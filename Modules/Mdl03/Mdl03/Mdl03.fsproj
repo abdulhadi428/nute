@@ -13,7 +13,7 @@
   <Document>
     <LocalLibrary />
     <Pcb>
-<File path=".\Mdl03.fsx" Folder="-1" isopened="0"/>
+<File path=".\Mdl03.fsx" Folder="-1" isopened="1"/>
     </Pcb>
     <ARouteSessions>
 <Session name="Mdl03" date="2011-01-18 18:32:59" path=".\autoroute_Mdl03_110118183259\">
