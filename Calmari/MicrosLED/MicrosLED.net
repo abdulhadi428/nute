@@ -1,0 +1,299 @@
+# EESchema Netlist Version 1.1 created  17/08/2010 10:42:58
+(
+ ( /4C6A2DE5 SMD0805 C1 0.1u
+  ( 1 N-000001 )
+  ( 2 GND )
+ )
+ ( /4C6A2DE7 SMD0805 C2 10u
+  ( 1 N-000001 )
+  ( 2 GND )
+ )
+ ( /4C6A2DD9 SMD0805 C3 0.1u
+  ( 1 N-000022 )
+  ( 2 GND )
+ )
+ ( /4C6A2DDD SMD0805 C4 10u
+  ( 1 N-000022 )
+  ( 2 GND )
+ )
+ ( /4C6A2E27 SMD0603 C5 2n2
+  ( 1 N-000031 )
+  ( 2 GND )
+ )
+ ( /4C698491 LED-5MM D1 LED
+  ( A N-000022 )
+  ( C N-000017 )
+ )
+ ( /4C6984E9 LED-5MM D2 LED
+  ( A N-000022 )
+  ( C N-000009 )
+ )
+ ( /4C6984E3 LED-5MM D3 LED
+  ( A N-000022 )
+  ( C N-000010 )
+ )
+ ( /4C69852C LED-5MM D4 LED
+  ( A N-000022 )
+  ( C N-000023 )
+ )
+ ( /4C6A15B7 LED-5MM D5 LED
+  ( A N-000022 )
+  ( C N-000006 )
+ )
+ ( /4C6A15B2 LED-5MM D6 LED
+  ( A N-000022 )
+  ( C N-000021 )
+ )
+ ( /4C698499 LED-5MM D7 LED
+  ( A N-000017 )
+  ( C N-000016 )
+ )
+ ( /4C6984EA LED-5MM D8 LED
+  ( A N-000009 )
+  ( C N-000028 )
+ )
+ ( /4C6984E2 LED-5MM D9 LED
+  ( A N-000010 )
+  ( C N-000011 )
+ )
+ ( /4C69852B LED-5MM D10 LED
+  ( A N-000023 )
+  ( C N-000024 )
+ )
+ ( /4C6A15B8 LED-5MM D11 LED
+  ( A N-000006 )
+  ( C N-000005 )
+ )
+ ( /4C6A15B3 LED-5MM D12 LED
+  ( A N-000021 )
+  ( C N-000020 )
+ )
+ ( /4C69849D LED-5MM D13 LED
+  ( A N-000016 )
+  ( C N-000015 )
+ )
+ ( /4C6984EB LED-5MM D14 LED
+  ( A N-000028 )
+  ( C N-000029 )
+ )
+ ( /4C6984E1 LED-5MM D15 LED
+  ( A N-000011 )
+  ( C N-000012 )
+ )
+ ( /4C69852A LED-5MM D16 LED
+  ( A N-000024 )
+  ( C N-000025 )
+ )
+ ( /4C6A15B9 LED-5MM D17 LED
+  ( A N-000005 )
+  ( C N-000004 )
+ )
+ ( /4C6A15B4 LED-5MM D18 LED
+  ( A N-000020 )
+  ( C N-000019 )
+ )
+ ( /4C6984A0 LED-5MM D19 LED
+  ( A N-000015 )
+  ( C N-000014 )
+ )
+ ( /4C6984EC LED-5MM D20 LED
+  ( A N-000029 )
+  ( C N-000027 )
+ )
+ ( /4C6984E0 LED-5MM D21 LED
+  ( A N-000012 )
+  ( C N-000013 )
+ )
+ ( /4C698529 LED-5MM D22 LED
+  ( A N-000025 )
+  ( C N-000026 )
+ )
+ ( /4C6A15BA LED-5MM D23 LED
+  ( A N-000004 )
+  ( C N-000003 )
+ )
+ ( /4C6A15B5 LED-5MM D24 LED
+  ( A N-000019 )
+  ( C N-000018 )
+ )
+ ( /4C6984A4 LED-5MM D25 LED
+  ( A N-000014 )
+  ( C N-000007 )
+ )
+ ( /4C6984ED LED-5MM D26 LED
+  ( A N-000027 )
+  ( C N-000007 )
+ )
+ ( /4C6984DF LED-5MM D27 LED
+  ( A N-000013 )
+  ( C N-000007 )
+ )
+ ( /4C698528 LED-5MM D28 LED
+  ( A N-000026 )
+  ( C N-000007 )
+ )
+ ( /4C6A15BB LED-5MM D29 LED
+  ( A N-000003 )
+  ( C N-000007 )
+ )
+ ( /4C6A15B6 LED-5MM D30 LED
+  ( A N-000018 )
+  ( C N-000007 )
+ )
+ ( /4C6A2DCE Diode_SMA D31 D_SHOTTKY
+  ( A GND )
+  ( C N-000030 )
+ )
+ ( /4C6A2DC3 SO8E DA1 NCP3066
+  ( 1 N-000001 )
+  ( 2 N-000030 )
+  ( 3 N-000031 )
+  ( 4 GND )
+  ( 5 N-000007 )
+  ( 6 N-000001 )
+  ( 7 N-000001 )
+  ( 8 N-000001 )
+ )
+ ( /4C6A2DC9 INDUCTOR_SR0604 L1 10uH
+  ( 1 N-000022 )
+  ( 2 N-000030 )
+ )
+ ( /4C6A2DF3 SMD1206 R1 6R8
+  ( 1 N-000007 )
+  ( 2 GND )
+ )
+ ( /4C6A2DF7 SMD1206 R2 6R8
+  ( 1 N-000007 )
+  ( 2 GND )
+ )
+ ( /4C6A2DBD PWR_CON1 XL1 BARREL_SOCKET
+  ( GND GND )
+  ( PWR N-000001 )
+  ( SW ? )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C1
+ SMD*
+$endlist
+$component C2
+ SMD*
+$endlist
+$component C3
+ SMD*
+$endlist
+$component C4
+ SMD*
+$endlist
+$component C5
+ SMD*
+$endlist
+$component D1
+ LED*
+$endlist
+$component D2
+ LED*
+$endlist
+$component D3
+ LED*
+$endlist
+$component D4
+ LED*
+$endlist
+$component D5
+ LED*
+$endlist
+$component D6
+ LED*
+$endlist
+$component D7
+ LED*
+$endlist
+$component D8
+ LED*
+$endlist
+$component D9
+ LED*
+$endlist
+$component D10
+ LED*
+$endlist
+$component D11
+ LED*
+$endlist
+$component D12
+ LED*
+$endlist
+$component D13
+ LED*
+$endlist
+$component D14
+ LED*
+$endlist
+$component D15
+ LED*
+$endlist
+$component D16
+ LED*
+$endlist
+$component D17
+ LED*
+$endlist
+$component D18
+ LED*
+$endlist
+$component D19
+ LED*
+$endlist
+$component D20
+ LED*
+$endlist
+$component D21
+ LED*
+$endlist
+$component D22
+ LED*
+$endlist
+$component D23
+ LED*
+$endlist
+$component D24
+ LED*
+$endlist
+$component D25
+ LED*
+$endlist
+$component D26
+ LED*
+$endlist
+$component D27
+ LED*
+$endlist
+$component D28
+ LED*
+$endlist
+$component D29
+ LED*
+$endlist
+$component D30
+ LED*
+$endlist
+$component D31
+ D*
+$endlist
+$component DA1
+ SO8
+$endlist
+$component L1
+ INDUCTOR*
+ SMD*
+$endlist
+$component R1
+ SMD*
+$endlist
+$component R2
+ SMD*
+$endlist
+$endfootprintlist
+}
