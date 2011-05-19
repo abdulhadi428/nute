@@ -1,4 +1,4 @@
-update=05/05/2011 15:48:57
+update=20/05/2011 01:35:10
 version=1
 last_client=eeschema
 [cvpcb]
@@ -124,3 +124,4 @@ LibName10=Sensors
 LibName11=st_kl
 LibName12=Tittar_kl
 LibName13=Transistors_kl
+LibName14=modules
