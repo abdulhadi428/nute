@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPCB (2011-03-30 BZR 2932)-stable date = 23/05/2011 02:03:35
+Cmp-Mod V01 Created by CvPCB (2011-04-29 BZR 2986)-stable date = 23/05/2011 18:06:45
 
 BeginCmp
 TimeStamp = /4DD58C76;
@@ -431,14 +431,14 @@ BeginCmp
 TimeStamp = /4DD9106F;
 Reference = D1;
 ValeurCmp = BRIDGE;
-IdModule  = ;
+IdModule  = BRIDGE_BxS;
 EndCmp
 
 BeginCmp
-TimeStamp = /4DD91084;
+TimeStamp = /4DDA5BAA;
 Reference = D2;
-ValeurCmp = BZX84C_3V3;
-IdModule  = ;
+ValeurCmp = BZX84C3V3;
+IdModule  = SOT23;
 EndCmp
 
 BeginCmp
@@ -459,7 +459,7 @@ BeginCmp
 TimeStamp = /4DCFCF18;
 Reference = DA1;
 ValeurCmp = BQ24010;
-IdModule  = ;
+IdModule  = SON10;
 EndCmp
 
 BeginCmp
@@ -844,35 +844,35 @@ BeginCmp
 TimeStamp = /4DD41763;
 Reference = Rx17;
 ValeurCmp = 22RX4;
-IdModule  = ;
+IdModule  = Rx4;
 EndCmp
 
 BeginCmp
 TimeStamp = /4DD4178B;
 Reference = Rx18;
 ValeurCmp = 22RX4;
-IdModule  = ;
+IdModule  = Rx4;
 EndCmp
 
 BeginCmp
 TimeStamp = /4DD41791;
 Reference = Rx19;
 ValeurCmp = 22RX4;
-IdModule  = ;
+IdModule  = Rx4;
 EndCmp
 
 BeginCmp
 TimeStamp = /4DD41795;
 Reference = Rx20;
 ValeurCmp = 22RX4;
-IdModule  = ;
+IdModule  = Rx4;
 EndCmp
 
 BeginCmp
 TimeStamp = /4DD57899;
 Reference = Rx28;
 ValeurCmp = 100kX4;
-IdModule  = ;
+IdModule  = Rx4;
 EndCmp
 
 BeginCmp

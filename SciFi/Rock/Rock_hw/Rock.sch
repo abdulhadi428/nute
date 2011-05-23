@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 23/05/2011 02:14:14
+EESchema Schematic File Version 2  date 23/05/2011 18:06:52
 LIBS:Audio_kl
 LIBS:Connectors_kl
 LIBS:display_kl
@@ -11,14 +11,13 @@ LIBS:st_kl
 LIBS:Tittar_kl
 LIBS:Transistors_kl
 LIBS:Interface_kl
-LIBS:Rock-cache
 EELAYER 25  0
 EELAYER END
 $Descr A2 23400 16535
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "22 may 2011"
+Date "23 may 2011"
 Rev ""
 Comp ""
 Comment1 ""
@@ -26,6 +25,15 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L ZENER_SOT23 D2
+U 1 1 4DDA5BAA
+P 4100 14200
+F 0 "D2" H 3900 14300 40  0000 C CNN
+F 1 "BZX84C3V3" H 4150 14300 40  0000 C CNN
+	1    4100 14200
+	0    -1   -1   0   
+$EndComp
 Connection ~ 8650 15500
 Wire Wire Line
 	8700 15500 8550 15500
@@ -1439,20 +1447,11 @@ F 1 "GND" H 4100 14420 30  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L ZENER D2
-U 1 1 4DD91084
-P 4100 14200
-F 0 "D2" H 4100 14300 40  0000 C CNN
-F 1 "BZX84C 3V3" H 4100 14100 40  0000 C CNN
-	1    4100 14200
-	0    -1   -1   0   
-$EndComp
-$Comp
 L BRIDGE D1
 U 1 1 4DD9106F
 P 3400 14200
 F 0 "D1" H 3550 14450 60  0000 C CNN
-F 1 "BRIDGE" H 3250 14450 60  0000 C CNN
+F 1 "B8S" H 3250 14450 60  0000 C CNN
 	1    3400 14200
 	1    0    0    -1  
 $EndComp
