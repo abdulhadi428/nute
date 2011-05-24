@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPCB (2011-04-29 BZR 2986)-stable date = 24/05/2011 17:43:30
+Cmp-Mod V01 Created by CvPCB (2011-03-30 BZR 2932)-stable date = 24/05/2011 20:30:56
 
 BeginCmp
 TimeStamp = /4DD58C76;
@@ -1097,6 +1097,13 @@ TimeStamp = /4DCFA8CF;
 Reference = XL27;
 ValeurCmp = CONN_2;
 IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4DDBD05D;
+Reference = XL28;
+ValeurCmp = SD_CONNECTOR;
+IdModule  = SD_7SDCN;
 EndCmp
 
 BeginCmp
