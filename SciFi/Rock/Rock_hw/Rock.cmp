@@ -1,10 +1,10 @@
-Cmp-Mod V01 Created by CvPCB (2011-04-29 BZR 2986)-stable date = 23/05/2011 18:06:45
+Cmp-Mod V01 Created by CvPCB (2011-04-29 BZR 2986)-stable date = 24/05/2011 17:43:30
 
 BeginCmp
 TimeStamp = /4DD58C76;
 Reference = ANT1;
 ValeurCmp = ANT_PCB_MONO;
-IdModule  = ;
+IdModule  = ANT_868_MEANDER;
 EndCmp
 
 BeginCmp
@@ -430,7 +430,7 @@ EndCmp
 BeginCmp
 TimeStamp = /4DD9106F;
 Reference = D1;
-ValeurCmp = BRIDGE;
+ValeurCmp = B8S;
 IdModule  = BRIDGE_BxS;
 EndCmp
 
@@ -491,10 +491,10 @@ IdModule  = DRB;
 EndCmp
 
 BeginCmp
-TimeStamp = /4DD3B5DC;
+TimeStamp = /4D2F47C3;
 Reference = DD1;
-ValeurCmp = STM32F103RC-64;
-IdModule  = LQFP64;
+ValeurCmp = CC1101;
+IdModule  = QFN20;
 EndCmp
 
 BeginCmp
@@ -519,10 +519,10 @@ IdModule  = QFN16_5_3;
 EndCmp
 
 BeginCmp
-TimeStamp = /4D2F47C3;
+TimeStamp = /4DD3B5DC;
 Reference = DD5;
-ValeurCmp = CC1101;
-IdModule  = QFN20;
+ValeurCmp = STM32F103RC-64;
+IdModule  = LQFP64;
 EndCmp
 
 BeginCmp
@@ -1047,7 +1047,7 @@ BeginCmp
 TimeStamp = /4DD2DA8B;
 Reference = XL20;
 ValeurCmp = SD_CONNECTOR;
-IdModule  = ;
+IdModule  = SD_PUSH002;
 EndCmp
 
 BeginCmp
