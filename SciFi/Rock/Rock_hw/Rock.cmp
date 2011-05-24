@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPCB (2011-03-30 BZR 2932)-stable date = 24/05/2011 20:30:56
+Cmp-Mod V01 Created by CvPCB (2011-03-30 BZR 2932)-stable date = 24/05/2011 21:22:31
 
 BeginCmp
 TimeStamp = /4DD58C76;
@@ -25,13 +25,6 @@ BeginCmp
 TimeStamp = /4D2F481D;
 Reference = C3;
 ValeurCmp = 1pF;
-IdModule  = SMD0402;
-EndCmp
-
-BeginCmp
-TimeStamp = /4D2F48A5;
-Reference = C4;
-ValeurCmp = 12pF;
 IdModule  = SMD0402;
 EndCmp
 
@@ -694,6 +687,13 @@ IdModule  = SMD0603;
 EndCmp
 
 BeginCmp
+TimeStamp = /4DDBDEAA;
+Reference = R17;
+ValeurCmp = 100k;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
 TimeStamp = /4DD34CDC;
 Reference = R21;
 ValeurCmp = 47k;
@@ -865,13 +865,6 @@ BeginCmp
 TimeStamp = /4DD41795;
 Reference = Rx20;
 ValeurCmp = 22RX4;
-IdModule  = Rx4;
-EndCmp
-
-BeginCmp
-TimeStamp = /4DD57899;
-Reference = Rx28;
-ValeurCmp = 100kX4;
 IdModule  = Rx4;
 EndCmp
 
@@ -1102,7 +1095,7 @@ EndCmp
 BeginCmp
 TimeStamp = /4DDBD05D;
 Reference = XL28;
-ValeurCmp = SD_CONNECTOR;
+ValeurCmp = 7SDCN;
 IdModule  = SD_7SDCN;
 EndCmp
 
@@ -1114,7 +1107,7 @@ IdModule  = CRYSTAL_HC49;
 EndCmp
 
 BeginCmp
-TimeStamp = /4D2F4A2C;
+TimeStamp = /4DDBDFA4;
 Reference = XTAL2;
 ValeurCmp = 27MHz;
 IdModule  = CRYSTAL_HC49;
