@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPCB (2011-03-30 BZR 2932)-stable date = 25/05/2011 14:07:24
+Cmp-Mod V01 Created by CvPCB (2011-04-29 BZR 2986)-stable date = 25/05/2011 16:37:38
 
 BeginCmp
 TimeStamp = /4DD58C76;
@@ -428,10 +428,10 @@ IdModule  = BRIDGE_BxS;
 EndCmp
 
 BeginCmp
-TimeStamp = /4DDA5BAA;
+TimeStamp = /4DDCF6F6;
 Reference = D2;
-ValeurCmp = BZX84C3V3;
-IdModule  = SOT23;
+ValeurCmp = BZV55C3V3;
+IdModule  = DIODE_SOD80C;
 EndCmp
 
 BeginCmp
