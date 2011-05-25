@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPCB (2011-03-30 BZR 2932)-stable date = 24/05/2011 21:22:31
+Cmp-Mod V01 Created by CvPCB (2011-03-30 BZR 2932)-stable date = 25/05/2011 14:07:24
 
 BeginCmp
 TimeStamp = /4DD58C76;
@@ -984,7 +984,7 @@ BeginCmp
 TimeStamp = /4D30588A;
 Reference = XL12;
 ValeurCmp = USB_MINI_B;
-IdModule  = USB_UX60A;
+IdModule  = USBDT_00501;
 EndCmp
 
 BeginCmp
