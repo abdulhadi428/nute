@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPCB (2011-04-29 BZR 2986)-stable date = 25/05/2011 16:37:38
+Cmp-Mod V01 Created by CvPCB (2011-03-30 BZR 2932)-stable date = 26/05/2011 00:25:34
 
 BeginCmp
 TimeStamp = /4DD58C76;
@@ -81,7 +81,7 @@ BeginCmp
 TimeStamp = /4D2F50B2;
 Reference = C12;
 ValeurCmp = 0.1u;
-IdModule  = SMD0402;
+IdModule  = SMD0603;
 EndCmp
 
 BeginCmp
@@ -116,7 +116,7 @@ BeginCmp
 TimeStamp = /4D2F4A18;
 Reference = C17;
 ValeurCmp = 0.1u;
-IdModule  = SMD0402;
+IdModule  = SMD0603;
 EndCmp
 
 BeginCmp
@@ -491,7 +491,7 @@ IdModule  = QFN20;
 EndCmp
 
 BeginCmp
-TimeStamp = /4DD3D30D;
+TimeStamp = /4DDD65A3;
 Reference = DD2;
 ValeurCmp = PCA9635;
 IdModule  = SSOP28;

@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 25/05/2011 19:08:23
+EESchema Schematic File Version 2  date 26/05/2011 00:25:18
 LIBS:Audio_kl
 LIBS:Connectors_kl
 LIBS:display_kl
@@ -26,6 +26,15 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L PCA9635 DD2
+U 1 1 4DDD65A3
+P 10900 2700
+F 0 "DD2" H 10650 3900 60  0000 C CNN
+F 1 "PCA9635" H 11150 3900 60  0000 C CNN
+	1    10900 2700
+	1    0    0    -1  
+$EndComp
 $Comp
 L GND #PWR?
 U 1 1 4DDD1972
@@ -2224,15 +2233,6 @@ F 0 "XL21" V 12950 1700 40  0000 C CNN
 F 1 "CONN_4" V 13050 1700 40  0000 C CNN
 	1    13000 1700
 	-1   0    0    -1  
-$EndComp
-$Comp
-L PCA9635 DD2
-U 1 1 4DD3D30D
-P 10900 2700
-F 0 "DD2" H 10700 3900 60  0000 C CNN
-F 1 "PCA9635" H 11150 3900 60  0000 C CNN
-	1    10900 2700
-	1    0    0    -1  
 $EndComp
 Text Label 4100 2750 0    60   ~ 0
 CC_SCLK
