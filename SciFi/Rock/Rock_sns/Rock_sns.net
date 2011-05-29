@@ -1,0 +1,138 @@
+# EESchema Netlist Version 1.1 created  29/05/2011 21:19:27
+(
+ ( /4DDC2016 SMD0603 C1 0.1u
+  ( 1 VCC )
+  ( 2 GND )
+ )
+ ( /4DDC27E3 SMD0603 C2 22n
+  ( 1 N-000008 )
+  ( 2 N-000009 )
+ )
+ ( /4DDFE147 SMD0603 C3 0.1u
+  ( 1 N-000005 )
+  ( 2 GND )
+ )
+ ( /4DDFBEDC SOT23-6 DA1 STTS751-1WB3F
+  ( 1 GND )
+  ( 2 GND )
+  ( 3 VCC )
+  ( 4 /Tmp_sns )
+  ( 5 ? )
+  ( 6 N-000007 )
+ )
+ ( /4DDC30E8 SOT553 DA2 AH1888
+  ( 1 /Magnet )
+  ( 2 GND )
+  ( 3 ? )
+  ( 4 VCC )
+  ( 5 ? )
+ )
+ ( /4DDC2562 SOT23-6 DA3 AT42QT101X
+  ( 1 /Sensor )
+  ( 2 GND )
+  ( 3 N-000008 )
+  ( 4 N-000009 )
+  ( 5 VCC )
+  ( 6 GND )
+ )
+ ( /4DE27F7A Hole3_5_out6mm HOLE1 HOLE_METALLED
+  ( Hle GND )
+ )
+ ( /4DDC3534 HH5050_RGB_LED Q1 LED_RGB
+  ( BA VCC )
+  ( BC N-000016 )
+  ( GA VCC )
+  ( GC N-000013 )
+  ( RA VCC )
+  ( RC N-000017 )
+ )
+ ( /4DDFEA0B SIL-3 Q2 TSOP48XX
+  ( 1 GND )
+  ( 2 N-000005 )
+  ( 3 /IR )
+ )
+ ( /4DDFDF94 TSOP752 Q3 TSOP752XX
+  ( 1 GND )
+  ( 2 N-000005 )
+  ( 3 /IR )
+  ( 4 GND )
+ )
+ ( /4DDFEE72 ASMT-QTB0 Q4 LED_RGB_CA
+  ( B N-000016 )
+  ( COM VCC )
+  ( G N-000013 )
+  ( R N-000017 )
+ )
+ ( /4DDC283B SMD0603 R1 1k
+  ( 1 N-000008 )
+  ( 2 N-000011 )
+ )
+ ( /4DDC2A31 SMD0603 R2 10k
+  ( 1 /Sensor )
+  ( 2 GND )
+ )
+ ( /4DDFE05D SMD0603 R3 100
+  ( 1 VCC )
+  ( 2 N-000005 )
+ )
+ ( /4DDC28F2 PAD_11MM SNSP1 SENSORPAD
+  ( 1 N-000011 )
+ )
+ ( /4DDFC00C SIL-2 XL1 CONN_2
+  ( 1 /Tmp_sns )
+  ( 2 N-000007 )
+ )
+ ( /4DDC1FEC PWRCON2PIN XL2 PWRCONN
+  ( 1 VCC )
+  ( 2 GND )
+ )
+ ( /4DDC35E2 SIL-3 XL3 CONN_3
+  ( 1 N-000017 )
+  ( 2 N-000013 )
+  ( 3 N-000016 )
+ )
+ ( /4DDC314B SIL-1 XL4 CONN_1
+  ( 1 /Magnet )
+ )
+ ( /4DDFE899 SIL-1 XL5 CONN_1
+  ( 1 /IR )
+ )
+ ( /4DDC299E SIL-1 XL6 CONN_1
+  ( 1 /Sensor )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C1
+ SMD*
+$endlist
+$component C2
+ SMD*
+$endlist
+$component C3
+ SMD*
+$endlist
+$component DA3
+ SOT23-6
+$endlist
+$component HOLE1
+ HOLE*
+$endlist
+$component R1
+ SMD*
+$endlist
+$component R2
+ SMD*
+$endlist
+$component R3
+ SMD*
+$endlist
+$component SNSP1
+ TESTPOINT*
+ PAD*
+$endlist
+$component XL2
+ PWRCON*
+$endlist
+$endfootprintlist
+}

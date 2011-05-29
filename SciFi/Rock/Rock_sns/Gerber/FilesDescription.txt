@@ -1,0 +1,7 @@
+Rock_sns-Front.gtl      - GERBER-файл верхнего слоя платы
+Rock_sns-Back.gbl       - GERBER-файл нижнего слоя платы
+Rock_sns-Mask_Front.gts - GERBER-файл маски верхнего слоя платы
+Rock_sns-Mask_Back.gbs  - GERBER-файл маски нижнего слоя платы 
+Rock_sns-PCB_Edges.gbr  - GERBER-файл контура платы
+Rock_sns.drl            - файл листа сверловки
+other_formats.xls   - заполненная карта заказа с сайта
