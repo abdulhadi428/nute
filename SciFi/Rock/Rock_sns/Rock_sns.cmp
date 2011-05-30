@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPCB (2011-03-30 BZR 2932)-stable date = 29/05/2011 21:19:27
+Cmp-Mod V01 Created by CvPCB (2011-03-30 BZR 2932)-stable date = 31/05/2011 00:51:29
 
 BeginCmp
 TimeStamp = /4DDC2016;
@@ -40,6 +40,13 @@ TimeStamp = /4DDC2562;
 Reference = DA3;
 ValeurCmp = AT42QT101X;
 IdModule  = SOT23-6;
+EndCmp
+
+BeginCmp
+TimeStamp = /4DE3EEB9;
+Reference = DA4;
+ValeurCmp = APDS-9007-020;
+IdModule  = APDS-9007-020;
 EndCmp
 
 BeginCmp
@@ -99,6 +106,13 @@ IdModule  = SMD0603;
 EndCmp
 
 BeginCmp
+TimeStamp = /4DE3F0D0;
+Reference = R4;
+ValeurCmp = 27k;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
 TimeStamp = /4DDC28F2;
 Reference = SNSP1;
 ValeurCmp = SENSORPAD;
@@ -143,6 +157,13 @@ EndCmp
 BeginCmp
 TimeStamp = /4DDC299E;
 Reference = XL6;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4DE3F0EC;
+Reference = XL7;
 ValeurCmp = CONN_1;
 IdModule  = SIL-1;
 EndCmp

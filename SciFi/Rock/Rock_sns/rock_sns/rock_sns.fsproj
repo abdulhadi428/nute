@@ -13,9 +13,11 @@
   <Document>
     <LocalLibrary />
     <Pcb>
-<File path=".\Rock_sns.fsx" Folder="-1" isopened="1"/>
     </Pcb>
     <ARouteSessions>
+<Session name="Rock_sns" date="2011-05-31 01:02:39" path=".\autoroute_Rock_sns_110531010239\">
+<File path=".\autoroute_Rock_sns_110531010239\Rock_sns_230-4s.fsb" Folder="-1" isopened="1"/>
+</Session>
     </ARouteSessions>
   </Document>
 </Project>

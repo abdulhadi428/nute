@@ -1,138 +1,233 @@
-# EESchema Netlist Version 1.1 created  29/05/2011 21:19:27
+# EESchema Netlist Version 1.1 created  31/05/2011 00:54:15
 (
- ( /4DDC2016 SMD0603 C1 0.1u
-  ( 1 VCC )
-  ( 2 GND )
+ ( /4DE3F0EC $noname  XL7 CONN_1 {Lib=CONN_1}
+  (    1 /Lum )
  )
- ( /4DDC27E3 SMD0603 C2 22n
-  ( 1 N-000008 )
-  ( 2 N-000009 )
+ ( /4DE3F0D0 $noname  R4 27k {Lib=R}
+  (    1 /Lum )
+  (    2 ? )
  )
- ( /4DDFE147 SMD0603 C3 0.1u
-  ( 1 N-000005 )
-  ( 2 GND )
+ ( /4DE3EEB9 $noname  DA4 APDS-9007-020 {Lib=APDS-9007-020}
+  (    1 GND )
+  (    3 /Lum )
+  (    4 VCC )
+  (    6 GND )
  )
- ( /4DDFBEDC SOT23-6 DA1 STTS751-1WB3F
-  ( 1 GND )
-  ( 2 GND )
-  ( 3 VCC )
-  ( 4 /Tmp_sns )
-  ( 5 ? )
-  ( 6 N-000007 )
+ ( /4DE27F7A $noname  HOLE1 HOLE_METALLED {Lib=HOLE_METALLED}
+  (  Hle GND )
  )
- ( /4DDC30E8 SOT553 DA2 AH1888
-  ( 1 /Magnet )
-  ( 2 GND )
-  ( 3 ? )
-  ( 4 VCC )
-  ( 5 ? )
+ ( /4DDFEE72 $noname  Q4 LED_RGB_CA {Lib=LED_RGB_CA}
+  (    B N-000019 )
+  (  COM VCC )
+  (    G N-000014 )
+  (    R N-000006 )
  )
- ( /4DDC2562 SOT23-6 DA3 AT42QT101X
-  ( 1 /Sensor )
-  ( 2 GND )
-  ( 3 N-000008 )
-  ( 4 N-000009 )
-  ( 5 VCC )
-  ( 6 GND )
+ ( /4DDFEA0B $noname  Q2 TSOP48XX {Lib=TSOP48XX}
+  (    1 GND )
+  (    2 N-000007 )
+  (    3 /IR )
  )
- ( /4DE27F7A Hole3_5_out6mm HOLE1 HOLE_METALLED
-  ( Hle GND )
+ ( /4DDFE899 $noname  XL5 CONN_1 {Lib=CONN_1}
+  (    1 /IR )
  )
- ( /4DDC3534 HH5050_RGB_LED Q1 LED_RGB
-  ( BA VCC )
-  ( BC N-000016 )
-  ( GA VCC )
-  ( GC N-000013 )
-  ( RA VCC )
-  ( RC N-000017 )
+ ( /4DDFE147 $noname  C3 0.1u {Lib=C}
+  (    1 N-000007 )
+  (    2 GND )
  )
- ( /4DDFEA0B SIL-3 Q2 TSOP48XX
-  ( 1 GND )
-  ( 2 N-000005 )
-  ( 3 /IR )
+ ( /4DDFE05D $noname  R3 100 {Lib=R}
+  (    1 VCC )
+  (    2 N-000007 )
  )
- ( /4DDFDF94 TSOP752 Q3 TSOP752XX
-  ( 1 GND )
-  ( 2 N-000005 )
-  ( 3 /IR )
-  ( 4 GND )
+ ( /4DDFDF94 $noname  Q3 TSOP752XX {Lib=TSOP752XX}
+  (    1 GND )
+  (    2 N-000007 )
+  (    3 /IR )
+  (    4 GND )
  )
- ( /4DDFEE72 ASMT-QTB0 Q4 LED_RGB_CA
-  ( B N-000016 )
-  ( COM VCC )
-  ( G N-000013 )
-  ( R N-000017 )
+ ( /4DDFC00C $noname  XL1 CONN_2 {Lib=CONN_2}
+  (    1 /Tmp_sns )
+  (    2 N-000005 )
  )
- ( /4DDC283B SMD0603 R1 1k
-  ( 1 N-000008 )
-  ( 2 N-000011 )
+ ( /4DDFBEDC $noname  DA1 STTS751-1WB3F {Lib=STTS751-1WB3F}
+  (    1 GND )
+  (    2 GND )
+  (    3 VCC )
+  (    4 /Tmp_sns )
+  (    5 ? )
+  (    6 N-000005 )
  )
- ( /4DDC2A31 SMD0603 R2 10k
-  ( 1 /Sensor )
-  ( 2 GND )
+ ( /4DDC35E2 $noname  XL3 CONN_3 {Lib=CONN_3}
+  (    1 N-000006 )
+  (    2 N-000014 )
+  (    3 N-000019 )
  )
- ( /4DDFE05D SMD0603 R3 100
-  ( 1 VCC )
-  ( 2 N-000005 )
+ ( /4DDC3534 $noname  Q1 LED_RGB {Lib=LED_RGB}
+  (   BA VCC )
+  (   BC N-000019 )
+  (   GA VCC )
+  (   GC N-000014 )
+  (   RA VCC )
+  (   RC N-000006 )
  )
- ( /4DDC28F2 PAD_11MM SNSP1 SENSORPAD
-  ( 1 N-000011 )
+ ( /4DDC314B $noname  XL4 CONN_1 {Lib=CONN_1}
+  (    1 /Magnet )
  )
- ( /4DDFC00C SIL-2 XL1 CONN_2
-  ( 1 /Tmp_sns )
-  ( 2 N-000007 )
+ ( /4DDC30E8 $noname  DA2 AH1888 {Lib=AH1888}
+  (    1 /Magnet )
+  (    2 GND )
+  (    3 ? )
+  (    4 VCC )
+  (    5 ? )
  )
- ( /4DDC1FEC PWRCON2PIN XL2 PWRCONN
-  ( 1 VCC )
-  ( 2 GND )
+ ( /4DDC2A31 $noname  R2 10k {Lib=R}
+  (    1 /Sensor )
+  (    2 GND )
  )
- ( /4DDC35E2 SIL-3 XL3 CONN_3
-  ( 1 N-000017 )
-  ( 2 N-000013 )
-  ( 3 N-000016 )
+ ( /4DDC28F2 $noname  SNSP1 SENSORPAD {Lib=SENSORPAD}
+  (    1 N-000012 )
  )
- ( /4DDC314B SIL-1 XL4 CONN_1
-  ( 1 /Magnet )
+ ( /4DDC299E $noname  XL6 CONN_1 {Lib=CONN_1}
+  (    1 /Sensor )
  )
- ( /4DDFE899 SIL-1 XL5 CONN_1
-  ( 1 /IR )
+ ( /4DDC283B $noname  R1 1k {Lib=R}
+  (    1 N-000008 )
+  (    2 N-000012 )
  )
- ( /4DDC299E SIL-1 XL6 CONN_1
-  ( 1 /Sensor )
+ ( /4DDC27E3 $noname  C2 22n {Lib=C}
+  (    1 N-000008 )
+  (    2 N-000009 )
+ )
+ ( /4DDC2562 $noname  DA3 AT42QT101X {Lib=AT42QT101X}
+  (    1 /Sensor )
+  (    2 GND )
+  (    3 N-000008 )
+  (    4 N-000009 )
+  (    5 VCC )
+  (    6 GND )
+ )
+ ( /4DDC2016 $noname  C1 0.1u {Lib=C}
+  (    1 VCC )
+  (    2 GND )
+ )
+ ( /4DDC1FEC $noname  XL2 PWRCONN {Lib=PWRCONN}
+  (    1 VCC )
+  (    2 GND )
  )
 )
 *
 { Allowed footprints by component:
-$component C1
+$component R4
  SMD*
-$endlist
-$component C2
- SMD*
-$endlist
-$component C3
- SMD*
-$endlist
-$component DA3
- SOT23-6
 $endlist
 $component HOLE1
  HOLE*
 $endlist
-$component R1
- SMD*
-$endlist
-$component R2
+$component C3
  SMD*
 $endlist
 $component R3
+ SMD*
+$endlist
+$component R2
  SMD*
 $endlist
 $component SNSP1
  TESTPOINT*
  PAD*
 $endlist
+$component R1
+ SMD*
+$endlist
+$component C2
+ SMD*
+$endlist
+$component DA3
+ SOT23-6
+$endlist
+$component C1
+ SMD*
+$endlist
 $component XL2
  PWRCON*
 $endlist
 $endfootprintlist
 }
+{ Pin List by Nets
+Net 2 "GND" "GND"
+ XL2 2
+ C1 2
+ DA3 6
+ DA4 1
+ DA3 2
+ DA4 6
+ HOLE1 Hle
+ Q3 1
+ R2 2
+ DA2 2
+ DA1 2
+ DA1 1
+ Q2 1
+ Q3 4
+ C3 2
+Net 3 "VCC" "VCC"
+ DA2 4
+ DA1 3
+ R3 1
+ DA4 4
+ DA3 5
+ Q4 COM
+ C1 1
+ XL2 1
+ Q1 GA
+ Q1 RA
+ Q1 BA
+Net 4 "/Tmp sns" "Tmp sns"
+ DA1 4
+ XL1 1
+Net 5 "" ""
+ DA1 6
+ XL1 2
+Net 6 "" ""
+ Q4 R
+ XL3 1
+ Q1 RC
+Net 7 "" ""
+ R3 2
+ C3 1
+ Q2 2
+ Q3 2
+Net 8 "" ""
+ R1 1
+ DA3 3
+ C2 1
+Net 9 "" ""
+ DA3 4
+ C2 2
+Net 12 "" ""
+ SNSP1 1
+ R1 2
+Net 13 "/Sensor" "Sensor"
+ R2 1
+ XL6 1
+ DA3 1
+Net 14 "" ""
+ XL3 2
+ Q4 G
+ Q1 GC
+Net 15 "/Lum" "Lum"
+ DA4 3
+ R4 1
+ XL7 1
+Net 17 "/IR" "IR"
+ Q2 3
+ XL5 1
+ Q3 3
+Net 18 "/Magnet" "Magnet"
+ DA2 1
+ XL4 1
+Net 19 "" ""
+ Q1 BC
+ Q4 B
+ XL3 3
+}
+#End
