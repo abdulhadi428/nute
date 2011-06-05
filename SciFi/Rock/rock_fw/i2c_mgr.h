@@ -12,17 +12,20 @@
 #include "stm32f10x_i2c.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"
+#include "stm32f10x_dma.h"
 #include "misc.h"
 
 // Inner use defines
-#define I2C_DMA_CHNL    DMA1_Channel5
-#define I2C_DMA_IRQ     DMA1_Channel5_IRQn
+#define I2C_DMA_CHNL    DMA1_Channel6
+#define I2C_DMA_IRQ     DMA1_Channel6_IRQn
+#define I2C_DMA_IT_TC6  DMA1_IT_TC6
+#define I2C_DMA_IT_GLB  DMA1_IT_GL6
 
 // Declare DMA1_Channel5 IRQ. Use externC to make it visible from asm file.
 #ifdef __cplusplus
 extern "C" {
 #endif
-void DMA1_Channel5_IRQHandler(void);
+void DMA1_Channel6_IRQHandler(void);
 #ifdef __cplusplus
 }
 #endif

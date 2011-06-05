@@ -1,5 +1,4 @@
 #include "i2c_mgr.h"
-#include "stm32f10x_dma.h"
 
 #include "uart.h"
 #include "delay_util.h"
@@ -22,10 +21,10 @@ void i2cMgr_t::Init() {
     I2C_InitTypeDef I2C_InitStructure;
     I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
     I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
-    I2C_InitStructure.I2C_OwnAddress1 = 0x01;
+    I2C_InitStructure.I2C_OwnAddress1 = 0x30;
     I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
     I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
-    I2C_InitStructure.I2C_ClockSpeed = 100000;
+    I2C_InitStructure.I2C_ClockSpeed = 400000;
     I2C_Init(I2C1, &I2C_InitStructure);
     I2C_Cmd(I2C1, ENABLE);
 
@@ -37,18 +36,17 @@ void i2cMgr_t::Init() {
     for (uint8_t i=0; i<I2C_CMD_QUEUE_LENGTH; i++) Commands[i].State = CmdSucceded;
 
     // ==== Init DMA ====
-//    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
-//    DMA_DeInit(I2C_DMA_CHNL);
-//    // ==== Init NVIC ====
-//    NVIC_InitTypeDef NVIC_InitStructure;
-//    // Enable DMA1 channel3 IRQ Channel
-//    NVIC_InitStructure.NVIC_IRQChannel = I2C_DMA_IRQ;
-//    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-//    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-//    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//    NVIC_Init(&NVIC_InitStructure);
-//    // Enable DMA1 Channel Transfer Complete interrupt
-//    DMA_ITConfig(I2C_DMA_CHNL, DMA_IT_TC, ENABLE);
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+    DMA_DeInit(I2C_DMA_CHNL);
+
+    // ==== Init NVIC ====
+    NVIC_InitTypeDef NVIC_InitStructure;
+    // Enable DMA1 IRQ Channel
+    NVIC_InitStructure.NVIC_IRQChannel = I2C_DMA_IRQ;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 }
 
 void i2cMgr_t::AddCmd(I2C_Cmd_t ACmd) {
@@ -62,37 +60,8 @@ void i2cMgr_t::AddCmd(I2C_Cmd_t ACmd) {
     if (!IsBusy) ProcessCmd();
 }
 
-void i2cMgr_t::WriteBufferNoDMA(uint8_t AAddr, uint8_t* ABuffer, uint8_t ABufferSize) {
-    Uart.PrintString("I2C wb\r");
-    uint32_t IEvt;
-    uint8_t b;
-    // Send Start and Address as transmitter
-    if (SendStart()) return;
-    if (SendAddrTX(AAddr)) return;
-    // Address was acknowledged, start transmission
-    for (uint8_t i=0; i<ABufferSize; i++) {
-        b = *ABuffer++;
-        Uart.PrintAsHex(b);
-        Uart.Print(' ');
-        I2C_SendData(I2C1, b);
-        do {
-            IEvt = I2C_GetLastEvent(I2C1);
-            if (IEvt & I2C_EVENT_SLAVE_ACK_FAILURE) {   // NACK occured, slave doesn't answer
-                Uart.PrintString("\rI2C Slave NACK\r");
-                I2C_GenerateSTOP(I2C1, ENABLE);
-                return;
-            }
-        } while(IEvt != I2C_EVENT_MASTER_BYTE_TRANSMITTED);
-    } // for
-    I2C_GenerateSTOP(I2C1, ENABLE);
-    Uart.PrintString("\rI2C write completed\r");
-}
-
 void i2cMgr_t::ProcessCmd() {
-    CmdToRead->State = CmdFailed;
-    if (SendStart()) return;
-    if (SendAddrTX(CmdToRead->Address)) return;
-    // Address was sent and was acknowledged, write or read data
+    //Uart.PrintString("PC\r");
     if (CmdToRead->DataToWrite.Length != 0) {
         PrepareToWrite();
         return;
@@ -106,7 +75,8 @@ void i2cMgr_t::ProcessCmd() {
 }
 
 void i2cMgr_t::PrepareToWrite() {
-    CmdToRead->State = CmdWriting;
+    //Uart.PrintString("PTW\r");
+    CmdToRead->State = CmdFailed;
     IsBusy = true;
     // If more than one byte to send, use DMA
     if (CmdToRead->DataToWrite.Length > 1) {
@@ -116,18 +86,24 @@ void i2cMgr_t::PrepareToWrite() {
         DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &I2C1->DR;
         DMA_InitStructure.DMA_MemoryBaseAddr     = (uint32_t) &CmdToRead->DataToWrite.Buf[0];
         DMA_InitStructure.DMA_BufferSize         = CmdToRead->DataToWrite.Length;
+        DMA_InitStructure.DMA_Priority           = DMA_Priority_VeryHigh;
         DMA_InitStructure.DMA_DIR                = DMA_DIR_PeripheralDST;  // From memory to I2C
+        DMA_InitStructure.DMA_Mode               = DMA_Mode_Normal;
         DMA_InitStructure.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
         DMA_InitStructure.DMA_MemoryInc          = DMA_MemoryInc_Enable;
         DMA_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte;
         DMA_InitStructure.DMA_MemoryDataSize     = DMA_MemoryDataSize_Byte;
-        DMA_InitStructure.DMA_Mode               = DMA_Mode_Normal;
-        DMA_InitStructure.DMA_Priority           = DMA_Priority_Medium;
         DMA_InitStructure.DMA_M2M                = DMA_M2M_Disable;
         DMA_Init(I2C_DMA_CHNL, &DMA_InitStructure);
         // Start transmission
-        I2C_DMACmd(I2C1, ENABLE);       // Enable DMA
+        if (SendStart()) return;
+        if (SendAddrTX(CmdToRead->Address)) return;
+        CmdToRead->State = CmdWriting;
         DMA_Cmd(I2C_DMA_CHNL, ENABLE);  // Enable DMA channel
+        I2C_DMACmd(I2C1, ENABLE);       // Enable DMA
+        // Enable DMA1 Channel Transfer Complete interrupt
+        DMA_ITConfig(I2C_DMA_CHNL, DMA_IT_TC, ENABLE);
+        //Uart.PrintString("ST\r\r");
     }
     else {
         I2C_SendData(I2C1, CmdToRead->DataToWrite.Buf[0]);
@@ -191,6 +167,7 @@ void i2cMgr_t::PrepareToRead() {
 
 void i2cMgr_t::StopAndGetNext() {
     I2C_GenerateSTOP(I2C1, ENABLE);
+//    Uart.PrintString("cmd sent\r");
     IsBusy = false;
     // Get next command
     CmdToRead++;
@@ -256,14 +233,41 @@ uint8_t i2cMgr_t::SendAddrRX(uint8_t AAddr) {
     return 0;   // all right
 }
 
+void i2cMgr_t::WriteBufferNoDMA(uint8_t AAddr, uint8_t* ABuffer, uint8_t ABufferSize) {
+    Uart.PrintString("I2C wb\r");
+    uint32_t IEvt;
+    uint8_t b;
+    // Send Start and Address as transmitter
+    if (SendStart()) return;
+    if (SendAddrTX(AAddr)) return;
+    // Address was acknowledged, start transmission
+    for (uint8_t i=0; i<ABufferSize; i++) {
+        b = *ABuffer++;
+        Uart.PrintAsHex(b);
+        Uart.Print(' ');
+        I2C_SendData(I2C1, b);
+        do {
+            IEvt = I2C_GetLastEvent(I2C1);
+            if (IEvt & I2C_EVENT_SLAVE_ACK_FAILURE) {   // NACK occured, slave doesn't answer
+                Uart.PrintString("\rI2C Slave NACK\r");
+                I2C_GenerateSTOP(I2C1, ENABLE);
+                return;
+            }
+        } while(IEvt != I2C_EVENT_MASTER_BYTE_TRANSMITTED);
+    } // for
+    I2C_GenerateSTOP(I2C1, ENABLE);
+    Uart.PrintString("\rI2C write completed\r");
+}
+
+
 // ============================ Interrupts =====================================
 // DMA interrupt of end of transmission
-
-void DMA1_Channel5_IRQHandler(void) {
-    // Test on DMA1 Channel5 Transfer Complete interrupt
-    if (DMA_GetITStatus(DMA1_IT_TC5)) {
+void DMA1_Channel6_IRQHandler(void) {
+//    Uart.PrintString("DMA IRQ\r");
+    // Test on DMA1 Channel6 Transfer Complete interrupt
+    if (DMA_GetITStatus(I2C_DMA_IT_TC6)) {
         // Clear DMA1 Channel5 Half Transfer, Transfer Complete and Global interrupt pending bits
-        DMA_ClearITPendingBit(DMA1_IT_GL5);
+        DMA_ClearITPendingBit(I2C_DMA_IT_GLB);
         DMA_DeInit(I2C_DMA_CHNL); // Disable DMA
         // Check what to do
         if (i2cMgr.CmdToRead->State == CmdWriting) {

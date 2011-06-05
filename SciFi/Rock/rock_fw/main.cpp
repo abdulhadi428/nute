@@ -20,9 +20,12 @@ int main(void) {
     Uart.PrintString("Let's rock!\r");
 
     GeneralInit();
+
+    Leds.FadeInAll();
+
     // Forever
     while(1) {
-
+        Leds.Task();
     }
 }
 
