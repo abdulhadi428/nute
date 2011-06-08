@@ -6,7 +6,7 @@
 Leds_t Leds;
 
 void Leds_t::Init() {
-    Uart.PrintString("PCA Init\r");
+    UART_PrintString("PCA Init\r");
     // Init OE pin
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
     GPIO_InitTypeDef    GPIO_InitStructure;

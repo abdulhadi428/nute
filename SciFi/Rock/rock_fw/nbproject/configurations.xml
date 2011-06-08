@@ -80,14 +80,20 @@
       <itemPath>lib/stm32_flash.ld</itemPath>
       <itemPath>lib/stm32f10x.h</itemPath>
       <itemPath>lib/stm32f10x_conf.h</itemPath>
-      <itemPath>lib/stm32f10x_it.c</itemPath>
-      <itemPath>lib/stm32f10x_it.h</itemPath>
       <itemPath>lib/system_stm32f10x.c</itemPath>
       <itemPath>lib/system_stm32f10x.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="sd" displayName="sd" projectFiles="true">
+      <itemPath>sd/sd.cpp</itemPath>
+      <itemPath>sd/sd.h</itemPath>
+      <itemPath>sd/sd_lowlevel.c</itemPath>
+      <itemPath>sd/sd_lowlevel.h</itemPath>
+      <itemPath>sd/stm32_eval_sdio_sd.c</itemPath>
+      <itemPath>sd/stm32_eval_sdio_sd.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -96,7 +102,7 @@
       <itemPath>i2c_mgr.cpp</itemPath>
       <itemPath>leds_pca.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
-      <itemPath>uart.cpp</itemPath>
+      <itemPath>uart.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -112,6 +118,7 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>lib</Elem>
+    <Elem>sd</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -126,6 +133,7 @@
             <pElem>.</pElem>
             <pElem>lib</pElem>
             <pElem>lib/inc</pElem>
+            <pElem>sd</pElem>
           </incDir>
           <preprocessorList>
             <Elem>STM32F10X_HD</Elem>
@@ -136,6 +144,7 @@
             <pElem>.</pElem>
             <pElem>lib</pElem>
             <pElem>lib/inc</pElem>
+            <pElem>sd</pElem>
           </incDir>
           <preprocessorList>
             <Elem>STM32F10X_HD</Elem>

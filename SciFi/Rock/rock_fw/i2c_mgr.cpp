@@ -111,7 +111,7 @@ void i2cMgr_t::PrepareToWrite() {
         while (I2C_GetFlagStatus(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED) == RESET) {
             if ((FTimeout--) == 0) {
                 IsBusy = false;
-                Uart.PrintString("I2C can't transmit single byte\r");
+                UART_PrintString("I2C can't transmit single byte\r");
                 return;
             }
         } // while
@@ -157,7 +157,7 @@ void i2cMgr_t::PrepareToRead() {
         while (I2C_GetFlagStatus(I2C1, I2C_FLAG_RXNE) == RESET) {
             if ((FTimeout--) == 0) {
                 IsBusy = false;
-                Uart.PrintString("I2C can't receive single byte\r");
+                UART_PrintString("I2C can't receive single byte\r");
                 return;
             }
         } // while
@@ -188,7 +188,7 @@ uint8_t i2cMgr_t::SendStart(void) {
     while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)) {
         if ((FTimeout--) == 0) {
             IsBusy = false;
-            Uart.PrintString("I2C can't enter master mode\r");
+            UART_PrintString("I2C can't enter master mode\r");
             return 2;
         }
     }
@@ -202,12 +202,12 @@ uint8_t i2cMgr_t::SendAddrTX(uint8_t AAddr) {
         IEvt = I2C_GetLastEvent(I2C1);
         if (IEvt & I2C_EVENT_SLAVE_ACK_FAILURE) {   // NACK occured, slave doesn't answer
             IsBusy = false;
-            Uart.PrintString("I2C Slave Addr NACK\r");
+            UART_PrintString("I2C Slave Addr NACK\r");
             return 1;
         }
         if ((FTimeout--) == 0) {
             IsBusy = false;
-            Uart.PrintString("I2C Slave Addr Timeout\r");
+            UART_PrintString("I2C Slave Addr Timeout\r");
             return 2;
         }
     } while (IEvt != I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED);
@@ -221,12 +221,12 @@ uint8_t i2cMgr_t::SendAddrRX(uint8_t AAddr) {
         IEvt = I2C_GetLastEvent(I2C1);
         if (IEvt & I2C_EVENT_SLAVE_ACK_FAILURE) {   // NACK occured, slave doesn't answer
             IsBusy = false;
-            Uart.PrintString("I2C Slave Addr NACK\r");
+            UART_PrintString("I2C Slave Addr NACK\r");
             return 1;
         }
         if ((FTimeout--) == 0) {
             IsBusy = false;
-            Uart.PrintString("I2C Slave Addr Timeout\r");
+            UART_PrintString("I2C Slave Addr Timeout\r");
             return 2;
         }
     } while (IEvt != I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED);
@@ -234,7 +234,7 @@ uint8_t i2cMgr_t::SendAddrRX(uint8_t AAddr) {
 }
 
 void i2cMgr_t::WriteBufferNoDMA(uint8_t AAddr, uint8_t* ABuffer, uint8_t ABufferSize) {
-    Uart.PrintString("I2C wb\r");
+    UART_PrintString("I2C wb\r");
     uint32_t IEvt;
     uint8_t b;
     // Send Start and Address as transmitter
@@ -243,20 +243,20 @@ void i2cMgr_t::WriteBufferNoDMA(uint8_t AAddr, uint8_t* ABuffer, uint8_t ABuffer
     // Address was acknowledged, start transmission
     for (uint8_t i=0; i<ABufferSize; i++) {
         b = *ABuffer++;
-        Uart.PrintAsHex(b);
-        Uart.Print(' ');
+        UART_PrintAsHex(b);
+        UART_Print(' ');
         I2C_SendData(I2C1, b);
         do {
             IEvt = I2C_GetLastEvent(I2C1);
             if (IEvt & I2C_EVENT_SLAVE_ACK_FAILURE) {   // NACK occured, slave doesn't answer
-                Uart.PrintString("\rI2C Slave NACK\r");
+                UART_PrintString("\rI2C Slave NACK\r");
                 I2C_GenerateSTOP(I2C1, ENABLE);
                 return;
             }
         } while(IEvt != I2C_EVENT_MASTER_BYTE_TRANSMITTED);
     } // for
     I2C_GenerateSTOP(I2C1, ENABLE);
-    Uart.PrintString("\rI2C write completed\r");
+    UART_PrintString("\rI2C write completed\r");
 }
 
 

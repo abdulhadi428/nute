@@ -15,15 +15,17 @@ OUTTYPE = binary
 #OUTTYPE = ihex
 
 # List project source files here
-PRJCSRC =
+PRJCSRC = uart.c \
+sd/stm32_eval_sdio_sd.c \
+sd/sd_lowlevel.c
+
 
 
 PRJCPPSRC = main.cpp \
 i2c_mgr.cpp \
 leds_pca.cpp \
 delay_util.cpp \
-uart.cpp \
-
+sd/sd.cpp \
 
 
 # List project include directories here
@@ -49,6 +51,7 @@ STINCDIR = . \
 lib \
 lib/CoreSupport \
 lib/inc \
+sd \
 
 #./lib/startup
 
@@ -58,14 +61,14 @@ LDSCRIPT_FLASH = lib/stm32_flash.ld
 # List C source files here
 SRC  = $(PRJCSRC) \
 lib/system_stm32f10x.c \
-lib/stm32f10x_it.c \
 lib/src/misc.c \
 lib/src/stm32f10x_gpio.c \
 lib/src/stm32f10x_rcc.c \
 lib/src/stm32f10x_i2c.c \
 lib/src/stm32f10x_dma.c \
 lib/src/stm32f10x_usart.c \
-lib/src/stm32f10x_tim.c
+lib/src/stm32f10x_tim.c \
+lib/src/stm32f10x_sdio.c
 
 #lib/src/stm32f10x_spi.c \
 #lib/src/stm32f10x_exti.c \
@@ -126,8 +129,8 @@ CFLAGS += -DUSE_STDPERIPH_DRIVER
 # From Wiki:
 CFLAGS += -ffunction-sections -fdata-sections
 CFLAGS += -Wall -Wextra
-CFLAGS += -Wimplicit -Wcast-align -Wpointer-arith -Wredundant-decls
-CFLAGS += -Wshadow -Wcast-qual -Wcast-align -Wnested-externs
+CFLAGS += -Wimplicit -Wpointer-arith -Wredundant-decls
+CFLAGS += -Wshadow -Wcast-qual -Wnested-externs
 # End of Wiki
 #CFLAGS += -Wa-ahlms=$(<:.c=.lst) $(DEFS)
 CFLAGS += -fomit-frame-pointer
@@ -158,7 +161,6 @@ CPPFLAGS += -fno-elide-constructors
 CPPFLAGS += -funsigned-bitfields -fshort-enums
 CPPFLAGS += -Wall -Wextra
 CPPFLAGS += -Winline -finline-limit=40
-CPPFLAGS += -Wcast-align
 CPPFLAGS += -Wpointer-arith -Wredundant-decls
 CPPFLAGS += -Wshadow -Wcast-qual -Wcast-align
 # End of Wiki

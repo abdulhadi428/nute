@@ -11,6 +11,7 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>lib</sourceRootElem>
+                <sourceRootElem>sd</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

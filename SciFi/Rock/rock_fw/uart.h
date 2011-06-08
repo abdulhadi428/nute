@@ -14,6 +14,10 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 // ============================ Definitions ====================================
 #define UART_HARDWARE   // Software or hardware uart
 
@@ -36,25 +40,23 @@
 #define GET_RX_PIN( )	(UARTPin & (1<<RxPin))
 #endif
 
-class UART_t {
-private:
-    char UintToHexChar (uint8_t b);
-public:
-    void Init(void);
-    void Print (uint8_t AByte);
-    void PrintAsHex (uint8_t AByte);
-    void NewLine (void) { Print ('\r'); }
-    void PrintUint (uint16_t);
-    void PrintInt (int16_t);
-    void PrintString (const char *S);
-    void PrintStringLen (const char *S, const uint8_t ALength);
-    void PrintArr (uint8_t *Arr, uint8_t ALength);
-    void PrintArrAsString (uint8_t *Arr, uint8_t ALength);
-};
-
-extern UART_t Uart;
-
 // ============================ Prototypes =====================================
+void UART_Init(void);
+void UART_Print (uint8_t AByte);
+char UintToHexChar (uint8_t b);
+void UART_PrintAsHex (uint8_t AByte);
+void UART_PrintUint (uint32_t ANumber);
+void UART_PrintInt (int32_t ANumber);
+void UART_PrintString (const char *S);
+void UART_PrintArrAsString (uint8_t *Arr, uint8_t ALength);
+void UART_NewLine (void);
+
+void UART_StrInt(const char *S, uint16_t ANumber);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif
 
