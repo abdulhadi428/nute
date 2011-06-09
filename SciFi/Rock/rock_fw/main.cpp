@@ -28,6 +28,7 @@ int main(void) {
     // Forever
     while(1) {
         //Leds.Task();
+
     }
 }
 
@@ -42,6 +43,20 @@ void GeneralInit(void) {
     // Sound etc.
     //SD.Init();
     Vs.Init();
+
+    uint16_t IData;
+    Vs.Enable();
+
+    if (Vs.CmdRead(VS_REG_MODE, &IData) == VS_OK) {
+        UART_StrHex16("VS Mode: ", IData);
+    }
+
+    if (Vs.CmdRead(VS_REG_CLOCKF, &IData) == VS_OK) {
+        UART_StrHex16("VS Clk: ", IData);
+    }
+
+
+
 }
 
 

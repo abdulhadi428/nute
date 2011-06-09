@@ -69,9 +69,9 @@ lib/src/stm32f10x_i2c.c \
 lib/src/stm32f10x_dma.c \
 lib/src/stm32f10x_usart.c \
 lib/src/stm32f10x_tim.c \
-lib/src/stm32f10x_sdio.c
+lib/src/stm32f10x_sdio.c \
+lib/src/stm32f10x_spi.c \
 
-#lib/src/stm32f10x_spi.c \
 #lib/src/stm32f10x_exti.c \
 
 

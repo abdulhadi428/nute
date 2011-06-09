@@ -1,9 +1,11 @@
 #include "vs.h"
 
+#include "uart.h"
+#include "i2c_mgr.h"
+
 VS_t Vs;
 
 void VS_t::Init() {
-    // ******** Hardware init section *******
     // ==== Clocks init ====
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_SPI1 | RCC_APB2Periph_AFIO, ENABLE);
     // ==== GPIO init ====
@@ -44,6 +46,15 @@ void VS_t::Init() {
 }
 
 void VS_t::Enable() {
+    Rst_Hi();
+    // Setup clock
+    CmdWrite(VS_REG_CLOCKF, 0xC430);    // x4, XTALI = 12.288 MHz
+    BusyWait();
+    CmdWrite(VS_REG_MODE, (VS_SM_SDINEW | VS_SM_RESET));    // Perform software reset
+    BusyWait();
+    // Setup registers
+    CmdWrite(VS_REG_MODE, (VS_SM_DIFF | VS_ICONF_ADSDI | VS_SM_SDINEW));
+    CmdWrite(VS_REG_MIXERVOL, (VS_SMV_ACTIVE | VS_SMV_GAIN2));
 
 }
 void VS_t::Disable() {
@@ -55,35 +66,61 @@ uint8_t VS_t::BusyWait(void) {
     uint32_t Timeout = VS_TIMEOUT;
     while (IsBusy()) {
         Timeout--;
-        if (Timeout == 0) return VS_TIMEOUT;
+        if (Timeout == 0) return VS_TIMEOUT_ER;
     }
     return VS_OK;
 }
 
 // ==== Amplifier ====
 void VS_t::AmplifierOn() {
-
+    // Setup GPIO0 as output
+    CmdWrite(VS_REG_WRAMADDR, 0xC017);
+    CmdWrite(VS_REG_WRAM,     0x0001);
+    // Set output high
+    CmdWrite(VS_REG_WRAMADDR, 0xC019);
+    CmdWrite(VS_REG_WRAM,     0x0001);
 }
 void VS_t::AmplifierOff() {
-
+    // Setup GPIO0 as output
+    CmdWrite(VS_REG_WRAMADDR, 0xC017);
+    CmdWrite(VS_REG_WRAM,     0x0001);
+    // Set output low
+    CmdWrite(VS_REG_WRAMADDR, 0xC019);
+    CmdWrite(VS_REG_WRAM,     0x0000);
 }
 
 // ==== Commands ====
 uint8_t VS_t::CmdRead(uint8_t AAddr, uint16_t* AData) {
     uint8_t IReply;
+    uint16_t IData;
     // Wait until ready
-    if (IReply = BusyWait()) return IReply; // Get out in case of timeout
-    // Start communication
-    XCS_Lo();
-    WriteByte(VS_READ_OPCODE);
+    if ((IReply = BusyWait()) != VS_OK) return IReply; // Get out in case of timeout
+    XCS_Lo();   // Start transmission
+    ReadWriteByte(VS_READ_OPCODE);  // Send operation code
+    ReadWriteByte(AAddr);           // Send addr
+    *AData = ReadWriteByte(0);      // Read upper byte
+    *AData <<= 8;
+    IData = ReadWriteByte(0);       // Read lower byte
+    *AData += IData;
+    XCS_Hi();   // End transmission
+    return VS_OK;
+}
+uint8_t VS_t::CmdWrite(uint8_t AAddr, uint16_t AData) {
+    uint8_t IReply;
+    // Wait until ready
+    if ((IReply = BusyWait()) != VS_OK) return IReply; // Get out in case of timeout
+    XCS_Lo();                       // Start transmission
+    ReadWriteByte(VS_WRITE_OPCODE); // Send operation code
+    ReadWriteByte(AAddr);           // Send addr
+    ReadWriteByte(AData >> 8);      // Send upper byte
+    ReadWriteByte(0x00FF & AData);  // Send lower byte
+    XCS_Hi();                       // End transmission
+    return VS_OK;
 }
 
-// ==== Low-level SPI transactions
-void VS_t::WriteByte(uint8_t AByte) {
-
+uint8_t VS_t::ReadWriteByte(uint8_t AByte) {
+    SPI1->DR = AByte;
+    while (!(SPI1->SR & SPI_I2S_FLAG_RXNE));
+    return (uint8_t)(SPI1->DR);
 }
-uint8_t VS_t::ReadByte() {
-
-}
-
 

@@ -39,6 +39,11 @@ bool Delay_t::Elapsed(uint32_t *AVar, const uint32_t ADelay) {
     else return false;
 }
 
+void Delay_t::ms (uint32_t Ams) {
+    uint32_t __ticks = (SystemCoreClock / 10000) * Ams;
+    Loop (__ticks);
+}
+
 // ================================ Interrupts =================================
 // Delay counter
 void TIM2_IRQHandler (void) {
