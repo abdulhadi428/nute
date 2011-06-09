@@ -10,6 +10,7 @@
       <itemPath>i2c_mgr.h</itemPath>
       <itemPath>leds_pca.h</itemPath>
       <itemPath>uart.h</itemPath>
+      <itemPath>vs.h</itemPath>
     </logicalFolder>
     <logicalFolder name="lib" displayName="lib" projectFiles="true">
       <logicalFolder name="CoreSupport" displayName="CoreSupport" projectFiles="true">
@@ -103,6 +104,7 @@
       <itemPath>leds_pca.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>uart.c</itemPath>
+      <itemPath>vs.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"

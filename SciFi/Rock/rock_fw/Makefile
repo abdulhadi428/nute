@@ -26,6 +26,7 @@ i2c_mgr.cpp \
 leds_pca.cpp \
 delay_util.cpp \
 sd/sd.cpp \
+vs.cpp \
 
 
 # List project include directories here

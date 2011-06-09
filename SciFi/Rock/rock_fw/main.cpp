@@ -10,6 +10,7 @@
 #include "leds_pca.h"
 #include "delay_util.h"
 #include "sd.h"
+#include "vs.h"
 
 #include "uart.h"
 
@@ -39,7 +40,8 @@ void GeneralInit(void) {
     //Leds.Init();
     Delay.Init();
     // Sound etc.
-    SD.Init();
+    //SD.Init();
+    Vs.Init();
 }
 
 
