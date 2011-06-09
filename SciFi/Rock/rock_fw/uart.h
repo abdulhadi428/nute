@@ -51,7 +51,10 @@ void UART_PrintString (const char *S);
 void UART_PrintArrAsString (uint8_t *Arr, uint8_t ALength);
 void UART_NewLine (void);
 
-void UART_StrInt(const char *S, uint16_t ANumber);
+void UART_StrUint(const char *S, uint16_t ANumber);
+void UART_StrHex8(const char *S, uint8_t ANumber);
+void UART_StrHex16(const char *S, uint16_t ANumber);
+
 
 #ifdef __cplusplus
 }

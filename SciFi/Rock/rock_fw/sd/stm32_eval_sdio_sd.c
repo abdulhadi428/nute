@@ -1172,7 +1172,7 @@ SD_Error SD_ReadBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize) 
 
     errorstatus = CmdResp1Error();
 #ifdef SD_VERBOSE_READ_BLOCK
-    UART_StrInt("SD_CMD_SET_BLOCKLEN: ", errorstatus);
+    UART_StrUint("SD_CMD_SET_BLOCKLEN: ", errorstatus);
 #endif
     if (errorstatus != SD_OK) {
         return (errorstatus);
@@ -1196,7 +1196,7 @@ SD_Error SD_ReadBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize) 
 
     errorstatus = CmdResp1Error();
 #ifdef SD_VERBOSE_READ_BLOCK
-    UART_StrInt("SD_CMD_READ_SINGLE_BLOCK: ", errorstatus);
+    UART_StrUint("SD_CMD_READ_SINGLE_BLOCK: ", errorstatus);
 #endif
 
     if (errorstatus != SD_OK) {

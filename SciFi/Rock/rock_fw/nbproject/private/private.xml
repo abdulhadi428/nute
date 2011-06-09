@@ -6,9 +6,14 @@
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1">
         <file>
+            <url>sd/stm32_eval_sdio_sd.c</url>
+            <line>524</line>
+            <line>2384</line>
+        </file>
+        <file>
             <url>Makefile</url>
             <line>10</line>
-            <line>73</line>
+            <line>72</line>
         </file>
     </editor-bookmarks>
 </project-private>
