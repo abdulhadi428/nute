@@ -19,62 +19,56 @@
 #define LCD_USART       USART3
 
 #define LCD_SCLK        GPIO_Pin_12
-#define LCD_SDA         
-#define LCD_XRES    PD4
-#define LCD_XCS     PD7
-#define LCD_BCKLT   PD6
-
-// Uncomment this line, if image need to be turned uside down
-#define LCD_UPSIDEDOWN
-
-// =========================== Pseudo functions ================================
-#define LCD_SCLK_HI()   LCD_PORT |=  (1<<LCD_SCLK)
-#define LCD_SCLK_LO()   LCD_PORT &= ~(1<<LCD_SCLK)
-#define LCD_XCS_HI()    LCD_PORT |=  (1<<LCD_XCS)
-#define LCD_XCS_LO()    LCD_PORT &= ~(1<<LCD_XCS)
-#define LCD_XRES_HI()   LCD_PORT |=  (1<<LCD_XRES)
-#define LCD_XRES_LO()   LCD_PORT &= ~(1<<LCD_XRES)
-#define LCD_SDA_HI()    LCD_PORT |=  (1<<LCD_SDA)
-#define LCD_SDA_LO()    LCD_PORT &= ~(1<<LCD_SDA)
-
-#define LCD_BCKLT_OFF() LCD_PORT |=  (1<<LCD_BCKLT)
-#define LCD_BCKLT_ON()  LCD_PORT &= ~(1<<LCD_BCKLT)
-
+#define LCD_SDA         GPIO_Pin_10
+#define LCD_XRES        GPIO_Pin_11
+#define LCD_XCS         GPIO_Pin_2
 
 #define LCD_CMD     0
 #define LCD_DATA    1
 
-// =============================== Common use ==================================
 #define LCD_STR_HEIGHT  8
 #define LCD_STR_WIDTH   16
 
-// =============================== Prototypes ==================================
-void LCD_Init(void);
-void LCD_Shutdown(void);
+// Uncomment this line, if image need to be turned upside down
+#define LCD_UPSIDEDOWN
 
-void LCD_Clear(void);
-void LCD_DrawChar(uint8_t AChar, bool AInvert);
-void LCD_PrintString(const uint8_t x, const uint8_t y, const char *S, bool AInvert);
-void LCD_PrintString_P(const uint8_t x, const uint8_t y, const char *S, bool AInvert);
-void LCD_DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInvert);
+enum Invert_t {NotInverted, Inverted};
 
-void LCD_PrintUint(const uint8_t x, const uint8_t y, uint16_t ANumber, bool AInvert);
-void LCD_PrintInt(const uint8_t x, const uint8_t y, int16_t ANumber, bool AInvert);
-void LCD_PrintUint0_99(const uint8_t x, const uint8_t y, uint8_t ANumber, bool AInvert);
+class Lcd_t {
+private:
+    // Pin driving functions
+    void SCLK_Hi(void) { LCD_GPIO->BSRR = LCD_SCLK; }
+    void SCLK_Lo(void) { LCD_GPIO->BRR  = LCD_SCLK; }
+    void XCS_Hi (void) { LCD_GPIO->BSRR = LCD_XCS;  }
+    void XCS_Lo (void) { LCD_GPIO->BRR  = LCD_XCS;  }
+    void XRES_Hi(void) { LCD_GPIO->BSRR = LCD_XRES; }
+    void XRES_Lo(void) { LCD_GPIO->BRR  = LCD_XRES; }
+    void SDA_Hi (void) { LCD_GPIO->BSRR = LCD_SDA;  }
+    void SDA_Lo (void) { LCD_GPIO->BRR  = LCD_SDA;  }
+    // Data exchange
+    void WriteData(uint8_t AByte);
+    void WriteCmd(uint8_t AByte);
+    void GotoXY(uint8_t x, uint8_t y);
+    void GotoXYstr(uint8_t x, uint8_t y);
+public:
+    // General use
+    void Init(void);
+    void Shutdown(void);
+    // Grafics handling
+    void Cls(void);
+    void DrawChar(uint8_t AChar, Invert_t AInvert);
+    void PrintString(const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert);
+//    void DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInvert);
+};
 
-void LCD_PrintTime(uint8_t x, uint8_t y, bool InvertHours, bool InvertMinTens, bool InvertMinUnits);
+extern Lcd_t Lcd;
 
-void LCD_GotoXY(uint8_t x, uint8_t y);
-void LCD_GotoXYstr(uint8_t x, uint8_t y);
 
-// Special
-#define GAUGE_Y     4
-void LCD_DrawGauge(void);
-void LCD_GaugeValue(const uint8_t AValue);
+//void LCD_PrintUint(const uint8_t x, const uint8_t y, uint16_t ANumber, bool AInvert);
+//void LCD_PrintInt(const uint8_t x, const uint8_t y, int16_t ANumber, bool AInvert);
+//void LCD_PrintUint0_99(const uint8_t x, const uint8_t y, uint8_t ANumber, bool AInvert);
 
-// Inner use
-void LCD_WriteData(uint8_t AByte);
-void LCD_WriteCmd(uint8_t AByte);
+//void LCD_PrintTime(uint8_t x, uint8_t y, bool InvertHours, bool InvertMinTens, bool InvertMinUnits);
 
 #endif	/* LCD110X_H */
 

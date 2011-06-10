@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   images.h
  * Author: Kreyl Laurelindo
  *
@@ -8,10 +8,10 @@
 #ifndef IMAGES_H
 #define	IMAGES_H
 
-#include <avr/pgmspace.h>
+#include <inttypes.h>
 
-extern prog_uint8_t ImageLogo[];
-extern prog_uint8_t ImageGauge[];
+extern const uint8_t ImageLogo[];
+extern const uint8_t ImageGauge[];
 
 #endif	/* IMAGES_H */
 

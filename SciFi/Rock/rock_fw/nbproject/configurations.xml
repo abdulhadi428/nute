@@ -12,6 +12,9 @@
       <itemPath>delay_util.h</itemPath>
       <itemPath>heat_sns.h</itemPath>
       <itemPath>i2c_mgr.h</itemPath>
+      <itemPath>images.h</itemPath>
+      <itemPath>lcd110x.h</itemPath>
+      <itemPath>lcd_font.h</itemPath>
       <itemPath>leds_pca.h</itemPath>
       <itemPath>uart.h</itemPath>
       <itemPath>vs.h</itemPath>
@@ -107,6 +110,9 @@
       <itemPath>cc1101.cpp</itemPath>
       <itemPath>delay_util.cpp</itemPath>
       <itemPath>i2c_mgr.cpp</itemPath>
+      <itemPath>images.cpp</itemPath>
+      <itemPath>lcd110x.cpp</itemPath>
+      <itemPath>lcd_font.cpp</itemPath>
       <itemPath>leds_pca.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>uart.c</itemPath>
@@ -133,7 +139,7 @@
     <conf name="Debug" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>default</compilerSet>
+        <compilerSet>Yagarto|Yagarto</compilerSet>
       </toolsSet>
       <compileType>
         <cTool>

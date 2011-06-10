@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   lcd_font.h
  * Author: Kreyl Laurelindo
  *
@@ -8,9 +8,9 @@
 #ifndef LCD_FONT_H
 #define	LCD_FONT_H
 
-#include <avr/pgmspace.h>
+#include <inttypes.h>
 
-extern prog_uint8_t Font_6x8_Data[256][6];
+extern const uint8_t Font_6x8_Data[256][6];
 
 
 #endif	/* LCD_FONT_H */

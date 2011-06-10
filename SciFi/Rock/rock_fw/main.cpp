@@ -55,6 +55,9 @@ void GeneralInit(void) {
 //    }
 
     CC.Init();
+
+    Lcd.Init();
+    Lcd.PrintString(0, 0, "Aiya Feanaro!", NotInverted);
 }
 
 // ================================== Events ===================================

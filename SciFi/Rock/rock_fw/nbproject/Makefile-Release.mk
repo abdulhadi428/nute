@@ -14,14 +14,14 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=arm-none-eabi-gcc.exe
-CCC=arm-none-eabi-g++.exe
-CXX=arm-none-eabi-g++.exe
+CC=avr-gcc.exe
+CCC=avr-g++.exe
+CXX=avr-g++.exe
 FC=gfortran
-AS=arm-none-eabi-as.exe
+AS=avr-as.exe
 
 # Macros
-CND_PLATFORM=Yagarto-Windows
+CND_PLATFORM=WinAVR-Windows
 CND_CONF=Release
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -40,16 +40,19 @@ OBJECTFILES= \
 	${OBJECTDIR}/sd/stm32_eval_sdio_sd.o \
 	${OBJECTDIR}/lib/src/stm32f10x_adc.o \
 	${OBJECTDIR}/leds_pca.o \
-	${OBJECTDIR}/lib/src/stm32f10x_rcc.o \
 	${OBJECTDIR}/lib/src/stm32f10x_can.o \
-	${OBJECTDIR}/lib/src/stm32f10x_i2c.o \
 	${OBJECTDIR}/lib/src/stm32f10x_flash.o \
+	${OBJECTDIR}/lcd110x.o \
+	${OBJECTDIR}/lib/src/stm32f10x_rcc.o \
+	${OBJECTDIR}/lib/src/stm32f10x_i2c.o \
 	${OBJECTDIR}/lib/src/stm32f10x_gpio.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/lib/src/stm32f10x_rtc.o \
 	${OBJECTDIR}/lib/src/stm32f10x_dma.o \
 	${OBJECTDIR}/lib/src/stm32f10x_crc.o \
+	${OBJECTDIR}/images.o \
 	${OBJECTDIR}/sd/sd.o \
+	${OBJECTDIR}/lcd_font.o \
 	${OBJECTDIR}/lib/src/stm32f10x_spi.o \
 	${OBJECTDIR}/lib/CoreSupport/core_cm3.o \
 	${OBJECTDIR}/lib/startup/startup_stm32f10x_md_vl.o \
@@ -131,25 +134,30 @@ ${OBJECTDIR}/leds_pca.o: leds_pca.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/leds_pca.o leds_pca.cpp
 
-${OBJECTDIR}/lib/src/stm32f10x_rcc.o: lib/src/stm32f10x_rcc.c 
-	${MKDIR} -p ${OBJECTDIR}/lib/src
-	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/lib/src/stm32f10x_rcc.o lib/src/stm32f10x_rcc.c
-
 ${OBJECTDIR}/lib/src/stm32f10x_can.o: lib/src/stm32f10x_can.c 
 	${MKDIR} -p ${OBJECTDIR}/lib/src
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/lib/src/stm32f10x_can.o lib/src/stm32f10x_can.c
 
-${OBJECTDIR}/lib/src/stm32f10x_i2c.o: lib/src/stm32f10x_i2c.c 
-	${MKDIR} -p ${OBJECTDIR}/lib/src
-	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/lib/src/stm32f10x_i2c.o lib/src/stm32f10x_i2c.c
-
 ${OBJECTDIR}/lib/src/stm32f10x_flash.o: lib/src/stm32f10x_flash.c 
 	${MKDIR} -p ${OBJECTDIR}/lib/src
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/lib/src/stm32f10x_flash.o lib/src/stm32f10x_flash.c
+
+${OBJECTDIR}/lcd110x.o: lcd110x.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/lcd110x.o lcd110x.cpp
+
+${OBJECTDIR}/lib/src/stm32f10x_rcc.o: lib/src/stm32f10x_rcc.c 
+	${MKDIR} -p ${OBJECTDIR}/lib/src
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/lib/src/stm32f10x_rcc.o lib/src/stm32f10x_rcc.c
+
+${OBJECTDIR}/lib/src/stm32f10x_i2c.o: lib/src/stm32f10x_i2c.c 
+	${MKDIR} -p ${OBJECTDIR}/lib/src
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/lib/src/stm32f10x_i2c.o lib/src/stm32f10x_i2c.c
 
 ${OBJECTDIR}/lib/src/stm32f10x_gpio.o: lib/src/stm32f10x_gpio.c 
 	${MKDIR} -p ${OBJECTDIR}/lib/src
@@ -176,10 +184,20 @@ ${OBJECTDIR}/lib/src/stm32f10x_crc.o: lib/src/stm32f10x_crc.c
 	${RM} $@.d
 	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/lib/src/stm32f10x_crc.o lib/src/stm32f10x_crc.c
 
+${OBJECTDIR}/images.o: images.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/images.o images.cpp
+
 ${OBJECTDIR}/sd/sd.o: sd/sd.cpp 
 	${MKDIR} -p ${OBJECTDIR}/sd
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/sd/sd.o sd/sd.cpp
+
+${OBJECTDIR}/lcd_font.o: lcd_font.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/lcd_font.o lcd_font.cpp
 
 ${OBJECTDIR}/lib/src/stm32f10x_spi.o: lib/src/stm32f10x_spi.c 
 	${MKDIR} -p ${OBJECTDIR}/lib/src

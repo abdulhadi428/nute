@@ -19,7 +19,7 @@ private:
 public:
     void Init(void);
     // Simple loop-based delays, no init needed
-    void Loop (volatile uint32_t ACounter) { for (; ACounter != 0; ACounter--); }
+    void Loop (volatile uint32_t ACounter);
     void ms (uint32_t Ams);
     // Interrupt-driven delays
     bool Elapsed(uint32_t *AVar, const uint32_t ADelay);
