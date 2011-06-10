@@ -5,6 +5,12 @@
 
 VS_t Vs;
 
+void VS_t::Task() {
+    if (IsBusy()) return;   // Nothing to to if VS is busy
+
+}
+
+// ============================ Init etc. ======================================
 void VS_t::Init() {
     // ==== Clocks init ====
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_SPI1 | RCC_APB2Periph_AFIO, ENABLE);
@@ -55,7 +61,8 @@ void VS_t::Enable() {
     // Setup registers
     CmdWrite(VS_REG_MODE, (VS_SM_DIFF | VS_ICONF_ADSDI | VS_SM_SDINEW));
     CmdWrite(VS_REG_MIXERVOL, (VS_SMV_ACTIVE | VS_SMV_GAIN2));
-
+    // Setup variables
+    IsSinging = false;
 }
 void VS_t::Disable() {
     AmplifierOff();

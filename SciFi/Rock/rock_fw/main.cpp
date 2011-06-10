@@ -11,6 +11,8 @@
 #include "delay_util.h"
 #include "sd.h"
 #include "vs.h"
+#include "cc1101.h"
+#include "lcd110x.h"
 
 #include "uart.h"
 
@@ -28,7 +30,8 @@ int main(void) {
     // Forever
     while(1) {
         //Leds.Task();
-
+        //Vs.Task();
+        //CC.Task();
     }
 }
 
@@ -44,19 +47,17 @@ void GeneralInit(void) {
     //SD.Init();
     Vs.Init();
 
-    uint16_t IData;
-    Vs.Enable();
+//    uint16_t IData;
+//    Vs.Enable();
+//
+//    if (Vs.CmdRead(VS_REG_MODE, &IData) == VS_OK) {
+//        UART_StrHex16("VS Mode: ", IData);
+//    }
 
-    if (Vs.CmdRead(VS_REG_MODE, &IData) == VS_OK) {
-        UART_StrHex16("VS Mode: ", IData);
-    }
-
-    if (Vs.CmdRead(VS_REG_CLOCKF, &IData) == VS_OK) {
-        UART_StrHex16("VS Clk: ", IData);
-    }
-
-
-
+    CC.Init();
 }
 
+// ================================== Events ===================================
+void EVENT_NewPacket(void) {
 
+}

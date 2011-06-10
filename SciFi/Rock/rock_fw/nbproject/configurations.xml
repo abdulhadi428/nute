@@ -5,6 +5,10 @@
                    displayName="Header Files"
                    projectFiles="true">
       <itemPath>acc_mma.h</itemPath>
+      <itemPath>cc1101.h</itemPath>
+      <itemPath>cc1101defins.h</itemPath>
+      <itemPath>cc_rf_settings.h</itemPath>
+      <itemPath>common.h</itemPath>
       <itemPath>delay_util.h</itemPath>
       <itemPath>heat_sns.h</itemPath>
       <itemPath>i2c_mgr.h</itemPath>
@@ -100,6 +104,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>cc1101.cpp</itemPath>
       <itemPath>delay_util.cpp</itemPath>
       <itemPath>i2c_mgr.cpp</itemPath>
       <itemPath>leds_pca.cpp</itemPath>

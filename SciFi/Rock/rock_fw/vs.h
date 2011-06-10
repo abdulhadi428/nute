@@ -13,7 +13,8 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_spi.h"
 
-#include "vs_defs.h"\
+#include "vs_defs.h"
+#include "common.h"
 
 // ==== Defines ====
 // Pins
@@ -37,6 +38,7 @@ typedef struct {
 
 class VS_t {
 private:
+    bool IsSinging;
     uint8_t ReadWriteByte(uint8_t AByte);
 
     void Rst_Lo(void) { GPIOA->BRR  = VS_RST; }
@@ -56,6 +58,10 @@ public:
     void AmplifierOff(void);
     uint8_t CmdRead(uint8_t AAddr, uint16_t *AData);
     uint8_t CmdWrite(uint8_t AAddr, uint16_t AData);
+    // Task
+    void Task(void);
+    // Playback
+    //void PlayBuf(uint8_t *ABuf, uint32_t ALen);
 };
 
 extern VS_t Vs;

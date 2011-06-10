@@ -15,6 +15,8 @@
 #include "stm32f10x_dma.h"
 #include "misc.h"
 
+#include "common.h"
+
 // Inner use defines
 #define I2C_DMA_CHNL    DMA1_Channel6
 #define I2C_DMA_IRQ     DMA1_Channel6_IRQn
@@ -36,13 +38,6 @@ void DMA1_Channel6_IRQHandler(void);
 #define I2C_TIMEOUT             50004
 
 // ================================ Data types =================================
-struct Buf8_t {
-    uint8_t *Buf;
-    uint8_t Length;
-    uint8_t CurrentItem;
-};
-typedef Buf8_t* Buf8_p;
-
 enum CmdState_t {CmdPending, CmdWriting, CmdReading, CmdSucceded, CmdFailed};
 
 struct I2C_Cmd_t {

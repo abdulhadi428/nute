@@ -27,6 +27,8 @@ leds_pca.cpp \
 delay_util.cpp \
 sd/sd.cpp \
 vs.cpp \
+cc1101.cpp \
+
 
 
 # List project include directories here
