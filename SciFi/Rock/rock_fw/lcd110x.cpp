@@ -9,10 +9,8 @@ Lcd_t Lcd;
 
 void Lcd_t::Init(void) {
     // ====================== Hardware setup ===================================
-    // ==== Clocks init ====
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
     // ==== GPIO init ====
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     // Configure LCD_XRES & LCD_XCS as Push-Pull output
@@ -30,6 +28,7 @@ void Lcd_t::Init(void) {
     SPI2->CR2 = tmp;
 
     // ==== USART init ====
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
     // Usart clock: enabled, idle low, first edge, enable last bit pulse
     USART_ClockInitTypeDef USART_ClockInitStructure;
     USART_ClockInitStructure.USART_Clock = USART_Clock_Enable;
@@ -49,6 +48,36 @@ void Lcd_t::Init(void) {
     // Enable USART
     USART_Cmd(LCD_USART, ENABLE);
 
+    // ==== DMA ====
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+    DMA_InitTypeDef DMA_InitStructure;
+    DMA_DeInit(LCD_DMA_CHNL);
+    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&LCD_USART->DR;
+    DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t) CommonBuf;
+    DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+    DMA_InitStructure.DMA_BufferSize = LCD_BUF_SIZE;
+    DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+    DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+    DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+    DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+    DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+    DMA_InitStructure.DMA_Priority = DMA_Priority_Low;
+    DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+    DMA_Init(LCD_DMA_CHNL, &DMA_InitStructure);
+    // Enable USARTy DMA TX request
+    USART_DMACmd(LCD_USART, USART_DMAReq_Tx, ENABLE);
+
+    // ==== DMA IRQ ====
+    NVIC_InitTypeDef NVIC_InitStructure;
+    // Enable DMA1 channel3 IRQ Channel
+    NVIC_InitStructure.NVIC_IRQChannel = LCD_DMA_IRQ;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+    // Enable DMA Transfer Complete interrupt
+    DMA_ITConfig(LCD_DMA_CHNL, DMA_IT_TC, ENABLE);
+
     // ========================= Init LCD ======================================
     XCS_Hi();
     // Reset display
@@ -56,36 +85,31 @@ void Lcd_t::Init(void) {
     Delay.ms(7);
     XRES_Hi();
     // Initial commands
-    Write(LCD_CMD, 0xA4);   // Set normal display mode
-    Write(LCD_CMD, 0x2F);   // Charge pump on
-#ifdef LCD_UPSIDEDOWN
-    WriteCmd(0xC8); // mirror Y axis
-    WriteCmd(0xA1); // Mirror X axis
-#endif
-    Write(LCD_CMD, 0x40);   // Set start row address = 0
-    Write(LCD_CMD, 0xAF);   // display ON
     Cls(); // clear LCD
+    Ram.Cmd[0] = Distort(LCD_CMD, 0xA4);    // Set normal display mode
+    Ram.Cmd[1] = Distort(LCD_CMD, 0x2F);    // Charge pump on
+    Ram.Cmd[2] = Distort(LCD_CMD, 0x40);    // Set start row address = 0
+    Ram.Cmd[3] = Distort(LCD_CMD, 0xAF);    // display ON
+    // Set x=0, y=0
+    Ram.Cmd[4] = Distort(LCD_CMD, 0xB0);    // Y axis initialization
+    Ram.Cmd[5] = Distort(LCD_CMD, 0x00);    // X axis initialisation1
+    Ram.Cmd[6] = Distort(LCD_CMD, 0x10);    // X axis initialisation2
+#ifdef LCD_UPSIDEDOWN
+    Ram.Cmd[6] = Distort(LCD_CMD, 0xC8);    // mirror Y axis
+    Ram.Cmd[6] = Distort(LCD_CMD, 0xA1);    // Mirror X axis
+#endif
+    // Start transmission
+    XCS_Lo();
+    DMA_Cmd(LCD_DMA_CHNL, ENABLE);          // Enable USARTy DMA TX Channel
 }
 
 void Lcd_t::Shutdown(void) {
     XRES_Lo();
-    //    SCLK_Lo();
     XCS_Lo();
-    //SDA_Lo();
 }
-
-void Lcd_t::Cls(void) {
-    Write(LCD_CMD, 0x40); // Y = 0
-    Write(LCD_CMD, 0xB0);
-    Write(LCD_CMD, 0x10); // X = 0
-    Write(LCD_CMD, 0x00);
-    for (uint16_t i = 0; i < 864; i++) Write(LCD_DATA, 0x00);
-}
-
-void Lcd_t::PrintString(const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert) {
-    GotoXYstr(x, y);
-    while (*S != '\0')
-        DrawChar(*S++, AInvert);
+// ================================ Graphics ===================================
+void Lcd_t::Cls() {
+    for (uint16_t i = 0; i < LCD_VIDEOBUF_SIZE; i++) Ram.Data[i] = ((0xA2 << 1) | 0x01);
 }
 //void LCD_DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInvert) {
 //    uint8_t Width = pgm_read_byte(I++), Height = pgm_read_byte(I++);
@@ -167,90 +191,26 @@ void Lcd_t::PrintString(const uint8_t x, const uint8_t y, const char *S, Invert_
 //    LCD_DrawChar('0'+t, InvertMinUnits);
 //}
 
-// ============================= Special =======================================
-// Special
-
-void Lcd_t::DrawChar(uint8_t AChar, Invert_t AInvert) {
-    uint8_t b;
-    for (uint8_t i = 0; i < 6; i++) {
-        b = Font_6x8_Data[AChar][i];
-        if (AInvert == Inverted) b = ~b;
-        Write(LCD_DATA, b);
-        //WriteData(0xFF);
-    }
-}
 
 // ============================ Inner use ======================================
-void Lcd_t::GotoXY(uint8_t x, uint8_t y) {
-    Write(LCD_CMD, (0xB0 | (y & 0x0F))); // Y axis initialisation: 0100 yyyy
-    Write(LCD_CMD, (0x00 | (x & 0x0F))); // X axis initialisation: 0000 xxxx ( x3 x2 x1 x0)
-    Write(LCD_CMD, (0x10 | ((x >> 4)&0x07))); // X axis initialisation: 0010 0xxx  ( x6 x5 x4)
-}
-
-void Lcd_t::GotoXYstr(uint8_t x, uint8_t y) {
-    x = (x << 2)+(x << 1); // x=x*6
-    Write(LCD_CMD, (0xB0 | (y & 0x0F))); // Y axis initialisation: 0100 yyyy
-    Write(LCD_CMD, (0x00 | (x & 0x0F))); // X axis initialisation: 0000 xxxx ( x3 x2 x1 x0)
-    Write(LCD_CMD, (0x10 | ((x >> 4)&0x07))); // X axis initialisation: 0010 0xxx  ( x6 x5 x4)
-}
-
-void Lcd_t::Write(uint16_t CmdDta, uint8_t AByte) {
-    // Reverse AByte bit order as USART sends data only LSB first (display needs MSB)
-    uint32_t Itmp = (uint32_t)AByte;
-    __ASM volatile ("rbit %0, %1" : "=r" (Itmp) : "r" (Itmp) );    // Reverse bit order, extending to uint32
-    __ASM volatile ("rev %0, %1"  : "=r" (Itmp) : "r" (Itmp) );    // Reverse byte order
+uint16_t Lcd_t::Distort(uint16_t CmdDta, uint8_t AByte) {
+    uint32_t Itmp = (uint32_t) AByte;
+    __ASM volatile ("rbit %0, %1" : "=r" (Itmp) : "r" (Itmp)); // Reverse bit order
+    __ASM volatile ("rev %0, %1" : "=r" (Itmp) : "r" (Itmp)); // Reverse byte order
     Itmp <<= 1;
     Itmp |= CmdDta;
-    // Send data
-    XCS_Lo(); // Select chip
-    USART_SendData(LCD_USART, (uint16_t)Itmp);
-    /* Wait until end of transmit */
-    while(USART_GetFlagStatus(LCD_USART, USART_FLAG_TC) == RESET);
-    XCS_Hi();
+    return (uint16_t)Itmp;
 }
 
-
-//#define LCD_BIT_DELAY   10
-//void Lcd_t::WriteData(uint8_t AByte) {
-//    //    SCLK_Lo();
-//    XCS_Lo(); // Select chip
-//    // Send "Data" bit
-//    //    SDA_Hi();
-//    //    SCLK_Hi();
-//    Delay.Loop(LCD_BIT_DELAY);
-//    //    SCLK_Lo();
-//    Delay.Loop(LCD_BIT_DELAY);
-//    // Send byte
-//    for (uint8_t i = 0; i < 8; i++) {
-//        if (AByte & 0x80) SDA_Hi();
-//        else SDA_Lo();
-//        SCLK_Hi();
-//        Delay.Loop(LCD_BIT_DELAY);
-//        SCLK_Lo();
-//        Delay.Loop(LCD_BIT_DELAY);
-//        AByte <<= 1;
-//    }
-//    XCS_Lo();
-//}
-
-//void Lcd_t::WriteCmd(uint8_t AByte) {
-//    SCLK_Lo();
-//    XCS_Lo(); // Select chip
-//    // Send "Cmd" bit
-//    SDA_Lo();
-//    SCLK_Hi();
-//    Delay.Loop(LCD_BIT_DELAY);
-//    SCLK_Lo();
-//    Delay.Loop(LCD_BIT_DELAY);
-//    // Send byte
-//    for (uint8_t i = 0; i < 8; i++) {
-//        if (AByte & 0x80) SDA_Hi();
-//        else SDA_Lo();
-//        SCLK_Hi();
-//        Delay.Loop(LCD_BIT_DELAY);
-//        SCLK_Lo();
-//        Delay.Loop(LCD_BIT_DELAY);
-//        AByte <<= 1;
-//    }
-//    XCS_Lo();
-//}
+// ================================== Interrupts ===============================
+void DMA1_Channel2_IRQHandler(void) {
+    // Test on DMA1 Channel3 Transfer Complete interrupt
+    if(DMA_GetITStatus(DMA1_IT_TC2)) {
+        // Set and reset LCD_CS to sync next frame
+        Lcd.XCS_Hi();
+        // Clear DMA1 Channel3 Half Transfer, Transfer Complete and Global interrupt pending bits
+        DMA_ClearITPendingBit(DMA1_IT_GL2);
+        Lcd.XCS_Lo();
+        UART_Print('i');
+    } // if IT_TC3
+}

@@ -59,19 +59,8 @@ void GeneralInit(void) {
     Lcd.Init();
     //Lcd.PrintString(0, 0, "Aiya Feanaro!", NotInverted);
     //for (uint8_t i=0; i<8; i++)
-        Lcd.PrintString(0, 0, "Aiya Feanaro!", NotInverted);
+        //Lcd.PrintString(0, 0, "Aiya Feanaro!", NotInverted);
 
-//    uint8_t a = 0xC5;
-//
-//    uint32_t r1;
-//
-//    __ASM volatile ("rbit %0, %1" : "=r" (r1) : "r" (a) );
-//
-//    __ASM volatile ("rev %0, %1" : "=r" (r1) : "r" (r1) );
-//
-//
-//    UART_StrHex8("a: ", a);
-//    UART_StrHex8("r: ", r1);
 
 
 
