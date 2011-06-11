@@ -64,28 +64,19 @@ void Lcd_t::Init(void) {
     DMA_InitStructure.DMA_Priority = DMA_Priority_Low;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(LCD_DMA_CHNL, &DMA_InitStructure);
-    // Enable USARTy DMA TX request
+    // Enable USART DMA TX request
     USART_DMACmd(LCD_USART, USART_DMAReq_Tx, ENABLE);
 
-    // ==== DMA IRQ ====
-    NVIC_InitTypeDef NVIC_InitStructure;
-    // Enable DMA1 channel3 IRQ Channel
-    NVIC_InitStructure.NVIC_IRQChannel = LCD_DMA_IRQ;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-    // Enable DMA Transfer Complete interrupt
-    DMA_ITConfig(LCD_DMA_CHNL, DMA_IT_TC, ENABLE);
-
     // ========================= Init LCD ======================================
-    XCS_Hi();
+    // Init variables
+    CurrentPosition = 0;
+    Cls(); // clear buffer
     // Reset display
+    XCS_Hi();
     XRES_Lo();
     Delay.ms(7);
     XRES_Hi();
     // Initial commands
-    Cls(); // clear LCD
     Ram.Cmd[0] = Distort(LCD_CMD, 0xA4);    // Set normal display mode
     Ram.Cmd[1] = Distort(LCD_CMD, 0x2F);    // Charge pump on
     Ram.Cmd[2] = Distort(LCD_CMD, 0x40);    // Set start row address = 0
@@ -107,89 +98,52 @@ void Lcd_t::Shutdown(void) {
     XRES_Lo();
     XCS_Lo();
 }
+
 // ================================ Graphics ===================================
 void Lcd_t::Cls() {
-    for (uint16_t i = 0; i < LCD_VIDEOBUF_SIZE; i++) Ram.Data[i] = ((0xA2 << 1) | 0x01);
+    for (uint16_t i = 0; i < LCD_VIDEOBUF_SIZE; i++)
+        Ram.Data[i] = 0x0001;   // Empty character
 }
-//void LCD_DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInvert) {
-//    uint8_t Width = pgm_read_byte(I++), Height = pgm_read_byte(I++);
-//    uint8_t b;
-//    for(uint8_t fy=y; fy<y+Height; fy++) {
-//        LCD_GotoXY(x, fy);
-//        for(uint8_t fx=x; fx<x+Width; fx++) {
-//            b = pgm_read_byte(I++);
-//            if(AInvert) b = ~b;
-//            LCD_WriteData(b);
-//        } // fx
-//    } // fy
-//
-//}
 
-//void LCD_PrintUint(const uint8_t x, const uint8_t y, uint16_t ANumber, bool AInvert) {
-//    uint8_t digit = '0';
-//    bool ShouldPrint = false;
-//    const uint16_t FArr[9] = {10000, 1000, 100, 10};
-//    LCD_GotoXYstr(x, y);
-//    // Iterate until ANumber > 10
-//    for(uint8_t i=0; i<4; i++) {
-//        while (ANumber >= FArr[i]) {
-//            digit++;
-//            ANumber -= FArr[i];
-//        }
-//        if((digit != '0') || ShouldPrint) {
-//                LCD_DrawChar(digit, AInvert);
-//                ShouldPrint = true;
-//        }
-//        digit = '0';
-//    }
-//    // Print last digit
-//    LCD_DrawChar('0'+ANumber, AInvert);
-//}
-//void LCD_PrintInt(const uint8_t x, const uint8_t y, int16_t ANumber, bool AInvert) {
-//    LCD_GotoXYstr(x, y);
-//    if(ANumber < 0) {
-//        LCD_DrawChar('-', AInvert);
-//        LCD_PrintUint(x+1, y, -ANumber, AInvert);
-//    }
-//    else LCD_PrintUint(x, y, -ANumber, AInvert);
-//}
-//// Print uint ANumber, 0<=ANumber<=99
-//void LCD_PrintUint0_99(const uint8_t x, const uint8_t y, uint8_t ANumber, bool AInvert) {
-//    uint8_t digit = '0';
-//    LCD_GotoXYstr(x, y);
-//    while(ANumber >= 10) {
-//        digit++;
-//        ANumber -= 10;
-//    }
-//    LCD_DrawChar(digit, AInvert);
-//    LCD_DrawChar('0'+ANumber, AInvert);
-//}
-//
+void Lcd_t::GotoCharXY(uint8_t x, uint8_t y) {
+    CurrentPosition =  (x<<2)+(x<<1);   // = x * 6; move to x
+    CurrentPosition += (y<<6)+(y<<5);   // = (*64)+(*32) = *96; move to y
+}
+void Lcd_t::GotoXY(uint8_t x, uint8_t y) {
+    CurrentPosition =  x;               // move to x
+    CurrentPosition += (y<<6)+(y<<5);   // = (*64)+(*32) = *96; move to y
+}
 
-//
-//void LCD_PrintTime(uint8_t x, uint8_t y, bool InvertHours, bool InvertMinTens, bool InvertMinUnits) {
-//    LCD_GotoXYstr(x, y);
-//    // Print hours
-//    uint8_t t = Time.Hour;
-//    uint8_t digit = '0';
-//    while(t >= 10) {
-//        digit++;
-//        t -= 10;
-//    }
-//    LCD_DrawChar(digit, InvertHours);
-//    LCD_DrawChar('0'+t, InvertHours);
-//    // Print delimiter
-//    LCD_DrawChar(':', false);
-//    // Print minutes
-//    t = Time.Minute;
-//    digit = '0';
-//    while(t >= 10) {
-//        digit++;
-//        t -= 10;
-//    }
-//    LCD_DrawChar(digit, InvertMinTens);
-//    LCD_DrawChar('0'+t, InvertMinUnits);
-//}
+void Lcd_t::DrawChar(uint8_t AChar, Invert_t AInvert) {
+    uint8_t b;
+    for(uint8_t i=0; i<6; i++) {
+        b = Font_6x8_Data[AChar][i];
+        if(AInvert == Inverted) b = ~b;
+        Ram.Data[CurrentPosition++] = Distort(LCD_DATA, b);
+        if (CurrentPosition >= LCD_VIDEOBUF_SIZE) CurrentPosition = 0;
+    }
+}
+
+void Lcd_t::PrintString(const uint8_t x, const uint8_t y, const char* S, Invert_t AInvert) {
+    GotoCharXY(x, y);
+    while (*S != '\0')
+        DrawChar(*S++, AInvert);
+}
+
+void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img, Invert_t AInvert) {
+    uint8_t *I = Img;
+    uint8_t Width = (*I++), Height = (*I++);
+    uint8_t b;
+    for(uint8_t fy=y; fy<y+Height; fy++) {
+        GotoXY(x, fy);
+        for(uint8_t fx=x; fx<x+Width; fx++) {
+            b = *I++;
+            if(AInvert) b = ~b;
+            Ram.Data[CurrentPosition++] = Distort(LCD_DATA, b);
+            if (CurrentPosition >= LCD_VIDEOBUF_SIZE) CurrentPosition = 0;
+        } // fx
+    } // fy
+}
 
 
 // ============================ Inner use ======================================
@@ -200,17 +154,4 @@ uint16_t Lcd_t::Distort(uint16_t CmdDta, uint8_t AByte) {
     Itmp <<= 1;
     Itmp |= CmdDta;
     return (uint16_t)Itmp;
-}
-
-// ================================== Interrupts ===============================
-void DMA1_Channel2_IRQHandler(void) {
-    // Test on DMA1 Channel3 Transfer Complete interrupt
-    if(DMA_GetITStatus(DMA1_IT_TC2)) {
-        // Set and reset LCD_CS to sync next frame
-        Lcd.XCS_Hi();
-        // Clear DMA1 Channel3 Half Transfer, Transfer Complete and Global interrupt pending bits
-        DMA_ClearITPendingBit(DMA1_IT_GL2);
-        Lcd.XCS_Lo();
-        UART_Print('i');
-    } // if IT_TC3
 }

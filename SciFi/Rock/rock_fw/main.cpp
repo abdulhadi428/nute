@@ -12,7 +12,9 @@
 #include "sd.h"
 #include "vs.h"
 #include "cc1101.h"
+
 #include "lcd110x.h"
+#include "images.h"
 
 #include "uart.h"
 
@@ -57,10 +59,11 @@ void GeneralInit(void) {
     CC.Init();
 
     Lcd.Init();
+    //Lcd.DrawChar('a', NotInverted);
     //Lcd.PrintString(0, 0, "Aiya Feanaro!", NotInverted);
     //for (uint8_t i=0; i<8; i++)
-        //Lcd.PrintString(0, 0, "Aiya Feanaro!", NotInverted);
-
+    //Lcd.PrintString(1, 3, "Aiya Feanaro!", NotInverted);
+    Lcd.DrawImage(0,0, ImageLogo, NotInverted);
 
 
 

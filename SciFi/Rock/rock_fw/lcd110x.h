@@ -36,7 +36,7 @@
 //#define LCD_UPSIDEDOWN
 
 // Data sizes
-#define LCD_VIDEOBUF_SIZE       768
+#define LCD_VIDEOBUF_SIZE       864     // = 96 * 9
 // Number of initialization commands
 #ifdef LCD_UPSIDEDOWN
 #define LCD_INITCMD_COUNT       (6+3)
@@ -53,52 +53,35 @@ struct LcdBuf_t {
     uint16_t Data[LCD_VIDEOBUF_SIZE];
 };
 
-
 class Lcd_t {
 private:
+    // Variables
     union {
         LcdBuf_t Ram;
         uint16_t CommonBuf[LCD_BUF_SIZE];
     };
+    uint16_t CurrentPosition;
     // Bit distortion to fulfill LSB-only USART capability
     uint16_t Distort(uint16_t CmdDta, uint8_t AByte);
     // Pin driving functions
+    void XCS_Hi (void) { LCD_GPIO->BSRR = LCD_XCS;  }
+    void XCS_Lo (void) { LCD_GPIO->BRR  = LCD_XCS;  }
     void XRES_Hi(void) { LCD_GPIO->BSRR = LCD_XRES; }
     void XRES_Lo(void) { LCD_GPIO->BRR  = LCD_XRES; }
-    // Data exchange
-    void Write(uint16_t CmdDta, uint8_t AByte);
-    void GotoXY(uint8_t x, uint8_t y);
-    void GotoXYstr(uint8_t x, uint8_t y);
 public:
     // General use
     void Init(void);
     void Shutdown(void);
-    // Used in interrupt
-    void XCS_Hi (void) { LCD_GPIO->BSRR = LCD_XCS;  }
-    void XCS_Lo (void) { LCD_GPIO->BRR  = LCD_XCS;  }
     // Grafics handling
-    void ClsPoll(void);
-    void DrawCharPoll(uint8_t AChar, Invert_t AInvert);
-    void PrintStringPoll(const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert);
-    // Dma-based
     void Cls(void);
-//    void DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInvert);
+    void GotoXY(uint8_t x, uint8_t y);
+    void GotoCharXY(uint8_t x, uint8_t y);
+    void DrawChar(uint8_t AChar, Invert_t AInvert);
+    void PrintString (const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert);
+    void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img, Invert_t AInvert);
 };
 
 extern Lcd_t Lcd;
-
-// DMA transfer complete interrupt handler
-#ifdef __cplusplus
-extern "C" {
-void DMA1_Channel2_IRQHandler(void);
-}
-#endif
-
-//void LCD_PrintUint(const uint8_t x, const uint8_t y, uint16_t ANumber, bool AInvert);
-//void LCD_PrintInt(const uint8_t x, const uint8_t y, int16_t ANumber, bool AInvert);
-//void LCD_PrintUint0_99(const uint8_t x, const uint8_t y, uint8_t ANumber, bool AInvert);
-
-//void LCD_PrintTime(uint8_t x, uint8_t y, bool InvertHours, bool InvertMinTens, bool InvertMinUnits);
 
 #endif	/* LCD110X_H */
 
