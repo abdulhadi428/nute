@@ -76,8 +76,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/lib/system_stm32f10x.o \
 	${OBJECTDIR}/lib/startup/startup_stm32f10x_ld.o \
 	${OBJECTDIR}/lib/src/stm32f10x_usart.o \
-	${OBJECTDIR}/sd/sd_lowlevel.o \
 	${OBJECTDIR}/lib/src/stm32f10x_wwdg.o \
+	${OBJECTDIR}/sd/sd_lowlevel.o \
 	${OBJECTDIR}/delay_util.o \
 	${OBJECTDIR}/lib/src/stm32f10x_pwr.o
 
@@ -308,15 +308,15 @@ ${OBJECTDIR}/lib/src/stm32f10x_usart.o: lib/src/stm32f10x_usart.c
 	${RM} $@.d
 	$(COMPILE.c) -g -DSTM32F10X_HD -I. -Ilib -Ilib/inc -Isd -MMD -MP -MF $@.d -o ${OBJECTDIR}/lib/src/stm32f10x_usart.o lib/src/stm32f10x_usart.c
 
-${OBJECTDIR}/sd/sd_lowlevel.o: sd/sd_lowlevel.c 
-	${MKDIR} -p ${OBJECTDIR}/sd
-	${RM} $@.d
-	$(COMPILE.c) -g -DSTM32F10X_HD -I. -Ilib -Ilib/inc -Isd -MMD -MP -MF $@.d -o ${OBJECTDIR}/sd/sd_lowlevel.o sd/sd_lowlevel.c
-
 ${OBJECTDIR}/lib/src/stm32f10x_wwdg.o: lib/src/stm32f10x_wwdg.c 
 	${MKDIR} -p ${OBJECTDIR}/lib/src
 	${RM} $@.d
 	$(COMPILE.c) -g -DSTM32F10X_HD -I. -Ilib -Ilib/inc -Isd -MMD -MP -MF $@.d -o ${OBJECTDIR}/lib/src/stm32f10x_wwdg.o lib/src/stm32f10x_wwdg.c
+
+${OBJECTDIR}/sd/sd_lowlevel.o: sd/sd_lowlevel.c 
+	${MKDIR} -p ${OBJECTDIR}/sd
+	${RM} $@.d
+	$(COMPILE.c) -g -DSTM32F10X_HD -I. -Ilib -Ilib/inc -Isd -MMD -MP -MF $@.d -o ${OBJECTDIR}/sd/sd_lowlevel.o sd/sd_lowlevel.c
 
 ${OBJECTDIR}/delay_util.o: delay_util.cpp 
 	${MKDIR} -p ${OBJECTDIR}

@@ -15,13 +15,13 @@ CND_PACKAGE_DIR_Debug=dist/Debug/Yagarto-Windows/package
 CND_PACKAGE_NAME_Debug=rockfw.tar
 CND_PACKAGE_PATH_Debug=dist/Debug/Yagarto-Windows/package/rockfw.tar
 # Release configuration
-CND_PLATFORM_Release=WinAVR-Windows
-CND_ARTIFACT_DIR_Release=dist/Release/WinAVR-Windows
+CND_PLATFORM_Release=Yagarto-Windows
+CND_ARTIFACT_DIR_Release=dist/Release/Yagarto-Windows
 CND_ARTIFACT_NAME_Release=rock_fw
-CND_ARTIFACT_PATH_Release=dist/Release/WinAVR-Windows/rock_fw
-CND_PACKAGE_DIR_Release=dist/Release/WinAVR-Windows/package
+CND_ARTIFACT_PATH_Release=dist/Release/Yagarto-Windows/rock_fw
+CND_PACKAGE_DIR_Release=dist/Release/Yagarto-Windows/package
 CND_PACKAGE_NAME_Release=rockfw.tar
-CND_PACKAGE_PATH_Release=dist/Release/WinAVR-Windows/package/rockfw.tar
+CND_PACKAGE_PATH_Release=dist/Release/Yagarto-Windows/package/rockfw.tar
 #
 # include compiler specific variables
 #

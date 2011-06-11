@@ -23,8 +23,8 @@
 #define LCD_XRES        GPIO_Pin_11
 #define LCD_XCS         GPIO_Pin_2
 
-#define LCD_CMD     0x0000
-#define LCD_DATA    0x0001
+#define LCD_CMD     0
+#define LCD_DATA    1
 
 #define LCD_STR_HEIGHT  8
 #define LCD_STR_WIDTH   16
@@ -34,22 +34,20 @@
 
 enum Invert_t {NotInverted, Inverted};
 
-
 class Lcd_t {
 private:
     // Pin driving functions
-//    void SCLK_Hi(void) { LCD_GPIO->BSRR = LCD_SCLK; }
-//    void SCLK_Lo(void) { LCD_GPIO->BRR  = LCD_SCLK; }
+    void SCLK_Hi(void) { LCD_GPIO->BSRR = LCD_SCLK; }
+    void SCLK_Lo(void) { LCD_GPIO->BRR  = LCD_SCLK; }
     void XCS_Hi (void) { LCD_GPIO->BSRR = LCD_XCS;  }
     void XCS_Lo (void) { LCD_GPIO->BRR  = LCD_XCS;  }
     void XRES_Hi(void) { LCD_GPIO->BSRR = LCD_XRES; }
     void XRES_Lo(void) { LCD_GPIO->BRR  = LCD_XRES; }
-//    void SDA_Hi (void) { LCD_GPIO->BSRR = LCD_SDA;  }
-//    void SDA_Lo (void) { LCD_GPIO->BRR  = LCD_SDA;  }
+    void SDA_Hi (void) { LCD_GPIO->BSRR = LCD_SDA;  }
+    void SDA_Lo (void) { LCD_GPIO->BRR  = LCD_SDA;  }
     // Data exchange
-//    void WriteData(uint8_t AByte);
-//    void WriteCmd(uint8_t AByte);
-    void Write(uint16_t CmdDta, uint8_t AByte);
+    void WriteData(uint8_t AByte);
+    void WriteCmd(uint8_t AByte);
     void GotoXY(uint8_t x, uint8_t y);
     void GotoXYstr(uint8_t x, uint8_t y);
 public:
