@@ -96,6 +96,10 @@ void Lcd_t::Init(void) {
 
 void Lcd_t::Shutdown(void) {
     XRES_Lo();
+    // Disable all
+    DMA_Cmd(LCD_DMA_CHNL, DISABLE);
+    USART_DMACmd(LCD_USART, USART_DMAReq_Tx, DISABLE);
+    USART_Cmd(LCD_USART, DISABLE);
     XCS_Lo();
 }
 
@@ -131,13 +135,13 @@ void Lcd_t::PrintString(const uint8_t x, const uint8_t y, const char* S, Invert_
 }
 
 void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img, Invert_t AInvert) {
-    uint8_t *I = Img;
-    uint8_t Width = (*I++), Height = (*I++);
+    uint16_t i=0;
+    uint8_t Width = Img[i++], Height = Img[i++];
     uint8_t b;
     for(uint8_t fy=y; fy<y+Height; fy++) {
         GotoXY(x, fy);
         for(uint8_t fx=x; fx<x+Width; fx++) {
-            b = *I++;
+            b = Img[i++];
             if(AInvert) b = ~b;
             Ram.Data[CurrentPosition++] = Distort(LCD_DATA, b);
             if (CurrentPosition >= LCD_VIDEOBUF_SIZE) CurrentPosition = 0;
