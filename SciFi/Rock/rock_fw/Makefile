@@ -30,7 +30,8 @@ vs.cpp \
 cc1101.cpp \
 images.cpp \
 lcd_font.cpp \
-lcd110x.cpp
+lcd110x.cpp \
+acc_mma.cpp
 
 
 

@@ -17,6 +17,7 @@
 #include "images.h"
 
 #include "uart.h"
+#include "acc_mma.h"
 
 void GeneralInit(void);
 
@@ -29,8 +30,18 @@ int main(void) {
 
     //Leds.FadeInAll();
 
+    uint32_t FTimer;
+    Delay.Reset(&FTimer);
+    uint8_t d='a';
+
     // Forever
     while(1) {
+        if(Delay.Elapsed(&FTimer, 306)) {
+            Lcd.GotoCharXY(0, 7);
+            Lcd.DrawChar(d, NotInverted);
+            if(++d == 'z') d='a';
+        }
+
         //Leds.Task();
         //Vs.Task();
         //CC.Task();
@@ -58,18 +69,15 @@ void GeneralInit(void) {
 
     CC.Init();
 
+    Acc.Init();
+
     Lcd.Init();
-    //Lcd.DrawChar('a', NotInverted);
-    //Lcd.PrintString(0, 0, "Aiya Feanaro!", NotInverted);
-    //for (uint8_t i=0; i<8; i++)
-    //Lcd.PrintString(1, 3, "Aiya Feanaro!", NotInverted);
     Lcd.DrawImage(0,0, ImageLogo, NotInverted);
-
-
 
 }
 
 // ================================== Events ===================================
+// RF: new packet received
 void EVENT_NewPacket(void) {
 
 }

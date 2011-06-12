@@ -1,7 +1,6 @@
 #include "leds_pca.h"
 
 #include "uart.h"
-#include "delay_util.h"
 
 Leds_t Leds;
 

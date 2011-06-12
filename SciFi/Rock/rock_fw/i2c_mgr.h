@@ -38,6 +38,13 @@ void DMA1_Channel6_IRQHandler(void);
 #define I2C_TIMEOUT             50004
 
 // ================================ Data types =================================
+// Struct to write or read single register
+struct SingleReg_t {
+    uint8_t RegAddr;
+    uint8_t RegValue;
+};
+#define ACC_SINGLEREG_SIZE      2
+
 enum CmdState_t {CmdPending, CmdWriting, CmdReading, CmdSucceded, CmdFailed};
 
 struct I2C_Cmd_t {

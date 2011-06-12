@@ -50,6 +50,43 @@ void Lcd_t::Init(void) {
 
     // ==== DMA ====
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+    LCD_DMA_Init();
+
+    // ==== DMA IRQ ====
+    NVIC_InitTypeDef NVIC_InitStructure;
+    // Enable DMA1 channel3 IRQ Channel
+    NVIC_InitStructure.NVIC_IRQChannel = LCD_DMA_IRQ;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+
+    // ========================= Init LCD ======================================
+    XCS_Hi();
+    // Reset display
+    XRES_Lo();
+    Delay.ms(7);
+    XRES_Hi();
+    // Initial commands
+    Cls(); // clear LCD
+    Ram.Cmd[0] = Distort(LCD_CMD, 0xA4);    // Set normal display mode
+    Ram.Cmd[1] = Distort(LCD_CMD, 0x2F);    // Charge pump on
+    Ram.Cmd[2] = Distort(LCD_CMD, 0x40);    // Set start row address = 0
+    Ram.Cmd[3] = Distort(LCD_CMD, 0xAF);    // display ON
+    // Set x=0, y=0
+    Ram.Cmd[4] = Distort(LCD_CMD, 0xB0);    // Y axis initialization
+    Ram.Cmd[5] = Distort(LCD_CMD, 0x00);    // X axis initialisation1
+    Ram.Cmd[6] = Distort(LCD_CMD, 0x10);    // X axis initialisation2
+#ifdef LCD_UPSIDEDOWN
+    Ram.Cmd[7] = Distort(LCD_CMD, 0xC8);    // mirror Y axis
+    Ram.Cmd[8] = Distort(LCD_CMD, 0xA1);    // Mirror X axis
+#endif
+    // Start transmission
+    XCS_Lo();
+    DMA_Cmd(LCD_DMA_CHNL, ENABLE);          // Enable USARTy DMA TX Channel
+}
+
+void Lcd_t::LCD_DMA_Init() {
     DMA_InitTypeDef DMA_InitStructure;
     DMA_DeInit(LCD_DMA_CHNL);
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&LCD_USART->DR;
@@ -64,45 +101,17 @@ void Lcd_t::Init(void) {
     DMA_InitStructure.DMA_Priority = DMA_Priority_Low;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(LCD_DMA_CHNL, &DMA_InitStructure);
-    // Enable USART DMA TX request
+    // Enable USARTy DMA TX request
     USART_DMACmd(LCD_USART, USART_DMAReq_Tx, ENABLE);
-
-    // ========================= Init LCD ======================================
-    // Init variables
-    CurrentPosition = 0;
-    Cls(); // clear buffer
-    // Reset display
-    XCS_Hi();
-    XRES_Lo();
-    Delay.ms(7);
-    XRES_Hi();
-    // Initial commands
-    Ram.Cmd[0] = Distort(LCD_CMD, 0xA4);    // Set normal display mode
-    Ram.Cmd[1] = Distort(LCD_CMD, 0x2F);    // Charge pump on
-    Ram.Cmd[2] = Distort(LCD_CMD, 0x40);    // Set start row address = 0
-    Ram.Cmd[3] = Distort(LCD_CMD, 0xAF);    // display ON
-    // Set x=0, y=0
-    Ram.Cmd[4] = Distort(LCD_CMD, 0xB0);    // Y axis initialization
-    Ram.Cmd[5] = Distort(LCD_CMD, 0x00);    // X axis initialisation1
-    Ram.Cmd[6] = Distort(LCD_CMD, 0x10);    // X axis initialisation2
-#ifdef LCD_UPSIDEDOWN
-    Ram.Cmd[6] = Distort(LCD_CMD, 0xC8);    // mirror Y axis
-    Ram.Cmd[6] = Distort(LCD_CMD, 0xA1);    // Mirror X axis
-#endif
-    // Start transmission
-    XCS_Lo();
-    DMA_Cmd(LCD_DMA_CHNL, ENABLE);          // Enable USARTy DMA TX Channel
+    // Enable DMA Transfer Complete interrupt
+    DMA_ITConfig(LCD_DMA_CHNL, DMA_IT_TC, ENABLE);
 }
 
 void Lcd_t::Shutdown(void) {
-    XRES_Lo();
-    // Disable all
     DMA_Cmd(LCD_DMA_CHNL, DISABLE);
-    USART_DMACmd(LCD_USART, USART_DMAReq_Tx, DISABLE);
-    USART_Cmd(LCD_USART, DISABLE);
+    XRES_Lo();
     XCS_Lo();
 }
-
 // ================================ Graphics ===================================
 void Lcd_t::Cls() {
     for (uint16_t i = 0; i < LCD_VIDEOBUF_SIZE; i++)
@@ -149,7 +158,6 @@ void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img, Inve
     } // fy
 }
 
-
 // ============================ Inner use ======================================
 uint16_t Lcd_t::Distort(uint16_t CmdDta, uint8_t AByte) {
     uint32_t Itmp = (uint32_t) AByte;
@@ -158,4 +166,20 @@ uint16_t Lcd_t::Distort(uint16_t CmdDta, uint8_t AByte) {
     Itmp <<= 1;
     Itmp |= CmdDta;
     return (uint16_t)Itmp;
+}
+
+// ================================== Interrupts ===============================
+void DMA1_Channel2_IRQHandler(void) {
+    // Test on DMA1 Channel3 Transfer Complete interrupt
+    if(DMA_GetITStatus(DMA1_IT_TC2)) {
+        // Clear DMA Half Transfer, Transfer Complete and Global interrupt pending bits
+        DMA_ClearITPendingBit(DMA1_IT_GL2);
+        DMA_Cmd(LCD_DMA_CHNL, DISABLE);
+        // Wait for current byte to finish transfer
+        while(USART_GetFlagStatus(LCD_USART, USART_FLAG_TC) == RESET);
+        Lcd.XCS_Hi();   // End transmission
+        Delay.Loop(9);
+        Lcd.XCS_Lo();   // Start transmission
+        DMA_Cmd(LCD_DMA_CHNL, ENABLE);
+    } // if
 }

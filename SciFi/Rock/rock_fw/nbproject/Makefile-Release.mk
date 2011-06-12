@@ -51,6 +51,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/lib/startup/startup_stm32f10x_cl.o \
 	${OBJECTDIR}/lib/startup/startup_stm32f10x_md.o \
 	${OBJECTDIR}/lib/startup/startup_stm32f10x_ld.o \
+	${OBJECTDIR}/acc_mma.o \
 	${OBJECTDIR}/delay_util.o
 
 
@@ -154,6 +155,11 @@ ${OBJECTDIR}/lib/startup/startup_stm32f10x_md.o: lib/startup/startup_stm32f10x_m
 ${OBJECTDIR}/lib/startup/startup_stm32f10x_ld.o: lib/startup/startup_stm32f10x_ld.s 
 	${MKDIR} -p ${OBJECTDIR}/lib/startup
 	$(AS) $(ASFLAGS) -o ${OBJECTDIR}/lib/startup/startup_stm32f10x_ld.o lib/startup/startup_stm32f10x_ld.s
+
+${OBJECTDIR}/acc_mma.o: acc_mma.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/acc_mma.o acc_mma.cpp
 
 ${OBJECTDIR}/delay_util.o: delay_util.cpp 
 	${MKDIR} -p ${OBJECTDIR}

@@ -53,6 +53,7 @@ struct LcdBuf_t {
     uint16_t Data[LCD_VIDEOBUF_SIZE];
 };
 
+
 class Lcd_t {
 private:
     // Variables
@@ -64,24 +65,33 @@ private:
     // Bit distortion to fulfill LSB-only USART capability
     uint16_t Distort(uint16_t CmdDta, uint8_t AByte);
     // Pin driving functions
-    void XCS_Hi (void) { LCD_GPIO->BSRR = LCD_XCS;  }
-    void XCS_Lo (void) { LCD_GPIO->BRR  = LCD_XCS;  }
     void XRES_Hi(void) { LCD_GPIO->BSRR = LCD_XRES; }
     void XRES_Lo(void) { LCD_GPIO->BRR  = LCD_XRES; }
 public:
     // General use
     void Init(void);
     void Shutdown(void);
+    // Interrupt uses this
+    void XCS_Hi (void) { LCD_GPIO->BSRR = LCD_XCS;  }
+    void XCS_Lo (void) { LCD_GPIO->BRR  = LCD_XCS;  }
+    void LCD_DMA_Init(void);
     // Grafics handling
     void Cls(void);
     void GotoXY(uint8_t x, uint8_t y);
     void GotoCharXY(uint8_t x, uint8_t y);
     void DrawChar(uint8_t AChar, Invert_t AInvert);
     void PrintString (const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert);
-    void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img, Invert_t AInvert);
-};
+    void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img, Invert_t AInvert);};
 
 extern Lcd_t Lcd;
+
+// DMA transfer complete interrupt handler
+#ifdef __cplusplus
+extern "C" {
+void DMA1_Channel2_IRQHandler(void);
+}
+#endif
+
 
 #endif	/* LCD110X_H */
 
