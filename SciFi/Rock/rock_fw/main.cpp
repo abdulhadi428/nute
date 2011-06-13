@@ -32,14 +32,19 @@ int main(void) {
 
     uint32_t FTimer;
     Delay.Reset(&FTimer);
-    uint8_t d='a';
+//    uint8_t d='a';
 
     // Forever
     while(1) {
-        if(Delay.Elapsed(&FTimer, 306)) {
-            Lcd.GotoCharXY(0, 7);
-            Lcd.DrawChar(d, NotInverted);
-            if(++d == 'z') d='a';
+        if(Delay.Elapsed(&FTimer, 504)) {
+//            Lcd.GotoCharXY(0, 7);
+//            Lcd.DrawChar(d, NotInverted);
+//            if(++d == 'z') d='a';
+            Acc.ReadAccelerations();
+            UART_StrUint("X: ", Acc.Accelerations.xMSB);
+            UART_StrUint("Y: ", Acc.Accelerations.yMSB);
+            UART_StrUint("Z: ", Acc.Accelerations.zMSB);
+            UART_NewLine();
         }
 
         //Leds.Task();
@@ -53,7 +58,7 @@ void GeneralInit(void) {
     // Disable JTAG
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
     // Init peripherial
-    //i2cMgr.Init();
+    i2cMgr.Init();
     //Leds.Init();
     Delay.Init();
     // Sound etc.

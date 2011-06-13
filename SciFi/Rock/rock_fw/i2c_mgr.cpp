@@ -66,7 +66,7 @@ void i2cMgr_t::ProcessCmd() {
         PrepareToWrite();
         return;
     }
-    else if (CmdToRead->DataToRead.Length != 0) {
+    if (CmdToRead->DataToRead.Length != 0) {
         PrepareToRead();
         return;
     }
@@ -74,7 +74,8 @@ void i2cMgr_t::ProcessCmd() {
     StopAndGetNext();
 }
 
-void i2cMgr_t::PrepareToWrite() {
+uint8_t i2cMgr_t::PrepareToWrite() {
+    uint8_t IResult;
     //Uart.PrintString("PTW\r");
     CmdToRead->State = CmdFailed;
     IsBusy = true;
@@ -106,6 +107,10 @@ void i2cMgr_t::PrepareToWrite() {
         //Uart.PrintString("ST\r\r");
     }
     else {
+        // Send single byte
+        if ((IResult = SendStart()) != I2C_OK) return IResult;
+        if (SendAddrTX(CmdToRead->Address)) return;
+        CmdToRead->State = CmdWriting;
         I2C_SendData(I2C1, CmdToRead->DataToWrite.Buf[0]);
         uint32_t FTimeout = I2C_TIMEOUT;
         while (I2C_GetFlagStatus(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED) == RESET) {
@@ -115,7 +120,6 @@ void i2cMgr_t::PrepareToWrite() {
                 return;
             }
         } // while
-        StopAndGetNext();
     } // if 1 byte
 }
 void i2cMgr_t::PrepareToRead() {
@@ -181,7 +185,7 @@ void i2cMgr_t::StopAndGetNext() {
 uint8_t i2cMgr_t::SendStart(void) {
     // Wait for Idle Bus
     uint32_t FTimeout = I2C_TIMEOUT;
-    while(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY)) if((FTimeout--) == 0) return 1;
+    while(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY)) if((FTimeout--) == 0) return I2C_ERR_TIMEOUT;
 
     I2C_GenerateSTART(I2C1, ENABLE);
     FTimeout = I2C_TIMEOUT;
@@ -189,10 +193,10 @@ uint8_t i2cMgr_t::SendStart(void) {
         if ((FTimeout--) == 0) {
             IsBusy = false;
             UART_PrintString("I2C can't enter master mode\r");
-            return 2;
+            return I2C_ERR_NOMASTER;
         }
     }
-    return 0;
+    return I2C_OK;
 }
 uint8_t i2cMgr_t::SendAddrTX(uint8_t AAddr) {
     uint32_t IEvt;
