@@ -40,6 +40,9 @@ void DMA1_Channel6_IRQHandler(void);
 #define I2C_OK                  0
 #define I2C_ERR_TIMEOUT         1
 #define I2C_ERR_NOMASTER        2
+#define I2C_ERR_SLAVE_NACK      3
+#define I2C_WAITING             4
+
 
 // ================================ Data types =================================
 // Struct to write or read single register
@@ -49,7 +52,7 @@ struct SingleReg_t {
 };
 #define I2C_SINGLEREG_SIZE      2
 
-enum CmdState_t {CmdPending, CmdWriting, CmdReading, CmdSucceded, CmdFailed};
+enum CmdState_t {CmdPending, CmdWritingAddrTX, CmdWritingAddrRX, CmdWritingOne, CmdWritingMany, CmdReadingOne, CmdReadingMany, CmdSucceded, CmdFailed};
 
 struct I2C_Cmd_t {
     Buf8_t DataToWrite, DataToRead;     // Buffers of data to read or write
@@ -60,11 +63,29 @@ struct I2C_Cmd_t {
 class i2cMgr_t {
 private:
     bool IsBusy;
+    uint32_t Timer;
     I2C_Cmd_t Commands[I2C_CMD_QUEUE_LENGTH];
+    // Bus handling
     uint8_t SendStart(void);
-    uint8_t SendAddrTX(uint8_t AAddr);
-    uint8_t SendAddrRX(uint8_t AAddr);
+    void SendAddrTX(void);
+    void SendAddrRX(void);
+    uint8_t CheckAddrSending(void);
+
+    void WriteOneByte(void);
+    uint8_t CheckOneByteWriting(void);
+    void WriteMany(void);
+    uint8_t CheckManyWriting(void);
+
+    void ReadOneByte(void);
+    uint8_t CheckOneByteReading(void);
+    void ReadMany(void);
+    uint8_t CheckManyReading(void);
+
+    uint8_t SendAddrTXPoll(uint8_t AAddr);
+    uint8_t SendAddrRXPoll(uint8_t AAddr);
     void ProcessCmd(void);
+    uint8_t WriteOneBytePoll(void);
+    uint8_t WriteBufDMA(void);
 public:
     // Needed here for Interrupt Handler to have access
     I2C_Cmd_t *CmdToWrite, *CmdToRead;

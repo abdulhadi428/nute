@@ -47,6 +47,7 @@ int main(void) {
             UART_NewLine();
         }
 
+        i2cMgr.Task();
         //Leds.Task();
         //Vs.Task();
         //CC.Task();

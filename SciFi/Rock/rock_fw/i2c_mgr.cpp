@@ -6,6 +6,141 @@
 
 i2cMgr_t i2cMgr;
 
+void i2cMgr_t::Task() {
+    uint8_t IEvt;
+    switch (CmdToRead->State) {
+        case CmdPending:
+            if (SendStart() == I2C_OK) {    // Send Start
+                // Send Addr of needed type
+                if (CmdToRead->DataToWrite.Length != 0) {
+                    SendAddrTX();
+                    CmdToRead->State = CmdWritingAddrTX;
+                }
+                else {  // nothing to write
+                    CmdToRead->State = CmdSucceded;
+                    StopAndGetNext();
+                }
+            } // if start
+            else {
+                CmdToRead->State = CmdFailed;
+                StopAndGetNext();
+            }
+            break;
+
+        case CmdWritingAddrTX:  // ****** Writing Address with TX bit *******
+            IEvt = CheckAddrSending();          // Check if ok
+            if (IEvt == I2C_OK) {               // Addr sent, write data
+                if (CmdToRead->DataToWrite.Length == 1) {   // Single byte to write
+                    WriteOneByte();
+                    CmdToRead->State = CmdWritingOne;
+                }
+                else {  // Many bytes to write
+                    WriteMany();
+                    CmdToRead->State = CmdWritingMany;
+                }
+            }
+            else if (IEvt != I2C_WAITING) { // Some error occured
+                CmdToRead->State = CmdFailed;
+                StopAndGetNext();
+            }
+            break;  // Otherwise still sending address
+
+        case CmdWritingOne: // ****** Writing one byte *******
+            IEvt = CheckOneByteWriting();
+            if (IEvt == I2C_OK) {               // Byte sent, check if reading needed
+                if (CmdToRead->DataToRead.Length != 0) {    // Send RepeatedStart and address RX
+                    if (SendStart() == I2C_OK) {            // Send Start
+                        SendAddrRX();
+                        CmdToRead->State = CmdWritingAddrRX;
+                    }
+                    else {  // Repeated start failed
+                        CmdToRead->State = CmdFailed;
+                        StopAndGetNext();
+                    }
+                }
+                else {  // nothing to read
+                    CmdToRead->State = CmdSucceded;
+                    StopAndGetNext();
+                }
+            } //
+            else if (IEvt != I2C_WAITING) { // Some error occured
+                CmdToRead->State = CmdFailed;
+                StopAndGetNext();
+            }
+            break;  // Otherwise still sending byte
+
+        case CmdWritingAddrRX:  // ****** Writing Address with RX bit *******
+            IEvt = CheckAddrSending();          // Check if ok
+            if (IEvt == I2C_OK) {               // Addr sent, read data
+                if (CmdToRead->DataToRead.Length == 1) {   // Single byte to read
+                    ReadOneByte();
+                    CmdToRead->State = CmdReadingOne;
+                }
+                else {  // Many bytes to read
+                    ReadMany();
+                    CmdToRead->State = CmdReadingMany;
+                }
+            }
+            else if (IEvt != I2C_WAITING) { // Some error occured
+                CmdToRead->State = CmdFailed;
+                StopAndGetNext();
+            }
+            break;  // Otherwise still sending address
+
+        case CmdReadingOne: // ****** Reading one byte *******
+            IEvt = CheckOneByteReading();
+            if (IEvt == I2C_OK) {               // Byte read
+                CmdToRead->State = CmdSucceded;
+                StopAndGetNext();
+            }
+            else if (IEvt != I2C_WAITING) { // Some error occured
+                CmdToRead->State = CmdFailed;
+                StopAndGetNext();
+            }
+            break;  // Otherwise still reading byte
+
+        case CmdWritingMany: // ****** Writing many bytes *******
+            IEvt = CheckManyWriting();
+            if (IEvt == I2C_OK) {               // Bytes sent, check if reading needed
+                if (CmdToRead->DataToRead.Length != 0) {    // Send RepeatedStart and address RX
+                    if (SendStart() == I2C_OK) {            // Send Start
+                        SendAddrRX();
+                        CmdToRead->State = CmdWritingAddrRX;
+                    }
+                    else {  // Repeated start failed
+                        CmdToRead->State = CmdFailed;
+                        StopAndGetNext();
+                    }
+                }
+                else {  // nothing to read
+                    CmdToRead->State = CmdSucceded;
+                    StopAndGetNext();
+                }
+            } //
+            else if (IEvt != I2C_WAITING) { // Some error occured
+                CmdToRead->State = CmdFailed;
+                StopAndGetNext();
+            }
+            break;  // Otherwise still sending bytes
+
+        case CmdReadingMany: // ****** Reading many bytes *******
+            IEvt = CheckManyReading();
+            if (IEvt == I2C_OK) {               // Byte read
+                CmdToRead->State = CmdSucceded;
+                StopAndGetNext();
+            }
+            else if (IEvt != I2C_WAITING) { // Some error occured
+                CmdToRead->State = CmdFailed;
+                StopAndGetNext();
+            }
+            break;  // Otherwise still reading bytes
+
+        case CmdFailed:
+            StopAndGetNext();
+            break;
+    } // switch
+}
+
 void i2cMgr_t::Init() {
     // ==== Init I2C ====
     // Init clock
@@ -61,16 +196,16 @@ void i2cMgr_t::AddCmd(I2C_Cmd_t ACmd) {
 }
 
 void i2cMgr_t::ProcessCmd() {
-    //Uart.PrintString("PC\r");
-    if (CmdToRead->DataToWrite.Length != 0) {
-        PrepareToWrite();
-        return;
-    }
-    if (CmdToRead->DataToRead.Length != 0) {
-        PrepareToRead();
-        return;
-    }
-    // If no data is to be read or written, send STOP
+    if (SendStart() == I2C_OK) {
+        if (SendAddrTX(CmdToRead->Address) == I2C_OK) {
+            uint8_t IEvt;
+            // Write if needed
+            if      (CmdToRead->DataToWrite.Length == 1) IEvt = WriteOneByte();
+            else if (CmdToRead->DataToWrite.Length  > 1) IEvt = WriteBufDMA();
+            // Read if needed
+
+        } // if addr
+    } // if start
     StopAndGetNext();
 }
 
@@ -97,8 +232,6 @@ uint8_t i2cMgr_t::PrepareToWrite() {
         DMA_InitStructure.DMA_M2M                = DMA_M2M_Disable;
         DMA_Init(I2C_DMA_CHNL, &DMA_InitStructure);
         // Start transmission
-        if (SendStart()) return;
-        if (SendAddrTX(CmdToRead->Address)) return;
         CmdToRead->State = CmdWriting;
         DMA_Cmd(I2C_DMA_CHNL, ENABLE);  // Enable DMA channel
         I2C_DMACmd(I2C1, ENABLE);       // Enable DMA
@@ -109,7 +242,7 @@ uint8_t i2cMgr_t::PrepareToWrite() {
     else {
         // Send single byte
         if ((IResult = SendStart()) != I2C_OK) return IResult;
-        if (SendAddrTX(CmdToRead->Address)) return;
+        if ((IResult = SendAddrTX(CmdToRead->Address)) != I2C_OK) return IResult;
         CmdToRead->State = CmdWriting;
         I2C_SendData(I2C1, CmdToRead->DataToWrite.Buf[0]);
         uint32_t FTimeout = I2C_TIMEOUT;
@@ -117,10 +250,11 @@ uint8_t i2cMgr_t::PrepareToWrite() {
             if ((FTimeout--) == 0) {
                 IsBusy = false;
                 UART_PrintString("I2C can't transmit single byte\r");
-                return;
+                return I2C_ERR_TIMEOUT;
             }
         } // while
     } // if 1 byte
+    return I2C_OK;
 }
 void i2cMgr_t::PrepareToRead() {
     CmdToRead->State = CmdFailed;
@@ -207,15 +341,15 @@ uint8_t i2cMgr_t::SendAddrTX(uint8_t AAddr) {
         if (IEvt & I2C_EVENT_SLAVE_ACK_FAILURE) {   // NACK occured, slave doesn't answer
             IsBusy = false;
             UART_PrintString("I2C Slave Addr NACK\r");
-            return 1;
+            return I2C_ERR_SLAVE_NACK;
         }
         if ((FTimeout--) == 0) {
             IsBusy = false;
             UART_PrintString("I2C Slave Addr Timeout\r");
-            return 2;
+            return I2C_ERR_TIMEOUT;
         }
     } while (IEvt != I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED);
-    return 0;   // all right
+    return I2C_OK;   // all right
 }
 uint8_t i2cMgr_t::SendAddrRX(uint8_t AAddr) {
     uint32_t IEvt;
@@ -226,15 +360,15 @@ uint8_t i2cMgr_t::SendAddrRX(uint8_t AAddr) {
         if (IEvt & I2C_EVENT_SLAVE_ACK_FAILURE) {   // NACK occured, slave doesn't answer
             IsBusy = false;
             UART_PrintString("I2C Slave Addr NACK\r");
-            return 1;
+            return I2C_ERR_SLAVE_NACK;
         }
         if ((FTimeout--) == 0) {
             IsBusy = false;
             UART_PrintString("I2C Slave Addr Timeout\r");
-            return 2;
+            return I2C_ERR_TIMEOUT;
         }
     } while (IEvt != I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED);
-    return 0;   // all right
+    return I2C_OK;   // all right
 }
 
 void i2cMgr_t::WriteBufferNoDMA(uint8_t AAddr, uint8_t* ABuffer, uint8_t ABufferSize) {
