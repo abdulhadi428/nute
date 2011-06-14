@@ -37,10 +37,9 @@ int main(void) {
     // Forever
     while(1) {
         if(Delay.Elapsed(&FTimer, 504)) {
-//            Lcd.GotoCharXY(0, 7);
-//            Lcd.DrawChar(d, NotInverted);
-//            if(++d == 'z') d='a';
             Acc.ReadAccelerations();
+
+            UART_StrUint("State: ", Acc.Accelerations.Status);
             UART_StrUint("X: ", Acc.Accelerations.xMSB);
             UART_StrUint("Y: ", Acc.Accelerations.yMSB);
             UART_StrUint("Z: ", Acc.Accelerations.zMSB);
@@ -60,7 +59,10 @@ void GeneralInit(void) {
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
     // Init peripherial
     i2cMgr.Init();
-    //Leds.Init();
+
+//    Leds.Init();
+//    Leds.FadeInAll();
+
     Delay.Init();
     // Sound etc.
     //SD.Init();

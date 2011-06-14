@@ -22,6 +22,7 @@ void Leds_t::Init() {
     i2cCmd.DataToRead.Length = 0;   // Nothing to read
     i2cCmd.DataToWrite.Buf = (uint8_t *)&FPkt;
     i2cCmd.DataToWrite.Length = LEDS_PKT_SIZE;
+    i2cCmd.Callback = 0;
     // Prepare initialization packet
     FPkt.ControlReg = 0b10000000;   // Autoincrement enable, first register is 0x00
     FPkt.Mode1 = 0b10000000;    // Non-sleep mode, do not respond to extra adresses
@@ -44,7 +45,7 @@ void Leds_t::FadeInAll() {
     i2cMgr.AddCmd(i2cCmd);
     OutputEnable();
     Mode = lmFadeInAll;
-    lDelay = 250;
+    lDelay = 150;
 }
 void Leds_t::EqualAll(uint8_t AValue) {
     SetAll(AValue);

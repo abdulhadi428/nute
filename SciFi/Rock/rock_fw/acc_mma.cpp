@@ -24,12 +24,13 @@ void Acc_t::Init() {
     i2cCmd.DataToWrite.Length = 1;
     i2cCmd.DataToRead.Buf = AccArray;
     i2cCmd.DataToRead.Length = ACCELERATIONS_SIZE;
+    i2cCmd.Callback = 0;
     // ==== Setup initial registers ====
     SingleReg_t RegBuf;
     // Setup High-Pass filter and acceleration scale
     RegBuf.RegAddr = ACC_REG_XYZ_DATA_CFG;
     RegBuf.RegValue = 0x01; // No filter, scale = 4g
-    i2cMgr.WriteBufferNoDMA(ACC_I2C_ADDR, (uint8_t *)&RegBuf, I2C_SINGLEREG_SIZE);
+    i2cMgr.WriteBufferPoll(ACC_I2C_ADDR, (uint8_t *)&RegBuf, I2C_SINGLEREG_SIZE);
     // Control registers
     uint8_t CtrlRegs[6];
     CtrlRegs[0] = ACC_REG_CONTROL1; // CtrReg[0] is register address
@@ -38,6 +39,6 @@ void Acc_t::Init() {
     CtrlRegs[3] = 0x02;     // No IRQ; IRQ output active high
     CtrlRegs[4] = 0x00;     // All interrupts disabled
     CtrlRegs[5] = 0x04;     // FreeFall IRQ is routed to INT1 pin
-    i2cMgr.WriteBufferNoDMA(ACC_I2C_ADDR, &CtrlRegs[1], 5);
+    i2cMgr.WriteBufferPoll(ACC_I2C_ADDR, &CtrlRegs[0], 6);
 }
 
