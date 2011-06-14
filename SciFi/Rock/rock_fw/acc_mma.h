@@ -21,9 +21,7 @@
 // Bunches of registers
 struct Accelerations_t {
     uint8_t Status;
-    uint8_t xMSB, xLSB;
-    uint8_t yMSB, yLSB;
-    uint8_t zMSB, zLSB;
+    int8_t xMSB, xLSB, yMSB, yLSB, zMSB, zLSB;
 };
 #define ACCELERATIONS_SIZE      sizeof(struct Accelerations_t)
 

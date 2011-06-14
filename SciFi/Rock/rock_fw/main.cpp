@@ -38,11 +38,9 @@ int main(void) {
     while(1) {
         if(Delay.Elapsed(&FTimer, 504)) {
             Acc.ReadAccelerations();
-
-            UART_StrUint("State: ", Acc.Accelerations.Status);
-            UART_StrUint("X: ", Acc.Accelerations.xMSB);
-            UART_StrUint("Y: ", Acc.Accelerations.yMSB);
-            UART_StrUint("Z: ", Acc.Accelerations.zMSB);
+            UART_StrInt("X: ", Acc.Accelerations.xMSB);
+            UART_StrInt("Y: ", Acc.Accelerations.yMSB);
+            UART_StrInt("Z: ", Acc.Accelerations.zMSB);
             UART_NewLine();
         }
 

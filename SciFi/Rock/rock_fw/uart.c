@@ -110,9 +110,14 @@ void UART_NewLine (void) {
     UART_Print ('\r');
 }
 
-void UART_StrUint(const char *S, uint16_t ANumber) {
+void UART_StrUint(const char *S, uint32_t ANumber) {
     UART_PrintString(S);
     UART_PrintUint(ANumber);
+    UART_NewLine();
+}
+void UART_StrInt  (const char *S,  int32_t ANumber) {
+    UART_PrintString(S);
+    UART_PrintInt(ANumber);
     UART_NewLine();
 }
 void UART_StrHex8(const char *S, uint8_t ANumber) {

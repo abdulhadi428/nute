@@ -34,7 +34,7 @@ void Acc_t::Init() {
     // Control registers
     uint8_t CtrlRegs[6];
     CtrlRegs[0] = ACC_REG_CONTROL1; // CtrReg[0] is register address
-    CtrlRegs[1] = 0x21;     // DR=100 => 50Hz data rete; Mode = Active
+    CtrlRegs[1] = 0x21;     // DR=100 => 50Hz data rate; Mode = Active
     CtrlRegs[2] = 0x00;     // Normal mode
     CtrlRegs[3] = 0x02;     // No IRQ; IRQ output active high
     CtrlRegs[4] = 0x00;     // All interrupts disabled
