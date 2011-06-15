@@ -36,13 +36,7 @@ int main(void) {
 
     // Forever
     while(1) {
-        if(Delay.Elapsed(&FTimer, 504)) {
-            Acc.ReadAccelerations();
-            UART_StrInt("X: ", Acc.Accelerations.xMSB);
-            UART_StrInt("Y: ", Acc.Accelerations.yMSB);
-            UART_StrInt("Z: ", Acc.Accelerations.zMSB);
-            UART_NewLine();
-        }
+
 
         i2cMgr.Task();
         //Leds.Task();

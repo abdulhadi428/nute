@@ -6,14 +6,20 @@
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1">
         <file>
-            <url>sd/stm32_eval_sdio_sd.c</url>
-            <line>524</line>
-            <line>2384</line>
+            <url>i2c_mgr.cpp</url>
+            <line>52</line>
+            <line>96</line>
+            <line>206</line>
         </file>
         <file>
             <url>Makefile</url>
             <line>10</line>
             <line>75</line>
+        </file>
+        <file>
+            <url>sd/stm32_eval_sdio_sd.c</url>
+            <line>524</line>
+            <line>2384</line>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">

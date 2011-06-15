@@ -97,6 +97,11 @@
                    projectFiles="true">
     </logicalFolder>
     <logicalFolder name="sd" displayName="sd" projectFiles="true">
+      <itemPath>sd/diskio.h</itemPath>
+      <itemPath>sd/ff.c</itemPath>
+      <itemPath>sd/ff.h</itemPath>
+      <itemPath>sd/ffconf.h</itemPath>
+      <itemPath>sd/integer.h</itemPath>
       <itemPath>sd/sd.cpp</itemPath>
       <itemPath>sd/sd.h</itemPath>
       <itemPath>sd/sd_lowlevel.c</itemPath>
@@ -166,62 +171,6 @@
           </preprocessorList>
         </ccTool>
       </compileType>
-      <item path="lib/CoreSupport/core_cm3.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/misc.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_adc.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_bkp.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_can.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_cec.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_crc.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_dac.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_dbgmcu.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_dma.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_exti.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_flash.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_fsmc.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_gpio.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_i2c.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_iwdg.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_pwr.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_rcc.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_rtc.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_sdio.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_spi.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_tim.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_usart.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/src/stm32f10x_wwdg.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="lib/system_stm32f10x.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="sd/sd_lowlevel.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="sd/stm32_eval_sdio_sd.c" ex="false" tool="0" flavor="0">
-      </item>
-      <item path="uart.c" ex="false" tool="0" flavor="0">
-      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
