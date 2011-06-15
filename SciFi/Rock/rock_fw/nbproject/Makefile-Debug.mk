@@ -14,14 +14,14 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=arm-none-eabi-gcc.exe
-CCC=arm-none-eabi-g++.exe
-CXX=arm-none-eabi-g++.exe
+CC=avr-gcc.exe
+CCC=avr-g++.exe
+CXX=avr-g++.exe
 FC=gfortran
-AS=arm-none-eabi-as.exe
+AS=avr-as.exe
 
 # Macros
-CND_PLATFORM=Yagarto-Windows
+CND_PLATFORM=WinAVR-Windows
 CND_CONF=Debug
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -67,6 +67,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/i2c_mgr.o \
 	${OBJECTDIR}/lib/startup/startup_stm32f10x_cl.o \
 	${OBJECTDIR}/lib/src/stm32f10x_dac.o \
+	${OBJECTDIR}/media.o \
 	${OBJECTDIR}/lib/src/stm32f10x_sdio.o \
 	${OBJECTDIR}/uart.o \
 	${OBJECTDIR}/lib/startup/startup_stm32f10x_md.o \
@@ -266,6 +267,11 @@ ${OBJECTDIR}/lib/src/stm32f10x_dac.o: lib/src/stm32f10x_dac.c
 	${MKDIR} -p ${OBJECTDIR}/lib/src
 	${RM} $@.d
 	$(COMPILE.c) -g -DSTM32F10X_HD -I. -Ilib -Ilib/inc -Isd -MMD -MP -MF $@.d -o ${OBJECTDIR}/lib/src/stm32f10x_dac.o lib/src/stm32f10x_dac.c
+
+${OBJECTDIR}/media.o: media.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -g -DSTM32F10X_HD -I. -Ilib -Ilib/inc -Isd -MMD -MP -MF $@.d -o ${OBJECTDIR}/media.o media.cpp
 
 ${OBJECTDIR}/lib/src/stm32f10x_sdio.o: lib/src/stm32f10x_sdio.c 
 	${MKDIR} -p ${OBJECTDIR}/lib/src

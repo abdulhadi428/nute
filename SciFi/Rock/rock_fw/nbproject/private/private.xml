@@ -12,28 +12,14 @@
             <line>206</line>
         </file>
         <file>
-            <url>Makefile</url>
-            <line>10</line>
-            <line>75</line>
-        </file>
-        <file>
             <url>sd/stm32_eval_sdio_sd.c</url>
             <line>524</line>
             <line>2384</line>
         </file>
+        <file>
+            <url>Makefile</url>
+            <line>10</line>
+            <line>75</line>
+        </file>
     </editor-bookmarks>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/main.cpp</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/lcd110x.h</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/lcd110x.cpp</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/cc1101.cpp</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/cc1101.h</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/uart.c</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/delay_util.h</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/images.cpp</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/images.h</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/Makefile</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/lcd_font.h</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/delay_util.cpp</file>
-    </open-files>
 </project-private>

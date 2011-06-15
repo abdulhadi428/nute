@@ -12,12 +12,13 @@
 #include "sd.h"
 #include "vs.h"
 #include "cc1101.h"
+#include "acc_mma.h"
+#include "media.h"
 
 #include "lcd110x.h"
 #include "images.h"
 
 #include "uart.h"
-#include "acc_mma.h"
 
 void GeneralInit(void);
 
@@ -34,11 +35,10 @@ int main(void) {
     Delay.Reset(&FTimer);
 //    uint8_t d='a';
 
-    // Forever
+    // ==== Main cycle ====
     while(1) {
-
-
         i2cMgr.Task();
+        ESnd.Task();
         //Leds.Task();
         //Vs.Task();
         //CC.Task();
@@ -57,7 +57,7 @@ void GeneralInit(void) {
 
     Delay.Init();
     // Sound etc.
-    //SD.Init();
+    SD.Init();
     Vs.Init();
 
 //    uint16_t IData;
@@ -74,6 +74,8 @@ void GeneralInit(void) {
     Lcd.Init();
     Lcd.DrawImage(0,0, ImageLogo, NotInverted);
 
+    ESnd.Init();
+    ESnd.Play("alive.wav");
 }
 
 // ================================== Events ===================================

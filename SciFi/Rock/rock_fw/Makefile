@@ -17,7 +17,8 @@ OUTTYPE = binary
 # List project source files here
 PRJCSRC = uart.c \
 sd/stm32_eval_sdio_sd.c \
-sd/sd_lowlevel.c
+sd/sd_lowlevel.c \
+sd/ff.c
 
 
 
@@ -31,7 +32,8 @@ cc1101.cpp \
 images.cpp \
 lcd_font.cpp \
 lcd110x.cpp \
-acc_mma.cpp
+acc_mma.cpp \
+media.cpp
 
 
 
