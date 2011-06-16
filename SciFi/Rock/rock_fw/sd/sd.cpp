@@ -1,9 +1,9 @@
 #include "misc.h"
 #include "sd.h"
 #include "sd_lowlevel.h"
-#include "diskio.h"
 
 #include "uart.h"
+#include "ff.h"
 
 
 #define BLOCK_SIZE          512 /* Block Size in Bytes */
@@ -65,6 +65,9 @@ DSTATUS disk_initialize (BYTE drv) {
         UART_StrUint("SD init error: ", SD.Status);
         return STA_NOINIT;
     }
+    // Register filesystem
+    f_mount(0, &SD.FatFilesystem);
+
     UART_PrintString("Crd on\r");
     return 0;
 }

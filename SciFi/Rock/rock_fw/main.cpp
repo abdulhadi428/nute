@@ -76,7 +76,7 @@ void GeneralInit(void) {
     rslt = disk_initialize(0);
     UART_StrUint("Disk Init: ", rslt);
 
-    f_mount(0, )
+//    f_mount(0, )
 
     Vs.Init();
     ESnd.Init();

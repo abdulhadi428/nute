@@ -15,15 +15,22 @@
 #include "stm32f10x_rcc.h"
 
 #include "stm32_eval_sdio_sd.h"
+#include "diskio.h"
 
 // ============================ Defines ========================================
-
+#define SD_BUF_SIZE 4096
 
 // ============================= Types =========================================
 
 class sd_t {
 private:
 public:
+    // Files data
+    FATFS FatFilesystem;
+//    FIL file1;
+//    DIR dir;
+//    uint8_t Buf[SD_BUF_SIZE];
+    // SD data
     SD_Error Status;
     void Init(void);
 };

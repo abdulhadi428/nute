@@ -14,7 +14,7 @@
         <file>
             <url>Makefile</url>
             <line>10</line>
-            <line>75</line>
+            <line>77</line>
         </file>
         <file>
             <url>sd/stm32_eval_sdio_sd.c</url>
