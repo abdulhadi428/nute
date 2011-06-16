@@ -14,14 +14,14 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=avr-gcc.exe
-CCC=avr-g++.exe
-CXX=avr-g++.exe
+CC=arm-none-eabi-gcc.exe
+CCC=arm-none-eabi-g++.exe
+CXX=arm-none-eabi-g++.exe
 FC=gfortran
-AS=avr-as.exe
+AS=arm-none-eabi-as.exe
 
 # Macros
-CND_PLATFORM=WinAVR-Windows
+CND_PLATFORM=Yagarto-Windows
 CND_CONF=Debug
 CND_DISTDIR=dist
 CND_BUILDDIR=build

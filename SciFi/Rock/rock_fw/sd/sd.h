@@ -23,8 +23,8 @@
 
 class sd_t {
 private:
-    SD_Error Status;
 public:
+    SD_Error Status;
     void Init(void);
 };
 

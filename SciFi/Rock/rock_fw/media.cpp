@@ -1,6 +1,5 @@
 #include "media.h"
 #include <string.h>
-#include "ff.h"
 
 #include "uart.h"
 
@@ -27,7 +26,6 @@ void Sound_t::Play(const char* AFilename) {
     strcpy(IFilename, AFilename);
     // OpenFile (IFilename);
     FRESULT rslt;
-    FIL IFile;
     rslt = f_open(&IFile, IFilename, FA_READ+FA_OPEN_EXISTING);
 
     UART_StrUint("open: ", rslt);

@@ -56,9 +56,6 @@ void GeneralInit(void) {
 //    Leds.FadeInAll();
 
     Delay.Init();
-    // Sound etc.
-    SD.Init();
-    Vs.Init();
 
 //    uint16_t IData;
 //    Vs.Enable();
@@ -74,6 +71,14 @@ void GeneralInit(void) {
     Lcd.Init();
     Lcd.DrawImage(0,0, ImageLogo, NotInverted);
 
+    // Sound etc.
+    DSTATUS rslt;
+    rslt = disk_initialize(0);
+    UART_StrUint("Disk Init: ", rslt);
+
+    f_mount(0, )
+
+    Vs.Init();
     ESnd.Init();
     ESnd.Play("alive.wav");
 }
