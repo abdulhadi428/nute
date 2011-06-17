@@ -4,6 +4,7 @@
 
 #include "uart.h"
 #include "ff.h"
+#include "delay_util.h"
 
 
 #define BLOCK_SIZE          512 /* Block Size in Bytes */
@@ -15,6 +16,9 @@ uint8_t Buffer_Rx[MULTI_BUFFER_SIZE];
 sd_t SD;
 
 void sd_t::Init() {
+    // Register filesystem
+    f_mount(0, &SD.FatFilesystem);
+
     // NVIC configuration
     //    NVIC_InitTypeDef NVIC_InitStructure;
     //    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
@@ -25,11 +29,11 @@ void sd_t::Init() {
     //    NVIC_Init(&NVIC_InitStructure);
 
     // Init SD
-    Status = SD_Init();
-    if (Status != SD_OK) {
-        UART_StrUint("SD init error: ", Status);
-        return;
-    } else UART_PrintString("Crd on\r");
+//    Status = SD_Init();
+//    if (Status != SD_OK) {
+//        UART_StrUint("SD init error: ", Status);
+//        return;
+//    } else UART_PrintString("Crd on\r");
 
 
 //
@@ -44,13 +48,44 @@ void sd_t::Init() {
 //            else UART_PrintString("err");
 }
 
+void sd_t::Test() {
+//    UINT BytesWasRead;
+//    uint8_t IBuf[4096];//    FRESULT rslt;
+//    rslt = f_open(&IFile, IFilename, FA_READ+FA_OPEN_EXISTING);
+//    UART_StrUint("Open: ", rslt);
+//
+//    if (rslt == FR_OK) {
+//        rslt = f_read(&IFile, IBuf, 4096, &BytesWasRead);
+//        UART_StrUint("f_read: ", rslt);
+//        UART_StrUint("BytesWasRead: ", BytesWasRead);
+//
+//        if (rslt == FR_OK) {
+//            for (uint32_t i=0; i<BytesWasRead; i++) {
+////                UART_PrintAsHex(IBuf[i]);
+////                UART_Print(' ');
+//                UART_Print(IBuf[i]);
+//            }
+//            UART_NewLine();
+//        }
+//
+//
+//        rslt = f_close(&IFile);
+//        UART_StrUint("Close: ", rslt);
+//    }
+}
+
 // ========================= FAT needed functions ==============================
 // Physical drive number (0), Pointer to the data buffer to store read data, Start sector number (LBA), Sector count (1..255)
 DRESULT disk_read (BYTE drv, BYTE *buff, DWORD sector, BYTE count) {
 	if (drv || !count) return RES_PARERR;
-    UART_StrUint("Sector: ", count);
-    UART_StrUint("Count: ", count);
+//    UART_StrUint("Sector: ", sector);
+//    UART_StrUint("Count: ", count);
+    //uint32_t Tmr1, Tmr2;
+    //Tmr1 = Delay.TickCounter;
     SD.Status = SD_ReadBlock(buff, (sector * 512), 512);
+    //Tmr2 = Delay.TickCounter;
+    //UART_StrUint("Tmr1: ", Tmr1);
+    //UART_StrUint("Tmr2: ", Tmr2);
     if (SD.Status != SD_OK) return RES_ERROR;
     return RES_OK;
 }
@@ -65,8 +100,6 @@ DSTATUS disk_initialize (BYTE drv) {
         UART_StrUint("SD init error: ", SD.Status);
         return STA_NOINIT;
     }
-    // Register filesystem
-    f_mount(0, &SD.FatFilesystem);
 
     UART_PrintString("Crd on\r");
     return 0;

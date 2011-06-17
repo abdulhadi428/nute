@@ -103,11 +103,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rock_fw.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk d\Nute\SciFi\Rock\rock_fw\output\output.elf.exe
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rock_fw.exe: ${OBJECTFILES}
-	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rock_fw ${OBJECTFILES} ${LDLIBSOPTIONS} 
+d\Nute\SciFi\Rock\rock_fw\output\output.elf.exe: ${OBJECTFILES}
+	${MKDIR} -p d\Nute\SciFi\Rock\rock_fw\output
+	${LINK.cc} -o d:\Nute\SciFi\Rock\rock_fw\output\output.elf ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
 ${OBJECTDIR}/lib/startup/startup_stm32f10x_ld_vl.o: lib/startup/startup_stm32f10x_ld_vl.s 
 	${MKDIR} -p ${OBJECTDIR}/lib/startup
@@ -352,7 +352,7 @@ ${OBJECTDIR}/lib/src/stm32f10x_pwr.o: lib/src/stm32f10x_pwr.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rock_fw.exe
+	${RM} d\Nute\SciFi\Rock\rock_fw\output\output.elf.exe
 
 # Subprojects
 .clean-subprojects:

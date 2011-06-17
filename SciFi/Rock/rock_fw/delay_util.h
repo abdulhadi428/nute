@@ -14,9 +14,8 @@
 #include "stm32f10x.h"
 
 class Delay_t {
-private:
-    uint32_t TickCounter;
 public:
+    uint32_t TickCounter;
     void Init(void);
     // Simple loop-based delays, no init needed
     void Loop (volatile uint32_t ACounter);

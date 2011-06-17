@@ -27,7 +27,9 @@
 #define VS_SI           GPIO_Pin_7
 
 // Constants
-#define VS_TIMEOUT  8000000
+#define VS_TIMEOUT              8000000
+#define VS_BUFSIZE              32
+#define VS_TRAILING_0_COUNT     11
 
 // Types
 typedef struct {
@@ -38,19 +40,20 @@ typedef struct {
 
 class VS_t {
 private:
-    bool IsSinging;
+    uint8_t IZero;
     uint8_t ReadWriteByte(uint8_t AByte);
 
-    void Rst_Lo(void) { GPIOA->BRR  = VS_RST; }
-    void Rst_Hi(void) { GPIOA->BSRR = VS_RST; }
-    void XCS_Lo(void) { GPIOA->BRR  = VS_XCS; }
-    void XCS_Hi(void) { GPIOA->BSRR = VS_XCS; }
+    void Rst_Lo(void)  { GPIOA->BRR  = VS_RST;  }
+    void Rst_Hi(void)  { GPIOA->BSRR = VS_RST;  }
+    void XCS_Lo(void)  { GPIOA->BRR  = VS_XCS;  }
+    void XCS_Hi(void)  { GPIOA->BSRR = VS_XCS;  }
     void XDCS_Lo(void) { GPIOA->BRR  = VS_XDCS; }
     void XDCS_Hi(void) { GPIOA->BSRR = VS_XDCS; }
 
-    bool IsBusy(void) { return (GPIO_ReadInputDataBit(GPIOA, VS_DREQ) == Bit_RESET);  }
     uint8_t BusyWait(void);
 public:
+    bool IsBusy(void) { return (GPIO_ReadInputDataBit(GPIOA, VS_DREQ) == Bit_RESET);  }
+    // General
     void Init(void);
     void Enable(void);
     void Disable(void);
@@ -59,9 +62,10 @@ public:
     uint8_t CmdRead(uint8_t AAddr, uint16_t *AData);
     uint8_t CmdWrite(uint8_t AAddr, uint16_t AData);
     // Task
-    void Task(void);
+//    void Task(void);
     // Playback
-    //void PlayBuf(uint8_t *ABuf, uint32_t ALen);
+    void WriteData(uint8_t *ABuf, uint16_t ACount);
+    void WriteTrailingZeroes(void);
 };
 
 extern VS_t Vs;

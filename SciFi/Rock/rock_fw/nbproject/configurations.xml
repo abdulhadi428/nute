@@ -172,6 +172,9 @@
             <Elem>STM32F10X_HD</Elem>
           </preprocessorList>
         </ccTool>
+        <linkerTool>
+          <output>d:\Nute\SciFi\Rock\rock_fw\output\output.elf</output>
+        </linkerTool>
       </compileType>
     </conf>
     <conf name="Release" type="1">

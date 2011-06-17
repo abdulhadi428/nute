@@ -92,6 +92,7 @@
 #include "ff.h"			/* FatFs configurations and declarations */
 #include "diskio.h"		/* Declarations of low level disk I/O functions */
 
+//#include "uart.h"   // DEBUG
 
 /*--------------------------------------------------------------------------
 
@@ -946,7 +947,7 @@ FRESULT remove_chain (
 #if _USE_ERASE
 			if (ecl + 1 == nxt) {	/* Next cluster is contiguous */
 				ecl = nxt;
-			} else {				/* End of contiguous clusters */ 
+			} else {				/* End of contiguous clusters */
 				resion[0] = clust2sect(fs, scl);					/* Start sector */
 				resion[1] = clust2sect(fs, ecl) + fs->csize - 1;	/* End sector */
 				disk_ioctl(fs->drv, CTRL_ERASE_SECTOR, resion);		/* Erase the block */
@@ -1977,6 +1978,7 @@ BYTE check_fs (	/* 0:The FAT BR, 1:Valid BR but not an FAT, 2:Not a BR, 3:Disk e
 	DWORD sect	/* Sector# (lba) to check if it is an FAT boot record or not */
 )
 {
+//    UART_PrintString("check_fs\r");
 	if (disk_read(fs->drv, fs->win, sect, 1) != RES_OK)	/* Load boot record */
 		return 3;
 	if (LD_WORD(&fs->win[BS_55AA]) != 0xAA55)		/* Check record signature (always placed at offset 510 even if the sector size is >512) */
@@ -2012,6 +2014,7 @@ FRESULT chk_mounted (	/* FR_OK(0): successful, !=0: any error occurred */
 	const TCHAR *p = *path;
 	FATFS *fs;
 
+//    UART_PrintString("chk_mounted\r");
 	/* Get logical drive number from the path name */
 	vol = p[0] - '0';					/* Is there a drive number? */
 	if (vol <= 9 && p[1] == ':') {		/* Found a drive number, get and strip it */
@@ -2245,6 +2248,7 @@ FRESULT f_open (
 	BYTE *dir;
 	DEF_NAMEBUF;
 
+//    UART_PrintString("f_open\r");
 
 	fp->fs = 0;			/* Clear file object */
 
@@ -2650,7 +2654,7 @@ FRESULT f_close (
 #if _FS_REENTRANT
 		res = validate(fp->fs, fp->id);
 		if (res == FR_OK) {
-			res = dec_lock(fp->lockid);	
+			res = dec_lock(fp->lockid);
 			unlock_fs(fp->fs, FR_OK);
 		}
 #else
@@ -2749,7 +2753,7 @@ FRESULT f_getcwd (
 				res = dir_read(&dj);
 				if (res != FR_OK) break;
 				if (ccl == LD_CLUST(dj.dir)) break;	/* Found the entry */
-				res = dir_next(&dj, 0);	
+				res = dir_next(&dj, 0);
 			} while (res == FR_OK);
 			if (res == FR_NO_FILE) res = FR_INT_ERR;/* It cannot be 'not found'. */
 			if (res != FR_OK) break;

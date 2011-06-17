@@ -16,6 +16,7 @@
 
 #include "stm32_eval_sdio_sd.h"
 #include "diskio.h"
+#include "ff.h"
 
 // ============================ Defines ========================================
 #define SD_BUF_SIZE 4096
@@ -33,6 +34,7 @@ public:
     // SD data
     SD_Error Status;
     void Init(void);
+    void Test(void);
 };
 
 

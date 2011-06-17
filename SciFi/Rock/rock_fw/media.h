@@ -10,21 +10,32 @@
 
 #include "ff.h"
 #include "diskio.h"
+#include <stdint.h>
 
-#define MAX_FNAME_LEN   18
+#define SND_BUF_SIZE    512
 
 enum sndState_t {sndStopped, sndPlaying, sndMustStop};
 
+typedef struct {
+    uint8_t Arr[SND_BUF_SIZE];
+    UINT Size;
+    uint16_t CItem;
+} SndBuf_t;
+
 class Sound_t {
 private:
-    char IFilename[MAX_FNAME_LEN];
     FIL IFile;
+    SndBuf_t Buf1, Buf2, *CBuf;
+
+    uint16_t BytesToRead, ReadPosition;
+    void UploadData(void);
+    void StopNow(void);
 public:
     sndState_t State;
     void Init(void);
     void Task(void);
     void Play(const char* AFilename);
-    void Stop(void);
+    void Stop(void) { State = sndMustStop; }
 };
 
 extern Sound_t ESnd;

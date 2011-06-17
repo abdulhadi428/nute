@@ -2,12 +2,32 @@
 
 #include "uart.h"
 #include "i2c_mgr.h"
+#include "acc_mma.h"
+#include "media.h"
 
 VS_t Vs;
 
-void VS_t::Task() {
-    if (IsBusy()) return;   // Nothing to to if VS is busy
-
+void VS_t::WriteData(uint8_t* ABuf, uint16_t ACount) {
+    if(ACount == 0) return;
+    if(BusyWait() != VS_OK) return;     // Get out in case of timeout
+    if(ACount == 1) {                   // Do not use DMA
+        XDCS_Lo();                      // Start transmission
+        ReadWriteByte(ABuf[0]);         // Send data
+        XDCS_Hi();                      // End transmission
+    }
+    else {
+        XDCS_Lo();                      // Start transmission
+        for (uint8_t i=0; i<ACount; i++)
+            ReadWriteByte(ABuf[i]);         // Send data
+        XDCS_Hi();                      // End transmission
+    }
+}
+void VS_t::WriteTrailingZeroes() {
+    if(BusyWait() != VS_OK) return;     // Get out in case of timeout
+    XDCS_Lo();                          // Start transmission
+    for (uint8_t i=0; i<VS_TRAILING_0_COUNT; i++)
+        ReadWriteByte(0);               // Send data
+    XDCS_Hi();                          // End transmission
 }
 
 // ============================ Init etc. ======================================
@@ -54,15 +74,17 @@ void VS_t::Init() {
 void VS_t::Enable() {
     Rst_Hi();
     // Setup clock
-    CmdWrite(VS_REG_CLOCKF, 0xC430);    // x4, XTALI = 12.288 MHz
+    //CmdWrite(VS_REG_CLOCKF, 0xC430);    // x4, XTALI = 12.288 MHz
+    CmdWrite(VS_REG_CLOCKF, 0x0000);
     BusyWait();
     CmdWrite(VS_REG_MODE, (VS_SM_SDINEW | VS_SM_RESET));    // Perform software reset
     BusyWait();
     // Setup registers
-    CmdWrite(VS_REG_MODE, (VS_SM_DIFF | VS_ICONF_ADSDI | VS_SM_SDINEW));
+    CmdWrite(VS_REG_MODE, (VS_SM_DIFF | VS_ICONF_ADSDI | VS_SM_SDINEW));  // Normal mode
     CmdWrite(VS_REG_MIXERVOL, (VS_SMV_ACTIVE | VS_SMV_GAIN2));
+    CmdWrite(VS_REG_VOL, ((40*256)+40));
     // Setup variables
-    IsSinging = false;
+    IZero = 0;
 }
 void VS_t::Disable() {
     AmplifierOff();
@@ -73,7 +95,10 @@ uint8_t VS_t::BusyWait(void) {
     uint32_t Timeout = VS_TIMEOUT;
     while (IsBusy()) {
         Timeout--;
-        if (Timeout == 0) return VS_TIMEOUT_ER;
+        if (Timeout == 0) {
+            UART_PrintString("VS timeout\r");
+            return VS_TIMEOUT_ER;
+        }
     }
     return VS_OK;
 }

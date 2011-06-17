@@ -22,17 +22,4 @@
             <line>2384</line>
         </file>
     </editor-bookmarks>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/main.cpp</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/sd/diskio.h</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/sd/ffconf.h</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/sd/ff.h</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/sd/ff.c</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/sd/sd.h</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/sd/sd.cpp</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/media.cpp</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/media.h</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/sd/stm32_eval_sdio_sd.c</file>
-        <file>file:/D:/Nute/SciFi/Rock/rock_fw/sd/stm32_eval_sdio_sd.h</file>
-    </open-files>
 </project-private>

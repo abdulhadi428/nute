@@ -38,6 +38,7 @@
 #define VS_SM_DIFF      0x0001
 #define VS_SM_RESET     0x0004
 #define VS_SM_PDOWN     0x0010
+#define VS_SM_TESTS     0x0020
 #define VS_ICONF_ADSDI  0x0040  // SCI midi, SDI ADPCM
 #define VS_SM_SDINEW    0x0800  // native SPI modes; must have
 

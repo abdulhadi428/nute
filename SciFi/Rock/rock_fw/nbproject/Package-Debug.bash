@@ -6,14 +6,14 @@
 
 # Macros
 TOP=`pwd`
-CND_PLATFORM=WinAVR-Windows
+CND_PLATFORM=Yagarto-Windows
 CND_CONF=Debug
 CND_DISTDIR=dist
 CND_BUILDDIR=build
 NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/rock_fw
-OUTPUT_BASENAME=rock_fw
+OUTPUT_PATH=d:\Nute\SciFi\Rock\rock_fw\output\output.elf
+OUTPUT_BASENAME=output.elf
 PACKAGE_TOP_DIR=rockfw/
 
 # Functions

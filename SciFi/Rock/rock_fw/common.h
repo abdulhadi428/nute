@@ -8,11 +8,11 @@
 #ifndef COMMON_H
 #define	COMMON_H
 
-struct Buf8_t {
+typedef struct {
     uint8_t *Buf;
     uint8_t Length;
     uint8_t CurrentItem;
-};
+} Buf8_t;
 typedef Buf8_t* Buf8_p;
 
 #endif	/* COMMON_H */

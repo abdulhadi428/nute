@@ -39,8 +39,9 @@ int main(void) {
     while(1) {
         i2cMgr.Task();
         ESnd.Task();
+//
+        if (ESnd.State == sndStopped) ESnd.Play("alive.wav");
         //Leds.Task();
-        //Vs.Task();
         //CC.Task();
     }
 }
@@ -51,19 +52,10 @@ void GeneralInit(void) {
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
     // Init peripherial
     i2cMgr.Init();
-
 //    Leds.Init();
 //    Leds.FadeInAll();
 
     Delay.Init();
-
-//    uint16_t IData;
-//    Vs.Enable();
-//
-//    if (Vs.CmdRead(VS_REG_MODE, &IData) == VS_OK) {
-//        UART_StrHex16("VS Mode: ", IData);
-//    }
-
     CC.Init();
 
     Acc.Init();
@@ -71,16 +63,9 @@ void GeneralInit(void) {
     Lcd.Init();
     Lcd.DrawImage(0,0, ImageLogo, NotInverted);
 
-    // Sound etc.
-    DSTATUS rslt;
-    rslt = disk_initialize(0);
-    UART_StrUint("Disk Init: ", rslt);
-
-//    f_mount(0, )
-
+    SD.Init();
     Vs.Init();
     ESnd.Init();
-    ESnd.Play("alive.wav");
 }
 
 // ================================== Events ===================================
