@@ -61,7 +61,6 @@ void Sound_t::Play(const char* AFilename) {
 //    }
     // Setup buffers
     CBuf = &Buf1;
-    BytesSent = 0;
     // Setup VS
     Vs.Enable();
     Vs.AmplifierOn();
@@ -72,13 +71,8 @@ void Sound_t::Play(const char* AFilename) {
 }
 
 void Sound_t::UploadData() {
-    if (BytesSent >= IFile.fsize) {
-        StopNow();
-        return;
-    }
     Vs.WriteData(CBuf->Arr, CBuf->Size);
-    BytesSent += CBuf->Size;
-    if (BytesSent < IFile.fsize) {
+    if(IFile.fptr < IFile.fsize) { // Not EOF
         // Switch to other buffer
         CBuf = (CBuf == &Buf1)? &Buf2 : &Buf1;
         // Fill the buffer
@@ -89,6 +83,7 @@ void Sound_t::UploadData() {
             return;
         }
     }
+    else StopNow();
 }
 
 void Sound_t::StopNow() {

@@ -25,7 +25,6 @@ class Sound_t {
 private:
     FIL IFile;
     SndBuf_t Buf1, Buf2, *CBuf;
-    uint32_t BytesSent;
     void UploadData(void);
     void StopNow(void);
 public:
