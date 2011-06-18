@@ -19,15 +19,13 @@ enum sndState_t {sndStopped, sndPlaying, sndMustStop};
 typedef struct {
     uint8_t Arr[SND_BUF_SIZE];
     UINT Size;
-    uint16_t CItem;
 } SndBuf_t;
 
 class Sound_t {
 private:
     FIL IFile;
     SndBuf_t Buf1, Buf2, *CBuf;
-
-    uint16_t BytesToRead, ReadPosition;
+    uint32_t BytesSent;
     void UploadData(void);
     void StopNow(void);
 public:

@@ -30,7 +30,7 @@
 
 // Constants
 #define VS_TIMEOUT              8000000
-#define VS_BUFSIZE              32
+//#define VS_BUFSIZE              512
 #define VS_TRAILING_0_COUNT     11
 
 // Types
@@ -72,11 +72,6 @@ public:
 };
 
 extern VS_t Vs;
-
-// Declare DMA1_Channel3 IRQ. Use externC to make it visible from asm file.
-extern "C" {
-void DMA1_Channel3_IRQHandler(void);
-}
 
 #endif	/* VS_H */
 
