@@ -440,6 +440,19 @@ SD_Error SD_Init(void) {
 #endif
     }
 
+    // KL: Send block size
+    SDIO_CmdInitStructure.SDIO_Argument = (uint32_t)512;
+    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_BLOCKLEN;
+    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
+    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
+    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
+    SDIO_SendCommand(&SDIO_CmdInitStructure);
+
+    errorstatus = CmdResp1Error();
+#ifdef SD_VERBOSE_INIT
+    UART_StrUint("SD_CMD_SET_BLOCKLEN: ", errorstatus);
+#endif
+
     return (errorstatus);
 }
 
@@ -1160,22 +1173,6 @@ SD_Error SD_ReadBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize) 
     if (CardType == SDIO_HIGH_CAPACITY_SD_CARD) {
         BlockSize = 512;
         ReadAddr /= 512;
-    }
-
-    // Send block size
-    SDIO_CmdInitStructure.SDIO_Argument = (uint32_t) 512;
-    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_BLOCKLEN;
-    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
-    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
-    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
-    SDIO_SendCommand(&SDIO_CmdInitStructure);
-
-    errorstatus = CmdResp1Error();
-#ifdef SD_VERBOSE_READ_BLOCK
-    UART_StrUint("SD_CMD_SET_BLOCKLEN: ", errorstatus);
-#endif
-    if (errorstatus != SD_OK) {
-        return (errorstatus);
     }
 
     SDIO_DataInitStructure.SDIO_DataTimeOut = SD_DATATIMEOUT;

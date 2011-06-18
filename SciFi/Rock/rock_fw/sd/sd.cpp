@@ -86,7 +86,16 @@ DRESULT disk_read (BYTE drv, BYTE *buff, DWORD sector, BYTE count) {
     //Tmr2 = Delay.TickCounter;
     //UART_StrUint("Tmr1: ", Tmr1);
     //UART_StrUint("Tmr2: ", Tmr2);
-    if (SD.Status != SD_OK) return RES_ERROR;
+    if (SD.Status != SD_OK) {
+        UART_StrUint("Err1: ", SD.Status);
+        return RES_ERROR;
+    }
+    // Wait for DMA transfer to finish
+    SD.Status = SD_WaitReadOperation();
+    if (SD.Status != SD_OK) {
+        UART_StrUint("Err2: ", SD.Status);
+        return RES_ERROR;
+    }
     return RES_OK;
 }
 DSTATUS disk_status (BYTE drv) {

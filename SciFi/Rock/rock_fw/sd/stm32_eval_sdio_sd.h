@@ -311,8 +311,8 @@ typedef struct
 #define SD_CMD_SD_APP_SECURE_WRITE_MKB             ((uint8_t)48) /*!< For SD Card only */
 
 /* Uncomment the following line to select the SDIO Data transfer mode */
-//#define SD_DMA_MODE                                ((uint32_t)0x00000000)
-#define SD_POLLING_MODE                            ((uint32_t)0x00000002)
+#define SD_DMA_MODE                                ((uint32_t)0x00000000)
+//#define SD_POLLING_MODE                            ((uint32_t)0x00000002)
 
 /**
   * @brief  SD detection on its memory slot
