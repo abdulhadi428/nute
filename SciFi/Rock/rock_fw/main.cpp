@@ -40,8 +40,8 @@ int main(void) {
         i2cMgr.Task();
         ESnd.Task();
 //
-        //if (ESnd.State == sndStopped) ESnd.Play("the_moon.wav");
-        if (ESnd.State == sndStopped) ESnd.Play("alive.wav");
+        if (ESnd.State == sndStopped) ESnd.Play("the_moon.wav");
+        //if (ESnd.State == sndStopped) ESnd.Play("alive.wav");
         //Leds.Task();
         //CC.Task();
     }
