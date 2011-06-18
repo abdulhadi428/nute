@@ -12,6 +12,8 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_spi.h"
+#include "stm32f10x_dma.h"
+#include "misc.h"
 
 #include "vs_defs.h"
 #include "common.h"
@@ -47,28 +49,34 @@ private:
     void Rst_Hi(void)  { GPIOA->BSRR = VS_RST;  }
     void XCS_Lo(void)  { GPIOA->BRR  = VS_XCS;  }
     void XCS_Hi(void)  { GPIOA->BSRR = VS_XCS;  }
-    void XDCS_Lo(void) { GPIOA->BRR  = VS_XDCS; }
-    void XDCS_Hi(void) { GPIOA->BSRR = VS_XDCS; }
 
     uint8_t BusyWait(void);
+    uint8_t CmdRead(uint8_t AAddr, uint16_t *AData);
+    uint8_t CmdWrite(uint8_t AAddr, uint16_t AData);
 public:
-    bool IsBusy(void) { return (GPIO_ReadInputDataBit(GPIOA, VS_DREQ) == Bit_RESET);  }
+    bool DMA_Busy;
+    // Low-level
+    void XDCS_Lo(void) { GPIOA->BRR  = VS_XDCS; }
+    void XDCS_Hi(void) { GPIOA->BSRR = VS_XDCS; }
+    bool IsBusy (void);
     // General
     void Init(void);
     void Enable(void);
     void Disable(void);
     void AmplifierOn(void);
     void AmplifierOff(void);
-    uint8_t CmdRead(uint8_t AAddr, uint16_t *AData);
-    uint8_t CmdWrite(uint8_t AAddr, uint16_t AData);
-    // Task
-//    void Task(void);
     // Playback
     void WriteData(uint8_t *ABuf, uint16_t ACount);
     void WriteTrailingZeroes(void);
+    void SetVolume(uint8_t Attenuation) { CmdWrite(VS_REG_VOL, ((Attenuation*256)+Attenuation)); }
 };
 
 extern VS_t Vs;
+
+// Declare DMA1_Channel3 IRQ. Use externC to make it visible from asm file.
+extern "C" {
+void DMA1_Channel3_IRQHandler(void);
+}
 
 #endif	/* VS_H */
 

@@ -33,7 +33,6 @@
 #define VS_REG_MIXERVOL     0x0C
 #define VS_REG_RECCTRL      0x0D
 
-
 // Mode flags
 #define VS_SM_DIFF      0x0001
 #define VS_SM_RESET     0x0004
@@ -46,7 +45,8 @@
 #define VS_SMV_ACTIVE   0x8000  // Mixer is active
 #define VS_SMV_GAIN2    (25 << 5)     // Gain2 = 0 db, others muted
 
-
+// VS_REG_RECCTRL
+#define VS_SARC_DREQ512 0x0100  // DREQ needs 512 byte space to turn on
 
 #endif	/* _VS1003DEFS_H */
 
