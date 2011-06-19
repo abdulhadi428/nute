@@ -33,7 +33,8 @@ images.cpp \
 lcd_font.cpp \
 lcd110x.cpp \
 acc_mma.cpp \
-media.cpp
+media.cpp \
+sensors.cpp
 
 
 
