@@ -13,8 +13,9 @@
 #include "stm32f10x_adc.h"
 #include "stm32f10x_tim.h"
 #include "stm32f10x_dma.h"
-//#include "misc.h"
+#include "misc.h"
 
+#include "i2c_mgr.h"
 #include "acc_mma.h"
 #include "delay_util.h"
 
@@ -32,6 +33,21 @@ struct SnsState_t {
     Acceleration_t Acceleration;
 };
 
+// ========================= STTS751 heat sensor ===============================
+#define HEATSNS_I2C_ADDR        0x3B
+#define HEATSNS_REG_CONFIG      0x03
+#define HEATSNS_REG_RATE        0x04
+
+class SnsHeat_t {
+private:
+    uint8_t RegAddrToRead;
+    I2C_Cmd_t i2cCmd;
+public:
+    void Init(void);
+    void ReadTemperature(void) { i2cMgr.AddCmd(i2cCmd); }
+};
+
+// =============================== Common ======================================
 class Sns_t {
 private:
     uint32_t Timer;
@@ -58,6 +74,7 @@ public:
 
 extern Sns_t ESns;
 extern SnsState_t SnsState;
+extern SnsHeat_t SnsHeat;
 
 // Sensors state change event
 void EVENT_SensorsStateChanged(void);

@@ -376,7 +376,7 @@ uint8_t i2cMgr_t::SendAddrRXPoll(uint8_t AAddr) {
 }
 
 void i2cMgr_t::WriteBufferPoll(uint8_t AAddr, uint8_t* ABuffer, uint8_t ABufferSize) {
-    UART_PrintString("I2C wb\r");
+    UART_StrHex8("I2C w buf ", AAddr);
     uint32_t IEvt;
     uint8_t b;
     if (BusyWait()) return;

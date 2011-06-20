@@ -11,7 +11,6 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_rcc.h"
 #include "i2c_mgr.h"
-#include "delay_util.h"
 
 #define ACC_I2C_ADDR    0x1C
 #define ACC_INT_PIN     GPIO_Pin_15
@@ -26,16 +25,15 @@ struct Accelerations_t {
 #define ACCELERATIONS_SIZE      sizeof(struct Accelerations_t)
 
 class Acc_t {
+private:
     uint8_t RegAddrToRead;
     I2C_Cmd_t i2cCmd;
-    uint32_t Timer;
 public:
     union {
         Accelerations_t Accelerations;
         uint8_t AccArray[ACCELERATIONS_SIZE];
     };
     void Init(void);
-    void Task(void);
     void ReadAccelerations(void) { i2cMgr.AddCmd(i2cCmd); }
 };
 

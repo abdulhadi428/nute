@@ -2,10 +2,6 @@
 
 Acc_t Acc;
 
-void Acc_t::Task() {
-    if (!Delay.Elapsed(&Timer, ACC_PERIOD)) return;
-}
-
 void Acc_t::Init() {
     // Init INT pin
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -16,7 +12,6 @@ void Acc_t::Init() {
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     // ======== Variables =========
-    Delay.Reset(&Timer);
     // Prepare i2cCmd for accelerations reading
     RegAddrToRead = ACC_REG_STATUS;
     i2cCmd.Address = ACC_I2C_ADDR;
