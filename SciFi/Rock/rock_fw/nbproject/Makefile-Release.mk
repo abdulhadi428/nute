@@ -53,7 +53,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/lib/startup/startup_stm32f10x_md.o \
 	${OBJECTDIR}/lib/startup/startup_stm32f10x_ld.o \
 	${OBJECTDIR}/acc_mma.o \
-	${OBJECTDIR}/delay_util.o
+	${OBJECTDIR}/delay_util.o \
+	${OBJECTDIR}/sensors.o
 
 
 # C Compiler Flags
@@ -171,6 +172,11 @@ ${OBJECTDIR}/delay_util.o: delay_util.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/delay_util.o delay_util.cpp
+
+${OBJECTDIR}/sensors.o: sensors.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/sensors.o sensors.cpp
 
 # Subprojects
 .build-subprojects:

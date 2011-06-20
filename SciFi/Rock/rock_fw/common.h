@@ -15,5 +15,8 @@ typedef struct {
 } Buf8_t;
 typedef Buf8_t* Buf8_p;
 
+// Functional types
+typedef void (*Voidvoid_f)(void);
+
 #endif	/* COMMON_H */
 

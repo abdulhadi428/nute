@@ -14,7 +14,7 @@ void Delay_t::Init(void) {
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
-    // TIM7 clock enable
+    // TIM2 clock enable
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
     // Time base configuration: 1 ms == 1000 Hz = FCLK / (100 * (FCLK/100 000))
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -50,7 +50,6 @@ void Delay_t::ms(uint32_t Ams) {
 
 // ================================ Interrupts =================================
 // Delay counter
-
 void TIM2_IRQHandler(void) {
     // Clear TIM2 update interrupt
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);

@@ -46,13 +46,11 @@ struct SingleReg_t {
 
 enum CmdState_t {CmdPending, CmdWritingAddrTX, CmdWritingAddrRX, CmdWritingOne, CmdWritingMany, CmdReadingOne, CmdReadingMany, CmdSucceded, CmdFailed};
 
-typedef void (*Callback_f)(void);
-
 struct I2C_Cmd_t {
     Buf8_t DataToWrite, DataToRead;     // Buffers of data to read or write
     uint8_t Address;                    // Device address
     CmdState_t State;
-    Callback_f Callback;
+    Voidvoid_f Callback;
 };
 
 class i2cMgr_t {

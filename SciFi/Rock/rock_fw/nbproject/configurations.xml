@@ -17,6 +17,7 @@
       <itemPath>lcd_font.h</itemPath>
       <itemPath>leds_pca.h</itemPath>
       <itemPath>media.h</itemPath>
+      <itemPath>sensors.h</itemPath>
       <itemPath>uart.h</itemPath>
       <itemPath>vs.h</itemPath>
       <itemPath>vs_defs.h</itemPath>
@@ -123,6 +124,7 @@
       <itemPath>leds_pca.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>media.cpp</itemPath>
+      <itemPath>sensors.cpp</itemPath>
       <itemPath>uart.c</itemPath>
       <itemPath>vs.cpp</itemPath>
     </logicalFolder>

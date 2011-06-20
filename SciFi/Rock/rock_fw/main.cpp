@@ -14,6 +14,7 @@
 #include "cc1101.h"
 #include "acc_mma.h"
 #include "media.h"
+#include "sensors.h"
 
 #include "lcd110x.h"
 #include "images.h"
@@ -29,44 +30,36 @@ int main(void) {
 
     GeneralInit();
 
-    //Leds.FadeInAll();
-
-    uint32_t FTimer;
-    Delay.Reset(&FTimer);
-//    uint8_t d='a';
-
     // ==== Main cycle ====
     while(1) {
         i2cMgr.Task();
         ESnd.Task();
-//
-        if (ESnd.State == sndStopped) ESnd.Play("the_moon.wav");
-        //if (ESnd.State == sndStopped) ESnd.Play("alive.wav");
+        ESns.Task();
         //Leds.Task();
         //CC.Task();
-    }
+    } // while(1)
 }
-
 
 void GeneralInit(void) {
     // Disable JTAG
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
-    // Init peripherial
+    // Init peripheral
     i2cMgr.Init();
 //    Leds.Init();
 //    Leds.FadeInAll();
 
     Delay.Init();
     CC.Init();
-
-    Acc.Init();
-
+    // Sensors
+    ESns.Init();
+    // LCD
     Lcd.Init();
     Lcd.DrawImage(0,0, ImageLogo, NotInverted);
-
+    // Sound
     SD.Init();
     Vs.Init();
     ESnd.Init();
+    ESnd.Play("alive.wav");
 }
 
 // ================================== Events ===================================
