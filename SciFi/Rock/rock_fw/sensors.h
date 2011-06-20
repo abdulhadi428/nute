@@ -21,11 +21,27 @@
 // Constants
 #define ADC_REQUEST_PERIOD      500  // ms
 
+enum BatteryState_t {BatOk, BatHalf, BatEmpty};
+enum Acceleration_t {gX, gY, gZ, gNone};
+
+// State of sensors
+struct SnsState_t {
+    bool KeyTouched[3];
+    bool MagnetNear;
+    bool VoltageApplied;
+    Acceleration_t Acceleration;
+};
 
 class Sns_t {
 private:
     uint32_t Timer;
-    void BatteryInit(void);
+    BatteryState_t Battery;
+    SnsState_t OldState;
+    // Sensors
+    bool Touched (uint8_t Indx);
+    bool MagnetNear(void) { return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_13); }
+    bool VoltageApplied(void) { return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_2); }
+    bool SensorsStateChanged(void);
 public:
     union {
         uint16_t ADCValues[2];
@@ -36,14 +52,18 @@ public:
     // General
     void Init(void);
     void Task(void);
+    void PowerOn (void) { GPIOC->BSRR = GPIO_Pin_14; }
+    void PowerOff(void) { GPIOC->BRR  = GPIO_Pin_14; }
 };
 
 extern Sns_t ESns;
+extern SnsState_t SnsState;
 
-// Declare Timer IRQ. Use externC to make it visible from asm file.
-//extern "C" {
-//void ADC1_2_IRQHandler(void);
-//}
+// Sensors state change event
+void EVENT_SensorsStateChanged(void);
+
+// Display sensors
+void SnsVerbose(void);
 
 #endif	/* SENSORS_H */
 

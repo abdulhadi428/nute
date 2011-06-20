@@ -38,7 +38,7 @@ void Lcd_t::Init(void) {
     USART_ClockInit(LCD_USART, &USART_ClockInitStructure);
     // Usart itself
     USART_InitTypeDef USART_InitStructure;
-    USART_InitStructure.USART_BaudRate = 250000;
+    USART_InitStructure.USART_BaudRate = 60000;
     USART_InitStructure.USART_WordLength = USART_WordLength_9b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;

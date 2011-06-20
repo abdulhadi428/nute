@@ -2,12 +2,22 @@
 #include "uart.h"
 
 Sns_t ESns;
+SnsState_t SnsState;
 
 void Sns_t::Task() {
-    if (Delay.Elapsed(&Timer, 400)) {
-        UART_StrUint("0: ", BatteryADC);
-        UART_StrUint("1: ", LumiADC);
-    }
+    if (!Delay.Elapsed(&Timer, 198)) return;
+    //UART_StrUint("0: ", BatteryADC);
+    //UART_StrUint("1: ", LumiADC);
+
+    // Check sensors
+    SnsState.KeyTouched[0]  = Touched(0);
+    SnsState.KeyTouched[1]  = Touched(1);
+    SnsState.KeyTouched[2]  = Touched(2);
+    SnsState.MagnetNear     = MagnetNear();
+    SnsState.VoltageApplied = VoltageApplied();
+
+    // Rise event if something changed
+    if (SensorsStateChanged()) EVENT_SensorsStateChanged();
 }
 
 void Sns_t::Init() {
@@ -19,11 +29,20 @@ void Sns_t::Init() {
     RCC_AHBPeriphClockCmd (RCC_AHBPeriph_DMA1,  ENABLE);
     // ==== GPIO ====
     GPIO_InitTypeDef GPIO_InitStructure;
-
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     // Battery and light
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
+    // Touch, magnet, voltage sensors
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_13;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+    // Sensors power
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+    PowerOn();
     // ==== Timer ====
     // Time base configuration
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
@@ -84,6 +103,30 @@ void Sns_t::Init() {
     NVIC_Init(&NVIC_InitStructure);
 }
 
-void Sns_t::BatteryInit() {
+bool Sns_t::SensorsStateChanged() {
+    bool Changed = false;
+    if (SnsState.KeyTouched[0]  != OldState.KeyTouched[0] ) Changed = true;
+    if (SnsState.KeyTouched[1]  != OldState.KeyTouched[1] ) Changed = true;
+    if (SnsState.KeyTouched[2]  != OldState.KeyTouched[2] ) Changed = true;
+    if (SnsState.MagnetNear     != OldState.MagnetNear    ) Changed = true;
+    if (SnsState.VoltageApplied != OldState.VoltageApplied) Changed = true;
+    // TODO: accelerations
+    if (Changed) OldState = SnsState;
+    return Changed;
+}
 
+void SnsVerbose(void) {
+    if(SnsState.KeyTouched[0] ) UART_PrintString("Key0 touched\r");
+    if(SnsState.KeyTouched[1] ) UART_PrintString("Key1 touched\r");
+    if(SnsState.KeyTouched[2] ) UART_PrintString("Key2 touched\r");
+    if(SnsState.MagnetNear    ) UART_PrintString("MagnetNear\r");
+    if(SnsState.VoltageApplied) UART_PrintString("VoltageApplied\r");
+    UART_NewLine();
+}
+
+// Sensors
+bool Sns_t::Touched(uint8_t Indx) {
+    if      (Indx==0) return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_3);
+    else if (Indx==1) return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_4);
+    else              return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_5);
 }

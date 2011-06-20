@@ -67,3 +67,7 @@ void GeneralInit(void) {
 void EVENT_NewPacket(void) {
 
 }
+
+void EVENT_SensorsStateChanged(void) {
+    SnsVerbose();
+}
