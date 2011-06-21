@@ -35,7 +35,7 @@ int main(void) {
         i2cMgr.Task();
         ESnd.Task();
         ESns.Task();
-        //Leds.Task();
+        Leds.Task();
         //CC.Task();
     } // while(1)
 }
@@ -45,11 +45,11 @@ void GeneralInit(void) {
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
     // Init peripheral
     i2cMgr.Init();
-//    Leds.Init();
-//    Leds.FadeInAll();
-
     Delay.Init();
     CC.Init();
+    // Leds
+    Leds.Init();
+    Leds.FadeInAll();
     // Sensors
     ESns.Init();
     // LCD

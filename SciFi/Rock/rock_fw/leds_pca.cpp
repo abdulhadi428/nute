@@ -34,9 +34,9 @@ void Leds_t::Init() {
     FPkt.LEDOut[0] = 0xFF;      // LED driver has individual brightness and group dimming/blinking and can be controlled through its PWMx register and the GRPPWM registers
     FPkt.LEDOut[1] = 0xFF;
     FPkt.LEDOut[2] = 0xFF;
-    FPkt.LEDOut[3] = 0xFF;
+    FPkt.LEDOut[3] = 0x7F;      // LEDOut15 = 01 => fully on => 0 at output
     // ==== Init device ====
-    //i2cMgr.WriteBufferNoDMA(LED_I2C_ADDR, (uint8_t *)&FPkt, LEDS_PKT_SIZE);
+    i2cMgr.WriteBufferPoll(LED_I2C_ADDR, (uint8_t *)&FPkt, LEDS_PKT_SIZE);
 }
 
 // =============================== Light effects ===============================
@@ -69,4 +69,14 @@ void Leds_t::Task() {
 
         default: break;
     } // switch
+}
+
+// ==== LCD backlight ====
+void Leds_t::BacklightOn() {
+    FPkt.LEDOut[3] = 0x3F;
+    i2cMgr.AddCmd(i2cCmd);
+}
+void Leds_t::BacklightOff() {
+    FPkt.LEDOut[3] = 0x7F;
+    i2cMgr.AddCmd(i2cCmd);
 }

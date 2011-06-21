@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 26/05/2011 00:25:18
+EESchema Schematic File Version 2  date 22/06/2011 01:32:03
 LIBS:Audio_kl
 LIBS:Connectors_kl
 LIBS:display_kl
@@ -18,7 +18,7 @@ $Descr A2 23400 16535
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "25 may 2011"
+Date "21 jun 2011"
 Rev ""
 Comp ""
 Comment1 ""
@@ -1933,7 +1933,7 @@ F 1 "GND" H 2350 11470 30  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 1200 11200 0    60   ~ 0
-Temperature\nsensor\n20uA\nI2C addr = 0x4A
+Temperature\nsensor\n20uA\nI2C addr = 0x76
 Text Label 6900 4550 0    60   ~ 0
 SnsPowerOn
 Text Label 6900 3200 0    60   ~ 0
@@ -2167,7 +2167,7 @@ L RX4 Rx20
 U 1 1 4DD41795
 P 11900 3600
 F 0 "Rx20" H 12050 3900 60  0000 C CNN
-F 1 "22RX4" H 11750 3900 60  0000 C CNN
+F 1 "100RX4" H 11750 3900 60  0000 C CNN
 	1    11900 3600
 	1    0    0    1   
 $EndComp
@@ -2176,7 +2176,7 @@ L RX4 Rx19
 U 1 1 4DD41791
 P 11900 3000
 F 0 "Rx19" H 12050 3300 60  0000 C CNN
-F 1 "22RX4" H 11750 3300 60  0000 C CNN
+F 1 "100RX4" H 11750 3300 60  0000 C CNN
 	1    11900 3000
 	1    0    0    1   
 $EndComp
@@ -2185,7 +2185,7 @@ L RX4 Rx18
 U 1 1 4DD4178B
 P 11900 2400
 F 0 "Rx18" H 12050 2700 60  0000 C CNN
-F 1 "22RX4" H 11750 2700 60  0000 C CNN
+F 1 "100RX4" H 11750 2700 60  0000 C CNN
 	1    11900 2400
 	1    0    0    1   
 $EndComp
@@ -2194,7 +2194,7 @@ L RX4 Rx17
 U 1 1 4DD41763
 P 11900 1800
 F 0 "Rx17" H 12050 2100 60  0000 C CNN
-F 1 "22RX4" H 11750 2100 60  0000 C CNN
+F 1 "100RX4" H 11750 2100 60  0000 C CNN
 	1    11900 1800
 	1    0    0    1   
 $EndComp

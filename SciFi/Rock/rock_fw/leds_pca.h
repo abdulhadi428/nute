@@ -38,13 +38,16 @@ private:
     I2C_Cmd_t i2cCmd;
     uint32_t Timer, lDelay;
     LedModes_t Mode;
-    void SetAll(uint8_t APWM) { for (uint8_t i=0; i<=15; i++) FPkt.PWM[i] = APWM; }
+    void SetAll(uint8_t APWM) { for (uint8_t i=0; i<=14; i++) FPkt.PWM[i] = APWM; }
 public:
     void Init(void);
     void Task(void);
     void SendCmd(void) { i2cMgr.AddCmd(i2cCmd); }
     void OutputEnable (void) { GPIOB->BRR  = LED_OE_PIN; }
     void OutputDisable(void) { GPIOB->BSRR = LED_OE_PIN; }
+    // LCD backlight
+    void BacklightOn(void);
+    void BacklightOff(void);
     // Light effects
     void EqualAll(uint8_t AValue);
     void FadeInAll(void);

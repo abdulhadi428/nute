@@ -3,13 +3,10 @@
 
 Sns_t ESns;
 SnsState_t SnsState;
-SnsHeat_t SnsHeat;
 
 void Sns_t::Task() {
     if (!Delay.Elapsed(&Timer, 198)) return;
-    //UART_StrUint("0: ", BatteryADC);
-    //UART_StrUint("1: ", LumiADC);
-
+    //UART_StrUint("Battery: ", BatteryADC);
     // Check sensors
     SnsState.KeyTouched[0]  = Touched(0);
     SnsState.KeyTouched[1]  = Touched(1);
@@ -17,19 +14,14 @@ void Sns_t::Task() {
     SnsState.MagnetNear     = MagnetNear();
     SnsState.VoltageApplied = VoltageApplied();
     // Accelerometer
-    //Acc.ReadAccelerations();
-
-    // Heat sensor
-    //SnsHeat
-
+    Acc.ReadAccelerations();
     // Rise event if something changed
     if (SensorsStateChanged()) EVENT_SensorsStateChanged();
 }
 
 void Sns_t::Init() {
     // Outer modules init
-    //Acc.Init();
-    SnsHeat.Init();
+    Acc.Init();
     // ==== Clocks ====
     RCC_ADCCLKConfig(RCC_PCLK2_Div4);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOC, ENABLE);
@@ -137,22 +129,4 @@ bool Sns_t::Touched(uint8_t Indx) {
     if      (Indx==0) return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_3);
     else if (Indx==1) return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_4);
     else              return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_5);
-}
-
-// ========================= STTS751 heat sensor ===============================
-void SnsHeat_t::Init() {
-//    // Prepare i2cCmd for accelerations reading
-//    RegAddrToRead = ;
-//    i2cCmd.Address = HEATSNS_I2C_ADDR;
-//    i2cCmd.DataToWrite.Buf = &RegAddrToRead;
-//    i2cCmd.DataToWrite.Length = 1;
-//    i2cCmd.DataToRead.Buf = AccArray;
-//    i2cCmd.DataToRead.Length = ACCELERATIONS_SIZE;
-//    i2cCmd.Callback = 0;
-    // ==== Setup initial registers ====
-    SingleReg_t RegBuf;
-    // Write configuration register
-    RegBuf.RegAddr = HEATSNS_REG_CONFIG;
-    RegBuf.RegValue = 0b10000000; // EVENT disabled, convert continuously, 10 bit
-    i2cMgr.WriteBufferPoll(HEATSNS_I2C_ADDR, (uint8_t *)&RegBuf, I2C_SINGLEREG_SIZE);
 }
