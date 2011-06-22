@@ -16,13 +16,25 @@
 #define LED_OE_PIN      GPIO_Pin_3
 #define LED_I2C_ADDR    0x1B
 
+// Colors
+struct Color_t {
+    uint8_t Red, Green, Blue;
+};
+#define COLOR_MAX       250
+
 // PCA registers
 struct LedsPkt_t {
     uint8_t ControlReg;
     // Registers
     uint8_t Mode1;
     uint8_t Mode2;
-    uint8_t PWM[16];    // PWM channels
+    union {
+        uint8_t PWM[16];    // PWM channels
+        struct {
+            Color_t Colors[5];
+            uint8_t Backlight;
+        };
+    };
     uint8_t GrpPWM;
     uint8_t GrpFreq;
     uint8_t LEDOut[4];
@@ -30,14 +42,16 @@ struct LedsPkt_t {
 #define LEDS_PKT_SIZE   sizeof(LedsPkt_t)
 
 // Modes of operation
-enum LedModes_t {lmEqualAll, lmFadeInAll};
+enum LedModes_t {lmEqualAll, lmFadeInAll, lmRunningRGB};
 
 class Leds_t {
 private:
     LedsPkt_t FPkt;
     I2C_Cmd_t i2cCmd;
     uint32_t Timer, lDelay;
-    LedModes_t Mode;
+    LedModes_t IMode;
+    uint8_t LedID;
+    Color_t IColor;
     void SetAll(uint8_t APWM) { for (uint8_t i=0; i<=14; i++) FPkt.PWM[i] = APWM; }
 public:
     void Init(void);
@@ -50,7 +64,7 @@ public:
     void BacklightOff(void);
     // Light effects
     void EqualAll(uint8_t AValue);
-    void FadeInAll(void);
+    void SetMode(LedModes_t AMode);
 };
 
 extern Leds_t Leds;

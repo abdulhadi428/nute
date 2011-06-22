@@ -91,6 +91,6 @@ void Sound_t::StopNow() {
     Vs.WriteTrailingZeroes();
     State = sndStopped;
     Vs.AmplifierOff();
-    Vs.Disable();
+    //Vs.Disable();
     UART_PrintString("Stopped\r");
 }

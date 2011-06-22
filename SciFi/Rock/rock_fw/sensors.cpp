@@ -1,5 +1,6 @@
 #include "sensors.h"
 #include "uart.h"
+#include "media.h"
 
 Sns_t ESns;
 SnsState_t SnsState;
@@ -116,11 +117,26 @@ bool Sns_t::SensorsStateChanged() {
 }
 
 void SnsVerbose(void) {
-    if(SnsState.KeyTouched[0] ) UART_PrintString("Key0 touched\r");
-    if(SnsState.KeyTouched[1] ) UART_PrintString("Key1 touched\r");
-    if(SnsState.KeyTouched[2] ) UART_PrintString("Key2 touched\r");
-    if(SnsState.MagnetNear    ) UART_PrintString("MagnetNear\r");
-    if(SnsState.VoltageApplied) UART_PrintString("VoltageApplied\r");
+    if(SnsState.KeyTouched[0]) {
+        UART_PrintString("Key0 touched\r");
+        if (ESnd.State == sndStopped) ESnd.Play("touch0.wav");
+    }
+    if(SnsState.KeyTouched[1]) {
+        UART_PrintString("Key1 touched\r");
+        if (ESnd.State == sndStopped) ESnd.Play("touch1.wav");
+    }
+    if(SnsState.KeyTouched[2]) {
+        UART_PrintString("Key2 touched\r");
+        if (ESnd.State == sndStopped) ESnd.Play("touch2.wav");
+    }
+    if(SnsState.MagnetNear) {
+        UART_PrintString("MagnetNear\r");
+        if (ESnd.State == sndStopped) ESnd.Play("magnet.wav");
+    }
+    if(SnsState.VoltageApplied) {
+        UART_PrintString("VoltageApplied\r");
+        if (ESnd.State == sndStopped) ESnd.Play("acceleration.wav");
+    }
     UART_NewLine();
 }
 
