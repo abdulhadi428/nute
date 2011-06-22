@@ -1,0 +1,496 @@
+Archive member included because of file (symbol)
+
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o (exit)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+                              ./src/cc2500.o (__do_clear_bss)
+
+Allocating common symbols
+Common symbol       size              file
+
+MustSleep           0x1               ./src/olwen.o
+TickCounter         0x2               ./src/time_utils.o
+ELight              0x15              ./src/olwen.o
+CC                  0x15              ./src/cc2500.o
+ESens               0x7               ./src/olwen.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x00000000         0x00002000         xr
+data             0x00800060         0x0000ffa0         rw !x
+eeprom           0x00810000         0x00010000         rw !x
+fuse             0x00820000         0x00000400         rw !x
+lock             0x00830000         0x00000400         rw !x
+signature        0x00840000         0x00000400         rw !x
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+Address of section .data set to 0x800100
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+LOAD ./src/cc2500.o
+LOAD ./src/olwen.o
+LOAD ./src/time_utils.o
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4\libm.a
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4\libc.a
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x00000000     0x1328
+ *(.vectors)
+ .vectors       0x00000000       0x34 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+                0x00000000                __vectors
+                0x00000000                __vector_default
+ *(.vectors)
+ *(.progmem.gcc*)
+ *(.progmem*)
+ .progmem.data  0x00000034      0x123 ./src/olwen.o
+                0x00000034                ColorTable
+                0x00000158                . = ALIGN (0x2)
+ *fill*         0x00000157        0x1 00
+                0x00000158                __trampolines_start = .
+ *(.trampolines)
+ .trampolines   0x00000158        0x0 linker stubs
+ *(.trampolines*)
+                0x00000158                __trampolines_end = .
+ *(.jumptables)
+ *(.jumptables*)
+ *(.lowtext)
+ *(.lowtext*)
+                0x00000158                __ctors_start = .
+ *(.ctors)
+                0x00000158                __ctors_end = .
+                0x00000158                __dtors_start = .
+ *(.dtors)
+                0x00000158                __dtors_end = .
+ SORT(*)(.ctors)
+ SORT(*)(.dtors)
+ *(.init0)
+ .init0         0x00000158        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+                0x00000158                __init
+ *(.init0)
+ *(.init1)
+ *(.init1)
+ *(.init2)
+ .init2         0x00000158        0xc c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+ *(.init2)
+ *(.init3)
+ *(.init3)
+ *(.init4)
+ .init4         0x00000164       0x10 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+                0x00000164                __do_clear_bss
+ *(.init4)
+ *(.init5)
+ *(.init5)
+ *(.init6)
+ *(.init6)
+ *(.init7)
+ *(.init7)
+ *(.init8)
+ *(.init8)
+ *(.init9)
+ .init9         0x00000174        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+ *(.init9)
+ *(.text)
+ .text          0x00000178        0x2 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+                0x00000178                __vector_22
+                0x00000178                __vector_24
+                0x00000178                __vector_12
+                0x00000178                __bad_interrupt
+                0x00000178                __vector_6
+                0x00000178                __vector_3
+                0x00000178                __vector_23
+                0x00000178                __vector_25
+                0x00000178                __vector_13
+                0x00000178                __vector_17
+                0x00000178                __vector_19
+                0x00000178                __vector_7
+                0x00000178                __vector_5
+                0x00000178                __vector_9
+                0x00000178                __vector_2
+                0x00000178                __vector_21
+                0x00000178                __vector_15
+                0x00000178                __vector_8
+                0x00000178                __vector_14
+                0x00000178                __vector_10
+                0x00000178                __vector_16
+                0x00000178                __vector_18
+                0x00000178                __vector_20
+ .text          0x0000017a      0x662 ./src/cc2500.o
+                0x00000706                __vector_1
+                0x0000048e                CC_ReadRegister
+                0x0000017a                CC_Init
+                0x0000033e                CC_WriteBurst_P
+                0x00000416                CC_ReadRX
+                0x000005e8                CC_RfConfig
+                0x00000502                CC_WriteRegister
+                0x00000572                CC_WriteStrobe
+                0x0000024a                CC_SetAddress
+                0x000006d4                CC_ReadWriteByte
+                0x00000222                CC_SetChannel
+                0x000003ec                CC_WriteTX
+                0x00000264                CC_WriteBurst
+ .text          0x000007dc      0x9ce ./src/olwen.o
+                0x000010d0                EVENT_UpHoldTick
+                0x00000f72                EVENT_BothTouched
+                0x00000dd0                CC_Task
+                0x00000e96                Sleep_Task
+                0x0000113c                EVENT_DownHoldTick
+                0x00000c1c                Light_Task
+                0x000007dc                main
+                0x000011a8                __vector_4
+                0x000009f2                SENS_Task
+                0x00000906                SetDesiredColor
+                0x000007f2                GeneralInit
+                0x00000940                SetTableColor
+                0x0000100e                EVENT_UfSwitchTouched
+ .text          0x000011aa      0x17a ./src/time_utils.o
+                0x000011e0                TimerDelayElapsed
+                0x000012a0                TimerResetDelay
+                0x000012ea                __vector_11
+                0x000011aa                TimerInit
+ .text          0x00001324        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+ .text          0x00001324        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+                0x00001324                . = ALIGN (0x2)
+ *(.text.*)
+ .text.libgcc   0x00001324        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+ .text.libgcc   0x00001324        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+                0x00001324                . = ALIGN (0x2)
+ *(.fini9)
+ .fini9         0x00001324        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+                0x00001324                exit
+                0x00001324                _exit
+ *(.fini9)
+ *(.fini8)
+ *(.fini8)
+ *(.fini7)
+ *(.fini7)
+ *(.fini6)
+ *(.fini6)
+ *(.fini5)
+ *(.fini5)
+ *(.fini4)
+ *(.fini4)
+ *(.fini3)
+ *(.fini3)
+ *(.fini2)
+ *(.fini2)
+ *(.fini1)
+ *(.fini1)
+ *(.fini0)
+ .fini0         0x00001324        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+ *(.fini0)
+                0x00001328                _etext = .
+
+.data           0x00800100        0x0 load address 0x00001328
+                0x00800100                PROVIDE (__data_start, .)
+ *(.data)
+ .data          0x00800100        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+ .data          0x00800100        0x0 ./src/cc2500.o
+ .data          0x00800100        0x0 ./src/olwen.o
+ .data          0x00800100        0x0 ./src/time_utils.o
+ .data          0x00800100        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+ .data          0x00800100        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+ *(.data*)
+ *(.rodata)
+ *(.rodata*)
+ *(.gnu.linkonce.d*)
+                0x00800100                . = ALIGN (0x2)
+                0x00800100                _edata = .
+                0x00800100                PROVIDE (__data_end, .)
+
+.bss            0x00800100       0x34
+                0x00800100                PROVIDE (__bss_start, .)
+ *(.bss)
+ .bss           0x00800100        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+ .bss           0x00800100        0x0 ./src/cc2500.o
+ .bss           0x00800100        0x0 ./src/olwen.o
+ .bss           0x00800100        0x0 ./src/time_utils.o
+ .bss           0x00800100        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+ .bss           0x00800100        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+ *(.bss*)
+ *(COMMON)
+ COMMON         0x00800100       0x15 ./src/cc2500.o
+                0x00800100                CC
+ COMMON         0x00800115       0x1d ./src/olwen.o
+                0x00800115                MustSleep
+                0x00800116                ELight
+                0x0080012b                ESens
+ COMMON         0x00800132        0x2 ./src/time_utils.o
+                0x00800132                TickCounter
+                0x00800134                PROVIDE (__bss_end, .)
+                0x00001328                __data_load_start = LOADADDR (.data)
+                0x00001328                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x00800134        0x0
+                0x00800134                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                0x00800134                PROVIDE (__noinit_end, .)
+                0x00800134                _end = .
+                0x00800134                PROVIDE (__heap_start, .)
+
+.eeprom         0x00810000        0x0
+ *(.eeprom*)
+                0x00810000                __eeprom_end = .
+
+.fuse
+ *(.fuse)
+ *(.lfuse)
+ *(.hfuse)
+ *(.efuse)
+
+.lock
+ *(.lock*)
+
+.signature
+ *(.signature*)
+
+.stab           0x00000000     0x1e54
+ *(.stab)
+ .stab          0x00000000      0xe1c ./src/cc2500.o
+ .stab          0x00000e1c      0xc84 ./src/olwen.o
+                                0xf0c (size before relaxing)
+ .stab          0x00001aa0      0x3b4 ./src/time_utils.o
+                                0x564 (size before relaxing)
+
+.stabstr        0x00000000     0x10f1
+ *(.stabstr)
+ .stabstr       0x00000000     0x10f1 ./src/cc2500.o
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment
+ *(.comment)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info
+ *(.debug_info)
+ *(.gnu.linkonce.wi.*)
+
+.debug_abbrev
+ *(.debug_abbrev)
+
+.debug_line
+ *(.debug_line)
+
+.debug_frame
+ *(.debug_frame)
+
+.debug_str
+ *(.debug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+OUTPUT(mielofon.elf elf32-avr)
+LOAD linker stubs
+
+Cross Reference Table
+
+Symbol                                            File
+CC                                                ./src/olwen.o
+                                                  ./src/cc2500.o
+CC_Init                                           ./src/cc2500.o
+                                                  ./src/olwen.o
+CC_ReadRX                                         ./src/cc2500.o
+CC_ReadRegister                                   ./src/cc2500.o
+CC_ReadWriteByte                                  ./src/cc2500.o
+CC_RfConfig                                       ./src/cc2500.o
+CC_SetAddress                                     ./src/cc2500.o
+                                                  ./src/olwen.o
+CC_SetChannel                                     ./src/cc2500.o
+CC_Task                                           ./src/olwen.o
+CC_WriteBurst                                     ./src/cc2500.o
+CC_WriteBurst_P                                   ./src/cc2500.o
+CC_WriteRegister                                  ./src/cc2500.o
+CC_WriteStrobe                                    ./src/cc2500.o
+                                                  ./src/olwen.o
+CC_WriteTX                                        ./src/cc2500.o
+                                                  ./src/olwen.o
+ColorTable                                        ./src/olwen.o
+ELight                                            ./src/olwen.o
+ESens                                             ./src/olwen.o
+EVENT_BothTouched                                 ./src/olwen.o
+EVENT_DownHoldTick                                ./src/olwen.o
+EVENT_UfSwitchTouched                             ./src/olwen.o
+EVENT_UpHoldTick                                  ./src/olwen.o
+GeneralInit                                       ./src/olwen.o
+Light_Task                                        ./src/olwen.o
+MustSleep                                         ./src/olwen.o
+SENS_Task                                         ./src/olwen.o
+SetDesiredColor                                   ./src/olwen.o
+SetTableColor                                     ./src/olwen.o
+Sleep_Task                                        ./src/olwen.o
+TickCounter                                       ./src/time_utils.o
+TimerDelayElapsed                                 ./src/time_utils.o
+                                                  ./src/olwen.o
+TimerInit                                         ./src/time_utils.o
+                                                  ./src/olwen.o
+TimerResetDelay                                   ./src/time_utils.o
+                                                  ./src/olwen.o
+__bad_interrupt                                   c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__bss_end                                         c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+__bss_start                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+__do_clear_bss                                    c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+                                                  ./src/time_utils.o
+                                                  ./src/olwen.o
+                                                  ./src/cc2500.o
+__heap_end                                        c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__init                                            c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__stack                                           c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_1                                        ./src/cc2500.o
+                                                  c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_10                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_11                                       ./src/time_utils.o
+                                                  c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_12                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_13                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_14                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_15                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_16                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_17                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_18                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_19                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_2                                        c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_20                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_21                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_22                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_23                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_24                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_25                                       c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_3                                        c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_4                                        ./src/olwen.o
+                                                  c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_5                                        c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_6                                        c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_7                                        c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_8                                        c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_9                                        c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vector_default                                  c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+__vectors                                         c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+_exit                                             c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+exit                                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+                                                  c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o
+main                                              ./src/olwen.o
+                                                  c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm88.o

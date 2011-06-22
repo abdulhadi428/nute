@@ -1,0 +1,2912 @@
+
+mielofon.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00001328  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bss          00000034  00800100  00800100  0000139c  2**0
+                  ALLOC
+  2 .stab         00001e54  00000000  00000000  0000139c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  3 .stabstr      000010f1  00000000  00000000  000031f0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+       0:	ab c0       	rjmp	.+342    	; 0x158 <__ctors_end>
+       2:	81 c3       	rjmp	.+1794   	; 0x706 <__vector_1>
+       4:	b9 c0       	rjmp	.+370    	; 0x178 <__bad_interrupt>
+       6:	b8 c0       	rjmp	.+368    	; 0x178 <__bad_interrupt>
+       8:	cf c8       	rjmp	.-3682   	; 0xfffff1a8 <__eeprom_end+0xff7ef1a8>
+       a:	b6 c0       	rjmp	.+364    	; 0x178 <__bad_interrupt>
+       c:	b5 c0       	rjmp	.+362    	; 0x178 <__bad_interrupt>
+       e:	b4 c0       	rjmp	.+360    	; 0x178 <__bad_interrupt>
+      10:	b3 c0       	rjmp	.+358    	; 0x178 <__bad_interrupt>
+      12:	b2 c0       	rjmp	.+356    	; 0x178 <__bad_interrupt>
+      14:	b1 c0       	rjmp	.+354    	; 0x178 <__bad_interrupt>
+      16:	69 c9       	rjmp	.-3374   	; 0xfffff2ea <__eeprom_end+0xff7ef2ea>
+      18:	af c0       	rjmp	.+350    	; 0x178 <__bad_interrupt>
+      1a:	ae c0       	rjmp	.+348    	; 0x178 <__bad_interrupt>
+      1c:	ad c0       	rjmp	.+346    	; 0x178 <__bad_interrupt>
+      1e:	ac c0       	rjmp	.+344    	; 0x178 <__bad_interrupt>
+      20:	ab c0       	rjmp	.+342    	; 0x178 <__bad_interrupt>
+      22:	aa c0       	rjmp	.+340    	; 0x178 <__bad_interrupt>
+      24:	a9 c0       	rjmp	.+338    	; 0x178 <__bad_interrupt>
+      26:	a8 c0       	rjmp	.+336    	; 0x178 <__bad_interrupt>
+      28:	a7 c0       	rjmp	.+334    	; 0x178 <__bad_interrupt>
+      2a:	a6 c0       	rjmp	.+332    	; 0x178 <__bad_interrupt>
+      2c:	a5 c0       	rjmp	.+330    	; 0x178 <__bad_interrupt>
+      2e:	a4 c0       	rjmp	.+328    	; 0x178 <__bad_interrupt>
+      30:	a3 c0       	rjmp	.+326    	; 0x178 <__bad_interrupt>
+      32:	a2 c0       	rjmp	.+324    	; 0x178 <__bad_interrupt>
+
+00000034 <ColorTable>:
+      34:	ff ff 87 ff ff 36 ff ff 12 ff ff 00 87 87 00 ff     .....6..........
+      44:	87 12 ff 87 00 ff 87 36 87 36 00 87 36 12 87 12     .......6.6..6...
+      54:	00 87 00 00 ff 87 87 ff 36 36 ff 12 36 ff 12 12     ........66..6...
+      64:	ff 36 12 ff 36 00 ff 12 00 ff 00 00 87 36 36 87     .6..6........66.
+      74:	12 12 ff 36 87 ff 00 36 87 00 12 ff 12 87 87 12     ...6...6........
+      84:	36 87 00 36 ff 87 ff ff 36 ff ff 12 ff ff 00 ff     6..6....6.......
+      94:	ff 00 87 87 36 87 87 12 87 87 00 87 87 12 ff 87     ....6...........
+      a4:	00 ff 36 00 87 87 36 ff 36 12 87 36 12 ff 36 00     ..6...6.6..6..6.
+      b4:	ff 12 00 ff 12 00 87 87 87 ff 36 36 ff 36 36 87     ..........66.66.
+      c4:	12 12 ff 12 12 87 12 36 ff 36 87 ff 00 36 ff 00     .......6.6...6..
+      d4:	12 87 00 00 87 00 00 ff 00 12 ff 12 36 87 00 36     ............6..6
+      e4:	87 36 87 87 12 87 87 87 ff ff 36 ff ff 12 ff ff     .6........6.....
+      f4:	00 ff ff 12 87 ff 00 87 ff 00 87 87 87 ff 87 36     ...............6
+     104:	ff 87 12 ff 87 00 ff 87 12 ff 36 36 ff 36 36 ff     ..........66.66.
+     114:	12 12 ff 12 00 ff 36 00 ff 12 00 ff 00 12 ff 00     ......6.........
+     124:	36 ff 00 36 87 36 12 87 12 00 87 00 00 87 12 00     6..6.6..........
+     134:	87 36 12 87 36 87 ff 36 87 ff 12 87 ff 00 36 87     .6..6..6......6.
+     144:	00 36 87 12 12 87 00 87 87 12 87 87 36 87 87 87     .6..........6...
+     154:	ff ff ff 00                                         ....
+
+00000158 <__ctors_end>:
+     158:	11 24       	eor	r1, r1
+     15a:	1f be       	out	0x3f, r1	; 63
+     15c:	cf ef       	ldi	r28, 0xFF	; 255
+     15e:	d4 e0       	ldi	r29, 0x04	; 4
+     160:	de bf       	out	0x3e, r29	; 62
+     162:	cd bf       	out	0x3d, r28	; 61
+
+00000164 <__do_clear_bss>:
+     164:	11 e0       	ldi	r17, 0x01	; 1
+     166:	a0 e0       	ldi	r26, 0x00	; 0
+     168:	b1 e0       	ldi	r27, 0x01	; 1
+     16a:	01 c0       	rjmp	.+2      	; 0x16e <.do_clear_bss_start>
+
+0000016c <.do_clear_bss_loop>:
+     16c:	1d 92       	st	X+, r1
+
+0000016e <.do_clear_bss_start>:
+     16e:	a4 33       	cpi	r26, 0x34	; 52
+     170:	b1 07       	cpc	r27, r17
+     172:	e1 f7       	brne	.-8      	; 0x16c <.do_clear_bss_loop>
+     174:	33 d3       	rcall	.+1638   	; 0x7dc <main>
+     176:	d6 c8       	rjmp	.-3668   	; 0xfffff324 <__eeprom_end+0xff7ef324>
+
+00000178 <__bad_interrupt>:
+     178:	43 cf       	rjmp	.-378    	; 0x0 <__vectors>
+
+0000017a <CC_Init>:
+#define CC_IOCFG0_VALUE     0x06        // GDO0 - Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
+#endif
+
+struct CC_t CC;
+
+void CC_Init(void){
+     17a:	df 93       	push	r29
+     17c:	cf 93       	push	r28
+     17e:	cd b7       	in	r28, 0x3d	; 61
+     180:	de b7       	in	r29, 0x3e	; 62
+    // ******** Hardware init section *******
+    // Interrupts
+    CC_GDO0_IRQ_DISABLE();
+     182:	ad e3       	ldi	r26, 0x3D	; 61
+     184:	b0 e0       	ldi	r27, 0x00	; 0
+     186:	ed e3       	ldi	r30, 0x3D	; 61
+     188:	f0 e0       	ldi	r31, 0x00	; 0
+     18a:	80 81       	ld	r24, Z
+     18c:	8e 7f       	andi	r24, 0xFE	; 254
+     18e:	8c 93       	st	X, r24
+    EICRA |= (1<<ISC01)|(1<<ISC00); // Rising edge generates an interrupt
+     190:	a9 e6       	ldi	r26, 0x69	; 105
+     192:	b0 e0       	ldi	r27, 0x00	; 0
+     194:	e9 e6       	ldi	r30, 0x69	; 105
+     196:	f0 e0       	ldi	r31, 0x00	; 0
+     198:	80 81       	ld	r24, Z
+     19a:	83 60       	ori	r24, 0x03	; 3
+     19c:	8c 93       	st	X, r24
+    EIFR  |= (1<<INTF0);            // Clear IRQ flag
+     19e:	ac e3       	ldi	r26, 0x3C	; 60
+     1a0:	b0 e0       	ldi	r27, 0x00	; 0
+     1a2:	ec e3       	ldi	r30, 0x3C	; 60
+     1a4:	f0 e0       	ldi	r31, 0x00	; 0
+     1a6:	80 81       	ld	r24, Z
+     1a8:	81 60       	ori	r24, 0x01	; 1
+     1aa:	8c 93       	st	X, r24
+
+    // Setup ports
+    CC_DDR  &= ~((1<<CC_GDO0)|(1<<CC_MISO));
+     1ac:	aa e2       	ldi	r26, 0x2A	; 42
+     1ae:	b0 e0       	ldi	r27, 0x00	; 0
+     1b0:	ea e2       	ldi	r30, 0x2A	; 42
+     1b2:	f0 e0       	ldi	r31, 0x00	; 0
+     1b4:	80 81       	ld	r24, Z
+     1b6:	8a 7f       	andi	r24, 0xFA	; 250
+     1b8:	8c 93       	st	X, r24
+    CC_DDR  |=   (1<<CC_CS)|(1<<CC_MOSI)|(1<<CC_SCLK);
+     1ba:	aa e2       	ldi	r26, 0x2A	; 42
+     1bc:	b0 e0       	ldi	r27, 0x00	; 0
+     1be:	ea e2       	ldi	r30, 0x2A	; 42
+     1c0:	f0 e0       	ldi	r31, 0x00	; 0
+     1c2:	80 81       	ld	r24, Z
+     1c4:	82 69       	ori	r24, 0x92	; 146
+     1c6:	8c 93       	st	X, r24
+    CC_PORT |=   (1<<CC_GDO0)|(CC_MISO); // Enable pull-ups
+     1c8:	ab e2       	ldi	r26, 0x2B	; 43
+     1ca:	b0 e0       	ldi	r27, 0x00	; 0
+     1cc:	eb e2       	ldi	r30, 0x2B	; 43
+     1ce:	f0 e0       	ldi	r31, 0x00	; 0
+     1d0:	80 81       	ld	r24, Z
+     1d2:	84 60       	ori	r24, 0x04	; 4
+     1d4:	8c 93       	st	X, r24
+    // Set initial values
+    CC_SCLK_LO;
+     1d6:	ab e2       	ldi	r26, 0x2B	; 43
+     1d8:	b0 e0       	ldi	r27, 0x00	; 0
+     1da:	eb e2       	ldi	r30, 0x2B	; 43
+     1dc:	f0 e0       	ldi	r31, 0x00	; 0
+     1de:	80 81       	ld	r24, Z
+     1e0:	8f 7e       	andi	r24, 0xEF	; 239
+     1e2:	8c 93       	st	X, r24
+    CC_CS_HI;
+     1e4:	ab e2       	ldi	r26, 0x2B	; 43
+     1e6:	b0 e0       	ldi	r27, 0x00	; 0
+     1e8:	eb e2       	ldi	r30, 0x2B	; 43
+     1ea:	f0 e0       	ldi	r31, 0x00	; 0
+     1ec:	80 81       	ld	r24, Z
+     1ee:	80 68       	ori	r24, 0x80	; 128
+     1f0:	8c 93       	st	X, r24
+    // Setup SPI: MSB first, master, SCK idle low, f/4
+    //SPCR = (0<<SPIE)|(1<<SPE)|(0<<DORD)|(1<<MSTR)|(0<<CPOL)|(0<<CPHA)|(0<<SPR1)|(0<<SPR0);
+    //SPSR = (1<<SPI2X);
+    // Setup UART as SPI: all the same as above
+    UCSR0C = (1<<UMSEL01)|(1<<UMSEL00)|(0<<UDORD0)|(0<<UCPHA0)|(0<<UCPOL0);
+     1f2:	e2 ec       	ldi	r30, 0xC2	; 194
+     1f4:	f0 e0       	ldi	r31, 0x00	; 0
+     1f6:	80 ec       	ldi	r24, 0xC0	; 192
+     1f8:	80 83       	st	Z, r24
+    UCSR0B = (1<<TXEN0)|(1<<RXEN0);
+     1fa:	e1 ec       	ldi	r30, 0xC1	; 193
+     1fc:	f0 e0       	ldi	r31, 0x00	; 0
+     1fe:	88 e1       	ldi	r24, 0x18	; 24
+     200:	80 83       	st	Z, r24
+    UBRR0 = 1;
+     202:	e4 ec       	ldi	r30, 0xC4	; 196
+     204:	f0 e0       	ldi	r31, 0x00	; 0
+     206:	81 e0       	ldi	r24, 0x01	; 1
+     208:	90 e0       	ldi	r25, 0x00	; 0
+     20a:	91 83       	std	Z+1, r25	; 0x01
+     20c:	80 83       	st	Z, r24
+
+    // ******* Firmware init section *******
+    CC.NewPacketReceived = false;
+     20e:	10 92 13 01 	sts	0x0113, r1
+    CC_RESET();
+     212:	80 e3       	ldi	r24, 0x30	; 48
+     214:	ae d1       	rcall	.+860    	; 0x572 <CC_WriteStrobe>
+    CC_FLUSH_RX_FIFO();
+     216:	8a e3       	ldi	r24, 0x3A	; 58
+     218:	ac d1       	rcall	.+856    	; 0x572 <CC_WriteStrobe>
+    CC_RfConfig();
+     21a:	e6 d1       	rcall	.+972    	; 0x5e8 <CC_RfConfig>
+
+    //CC_GDO0_IRQ_ENABLE();
+}
+     21c:	cf 91       	pop	r28
+     21e:	df 91       	pop	r29
+     220:	08 95       	ret
+
+00000222 <CC_SetChannel>:
+
+FORCE_INLINE void CC_SetChannel(uint8_t AChannel){
+     222:	df 93       	push	r29
+     224:	cf 93       	push	r28
+     226:	0f 92       	push	r0
+     228:	cd b7       	in	r28, 0x3d	; 61
+     22a:	de b7       	in	r29, 0x3e	; 62
+     22c:	89 83       	std	Y+1, r24	; 0x01
+     22e:	02 c0       	rjmp	.+4      	; 0x234 <CC_SetChannel+0x12>
+    // CC must be in IDLE mode
+    while (CC.State != CC_STB_IDLE) CC_ENTER_IDLE();
+     230:	86 e3       	ldi	r24, 0x36	; 54
+     232:	9f d1       	rcall	.+830    	; 0x572 <CC_WriteStrobe>
+     234:	80 91 00 01 	lds	r24, 0x0100
+     238:	88 23       	and	r24, r24
+     23a:	d1 f7       	brne	.-12     	; 0x230 <CC_SetChannel+0xe>
+    // Now set channel
+    CC_WriteRegister(CC_CHANNR, AChannel);
+     23c:	8a e0       	ldi	r24, 0x0A	; 10
+     23e:	69 81       	ldd	r22, Y+1	; 0x01
+     240:	60 d1       	rcall	.+704    	; 0x502 <CC_WriteRegister>
+}
+     242:	0f 90       	pop	r0
+     244:	cf 91       	pop	r28
+     246:	df 91       	pop	r29
+     248:	08 95       	ret
+
+0000024a <CC_SetAddress>:
+
+FORCE_INLINE void CC_SetAddress(uint8_t AAddress) {
+     24a:	df 93       	push	r29
+     24c:	cf 93       	push	r28
+     24e:	0f 92       	push	r0
+     250:	cd b7       	in	r28, 0x3d	; 61
+     252:	de b7       	in	r29, 0x3e	; 62
+     254:	89 83       	std	Y+1, r24	; 0x01
+    CC_WriteRegister(CC_ADDR, AAddress);
+     256:	89 e0       	ldi	r24, 0x09	; 9
+     258:	69 81       	ldd	r22, Y+1	; 0x01
+     25a:	53 d1       	rcall	.+678    	; 0x502 <CC_WriteRegister>
+}
+     25c:	0f 90       	pop	r0
+     25e:	cf 91       	pop	r28
+     260:	df 91       	pop	r29
+     262:	08 95       	ret
+
+00000264 <CC_WriteBurst>:
+
+// ============================= Inner use =====================================
+void CC_WriteBurst(uint8_t ARegAddr, uint8_t *PData, uint8_t ALength){
+     264:	df 93       	push	r29
+     266:	cf 93       	push	r28
+     268:	cd b7       	in	r28, 0x3d	; 61
+     26a:	de b7       	in	r29, 0x3e	; 62
+     26c:	27 97       	sbiw	r28, 0x07	; 7
+     26e:	0f b6       	in	r0, 0x3f	; 63
+     270:	f8 94       	cli
+     272:	de bf       	out	0x3e, r29	; 62
+     274:	0f be       	out	0x3f, r0	; 63
+     276:	cd bf       	out	0x3d, r28	; 61
+     278:	8c 83       	std	Y+4, r24	; 0x04
+     27a:	7e 83       	std	Y+6, r23	; 0x06
+     27c:	6d 83       	std	Y+5, r22	; 0x05
+     27e:	4f 83       	std	Y+7, r20	; 0x07
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+     280:	ef e5       	ldi	r30, 0x5F	; 95
+     282:	f0 e0       	ldi	r31, 0x00	; 0
+     284:	80 81       	ld	r24, Z
+     286:	8b 83       	std	Y+3, r24	; 0x03
+     288:	3f d0       	rcall	.+126    	; 0x308 <__iCliRetVal>
+     28a:	8a 83       	std	Y+2, r24	; 0x02
+     28c:	2e c0       	rjmp	.+92     	; 0x2ea <CC_WriteBurst+0x86>
+        CC_CS_LO;                                                   // Start transmission
+     28e:	ab e2       	ldi	r26, 0x2B	; 43
+     290:	b0 e0       	ldi	r27, 0x00	; 0
+     292:	eb e2       	ldi	r30, 0x2B	; 43
+     294:	f0 e0       	ldi	r31, 0x00	; 0
+     296:	80 81       	ld	r24, Z
+     298:	8f 77       	andi	r24, 0x7F	; 127
+     29a:	8c 93       	st	X, r24
+        while (CC_MISO_IS_HI());                                      // Wait for chip to become ready
+     29c:	e9 e2       	ldi	r30, 0x29	; 41
+     29e:	f0 e0       	ldi	r31, 0x00	; 0
+     2a0:	80 81       	ld	r24, Z
+     2a2:	88 2f       	mov	r24, r24
+     2a4:	90 e0       	ldi	r25, 0x00	; 0
+     2a6:	81 70       	andi	r24, 0x01	; 1
+     2a8:	90 70       	andi	r25, 0x00	; 0
+     2aa:	88 23       	and	r24, r24
+     2ac:	b9 f7       	brne	.-18     	; 0x29c <CC_WriteBurst+0x38>
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+     2ae:	8c 81       	ldd	r24, Y+4	; 0x04
+     2b0:	80 64       	ori	r24, 0x40	; 64
+     2b2:	10 d2       	rcall	.+1056   	; 0x6d4 <CC_ReadWriteByte>
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(*PData++);   // Write bytes themselves
+     2b4:	19 82       	std	Y+1, r1	; 0x01
+     2b6:	0d c0       	rjmp	.+26     	; 0x2d2 <CC_WriteBurst+0x6e>
+     2b8:	ed 81       	ldd	r30, Y+5	; 0x05
+     2ba:	fe 81       	ldd	r31, Y+6	; 0x06
+     2bc:	20 81       	ld	r18, Z
+     2be:	8d 81       	ldd	r24, Y+5	; 0x05
+     2c0:	9e 81       	ldd	r25, Y+6	; 0x06
+     2c2:	01 96       	adiw	r24, 0x01	; 1
+     2c4:	9e 83       	std	Y+6, r25	; 0x06
+     2c6:	8d 83       	std	Y+5, r24	; 0x05
+     2c8:	82 2f       	mov	r24, r18
+     2ca:	04 d2       	rcall	.+1032   	; 0x6d4 <CC_ReadWriteByte>
+     2cc:	89 81       	ldd	r24, Y+1	; 0x01
+     2ce:	8f 5f       	subi	r24, 0xFF	; 255
+     2d0:	89 83       	std	Y+1, r24	; 0x01
+     2d2:	99 81       	ldd	r25, Y+1	; 0x01
+     2d4:	8f 81       	ldd	r24, Y+7	; 0x07
+     2d6:	98 17       	cp	r25, r24
+     2d8:	78 f3       	brcs	.-34     	; 0x2b8 <CC_WriteBurst+0x54>
+        CC_CS_HI;                                                   // End transmission
+     2da:	ab e2       	ldi	r26, 0x2B	; 43
+     2dc:	b0 e0       	ldi	r27, 0x00	; 0
+     2de:	eb e2       	ldi	r30, 0x2B	; 43
+     2e0:	f0 e0       	ldi	r31, 0x00	; 0
+     2e2:	80 81       	ld	r24, Z
+     2e4:	80 68       	ori	r24, 0x80	; 128
+     2e6:	8c 93       	st	X, r24
+    CC_WriteRegister(CC_ADDR, AAddress);
+}
+
+// ============================= Inner use =====================================
+void CC_WriteBurst(uint8_t ARegAddr, uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+     2e8:	1a 82       	std	Y+2, r1	; 0x02
+     2ea:	8a 81       	ldd	r24, Y+2	; 0x02
+     2ec:	88 23       	and	r24, r24
+     2ee:	79 f6       	brne	.-98     	; 0x28e <CC_WriteBurst+0x2a>
+     2f0:	ce 01       	movw	r24, r28
+     2f2:	03 96       	adiw	r24, 0x03	; 3
+     2f4:	12 d0       	rcall	.+36     	; 0x31a <__iRestore>
+        while (CC_MISO_IS_HI());                                      // Wait for chip to become ready
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(*PData++);   // Write bytes themselves
+        CC_CS_HI;                                                   // End transmission
+    } // atomic
+}
+     2f6:	27 96       	adiw	r28, 0x07	; 7
+     2f8:	0f b6       	in	r0, 0x3f	; 63
+     2fa:	f8 94       	cli
+     2fc:	de bf       	out	0x3e, r29	; 62
+     2fe:	0f be       	out	0x3f, r0	; 63
+     300:	cd bf       	out	0x3d, r28	; 61
+     302:	cf 91       	pop	r28
+     304:	df 91       	pop	r29
+     306:	08 95       	ret
+
+00000308 <__iCliRetVal>:
+    sei();
+    return 1;
+}
+
+static __inline__ uint8_t __iCliRetVal(void)
+{
+     308:	df 93       	push	r29
+     30a:	cf 93       	push	r28
+     30c:	cd b7       	in	r28, 0x3d	; 61
+     30e:	de b7       	in	r29, 0x3e	; 62
+    cli();
+     310:	f8 94       	cli
+    return 1;
+     312:	81 e0       	ldi	r24, 0x01	; 1
+}
+     314:	cf 91       	pop	r28
+     316:	df 91       	pop	r29
+     318:	08 95       	ret
+
+0000031a <__iRestore>:
+    __asm__ volatile ("" ::: "memory");
+    (void)__s;
+}
+
+static __inline__ void __iRestore(const  uint8_t *__s)
+{
+     31a:	df 93       	push	r29
+     31c:	cf 93       	push	r28
+     31e:	00 d0       	rcall	.+0      	; 0x320 <__iRestore+0x6>
+     320:	cd b7       	in	r28, 0x3d	; 61
+     322:	de b7       	in	r29, 0x3e	; 62
+     324:	9a 83       	std	Y+2, r25	; 0x02
+     326:	89 83       	std	Y+1, r24	; 0x01
+    SREG = *__s;
+     328:	ef e5       	ldi	r30, 0x5F	; 95
+     32a:	f0 e0       	ldi	r31, 0x00	; 0
+     32c:	a9 81       	ldd	r26, Y+1	; 0x01
+     32e:	ba 81       	ldd	r27, Y+2	; 0x02
+     330:	8c 91       	ld	r24, X
+     332:	80 83       	st	Z, r24
+    __asm__ volatile ("" ::: "memory");
+}
+     334:	0f 90       	pop	r0
+     336:	0f 90       	pop	r0
+     338:	cf 91       	pop	r28
+     33a:	df 91       	pop	r29
+     33c:	08 95       	ret
+
+0000033e <CC_WriteBurst_P>:
+void CC_WriteBurst_P(uint8_t ARegAddr, prog_uint8_t *PData, uint8_t ALength){
+     33e:	df 93       	push	r29
+     340:	cf 93       	push	r28
+     342:	cd b7       	in	r28, 0x3d	; 61
+     344:	de b7       	in	r29, 0x3e	; 62
+     346:	2a 97       	sbiw	r28, 0x0a	; 10
+     348:	0f b6       	in	r0, 0x3f	; 63
+     34a:	f8 94       	cli
+     34c:	de bf       	out	0x3e, r29	; 62
+     34e:	0f be       	out	0x3f, r0	; 63
+     350:	cd bf       	out	0x3d, r28	; 61
+     352:	8f 83       	std	Y+7, r24	; 0x07
+     354:	79 87       	std	Y+9, r23	; 0x09
+     356:	68 87       	std	Y+8, r22	; 0x08
+     358:	4a 87       	std	Y+10, r20	; 0x0a
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+     35a:	ef e5       	ldi	r30, 0x5F	; 95
+     35c:	f0 e0       	ldi	r31, 0x00	; 0
+     35e:	80 81       	ld	r24, Z
+     360:	8e 83       	std	Y+6, r24	; 0x06
+     362:	d2 df       	rcall	.-92     	; 0x308 <__iCliRetVal>
+     364:	8d 83       	std	Y+5, r24	; 0x05
+     366:	33 c0       	rjmp	.+102    	; 0x3ce <CC_WriteBurst_P+0x90>
+        CC_CS_LO;                                                   // Start transmission
+     368:	ab e2       	ldi	r26, 0x2B	; 43
+     36a:	b0 e0       	ldi	r27, 0x00	; 0
+     36c:	eb e2       	ldi	r30, 0x2B	; 43
+     36e:	f0 e0       	ldi	r31, 0x00	; 0
+     370:	80 81       	ld	r24, Z
+     372:	8f 77       	andi	r24, 0x7F	; 127
+     374:	8c 93       	st	X, r24
+        while (CC_MISO_IS_HI());                                      // Wait for chip to become ready
+     376:	e9 e2       	ldi	r30, 0x29	; 41
+     378:	f0 e0       	ldi	r31, 0x00	; 0
+     37a:	80 81       	ld	r24, Z
+     37c:	88 2f       	mov	r24, r24
+     37e:	90 e0       	ldi	r25, 0x00	; 0
+     380:	81 70       	andi	r24, 0x01	; 1
+     382:	90 70       	andi	r25, 0x00	; 0
+     384:	88 23       	and	r24, r24
+     386:	b9 f7       	brne	.-18     	; 0x376 <CC_WriteBurst_P+0x38>
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+     388:	8f 81       	ldd	r24, Y+7	; 0x07
+     38a:	80 64       	ori	r24, 0x40	; 64
+     38c:	a3 d1       	rcall	.+838    	; 0x6d4 <CC_ReadWriteByte>
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(pgm_read_byte (PData++));   // Write bytes themselves
+     38e:	1c 82       	std	Y+4, r1	; 0x04
+     390:	12 c0       	rjmp	.+36     	; 0x3b6 <CC_WriteBurst_P+0x78>
+     392:	88 85       	ldd	r24, Y+8	; 0x08
+     394:	99 85       	ldd	r25, Y+9	; 0x09
+     396:	9b 83       	std	Y+3, r25	; 0x03
+     398:	8a 83       	std	Y+2, r24	; 0x02
+     39a:	88 85       	ldd	r24, Y+8	; 0x08
+     39c:	99 85       	ldd	r25, Y+9	; 0x09
+     39e:	01 96       	adiw	r24, 0x01	; 1
+     3a0:	99 87       	std	Y+9, r25	; 0x09
+     3a2:	88 87       	std	Y+8, r24	; 0x08
+     3a4:	ea 81       	ldd	r30, Y+2	; 0x02
+     3a6:	fb 81       	ldd	r31, Y+3	; 0x03
+     3a8:	84 91       	lpm	r24, Z+
+     3aa:	89 83       	std	Y+1, r24	; 0x01
+     3ac:	89 81       	ldd	r24, Y+1	; 0x01
+     3ae:	92 d1       	rcall	.+804    	; 0x6d4 <CC_ReadWriteByte>
+     3b0:	8c 81       	ldd	r24, Y+4	; 0x04
+     3b2:	8f 5f       	subi	r24, 0xFF	; 255
+     3b4:	8c 83       	std	Y+4, r24	; 0x04
+     3b6:	9c 81       	ldd	r25, Y+4	; 0x04
+     3b8:	8a 85       	ldd	r24, Y+10	; 0x0a
+     3ba:	98 17       	cp	r25, r24
+     3bc:	50 f3       	brcs	.-44     	; 0x392 <CC_WriteBurst_P+0x54>
+        CC_CS_HI;                                                   // End transmission
+     3be:	ab e2       	ldi	r26, 0x2B	; 43
+     3c0:	b0 e0       	ldi	r27, 0x00	; 0
+     3c2:	eb e2       	ldi	r30, 0x2B	; 43
+     3c4:	f0 e0       	ldi	r31, 0x00	; 0
+     3c6:	80 81       	ld	r24, Z
+     3c8:	80 68       	ori	r24, 0x80	; 128
+     3ca:	8c 93       	st	X, r24
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(*PData++);   // Write bytes themselves
+        CC_CS_HI;                                                   // End transmission
+    } // atomic
+}
+void CC_WriteBurst_P(uint8_t ARegAddr, prog_uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+     3cc:	1d 82       	std	Y+5, r1	; 0x05
+     3ce:	8d 81       	ldd	r24, Y+5	; 0x05
+     3d0:	88 23       	and	r24, r24
+     3d2:	51 f6       	brne	.-108    	; 0x368 <CC_WriteBurst_P+0x2a>
+     3d4:	ce 01       	movw	r24, r28
+     3d6:	06 96       	adiw	r24, 0x06	; 6
+     3d8:	a0 df       	rcall	.-192    	; 0x31a <__iRestore>
+        while (CC_MISO_IS_HI());                                      // Wait for chip to become ready
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(pgm_read_byte (PData++));   // Write bytes themselves
+        CC_CS_HI;                                                   // End transmission
+    } // atomic
+}
+     3da:	2a 96       	adiw	r28, 0x0a	; 10
+     3dc:	0f b6       	in	r0, 0x3f	; 63
+     3de:	f8 94       	cli
+     3e0:	de bf       	out	0x3e, r29	; 62
+     3e2:	0f be       	out	0x3f, r0	; 63
+     3e4:	cd bf       	out	0x3d, r28	; 61
+     3e6:	cf 91       	pop	r28
+     3e8:	df 91       	pop	r29
+     3ea:	08 95       	ret
+
+000003ec <CC_WriteTX>:
+
+void CC_WriteTX (uint8_t *PData, uint8_t ALength){
+     3ec:	df 93       	push	r29
+     3ee:	cf 93       	push	r28
+     3f0:	00 d0       	rcall	.+0      	; 0x3f2 <CC_WriteTX+0x6>
+     3f2:	0f 92       	push	r0
+     3f4:	cd b7       	in	r28, 0x3d	; 61
+     3f6:	de b7       	in	r29, 0x3e	; 62
+     3f8:	9a 83       	std	Y+2, r25	; 0x02
+     3fa:	89 83       	std	Y+1, r24	; 0x01
+     3fc:	6b 83       	std	Y+3, r22	; 0x03
+    CC_WriteBurst(CC_FIFO, PData, ALength);
+     3fe:	29 81       	ldd	r18, Y+1	; 0x01
+     400:	3a 81       	ldd	r19, Y+2	; 0x02
+     402:	8f e3       	ldi	r24, 0x3F	; 63
+     404:	b9 01       	movw	r22, r18
+     406:	4b 81       	ldd	r20, Y+3	; 0x03
+     408:	2d df       	rcall	.-422    	; 0x264 <CC_WriteBurst>
+}
+     40a:	0f 90       	pop	r0
+     40c:	0f 90       	pop	r0
+     40e:	0f 90       	pop	r0
+     410:	cf 91       	pop	r28
+     412:	df 91       	pop	r29
+     414:	08 95       	ret
+
+00000416 <CC_ReadRX>:
+FORCE_INLINE void CC_ReadRX  (uint8_t *PData, uint8_t ALength){
+     416:	df 93       	push	r29
+     418:	cf 93       	push	r28
+     41a:	00 d0       	rcall	.+0      	; 0x41c <CC_ReadRX+0x6>
+     41c:	00 d0       	rcall	.+0      	; 0x41e <CC_ReadRX+0x8>
+     41e:	cd b7       	in	r28, 0x3d	; 61
+     420:	de b7       	in	r29, 0x3e	; 62
+     422:	9b 83       	std	Y+3, r25	; 0x03
+     424:	8a 83       	std	Y+2, r24	; 0x02
+     426:	6c 83       	std	Y+4, r22	; 0x04
+    CC_CS_LO;                                                   // Start transmission
+     428:	ab e2       	ldi	r26, 0x2B	; 43
+     42a:	b0 e0       	ldi	r27, 0x00	; 0
+     42c:	eb e2       	ldi	r30, 0x2B	; 43
+     42e:	f0 e0       	ldi	r31, 0x00	; 0
+     430:	80 81       	ld	r24, Z
+     432:	8f 77       	andi	r24, 0x7F	; 127
+     434:	8c 93       	st	X, r24
+    while (CC_MISO_IS_HI());                                      // Wait for chip to become ready
+     436:	e9 e2       	ldi	r30, 0x29	; 41
+     438:	f0 e0       	ldi	r31, 0x00	; 0
+     43a:	80 81       	ld	r24, Z
+     43c:	88 2f       	mov	r24, r24
+     43e:	90 e0       	ldi	r25, 0x00	; 0
+     440:	81 70       	andi	r24, 0x01	; 1
+     442:	90 70       	andi	r25, 0x00	; 0
+     444:	88 23       	and	r24, r24
+     446:	b9 f7       	brne	.-18     	; 0x436 <CC_ReadRX+0x20>
+    CC_WriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);           // Address with read & burst flags
+     448:	8f ef       	ldi	r24, 0xFF	; 255
+     44a:	44 d1       	rcall	.+648    	; 0x6d4 <CC_ReadWriteByte>
+    for (uint8_t i=0; i<ALength; i++) *PData++ = CC_ReadByte(); // Write bytes themselves
+     44c:	19 82       	std	Y+1, r1	; 0x01
+     44e:	0d c0       	rjmp	.+26     	; 0x46a <CC_ReadRX+0x54>
+     450:	80 e0       	ldi	r24, 0x00	; 0
+     452:	40 d1       	rcall	.+640    	; 0x6d4 <CC_ReadWriteByte>
+     454:	ea 81       	ldd	r30, Y+2	; 0x02
+     456:	fb 81       	ldd	r31, Y+3	; 0x03
+     458:	80 83       	st	Z, r24
+     45a:	8a 81       	ldd	r24, Y+2	; 0x02
+     45c:	9b 81       	ldd	r25, Y+3	; 0x03
+     45e:	01 96       	adiw	r24, 0x01	; 1
+     460:	9b 83       	std	Y+3, r25	; 0x03
+     462:	8a 83       	std	Y+2, r24	; 0x02
+     464:	89 81       	ldd	r24, Y+1	; 0x01
+     466:	8f 5f       	subi	r24, 0xFF	; 255
+     468:	89 83       	std	Y+1, r24	; 0x01
+     46a:	99 81       	ldd	r25, Y+1	; 0x01
+     46c:	8c 81       	ldd	r24, Y+4	; 0x04
+     46e:	98 17       	cp	r25, r24
+     470:	78 f3       	brcs	.-34     	; 0x450 <CC_ReadRX+0x3a>
+    CC_CS_HI;                                                   // End transmission
+     472:	ab e2       	ldi	r26, 0x2B	; 43
+     474:	b0 e0       	ldi	r27, 0x00	; 0
+     476:	eb e2       	ldi	r30, 0x2B	; 43
+     478:	f0 e0       	ldi	r31, 0x00	; 0
+     47a:	80 81       	ld	r24, Z
+     47c:	80 68       	ori	r24, 0x80	; 128
+     47e:	8c 93       	st	X, r24
+}
+     480:	0f 90       	pop	r0
+     482:	0f 90       	pop	r0
+     484:	0f 90       	pop	r0
+     486:	0f 90       	pop	r0
+     488:	cf 91       	pop	r28
+     48a:	df 91       	pop	r29
+     48c:	08 95       	ret
+
+0000048e <CC_ReadRegister>:
+
+uint8_t CC_ReadRegister (uint8_t ARegAddr){
+     48e:	df 93       	push	r29
+     490:	cf 93       	push	r28
+     492:	00 d0       	rcall	.+0      	; 0x494 <CC_ReadRegister+0x6>
+     494:	00 d0       	rcall	.+0      	; 0x496 <CC_ReadRegister+0x8>
+     496:	cd b7       	in	r28, 0x3d	; 61
+     498:	de b7       	in	r29, 0x3e	; 62
+     49a:	8c 83       	std	Y+4, r24	; 0x04
+    uint8_t FReply;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+     49c:	ef e5       	ldi	r30, 0x5F	; 95
+     49e:	f0 e0       	ldi	r31, 0x00	; 0
+     4a0:	80 81       	ld	r24, Z
+     4a2:	8b 83       	std	Y+3, r24	; 0x03
+     4a4:	31 df       	rcall	.-414    	; 0x308 <__iCliRetVal>
+     4a6:	89 83       	std	Y+1, r24	; 0x01
+     4a8:	1e c0       	rjmp	.+60     	; 0x4e6 <CC_ReadRegister+0x58>
+        CC_CS_LO;                               // Start transmission
+     4aa:	ab e2       	ldi	r26, 0x2B	; 43
+     4ac:	b0 e0       	ldi	r27, 0x00	; 0
+     4ae:	eb e2       	ldi	r30, 0x2B	; 43
+     4b0:	f0 e0       	ldi	r31, 0x00	; 0
+     4b2:	80 81       	ld	r24, Z
+     4b4:	8f 77       	andi	r24, 0x7F	; 127
+     4b6:	8c 93       	st	X, r24
+        while (CC_MISO_IS_HI());                // Wait for chip to become ready
+     4b8:	e9 e2       	ldi	r30, 0x29	; 41
+     4ba:	f0 e0       	ldi	r31, 0x00	; 0
+     4bc:	80 81       	ld	r24, Z
+     4be:	88 2f       	mov	r24, r24
+     4c0:	90 e0       	ldi	r25, 0x00	; 0
+     4c2:	81 70       	andi	r24, 0x01	; 1
+     4c4:	90 70       	andi	r25, 0x00	; 0
+     4c6:	88 23       	and	r24, r24
+     4c8:	b9 f7       	brne	.-18     	; 0x4b8 <CC_ReadRegister+0x2a>
+        CC_WriteByte(ARegAddr | CC_READ_FLAG);  // Transmit header byte: set READ bit and BURST flag
+     4ca:	8c 81       	ldd	r24, Y+4	; 0x04
+     4cc:	80 68       	ori	r24, 0x80	; 128
+     4ce:	02 d1       	rcall	.+516    	; 0x6d4 <CC_ReadWriteByte>
+        FReply = CC_ReadByte();         // Read reply
+     4d0:	80 e0       	ldi	r24, 0x00	; 0
+     4d2:	00 d1       	rcall	.+512    	; 0x6d4 <CC_ReadWriteByte>
+     4d4:	8a 83       	std	Y+2, r24	; 0x02
+        CC_CS_HI;                               // End transmission
+     4d6:	ab e2       	ldi	r26, 0x2B	; 43
+     4d8:	b0 e0       	ldi	r27, 0x00	; 0
+     4da:	eb e2       	ldi	r30, 0x2B	; 43
+     4dc:	f0 e0       	ldi	r31, 0x00	; 0
+     4de:	80 81       	ld	r24, Z
+     4e0:	80 68       	ori	r24, 0x80	; 128
+     4e2:	8c 93       	st	X, r24
+    CC_CS_HI;                                                   // End transmission
+}
+
+uint8_t CC_ReadRegister (uint8_t ARegAddr){
+    uint8_t FReply;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+     4e4:	19 82       	std	Y+1, r1	; 0x01
+     4e6:	89 81       	ldd	r24, Y+1	; 0x01
+     4e8:	88 23       	and	r24, r24
+     4ea:	f9 f6       	brne	.-66     	; 0x4aa <CC_ReadRegister+0x1c>
+     4ec:	ce 01       	movw	r24, r28
+     4ee:	03 96       	adiw	r24, 0x03	; 3
+     4f0:	14 df       	rcall	.-472    	; 0x31a <__iRestore>
+        while (CC_MISO_IS_HI());                // Wait for chip to become ready
+        CC_WriteByte(ARegAddr | CC_READ_FLAG);  // Transmit header byte: set READ bit and BURST flag
+        FReply = CC_ReadByte();         // Read reply
+        CC_CS_HI;                               // End transmission
+    }//atomic
+    return FReply;
+     4f2:	8a 81       	ldd	r24, Y+2	; 0x02
+}
+     4f4:	0f 90       	pop	r0
+     4f6:	0f 90       	pop	r0
+     4f8:	0f 90       	pop	r0
+     4fa:	0f 90       	pop	r0
+     4fc:	cf 91       	pop	r28
+     4fe:	df 91       	pop	r29
+     500:	08 95       	ret
+
+00000502 <CC_WriteRegister>:
+void CC_WriteRegister (uint8_t ARegAddr, uint8_t AData){
+     502:	df 93       	push	r29
+     504:	cf 93       	push	r28
+     506:	00 d0       	rcall	.+0      	; 0x508 <CC_WriteRegister+0x6>
+     508:	00 d0       	rcall	.+0      	; 0x50a <CC_WriteRegister+0x8>
+     50a:	cd b7       	in	r28, 0x3d	; 61
+     50c:	de b7       	in	r29, 0x3e	; 62
+     50e:	8b 83       	std	Y+3, r24	; 0x03
+     510:	6c 83       	std	Y+4, r22	; 0x04
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+     512:	ef e5       	ldi	r30, 0x5F	; 95
+     514:	f0 e0       	ldi	r31, 0x00	; 0
+     516:	80 81       	ld	r24, Z
+     518:	8a 83       	std	Y+2, r24	; 0x02
+     51a:	f6 de       	rcall	.-532    	; 0x308 <__iCliRetVal>
+     51c:	89 83       	std	Y+1, r24	; 0x01
+     51e:	1c c0       	rjmp	.+56     	; 0x558 <CC_WriteRegister+0x56>
+        CC_CS_LO;               // Start transmission
+     520:	ab e2       	ldi	r26, 0x2B	; 43
+     522:	b0 e0       	ldi	r27, 0x00	; 0
+     524:	eb e2       	ldi	r30, 0x2B	; 43
+     526:	f0 e0       	ldi	r31, 0x00	; 0
+     528:	80 81       	ld	r24, Z
+     52a:	8f 77       	andi	r24, 0x7F	; 127
+     52c:	8c 93       	st	X, r24
+        while (CC_MISO_IS_HI());// Wait for chip to become ready
+     52e:	e9 e2       	ldi	r30, 0x29	; 41
+     530:	f0 e0       	ldi	r31, 0x00	; 0
+     532:	80 81       	ld	r24, Z
+     534:	88 2f       	mov	r24, r24
+     536:	90 e0       	ldi	r25, 0x00	; 0
+     538:	81 70       	andi	r24, 0x01	; 1
+     53a:	90 70       	andi	r25, 0x00	; 0
+     53c:	88 23       	and	r24, r24
+     53e:	b9 f7       	brne	.-18     	; 0x52e <CC_WriteRegister+0x2c>
+        CC_WriteByte(ARegAddr); // Transmit header byte
+     540:	8b 81       	ldd	r24, Y+3	; 0x03
+     542:	c8 d0       	rcall	.+400    	; 0x6d4 <CC_ReadWriteByte>
+        CC_WriteByte(AData);    // Write data
+     544:	8c 81       	ldd	r24, Y+4	; 0x04
+     546:	c6 d0       	rcall	.+396    	; 0x6d4 <CC_ReadWriteByte>
+        CC_CS_HI;               // End transmission
+     548:	ab e2       	ldi	r26, 0x2B	; 43
+     54a:	b0 e0       	ldi	r27, 0x00	; 0
+     54c:	eb e2       	ldi	r30, 0x2B	; 43
+     54e:	f0 e0       	ldi	r31, 0x00	; 0
+     550:	80 81       	ld	r24, Z
+     552:	80 68       	ori	r24, 0x80	; 128
+     554:	8c 93       	st	X, r24
+        CC_CS_HI;                               // End transmission
+    }//atomic
+    return FReply;
+}
+void CC_WriteRegister (uint8_t ARegAddr, uint8_t AData){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+     556:	19 82       	std	Y+1, r1	; 0x01
+     558:	89 81       	ldd	r24, Y+1	; 0x01
+     55a:	88 23       	and	r24, r24
+     55c:	09 f7       	brne	.-62     	; 0x520 <CC_WriteRegister+0x1e>
+     55e:	ce 01       	movw	r24, r28
+     560:	02 96       	adiw	r24, 0x02	; 2
+     562:	db de       	rcall	.-586    	; 0x31a <__iRestore>
+        while (CC_MISO_IS_HI());// Wait for chip to become ready
+        CC_WriteByte(ARegAddr); // Transmit header byte
+        CC_WriteByte(AData);    // Write data
+        CC_CS_HI;               // End transmission
+    }//atomic
+}
+     564:	0f 90       	pop	r0
+     566:	0f 90       	pop	r0
+     568:	0f 90       	pop	r0
+     56a:	0f 90       	pop	r0
+     56c:	cf 91       	pop	r28
+     56e:	df 91       	pop	r29
+     570:	08 95       	ret
+
+00000572 <CC_WriteStrobe>:
+void CC_WriteStrobe (uint8_t AStrobe){
+     572:	df 93       	push	r29
+     574:	cf 93       	push	r28
+     576:	00 d0       	rcall	.+0      	; 0x578 <CC_WriteStrobe+0x6>
+     578:	0f 92       	push	r0
+     57a:	cd b7       	in	r28, 0x3d	; 61
+     57c:	de b7       	in	r29, 0x3e	; 62
+     57e:	8b 83       	std	Y+3, r24	; 0x03
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+     580:	ef e5       	ldi	r30, 0x5F	; 95
+     582:	f0 e0       	ldi	r31, 0x00	; 0
+     584:	80 81       	ld	r24, Z
+     586:	8a 83       	std	Y+2, r24	; 0x02
+     588:	bf de       	rcall	.-642    	; 0x308 <__iCliRetVal>
+     58a:	89 83       	std	Y+1, r24	; 0x01
+     58c:	21 c0       	rjmp	.+66     	; 0x5d0 <CC_WriteStrobe+0x5e>
+        CC_CS_LO;               // Start transmission
+     58e:	ab e2       	ldi	r26, 0x2B	; 43
+     590:	b0 e0       	ldi	r27, 0x00	; 0
+     592:	eb e2       	ldi	r30, 0x2B	; 43
+     594:	f0 e0       	ldi	r31, 0x00	; 0
+     596:	80 81       	ld	r24, Z
+     598:	8f 77       	andi	r24, 0x7F	; 127
+     59a:	8c 93       	st	X, r24
+        while (CC_MISO_IS_HI());// Wait for chip to become ready
+     59c:	e9 e2       	ldi	r30, 0x29	; 41
+     59e:	f0 e0       	ldi	r31, 0x00	; 0
+     5a0:	80 81       	ld	r24, Z
+     5a2:	88 2f       	mov	r24, r24
+     5a4:	90 e0       	ldi	r25, 0x00	; 0
+     5a6:	81 70       	andi	r24, 0x01	; 1
+     5a8:	90 70       	andi	r25, 0x00	; 0
+     5aa:	88 23       	and	r24, r24
+     5ac:	b9 f7       	brne	.-18     	; 0x59c <CC_WriteStrobe+0x2a>
+        CC.State = CC_ReadWriteByte(AStrobe);  // Write strobe
+     5ae:	8b 81       	ldd	r24, Y+3	; 0x03
+     5b0:	91 d0       	rcall	.+290    	; 0x6d4 <CC_ReadWriteByte>
+     5b2:	80 93 00 01 	sts	0x0100, r24
+        CC_CS_HI;               // End transmission
+     5b6:	ab e2       	ldi	r26, 0x2B	; 43
+     5b8:	b0 e0       	ldi	r27, 0x00	; 0
+     5ba:	eb e2       	ldi	r30, 0x2B	; 43
+     5bc:	f0 e0       	ldi	r31, 0x00	; 0
+     5be:	80 81       	ld	r24, Z
+     5c0:	80 68       	ori	r24, 0x80	; 128
+     5c2:	8c 93       	st	X, r24
+        CC.State &= 0b01110000; // Mask needed bits
+     5c4:	80 91 00 01 	lds	r24, 0x0100
+     5c8:	80 77       	andi	r24, 0x70	; 112
+     5ca:	80 93 00 01 	sts	0x0100, r24
+        CC_WriteByte(AData);    // Write data
+        CC_CS_HI;               // End transmission
+    }//atomic
+}
+void CC_WriteStrobe (uint8_t AStrobe){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+     5ce:	19 82       	std	Y+1, r1	; 0x01
+     5d0:	89 81       	ldd	r24, Y+1	; 0x01
+     5d2:	88 23       	and	r24, r24
+     5d4:	e1 f6       	brne	.-72     	; 0x58e <CC_WriteStrobe+0x1c>
+     5d6:	ce 01       	movw	r24, r28
+     5d8:	02 96       	adiw	r24, 0x02	; 2
+     5da:	9f de       	rcall	.-706    	; 0x31a <__iRestore>
+        while (CC_MISO_IS_HI());// Wait for chip to become ready
+        CC.State = CC_ReadWriteByte(AStrobe);  // Write strobe
+        CC_CS_HI;               // End transmission
+        CC.State &= 0b01110000; // Mask needed bits
+    } // atomic
+}
+     5dc:	0f 90       	pop	r0
+     5de:	0f 90       	pop	r0
+     5e0:	0f 90       	pop	r0
+     5e2:	cf 91       	pop	r28
+     5e4:	df 91       	pop	r29
+     5e6:	08 95       	ret
+
+000005e8 <CC_RfConfig>:
+
+// **** Used to setup CC with needed values ****
+void CC_RfConfig(void){
+     5e8:	df 93       	push	r29
+     5ea:	cf 93       	push	r28
+     5ec:	cd b7       	in	r28, 0x3d	; 61
+     5ee:	de b7       	in	r29, 0x3e	; 62
+    CC_WriteRegister(CC_FSCTRL1,  CC_FSCTRL1_VALUE);    // Frequency synthesizer control.
+     5f0:	8b e0       	ldi	r24, 0x0B	; 11
+     5f2:	66 e0       	ldi	r22, 0x06	; 6
+     5f4:	86 df       	rcall	.-244    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSCTRL0,  CC_FSCTRL0_VALUE);    // Frequency synthesizer control.
+     5f6:	8c e0       	ldi	r24, 0x0C	; 12
+     5f8:	60 e0       	ldi	r22, 0x00	; 0
+     5fa:	83 df       	rcall	.-250    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FREQ2,    CC_FREQ2_VALUE);      // Frequency control word, high byte.
+     5fc:	8d e0       	ldi	r24, 0x0D	; 13
+     5fe:	6d e5       	ldi	r22, 0x5D	; 93
+     600:	80 df       	rcall	.-256    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FREQ1,    CC_FREQ1_VALUE);      // Frequency control word, middle byte.
+     602:	8e e0       	ldi	r24, 0x0E	; 14
+     604:	63 e9       	ldi	r22, 0x93	; 147
+     606:	7d df       	rcall	.-262    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FREQ0,    CC_FREQ0_VALUE);      // Frequency control word, low byte.
+     608:	8f e0       	ldi	r24, 0x0F	; 15
+     60a:	61 eb       	ldi	r22, 0xB1	; 177
+     60c:	7a df       	rcall	.-268    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_MDMCFG4,  CC_MDMCFG4_VALUE);    // Modem configuration.
+     60e:	80 e1       	ldi	r24, 0x10	; 16
+     610:	68 e7       	ldi	r22, 0x78	; 120
+     612:	77 df       	rcall	.-274    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_MDMCFG3,  CC_MDMCFG3_VALUE);    // Modem configuration.
+     614:	81 e1       	ldi	r24, 0x11	; 17
+     616:	63 e9       	ldi	r22, 0x93	; 147
+     618:	74 df       	rcall	.-280    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_MDMCFG2,  CC_MDMCFG2_VALUE);    // Modem configuration.
+     61a:	82 e1       	ldi	r24, 0x12	; 18
+     61c:	63 e0       	ldi	r22, 0x03	; 3
+     61e:	71 df       	rcall	.-286    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_MDMCFG1,  CC_MDMCFG1_VALUE);    // Modem configuration.
+     620:	83 e1       	ldi	r24, 0x13	; 19
+     622:	62 ea       	ldi	r22, 0xA2	; 162
+     624:	6e df       	rcall	.-292    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_MDMCFG0,  CC_MDMCFG0_VALUE);    // Modem configuration.
+     626:	84 e1       	ldi	r24, 0x14	; 20
+     628:	68 ef       	ldi	r22, 0xF8	; 248
+     62a:	6b df       	rcall	.-298    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_CHANNR,   CC_CHANNR_VALUE);     // Channel number.
+     62c:	8a e0       	ldi	r24, 0x0A	; 10
+     62e:	60 e0       	ldi	r22, 0x00	; 0
+     630:	68 df       	rcall	.-304    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_DEVIATN,  CC_DEVIATN_VALUE);    // Modem deviation setting (when FSK modulation is enabled).
+     632:	85 e1       	ldi	r24, 0x15	; 21
+     634:	64 e4       	ldi	r22, 0x44	; 68
+     636:	65 df       	rcall	.-310    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FREND1,   CC_FREND1_VALUE);     // Front end RX configuration.
+     638:	81 e2       	ldi	r24, 0x21	; 33
+     63a:	66 e5       	ldi	r22, 0x56	; 86
+     63c:	62 df       	rcall	.-316    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FREND0,   CC_FREND0_VALUE);     // Front end RX configuration.
+     63e:	82 e2       	ldi	r24, 0x22	; 34
+     640:	60 e1       	ldi	r22, 0x10	; 16
+     642:	5f df       	rcall	.-322    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_MCSM0,    CC_MCSM0_VALUE);      // Main Radio Control State Machine configuration.
+     644:	88 e1       	ldi	r24, 0x18	; 24
+     646:	68 e1       	ldi	r22, 0x18	; 24
+     648:	5c df       	rcall	.-328    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FOCCFG,   CC_FOCCFG_VALUE);     // Frequency Offset Compensation Configuration.
+     64a:	89 e1       	ldi	r24, 0x19	; 25
+     64c:	66 e1       	ldi	r22, 0x16	; 22
+     64e:	59 df       	rcall	.-334    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_BSCFG,    CC_BSCFG_VALUE);      // Bit synchronization Configuration.
+     650:	8a e1       	ldi	r24, 0x1A	; 26
+     652:	6c e6       	ldi	r22, 0x6C	; 108
+     654:	56 df       	rcall	.-340    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_AGCCTRL2, CC_AGCCTRL2_VALUE);   // AGC control.
+     656:	8b e1       	ldi	r24, 0x1B	; 27
+     658:	63 e4       	ldi	r22, 0x43	; 67
+     65a:	53 df       	rcall	.-346    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_AGCCTRL1, CC_AGCCTRL1_VALUE);   // AGC control.
+     65c:	8c e1       	ldi	r24, 0x1C	; 28
+     65e:	60 e4       	ldi	r22, 0x40	; 64
+     660:	50 df       	rcall	.-352    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_AGCCTRL0, CC_AGCCTRL0_VALUE);   // AGC control.
+     662:	8d e1       	ldi	r24, 0x1D	; 29
+     664:	61 e9       	ldi	r22, 0x91	; 145
+     666:	4d df       	rcall	.-358    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSCAL3,   CC_FSCAL3_VALUE);     // Frequency synthesizer calibration.
+     668:	83 e2       	ldi	r24, 0x23	; 35
+     66a:	69 ea       	ldi	r22, 0xA9	; 169
+     66c:	4a df       	rcall	.-364    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSCAL2,   CC_FSCAL2_VALUE);     // Frequency synthesizer calibration.
+     66e:	84 e2       	ldi	r24, 0x24	; 36
+     670:	6a e0       	ldi	r22, 0x0A	; 10
+     672:	47 df       	rcall	.-370    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSCAL1,   CC_FSCAL1_VALUE);     // Frequency synthesizer calibration.
+     674:	85 e2       	ldi	r24, 0x25	; 37
+     676:	60 e0       	ldi	r22, 0x00	; 0
+     678:	44 df       	rcall	.-376    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSCAL0,   CC_FSCAL0_VALUE);     // Frequency synthesizer calibration.
+     67a:	86 e2       	ldi	r24, 0x26	; 38
+     67c:	61 e1       	ldi	r22, 0x11	; 17
+     67e:	41 df       	rcall	.-382    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSTEST,   CC_FSTEST_VALUE);     // Frequency synthesizer calibration.
+     680:	89 e2       	ldi	r24, 0x29	; 41
+     682:	69 e5       	ldi	r22, 0x59	; 89
+     684:	3e df       	rcall	.-388    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_TEST2,    CC_TEST2_VALUE);      // Various test settings.
+     686:	8c e2       	ldi	r24, 0x2C	; 44
+     688:	68 e8       	ldi	r22, 0x88	; 136
+     68a:	3b df       	rcall	.-394    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_TEST1,    CC_TEST1_VALUE);      // Various test settings.
+     68c:	8d e2       	ldi	r24, 0x2D	; 45
+     68e:	61 e3       	ldi	r22, 0x31	; 49
+     690:	38 df       	rcall	.-400    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_TEST0,    CC_TEST0_VALUE);      // Various test settings.
+     692:	8e e2       	ldi	r24, 0x2E	; 46
+     694:	6b e0       	ldi	r22, 0x0B	; 11
+     696:	35 df       	rcall	.-406    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_FIFOTHR,  CC_FIFOTHR_VALUE);    // fifo threshold
+     698:	83 e0       	ldi	r24, 0x03	; 3
+     69a:	67 e0       	ldi	r22, 0x07	; 7
+     69c:	32 df       	rcall	.-412    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_IOCFG2,   CC_IOCFG2_VALUE);     // GDO2 output pin configuration.
+     69e:	80 e0       	ldi	r24, 0x00	; 0
+     6a0:	6e e0       	ldi	r22, 0x0E	; 14
+     6a2:	2f df       	rcall	.-418    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_IOCFG0,   CC_IOCFG0_VALUE);     // GDO0 output pin configuration.
+     6a4:	82 e0       	ldi	r24, 0x02	; 2
+     6a6:	66 e0       	ldi	r22, 0x06	; 6
+     6a8:	2c df       	rcall	.-424    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_PKTCTRL1, CC_PKTCTRL1_VALUE);   // Packet automation control.
+     6aa:	87 e0       	ldi	r24, 0x07	; 7
+     6ac:	6e e0       	ldi	r22, 0x0E	; 14
+     6ae:	29 df       	rcall	.-430    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_PKTCTRL0, CC_PKTCTRL0_VALUE);   // Packet automation control.
+     6b0:	88 e0       	ldi	r24, 0x08	; 8
+     6b2:	64 e4       	ldi	r22, 0x44	; 68
+     6b4:	26 df       	rcall	.-436    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_PKTLEN,   CC_PKTLEN_VALUE);     // Packet length.
+     6b6:	86 e0       	ldi	r24, 0x06	; 6
+     6b8:	67 e0       	ldi	r22, 0x07	; 7
+     6ba:	23 df       	rcall	.-442    	; 0x502 <CC_WriteRegister>
+
+    CC_WriteRegister(CC_PATABLE, CC_PATABLE0_VALUE);
+     6bc:	8e e3       	ldi	r24, 0x3E	; 62
+     6be:	60 e5       	ldi	r22, 0x50	; 80
+     6c0:	20 df       	rcall	.-448    	; 0x502 <CC_WriteRegister>
+    
+    CC_WriteRegister(CC_MCSM2, CC_MCSM2_VALUE);
+     6c2:	86 e1       	ldi	r24, 0x16	; 22
+     6c4:	67 e0       	ldi	r22, 0x07	; 7
+     6c6:	1d df       	rcall	.-454    	; 0x502 <CC_WriteRegister>
+    CC_WriteRegister(CC_MCSM1, CC_MCSM1_VALUE);
+     6c8:	87 e1       	ldi	r24, 0x17	; 23
+     6ca:	6c e0       	ldi	r22, 0x0C	; 12
+     6cc:	1a df       	rcall	.-460    	; 0x502 <CC_WriteRegister>
+}
+     6ce:	cf 91       	pop	r28
+     6d0:	df 91       	pop	r29
+     6d2:	08 95       	ret
+
+000006d4 <CC_ReadWriteByte>:
+
+
+// ============================= Low level =====================================
+uint8_t CC_ReadWriteByte(uint8_t AByte){
+     6d4:	df 93       	push	r29
+     6d6:	cf 93       	push	r28
+     6d8:	00 d0       	rcall	.+0      	; 0x6da <CC_ReadWriteByte+0x6>
+     6da:	cd b7       	in	r28, 0x3d	; 61
+     6dc:	de b7       	in	r29, 0x3e	; 62
+     6de:	8a 83       	std	Y+2, r24	; 0x02
+    UDR0 = AByte;	// Start transmission
+     6e0:	e6 ec       	ldi	r30, 0xC6	; 198
+     6e2:	f0 e0       	ldi	r31, 0x00	; 0
+     6e4:	8a 81       	ldd	r24, Y+2	; 0x02
+     6e6:	80 83       	st	Z, r24
+    // Wait for transmission to complete
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+     6e8:	e0 ec       	ldi	r30, 0xC0	; 192
+     6ea:	f0 e0       	ldi	r31, 0x00	; 0
+     6ec:	80 81       	ld	r24, Z
+     6ee:	88 23       	and	r24, r24
+     6f0:	dc f7       	brge	.-10     	; 0x6e8 <CC_ReadWriteByte+0x14>
+    uint8_t Response = UDR0;
+     6f2:	e6 ec       	ldi	r30, 0xC6	; 198
+     6f4:	f0 e0       	ldi	r31, 0x00	; 0
+     6f6:	80 81       	ld	r24, Z
+     6f8:	89 83       	std	Y+1, r24	; 0x01
+    return Response;
+     6fa:	89 81       	ldd	r24, Y+1	; 0x01
+}
+     6fc:	0f 90       	pop	r0
+     6fe:	0f 90       	pop	r0
+     700:	cf 91       	pop	r28
+     702:	df 91       	pop	r29
+     704:	08 95       	ret
+
+00000706 <__vector_1>:
+
+// ============================ Interrupts =====================================
+ISR(INT0_vect) {
+     706:	1f 92       	push	r1
+     708:	0f 92       	push	r0
+     70a:	0f b6       	in	r0, 0x3f	; 63
+     70c:	0f 92       	push	r0
+     70e:	11 24       	eor	r1, r1
+     710:	2f 93       	push	r18
+     712:	3f 93       	push	r19
+     714:	4f 93       	push	r20
+     716:	5f 93       	push	r21
+     718:	6f 93       	push	r22
+     71a:	7f 93       	push	r23
+     71c:	8f 93       	push	r24
+     71e:	9f 93       	push	r25
+     720:	af 93       	push	r26
+     722:	bf 93       	push	r27
+     724:	ef 93       	push	r30
+     726:	ff 93       	push	r31
+     728:	df 93       	push	r29
+     72a:	cf 93       	push	r28
+     72c:	00 d0       	rcall	.+0      	; 0x72e <__vector_1+0x28>
+     72e:	00 d0       	rcall	.+0      	; 0x730 <__vector_1+0x2a>
+     730:	0f 92       	push	r0
+     732:	cd b7       	in	r28, 0x3d	; 61
+     734:	de b7       	in	r29, 0x3e	; 62
+    // Packet has been successfully recieved
+    uint8_t FifoSize = CC_ReadRegister(CC_RXBYTES); // Get bytes in FIFO
+     736:	8b e7       	ldi	r24, 0x7B	; 123
+     738:	aa de       	rcall	.-684    	; 0x48e <CC_ReadRegister>
+     73a:	8d 83       	std	Y+5, r24	; 0x05
+    if (FifoSize > 0) {
+     73c:	8d 81       	ldd	r24, Y+5	; 0x05
+     73e:	88 23       	and	r24, r24
+     740:	a9 f1       	breq	.+106    	; 0x7ac <__vector_1+0xa6>
+     742:	81 e0       	ldi	r24, 0x01	; 1
+     744:	91 e0       	ldi	r25, 0x01	; 1
+     746:	9b 83       	std	Y+3, r25	; 0x03
+     748:	8a 83       	std	Y+2, r24	; 0x02
+     74a:	8d 81       	ldd	r24, Y+5	; 0x05
+     74c:	8c 83       	std	Y+4, r24	; 0x04
+
+void CC_WriteTX (uint8_t *PData, uint8_t ALength){
+    CC_WriteBurst(CC_FIFO, PData, ALength);
+}
+FORCE_INLINE void CC_ReadRX  (uint8_t *PData, uint8_t ALength){
+    CC_CS_LO;                                                   // Start transmission
+     74e:	ab e2       	ldi	r26, 0x2B	; 43
+     750:	b0 e0       	ldi	r27, 0x00	; 0
+     752:	eb e2       	ldi	r30, 0x2B	; 43
+     754:	f0 e0       	ldi	r31, 0x00	; 0
+     756:	80 81       	ld	r24, Z
+     758:	8f 77       	andi	r24, 0x7F	; 127
+     75a:	8c 93       	st	X, r24
+    while (CC_MISO_IS_HI());                                      // Wait for chip to become ready
+     75c:	e9 e2       	ldi	r30, 0x29	; 41
+     75e:	f0 e0       	ldi	r31, 0x00	; 0
+     760:	80 81       	ld	r24, Z
+     762:	88 2f       	mov	r24, r24
+     764:	90 e0       	ldi	r25, 0x00	; 0
+     766:	81 70       	andi	r24, 0x01	; 1
+     768:	90 70       	andi	r25, 0x00	; 0
+     76a:	88 23       	and	r24, r24
+     76c:	b9 f7       	brne	.-18     	; 0x75c <__vector_1+0x56>
+    CC_WriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);           // Address with read & burst flags
+     76e:	8f ef       	ldi	r24, 0xFF	; 255
+     770:	b1 df       	rcall	.-158    	; 0x6d4 <CC_ReadWriteByte>
+    for (uint8_t i=0; i<ALength; i++) *PData++ = CC_ReadByte(); // Write bytes themselves
+     772:	19 82       	std	Y+1, r1	; 0x01
+     774:	0d c0       	rjmp	.+26     	; 0x790 <__vector_1+0x8a>
+     776:	80 e0       	ldi	r24, 0x00	; 0
+     778:	ad df       	rcall	.-166    	; 0x6d4 <CC_ReadWriteByte>
+     77a:	ea 81       	ldd	r30, Y+2	; 0x02
+     77c:	fb 81       	ldd	r31, Y+3	; 0x03
+     77e:	80 83       	st	Z, r24
+     780:	8a 81       	ldd	r24, Y+2	; 0x02
+     782:	9b 81       	ldd	r25, Y+3	; 0x03
+     784:	01 96       	adiw	r24, 0x01	; 1
+     786:	9b 83       	std	Y+3, r25	; 0x03
+     788:	8a 83       	std	Y+2, r24	; 0x02
+     78a:	89 81       	ldd	r24, Y+1	; 0x01
+     78c:	8f 5f       	subi	r24, 0xFF	; 255
+     78e:	89 83       	std	Y+1, r24	; 0x01
+     790:	99 81       	ldd	r25, Y+1	; 0x01
+     792:	8c 81       	ldd	r24, Y+4	; 0x04
+     794:	98 17       	cp	r25, r24
+     796:	78 f3       	brcs	.-34     	; 0x776 <__vector_1+0x70>
+    CC_CS_HI;                                                   // End transmission
+     798:	ab e2       	ldi	r26, 0x2B	; 43
+     79a:	b0 e0       	ldi	r27, 0x00	; 0
+     79c:	eb e2       	ldi	r30, 0x2B	; 43
+     79e:	f0 e0       	ldi	r31, 0x00	; 0
+     7a0:	80 81       	ld	r24, Z
+     7a2:	80 68       	ori	r24, 0x80	; 128
+     7a4:	8c 93       	st	X, r24
+ISR(INT0_vect) {
+    // Packet has been successfully recieved
+    uint8_t FifoSize = CC_ReadRegister(CC_RXBYTES); // Get bytes in FIFO
+    if (FifoSize > 0) {
+        CC_ReadRX(&CC.RX_PktArray[0], FifoSize);
+        CC.NewPacketReceived = true;
+     7a6:	81 e0       	ldi	r24, 0x01	; 1
+     7a8:	80 93 13 01 	sts	0x0113, r24
+    }
+}
+     7ac:	0f 90       	pop	r0
+     7ae:	0f 90       	pop	r0
+     7b0:	0f 90       	pop	r0
+     7b2:	0f 90       	pop	r0
+     7b4:	0f 90       	pop	r0
+     7b6:	cf 91       	pop	r28
+     7b8:	df 91       	pop	r29
+     7ba:	ff 91       	pop	r31
+     7bc:	ef 91       	pop	r30
+     7be:	bf 91       	pop	r27
+     7c0:	af 91       	pop	r26
+     7c2:	9f 91       	pop	r25
+     7c4:	8f 91       	pop	r24
+     7c6:	7f 91       	pop	r23
+     7c8:	6f 91       	pop	r22
+     7ca:	5f 91       	pop	r21
+     7cc:	4f 91       	pop	r20
+     7ce:	3f 91       	pop	r19
+     7d0:	2f 91       	pop	r18
+     7d2:	0f 90       	pop	r0
+     7d4:	0f be       	out	0x3f, r0	; 63
+     7d6:	0f 90       	pop	r0
+     7d8:	1f 90       	pop	r1
+     7da:	18 95       	reti
+
+000007dc <main>:
+} ELight;
+
+bool MustSleep; // toggles in Handle Touch events
+
+// ============================== General ======================================
+int main(void) {
+     7dc:	df 93       	push	r29
+     7de:	cf 93       	push	r28
+     7e0:	cd b7       	in	r28, 0x3d	; 61
+     7e2:	de b7       	in	r29, 0x3e	; 62
+    GeneralInit();
+     7e4:	06 d0       	rcall	.+12     	; 0x7f2 <GeneralInit>
+
+    sei();
+     7e6:	78 94       	sei
+    while (1) {
+        wdt_reset();    // Reset watchdog
+     7e8:	a8 95       	wdr
+        CC_Task();
+     7ea:	f2 d2       	rcall	.+1508   	; 0xdd0 <CC_Task>
+        SENS_Task ();
+     7ec:	02 d1       	rcall	.+516    	; 0x9f2 <SENS_Task>
+        Light_Task ();
+     7ee:	16 d2       	rcall	.+1068   	; 0xc1c <Light_Task>
+     7f0:	fb cf       	rjmp	.-10     	; 0x7e8 <main+0xc>
+
+000007f2 <GeneralInit>:
+        //Sleep_Task ();
+    } // while
+}
+
+FORCE_INLINE void GeneralInit(void) {
+     7f2:	df 93       	push	r29
+     7f4:	cf 93       	push	r28
+     7f6:	cd b7       	in	r28, 0x3d	; 61
+     7f8:	de b7       	in	r29, 0x3e	; 62
+    wdt_enable(WDTO_2S);
+     7fa:	88 e1       	ldi	r24, 0x18	; 24
+     7fc:	90 e0       	ldi	r25, 0x00	; 0
+     7fe:	2f e0       	ldi	r18, 0x0F	; 15
+     800:	0f b6       	in	r0, 0x3f	; 63
+     802:	f8 94       	cli
+     804:	a8 95       	wdr
+     806:	80 93 60 00 	sts	0x0060, r24
+     80a:	0f be       	out	0x3f, r0	; 63
+     80c:	20 93 60 00 	sts	0x0060, r18
+    ACSR = 1<<ACD;  // Disable analog comparator
+     810:	e0 e5       	ldi	r30, 0x50	; 80
+     812:	f0 e0       	ldi	r31, 0x00	; 0
+     814:	80 e8       	ldi	r24, 0x80	; 128
+     816:	80 83       	st	Z, r24
+    // Shutdown all unneeded
+    PRR = (1<<PRTWI)|(1<<PRSPI)|(1<<PRADC);
+     818:	e4 e6       	ldi	r30, 0x64	; 100
+     81a:	f0 e0       	ldi	r31, 0x00	; 0
+     81c:	85 e8       	ldi	r24, 0x85	; 133
+     81e:	80 83       	st	Z, r24
+
+    MustSleep = false;
+     820:	10 92 15 01 	sts	0x0115, r1
+    // Setup timer
+    TimerInit();
+     824:	c2 d4       	rcall	.+2436   	; 0x11aa <TimerInit>
+
+    // Light
+    LED_DDR  |= (1<<RED_P)|(1<<GREEN_P)|(1<<BLUE_P);
+     826:	aa e2       	ldi	r26, 0x2A	; 42
+     828:	b0 e0       	ldi	r27, 0x00	; 0
+     82a:	ea e2       	ldi	r30, 0x2A	; 42
+     82c:	f0 e0       	ldi	r31, 0x00	; 0
+     82e:	80 81       	ld	r24, Z
+     830:	88 66       	ori	r24, 0x68	; 104
+     832:	8c 93       	st	X, r24
+    LED_PORT &= ~((1<<RED_P)|(1<<GREEN_P)|(1<<BLUE_P));
+     834:	ab e2       	ldi	r26, 0x2B	; 43
+     836:	b0 e0       	ldi	r27, 0x00	; 0
+     838:	eb e2       	ldi	r30, 0x2B	; 43
+     83a:	f0 e0       	ldi	r31, 0x00	; 0
+     83c:	80 81       	ld	r24, Z
+     83e:	87 79       	andi	r24, 0x97	; 151
+     840:	8c 93       	st	X, r24
+    LED_UF_DDR |=(1<<UF_P);
+     842:	a4 e2       	ldi	r26, 0x24	; 36
+     844:	b0 e0       	ldi	r27, 0x00	; 0
+     846:	e4 e2       	ldi	r30, 0x24	; 36
+     848:	f0 e0       	ldi	r31, 0x00	; 0
+     84a:	80 81       	ld	r24, Z
+     84c:	88 60       	ori	r24, 0x08	; 8
+     84e:	8c 93       	st	X, r24
+    LED_UF_PORT &=~(1<<UF_P);
+     850:	a5 e2       	ldi	r26, 0x25	; 37
+     852:	b0 e0       	ldi	r27, 0x00	; 0
+     854:	e5 e2       	ldi	r30, 0x25	; 37
+     856:	f0 e0       	ldi	r31, 0x00	; 0
+     858:	80 81       	ld	r24, Z
+     85a:	87 7f       	andi	r24, 0xF7	; 247
+     85c:	8c 93       	st	X, r24
+    // Led power
+  //  LED_PWR_PORT &= ~(1<<LED_PWR_P);    // Low if output, Hi-Z if input
+   // LED_PWR_OFF();
+
+    TCCR0A = (1<<WGM01)|(1<<WGM00);
+     85e:	e4 e4       	ldi	r30, 0x44	; 68
+     860:	f0 e0       	ldi	r31, 0x00	; 0
+     862:	83 e0       	ldi	r24, 0x03	; 3
+     864:	80 83       	st	Z, r24
+    TCCR0B = (0<<WGM02)|(0<<CS02)|(0<<CS01)|(1<<CS00);
+     866:	e5 e4       	ldi	r30, 0x45	; 69
+     868:	f0 e0       	ldi	r31, 0x00	; 0
+     86a:	81 e0       	ldi	r24, 0x01	; 1
+     86c:	80 83       	st	Z, r24
+    TCCR2A = (1<<WGM21)|(1<<WGM20);
+     86e:	e0 eb       	ldi	r30, 0xB0	; 176
+     870:	f0 e0       	ldi	r31, 0x00	; 0
+     872:	83 e0       	ldi	r24, 0x03	; 3
+     874:	80 83       	st	Z, r24
+    TCCR2B = (0<<WGM22)|(0<<CS22)|(0<<CS21)|(1<<CS20);
+     876:	e1 eb       	ldi	r30, 0xB1	; 177
+     878:	f0 e0       	ldi	r31, 0x00	; 0
+     87a:	81 e0       	ldi	r24, 0x01	; 1
+     87c:	80 83       	st	Z, r24
+    TimerResetDelay(&ELight.Timer);
+     87e:	86 e1       	ldi	r24, 0x16	; 22
+     880:	91 e0       	ldi	r25, 0x01	; 1
+     882:	0e d5       	rcall	.+2588   	; 0x12a0 <TimerResetDelay>
+    ELight.Indx = 0;
+     884:	10 92 28 01 	sts	0x0128, r1
+    SetTableColor();
+     888:	5b d0       	rcall	.+182    	; 0x940 <SetTableColor>
+    ELight.SavedColor = ELight.DesiredColor;
+     88a:	80 91 18 01 	lds	r24, 0x0118
+     88e:	90 91 19 01 	lds	r25, 0x0119
+     892:	a0 91 1a 01 	lds	r26, 0x011A
+     896:	b0 91 1b 01 	lds	r27, 0x011B
+     89a:	80 93 20 01 	sts	0x0120, r24
+     89e:	90 93 21 01 	sts	0x0121, r25
+     8a2:	a0 93 22 01 	sts	0x0122, r26
+     8a6:	b0 93 23 01 	sts	0x0123, r27
+    SetDesiredColor(0, 0, 0,0);   // Initial fade
+     8aa:	80 e0       	ldi	r24, 0x00	; 0
+     8ac:	60 e0       	ldi	r22, 0x00	; 0
+     8ae:	40 e0       	ldi	r20, 0x00	; 0
+     8b0:	20 e0       	ldi	r18, 0x00	; 0
+     8b2:	29 d0       	rcall	.+82     	; 0x906 <SetDesiredColor>
+    ELight.UfIsOn = false;
+     8b4:	10 92 29 01 	sts	0x0129, r1
+
+    // Sensors
+    SENS_DDR  &= ~((1<<SENS_DOWN)|(1<<SENS_UP)|(1<<SENS_UF_SWITCH));
+     8b8:	a7 e2       	ldi	r26, 0x27	; 39
+     8ba:	b0 e0       	ldi	r27, 0x00	; 0
+     8bc:	e7 e2       	ldi	r30, 0x27	; 39
+     8be:	f0 e0       	ldi	r31, 0x00	; 0
+     8c0:	80 81       	ld	r24, Z
+     8c2:	88 7f       	andi	r24, 0xF8	; 248
+     8c4:	8c 93       	st	X, r24
+    SENS_DDR  |= 1<<SENS_PWR;
+     8c6:	a7 e2       	ldi	r26, 0x27	; 39
+     8c8:	b0 e0       	ldi	r27, 0x00	; 0
+     8ca:	e7 e2       	ldi	r30, 0x27	; 39
+     8cc:	f0 e0       	ldi	r31, 0x00	; 0
+     8ce:	80 81       	ld	r24, Z
+     8d0:	80 62       	ori	r24, 0x20	; 32
+     8d2:	8c 93       	st	X, r24
+    SENS_PORT &= ~((1<<SENS_DOWN)|(1<<SENS_UP)|(1<<SENS_UF_SWITCH)); // No pull-ups
+     8d4:	a8 e2       	ldi	r26, 0x28	; 40
+     8d6:	b0 e0       	ldi	r27, 0x00	; 0
+     8d8:	e8 e2       	ldi	r30, 0x28	; 40
+     8da:	f0 e0       	ldi	r31, 0x00	; 0
+     8dc:	80 81       	ld	r24, Z
+     8de:	88 7f       	andi	r24, 0xF8	; 248
+     8e0:	8c 93       	st	X, r24
+    ESens.DownIsOn   = false;
+    ESens.UpIsOn     = false;
+    ESens.UfIsOn = false;
+    ESens.BothIsOn   = false;
+*/
+    ESens.PollTime   = SENS_POLL_TIME;
+     8e2:	83 e6       	ldi	r24, 0x63	; 99
+     8e4:	90 e0       	ldi	r25, 0x00	; 0
+     8e6:	90 93 30 01 	sts	0x0130, r25
+     8ea:	80 93 2f 01 	sts	0x012F, r24
+    ESens.Step=SENS_STATE_START;
+     8ee:	81 e0       	ldi	r24, 0x01	; 1
+     8f0:	80 93 31 01 	sts	0x0131, r24
+    TimerResetDelay (&ESens.Timer);
+     8f4:	8b e2       	ldi	r24, 0x2B	; 43
+     8f6:	91 e0       	ldi	r25, 0x01	; 1
+     8f8:	d3 d4       	rcall	.+2470   	; 0x12a0 <TimerResetDelay>
+
+    // CC init
+    CC_Init();
+     8fa:	3f dc       	rcall	.-1922   	; 0x17a <CC_Init>
+    CC_SetAddress(4);   // Never changes in CC itself
+     8fc:	84 e0       	ldi	r24, 0x04	; 4
+     8fe:	a5 dc       	rcall	.-1718   	; 0x24a <CC_SetAddress>
+}
+     900:	cf 91       	pop	r28
+     902:	df 91       	pop	r29
+     904:	08 95       	ret
+
+00000906 <SetDesiredColor>:
+
+FORCE_INLINE void SetDesiredColor (uint8_t ARed, uint8_t AGreen, uint8_t ABlue, uint8_t AUf) {
+     906:	df 93       	push	r29
+     908:	cf 93       	push	r28
+     90a:	00 d0       	rcall	.+0      	; 0x90c <SetDesiredColor+0x6>
+     90c:	00 d0       	rcall	.+0      	; 0x90e <SetDesiredColor+0x8>
+     90e:	cd b7       	in	r28, 0x3d	; 61
+     910:	de b7       	in	r29, 0x3e	; 62
+     912:	89 83       	std	Y+1, r24	; 0x01
+     914:	6a 83       	std	Y+2, r22	; 0x02
+     916:	4b 83       	std	Y+3, r20	; 0x03
+     918:	2c 83       	std	Y+4, r18	; 0x04
+    ELight.DesiredColor.Red   = ARed;
+     91a:	89 81       	ldd	r24, Y+1	; 0x01
+     91c:	80 93 18 01 	sts	0x0118, r24
+    ELight.DesiredColor.Green = AGreen;
+     920:	8a 81       	ldd	r24, Y+2	; 0x02
+     922:	80 93 19 01 	sts	0x0119, r24
+    ELight.DesiredColor.Blue  = ABlue;
+     926:	8b 81       	ldd	r24, Y+3	; 0x03
+     928:	80 93 1a 01 	sts	0x011A, r24
+    ELight.DesiredColor.Uf  = AUf;
+     92c:	8c 81       	ldd	r24, Y+4	; 0x04
+     92e:	80 93 1b 01 	sts	0x011B, r24
+}
+     932:	0f 90       	pop	r0
+     934:	0f 90       	pop	r0
+     936:	0f 90       	pop	r0
+     938:	0f 90       	pop	r0
+     93a:	cf 91       	pop	r28
+     93c:	df 91       	pop	r29
+     93e:	08 95       	ret
+
+00000940 <SetTableColor>:
+void SetTableColor(void) {
+     940:	df 93       	push	r29
+     942:	cf 93       	push	r28
+     944:	cd b7       	in	r28, 0x3d	; 61
+     946:	de b7       	in	r29, 0x3e	; 62
+     948:	29 97       	sbiw	r28, 0x09	; 9
+     94a:	0f b6       	in	r0, 0x3f	; 63
+     94c:	f8 94       	cli
+     94e:	de bf       	out	0x3e, r29	; 62
+     950:	0f be       	out	0x3f, r0	; 63
+     952:	cd bf       	out	0x3d, r28	; 61
+    ELight.DesiredColor.Red   = pgm_read_byte(&ColorTable[ELight.Indx][0]);
+     954:	44 e3       	ldi	r20, 0x34	; 52
+     956:	50 e0       	ldi	r21, 0x00	; 0
+     958:	80 91 28 01 	lds	r24, 0x0128
+     95c:	28 2f       	mov	r18, r24
+     95e:	30 e0       	ldi	r19, 0x00	; 0
+     960:	c9 01       	movw	r24, r18
+     962:	88 0f       	add	r24, r24
+     964:	99 1f       	adc	r25, r25
+     966:	82 0f       	add	r24, r18
+     968:	93 1f       	adc	r25, r19
+     96a:	84 0f       	add	r24, r20
+     96c:	95 1f       	adc	r25, r21
+     96e:	99 87       	std	Y+9, r25	; 0x09
+     970:	88 87       	std	Y+8, r24	; 0x08
+     972:	e8 85       	ldd	r30, Y+8	; 0x08
+     974:	f9 85       	ldd	r31, Y+9	; 0x09
+     976:	84 91       	lpm	r24, Z+
+     978:	8f 83       	std	Y+7, r24	; 0x07
+     97a:	8f 81       	ldd	r24, Y+7	; 0x07
+     97c:	80 93 18 01 	sts	0x0118, r24
+    ELight.DesiredColor.Green = pgm_read_byte(&ColorTable[ELight.Indx][1]);
+     980:	44 e3       	ldi	r20, 0x34	; 52
+     982:	50 e0       	ldi	r21, 0x00	; 0
+     984:	80 91 28 01 	lds	r24, 0x0128
+     988:	28 2f       	mov	r18, r24
+     98a:	30 e0       	ldi	r19, 0x00	; 0
+     98c:	c9 01       	movw	r24, r18
+     98e:	88 0f       	add	r24, r24
+     990:	99 1f       	adc	r25, r25
+     992:	82 0f       	add	r24, r18
+     994:	93 1f       	adc	r25, r19
+     996:	01 96       	adiw	r24, 0x01	; 1
+     998:	84 0f       	add	r24, r20
+     99a:	95 1f       	adc	r25, r21
+     99c:	9e 83       	std	Y+6, r25	; 0x06
+     99e:	8d 83       	std	Y+5, r24	; 0x05
+     9a0:	ed 81       	ldd	r30, Y+5	; 0x05
+     9a2:	fe 81       	ldd	r31, Y+6	; 0x06
+     9a4:	84 91       	lpm	r24, Z+
+     9a6:	8c 83       	std	Y+4, r24	; 0x04
+     9a8:	8c 81       	ldd	r24, Y+4	; 0x04
+     9aa:	80 93 19 01 	sts	0x0119, r24
+    ELight.DesiredColor.Blue  = pgm_read_byte(&ColorTable[ELight.Indx][2]);
+     9ae:	44 e3       	ldi	r20, 0x34	; 52
+     9b0:	50 e0       	ldi	r21, 0x00	; 0
+     9b2:	80 91 28 01 	lds	r24, 0x0128
+     9b6:	28 2f       	mov	r18, r24
+     9b8:	30 e0       	ldi	r19, 0x00	; 0
+     9ba:	c9 01       	movw	r24, r18
+     9bc:	88 0f       	add	r24, r24
+     9be:	99 1f       	adc	r25, r25
+     9c0:	82 0f       	add	r24, r18
+     9c2:	93 1f       	adc	r25, r19
+     9c4:	02 96       	adiw	r24, 0x02	; 2
+     9c6:	84 0f       	add	r24, r20
+     9c8:	95 1f       	adc	r25, r21
+     9ca:	9b 83       	std	Y+3, r25	; 0x03
+     9cc:	8a 83       	std	Y+2, r24	; 0x02
+     9ce:	ea 81       	ldd	r30, Y+2	; 0x02
+     9d0:	fb 81       	ldd	r31, Y+3	; 0x03
+     9d2:	84 91       	lpm	r24, Z+
+     9d4:	89 83       	std	Y+1, r24	; 0x01
+     9d6:	89 81       	ldd	r24, Y+1	; 0x01
+     9d8:	80 93 1a 01 	sts	0x011A, r24
+    ELight.DesiredColor.Uf = 0;
+     9dc:	10 92 1b 01 	sts	0x011B, r1
+}
+     9e0:	29 96       	adiw	r28, 0x09	; 9
+     9e2:	0f b6       	in	r0, 0x3f	; 63
+     9e4:	f8 94       	cli
+     9e6:	de bf       	out	0x3e, r29	; 62
+     9e8:	0f be       	out	0x3f, r0	; 63
+     9ea:	cd bf       	out	0x3d, r28	; 61
+     9ec:	cf 91       	pop	r28
+     9ee:	df 91       	pop	r29
+     9f0:	08 95       	ret
+
+000009f2 <SENS_Task>:
+
+
+// ============================== Tasks ========================================
+void SENS_Task (void) {
+     9f2:	df 93       	push	r29
+     9f4:	cf 93       	push	r28
+     9f6:	00 d0       	rcall	.+0      	; 0x9f8 <SENS_Task+0x6>
+     9f8:	00 d0       	rcall	.+0      	; 0x9fa <SENS_Task+0x8>
+     9fa:	cd b7       	in	r28, 0x3d	; 61
+     9fc:	de b7       	in	r29, 0x3e	; 62
+    if (!TimerDelayElapsed (&ESens.Timer, ESens.PollTime)) return;
+     9fe:	20 91 2f 01 	lds	r18, 0x012F
+     a02:	30 91 30 01 	lds	r19, 0x0130
+     a06:	8b e2       	ldi	r24, 0x2B	; 43
+     a08:	91 e0       	ldi	r25, 0x01	; 1
+     a0a:	b9 01       	movw	r22, r18
+     a0c:	e9 d3       	rcall	.+2002   	; 0x11e0 <TimerDelayElapsed>
+     a0e:	98 2f       	mov	r25, r24
+     a10:	81 e0       	ldi	r24, 0x01	; 1
+     a12:	89 27       	eor	r24, r25
+     a14:	88 23       	and	r24, r24
+     a16:	09 f0       	breq	.+2      	; 0xa1a <SENS_Task+0x28>
+     a18:	df c0       	rjmp	.+446    	; 0xbd8 <SENS_Task+0x1e6>
+    // Reset to default wait time
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+     a1a:	ef e5       	ldi	r30, 0x5F	; 95
+     a1c:	f0 e0       	ldi	r31, 0x00	; 0
+     a1e:	80 81       	ld	r24, Z
+     a20:	8a 83       	std	Y+2, r24	; 0x02
+     a22:	e1 d0       	rcall	.+450    	; 0xbe6 <__iCliRetVal>
+     a24:	89 83       	std	Y+1, r24	; 0x01
+     a26:	07 c0       	rjmp	.+14     	; 0xa36 <SENS_Task+0x44>
+        ESens.PollTime = SENS_POLL_TIME;
+     a28:	83 e6       	ldi	r24, 0x63	; 99
+     a2a:	90 e0       	ldi	r25, 0x00	; 0
+     a2c:	90 93 30 01 	sts	0x0130, r25
+     a30:	80 93 2f 01 	sts	0x012F, r24
+
+// ============================== Tasks ========================================
+void SENS_Task (void) {
+    if (!TimerDelayElapsed (&ESens.Timer, ESens.PollTime)) return;
+    // Reset to default wait time
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+     a34:	19 82       	std	Y+1, r1	; 0x01
+     a36:	89 81       	ldd	r24, Y+1	; 0x01
+     a38:	88 23       	and	r24, r24
+     a3a:	b1 f7       	brne	.-20     	; 0xa28 <SENS_Task+0x36>
+     a3c:	ce 01       	movw	r24, r28
+     a3e:	02 96       	adiw	r24, 0x02	; 2
+     a40:	db d0       	rcall	.+438    	; 0xbf8 <__iRestore>
+        ESens.PollTime = SENS_POLL_TIME;
+    }
+    switch (ESens.Step)
+     a42:	80 91 31 01 	lds	r24, 0x0131
+     a46:	28 2f       	mov	r18, r24
+     a48:	30 e0       	ldi	r19, 0x00	; 0
+     a4a:	3c 83       	std	Y+4, r19	; 0x04
+     a4c:	2b 83       	std	Y+3, r18	; 0x03
+     a4e:	8b 81       	ldd	r24, Y+3	; 0x03
+     a50:	9c 81       	ldd	r25, Y+4	; 0x04
+     a52:	83 30       	cpi	r24, 0x03	; 3
+     a54:	91 05       	cpc	r25, r1
+     a56:	09 f4       	brne	.+2      	; 0xa5a <SENS_Task+0x68>
+     a58:	6c c0       	rjmp	.+216    	; 0xb32 <SENS_Task+0x140>
+     a5a:	2b 81       	ldd	r18, Y+3	; 0x03
+     a5c:	3c 81       	ldd	r19, Y+4	; 0x04
+     a5e:	24 30       	cpi	r18, 0x04	; 4
+     a60:	31 05       	cpc	r19, r1
+     a62:	5c f4       	brge	.+22     	; 0xa7a <SENS_Task+0x88>
+     a64:	8b 81       	ldd	r24, Y+3	; 0x03
+     a66:	9c 81       	ldd	r25, Y+4	; 0x04
+     a68:	81 30       	cpi	r24, 0x01	; 1
+     a6a:	91 05       	cpc	r25, r1
+     a6c:	99 f0       	breq	.+38     	; 0xa94 <SENS_Task+0xa2>
+     a6e:	2b 81       	ldd	r18, Y+3	; 0x03
+     a70:	3c 81       	ldd	r19, Y+4	; 0x04
+     a72:	22 30       	cpi	r18, 0x02	; 2
+     a74:	31 05       	cpc	r19, r1
+     a76:	d9 f1       	breq	.+118    	; 0xaee <SENS_Task+0xfc>
+     a78:	af c0       	rjmp	.+350    	; 0xbd8 <SENS_Task+0x1e6>
+     a7a:	8b 81       	ldd	r24, Y+3	; 0x03
+     a7c:	9c 81       	ldd	r25, Y+4	; 0x04
+     a7e:	84 30       	cpi	r24, 0x04	; 4
+     a80:	91 05       	cpc	r25, r1
+     a82:	09 f4       	brne	.+2      	; 0xa86 <SENS_Task+0x94>
+     a84:	77 c0       	rjmp	.+238    	; 0xb74 <SENS_Task+0x182>
+     a86:	2b 81       	ldd	r18, Y+3	; 0x03
+     a88:	3c 81       	ldd	r19, Y+4	; 0x04
+     a8a:	25 30       	cpi	r18, 0x05	; 5
+     a8c:	31 05       	cpc	r19, r1
+     a8e:	09 f4       	brne	.+2      	; 0xa92 <SENS_Task+0xa0>
+     a90:	86 c0       	rjmp	.+268    	; 0xb9e <SENS_Task+0x1ac>
+     a92:	a2 c0       	rjmp	.+324    	; 0xbd8 <SENS_Task+0x1e6>
+    {
+        case SENS_STATE_START:
+            if (SENS_UP_IS_ON()) ESens.Step=SENS_STATE_UP;             // Touch occured
+     a94:	e6 e2       	ldi	r30, 0x26	; 38
+     a96:	f0 e0       	ldi	r31, 0x00	; 0
+     a98:	80 81       	ld	r24, Z
+     a9a:	88 2f       	mov	r24, r24
+     a9c:	90 e0       	ldi	r25, 0x00	; 0
+     a9e:	82 70       	andi	r24, 0x02	; 2
+     aa0:	90 70       	andi	r25, 0x00	; 0
+     aa2:	00 97       	sbiw	r24, 0x00	; 0
+     aa4:	19 f0       	breq	.+6      	; 0xaac <SENS_Task+0xba>
+     aa6:	82 e0       	ldi	r24, 0x02	; 2
+     aa8:	80 93 31 01 	sts	0x0131, r24
+            if (SENS_DOWN_IS_ON()) ESens.Step=SENS_STATE_DOWN;          // Touch occured
+     aac:	e6 e2       	ldi	r30, 0x26	; 38
+     aae:	f0 e0       	ldi	r31, 0x00	; 0
+     ab0:	80 81       	ld	r24, Z
+     ab2:	88 2f       	mov	r24, r24
+     ab4:	90 e0       	ldi	r25, 0x00	; 0
+     ab6:	84 70       	andi	r24, 0x04	; 4
+     ab8:	90 70       	andi	r25, 0x00	; 0
+     aba:	00 97       	sbiw	r24, 0x00	; 0
+     abc:	19 f0       	breq	.+6      	; 0xac4 <SENS_Task+0xd2>
+     abe:	83 e0       	ldi	r24, 0x03	; 3
+     ac0:	80 93 31 01 	sts	0x0131, r24
+            if (SENS_UF_SWITCH_IS_ON()) ESens.Step=SENS_STATE_UF_SWITCH; // Touch occured
+     ac4:	e6 e2       	ldi	r30, 0x26	; 38
+     ac6:	f0 e0       	ldi	r31, 0x00	; 0
+     ac8:	80 81       	ld	r24, Z
+     aca:	88 2f       	mov	r24, r24
+     acc:	90 e0       	ldi	r25, 0x00	; 0
+     ace:	81 70       	andi	r24, 0x01	; 1
+     ad0:	90 70       	andi	r25, 0x00	; 0
+     ad2:	88 23       	and	r24, r24
+     ad4:	19 f0       	breq	.+6      	; 0xadc <SENS_Task+0xea>
+     ad6:	84 e0       	ldi	r24, 0x04	; 4
+     ad8:	80 93 31 01 	sts	0x0131, r24
+            if (ESens.Step!=SENS_STATE_START) TimerResetDelay(&ESens.HoldTimer);  // Reset hold timer
+     adc:	80 91 31 01 	lds	r24, 0x0131
+     ae0:	81 30       	cpi	r24, 0x01	; 1
+     ae2:	09 f4       	brne	.+2      	; 0xae6 <SENS_Task+0xf4>
+     ae4:	79 c0       	rjmp	.+242    	; 0xbd8 <SENS_Task+0x1e6>
+     ae6:	8d e2       	ldi	r24, 0x2D	; 45
+     ae8:	91 e0       	ldi	r25, 0x01	; 1
+     aea:	da d3       	rcall	.+1972   	; 0x12a0 <TimerResetDelay>
+     aec:	75 c0       	rjmp	.+234    	; 0xbd8 <SENS_Task+0x1e6>
+            break;
+        case SENS_STATE_UP:
+            if (SENS_DOWN_IS_ON()) ESens.Step=SENS_STATE_BOTH; // Touch occured
+     aee:	e6 e2       	ldi	r30, 0x26	; 38
+     af0:	f0 e0       	ldi	r31, 0x00	; 0
+     af2:	80 81       	ld	r24, Z
+     af4:	88 2f       	mov	r24, r24
+     af6:	90 e0       	ldi	r25, 0x00	; 0
+     af8:	84 70       	andi	r24, 0x04	; 4
+     afa:	90 70       	andi	r25, 0x00	; 0
+     afc:	00 97       	sbiw	r24, 0x00	; 0
+     afe:	19 f0       	breq	.+6      	; 0xb06 <SENS_Task+0x114>
+     b00:	85 e0       	ldi	r24, 0x05	; 5
+     b02:	80 93 31 01 	sts	0x0131, r24
+            if (!(SENS_UP_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured
+     b06:	e6 e2       	ldi	r30, 0x26	; 38
+     b08:	f0 e0       	ldi	r31, 0x00	; 0
+     b0a:	80 81       	ld	r24, Z
+     b0c:	88 2f       	mov	r24, r24
+     b0e:	90 e0       	ldi	r25, 0x00	; 0
+     b10:	82 70       	andi	r24, 0x02	; 2
+     b12:	90 70       	andi	r25, 0x00	; 0
+     b14:	00 97       	sbiw	r24, 0x00	; 0
+     b16:	19 f4       	brne	.+6      	; 0xb1e <SENS_Task+0x12c>
+     b18:	81 e0       	ldi	r24, 0x01	; 1
+     b1a:	80 93 31 01 	sts	0x0131, r24
+            if (TimerDelayElapsed(&ESens.HoldTimer, SENS_HOLD_TICK_TIMEOUT)) EVENT_UpHoldTick();
+     b1e:	8d e2       	ldi	r24, 0x2D	; 45
+     b20:	91 e0       	ldi	r25, 0x01	; 1
+     b22:	67 ee       	ldi	r22, 0xE7	; 231
+     b24:	73 e0       	ldi	r23, 0x03	; 3
+     b26:	5c d3       	rcall	.+1720   	; 0x11e0 <TimerDelayElapsed>
+     b28:	88 23       	and	r24, r24
+     b2a:	09 f4       	brne	.+2      	; 0xb2e <SENS_Task+0x13c>
+     b2c:	55 c0       	rjmp	.+170    	; 0xbd8 <SENS_Task+0x1e6>
+     b2e:	d0 d2       	rcall	.+1440   	; 0x10d0 <EVENT_UpHoldTick>
+     b30:	53 c0       	rjmp	.+166    	; 0xbd8 <SENS_Task+0x1e6>
+            break;
+        case SENS_STATE_DOWN:
+            if (SENS_UP_IS_ON()) ESens.Step=SENS_STATE_BOTH;    // Touch occured
+     b32:	e6 e2       	ldi	r30, 0x26	; 38
+     b34:	f0 e0       	ldi	r31, 0x00	; 0
+     b36:	80 81       	ld	r24, Z
+     b38:	88 2f       	mov	r24, r24
+     b3a:	90 e0       	ldi	r25, 0x00	; 0
+     b3c:	82 70       	andi	r24, 0x02	; 2
+     b3e:	90 70       	andi	r25, 0x00	; 0
+     b40:	00 97       	sbiw	r24, 0x00	; 0
+     b42:	19 f0       	breq	.+6      	; 0xb4a <SENS_Task+0x158>
+     b44:	85 e0       	ldi	r24, 0x05	; 5
+     b46:	80 93 31 01 	sts	0x0131, r24
+            if (!(SENS_DOWN_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured            
+     b4a:	e6 e2       	ldi	r30, 0x26	; 38
+     b4c:	f0 e0       	ldi	r31, 0x00	; 0
+     b4e:	80 81       	ld	r24, Z
+     b50:	88 2f       	mov	r24, r24
+     b52:	90 e0       	ldi	r25, 0x00	; 0
+     b54:	84 70       	andi	r24, 0x04	; 4
+     b56:	90 70       	andi	r25, 0x00	; 0
+     b58:	00 97       	sbiw	r24, 0x00	; 0
+     b5a:	19 f4       	brne	.+6      	; 0xb62 <SENS_Task+0x170>
+     b5c:	81 e0       	ldi	r24, 0x01	; 1
+     b5e:	80 93 31 01 	sts	0x0131, r24
+            if (TimerDelayElapsed(&ESens.HoldTimer, SENS_HOLD_TICK_TIMEOUT)) EVENT_DownHoldTick();
+     b62:	8d e2       	ldi	r24, 0x2D	; 45
+     b64:	91 e0       	ldi	r25, 0x01	; 1
+     b66:	67 ee       	ldi	r22, 0xE7	; 231
+     b68:	73 e0       	ldi	r23, 0x03	; 3
+     b6a:	3a d3       	rcall	.+1652   	; 0x11e0 <TimerDelayElapsed>
+     b6c:	88 23       	and	r24, r24
+     b6e:	a1 f1       	breq	.+104    	; 0xbd8 <SENS_Task+0x1e6>
+     b70:	e5 d2       	rcall	.+1482   	; 0x113c <EVENT_DownHoldTick>
+     b72:	32 c0       	rjmp	.+100    	; 0xbd8 <SENS_Task+0x1e6>
+            break;
+        case SENS_STATE_UF_SWITCH:
+            if (!(SENS_UF_SWITCH_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured
+     b74:	e6 e2       	ldi	r30, 0x26	; 38
+     b76:	f0 e0       	ldi	r31, 0x00	; 0
+     b78:	80 81       	ld	r24, Z
+     b7a:	88 2f       	mov	r24, r24
+     b7c:	90 e0       	ldi	r25, 0x00	; 0
+     b7e:	81 70       	andi	r24, 0x01	; 1
+     b80:	90 70       	andi	r25, 0x00	; 0
+     b82:	00 97       	sbiw	r24, 0x00	; 0
+     b84:	19 f4       	brne	.+6      	; 0xb8c <SENS_Task+0x19a>
+     b86:	81 e0       	ldi	r24, 0x01	; 1
+     b88:	80 93 31 01 	sts	0x0131, r24
+            if (TimerDelayElapsed(&ESens.HoldTimer, SENS_HOLD_TICK_TIMEOUT)) EVENT_UfSwitchTouched();
+     b8c:	8d e2       	ldi	r24, 0x2D	; 45
+     b8e:	91 e0       	ldi	r25, 0x01	; 1
+     b90:	67 ee       	ldi	r22, 0xE7	; 231
+     b92:	73 e0       	ldi	r23, 0x03	; 3
+     b94:	25 d3       	rcall	.+1610   	; 0x11e0 <TimerDelayElapsed>
+     b96:	88 23       	and	r24, r24
+     b98:	f9 f0       	breq	.+62     	; 0xbd8 <SENS_Task+0x1e6>
+     b9a:	39 d2       	rcall	.+1138   	; 0x100e <EVENT_UfSwitchTouched>
+     b9c:	1d c0       	rjmp	.+58     	; 0xbd8 <SENS_Task+0x1e6>
+            break;  
+        case SENS_STATE_BOTH:
+            if (!(SENS_UP_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured
+     b9e:	e6 e2       	ldi	r30, 0x26	; 38
+     ba0:	f0 e0       	ldi	r31, 0x00	; 0
+     ba2:	80 81       	ld	r24, Z
+     ba4:	88 2f       	mov	r24, r24
+     ba6:	90 e0       	ldi	r25, 0x00	; 0
+     ba8:	82 70       	andi	r24, 0x02	; 2
+     baa:	90 70       	andi	r25, 0x00	; 0
+     bac:	00 97       	sbiw	r24, 0x00	; 0
+     bae:	19 f4       	brne	.+6      	; 0xbb6 <SENS_Task+0x1c4>
+     bb0:	81 e0       	ldi	r24, 0x01	; 1
+     bb2:	80 93 31 01 	sts	0x0131, r24
+            if (!(SENS_DOWN_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured 
+     bb6:	e6 e2       	ldi	r30, 0x26	; 38
+     bb8:	f0 e0       	ldi	r31, 0x00	; 0
+     bba:	80 81       	ld	r24, Z
+     bbc:	88 2f       	mov	r24, r24
+     bbe:	90 e0       	ldi	r25, 0x00	; 0
+     bc0:	84 70       	andi	r24, 0x04	; 4
+     bc2:	90 70       	andi	r25, 0x00	; 0
+     bc4:	00 97       	sbiw	r24, 0x00	; 0
+     bc6:	19 f4       	brne	.+6      	; 0xbce <SENS_Task+0x1dc>
+     bc8:	81 e0       	ldi	r24, 0x01	; 1
+     bca:	80 93 31 01 	sts	0x0131, r24
+            if (ESens.Step==SENS_STATE_BOTH) EVENT_BothTouched();
+     bce:	80 91 31 01 	lds	r24, 0x0131
+     bd2:	85 30       	cpi	r24, 0x05	; 5
+     bd4:	09 f4       	brne	.+2      	; 0xbd8 <SENS_Task+0x1e6>
+     bd6:	cd d1       	rcall	.+922    	; 0xf72 <EVENT_BothTouched>
+            break;              
+    }
+}
+     bd8:	0f 90       	pop	r0
+     bda:	0f 90       	pop	r0
+     bdc:	0f 90       	pop	r0
+     bde:	0f 90       	pop	r0
+     be0:	cf 91       	pop	r28
+     be2:	df 91       	pop	r29
+     be4:	08 95       	ret
+
+00000be6 <__iCliRetVal>:
+    sei();
+    return 1;
+}
+
+static __inline__ uint8_t __iCliRetVal(void)
+{
+     be6:	df 93       	push	r29
+     be8:	cf 93       	push	r28
+     bea:	cd b7       	in	r28, 0x3d	; 61
+     bec:	de b7       	in	r29, 0x3e	; 62
+    cli();
+     bee:	f8 94       	cli
+    return 1;
+     bf0:	81 e0       	ldi	r24, 0x01	; 1
+}
+     bf2:	cf 91       	pop	r28
+     bf4:	df 91       	pop	r29
+     bf6:	08 95       	ret
+
+00000bf8 <__iRestore>:
+    __asm__ volatile ("" ::: "memory");
+    (void)__s;
+}
+
+static __inline__ void __iRestore(const  uint8_t *__s)
+{
+     bf8:	df 93       	push	r29
+     bfa:	cf 93       	push	r28
+     bfc:	00 d0       	rcall	.+0      	; 0xbfe <__iRestore+0x6>
+     bfe:	cd b7       	in	r28, 0x3d	; 61
+     c00:	de b7       	in	r29, 0x3e	; 62
+     c02:	9a 83       	std	Y+2, r25	; 0x02
+     c04:	89 83       	std	Y+1, r24	; 0x01
+    SREG = *__s;
+     c06:	ef e5       	ldi	r30, 0x5F	; 95
+     c08:	f0 e0       	ldi	r31, 0x00	; 0
+     c0a:	a9 81       	ldd	r26, Y+1	; 0x01
+     c0c:	ba 81       	ldd	r27, Y+2	; 0x02
+     c0e:	8c 91       	ld	r24, X
+     c10:	80 83       	st	Z, r24
+    __asm__ volatile ("" ::: "memory");
+}
+     c12:	0f 90       	pop	r0
+     c14:	0f 90       	pop	r0
+     c16:	cf 91       	pop	r28
+     c18:	df 91       	pop	r29
+     c1a:	08 95       	ret
+
+00000c1c <Light_Task>:
+
+void Light_Task(void) {
+     c1c:	df 93       	push	r29
+     c1e:	cf 93       	push	r28
+     c20:	cd b7       	in	r28, 0x3d	; 61
+     c22:	de b7       	in	r29, 0x3e	; 62
+    if (!TimerDelayElapsed(&ELight.Timer, LED_STEP_DELAY)) return;
+     c24:	86 e1       	ldi	r24, 0x16	; 22
+     c26:	91 e0       	ldi	r25, 0x01	; 1
+     c28:	64 e0       	ldi	r22, 0x04	; 4
+     c2a:	70 e0       	ldi	r23, 0x00	; 0
+     c2c:	d9 d2       	rcall	.+1458   	; 0x11e0 <TimerDelayElapsed>
+     c2e:	98 2f       	mov	r25, r24
+     c30:	81 e0       	ldi	r24, 0x01	; 1
+     c32:	89 27       	eor	r24, r25
+     c34:	88 23       	and	r24, r24
+     c36:	09 f0       	breq	.+2      	; 0xc3a <Light_Task+0x1e>
+     c38:	c8 c0       	rjmp	.+400    	; 0xdca <Light_Task+0x1ae>
+    // Red channel
+    if (ELight.CurrentColor.Red != ELight.DesiredColor.Red) {
+     c3a:	90 91 1c 01 	lds	r25, 0x011C
+     c3e:	80 91 18 01 	lds	r24, 0x0118
+     c42:	98 17       	cp	r25, r24
+     c44:	61 f1       	breq	.+88     	; 0xc9e <Light_Task+0x82>
+        if (ELight.DesiredColor.Red < ELight.CurrentColor.Red) {
+     c46:	90 91 18 01 	lds	r25, 0x0118
+     c4a:	80 91 1c 01 	lds	r24, 0x011C
+     c4e:	98 17       	cp	r25, r24
+     c50:	88 f4       	brcc	.+34     	; 0xc74 <Light_Task+0x58>
+            ELight.CurrentColor.Red--;
+     c52:	80 91 1c 01 	lds	r24, 0x011C
+     c56:	81 50       	subi	r24, 0x01	; 1
+     c58:	80 93 1c 01 	sts	0x011C, r24
+            if (ELight.CurrentColor.Red == 0) LED_RED_DISABLE();
+     c5c:	80 91 1c 01 	lds	r24, 0x011C
+     c60:	88 23       	and	r24, r24
+     c62:	c1 f4       	brne	.+48     	; 0xc94 <Light_Task+0x78>
+     c64:	a4 e4       	ldi	r26, 0x44	; 68
+     c66:	b0 e0       	ldi	r27, 0x00	; 0
+     c68:	e4 e4       	ldi	r30, 0x44	; 68
+     c6a:	f0 e0       	ldi	r31, 0x00	; 0
+     c6c:	80 81       	ld	r24, Z
+     c6e:	8f 73       	andi	r24, 0x3F	; 63
+     c70:	8c 93       	st	X, r24
+     c72:	10 c0       	rjmp	.+32     	; 0xc94 <Light_Task+0x78>
+        }
+        else {
+            if (ELight.CurrentColor.Red == 0) LED_RED_ENABLE();
+     c74:	80 91 1c 01 	lds	r24, 0x011C
+     c78:	88 23       	and	r24, r24
+     c7a:	39 f4       	brne	.+14     	; 0xc8a <Light_Task+0x6e>
+     c7c:	a4 e4       	ldi	r26, 0x44	; 68
+     c7e:	b0 e0       	ldi	r27, 0x00	; 0
+     c80:	e4 e4       	ldi	r30, 0x44	; 68
+     c82:	f0 e0       	ldi	r31, 0x00	; 0
+     c84:	80 81       	ld	r24, Z
+     c86:	80 68       	ori	r24, 0x80	; 128
+     c88:	8c 93       	st	X, r24
+            ELight.CurrentColor.Red++;
+     c8a:	80 91 1c 01 	lds	r24, 0x011C
+     c8e:	8f 5f       	subi	r24, 0xFF	; 255
+     c90:	80 93 1c 01 	sts	0x011C, r24
+        }
+        OCR0A = ELight.CurrentColor.Red;
+     c94:	e7 e4       	ldi	r30, 0x47	; 71
+     c96:	f0 e0       	ldi	r31, 0x00	; 0
+     c98:	80 91 1c 01 	lds	r24, 0x011C
+     c9c:	80 83       	st	Z, r24
+    }
+    // Green channel
+    if (ELight.CurrentColor.Green != ELight.DesiredColor.Green) {
+     c9e:	90 91 1d 01 	lds	r25, 0x011D
+     ca2:	80 91 19 01 	lds	r24, 0x0119
+     ca6:	98 17       	cp	r25, r24
+     ca8:	61 f1       	breq	.+88     	; 0xd02 <Light_Task+0xe6>
+        if (ELight.DesiredColor.Green < ELight.CurrentColor.Green) {
+     caa:	90 91 19 01 	lds	r25, 0x0119
+     cae:	80 91 1d 01 	lds	r24, 0x011D
+     cb2:	98 17       	cp	r25, r24
+     cb4:	88 f4       	brcc	.+34     	; 0xcd8 <Light_Task+0xbc>
+            ELight.CurrentColor.Green--;
+     cb6:	80 91 1d 01 	lds	r24, 0x011D
+     cba:	81 50       	subi	r24, 0x01	; 1
+     cbc:	80 93 1d 01 	sts	0x011D, r24
+            if (ELight.CurrentColor.Green == 0) LED_GREEN_DISABLE();
+     cc0:	80 91 1d 01 	lds	r24, 0x011D
+     cc4:	88 23       	and	r24, r24
+     cc6:	c1 f4       	brne	.+48     	; 0xcf8 <Light_Task+0xdc>
+     cc8:	a4 e4       	ldi	r26, 0x44	; 68
+     cca:	b0 e0       	ldi	r27, 0x00	; 0
+     ccc:	e4 e4       	ldi	r30, 0x44	; 68
+     cce:	f0 e0       	ldi	r31, 0x00	; 0
+     cd0:	80 81       	ld	r24, Z
+     cd2:	8f 7c       	andi	r24, 0xCF	; 207
+     cd4:	8c 93       	st	X, r24
+     cd6:	10 c0       	rjmp	.+32     	; 0xcf8 <Light_Task+0xdc>
+        }
+        else {
+            if (ELight.CurrentColor.Green == 0) LED_GREEN_ENABLE();
+     cd8:	80 91 1d 01 	lds	r24, 0x011D
+     cdc:	88 23       	and	r24, r24
+     cde:	39 f4       	brne	.+14     	; 0xcee <Light_Task+0xd2>
+     ce0:	a4 e4       	ldi	r26, 0x44	; 68
+     ce2:	b0 e0       	ldi	r27, 0x00	; 0
+     ce4:	e4 e4       	ldi	r30, 0x44	; 68
+     ce6:	f0 e0       	ldi	r31, 0x00	; 0
+     ce8:	80 81       	ld	r24, Z
+     cea:	80 62       	ori	r24, 0x20	; 32
+     cec:	8c 93       	st	X, r24
+            ELight.CurrentColor.Green++;
+     cee:	80 91 1d 01 	lds	r24, 0x011D
+     cf2:	8f 5f       	subi	r24, 0xFF	; 255
+     cf4:	80 93 1d 01 	sts	0x011D, r24
+        }
+        OCR0B = ELight.CurrentColor.Green;
+     cf8:	e8 e4       	ldi	r30, 0x48	; 72
+     cfa:	f0 e0       	ldi	r31, 0x00	; 0
+     cfc:	80 91 1d 01 	lds	r24, 0x011D
+     d00:	80 83       	st	Z, r24
+    }
+    // Blue channel
+    if (ELight.CurrentColor.Blue != ELight.DesiredColor.Blue) {
+     d02:	90 91 1e 01 	lds	r25, 0x011E
+     d06:	80 91 1a 01 	lds	r24, 0x011A
+     d0a:	98 17       	cp	r25, r24
+     d0c:	61 f1       	breq	.+88     	; 0xd66 <Light_Task+0x14a>
+        if (ELight.DesiredColor.Blue < ELight.CurrentColor.Blue) {
+     d0e:	90 91 1a 01 	lds	r25, 0x011A
+     d12:	80 91 1e 01 	lds	r24, 0x011E
+     d16:	98 17       	cp	r25, r24
+     d18:	88 f4       	brcc	.+34     	; 0xd3c <Light_Task+0x120>
+            ELight.CurrentColor.Blue--;
+     d1a:	80 91 1e 01 	lds	r24, 0x011E
+     d1e:	81 50       	subi	r24, 0x01	; 1
+     d20:	80 93 1e 01 	sts	0x011E, r24
+            if (ELight.CurrentColor.Blue == 0) LED_BLUE_DISABLE();
+     d24:	80 91 1e 01 	lds	r24, 0x011E
+     d28:	88 23       	and	r24, r24
+     d2a:	c1 f4       	brne	.+48     	; 0xd5c <Light_Task+0x140>
+     d2c:	a0 eb       	ldi	r26, 0xB0	; 176
+     d2e:	b0 e0       	ldi	r27, 0x00	; 0
+     d30:	e0 eb       	ldi	r30, 0xB0	; 176
+     d32:	f0 e0       	ldi	r31, 0x00	; 0
+     d34:	80 81       	ld	r24, Z
+     d36:	8f 7c       	andi	r24, 0xCF	; 207
+     d38:	8c 93       	st	X, r24
+     d3a:	10 c0       	rjmp	.+32     	; 0xd5c <Light_Task+0x140>
+        }
+        else {
+            if (ELight.CurrentColor.Blue == 0) LED_BLUE_ENABLE();
+     d3c:	80 91 1e 01 	lds	r24, 0x011E
+     d40:	88 23       	and	r24, r24
+     d42:	39 f4       	brne	.+14     	; 0xd52 <Light_Task+0x136>
+     d44:	a0 eb       	ldi	r26, 0xB0	; 176
+     d46:	b0 e0       	ldi	r27, 0x00	; 0
+     d48:	e0 eb       	ldi	r30, 0xB0	; 176
+     d4a:	f0 e0       	ldi	r31, 0x00	; 0
+     d4c:	80 81       	ld	r24, Z
+     d4e:	80 62       	ori	r24, 0x20	; 32
+     d50:	8c 93       	st	X, r24
+            ELight.CurrentColor.Blue++;
+     d52:	80 91 1e 01 	lds	r24, 0x011E
+     d56:	8f 5f       	subi	r24, 0xFF	; 255
+     d58:	80 93 1e 01 	sts	0x011E, r24
+        }
+        OCR2B = ELight.CurrentColor.Blue;
+     d5c:	e4 eb       	ldi	r30, 0xB4	; 180
+     d5e:	f0 e0       	ldi	r31, 0x00	; 0
+     d60:	80 91 1e 01 	lds	r24, 0x011E
+     d64:	80 83       	st	Z, r24
+    }
+    
+    if (ELight.CurrentColor.Uf != ELight.DesiredColor.Uf) {
+     d66:	90 91 1f 01 	lds	r25, 0x011F
+     d6a:	80 91 1b 01 	lds	r24, 0x011B
+     d6e:	98 17       	cp	r25, r24
+     d70:	61 f1       	breq	.+88     	; 0xdca <Light_Task+0x1ae>
+        if (ELight.DesiredColor.Uf < ELight.CurrentColor.Uf) {
+     d72:	90 91 1b 01 	lds	r25, 0x011B
+     d76:	80 91 1f 01 	lds	r24, 0x011F
+     d7a:	98 17       	cp	r25, r24
+     d7c:	88 f4       	brcc	.+34     	; 0xda0 <Light_Task+0x184>
+            ELight.CurrentColor.Uf--;
+     d7e:	80 91 1f 01 	lds	r24, 0x011F
+     d82:	81 50       	subi	r24, 0x01	; 1
+     d84:	80 93 1f 01 	sts	0x011F, r24
+            if (ELight.CurrentColor.Uf == 0) LED_UF_DISABLE();
+     d88:	80 91 1f 01 	lds	r24, 0x011F
+     d8c:	88 23       	and	r24, r24
+     d8e:	c1 f4       	brne	.+48     	; 0xdc0 <Light_Task+0x1a4>
+     d90:	a0 eb       	ldi	r26, 0xB0	; 176
+     d92:	b0 e0       	ldi	r27, 0x00	; 0
+     d94:	e0 eb       	ldi	r30, 0xB0	; 176
+     d96:	f0 e0       	ldi	r31, 0x00	; 0
+     d98:	80 81       	ld	r24, Z
+     d9a:	8f 73       	andi	r24, 0x3F	; 63
+     d9c:	8c 93       	st	X, r24
+     d9e:	10 c0       	rjmp	.+32     	; 0xdc0 <Light_Task+0x1a4>
+        }
+        else {
+            if (ELight.CurrentColor.Uf == 0) LED_UF_ENABLE();
+     da0:	80 91 1f 01 	lds	r24, 0x011F
+     da4:	88 23       	and	r24, r24
+     da6:	39 f4       	brne	.+14     	; 0xdb6 <Light_Task+0x19a>
+     da8:	a0 eb       	ldi	r26, 0xB0	; 176
+     daa:	b0 e0       	ldi	r27, 0x00	; 0
+     dac:	e0 eb       	ldi	r30, 0xB0	; 176
+     dae:	f0 e0       	ldi	r31, 0x00	; 0
+     db0:	80 81       	ld	r24, Z
+     db2:	80 68       	ori	r24, 0x80	; 128
+     db4:	8c 93       	st	X, r24
+            ELight.CurrentColor.Uf++;
+     db6:	80 91 1f 01 	lds	r24, 0x011F
+     dba:	8f 5f       	subi	r24, 0xFF	; 255
+     dbc:	80 93 1f 01 	sts	0x011F, r24
+        }
+        OCR2A = ELight.CurrentColor.Uf;
+     dc0:	e3 eb       	ldi	r30, 0xB3	; 179
+     dc2:	f0 e0       	ldi	r31, 0x00	; 0
+     dc4:	80 91 1f 01 	lds	r24, 0x011F
+     dc8:	80 83       	st	Z, r24
+    }
+}
+     dca:	cf 91       	pop	r28
+     dcc:	df 91       	pop	r29
+     dce:	08 95       	ret
+
+00000dd0 <CC_Task>:
+
+void CC_Task (void){
+     dd0:	df 93       	push	r29
+     dd2:	cf 93       	push	r28
+     dd4:	00 d0       	rcall	.+0      	; 0xdd6 <CC_Task+0x6>
+     dd6:	cd b7       	in	r28, 0x3d	; 61
+     dd8:	de b7       	in	r29, 0x3e	; 62
+    if (MustSleep) return;  // Get out if must sleep
+     dda:	80 91 15 01 	lds	r24, 0x0115
+     dde:	88 23       	and	r24, r24
+     de0:	09 f0       	breq	.+2      	; 0xde4 <CC_Task+0x14>
+     de2:	54 c0       	rjmp	.+168    	; 0xe8c <CC_Task+0xbc>
+    // Do with CC what needed
+    CC_GET_STATE();
+     de4:	8d e3       	ldi	r24, 0x3D	; 61
+     de6:	c5 db       	rcall	.-2166   	; 0x572 <CC_WriteStrobe>
+    switch (CC.State) {
+     de8:	80 91 00 01 	lds	r24, 0x0100
+     dec:	28 2f       	mov	r18, r24
+     dee:	30 e0       	ldi	r19, 0x00	; 0
+     df0:	3a 83       	std	Y+2, r19	; 0x02
+     df2:	29 83       	std	Y+1, r18	; 0x01
+     df4:	89 81       	ldd	r24, Y+1	; 0x01
+     df6:	9a 81       	ldd	r25, Y+2	; 0x02
+     df8:	80 37       	cpi	r24, 0x70	; 112
+     dfa:	91 05       	cpc	r25, r1
+     dfc:	91 f0       	breq	.+36     	; 0xe22 <CC_Task+0x52>
+     dfe:	29 81       	ldd	r18, Y+1	; 0x01
+     e00:	3a 81       	ldd	r19, Y+2	; 0x02
+     e02:	21 37       	cpi	r18, 0x71	; 113
+     e04:	31 05       	cpc	r19, r1
+     e06:	0c f0       	brlt	.+2      	; 0xe0a <CC_Task+0x3a>
+     e08:	41 c0       	rjmp	.+130    	; 0xe8c <CC_Task+0xbc>
+     e0a:	89 81       	ldd	r24, Y+1	; 0x01
+     e0c:	9a 81       	ldd	r25, Y+2	; 0x02
+     e0e:	00 97       	sbiw	r24, 0x00	; 0
+     e10:	59 f0       	breq	.+22     	; 0xe28 <CC_Task+0x58>
+     e12:	29 81       	ldd	r18, Y+1	; 0x01
+     e14:	3a 81       	ldd	r19, Y+2	; 0x02
+     e16:	20 36       	cpi	r18, 0x60	; 96
+     e18:	31 05       	cpc	r19, r1
+     e1a:	c1 f5       	brne	.+112    	; 0xe8c <CC_Task+0xbc>
+        case CC_STB_RX_OVF:
+            CC_FLUSH_RX_FIFO();
+     e1c:	8a e3       	ldi	r24, 0x3A	; 58
+     e1e:	a9 db       	rcall	.-2222   	; 0x572 <CC_WriteStrobe>
+     e20:	35 c0       	rjmp	.+106    	; 0xe8c <CC_Task+0xbc>
+            break;
+        case CC_STB_TX_UNDF:
+            CC_FLUSH_TX_FIFO();
+     e22:	8b e3       	ldi	r24, 0x3B	; 59
+     e24:	a6 db       	rcall	.-2228   	; 0x572 <CC_WriteStrobe>
+     e26:	32 c0       	rjmp	.+100    	; 0xe8c <CC_Task+0xbc>
+            break;
+
+        case CC_STB_IDLE:
+            // Transmit at once if IDLE
+            // Prepare Cale packet
+            CC.TX_Pkt.Address = 0;      // Broadcast
+     e28:	10 92 0a 01 	sts	0x010A, r1
+            CC.TX_Pkt.PacketID++;       // Increase packet ID, to avoid repeative treatment
+     e2c:	80 91 0b 01 	lds	r24, 0x010B
+     e30:	8f 5f       	subi	r24, 0xFF	; 255
+     e32:	80 93 0b 01 	sts	0x010B, r24
+            CC.TX_Pkt.CommandID = PKT_ID0_CALE;
+     e36:	8a ec       	ldi	r24, 0xCA	; 202
+     e38:	80 93 0c 01 	sts	0x010C, r24
+            CC.TX_Pkt.Data[0]   = PKT_ID1_CALE;
+     e3c:	8e e1       	ldi	r24, 0x1E	; 30
+     e3e:	80 93 0d 01 	sts	0x010D, r24
+            // Transmit black color if "shutdown" color is set
+            if (
+     e42:	80 91 18 01 	lds	r24, 0x0118
+     e46:	88 23       	and	r24, r24
+     e48:	79 f4       	brne	.+30     	; 0xe68 <CC_Task+0x98>
+     e4a:	80 91 19 01 	lds	r24, 0x0119
+     e4e:	88 23       	and	r24, r24
+     e50:	59 f4       	brne	.+22     	; 0xe68 <CC_Task+0x98>
+     e52:	80 91 1a 01 	lds	r24, 0x011A
+     e56:	87 30       	cpi	r24, 0x07	; 7
+     e58:	39 f4       	brne	.+14     	; 0xe68 <CC_Task+0x98>
+                    (ELight.DesiredColor.Red   == CLR_SHDN_RED) &&
+                    (ELight.DesiredColor.Green == CLR_SHDN_GREEN) &&
+                    (ELight.DesiredColor.Blue  == CLR_SHDN_BLUE)
+                ) {
+                CC.TX_Pkt.Data[1] = 0;
+     e5a:	10 92 0e 01 	sts	0x010E, r1
+                CC.TX_Pkt.Data[2] = 0;
+     e5e:	10 92 0f 01 	sts	0x010F, r1
+                CC.TX_Pkt.Data[3] = 0;
+     e62:	10 92 10 01 	sts	0x0110, r1
+     e66:	0c c0       	rjmp	.+24     	; 0xe80 <CC_Task+0xb0>
+            }
+            else {
+                CC.TX_Pkt.Data[1] = ELight.DesiredColor.Red;   // }
+     e68:	80 91 18 01 	lds	r24, 0x0118
+     e6c:	80 93 0e 01 	sts	0x010E, r24
+                CC.TX_Pkt.Data[2] = ELight.DesiredColor.Green; // }
+     e70:	80 91 19 01 	lds	r24, 0x0119
+     e74:	80 93 0f 01 	sts	0x010F, r24
+                CC.TX_Pkt.Data[3] = ELight.DesiredColor.Blue;  // } components of color
+     e78:	80 91 1a 01 	lds	r24, 0x011A
+     e7c:	80 93 10 01 	sts	0x0110, r24
+            }
+
+            CC_WriteTX (&CC.TX_PktArray[0], CC_PKT_LENGTH); // Write bytes to FIFO
+     e80:	8a e0       	ldi	r24, 0x0A	; 10
+     e82:	91 e0       	ldi	r25, 0x01	; 1
+     e84:	67 e0       	ldi	r22, 0x07	; 7
+     e86:	b2 da       	rcall	.-2716   	; 0x3ec <CC_WriteTX>
+            CC_ENTER_TX();
+     e88:	85 e3       	ldi	r24, 0x35	; 53
+     e8a:	73 db       	rcall	.-2330   	; 0x572 <CC_WriteStrobe>
+            break;
+
+        default: // Just get out in case of RX, TX, FSTXON, CALIBRATE, SETTLING
+            break;
+    }//Switch
+}
+     e8c:	0f 90       	pop	r0
+     e8e:	0f 90       	pop	r0
+     e90:	cf 91       	pop	r28
+     e92:	df 91       	pop	r29
+     e94:	08 95       	ret
+
+00000e96 <Sleep_Task>:
+
+void Sleep_Task (void) {
+     e96:	df 93       	push	r29
+     e98:	cf 93       	push	r28
+     e9a:	cd b7       	in	r28, 0x3d	; 61
+     e9c:	de b7       	in	r29, 0x3e	; 62
+    if (!MustSleep) return;
+     e9e:	80 91 15 01 	lds	r24, 0x0115
+     ea2:	91 e0       	ldi	r25, 0x01	; 1
+     ea4:	89 27       	eor	r24, r25
+     ea6:	88 23       	and	r24, r24
+     ea8:	09 f0       	breq	.+2      	; 0xeac <Sleep_Task+0x16>
+     eaa:	60 c0       	rjmp	.+192    	; 0xf6c <Sleep_Task+0xd6>
+    // Sleep if Current color is black => LED is faded down yet
+    if (
+     eac:	80 91 1c 01 	lds	r24, 0x011C
+     eb0:	88 23       	and	r24, r24
+     eb2:	09 f0       	breq	.+2      	; 0xeb6 <Sleep_Task+0x20>
+     eb4:	5b c0       	rjmp	.+182    	; 0xf6c <Sleep_Task+0xd6>
+     eb6:	80 91 1d 01 	lds	r24, 0x011D
+     eba:	88 23       	and	r24, r24
+     ebc:	09 f0       	breq	.+2      	; 0xec0 <Sleep_Task+0x2a>
+     ebe:	56 c0       	rjmp	.+172    	; 0xf6c <Sleep_Task+0xd6>
+     ec0:	80 91 1e 01 	lds	r24, 0x011E
+     ec4:	88 23       	and	r24, r24
+     ec6:	09 f0       	breq	.+2      	; 0xeca <Sleep_Task+0x34>
+     ec8:	51 c0       	rjmp	.+162    	; 0xf6c <Sleep_Task+0xd6>
+     eca:	80 91 1f 01 	lds	r24, 0x011F
+     ece:	88 23       	and	r24, r24
+     ed0:	09 f0       	breq	.+2      	; 0xed4 <Sleep_Task+0x3e>
+     ed2:	4c c0       	rjmp	.+152    	; 0xf6c <Sleep_Task+0xd6>
+            (ELight.CurrentColor.Green == 0) &&
+            (ELight.CurrentColor.Blue  == 0) &&
+            (ELight.CurrentColor.Uf  == 0)
+        ) {
+        // Enter sleep
+        CC_ENTER_IDLE();    // }
+     ed4:	86 e3       	ldi	r24, 0x36	; 54
+     ed6:	4d db       	rcall	.-2406   	; 0x572 <CC_WriteStrobe>
+        CC_POWERDOWN();     // } Shutdown CC
+     ed8:	89 e3       	ldi	r24, 0x39	; 57
+     eda:	4b db       	rcall	.-2410   	; 0x572 <CC_WriteStrobe>
+        //LED_PWR_OFF();      // Shutdown LED power
+
+        // Enable IRQ to wake
+        cli();
+     edc:	f8 94       	cli
+        HANDLE_IRQ_SETUP_MASK();
+     ede:	ac e6       	ldi	r26, 0x6C	; 108
+     ee0:	b0 e0       	ldi	r27, 0x00	; 0
+     ee2:	ec e6       	ldi	r30, 0x6C	; 108
+     ee4:	f0 e0       	ldi	r31, 0x00	; 0
+     ee6:	80 81       	ld	r24, Z
+     ee8:	81 60       	ori	r24, 0x01	; 1
+     eea:	8c 93       	st	X, r24
+        HANDLE_IRQ_CLEAR();
+     eec:	ab e3       	ldi	r26, 0x3B	; 59
+     eee:	b0 e0       	ldi	r27, 0x00	; 0
+     ef0:	eb e3       	ldi	r30, 0x3B	; 59
+     ef2:	f0 e0       	ldi	r31, 0x00	; 0
+     ef4:	80 81       	ld	r24, Z
+     ef6:	82 60       	ori	r24, 0x02	; 2
+     ef8:	8c 93       	st	X, r24
+        HANDLE_IRQ_ENABLE();
+     efa:	a8 e6       	ldi	r26, 0x68	; 104
+     efc:	b0 e0       	ldi	r27, 0x00	; 0
+     efe:	e8 e6       	ldi	r30, 0x68	; 104
+     f00:	f0 e0       	ldi	r31, 0x00	; 0
+     f02:	80 81       	ld	r24, Z
+     f04:	82 60       	ori	r24, 0x02	; 2
+     f06:	8c 93       	st	X, r24
+        sei();
+     f08:	78 94       	sei
+        // Enter sleep mode
+        set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+     f0a:	a3 e5       	ldi	r26, 0x53	; 83
+     f0c:	b0 e0       	ldi	r27, 0x00	; 0
+     f0e:	e3 e5       	ldi	r30, 0x53	; 83
+     f10:	f0 e0       	ldi	r31, 0x00	; 0
+     f12:	80 81       	ld	r24, Z
+     f14:	81 7f       	andi	r24, 0xF1	; 241
+     f16:	84 60       	ori	r24, 0x04	; 4
+     f18:	8c 93       	st	X, r24
+        sleep_enable();
+     f1a:	a3 e5       	ldi	r26, 0x53	; 83
+     f1c:	b0 e0       	ldi	r27, 0x00	; 0
+     f1e:	e3 e5       	ldi	r30, 0x53	; 83
+     f20:	f0 e0       	ldi	r31, 0x00	; 0
+     f22:	80 81       	ld	r24, Z
+     f24:	81 60       	ori	r24, 0x01	; 1
+     f26:	8c 93       	st	X, r24
+        wdt_disable();
+     f28:	88 e1       	ldi	r24, 0x18	; 24
+     f2a:	0f b6       	in	r0, 0x3f	; 63
+     f2c:	f8 94       	cli
+     f2e:	80 93 60 00 	sts	0x0060, r24
+     f32:	10 92 60 00 	sts	0x0060, r1
+     f36:	0f be       	out	0x3f, r0	; 63
+        sleep_cpu();    // Sleep now
+     f38:	88 95       	sleep
+        // Something happened, wake now
+        wdt_enable(WDTO_2S);
+     f3a:	88 e1       	ldi	r24, 0x18	; 24
+     f3c:	90 e0       	ldi	r25, 0x00	; 0
+     f3e:	2f e0       	ldi	r18, 0x0F	; 15
+     f40:	0f b6       	in	r0, 0x3f	; 63
+     f42:	f8 94       	cli
+     f44:	a8 95       	wdr
+     f46:	80 93 60 00 	sts	0x0060, r24
+     f4a:	0f be       	out	0x3f, r0	; 63
+     f4c:	20 93 60 00 	sts	0x0060, r18
+        sleep_disable();
+     f50:	a3 e5       	ldi	r26, 0x53	; 83
+     f52:	b0 e0       	ldi	r27, 0x00	; 0
+     f54:	e3 e5       	ldi	r30, 0x53	; 83
+     f56:	f0 e0       	ldi	r31, 0x00	; 0
+     f58:	80 81       	ld	r24, Z
+     f5a:	8e 7f       	andi	r24, 0xFE	; 254
+     f5c:	8c 93       	st	X, r24
+        HANDLE_IRQ_DISABLE();
+     f5e:	a8 e6       	ldi	r26, 0x68	; 104
+     f60:	b0 e0       	ldi	r27, 0x00	; 0
+     f62:	e8 e6       	ldi	r30, 0x68	; 104
+     f64:	f0 e0       	ldi	r31, 0x00	; 0
+     f66:	80 81       	ld	r24, Z
+     f68:	8d 7f       	andi	r24, 0xFD	; 253
+     f6a:	8c 93       	st	X, r24
+       // ESens.HandleIsOn = true;
+        // Event hanler will do the rest
+       // EVENT_HandleTouched();  // Execute it from here to switch on immediately
+    }
+}
+     f6c:	cf 91       	pop	r28
+     f6e:	df 91       	pop	r29
+     f70:	08 95       	ret
+
+00000f72 <EVENT_BothTouched>:
+
+// ============================== Events =======================================
+void EVENT_BothTouched(void) {
+     f72:	df 93       	push	r29
+     f74:	cf 93       	push	r28
+     f76:	00 d0       	rcall	.+0      	; 0xf78 <EVENT_BothTouched+0x6>
+     f78:	00 d0       	rcall	.+0      	; 0xf7a <EVENT_BothTouched+0x8>
+     f7a:	00 d0       	rcall	.+0      	; 0xf7c <EVENT_BothTouched+0xa>
+     f7c:	cd b7       	in	r28, 0x3d	; 61
+     f7e:	de b7       	in	r29, 0x3e	; 62
+    if (!(ELight.ShdnIsOn)) ELight.OldColor = ELight.DesiredColor;
+     f80:	80 91 2a 01 	lds	r24, 0x012A
+     f84:	91 e0       	ldi	r25, 0x01	; 1
+     f86:	89 27       	eor	r24, r25
+     f88:	88 23       	and	r24, r24
+     f8a:	81 f0       	breq	.+32     	; 0xfac <EVENT_BothTouched+0x3a>
+     f8c:	80 91 18 01 	lds	r24, 0x0118
+     f90:	90 91 19 01 	lds	r25, 0x0119
+     f94:	a0 91 1a 01 	lds	r26, 0x011A
+     f98:	b0 91 1b 01 	lds	r27, 0x011B
+     f9c:	80 93 24 01 	sts	0x0124, r24
+     fa0:	90 93 25 01 	sts	0x0125, r25
+     fa4:	a0 93 26 01 	sts	0x0126, r26
+     fa8:	b0 93 27 01 	sts	0x0127, r27
+     fac:	19 82       	std	Y+1, r1	; 0x01
+     fae:	1a 82       	std	Y+2, r1	; 0x02
+     fb0:	87 e0       	ldi	r24, 0x07	; 7
+     fb2:	8b 83       	std	Y+3, r24	; 0x03
+     fb4:	1c 82       	std	Y+4, r1	; 0x04
+    CC_Init();
+    CC_SetAddress(4);   // Never changes in CC itself
+}
+
+FORCE_INLINE void SetDesiredColor (uint8_t ARed, uint8_t AGreen, uint8_t ABlue, uint8_t AUf) {
+    ELight.DesiredColor.Red   = ARed;
+     fb6:	89 81       	ldd	r24, Y+1	; 0x01
+     fb8:	80 93 18 01 	sts	0x0118, r24
+    ELight.DesiredColor.Green = AGreen;
+     fbc:	8a 81       	ldd	r24, Y+2	; 0x02
+     fbe:	80 93 19 01 	sts	0x0119, r24
+    ELight.DesiredColor.Blue  = ABlue;
+     fc2:	8b 81       	ldd	r24, Y+3	; 0x03
+     fc4:	80 93 1a 01 	sts	0x011A, r24
+    ELight.DesiredColor.Uf  = AUf;
+     fc8:	8c 81       	ldd	r24, Y+4	; 0x04
+     fca:	80 93 1b 01 	sts	0x011B, r24
+// ============================== Events =======================================
+void EVENT_BothTouched(void) {
+    if (!(ELight.ShdnIsOn)) ELight.OldColor = ELight.DesiredColor;
+    // Set "Shutdown" color to demonstrate shutdown
+    SetDesiredColor(CLR_SHDN_RED, CLR_SHDN_GREEN, CLR_SHDN_BLUE,CLR_SHDN_UF);
+    ELight.ShdnIsOn=true;
+     fce:	81 e0       	ldi	r24, 0x01	; 1
+     fd0:	80 93 2a 01 	sts	0x012A, r24
+    // Increase sensor reaction time to avoid undesired switch-on events during detouching
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+     fd4:	ef e5       	ldi	r30, 0x5F	; 95
+     fd6:	f0 e0       	ldi	r31, 0x00	; 0
+     fd8:	80 81       	ld	r24, Z
+     fda:	8e 83       	std	Y+6, r24	; 0x06
+     fdc:	04 de       	rcall	.-1016   	; 0xbe6 <__iCliRetVal>
+     fde:	8d 83       	std	Y+5, r24	; 0x05
+     fe0:	07 c0       	rjmp	.+14     	; 0xff0 <EVENT_BothTouched+0x7e>
+        ESens.PollTime = SENS_BOTHDOWN_IGNORE_TIME;
+     fe2:	87 ee       	ldi	r24, 0xE7	; 231
+     fe4:	93 e0       	ldi	r25, 0x03	; 3
+     fe6:	90 93 30 01 	sts	0x0130, r25
+     fea:	80 93 2f 01 	sts	0x012F, r24
+    if (!(ELight.ShdnIsOn)) ELight.OldColor = ELight.DesiredColor;
+    // Set "Shutdown" color to demonstrate shutdown
+    SetDesiredColor(CLR_SHDN_RED, CLR_SHDN_GREEN, CLR_SHDN_BLUE,CLR_SHDN_UF);
+    ELight.ShdnIsOn=true;
+    // Increase sensor reaction time to avoid undesired switch-on events during detouching
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+     fee:	1d 82       	std	Y+5, r1	; 0x05
+     ff0:	8d 81       	ldd	r24, Y+5	; 0x05
+     ff2:	88 23       	and	r24, r24
+     ff4:	b1 f7       	brne	.-20     	; 0xfe2 <EVENT_BothTouched+0x70>
+     ff6:	ce 01       	movw	r24, r28
+     ff8:	06 96       	adiw	r24, 0x06	; 6
+     ffa:	fe dd       	rcall	.-1028   	; 0xbf8 <__iRestore>
+        ESens.PollTime = SENS_BOTHDOWN_IGNORE_TIME;
+    }
+}
+     ffc:	26 96       	adiw	r28, 0x06	; 6
+     ffe:	0f b6       	in	r0, 0x3f	; 63
+    1000:	f8 94       	cli
+    1002:	de bf       	out	0x3e, r29	; 62
+    1004:	0f be       	out	0x3f, r0	; 63
+    1006:	cd bf       	out	0x3d, r28	; 61
+    1008:	cf 91       	pop	r28
+    100a:	df 91       	pop	r29
+    100c:	08 95       	ret
+
+0000100e <EVENT_UfSwitchTouched>:
+
+void EVENT_UfSwitchTouched(void) {
+    100e:	df 93       	push	r29
+    1010:	cf 93       	push	r28
+    1012:	00 d0       	rcall	.+0      	; 0x1014 <EVENT_UfSwitchTouched+0x6>
+    1014:	00 d0       	rcall	.+0      	; 0x1016 <EVENT_UfSwitchTouched+0x8>
+    1016:	cd b7       	in	r28, 0x3d	; 61
+    1018:	de b7       	in	r29, 0x3e	; 62
+    if (ELight.ShdnIsOn) // убирам "Shutdown" color и выставляем значение сохраненного цвета
+    101a:	80 91 2a 01 	lds	r24, 0x012A
+    101e:	88 23       	and	r24, r24
+    1020:	99 f0       	breq	.+38     	; 0x1048 <EVENT_UfSwitchTouched+0x3a>
+    {
+        ELight.DesiredColor = ELight.OldColor;
+    1022:	80 91 24 01 	lds	r24, 0x0124
+    1026:	90 91 25 01 	lds	r25, 0x0125
+    102a:	a0 91 26 01 	lds	r26, 0x0126
+    102e:	b0 91 27 01 	lds	r27, 0x0127
+    1032:	80 93 18 01 	sts	0x0118, r24
+    1036:	90 93 19 01 	sts	0x0119, r25
+    103a:	a0 93 1a 01 	sts	0x011A, r26
+    103e:	b0 93 1b 01 	sts	0x011B, r27
+        ELight.ShdnIsOn=false;
+    1042:	10 92 2a 01 	sts	0x012A, r1
+    1046:	3d c0       	rjmp	.+122    	; 0x10c2 <EVENT_UfSwitchTouched+0xb4>
+        return;
+    }
+    // Toggle Uf on/off
+    if (!ELight.UfIsOn) { // Switch on
+    1048:	80 91 29 01 	lds	r24, 0x0129
+    104c:	91 e0       	ldi	r25, 0x01	; 1
+    104e:	89 27       	eor	r24, r25
+    1050:	88 23       	and	r24, r24
+    1052:	29 f1       	breq	.+74     	; 0x109e <EVENT_UfSwitchTouched+0x90>
+        ELight.UfIsOn = true;
+    1054:	81 e0       	ldi	r24, 0x01	; 1
+    1056:	80 93 29 01 	sts	0x0129, r24
+        ELight.SavedColor = ELight.DesiredColor;
+    105a:	80 91 18 01 	lds	r24, 0x0118
+    105e:	90 91 19 01 	lds	r25, 0x0119
+    1062:	a0 91 1a 01 	lds	r26, 0x011A
+    1066:	b0 91 1b 01 	lds	r27, 0x011B
+    106a:	80 93 20 01 	sts	0x0120, r24
+    106e:	90 93 21 01 	sts	0x0121, r25
+    1072:	a0 93 22 01 	sts	0x0122, r26
+    1076:	b0 93 23 01 	sts	0x0123, r27
+    107a:	19 82       	std	Y+1, r1	; 0x01
+    107c:	1a 82       	std	Y+2, r1	; 0x02
+    107e:	1b 82       	std	Y+3, r1	; 0x03
+    1080:	8f e0       	ldi	r24, 0x0F	; 15
+    1082:	8c 83       	std	Y+4, r24	; 0x04
+    CC_Init();
+    CC_SetAddress(4);   // Never changes in CC itself
+}
+
+FORCE_INLINE void SetDesiredColor (uint8_t ARed, uint8_t AGreen, uint8_t ABlue, uint8_t AUf) {
+    ELight.DesiredColor.Red   = ARed;
+    1084:	89 81       	ldd	r24, Y+1	; 0x01
+    1086:	80 93 18 01 	sts	0x0118, r24
+    ELight.DesiredColor.Green = AGreen;
+    108a:	8a 81       	ldd	r24, Y+2	; 0x02
+    108c:	80 93 19 01 	sts	0x0119, r24
+    ELight.DesiredColor.Blue  = ABlue;
+    1090:	8b 81       	ldd	r24, Y+3	; 0x03
+    1092:	80 93 1a 01 	sts	0x011A, r24
+    ELight.DesiredColor.Uf  = AUf;
+    1096:	8c 81       	ldd	r24, Y+4	; 0x04
+    1098:	80 93 1b 01 	sts	0x011B, r24
+    109c:	12 c0       	rjmp	.+36     	; 0x10c2 <EVENT_UfSwitchTouched+0xb4>
+        SENS_PWR_ON();
+*/
+       // LED_PWR_ON();
+    }
+    else {
+        ELight.UfIsOn = false;
+    109e:	10 92 29 01 	sts	0x0129, r1
+        ELight.DesiredColor = ELight.SavedColor;
+    10a2:	80 91 20 01 	lds	r24, 0x0120
+    10a6:	90 91 21 01 	lds	r25, 0x0121
+    10aa:	a0 91 22 01 	lds	r26, 0x0122
+    10ae:	b0 91 23 01 	lds	r27, 0x0123
+    10b2:	80 93 18 01 	sts	0x0118, r24
+    10b6:	90 93 19 01 	sts	0x0119, r25
+    10ba:	a0 93 1a 01 	sts	0x011A, r26
+    10be:	b0 93 1b 01 	sts	0x011B, r27
+        SetDesiredColor(0, 0, 0,0);
+        MustSleep = true;
+        SENS_PWR_OFF();
+*/
+    }
+}
+    10c2:	0f 90       	pop	r0
+    10c4:	0f 90       	pop	r0
+    10c6:	0f 90       	pop	r0
+    10c8:	0f 90       	pop	r0
+    10ca:	cf 91       	pop	r28
+    10cc:	df 91       	pop	r29
+    10ce:	08 95       	ret
+
+000010d0 <EVENT_UpHoldTick>:
+
+void EVENT_UpHoldTick(void) {   // Fires every N ms when Up is holded
+    10d0:	df 93       	push	r29
+    10d2:	cf 93       	push	r28
+    10d4:	cd b7       	in	r28, 0x3d	; 61
+    10d6:	de b7       	in	r29, 0x3e	; 62
+    if (ELight.ShdnIsOn) // убирам "Shutdown" color и выставляем значение сохраненного цвета
+    10d8:	80 91 2a 01 	lds	r24, 0x012A
+    10dc:	88 23       	and	r24, r24
+    10de:	99 f0       	breq	.+38     	; 0x1106 <EVENT_UpHoldTick+0x36>
+    {
+        ELight.DesiredColor = ELight.OldColor;
+    10e0:	80 91 24 01 	lds	r24, 0x0124
+    10e4:	90 91 25 01 	lds	r25, 0x0125
+    10e8:	a0 91 26 01 	lds	r26, 0x0126
+    10ec:	b0 91 27 01 	lds	r27, 0x0127
+    10f0:	80 93 18 01 	sts	0x0118, r24
+    10f4:	90 93 19 01 	sts	0x0119, r25
+    10f8:	a0 93 1a 01 	sts	0x011A, r26
+    10fc:	b0 93 1b 01 	sts	0x011B, r27
+        ELight.ShdnIsOn=false;
+    1100:	10 92 2a 01 	sts	0x012A, r1
+    1104:	18 c0       	rjmp	.+48     	; 0x1136 <EVENT_UpHoldTick+0x66>
+        return;
+    }
+    
+    if (ELight.UfIsOn)  // Уф сейчас включен, прибавляем его яркость
+    1106:	80 91 29 01 	lds	r24, 0x0129
+    110a:	88 23       	and	r24, r24
+    110c:	51 f0       	breq	.+20     	; 0x1122 <EVENT_UpHoldTick+0x52>
+    {
+        if (ELight.DesiredColor.Uf<0xF0) ELight.DesiredColor.Uf+= 0x0f;
+    110e:	80 91 1b 01 	lds	r24, 0x011B
+    1112:	80 3f       	cpi	r24, 0xF0	; 240
+    1114:	80 f4       	brcc	.+32     	; 0x1136 <EVENT_UpHoldTick+0x66>
+    1116:	80 91 1b 01 	lds	r24, 0x011B
+    111a:	81 5f       	subi	r24, 0xF1	; 241
+    111c:	80 93 1b 01 	sts	0x011B, r24
+    1120:	0a c0       	rjmp	.+20     	; 0x1136 <EVENT_UpHoldTick+0x66>
+        return;
+    }
+    
+    if (ELight.Indx == COLOR_COUNT-1) return;
+    1122:	80 91 28 01 	lds	r24, 0x0128
+    1126:	80 36       	cpi	r24, 0x60	; 96
+    1128:	31 f0       	breq	.+12     	; 0x1136 <EVENT_UpHoldTick+0x66>
+    SetTableColor();
+    112a:	0a dc       	rcall	.-2028   	; 0x940 <SetTableColor>
+    ELight.Indx++;
+    112c:	80 91 28 01 	lds	r24, 0x0128
+    1130:	8f 5f       	subi	r24, 0xFF	; 255
+    1132:	80 93 28 01 	sts	0x0128, r24
+}
+    1136:	cf 91       	pop	r28
+    1138:	df 91       	pop	r29
+    113a:	08 95       	ret
+
+0000113c <EVENT_DownHoldTick>:
+void EVENT_DownHoldTick(void) { // Fires every N ms when Down is holded
+    113c:	df 93       	push	r29
+    113e:	cf 93       	push	r28
+    1140:	cd b7       	in	r28, 0x3d	; 61
+    1142:	de b7       	in	r29, 0x3e	; 62
+    if (ELight.ShdnIsOn)  // убирам "Shutdown" color и выставляем значение сохраненного цвета
+    1144:	80 91 2a 01 	lds	r24, 0x012A
+    1148:	88 23       	and	r24, r24
+    114a:	99 f0       	breq	.+38     	; 0x1172 <EVENT_DownHoldTick+0x36>
+    {
+        ELight.DesiredColor = ELight.OldColor;
+    114c:	80 91 24 01 	lds	r24, 0x0124
+    1150:	90 91 25 01 	lds	r25, 0x0125
+    1154:	a0 91 26 01 	lds	r26, 0x0126
+    1158:	b0 91 27 01 	lds	r27, 0x0127
+    115c:	80 93 18 01 	sts	0x0118, r24
+    1160:	90 93 19 01 	sts	0x0119, r25
+    1164:	a0 93 1a 01 	sts	0x011A, r26
+    1168:	b0 93 1b 01 	sts	0x011B, r27
+        ELight.ShdnIsOn=false;
+    116c:	10 92 2a 01 	sts	0x012A, r1
+    1170:	18 c0       	rjmp	.+48     	; 0x11a2 <EVENT_DownHoldTick+0x66>
+        return;
+    }
+    if (ELight.UfIsOn)  // Уф сейчас включен, убавляем его яркость
+    1172:	80 91 29 01 	lds	r24, 0x0129
+    1176:	88 23       	and	r24, r24
+    1178:	51 f0       	breq	.+20     	; 0x118e <EVENT_DownHoldTick+0x52>
+    {
+        if (ELight.DesiredColor.Uf>0x0f) ELight.DesiredColor.Uf-= 0x0f;
+    117a:	80 91 1b 01 	lds	r24, 0x011B
+    117e:	80 31       	cpi	r24, 0x10	; 16
+    1180:	80 f0       	brcs	.+32     	; 0x11a2 <EVENT_DownHoldTick+0x66>
+    1182:	80 91 1b 01 	lds	r24, 0x011B
+    1186:	8f 50       	subi	r24, 0x0F	; 15
+    1188:	80 93 1b 01 	sts	0x011B, r24
+    118c:	0a c0       	rjmp	.+20     	; 0x11a2 <EVENT_DownHoldTick+0x66>
+        return;
+    }
+    if (ELight.Indx == 0) return;
+    118e:	80 91 28 01 	lds	r24, 0x0128
+    1192:	88 23       	and	r24, r24
+    1194:	31 f0       	breq	.+12     	; 0x11a2 <EVENT_DownHoldTick+0x66>
+    SetTableColor();
+    1196:	d4 db       	rcall	.-2136   	; 0x940 <SetTableColor>
+    ELight.Indx--;
+    1198:	80 91 28 01 	lds	r24, 0x0128
+    119c:	81 50       	subi	r24, 0x01	; 1
+    119e:	80 93 28 01 	sts	0x0128, r24
+}
+    11a2:	cf 91       	pop	r28
+    11a4:	df 91       	pop	r29
+    11a6:	08 95       	ret
+
+000011a8 <__vector_4>:
+
+// =========================== Interrupts ======================================
+EMPTY_INTERRUPT (PCINT1_vect);
+    11a8:	18 95       	reti
+
+000011aa <TimerInit>:
+#include "time_utils.h"
+
+volatile uint16_t TickCounter;
+
+void TimerInit (void) {
+    11aa:	df 93       	push	r29
+    11ac:	cf 93       	push	r28
+    11ae:	cd b7       	in	r28, 0x3d	; 61
+    11b0:	de b7       	in	r29, 0x3e	; 62
+    // Millisecond timer initialization, with output compare interrupt enabled
+    TCCR1A = 0;
+    11b2:	e0 e8       	ldi	r30, 0x80	; 128
+    11b4:	f0 e0       	ldi	r31, 0x00	; 0
+    11b6:	10 82       	st	Z, r1
+    TCCR1B = (0<<WGM13)|(1<<WGM12)|(0<<CS12)|(1<<CS11)|(0<<CS10); // CTC mode, 1 MHz/8 = 125 kHz
+    11b8:	e1 e8       	ldi	r30, 0x81	; 129
+    11ba:	f0 e0       	ldi	r31, 0x00	; 0
+    11bc:	8a e0       	ldi	r24, 0x0A	; 10
+    11be:	80 83       	st	Z, r24
+    OCR1A  = 125;                           // 125 kHz / 125 = 1000 compares per second
+    11c0:	e8 e8       	ldi	r30, 0x88	; 136
+    11c2:	f0 e0       	ldi	r31, 0x00	; 0
+    11c4:	8d e7       	ldi	r24, 0x7D	; 125
+    11c6:	90 e0       	ldi	r25, 0x00	; 0
+    11c8:	91 83       	std	Z+1, r25	; 0x01
+    11ca:	80 83       	st	Z, r24
+    TIMSK1 |= (1<<OCIE1A);                  // Enable interrupt
+    11cc:	af e6       	ldi	r26, 0x6F	; 111
+    11ce:	b0 e0       	ldi	r27, 0x00	; 0
+    11d0:	ef e6       	ldi	r30, 0x6F	; 111
+    11d2:	f0 e0       	ldi	r31, 0x00	; 0
+    11d4:	80 81       	ld	r24, Z
+    11d6:	82 60       	ori	r24, 0x02	; 2
+    11d8:	8c 93       	st	X, r24
+}
+    11da:	cf 91       	pop	r28
+    11dc:	df 91       	pop	r29
+    11de:	08 95       	ret
+
+000011e0 <TimerDelayElapsed>:
+
+bool TimerDelayElapsed (uint16_t *AVar, const uint16_t ADelay) {
+    11e0:	df 93       	push	r29
+    11e2:	cf 93       	push	r28
+    11e4:	cd b7       	in	r28, 0x3d	; 61
+    11e6:	de b7       	in	r29, 0x3e	; 62
+    11e8:	29 97       	sbiw	r28, 0x09	; 9
+    11ea:	0f b6       	in	r0, 0x3f	; 63
+    11ec:	f8 94       	cli
+    11ee:	de bf       	out	0x3e, r29	; 62
+    11f0:	0f be       	out	0x3f, r0	; 63
+    11f2:	cd bf       	out	0x3d, r28	; 61
+    11f4:	9e 83       	std	Y+6, r25	; 0x06
+    11f6:	8d 83       	std	Y+5, r24	; 0x05
+    11f8:	78 87       	std	Y+8, r23	; 0x08
+    11fa:	6f 83       	std	Y+7, r22	; 0x07
+    uint16_t ttmp;
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) {
+    11fc:	ef e5       	ldi	r30, 0x5F	; 95
+    11fe:	f0 e0       	ldi	r31, 0x00	; 0
+    1200:	80 81       	ld	r24, Z
+    1202:	8c 83       	std	Y+4, r24	; 0x04
+    1204:	32 d0       	rcall	.+100    	; 0x126a <__iCliRetVal>
+    1206:	89 83       	std	Y+1, r24	; 0x01
+    1208:	07 c0       	rjmp	.+14     	; 0x1218 <TimerDelayElapsed+0x38>
+        ttmp = TickCounter;
+    120a:	80 91 32 01 	lds	r24, 0x0132
+    120e:	90 91 33 01 	lds	r25, 0x0133
+    1212:	9b 83       	std	Y+3, r25	; 0x03
+    1214:	8a 83       	std	Y+2, r24	; 0x02
+    TIMSK1 |= (1<<OCIE1A);                  // Enable interrupt
+}
+
+bool TimerDelayElapsed (uint16_t *AVar, const uint16_t ADelay) {
+    uint16_t ttmp;
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) {
+    1216:	19 82       	std	Y+1, r1	; 0x01
+    1218:	89 81       	ldd	r24, Y+1	; 0x01
+    121a:	88 23       	and	r24, r24
+    121c:	b1 f7       	brne	.-20     	; 0x120a <TimerDelayElapsed+0x2a>
+    121e:	ce 01       	movw	r24, r28
+    1220:	04 96       	adiw	r24, 0x04	; 4
+    1222:	2c d0       	rcall	.+88     	; 0x127c <__iRestore>
+        ttmp = TickCounter;
+    }
+    if ((ttmp - *AVar) >= ADelay) {
+    1224:	ed 81       	ldd	r30, Y+5	; 0x05
+    1226:	fe 81       	ldd	r31, Y+6	; 0x06
+    1228:	20 81       	ld	r18, Z
+    122a:	31 81       	ldd	r19, Z+1	; 0x01
+    122c:	8a 81       	ldd	r24, Y+2	; 0x02
+    122e:	9b 81       	ldd	r25, Y+3	; 0x03
+    1230:	ac 01       	movw	r20, r24
+    1232:	42 1b       	sub	r20, r18
+    1234:	53 0b       	sbc	r21, r19
+    1236:	9a 01       	movw	r18, r20
+    1238:	8f 81       	ldd	r24, Y+7	; 0x07
+    123a:	98 85       	ldd	r25, Y+8	; 0x08
+    123c:	28 17       	cp	r18, r24
+    123e:	39 07       	cpc	r19, r25
+    1240:	48 f0       	brcs	.+18     	; 0x1254 <TimerDelayElapsed+0x74>
+        *AVar = ttmp;
+    1242:	ed 81       	ldd	r30, Y+5	; 0x05
+    1244:	fe 81       	ldd	r31, Y+6	; 0x06
+    1246:	8a 81       	ldd	r24, Y+2	; 0x02
+    1248:	9b 81       	ldd	r25, Y+3	; 0x03
+    124a:	91 83       	std	Z+1, r25	; 0x01
+    124c:	80 83       	st	Z, r24
+        return true;
+    124e:	51 e0       	ldi	r21, 0x01	; 1
+    1250:	59 87       	std	Y+9, r21	; 0x09
+    1252:	01 c0       	rjmp	.+2      	; 0x1256 <TimerDelayElapsed+0x76>
+    }
+    else return false;
+    1254:	19 86       	std	Y+9, r1	; 0x09
+    1256:	89 85       	ldd	r24, Y+9	; 0x09
+}
+    1258:	29 96       	adiw	r28, 0x09	; 9
+    125a:	0f b6       	in	r0, 0x3f	; 63
+    125c:	f8 94       	cli
+    125e:	de bf       	out	0x3e, r29	; 62
+    1260:	0f be       	out	0x3f, r0	; 63
+    1262:	cd bf       	out	0x3d, r28	; 61
+    1264:	cf 91       	pop	r28
+    1266:	df 91       	pop	r29
+    1268:	08 95       	ret
+
+0000126a <__iCliRetVal>:
+    sei();
+    return 1;
+}
+
+static __inline__ uint8_t __iCliRetVal(void)
+{
+    126a:	df 93       	push	r29
+    126c:	cf 93       	push	r28
+    126e:	cd b7       	in	r28, 0x3d	; 61
+    1270:	de b7       	in	r29, 0x3e	; 62
+    cli();
+    1272:	f8 94       	cli
+    return 1;
+    1274:	81 e0       	ldi	r24, 0x01	; 1
+}
+    1276:	cf 91       	pop	r28
+    1278:	df 91       	pop	r29
+    127a:	08 95       	ret
+
+0000127c <__iRestore>:
+    __asm__ volatile ("" ::: "memory");
+    (void)__s;
+}
+
+static __inline__ void __iRestore(const  uint8_t *__s)
+{
+    127c:	df 93       	push	r29
+    127e:	cf 93       	push	r28
+    1280:	00 d0       	rcall	.+0      	; 0x1282 <__iRestore+0x6>
+    1282:	cd b7       	in	r28, 0x3d	; 61
+    1284:	de b7       	in	r29, 0x3e	; 62
+    1286:	9a 83       	std	Y+2, r25	; 0x02
+    1288:	89 83       	std	Y+1, r24	; 0x01
+    SREG = *__s;
+    128a:	ef e5       	ldi	r30, 0x5F	; 95
+    128c:	f0 e0       	ldi	r31, 0x00	; 0
+    128e:	a9 81       	ldd	r26, Y+1	; 0x01
+    1290:	ba 81       	ldd	r27, Y+2	; 0x02
+    1292:	8c 91       	ld	r24, X
+    1294:	80 83       	st	Z, r24
+    __asm__ volatile ("" ::: "memory");
+}
+    1296:	0f 90       	pop	r0
+    1298:	0f 90       	pop	r0
+    129a:	cf 91       	pop	r28
+    129c:	df 91       	pop	r29
+    129e:	08 95       	ret
+
+000012a0 <TimerResetDelay>:
+
+void TimerResetDelay (uint16_t *AVar) {
+    12a0:	df 93       	push	r29
+    12a2:	cf 93       	push	r28
+    12a4:	00 d0       	rcall	.+0      	; 0x12a6 <TimerResetDelay+0x6>
+    12a6:	00 d0       	rcall	.+0      	; 0x12a8 <TimerResetDelay+0x8>
+    12a8:	cd b7       	in	r28, 0x3d	; 61
+    12aa:	de b7       	in	r29, 0x3e	; 62
+    12ac:	9c 83       	std	Y+4, r25	; 0x04
+    12ae:	8b 83       	std	Y+3, r24	; 0x03
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) {
+    12b0:	ef e5       	ldi	r30, 0x5F	; 95
+    12b2:	f0 e0       	ldi	r31, 0x00	; 0
+    12b4:	80 81       	ld	r24, Z
+    12b6:	8a 83       	std	Y+2, r24	; 0x02
+    12b8:	d8 df       	rcall	.-80     	; 0x126a <__iCliRetVal>
+    12ba:	89 83       	std	Y+1, r24	; 0x01
+    12bc:	09 c0       	rjmp	.+18     	; 0x12d0 <TimerResetDelay+0x30>
+        *AVar = TickCounter;
+    12be:	80 91 32 01 	lds	r24, 0x0132
+    12c2:	90 91 33 01 	lds	r25, 0x0133
+    12c6:	eb 81       	ldd	r30, Y+3	; 0x03
+    12c8:	fc 81       	ldd	r31, Y+4	; 0x04
+    12ca:	91 83       	std	Z+1, r25	; 0x01
+    12cc:	80 83       	st	Z, r24
+    }
+    else return false;
+}
+
+void TimerResetDelay (uint16_t *AVar) {
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) {
+    12ce:	19 82       	std	Y+1, r1	; 0x01
+    12d0:	89 81       	ldd	r24, Y+1	; 0x01
+    12d2:	88 23       	and	r24, r24
+    12d4:	a1 f7       	brne	.-24     	; 0x12be <TimerResetDelay+0x1e>
+    12d6:	ce 01       	movw	r24, r28
+    12d8:	02 96       	adiw	r24, 0x02	; 2
+    12da:	d0 df       	rcall	.-96     	; 0x127c <__iRestore>
+        *AVar = TickCounter;
+    }
+}
+    12dc:	0f 90       	pop	r0
+    12de:	0f 90       	pop	r0
+    12e0:	0f 90       	pop	r0
+    12e2:	0f 90       	pop	r0
+    12e4:	cf 91       	pop	r28
+    12e6:	df 91       	pop	r29
+    12e8:	08 95       	ret
+
+000012ea <__vector_11>:
+*/
+
+// ================================ Interrupts =================================
+// ISR for the timer 0 compare vector. This ISR fires once each millisecond,
+// and increments the tick counter.
+ISR (TIMER1_COMPA_vect, ISR_BLOCK) {
+    12ea:	1f 92       	push	r1
+    12ec:	0f 92       	push	r0
+    12ee:	0f b6       	in	r0, 0x3f	; 63
+    12f0:	0f 92       	push	r0
+    12f2:	11 24       	eor	r1, r1
+    12f4:	8f 93       	push	r24
+    12f6:	9f 93       	push	r25
+    12f8:	df 93       	push	r29
+    12fa:	cf 93       	push	r28
+    12fc:	cd b7       	in	r28, 0x3d	; 61
+    12fe:	de b7       	in	r29, 0x3e	; 62
+	TickCounter++;
+    1300:	80 91 32 01 	lds	r24, 0x0132
+    1304:	90 91 33 01 	lds	r25, 0x0133
+    1308:	01 96       	adiw	r24, 0x01	; 1
+    130a:	90 93 33 01 	sts	0x0133, r25
+    130e:	80 93 32 01 	sts	0x0132, r24
+    1312:	cf 91       	pop	r28
+    1314:	df 91       	pop	r29
+    1316:	9f 91       	pop	r25
+    1318:	8f 91       	pop	r24
+    131a:	0f 90       	pop	r0
+    131c:	0f be       	out	0x3f, r0	; 63
+    131e:	0f 90       	pop	r0
+    1320:	1f 90       	pop	r1
+    1322:	18 95       	reti
+
+00001324 <_exit>:
+    1324:	f8 94       	cli
+
+00001326 <__stop_program>:
+    1326:	ff cf       	rjmp	.-2      	; 0x1326 <__stop_program>
