@@ -40,8 +40,8 @@ private:
     SnsState_t OldState;
     // Sensors
     bool Touched (uint8_t Indx);
-    bool MagnetNear(void) { return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_13); }
-    bool VoltageApplied(void) { return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_2); }
+    bool MagnetNear(void)     { return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_13); }
+    bool VoltageApplied(void) { return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_2 ); }
     bool SensorsStateChanged(void);
 public:
     union {

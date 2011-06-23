@@ -7,7 +7,7 @@ SnsState_t SnsState;
 
 void Sns_t::Task() {
     if (!Delay.Elapsed(&Timer, 198)) return;
-    //UART_StrUint("Battery: ", BatteryADC);
+    UART_StrUint("Battery: ", BatteryADC);
     // Check sensors
     SnsState.KeyTouched[0]  = Touched(0);
     SnsState.KeyTouched[1]  = Touched(1);
@@ -26,7 +26,7 @@ void Sns_t::Init() {
     // ==== Clocks ====
     RCC_ADCCLKConfig(RCC_PCLK2_Div4);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOC, ENABLE);
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
     RCC_AHBPeriphClockCmd (RCC_AHBPeriph_DMA1,  ENABLE);
     // ==== GPIO ====
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -35,10 +35,18 @@ void Sns_t::Init() {
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
-    // Touch, magnet, voltage sensors
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_13;
+    // Touch & magnet sensors
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_13;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
+    // Voltage
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+    // Timer PWM output
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
     // Sensors power
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -48,10 +56,19 @@ void Sns_t::Init() {
     // Time base configuration
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; // Up-counter needed, nothing special
+    TIM_TimeBaseStructure.TIM_ClockDivision = 0x0;
     TIM_TimeBaseStructure.TIM_Period = ADC_REQUEST_PERIOD;
     TIM_TimeBaseStructure.TIM_Prescaler = (uint16_t) (SystemCoreClock / 1000) - 1; // Input clock divisor
-    TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-    TIM_SelectOutputTrigger(TIM3, TIM_TRGOSource_Update);       // Timer TRGO selection
+    TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+    //TIM_SelectOutputTrigger(TIM4, TIM_TRGOSource_Update);       // Timer TRGO selection
+    TIM_OCInitTypeDef TIM_OCInitStructure;
+    // TIM1 channel1 configuration in PWM mode
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing;
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;
+    TIM_OCInitStructure.TIM_Pulse = 0x7F;
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;
+    TIM_OC4Init(TIM4, &TIM_OCInitStructure);
+
     // ==== DMA ====
     DMA_DeInit(DMA1_Channel1);
     DMA_InitTypeDef DMA_InitStructure;
@@ -73,7 +90,7 @@ void Sns_t::Init() {
     ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;  // Independent, not dual
     ADC_InitStructure.ADC_ScanConvMode = ENABLE;
     ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
-    ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T3_TRGO;
+    ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T4_CC4;
     ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
     ADC_InitStructure.ADC_NbrOfChannel = 2;
     ADC_Init(ADC1, &ADC_InitStructure);
@@ -93,7 +110,8 @@ void Sns_t::Init() {
     ADC_StartCalibration(ADC1);                 // Start ADC1 calibration
     while(ADC_GetCalibrationStatus(ADC1));      // Check the end of ADC1 calibration
 
-    TIM_Cmd(TIM3, ENABLE);                      // Enable timer
+    TIM_Cmd(TIM4, ENABLE);                      // Enable timer
+    //TIM_CtrlPWMOutputs(TIM4, ENABLE);
 
     // Interrupt config: needed to workaround hardware bug
     NVIC_InitTypeDef NVIC_InitStructure;
