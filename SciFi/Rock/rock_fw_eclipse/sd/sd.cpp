@@ -2,9 +2,9 @@
 #include "sd.h"
 #include "sd_lowlevel.h"
 
-#include "uart.h"
+#include "../uart.h"
 #include "ff.h"
-#include "delay_util.h"
+#include "../delay_util.h"
 
 
 #define BLOCK_SIZE          512 /* Block Size in Bytes */

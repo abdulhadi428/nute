@@ -19,7 +19,7 @@
 #include <util/delay.h>
 // ============================= Types =========================================
 struct {
-    //bool UpIsOn, DownIsOn, UfIsOn, BothIsOn;
+    bool CoverIsOpen;//, DownIsOn, UfIsOn, BothIsOn;
     uint16_t Timer, HoldTimer;
     uint16_t PollTime;
     uint8_t Step;
@@ -36,7 +36,7 @@ struct {
     bool ShdnIsOn;
 } ELight;
 
-bool MustSleep; // toggles in Handle Touch events
+bool MustSleep; // toggles COVER events
 
 // ============================== General ======================================
 int main(void) {
@@ -78,19 +78,20 @@ FORCE_INLINE void GeneralInit(void) {
     TCCR1A = (1<<WGM11)|(1<<WGM10);
     TCCR1B = (0<<WGM12)|(0<<CS12)|(0<<CS11)|(1<<CS10);
     TimerResetDelay(&ELight.Timer);
-    ELight.Indx = 0;
-    SetTableColor();
-    ELight.SavedColor = ELight.DesiredColor;
-    SetDesiredColor(0, 0, 0,0);   // Initial fade
+    ELight.Indx =0;
+   // SetTableColor();
+    SetDesiredColor(0, 0xF0, 0,0);   // Initial fade
     ELight.UfIsOn = false;
+	ESens.CoverIsOpen=true;
 
     // Sensors
     SENS_DDR  &= ~((1<<SENS_DOWN)|(1<<SENS_UP)|(1<<SENS_UF_SWITCH));
    // SENS_DDR  |= 1<<SENS_PWR;
     SENS_PORT &= ~((1<<SENS_DOWN)|(1<<SENS_UP)|(1<<SENS_UF_SWITCH)); // No pull-ups
-	
+
 	COVER_DDR  &= ~(1<<COVER_P);
-	COVER_PORT &= ~(1<<COVER_P);
+	//COVER_PORT &= ~(1<<COVER_P);// No pull-up
+	COVER_PORT|= (1<<COVER_P); // Yes pull-up
 // SENS_PWR_OFF();
 /*
     ESens.DownIsOn   = false;
@@ -128,46 +129,42 @@ void SENS_Task (void) {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         ESens.PollTime = SENS_POLL_TIME;
     }
-	if (!(COVER_IS_UP()) )ESens.Step=SENS_COVER_CLOSED;  // крышка закрыта
-	
+	if (!(COVER_IS_UP()) )EVENT_CoverClosed();
+		else EVENT_CoverOpened();
+	if (!(ESens.CoverIsOpen))return;  // при закрытой крышке игнорируем все датчики
+		
     switch (ESens.Step)
     {
         case SENS_STATE_START:
             if (SENS_UP_IS_ON()) ESens.Step=SENS_STATE_UP;             // Touch occured
             if (SENS_DOWN_IS_ON()) ESens.Step=SENS_STATE_DOWN;          // Touch occured
             if (SENS_UF_SWITCH_IS_ON()) ESens.Step=SENS_STATE_UF_SWITCH; // Touch occured
-			if (!(COVER_IS_UP()) )ESens.Step=SENS_COVER_CLOSED;			 // крышка закрыта
+			//if (!(COVER_IS_UP()) )ESens.Step=SENS_COVER_CLOSED;			 // крышка закрыта
             if (ESens.Step!=SENS_STATE_START) TimerResetDelay(&ESens.HoldTimer);  // Reset hold timer
             break;
         case SENS_STATE_UP:
             if (SENS_DOWN_IS_ON()) ESens.Step=SENS_STATE_BOTH; // Touch occured
             if (!(SENS_UP_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured
+			if (!(COVER_IS_UP()) )ESens.Step=SENS_STATE_START;  // крышка закрыта
             if (TimerDelayElapsed(&ESens.HoldTimer, SENS_HOLD_TICK_TIMEOUT)) EVENT_UpHoldTick();
             break;
         case SENS_STATE_DOWN:
             if (SENS_UP_IS_ON()) ESens.Step=SENS_STATE_BOTH;    // Touch occured
             if (!(SENS_DOWN_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured   
+			//if (!(COVER_IS_UP()) )ESens.Step=SENS_STATE_START;  // крышка закрыта
             if (TimerDelayElapsed(&ESens.HoldTimer, SENS_HOLD_TICK_TIMEOUT)) EVENT_DownHoldTick();
             break;
         case SENS_STATE_UF_SWITCH:
             if (!(SENS_UF_SWITCH_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured
+			//if (!(COVER_IS_UP()) )ESens.Step=SENS_STATE_START;  // крышка закрыта
             if (TimerDelayElapsed(&ESens.HoldTimer, SENS_HOLD_TICK_TIMEOUT)) EVENT_UfSwitchTouched();
             break;  
         case SENS_STATE_BOTH:
             if (!(SENS_UP_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured
             if (!(SENS_DOWN_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured 
-		            if (ESens.Step==SENS_STATE_BOTH) EVENT_BothTouched();
+			//if (!(COVER_IS_UP()) )ESens.Step=SENS_STATE_START;  // крышка закрыта
+		    if (TimerDelayElapsed(&ESens.HoldTimer, SENS_HOLD_TICK_TIMEOUT)) EVENT_BothTouched();
             break; 
-		case SENS_COVER_CLOSED:		// крышка закрыта
-			
-			if (COVER_IS_UP() )	{				// крышка открыта
-				EVENT_CoverOpened();
-				ESens.Step=SENS_STATE_START;  
-			}	
-			else {
-				EVENT_CoverClosed();	
-			}				
-            break;              
     }
 }
 
@@ -183,7 +180,7 @@ void Light_Task(void) {
             if (ELight.CurrentColor.Red == 0) LED_RED_ENABLE();
             ELight.CurrentColor.Red++;
         }
-        OCR0A = ELight.CurrentColor.Red;
+        OCR2B = ELight.CurrentColor.Red;
     }
     // Green channel
     if (ELight.CurrentColor.Green != ELight.DesiredColor.Green) {
@@ -207,7 +204,7 @@ void Light_Task(void) {
             if (ELight.CurrentColor.Blue == 0) LED_BLUE_ENABLE();
             ELight.CurrentColor.Blue++;
         }
-        OCR2B = ELight.CurrentColor.Blue;
+        OCR0A = ELight.CurrentColor.Blue;
     }
     
     if (ELight.CurrentColor.Uf != ELight.DesiredColor.Uf) {
@@ -279,7 +276,6 @@ void Sleep_Task (void) {
         // Enter sleep
         CC_ENTER_IDLE();    // }
         CC_POWERDOWN();     // } Shutdown CC
-        //LED_PWR_OFF();      // Shutdown LED power
 
         // Enable IRQ to wake
         cli();
@@ -293,13 +289,11 @@ void Sleep_Task (void) {
         wdt_disable();
         sleep_cpu();    // Sleep now
         // Something happened, wake now
+		sleep_disable();
         wdt_enable(WDTO_2S);
-        sleep_disable();
-        COVER_IRQ_DISABLE();
+		ESens.CoverIsOpen=false;
+		EVENT_CoverOpened();// Execute it from here to switch on immediately
 		MustSleep=false;
-       // ESens.HandleIsOn = true;
-        // Event hanler will do the rest
-       // EVENT_HandleTouched();  // Execute it from here to switch on immediately
     }
 }
 
@@ -372,15 +366,17 @@ void EVENT_DownHoldTick(void) { // Fires every N ms when Down is holded
 
 
 void EVENT_CoverClosed(void) {
-	if (MustSleep) return; // уже начался переход в спящий режим
+	if (!(ESens.CoverIsOpen))return; // уже отработали закрытие
 	ELight.SleepColor = ELight.DesiredColor; // Сохраняем цвет до выключения
 	SetDesiredColor(0, 0, 0,0);
 	MustSleep=true;
+	ESens.CoverIsOpen=false;
 }
 void EVENT_CoverOpened(void) {
-	if (!(MustSleep)) return; // уже вышли из спящего режима (или не входили в него)
+	if (ESens.CoverIsOpen)return; // уже отработали открытие
 	ELight.DesiredColor = ELight.SleepColor; // Востонавливаем цвет до перехода в спящий режим.
 	MustSleep=false;
+	ESens.CoverIsOpen=true;
 }
 // =========================== Interrupts ======================================
-EMPTY_INTERRUPT (PCINT1_vect);
+EMPTY_INTERRUPT (PCINT0_vect);
