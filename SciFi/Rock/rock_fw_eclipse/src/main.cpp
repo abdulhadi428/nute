@@ -16,6 +16,8 @@
 #include "media.h"
 #include "sensors.h"
 
+#include "artifact.h"
+
 #include "lcd110x.h"
 #include "images.h"
 
@@ -36,6 +38,7 @@ int main(void) {
         ESnd.Task();
         ESns.Task();
         Leds.Task();
+        EArt.Task();
         //CC.Task();
     } // while(1)
 }
@@ -60,6 +63,8 @@ void GeneralInit(void) {
     Vs.Init();
     ESnd.Init();
     ESnd.Play("alive.wav");
+    // Artifact
+    EArt.Init();
 }
 
 // ================================== Events ===================================

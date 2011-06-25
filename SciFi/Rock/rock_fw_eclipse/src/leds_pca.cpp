@@ -57,6 +57,10 @@ void Leds_t::SetMode(LedModes_t AMode) {
             lDelay = 81;
             break;
 
+        case lmFadeAllAwayAndStop:
+            lDelay = 45;
+            break;
+
         default:
             lDelay = 10;
             break;
@@ -74,7 +78,7 @@ void Leds_t::EqualAll(uint8_t AValue) {
 // ================================ Task =======================================
 void Leds_t::Task() {
     if (!Delay.Elapsed(&Timer, lDelay)) return;
-    uint8_t b;
+    uint8_t b, i;
     switch (IMode) {
         case lmFadeInAll:
             // Increase PWM
@@ -99,6 +103,19 @@ void Leds_t::Task() {
                 else                                { IColor.Blue  = 0; IColor.Red   = COLOR_MAX; }
             }
             FPkt.Colors[LedID] = IColor;
+            i2cMgr.AddCmd(i2cCmd);
+            break;
+
+        case lmFadeAllAwayAndStop:
+            b = 0;
+            // Iterate all LEDs
+            for (i=0; i<15; i++) {
+                if (FPkt.PWM[i] != 0) {
+                    b = 1;
+                    FPkt.PWM[i]--;
+                }
+            } // for
+            if (b == 0) IMode = lmEqualAll;   // None is shining
             i2cMgr.AddCmd(i2cCmd);
             break;
 

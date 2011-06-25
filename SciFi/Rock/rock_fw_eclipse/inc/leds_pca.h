@@ -42,7 +42,7 @@ struct LedsPkt_t {
 #define LEDS_PKT_SIZE   sizeof(LedsPkt_t)
 
 // Modes of operation
-enum LedModes_t {lmEqualAll, lmFadeInAll, lmRunningRGB};
+enum LedModes_t {lmEqualAll, lmFadeInAll, lmFadeAllAwayAndStop, lmRunningRGB};
 
 class Leds_t {
 private:
@@ -65,6 +65,7 @@ public:
     // Light effects
     void EqualAll(uint8_t AValue);
     void SetMode(LedModes_t AMode);
+    void SetRunningColor(uint8_t ALedCount, Color_t AColor);
 };
 
 extern Leds_t Leds;
