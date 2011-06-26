@@ -16,8 +16,15 @@ void Leds_t::Init() {
     this->OutputDisable();
     // ==== Init variables ====
     Delay.Reset(&Timer);
-    IMode = lmEqualAll;
+    Mode = lmEqualAll;
     LedID = 0;
+    // Map colors on PWM channels
+    Colors[0] = (Color_t*)(&FPkt.PWM[9]);
+    Colors[1] = (Color_t*)(&FPkt.PWM[12]);
+    Colors[2] = (Color_t*)(&FPkt.PWM[6]);
+    Colors[3] = (Color_t*)(&FPkt.PWM[0]);
+    Colors[4] = (Color_t*)(&FPkt.PWM[3]);
+
     // Setup i2cCmd
     i2cCmd.Address = LED_I2C_ADDR;
     i2cCmd.DataToRead.Length = 0;   // Nothing to read
@@ -41,112 +48,80 @@ void Leds_t::Init() {
 }
 
 // =============================== Light effects ===============================
-void Leds_t::SetMode(LedModes_t AMode) {
-    // Switch all off
-    SetAll(0);
-    i2cMgr.AddCmd(i2cCmd);
-    OutputEnable();
-    IMode = AMode;
-    LedID = 0;
-    // Setup depending on mode
-    switch (AMode) {
-        case lmRunningRGB:
-            IColor.Red = COLOR_MAX;
-            IColor.Green = 0;
-            IColor.Blue = 0;
-            CurrentDelay = 81;
-            break;
-
-        case lmFadeAllAwayAndStop:
-            CurrentDelay = 45;
-            break;
-
-        default:
-            CurrentDelay = 10;
-            break;
-    } // switch
-    Delay.Bypass(&Timer, IDelay1);
-}
-void Leds_t::EqualAll(uint8_t AValue) {
+void Leds_t::SetEqualAll(uint8_t AValue) {
     SetAll(AValue);
     i2cMgr.AddCmd(i2cCmd);
     OutputEnable();
-    IMode = lmEqualAll;
+    Mode = lmEqualAll;
 }
-void Leds_t::SetRunning(uint16_t ADelay, uint8_t ALedCount, Color_t AColor) {
-    CurrentDelay = ADelay;
-    IColor = AColor;
+void Leds_t::SetRunning(void) {
+    Mode = lmRunning;
     LedID = 0;
-    IMode = lmRunning;
-    Delay.Bypass(&Timer, IDelay1);
+    CurrentDelay = RunDelay;
+    Delay.Bypass(&Timer, RunDelay);
 }
-void Leds_t::SetBlinkAll(uint16_t OnTime, uint16_t OffTime, Color_t AColor) {
-    IDelay1 = OnTime;
-    IDelay2 = OffTime;
-    CurrentDelay = IDelay2;
-    IColor = AColor;
-    IMode = lmBlinkAll;
+void Leds_t::SetBlinkAll(void) {
+    Mode = lmBlinkAll;
+    LedIsOn = false;
+    CurrentDelay = BlinkOffTime;
+    Delay.Bypass(&Timer, CurrentDelay);
+}
+void Leds_t::SetRunningWithBlink() {
+    OutputEnable();
+    Mode = lmRunAndBlink;
     LedID = 0;
-    Delay.Bypass(&Timer, IDelay2);
+    LedIsOn = false;
+    CurrentDelay = RunDelay;
+    Delay.Reset(&Timer2);
+    Delay.Bypass(&Timer, CurrentDelay);
 }
 
 // ================================ Task =======================================
 void Leds_t::Task() {
     if (!Delay.Elapsed(&Timer, CurrentDelay)) return;
-    uint8_t b, i;
-    switch (IMode) {
-        case lmFadeInAll:
-            // Increase PWM
-            b = FPkt.PWM[0];
-            b++;
-            SetAll(b);
-            i2cMgr.AddCmd(i2cCmd);
-            break;
-
+    uint8_t ILedToFade;
+    switch (Mode) {
         case lmRunning:
-            FPkt.Colors[LedID] = {0, 0, 0}; // Hide previous LED
+            *Colors[LedID] = {0, 0, 0}; // Hide previous LED
             if (++LedID == 5) LedID = 0;
-            FPkt.Colors[LedID] = IColor;    // Shine next LED
-            i2cMgr.AddCmd(i2cCmd);
-            break;
-
-        case lmRunningRGB:
-            FPkt.Colors[LedID] = {0, 0, 0}; // Hide previous LED
-            // Switch to next LED
-            if (++LedID == 5) {
-                LedID = 0;
-                // Switch color
-                if      (IColor.Red   == COLOR_MAX) { IColor.Red   = 0; IColor.Green = COLOR_MAX; }
-                else if (IColor.Green == COLOR_MAX) { IColor.Green = 0; IColor.Blue  = COLOR_MAX; }
-                else                                { IColor.Blue  = 0; IColor.Red   = COLOR_MAX; }
-            }
-            FPkt.Colors[LedID] = IColor;
-            i2cMgr.AddCmd(i2cCmd);
-            break;
-
-        case lmFadeAllAwayAndStop:
-            b = 0;
-            // Iterate all LEDs
-            for (i=0; i<15; i++) {
-                if (FPkt.PWM[i] != 0) {
-                    b = 1;
-                    FPkt.PWM[i]--;
-                }
-            } // for
-            if (b == 0) IMode = lmEqualAll;   // None is shining
+            *Colors[LedID] = RunColor;  // Shine next LED
             i2cMgr.AddCmd(i2cCmd);
             break;
 
         case lmBlinkAll:
-            if (LedID == 0) {   // Was off, switch on
-                for (uint8_t i=0; i<5; i++) FPkt.Colors[i] = IColor;
-                CurrentDelay = IDelay1; // ON time
+            if (LedIsOn) {   // Was on, switch off
+                for (uint8_t i=0; i<5; i++) *Colors[i] = {0, 0, 0};
+                CurrentDelay = BlinkOffTime; // OFF time
             }
             else {
-                for (uint8_t i=0; i<5; i++) FPkt.Colors[i] = {0, 0, 0};
-                CurrentDelay = IDelay2; // OFF time
+                for (uint8_t i=0; i<5; i++) *Colors[i] = BlinkColor;
+                CurrentDelay = BlinkOnTime; // ON time
             }
-            LedID = !LedID;
+            LedIsOn = !LedIsOn;
+            i2cMgr.AddCmd(i2cCmd);
+            break;
+
+        case lmRunAndBlink:
+            if (LedIsOn) {   // Was blinking on, check if time to switch off
+                if (Delay.Elapsed(&Timer2, BlinkOnTime)) {
+                    for (uint8_t i=0; i<5; i++) *Colors[i] = {0, 0, 0};
+                    LedIsOn = false;
+                }
+            }
+            else {  // LED is off
+                if (Delay.Elapsed(&Timer2, BlinkOffTime) && (BlinkColor.Red || BlinkColor.Green || BlinkColor.Blue)) {
+                    for (uint8_t i=0; i<5; i++) *Colors[i] = BlinkColor;
+                    LedIsOn = true;
+                }
+                else {  // Proceed with running
+                    if (++LedID == 5) LedID = 0;
+                    *Colors[LedID] = RunColor;  // Shine next LED
+                    // Fade previous LED
+                    ILedToFade = (LedID >= RunLedCount)? (LedID - RunLedCount) : ((5+LedID) - RunLedCount);
+                    *Colors[ILedToFade] = {0, 0, 0};
+                }
+            }
+            i2cMgr.AddCmd(i2cCmd);
             break;
 
         default: break;

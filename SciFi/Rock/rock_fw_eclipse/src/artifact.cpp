@@ -6,34 +6,26 @@
  */
 #include "artifact.h"
 #include "delay_util.h"
-#include "leds_pca.h"
 
 Artifact_t EArt;
 
 void Artifact_t::Task() {
-    if (CurrendField != ftNone) {
-        if (Delay.Elapsed(&Timer, CHARGE_INDICATION)) {
-            CurrendField = ftNone;
-            Leds.SetMode(lmFadeAllAwayAndStop);
-        }
-    }
+    //if (Delay.Elapsed(&Timer, FIELD_INDICATION_TIMEOUT)) ShowFieldExistance(ftNone);
 }
 
 void Artifact_t::Init() {
     Type = atEmpty;
     ChargeCount = 0;
-    CurrendField = ftNone;
 }
 
 void Artifact_t::Charge(FieldType_t AFType) {
-    //int8_t FCharges;
     switch (AFType) {
         case ftHP:
             // Decide if need to increase
             if ((Type == atBlackJack) || (Type == atPetlya)) return;
             H++;                            // Increase FieldPoints
             if (H.HasChanged) ChooseType(); // Decide which kind of artifact we have now
-            ShowHP();                       // Indicate field existance
+            ShowFieldExistance(ftHP);       // Indicate field existance if artifact type allows this
             break;
 
         case ftHM:
@@ -41,6 +33,7 @@ void Artifact_t::Charge(FieldType_t AFType) {
             if ((Type == atBlackJack) || (Type == atPetlya)) return;
             H--;
             if (H.HasChanged) ChooseType(); // Decide which kind of artifact we have now
+            ShowFieldExistance(ftHM);       // Indicate field existance
             break;
 
         case ftEP:
@@ -48,6 +41,7 @@ void Artifact_t::Charge(FieldType_t AFType) {
             if ((Type == atBlackJack) || (Type == atPetlya)) return;
             E++;
             if (E.HasChanged) ChooseType(); // Decide which kind of artifact we have now
+            ShowFieldExistance(ftEP);       // Indicate field existance
             break;
 
         case ftEM:
@@ -55,6 +49,7 @@ void Artifact_t::Charge(FieldType_t AFType) {
             if ((Type == atBlackJack) || (Type == atPetlya)) return;
             E--;
             if (E.HasChanged) ChooseType(); // Decide which kind of artifact we have now
+            ShowFieldExistance(ftEM);       // Indicate field existance
             break;
 
         case ftCP:
@@ -62,6 +57,7 @@ void Artifact_t::Charge(FieldType_t AFType) {
             if ((Type != atEmpty) && (Type != atBlackJack) && (Type != atPetlya)) return;
             C++;
             if (C.HasChanged) ChooseType(); // Decide which kind of artifact we have now
+            ShowFieldExistance(ftCP);       // Indicate field existance
             break;
 
         case ftCM:
@@ -69,6 +65,7 @@ void Artifact_t::Charge(FieldType_t AFType) {
             if ((Type != atEmpty) && (Type != atBlackJack) && (Type != atPetlya)) return;
             C--;
             if (C.HasChanged) ChooseType(); // Decide which kind of artifact we have now
+            ShowFieldExistance(ftCM);       // Indicate field existance
             break;
 
         default: break;
@@ -107,20 +104,22 @@ void Artifact_t::ChooseType() {
     // ==== Bipolar ====
     else if ((H > 0) && (E > 0)) {
         Type = atFlash;
-        ChargeCount = MaxV(H.Module(), E.Module());
+        ChargeCount = MinV(H.Module(), E.Module());
     }
     else if ((H > 0) && (E < 0)) {
         Type = atKusok;
-        ChargeCount = MaxV(H.Module(), E.Module());
+        ChargeCount = MinV(H.Module(), E.Module());
     }
     else if ((H < 0) && (E > 0)) {
         Type = atVyvert;
-        ChargeCount = MaxV(H.Module(), E.Module());
+        ChargeCount = MinV(H.Module(), E.Module());
     }
     else if ((H < 0) && (E < 0)) {
         Type = atSlomo;
-        ChargeCount = MaxV(H.Module(), E.Module());
+        ChargeCount = MinV(H.Module(), E.Module());
     }
+    // Indicate current type
+    ShowChargeCount();
 }
 
 void Artifact_t::Activate() {
@@ -128,11 +127,20 @@ void Artifact_t::Activate() {
 }
 
 // ================================ Indication =================================
-void Artifact_t::ShowHP() {
-    Delay.Reset(&Timer);
-    if(CurrendField == ftNone) {
-        Leds.SetRunning(81, ChargeCount, {255, 0, 0});
-    } //
+void Artifact_t::ShowFieldExistance(FieldType_t AFType) {
+    Delay.Reset(&Timer);        // Reset field dissapering timeout
+    if(Leds.Mode != lmRunAndBlink) {
+        Leds.BlinkOnTime  = FIELD_BLINK_ON_TIME;
+        Leds.BlinkOffTime = FIELD_BLINK_OFF_TIME;
+        Leds.SetRunningWithBlink();
+    }
+    Leds.BlinkColor = FieldColors[(uint8_t)AFType];
+}
+void Artifact_t::ShowChargeCount(void) {
+    Leds.RunDelay = ArtChargeRunDelays[ChargeCount];
+    Leds.RunColor = ArtTypeColors[Type];
+    Leds.RunLedCount = ChargeCount;
+    if(Leds.Mode != lmRunAndBlink) Leds.SetRunningWithBlink();
 }
 
 

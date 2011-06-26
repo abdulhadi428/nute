@@ -52,7 +52,6 @@ void GeneralInit(void) {
     CC.Init();
     // Leds
     Leds.Init();
-    Leds.SetMode(lmRunningRGB);
     // Sensors
     ESns.Init();
     // LCD
