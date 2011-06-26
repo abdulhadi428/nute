@@ -42,13 +42,13 @@ struct LedsPkt_t {
 #define LEDS_PKT_SIZE   sizeof(LedsPkt_t)
 
 // Modes of operation
-enum LedModes_t {lmEqualAll, lmFadeInAll, lmFadeAllAwayAndStop, lmRunningRGB};
+enum LedModes_t {lmEqualAll, lmFadeInAll, lmFadeAllAwayAndStop, lmBlinkAll, lmRunning, lmRunningRGB};
 
 class Leds_t {
 private:
     LedsPkt_t FPkt;
     I2C_Cmd_t i2cCmd;
-    uint32_t Timer, lDelay;
+    uint32_t Timer, CurrentDelay, IDelay1, IDelay2;
     LedModes_t IMode;
     uint8_t LedID;
     Color_t IColor;
@@ -65,7 +65,8 @@ public:
     // Light effects
     void EqualAll(uint8_t AValue);
     void SetMode(LedModes_t AMode);
-    void SetRunningColor(uint8_t ALedCount, Color_t AColor);
+    void SetRunning(uint16_t ADelay, uint8_t ALedCount, Color_t AColor);
+    void SetBlinkAll(uint16_t OnTime, uint16_t OffTime, Color_t AColor);
 };
 
 extern Leds_t Leds;

@@ -6,6 +6,7 @@
  */
 #include "artifact.h"
 #include "delay_util.h"
+#include "leds_pca.h"
 
 Artifact_t EArt;
 
@@ -69,6 +70,8 @@ void Artifact_t::Charge(FieldType_t AFType) {
             C--;
             if (C.HasChanged) ChooseType(); // Decide which kind of artifact we have now
             break;
+
+        default: break;
     } // switch
 }
 
@@ -128,7 +131,7 @@ void Artifact_t::Activate() {
 void Artifact_t::ShowHP() {
     Delay.Reset(&Timer);
     if(CurrendField == ftNone) {
-        Leds.SetRunningColor(ChargeCount);
+        Leds.SetRunning(81, ChargeCount, {255, 0, 0});
     } //
 }
 

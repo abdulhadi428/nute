@@ -22,7 +22,8 @@ public:
     void ms (uint32_t Ams);
     // Interrupt-driven delays
     bool Elapsed(uint32_t *AVar, const uint32_t ADelay);
-    void Reset(uint32_t *AVar) { *AVar = TickCounter; }
+    void Reset  (uint32_t *AVar) { *AVar = TickCounter; }
+    void Bypass (uint32_t *AVar, const uint32_t ADelay) { *AVar = TickCounter - ADelay; }
 
     void IncreaseTickCounter(void) { TickCounter++; }
 };

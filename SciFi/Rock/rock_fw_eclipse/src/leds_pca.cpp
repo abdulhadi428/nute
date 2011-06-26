@@ -54,19 +54,18 @@ void Leds_t::SetMode(LedModes_t AMode) {
             IColor.Red = COLOR_MAX;
             IColor.Green = 0;
             IColor.Blue = 0;
-            lDelay = 81;
+            CurrentDelay = 81;
             break;
 
         case lmFadeAllAwayAndStop:
-            lDelay = 45;
+            CurrentDelay = 45;
             break;
 
         default:
-            lDelay = 10;
+            CurrentDelay = 10;
             break;
     } // switch
-
-    Delay.Reset(&Timer);
+    Delay.Bypass(&Timer, IDelay1);
 }
 void Leds_t::EqualAll(uint8_t AValue) {
     SetAll(AValue);
@@ -74,10 +73,26 @@ void Leds_t::EqualAll(uint8_t AValue) {
     OutputEnable();
     IMode = lmEqualAll;
 }
+void Leds_t::SetRunning(uint16_t ADelay, uint8_t ALedCount, Color_t AColor) {
+    CurrentDelay = ADelay;
+    IColor = AColor;
+    LedID = 0;
+    IMode = lmRunning;
+    Delay.Bypass(&Timer, IDelay1);
+}
+void Leds_t::SetBlinkAll(uint16_t OnTime, uint16_t OffTime, Color_t AColor) {
+    IDelay1 = OnTime;
+    IDelay2 = OffTime;
+    CurrentDelay = IDelay2;
+    IColor = AColor;
+    IMode = lmBlinkAll;
+    LedID = 0;
+    Delay.Bypass(&Timer, IDelay2);
+}
 
 // ================================ Task =======================================
 void Leds_t::Task() {
-    if (!Delay.Elapsed(&Timer, lDelay)) return;
+    if (!Delay.Elapsed(&Timer, CurrentDelay)) return;
     uint8_t b, i;
     switch (IMode) {
         case lmFadeInAll:
@@ -88,14 +103,17 @@ void Leds_t::Task() {
             i2cMgr.AddCmd(i2cCmd);
             break;
 
+        case lmRunning:
+            FPkt.Colors[LedID] = {0, 0, 0}; // Hide previous LED
+            if (++LedID == 5) LedID = 0;
+            FPkt.Colors[LedID] = IColor;    // Shine next LED
+            i2cMgr.AddCmd(i2cCmd);
+            break;
+
         case lmRunningRGB:
-            // Fade current LED
-            FPkt.Colors[LedID].Red   = 0;
-            FPkt.Colors[LedID].Green = 0;
-            FPkt.Colors[LedID].Blue  = 0;
+            FPkt.Colors[LedID] = {0, 0, 0}; // Hide previous LED
             // Switch to next LED
-            LedID++;
-            if (LedID == 5) {
+            if (++LedID == 5) {
                 LedID = 0;
                 // Switch color
                 if      (IColor.Red   == COLOR_MAX) { IColor.Red   = 0; IColor.Green = COLOR_MAX; }
@@ -117,6 +135,18 @@ void Leds_t::Task() {
             } // for
             if (b == 0) IMode = lmEqualAll;   // None is shining
             i2cMgr.AddCmd(i2cCmd);
+            break;
+
+        case lmBlinkAll:
+            if (LedID == 0) {   // Was off, switch on
+                for (uint8_t i=0; i<5; i++) FPkt.Colors[i] = IColor;
+                CurrentDelay = IDelay1; // ON time
+            }
+            else {
+                for (uint8_t i=0; i<5; i++) FPkt.Colors[i] = {0, 0, 0};
+                CurrentDelay = IDelay2; // OFF time
+            }
+            LedID = !LedID;
             break;
 
         default: break;
