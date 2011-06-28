@@ -2,19 +2,23 @@
 #include "uart.h"
 #include "media.h"
 
+// Variables
 Sns_t ESns;
 SnsState_t SnsState;
+IRSirc_t EIRSirc;
+
+// Implementation
 
 void Sns_t::Task() {
     if (!Delay.Elapsed(&Timer, 198)) return;
-    UART_StrUint("Battery: ", BatteryADC);
+    //UART_StrUint("Battery: ", BatteryADC);
     // Check sensors
     SnsState.KeyTouched[0] = Touched(0);
     SnsState.KeyTouched[1] = Touched(1);
     SnsState.KeyTouched[2] = Touched(2);
     SnsState.MagnetNear    = MagnetNear();
     // Accelerometer
-    Acc.ReadAccelerations();
+    //Acc.ReadAccelerations();
     // Rise event if something changed
     if (SensorsStateChanged()) EVENT_SensorsStateChanged();
 }
@@ -22,6 +26,7 @@ void Sns_t::Task() {
 void Sns_t::Init() {
     // Outer modules init
     Acc.Init();
+    EIRSirc.Init();
     // ==== Clocks ====
     RCC_ADCCLKConfig(RCC_PCLK2_Div4);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOC | RCC_APB2Periph_TIM8, ENABLE);
@@ -130,7 +135,7 @@ void SnsVerbose(void) {
     UART_NewLine();
 }
 
-// ============================== Sensors =============================
+// ================================ Sensors ====================================
 bool Sns_t::Touched(uint8_t Indx) {
     if      (Indx==0) return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_3);
     else if (Indx==1) return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_4);
@@ -139,4 +144,75 @@ bool Sns_t::Touched(uint8_t Indx) {
 
 void Sns_t::MeasureBattery() {
 
+}
+
+// ================================ Infrared ===================================
+/* TIM3 configuration: Input Capture mode ---------------------
+The external signal is connected to TIM3 CH3 pin (PB.0)
+The Rising edge is used as active edge,
+The TIM3 CCR3 is used to compute the frequency value
+------------------------------------------------------------ */
+void IRSirc_t::Init() {
+    // ==== Clocks ====
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    // ==== NVIC config ==== Enable the TIM3 global Interrupt
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+    // ==== GPIO ====
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    // ==== Timer ====
+    // Time base configuration
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+    TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; // Up-counter needed, nothing special
+    TIM_TimeBaseStructure.TIM_Period = 0xFFFF;
+    TIM_TimeBaseStructure.TIM_Prescaler = 7; // Input clock divisor
+    TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+
+    TIM_ICInitTypeDef  TIM_ICInitStructure;
+    // Falling edge capture
+    TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
+    TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
+    TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
+    TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+    TIM_ICInitStructure.TIM_ICFilter = 0x0;
+    TIM_ICInit(TIM3, &TIM_ICInitStructure);
+    // Rising edge capture
+    TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
+    TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+    TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_IndirectTI;
+    TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+    TIM_ICInitStructure.TIM_ICFilter = 0x0;
+    TIM_ICInit(TIM3, &TIM_ICInitStructure);
+    // TIM enable counter
+    TIM_Cmd(TIM3, ENABLE);
+    // Enable the CC3 Interrupt Request
+    TIM_ITConfig(TIM3, TIM_IT_CC4, ENABLE);
+}
+
+void IRSirc_t::IRQHandler() {
+    uint16_t tc3 = TIM_GetCapture3(TIM3);
+    uint16_t tc4 = TIM_GetCapture4(TIM3);
+    TimValue = (tc4 >= tc3)? (tc4-tc3) : ((0xFFFF - tc3) + tc4);
+    UART_PrintUint(EIRSirc.TimValue);
+    UART_NewLine();
+//    TIM_SetCounter(TIM3, 0);
+}
+
+
+// ==== Timer3 IRQ ====
+void TIM3_IRQHandler(void) {
+    if(TIM_GetITStatus(TIM3, TIM_IT_CC4) == SET) {
+        TIM_ClearITPendingBit(TIM3, TIM_IT_CC4);
+        EIRSirc.IRQHandler();
+    }
 }

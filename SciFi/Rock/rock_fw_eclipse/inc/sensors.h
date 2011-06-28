@@ -12,6 +12,7 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_adc.h"
 #include "stm32f10x_tim.h"
+#include "misc.h"
 
 #include "i2c_mgr.h"
 #include "acc_mma.h"
@@ -54,8 +55,30 @@ public:
     void PowerOff(void) { GPIOC->BRR  = GPIO_Pin_14; }
 };
 
+// ================================== Ksotar's =================================
+class IRSirc_t {
+public:
+    uint32_t TimValue;
+    void Init(void);
+    //void Task(void);
+    void IRQHandler(void);
+private:
+    uint32_t Timer;
+    bool Rising;
+};
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+void TIM3_IRQHandler(void);
+#ifdef __cplusplus
+}
+#endif
+
+// =============================================================================
 extern Sns_t ESns;
 extern SnsState_t SnsState;
+extern IRSirc_t EIRSirc;
 
 // Sensors state change event
 void EVENT_SensorsStateChanged(void);
