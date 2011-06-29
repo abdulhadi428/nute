@@ -1,6 +1,7 @@
 #include "sensors.h"
 #include "uart.h"
 #include "media.h"
+#include "rock_action.h"
 
 // Variables
 Sns_t ESns;
@@ -147,11 +148,6 @@ void Sns_t::MeasureBattery() {
 }
 
 // ================================ Infrared ===================================
-/* TIM3 configuration: Input Capture mode ---------------------
-The external signal is connected to TIM3 CH3 pin (PB.0)
-The Rising edge is used as active edge,
-The TIM3 CCR3 is used to compute the frequency value
------------------------------------------------------------- */
 void IRSirc_t::Init() {
     // ==== Clocks ====
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
@@ -177,7 +173,7 @@ void IRSirc_t::Init() {
     TIM_TimeBaseStructure.TIM_Period = 0xFFFF;
     TIM_TimeBaseStructure.TIM_Prescaler = 7; // Input clock divisor
     TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-
+    // Capture channels
     TIM_ICInitTypeDef  TIM_ICInitStructure;
     // Falling edge capture
     TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
@@ -197,15 +193,43 @@ void IRSirc_t::Init() {
     TIM_Cmd(TIM3, ENABLE);
     // Enable the CC3 Interrupt Request
     TIM_ITConfig(TIM3, TIM_IT_CC4, ENABLE);
+    // ==== Variables ====
+    ResetPkt();
+}
+void IRSirc_t::Task() {
+    if (!NewPacket) return;
+    // Analyze packet
+    uint8_t IDamage = Pkt & 0x000F;
+    uint8_t ICmd    = (Pkt >> 4) & 0x0003;
+    uint8_t IID     = (Pkt >> 6) & 0x007F;
+    // Check pkt
+    FieldType_t IField = ftNone;
+    if (IID == 53) IField = ftHP;
 }
 
+// Capture complete IRQ handler
 void IRSirc_t::IRQHandler() {
     uint16_t tc3 = TIM_GetCapture3(TIM3);
     uint16_t tc4 = TIM_GetCapture4(TIM3);
-    TimValue = (tc4 >= tc3)? (tc4-tc3) : ((0xFFFF - tc3) + tc4);
-    UART_PrintUint(EIRSirc.TimValue);
-    UART_NewLine();
-//    TIM_SetCounter(TIM3, 0);
+    uint16_t PulseWidth = (tc4 >= tc3)? (tc4-tc3) : ((0xFFFF - tc3) + tc4);
+    //UART_PrintUint(PulseWidth);
+    //UART_NewLine();
+    // Check what we received
+    if (IsHeader(PulseWidth)) { // New packet begins
+        ResetPkt();
+        BitCounter = 1;
+    }
+    // Receive bits only if header is received, and no overflow
+    else if ((BitCounter >= 1) && (BitCounter < (IRS_PKT_LENGTH + 1))) {
+        Pkt <<= 1;                      // Shift packet
+        if (IsOne(PulseWidth)) Pkt++;
+        else if (!IsZero(PulseWidth)) { // if not one and not zero
+            ResetPkt();
+            return;
+        }
+        BitCounter++;
+        NewPacket = (BitCounter == (IRS_PKT_LENGTH + 1));
+    }
 }
 
 

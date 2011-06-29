@@ -16,7 +16,7 @@
 #include "media.h"
 #include "sensors.h"
 
-#include "artifact.h"
+#include "rock_action.h"
 
 #include "lcd110x.h"
 #include "images.h"

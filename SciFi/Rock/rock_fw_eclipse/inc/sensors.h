@@ -56,15 +56,26 @@ public:
 };
 
 // ================================== Ksotar's =================================
+// Defines
+#define IRS_HEADER_T        2400    // uS
+#define IRS_ZERO_T          600     // uS
+#define IRS_ONE_T           1200    // uS
+#define IRS_DEVIATION_T     100     // uS
+#define IRS_PKT_LENGTH      14
+
 class IRSirc_t {
 public:
-    uint32_t TimValue;
+    uint16_t Pkt;
     void Init(void);
-    //void Task(void);
+    void Task(void);
     void IRQHandler(void);
 private:
-    uint32_t Timer;
-    bool Rising;
+    uint8_t BitCounter;
+    bool NewPacket;
+    bool IsHeader(const uint16_t APulse) { return ((APulse > (IRS_HEADER_T - IRS_DEVIATION_T)) && (APulse < (IRS_HEADER_T + IRS_DEVIATION_T))); }
+    bool IsZero  (const uint16_t APulse) { return ((APulse > (IRS_ZERO_T   - IRS_DEVIATION_T)) && (APulse < (IRS_ZERO_T   + IRS_DEVIATION_T))); }
+    bool IsOne   (const uint16_t APulse) { return ((APulse > (IRS_ONE_T    - IRS_DEVIATION_T)) && (APulse < (IRS_ONE_T    + IRS_DEVIATION_T))); }
+    void ResetPkt(void) { BitCounter=0; NewPacket=false; Pkt=0; }
 };
 
 #ifdef __cplusplus

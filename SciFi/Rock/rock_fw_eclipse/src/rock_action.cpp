@@ -4,7 +4,7 @@
  *  Created on: 24.06.2011
  *      Author: Kreyl
  */
-#include "artifact.h"
+#include "rock_action.h"
 #include "delay_util.h"
 
 Artifact_t EArt;
