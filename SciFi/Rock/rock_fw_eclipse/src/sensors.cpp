@@ -199,12 +199,19 @@ void IRSirc_t::Init() {
 void IRSirc_t::Task() {
     if (!NewPacket) return;
     // Analyze packet
-    uint8_t IDamage = Pkt & 0x000F;
-    uint8_t ICmd    = (Pkt >> 4) & 0x0003;
+//    uint8_t IDamage = Pkt & 0x000F;
+//    uint8_t ICmd    = (Pkt >> 4) & 0x0003;
     uint8_t IID     = (Pkt >> 6) & 0x007F;
     // Check pkt
     FieldType_t IField = ftNone;
-    if (IID == 53) IField = ftHP;
+    if      (IID == 53) IField = ftHP;
+    else if (IID == 54) IField = ftHM;
+    else if (IID == 55) IField = ftEP;
+    else if (IID == 56) IField = ftEM;
+    else if (IID == 57) IField = ftCP;
+    else if (IID == 58) IField = ftCM;
+    ResetPkt();
+    ERock.Charge(IField);
 }
 
 // Capture complete IRQ handler
@@ -231,8 +238,6 @@ void IRSirc_t::IRQHandler() {
         NewPacket = (BitCounter == (IRS_PKT_LENGTH + 1));
     }
 }
-
-
 // ==== Timer3 IRQ ====
 void TIM3_IRQHandler(void) {
     if(TIM_GetITStatus(TIM3, TIM_IT_CC4) == SET) {

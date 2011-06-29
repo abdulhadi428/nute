@@ -38,9 +38,11 @@ int main(void) {
         ESnd.Task();
         ESns.Task();
         Leds.Task();
-        EArt.Task();
+        ERock.Task();
+        EIRSirc.Task();
         //CC.Task();
     } // while(1)
+    return 0;
 }
 
 void GeneralInit(void) {
@@ -63,7 +65,7 @@ void GeneralInit(void) {
     ESnd.Init();
     ESnd.Play("alive.wav");
     // Artifact
-    EArt.Init();
+    ERock.Init();
 }
 
 // ================================== Events ===================================

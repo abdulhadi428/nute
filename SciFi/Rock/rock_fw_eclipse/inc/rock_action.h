@@ -68,7 +68,7 @@ public:
     uint8_t Module(void) { return ((Value < 0)? (-Value) : Value); }
 };
 
-class Artifact_t {
+class Rock_t {
 private:
     uint32_t Timer;
     void ChooseType(void);
@@ -90,7 +90,7 @@ public:
 };
 
 
-extern Artifact_t EArt;
+extern Rock_t ERock;
 
 
 

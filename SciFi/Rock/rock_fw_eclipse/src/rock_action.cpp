@@ -7,18 +7,18 @@
 #include "rock_action.h"
 #include "delay_util.h"
 
-Artifact_t EArt;
+Rock_t ERock;
 
-void Artifact_t::Task() {
+void Rock_t::Task() {
     //if (Delay.Elapsed(&Timer, FIELD_INDICATION_TIMEOUT)) ShowFieldExistance(ftNone);
 }
 
-void Artifact_t::Init() {
+void Rock_t::Init() {
     Type = atEmpty;
     ChargeCount = 0;
 }
 
-void Artifact_t::Charge(FieldType_t AFType) {
+void Rock_t::Charge(FieldType_t AFType) {
     switch (AFType) {
         case ftHP:
             // Decide if need to increase
@@ -72,7 +72,7 @@ void Artifact_t::Charge(FieldType_t AFType) {
     } // switch
 }
 
-void Artifact_t::ChooseType() {
+void Rock_t::ChooseType() {
     if ((H == 0) && (E == 0) && (C == 0)) Type = atEmpty;
     // ==== C field ====
     if (C > 0) {
@@ -122,12 +122,12 @@ void Artifact_t::ChooseType() {
     ShowChargeCount();
 }
 
-void Artifact_t::Activate() {
+void Rock_t::Activate() {
 
 }
 
 // ================================ Indication =================================
-void Artifact_t::ShowFieldExistance(FieldType_t AFType) {
+void Rock_t::ShowFieldExistance(FieldType_t AFType) {
     Delay.Reset(&Timer);        // Reset field dissapering timeout
     if(Leds.Mode != lmRunAndBlink) {
         Leds.BlinkOnTime  = FIELD_BLINK_ON_TIME;
@@ -136,7 +136,7 @@ void Artifact_t::ShowFieldExistance(FieldType_t AFType) {
     }
     Leds.BlinkColor = FieldColors[(uint8_t)AFType];
 }
-void Artifact_t::ShowChargeCount(void) {
+void Rock_t::ShowChargeCount(void) {
     Leds.RunDelay = ArtChargeRunDelays[ChargeCount];
     Leds.RunColor = ArtTypeColors[Type];
     Leds.RunLedCount = ChargeCount;
