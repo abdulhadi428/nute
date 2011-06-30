@@ -19,6 +19,7 @@
 // Timings
 #define SENS_POLL_TIME  99 // ms
 #define SENS_BOTHDOWN_IGNORE_TIME    999 // ms
+#define SENS_UF_TOGGLE_IGNORE_TIME   999 // ms
 #define SENS_HOLD_TICK_TIMEOUT  499 //ms
 
 // Ports & pins

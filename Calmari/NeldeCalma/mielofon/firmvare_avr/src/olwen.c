@@ -68,8 +68,6 @@ FORCE_INLINE void GeneralInit(void) {
     LED_UF_DDR |=(1<<UF_P);
     LED_UF_PORT &=~(1<<UF_P);
     // Led power
-  //  LED_PWR_PORT &= ~(1<<LED_PWR_P);    // Low if output, Hi-Z if input
-   // LED_PWR_OFF();
 
     TCCR0A = (1<<WGM01)|(1<<WGM00);
     TCCR0B = (0<<WGM02)|(0<<CS02)|(0<<CS01)|(1<<CS00);
@@ -80,25 +78,18 @@ FORCE_INLINE void GeneralInit(void) {
     TimerResetDelay(&ELight.Timer);
     ELight.Indx =0;
    // SetTableColor();
-    SetDesiredColor(0, 0xF0, 0,0);   // Initial fade
+    SetDesiredColor(0, 0x90,0 ,0);   // Initial fade
     ELight.UfIsOn = false;
 	ESens.CoverIsOpen=true;
 
     // Sensors
     SENS_DDR  &= ~((1<<SENS_DOWN)|(1<<SENS_UP)|(1<<SENS_UF_SWITCH));
-   // SENS_DDR  |= 1<<SENS_PWR;
     SENS_PORT &= ~((1<<SENS_DOWN)|(1<<SENS_UP)|(1<<SENS_UF_SWITCH)); // No pull-ups
 
 	COVER_DDR  &= ~(1<<COVER_P);
 	//COVER_PORT &= ~(1<<COVER_P);// No pull-up
 	COVER_PORT|= (1<<COVER_P); // Yes pull-up
-// SENS_PWR_OFF();
-/*
-    ESens.DownIsOn   = false;
-    ESens.UpIsOn     = false;
-    ESens.UfIsOn = false;
-    ESens.BothIsOn   = false;
-*/
+
     ESens.PollTime   = SENS_POLL_TIME;
     ESens.Step=SENS_STATE_START;
     TimerResetDelay (&ESens.Timer);
@@ -139,7 +130,6 @@ void SENS_Task (void) {
             if (SENS_UP_IS_ON()) ESens.Step=SENS_STATE_UP;             // Touch occured
             if (SENS_DOWN_IS_ON()) ESens.Step=SENS_STATE_DOWN;          // Touch occured
             if (SENS_UF_SWITCH_IS_ON()) ESens.Step=SENS_STATE_UF_SWITCH; // Touch occured
-			//if (!(COVER_IS_UP()) )ESens.Step=SENS_COVER_CLOSED;			 // крышка закрыта
             if (ESens.Step!=SENS_STATE_START) TimerResetDelay(&ESens.HoldTimer);  // Reset hold timer
             break;
         case SENS_STATE_UP:
@@ -151,18 +141,17 @@ void SENS_Task (void) {
         case SENS_STATE_DOWN:
             if (SENS_UP_IS_ON()) ESens.Step=SENS_STATE_BOTH;    // Touch occured
             if (!(SENS_DOWN_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured   
-			//if (!(COVER_IS_UP()) )ESens.Step=SENS_STATE_START;  // крышка закрыта
             if (TimerDelayElapsed(&ESens.HoldTimer, SENS_HOLD_TICK_TIMEOUT)) EVENT_DownHoldTick();
             break;
         case SENS_STATE_UF_SWITCH:
             if (!(SENS_UF_SWITCH_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured
-			//if (!(COVER_IS_UP()) )ESens.Step=SENS_STATE_START;  // крышка закрыта
+			if (ESens.Step==SENS_STATE_START) break; 
             if (TimerDelayElapsed(&ESens.HoldTimer, SENS_HOLD_TICK_TIMEOUT)) EVENT_UfSwitchTouched();
             break;  
         case SENS_STATE_BOTH:
             if (!(SENS_UP_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured
             if (!(SENS_DOWN_IS_ON())) ESens.Step=SENS_STATE_START; // Detouch occured 
-			//if (!(COVER_IS_UP()) )ESens.Step=SENS_STATE_START;  // крышка закрыта
+			if (ESens.Step==SENS_STATE_START) break; 
 		    if (TimerDelayElapsed(&ESens.HoldTimer, SENS_HOLD_TICK_TIMEOUT)) EVENT_BothTouched();
             break; 
     }
@@ -327,6 +316,9 @@ void EVENT_UfSwitchTouched(void) {
 		ELight.SavedUfColor = ELight.DesiredColor;
         ELight.DesiredColor = ELight.SavedColor;
     }
+	ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        ESens.PollTime = SENS_UF_TOGGLE_IGNORE_TIME;
+    }
 }
 
 void EVENT_UpHoldTick(void) {   // Fires every N ms when Up is holded
@@ -339,7 +331,7 @@ void EVENT_UpHoldTick(void) {   // Fires every N ms when Up is holded
     
     if (ELight.UfIsOn)  // Уф сейчас включен, прибавляем его яркость
     {
-        if (ELight.DesiredColor.Uf<0xF0) ELight.DesiredColor.Uf+= 0x0f;
+        if (ELight.DesiredColor.Uf<0xFF) ELight.DesiredColor.Uf+= 0x0f;
         return;
     }
     
