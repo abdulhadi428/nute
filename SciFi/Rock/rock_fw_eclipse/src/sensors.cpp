@@ -11,6 +11,7 @@ IRSirc_t EIRSirc;
 // Implementation
 
 void Sns_t::Task() {
+    if (!IEnabled) return;
     if (!Delay.Elapsed(&Timer, 198)) return;
     //UART_StrUint("Battery: ", BatteryADC);
     // Check sensors
@@ -27,7 +28,6 @@ void Sns_t::Task() {
 void Sns_t::Init() {
     // Outer modules init
     Acc.Init();
-    EIRSirc.Init();
     // ==== Clocks ====
     RCC_ADCCLKConfig(RCC_PCLK2_Div4);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOC | RCC_APB2Periph_TIM8, ENABLE);
@@ -103,6 +103,9 @@ void Sns_t::Init() {
     while(ADC_GetCalibrationStatus(ADC1));      // Check the end of ADC1 calibration
 
 	TIM_Cmd(TIM8, ENABLE);						// TIM8 counter enable
+
+	// ==== Variables ====
+	IEnabled = true;
 }
 
 bool Sns_t::SensorsStateChanged() {
@@ -156,7 +159,7 @@ void IRSirc_t::Init() {
     NVIC_InitTypeDef NVIC_InitStructure;
     NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
     // ==== GPIO ====
@@ -166,12 +169,12 @@ void IRSirc_t::Init() {
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     // ==== Timer ====
-    // Time base configuration
+    // Time base configuration: pulse per uS
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; // Up-counter needed, nothing special
     TIM_TimeBaseStructure.TIM_Period = 0xFFFF;
-    TIM_TimeBaseStructure.TIM_Prescaler = 7; // Input clock divisor
+    TIM_TimeBaseStructure.TIM_Prescaler = (uint16_t) (SystemCoreClock / 1000000) - 1; // Input clock divisor
     TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
     // Capture channels
     TIM_ICInitTypeDef  TIM_ICInitStructure;
@@ -198,13 +201,15 @@ void IRSirc_t::Init() {
 }
 void IRSirc_t::Task() {
     if (!NewPacket) return;
+    //UART_StrHex16("Pkt: ", Pkt);
     // Analyze packet
 //    uint8_t IDamage = Pkt & 0x000F;
 //    uint8_t ICmd    = (Pkt >> 4) & 0x0003;
     uint8_t IID     = (Pkt >> 6) & 0x007F;
+    //UART_StrHex16("ID: ", IID);
     // Check pkt
     FieldType_t IField = ftNone;
-    if      (IID == 53) IField = ftHP;
+    if      (IID == 42) IField = ftHP;
     else if (IID == 54) IField = ftHM;
     else if (IID == 55) IField = ftEP;
     else if (IID == 56) IField = ftEM;
@@ -219,10 +224,12 @@ void IRSirc_t::IRQHandler() {
     uint16_t tc3 = TIM_GetCapture3(TIM3);
     uint16_t tc4 = TIM_GetCapture4(TIM3);
     uint16_t PulseWidth = (tc4 >= tc3)? (tc4-tc3) : ((0xFFFF - tc3) + tc4);
-    //UART_PrintUint(PulseWidth);
-    //UART_NewLine();
+//    UART_PrintUint(PulseWidth);
+//    UART_NewLine();
     // Check what we received
     if (IsHeader(PulseWidth)) { // New packet begins
+//        UART_PrintUint(PulseWidth);
+//        UART_NewLine();
         ResetPkt();
         BitCounter = 1;
     }

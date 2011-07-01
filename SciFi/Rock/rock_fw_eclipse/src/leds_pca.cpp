@@ -15,8 +15,15 @@ void Leds_t::Init() {
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     this->OutputDisable();
     // ==== Init variables ====
-    Delay.Reset(&Timer);
+    Delay.Reset(&Timer1);
     Mode = lmEqualAll;
+    BlinkOnTime  = 10;
+    BlinkOffTime = 10;
+    RunDelay = 10;
+    RunLedCount = 1;
+    BlinkColor = {0, 0, 0};
+    RunColor = {0, 0, 0};
+
     LedID = 0;
     // Map colors on PWM channels
     Colors[0] = (Color_t*)(&FPkt.PWM[9]);
@@ -48,8 +55,8 @@ void Leds_t::Init() {
 }
 
 // =============================== Light effects ===============================
-void Leds_t::SetEqualAll(uint8_t AValue) {
-    SetAll(AValue);
+void Leds_t::SetEqualAll(Color_t AColor) {
+    for (uint8_t i=0; i<5; i++) *Colors[i] = AColor;
     i2cMgr.AddCmd(i2cCmd);
     OutputEnable();
     Mode = lmEqualAll;
@@ -57,31 +64,27 @@ void Leds_t::SetEqualAll(uint8_t AValue) {
 void Leds_t::SetRunning(void) {
     Mode = lmRunning;
     LedID = 0;
-    CurrentDelay = RunDelay;
-    Delay.Bypass(&Timer, RunDelay);
+    Delay.Bypass(&Timer1, RunDelay);
 }
 void Leds_t::SetBlinkAll(void) {
     Mode = lmBlinkAll;
     LedIsOn = false;
-    CurrentDelay = BlinkOffTime;
-    Delay.Bypass(&Timer, CurrentDelay);
+    Delay.Bypass(&Timer1, BlinkOffTime);
 }
 void Leds_t::SetRunningWithBlink() {
     OutputEnable();
     Mode = lmRunAndBlink;
     LedID = 0;
     LedIsOn = false;
-    CurrentDelay = RunDelay;
     Delay.Reset(&Timer2);
-    Delay.Bypass(&Timer, CurrentDelay);
 }
 
 // ================================ Task =======================================
 void Leds_t::Task() {
-    if (!Delay.Elapsed(&Timer, CurrentDelay)) return;
     uint8_t ILedToFade;
     switch (Mode) {
         case lmRunning:
+            if (!Delay.Elapsed(&Timer1, RunDelay)) return;
             *Colors[LedID] = {0, 0, 0}; // Hide previous LED
             if (++LedID == 5) LedID = 0;
             *Colors[LedID] = RunColor;  // Shine next LED
@@ -90,38 +93,40 @@ void Leds_t::Task() {
 
         case lmBlinkAll:
             if (LedIsOn) {   // Was on, switch off
+                if (!Delay.Elapsed(&Timer1, BlinkOnTime)) return;
                 for (uint8_t i=0; i<5; i++) *Colors[i] = {0, 0, 0};
-                CurrentDelay = BlinkOffTime; // OFF time
             }
             else {
+                if (!Delay.Elapsed(&Timer1, BlinkOffTime)) return;
                 for (uint8_t i=0; i<5; i++) *Colors[i] = BlinkColor;
-                CurrentDelay = BlinkOnTime; // ON time
             }
             LedIsOn = !LedIsOn;
             i2cMgr.AddCmd(i2cCmd);
             break;
 
-        case lmRunAndBlink:
+        case lmRunAndBlink: // Blink: Timer2; Run: Timer1
             if (LedIsOn) {   // Was blinking on, check if time to switch off
-                if (Delay.Elapsed(&Timer2, BlinkOnTime)) {
-                    for (uint8_t i=0; i<5; i++) *Colors[i] = {0, 0, 0};
-                    LedIsOn = false;
-                }
+                if (!Delay.Elapsed(&Timer2, BlinkOnTime)) return;
+                for (uint8_t i=0; i<5; i++) *Colors[i] = {0, 0, 0};
+                LedIsOn = false;
+                i2cMgr.AddCmd(i2cCmd);
             }
             else {  // LED is off
                 if (Delay.Elapsed(&Timer2, BlinkOffTime) && (BlinkColor.Red || BlinkColor.Green || BlinkColor.Blue)) {
                     for (uint8_t i=0; i<5; i++) *Colors[i] = BlinkColor;
                     LedIsOn = true;
+                    i2cMgr.AddCmd(i2cCmd);
                 }
                 else {  // Proceed with running
+                    if (!(Delay.Elapsed(&Timer1, RunDelay) && RunColor.IsOn())) return;
                     if (++LedID == 5) LedID = 0;
                     *Colors[LedID] = RunColor;  // Shine next LED
                     // Fade previous LED
                     ILedToFade = (LedID >= RunLedCount)? (LedID - RunLedCount) : ((5+LedID) - RunLedCount);
                     *Colors[ILedToFade] = {0, 0, 0};
+                    i2cMgr.AddCmd(i2cCmd);
                 }
             }
-            i2cMgr.AddCmd(i2cCmd);
             break;
 
         default: break;

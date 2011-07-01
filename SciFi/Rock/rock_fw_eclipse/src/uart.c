@@ -105,6 +105,13 @@ void UART_PrintArrAsString (uint8_t *Arr, uint8_t ALength) {
     }
     UART_NewLine();
 }
+void UART_PrintArrAsHex(uint8_t *Arr, uint8_t ALength) {
+    while (ALength--) {
+        UART_PrintAsHex(*(Arr++));
+        UART_Print (' ');
+    }
+    UART_NewLine();
+}
 
 void UART_NewLine (void) {
     UART_Print ('\r');

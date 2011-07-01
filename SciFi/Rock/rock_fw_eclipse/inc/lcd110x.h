@@ -15,6 +15,8 @@
 #include "stm32f10x_usart.h"
 #include "stm32f10x_dma.h"
 
+#include <string.h>
+
 // ================================ Defines ====================================
 #define LCD_GPIO        GPIOB
 #define LCD_USART       USART3
@@ -81,7 +83,9 @@ public:
     void GotoCharXY(uint8_t x, uint8_t y);
     void DrawChar(uint8_t AChar, Invert_t AInvert);
     void PrintString (const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert);
-    void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img, Invert_t AInvert);};
+
+    void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img, Invert_t AInvert);
+};
 
 extern Lcd_t Lcd;
 

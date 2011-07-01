@@ -49,6 +49,7 @@ void UART_PrintUint (uint32_t ANumber);
 void UART_PrintInt (int32_t ANumber);
 void UART_PrintString (const char *S);
 void UART_PrintArrAsString (uint8_t *Arr, uint8_t ALength);
+void UART_PrintArrAsHex(uint8_t *Arr, uint8_t ALength);
 void UART_NewLine (void);
 
 void UART_StrUint (const char *S, uint32_t ANumber);

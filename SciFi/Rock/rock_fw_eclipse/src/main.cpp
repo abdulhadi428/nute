@@ -48,14 +48,24 @@ int main(void) {
 void GeneralInit(void) {
     // Disable JTAG
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
+    // Configure two bits for preemption priority
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
+
     // Init peripheral
     i2cMgr.Init();
     Delay.Init();
     CC.Init();
     // Leds
     Leds.Init();
+    #define CHCNT 3
+    Leds.RunDelay = ArtChargeRunDelays[CHCNT];
+    Leds.RunColor = ArtTypeColors[atPsiKleschi];
+    Leds.RunLedCount = CHCNT;
+    Leds.SetRunningWithBlink();
+
     // Sensors
     ESns.Init();
+    EIRSirc.Init();
     // LCD
     Lcd.Init();
     Lcd.DrawImage(0,0, ImageLogo, NotInverted);

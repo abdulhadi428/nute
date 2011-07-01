@@ -33,6 +33,7 @@ struct SnsState_t {
 
 class Sns_t {
 private:
+    bool IEnabled;
     uint32_t Timer;
     BatteryState_t Battery;
     SnsState_t OldState;
@@ -51,6 +52,8 @@ public:
     // General
     void Init(void);
     void Task(void);
+    void Enable(void)  { IEnabled = true; }
+    void Disable(void) { IEnabled = false; }
     void PowerOn (void) { GPIOC->BSRR = GPIO_Pin_14; }
     void PowerOff(void) { GPIOC->BRR  = GPIO_Pin_14; }
 };
@@ -60,7 +63,7 @@ public:
 #define IRS_HEADER_T        2400    // uS
 #define IRS_ZERO_T          600     // uS
 #define IRS_ONE_T           1200    // uS
-#define IRS_DEVIATION_T     100     // uS
+#define IRS_DEVIATION_T     300     // uS
 #define IRS_PKT_LENGTH      14
 
 class IRSirc_t {

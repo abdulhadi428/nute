@@ -52,6 +52,7 @@ struct I2C_Cmd_t {
     CmdState_t State;
     Voidvoid_f Callback;
 };
+#define I2C_CMD_SIZE    sizeof(I2C_Cmd_t)
 
 class i2cMgr_t {
 private:

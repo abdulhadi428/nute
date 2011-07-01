@@ -41,6 +41,8 @@ void i2cMgr_t::Task() {
                 }
             }
             else if (IEvt != I2C_WAITING) { // Some error occured
+                if (IEvt == I2C_ERR_TIMEOUT) UART_PrintString("atx timeout\r");
+                else if (IEvt == I2C_ERR_SLAVE_NACK) UART_PrintString("NACK\r");
                 CmdToRead->State = CmdFailed;
                 StopAndGetNext();
             }
@@ -212,7 +214,7 @@ void i2cMgr_t::WriteMany() {
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &I2C1->DR;
     DMA_InitStructure.DMA_MemoryBaseAddr     = (uint32_t) &CmdToRead->DataToWrite.Buf[0];
     DMA_InitStructure.DMA_BufferSize         = CmdToRead->DataToWrite.Length;
-    DMA_InitStructure.DMA_Priority           = DMA_Priority_VeryHigh;
+    DMA_InitStructure.DMA_Priority           = DMA_Priority_High;
     DMA_InitStructure.DMA_DIR                = DMA_DIR_PeripheralDST;  // From memory to I2C
     DMA_InitStructure.DMA_Mode               = DMA_Mode_Normal;
     DMA_InitStructure.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;

@@ -19,6 +19,9 @@
 // Colors
 struct Color_t {
     uint8_t Red, Green, Blue;
+    //bool operator == (const Color_t AColor) { return ((this->Red == AColor.Red) && (this->Green == AColor.Green) && (this->Blue == AColor.Blue)); }
+    //bool operator != (const Color_t AColor) { return ((this->Red != AColor.Red) || (this->Green != AColor.Green) || (this->Blue != AColor.Blue)); }
+    bool IsOn(void) const { return (Red || Green || Blue); }
 };
 #define COLOR_MAX       250
 
@@ -42,7 +45,7 @@ class Leds_t {
 private:
     LedsPkt_t FPkt;
     I2C_Cmd_t i2cCmd;
-    uint32_t Timer, CurrentDelay, Timer2;
+    uint32_t Timer1, Timer2;
     uint8_t LedID;
     // Colors array
     Color_t *Colors[5];
@@ -64,7 +67,7 @@ public:
     void BacklightOn(void);
     void BacklightOff(void);
     // Light effects
-    void SetEqualAll(uint8_t AValue);
+    void SetEqualAll(Color_t AColor);
     void SetRunning(void);
     void SetBlinkAll(void);
     void SetRunningWithBlink(void);

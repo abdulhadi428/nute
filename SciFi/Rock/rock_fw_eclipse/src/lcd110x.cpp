@@ -56,7 +56,7 @@ void Lcd_t::Init(void) {
     NVIC_InitTypeDef NVIC_InitStructure;
     // Enable DMA1 channel3 IRQ Channel
     NVIC_InitStructure.NVIC_IRQChannel = LCD_DMA_IRQ;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);

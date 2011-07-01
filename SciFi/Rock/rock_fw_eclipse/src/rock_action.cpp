@@ -6,11 +6,26 @@
  */
 #include "rock_action.h"
 #include "delay_util.h"
+#include "lcd110x.h"
+#include "media.h"
+#include "sensors.h"
+
+#include "uart.h"
 
 Rock_t ERock;
 
 void Rock_t::Task() {
-    //if (Delay.Elapsed(&Timer, FIELD_INDICATION_TIMEOUT)) ShowFieldExistance(ftNone);
+    if (IsActivated) {
+        if (Delay.Elapsed(&Timer, ACTIVATED_TIMEOUT)) { // Showtime is over
+            Lcd.Cls();          // Clear screen
+            DecreaseCharge();
+            ESns.Enable();
+            IsActivated = false;
+        }
+        else {
+            //if (ESnd.State == sndStopped) ESnd.Play(ArtTypeActiveSounds[Type]); // Replay active sound
+        }
+    } // if IsActivated
 }
 
 void Rock_t::Init() {
@@ -22,6 +37,7 @@ void Rock_t::Charge(FieldType_t AFType) {
     switch (AFType) {
         case ftHP:
             // Decide if need to increase
+            UART_PrintString("H+\r");
             if ((Type == atBlackJack) || (Type == atPetlya)) return;
             H++;                            // Increase FieldPoints
             if (H.HasChanged) ChooseType(); // Decide which kind of artifact we have now
@@ -122,8 +138,42 @@ void Rock_t::ChooseType() {
     ShowChargeCount();
 }
 
-void Rock_t::Activate() {
+void Rock_t::TryToActivate(ActType_t AActType) {
+    if (Type == atEmpty) return;
+    switch (AActType) {
+        case actOne: if ((Type == atVyvert) || (Type == atGirya) || (Type == atSlomo) || (Type == atPsiKleschi)) Activate(); break;
+        case actTwo: if ((Type == atShpala) || (Type == atKusok) || (Type == atPetlya))                          Activate(); break;
+        case actThree: if ((Type == atRadX) || (Type == atFlash) || (Type == atBlackJack))                       Activate(); break;
+    }
+}
 
+void Rock_t::Activate() {
+    if (Type == atEmpty) return;
+    if (ChargeCount == 0) return;
+    // Disable sensors
+    ESns.Disable();
+    // Light indication
+    Leds.SetEqualAll(ArtTypeColors[Type]);
+    // Sound indication
+    if (ESnd.State != sndStopped) ESnd.Stop();
+    else ESnd.Play(ArtTypeActiveSounds[Type]);
+    // Display text
+    DisplayText();
+    // Reset delay to check if showtime is over
+    Delay.Reset(&Timer);
+    IsActivated = true;
+}
+
+void Rock_t::DecreaseCharge() {
+//    switch (ChargeCount) {
+//
+//    } // switch
+
+
+    ShowChargeCount();
+}
+void Rock_t::DisplayText() {
+    //TODO
 }
 
 // ================================ Indication =================================
@@ -135,6 +185,8 @@ void Rock_t::ShowFieldExistance(FieldType_t AFType) {
         Leds.SetRunningWithBlink();
     }
     Leds.BlinkColor = FieldColors[(uint8_t)AFType];
+    //UART_PrintUint((uint8_t)AFType);
+    UART_PrintUint((uint8_t)AFType);
 }
 void Rock_t::ShowChargeCount(void) {
     Leds.RunDelay = ArtChargeRunDelays[ChargeCount];
