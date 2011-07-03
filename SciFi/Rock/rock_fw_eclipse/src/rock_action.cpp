@@ -139,7 +139,6 @@ void Rock_t::ChooseType() {
 }
 
 void Rock_t::TryToActivate(ActType_t AActType) {
-    if (Type == atEmpty) return;
     switch (AActType) {
         case actOne: if ((Type == atVyvert) || (Type == atGirya) || (Type == atSlomo) || (Type == atPsiKleschi)) Activate(); break;
         case actTwo: if ((Type == atShpala) || (Type == atKusok) || (Type == atPetlya))                          Activate(); break;
@@ -148,8 +147,7 @@ void Rock_t::TryToActivate(ActType_t AActType) {
 }
 
 void Rock_t::Activate() {
-    if (Type == atEmpty) return;
-    if (ChargeCount == 0) return;
+    if ((Type == atEmpty) || (ChargeCount == 0)) return;
     // Disable sensors
     ESns.Disable();
     // Light indication

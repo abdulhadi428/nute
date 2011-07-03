@@ -2,6 +2,7 @@
 #include "uart.h"
 #include "media.h"
 #include "rock_action.h"
+#include "rock_tables.h"
 
 // Variables
 Sns_t ESns;
@@ -209,12 +210,12 @@ void IRSirc_t::Task() {
     //UART_StrHex16("ID: ", IID);
     // Check pkt
     FieldType_t IField = ftNone;
-    if      (IID == 42) IField = ftHP;
-    else if (IID == 54) IField = ftHM;
-    else if (IID == 55) IField = ftEP;
-    else if (IID == 56) IField = ftEM;
-    else if (IID == 57) IField = ftCP;
-    else if (IID == 58) IField = ftCM;
+    if      (IID == fidHP) IField = ftHP;
+    else if (IID == fidHM) IField = ftHM;
+    else if (IID == fidEP) IField = ftEP;
+    else if (IID == fidEM) IField = ftEM;
+    else if (IID == fidCP) IField = ftCP;
+    else if (IID == fidCM) IField = ftCM;
     ResetPkt();
     ERock.Charge(IField);
 }

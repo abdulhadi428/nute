@@ -57,11 +57,11 @@ void GeneralInit(void) {
     CC.Init();
     // Leds
     Leds.Init();
-    #define CHCNT 3
-    Leds.RunDelay = ArtChargeRunDelays[CHCNT];
-    Leds.RunColor = ArtTypeColors[atPsiKleschi];
-    Leds.RunLedCount = CHCNT;
-    Leds.SetRunningWithBlink();
+//    #define CHCNT 3
+//    Leds.RunDelay = ArtChargeRunDelays[CHCNT];
+//    Leds.RunColor = ArtTypeColors[atPsiKleschi];
+//    Leds.RunLedCount = CHCNT;
+//    Leds.SetRunningWithBlink();
 
     // Sensors
     ESns.Init();

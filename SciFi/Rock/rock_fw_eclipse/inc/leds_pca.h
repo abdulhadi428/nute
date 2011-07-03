@@ -23,7 +23,7 @@ struct Color_t {
     //bool operator != (const Color_t AColor) { return ((this->Red != AColor.Red) || (this->Green != AColor.Green) || (this->Blue != AColor.Blue)); }
     bool IsOn(void) const { return (Red || Green || Blue); }
 };
-#define COLOR_MAX       250
+#define clBlack     {0, 0, 0}
 
 // PCA registers
 struct LedsPkt_t {
@@ -39,12 +39,14 @@ struct LedsPkt_t {
 #define LEDS_PKT_SIZE   sizeof(LedsPkt_t)
 
 // Modes of operation
-enum LedModes_t {lmEqualAll, lmBlinkAll, lmRunning, lmRunAndBlink};
+typedef enum {lmEqualAll, lmBlinkAll, lmRunning, lmRunAndBlink} LedModes_t;
+typedef enum {bsOff, bsOn, bsPreOn, bsPostOn} BlinkStates_t;
 
 class Leds_t {
 private:
     LedsPkt_t FPkt;
     I2C_Cmd_t i2cCmd;
+    BlinkStates_t BlinkState;
     uint32_t Timer1, Timer2;
     uint8_t LedID;
     // Colors array
@@ -56,7 +58,6 @@ public:
     Color_t RunColor, BlinkColor;
     uint32_t RunDelay, BlinkOnTime, BlinkOffTime;
     uint8_t RunLedCount;
-    bool LedIsOn;
     // General methods
     void Init(void);
     void Task(void);
