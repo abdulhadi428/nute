@@ -15,6 +15,7 @@
 #include "acc_mma.h"
 #include "media.h"
 #include "sensors.h"
+#include "kl_ini.h"
 
 #include "rock_action.h"
 
@@ -40,6 +41,7 @@ int main(void) {
         Leds.Task();
         ERock.Task();
         EIRSirc.Task();
+        Lcd.Task();
         //CC.Task();
     } // while(1)
     return 0;
@@ -76,6 +78,10 @@ void GeneralInit(void) {
     ESnd.Play("alive.wav");
     // Artifact
     ERock.Init();
+
+    //LcdTxtIni.Filename = LCD_TEXT_FILENAME;
+    LcdTxtIni.ReadString("Vyvert", "Charge1", Lcd.TextToShow, LCD_TEXT_SIZE_MAX, "lcd_text.txt");
+    Lcd.PrintText();
 }
 
 // ================================== Events ===================================

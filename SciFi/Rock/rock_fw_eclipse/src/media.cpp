@@ -26,7 +26,6 @@ void Sound_t::Init() {
 }
 
 void Sound_t::Play(const char* AFilename) {
-    //strcpy(IFilename, AFilename);
     FRESULT rslt;
     // Open file
     rslt = f_open(&IFile, AFilename, FA_READ+FA_OPEN_EXISTING);

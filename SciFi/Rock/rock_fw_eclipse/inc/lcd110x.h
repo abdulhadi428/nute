@@ -15,6 +15,8 @@
 #include "stm32f10x_usart.h"
 #include "stm32f10x_dma.h"
 
+#include "leds_pca.h"
+
 #include <string.h>
 
 // ================================ Defines ====================================
@@ -34,11 +36,14 @@
 #define LCD_STR_HEIGHT  8
 #define LCD_STR_WIDTH   16
 
+#define LCD_PAGE_DELAY  999
+
 // Uncomment this line, if image need to be turned upside down
 //#define LCD_UPSIDEDOWN
 
 // Data sizes
 #define LCD_VIDEOBUF_SIZE       864     // = 96 * 9
+#define LCD_TEXT_SIZE_MAX       512     // chars count
 // Number of initialization commands
 #ifdef LCD_UPSIDEDOWN
 #define LCD_INITCMD_COUNT       (6+3)
@@ -55,7 +60,6 @@ struct LcdBuf_t {
     uint16_t Data[LCD_VIDEOBUF_SIZE];
 };
 
-
 class Lcd_t {
 private:
     // Variables
@@ -63,16 +67,26 @@ private:
         LcdBuf_t Ram;
         uint16_t CommonBuf[LCD_BUF_SIZE];
     };
-    uint16_t CurrentPosition;
+    uint16_t CurrentPosition;   // x, y to place data to
+    // Text
+    uint32_t Timer;
+    uint8_t GlobY;
+    char *IStartPageP;
+    bool EndOfScroll, DisplayingText;
+    void FillScreen(void);
     // Bit distortion to fulfill LSB-only USART capability
     uint16_t Distort(uint16_t CmdDta, uint8_t AByte);
     // Pin driving functions
     void XRES_Hi(void) { LCD_GPIO->BSRR = LCD_XRES; }
     void XRES_Lo(void) { LCD_GPIO->BRR  = LCD_XRES; }
 public:
+    char TextToShow[LCD_TEXT_SIZE_MAX];
     // General use
     void Init(void);
+    void Task(void);
     void Shutdown(void);
+    void BacklightOn (void) { Leds.BacklightOn(); }
+    void BacklightOff(void) { Leds.BacklightOff(); }
     // Interrupt uses this
     void XCS_Hi (void) { LCD_GPIO->BSRR = LCD_XCS;  }
     void XCS_Lo (void) { LCD_GPIO->BRR  = LCD_XCS;  }
@@ -83,6 +97,8 @@ public:
     void GotoCharXY(uint8_t x, uint8_t y);
     void DrawChar(uint8_t AChar, Invert_t AInvert);
     void PrintString (const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert);
+    void PrintStringLen(const char *S, uint16_t ALen, Invert_t AInvert);
+    void PrintText(void);
 
     void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img, Invert_t AInvert);
 };

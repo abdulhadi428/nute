@@ -30,8 +30,10 @@ public:
 
 class Rock_t {
 private:
-    uint32_t Timer;
+    uint32_t Timer, ActivatedTime;
     bool IsActivated;
+    bool SoundPlayed, HaveActivitySound;
+    uint8_t Rnd13, Rnd19;   // Random numbers
     void ChooseType(void);
     uint8_t MaxV(uint8_t a, uint8_t b) { return ((a > b)? a : b); }
     uint8_t MinV(uint8_t a, uint8_t b) { return ((a < b)? a : b); }

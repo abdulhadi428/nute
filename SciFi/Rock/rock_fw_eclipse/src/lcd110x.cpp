@@ -1,11 +1,19 @@
 #include "lcd110x.h"
 #include "lcd_font.h"
 #include "images.h"
+#include "string.h"
 
 #include "delay_util.h"
 #include "uart.h"
 
 Lcd_t Lcd;
+
+void Lcd_t::Task(void) {
+    if (!DisplayingText) return;
+    if (!Delay.Elapsed(&Timer, LCD_PAGE_DELAY)) return;
+    if (EndOfScroll) PrintText();
+    else FillScreen();
+}
 
 void Lcd_t::Init(void) {
     // ====================== Hardware setup ===================================
@@ -38,7 +46,7 @@ void Lcd_t::Init(void) {
     USART_ClockInit(LCD_USART, &USART_ClockInitStructure);
     // Usart itself
     USART_InitTypeDef USART_InitStructure;
-    USART_InitStructure.USART_BaudRate = 60000;
+    USART_InitStructure.USART_BaudRate = 45000;
     USART_InitStructure.USART_WordLength = USART_WordLength_9b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -114,6 +122,7 @@ void Lcd_t::Shutdown(void) {
 }
 // ================================ Graphics ===================================
 void Lcd_t::Cls() {
+    DisplayingText = false;
     for (uint16_t i = 0; i < LCD_VIDEOBUF_SIZE; i++)
         Ram.Data[i] = 0x0001;   // Empty character
 }
@@ -141,6 +150,68 @@ void Lcd_t::PrintString(const uint8_t x, const uint8_t y, const char* S, Invert_
     GotoCharXY(x, y);
     while (*S != '\0')
         DrawChar(*S++, AInvert);
+}
+void Lcd_t::PrintStringLen(const char *S, uint16_t ALen, Invert_t AInvert) {
+    for (uint16_t i=0; ((i<ALen) && (*S != '\0')); i++)
+        DrawChar(*S++, AInvert);
+}
+
+void Lcd_t::PrintText() {
+    Cls();
+    IStartPageP = &TextToShow[0];
+    // Fill first screen
+    BacklightOn();
+    DisplayingText = true;
+    EndOfScroll = false;
+    GlobY = 3;      // Start show not from upper row
+    FillScreen();
+}
+void Lcd_t::FillScreen(void) {
+    char *StartP, *EndP;
+    uint8_t x=0, y=GlobY, len=0;
+    bool EndOfTextReached = false;
+
+    StartP = IStartPageP;
+    GotoXY(x, y);
+    while(1) {
+        EndP = strchr(StartP, ' ');
+        if (EndP == NULL) {
+            EndOfTextReached = true;
+            EndP = strchr(StartP, '\0');
+        }
+        len = EndP - StartP;
+        // Check if fit in current row
+        if((x+len) > 16) {                      // Goto next row if not fit
+            for (uint8_t i=x; i<16; i++) DrawChar(' ', NotInverted);    // Fill remainder of row with spaces
+            y++;
+            // Leading spaces
+            if ((y == 1) && (GlobY == 0)) IStartPageP = StartP;   // Next time, start with this row
+            if (y >= LCD_STR_HEIGHT) {          // End of screen
+                if (GlobY != 0) GlobY--;
+                return;
+            }
+            x = 0;
+            GotoXY(0, y);
+        }
+        else if (EndOfTextReached && (y==0)) EndOfScroll = true;  // End of scroll in case of last word is in first row
+        PrintStringLen(StartP, len, NotInverted);
+        x += len;
+        // Space after word
+        if (x < 16) {
+            DrawChar(' ', NotInverted);
+            x++;
+        }
+        // Go further through the text
+        if (!EndOfTextReached) StartP = EndP+1;
+        else {
+            for (uint8_t i=x; i<16; i++) DrawChar(' ', NotInverted);    // Fill remainder of row with spaces
+            if (++y < LCD_STR_HEIGHT) { // Fill next row with spaces
+                GotoXY(0, y);
+                for (uint8_t i=0; i<16; i++) DrawChar(' ', NotInverted);
+            }
+            return;
+        }
+    } // while
 }
 
 void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img, Invert_t AInvert) {

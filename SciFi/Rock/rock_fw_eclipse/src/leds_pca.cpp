@@ -76,7 +76,7 @@ void Leds_t::SetRunningWithBlink() {
     Mode = lmRunAndBlink;
     LedID = 0;
     BlinkState = bsOff;
-    Delay.Reset(&Timer2);
+    Delay.Bypass(&Timer2, BlinkOffTime);
 }
 
 // ================================ Task =======================================
@@ -154,6 +154,7 @@ void Leds_t::Task() {
 
 // ==== LCD backlight ====
 void Leds_t::BacklightOn() {
+    OutputEnable();
     FPkt.LEDOut[3] = 0x3F;
     i2cMgr.AddCmd(i2cCmd);
 }

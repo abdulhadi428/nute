@@ -10,27 +10,44 @@
 #include "media.h"
 #include "sensors.h"
 
+#include "ff.h"
+#include "diskio.h"
+
 #include "uart.h"
 
 Rock_t ERock;
 
 void Rock_t::Task() {
-    if (IsActivated) {
-        if (Delay.Elapsed(&Timer, ACTIVATED_TIMEOUT)) { // Showtime is over
-            Lcd.Cls();          // Clear screen
-            DecreaseCharge();
-            ESns.Enable();
-            IsActivated = false;
-        }
-        else {
-            //if (ESnd.State == sndStopped) ESnd.Play(ArtTypeActiveSounds[Type]); // Replay active sound
-        }
-    } // if IsActivated
+    // Random generator
+    if (++Rnd13 > 3) Rnd13 = 1;
+    if (++Rnd19 > 9) Rnd13 = 1;
+    // ==== Handle activated artifact ====
+    if (!IsActivated) return;
+    // Check if Showtime is over
+    if (Delay.Elapsed(&Timer, ActivatedTime)) {
+        Lcd.Cls();          // Clear screen
+        Lcd.BacklightOff();
+        DecreaseCharge();
+        ChooseType();
+        ESns.Enable();
+        IsActivated = false;
+    }
+    else {
+        if (ESnd.State == sndStopped) {
+            if (!SoundPlayed) {
+                ESnd.Play(ActivationSounds[Type]);  // Activation sound
+                SoundPlayed = true;
+            }
+            else if (HaveActivitySound) ESnd.Play(ActivitySounds[Type]);  // Sound during activity
+        } // if stopped
+    }
 }
 
 void Rock_t::Init() {
     Type = atEmpty;
     ChargeCount = 0;
+    Rnd13 = 1;
+    Rnd19 = 1;
 }
 
 void Rock_t::Charge(FieldType_t AFType) {
@@ -148,34 +165,107 @@ void Rock_t::TryToActivate(ActType_t AActType) {
 
 void Rock_t::Activate() {
     if ((Type == atEmpty) || (ChargeCount == 0)) return;
-    // Disable sensors
-    ESns.Disable();
-    // Light indication
-    Leds.SetEqualAll(ArtTypeColors[Type]);
-    // Sound indication
-    if (ESnd.State != sndStopped) ESnd.Stop();
-    else ESnd.Play(ArtTypeActiveSounds[Type]);
-    // Display text
-    DisplayText();
-    // Reset delay to check if showtime is over
-    Delay.Reset(&Timer);
+    ESns.Disable();                             // Disable sensors
+    Leds.SetEqualAll(ArtTypeColors[Type]);      // Light indication
+    if (ESnd.State != sndStopped) ESnd.Stop();  // Prepare sound indication
+    // Variables initialization
+    ActivatedTime = ACTIVATED_TIME_DEFAULT;
+    SoundPlayed = false;
+    HaveActivitySound = false;
     IsActivated = true;
+    // Do what needed depending on artifact type
+    uint8_t StrID2=0;   // String to display: ArtType -> ChargeCount -> StrID2
+    switch (Type) {
+        // Monopolar
+        case atRadX:
+            if (ChargeCount == 2) ActivatedTime = 300000;   // == 5 min.
+            break;
+        case atPsiKleschi:
+            if (ChargeCount == 3) StrID2 = Rnd19;
+            break;
+        case atPetlya:
+            if ((ChargeCount == 3) || (ChargeCount == 2)) HaveActivitySound = true;
+            break;
+        // Bipolar
+        case atKusok:
+            if (ChargeCount == 1) StrID2 = Rnd13;
+            break;
+        case atFlash:
+            // TODO: Make URL here
+            break;
+        case atGirya:
+            // TODO: make 12 hong beats
+            break;
+        case atPsiKleschi_Flash:
+            // TODO: Make URL here
+            break;
+        case atPsiKleschi_BlackJack:
+            // TODO: Make URL here
+            break;
+
+        default: break;
+    } // switch
+    DisplayText();// Read string from SD
+
+    Delay.Reset(&Timer);    // Reset delay to check if showtime is over
 }
 
 void Rock_t::DecreaseCharge() {
-//    switch (ChargeCount) {
-//
-//    } // switch
-
-
+    switch (Type) {
+        // Monopolar
+        case atGirya:
+        case atRadX:
+            H.DecreaseModule();
+            break;
+        case atPsiKleschi:
+        case atShpala:
+            E.DecreaseModule();
+            break;
+        case atBlackJack:
+        case atPetlya:
+            C.DecreaseModule();
+            break;
+        // Bipolar
+        case atFlash:
+        case atKusok:
+        case atVyvert:
+        case atSlomo:
+            H.DecreaseModule();
+            E.DecreaseModule();
+            break;
+        default: break;
+    } // switch
+    ChooseType();
     ShowChargeCount();
 }
-void Rock_t::DisplayText() {
-    //TODO
+void Rock_t::DisplayText() {    // ArtType -> StrID1 -> StrID2
+//    FRESULT rslt;
+//    FIL IFile;
+//    // Open file
+//    rslt = f_open(&IFile, LCD_TEXT_FILENAME, FA_READ+FA_OPEN_EXISTING);
+//    if (rslt != FR_OK) {
+//        if (rslt == FR_NO_FILE) {
+//            UART_PrintString(LCD_TEXT_FILENAME);
+//            UART_PrintString("File not found\r");
+//        }
+//        else UART_StrUint("OpenFile error: ", rslt);
+//        return;
+//    }
+//    // Check if zero file
+//    if (IFile.fsize == 0) {
+//        f_close(&IFile);
+//        UART_PrintString(LCD_TEXT_FILENAME);
+//        UART_PrintString("Empty file\r");
+//        return;
+//    }
+
+    // Read string from file
+
+    // Display string
 }
 
 // ================================ Indication =================================
-void Rock_t::ShowFieldExistance(FieldType_t AFType) {
+void Rock_t::ShowFieldExistance(FieldType_t AFType) { // TODO: sound field existance
     Delay.Reset(&Timer);        // Reset field dissapering timeout
     if(Leds.Mode != lmRunAndBlink) {
         Leds.BlinkOnTime  = FIELD_BLINK_ON_TIME;
@@ -228,4 +318,15 @@ void FieldPoint_t::operator --(int) {
     else if  (Counter >   THRESHOLD2)                              Value = 3;
     // Check if changed
     HasChanged = (OldValue != Value);
+}
+void FieldPoint_t::DecreaseModule() {
+    if (Value > 0) Value--;
+    if (Value < 0) Value++;
+    // Set Counter depending on Value
+    if      (Value == -3) Counter = -THRESHOLD3;
+    else if (Value == -2) Counter = -THRESHOLD2;
+    else if (Value == -1) Counter = -THRESHOLD1;
+    else if (Value ==  1) Counter =  THRESHOLD1;
+    else if (Value ==  2) Counter =  THRESHOLD2;
+    else if (Value ==  3) Counter =  THRESHOLD3;
 }
