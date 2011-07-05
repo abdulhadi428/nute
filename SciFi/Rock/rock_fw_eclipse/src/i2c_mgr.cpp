@@ -224,15 +224,18 @@ void i2cMgr_t::WriteMany() {
     DMA_InitStructure.DMA_M2M                = DMA_M2M_Disable;
     DMA_Init(I2C_DMA_CHNL_TX, &DMA_InitStructure);
     // Start transmission
-    DMA_Cmd(I2C_DMA_CHNL_TX, ENABLE);  // Enable DMA channel
-    I2C_DMACmd(I2C1, ENABLE);       // Enable DMA
+    DMA_Cmd(I2C_DMA_CHNL_TX, ENABLE);   // Enable DMA channel
+    I2C_DMACmd(I2C1, ENABLE);           // Enable DMA
     //Uart.PrintString("ST\r\r");
     Delay.Reset(&Timer);
 }
 uint8_t i2cMgr_t::CheckManyWriting() {
     // Check if DMA transfer ended
-    if (DMA_GetFlagStatus(I2C_DMA_FLAG_TC_TX) == SET) return I2C_OK;
-    if (Delay.Elapsed(&Timer, I2C_TIMEOUT_MS))     return I2C_ERR_TIMEOUT;
+    if (DMA_GetFlagStatus(I2C_DMA_FLAG_TC_TX) == SET)
+        if (I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY) == RESET)
+            return I2C_OK;
+
+    if (Delay.Elapsed(&Timer, I2C_TIMEOUT_MS)) return I2C_ERR_TIMEOUT;
     return I2C_WAITING;
 }
 
@@ -317,6 +320,10 @@ void i2cMgr_t::Init() {
 void i2cMgr_t::AddCmd(I2C_Cmd_t ACmd) {
     ACmd.State = CmdPending;
     *CmdToWrite = ACmd;     // Copy command to buffer
+    // DEBUG
+//    UART_PrintString("Cmd: ");
+//    UART_PrintArrAsHex(ACmd.DataToWrite.Buf, ACmd.DataToWrite.Length);
+//    UART_NewLine();
     // Process command queue
     CmdToWrite++;
     if ((CmdToWrite - &Commands[0]) >= I2C_CMD_QUEUE_LENGTH) CmdToWrite = &Commands[0];

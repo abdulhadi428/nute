@@ -44,11 +44,15 @@ typedef enum {bsOff, bsOn, bsPreOn, bsPostOn} BlinkStates_t;
 
 class Leds_t {
 private:
-    LedsPkt_t FPkt;
+    union {
+        LedsPkt_t FPkt;
+        uint8_t FPktArray[LEDS_PKT_SIZE];
+    };
     I2C_Cmd_t i2cCmd;
     BlinkStates_t BlinkState;
     uint32_t Timer1, Timer2;
     uint8_t LedID;
+    bool AllAreOff;
     // Colors array
     Color_t *Colors[5];
     void SetAll(uint8_t APWM) { for (uint8_t i=0; i<=14; i++) FPkt.PWM[i] = APWM; }

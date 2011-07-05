@@ -85,8 +85,6 @@ public:
     void Init(void);
     void Task(void);
     void Shutdown(void);
-    void BacklightOn (void) { Leds.BacklightOn(); }
-    void BacklightOff(void) { Leds.BacklightOff(); }
     // Interrupt uses this
     void XCS_Hi (void) { LCD_GPIO->BSRR = LCD_XCS;  }
     void XCS_Lo (void) { LCD_GPIO->BRR  = LCD_XCS;  }

@@ -160,10 +160,9 @@ void Lcd_t::PrintText() {
     Cls();
     IStartPageP = &TextToShow[0];
     // Fill first screen
-    BacklightOn();
     DisplayingText = true;
     EndOfScroll = false;
-    GlobY = 3;      // Start show not from upper row
+    GlobY = 7;      // Start show not from upper row
     FillScreen();
 }
 void Lcd_t::FillScreen(void) {

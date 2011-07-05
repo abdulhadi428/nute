@@ -32,17 +32,20 @@ class Rock_t {
 private:
     uint32_t Timer, ActivatedTime;
     bool IsActivated;
-    bool SoundPlayed, HaveActivitySound;
-    uint8_t Rnd13, Rnd19;   // Random numbers
+    bool SoundPlayed;
+    uint8_t ActivitySoundRepeatCount;
+    uint8_t Rnd13, Rnd19, Rnd0_97;   // Random numbers
     void ChooseType(void);
     uint8_t MaxV(uint8_t a, uint8_t b) { return ((a > b)? a : b); }
     uint8_t MinV(uint8_t a, uint8_t b) { return ((a < b)? a : b); }
     // Indication
     void ShowChargeCount(void);
-    void Activate(void);
-    void DisplayText(void);
     void DecreaseCharge(void);
+    // Inner use
+    char UintToSmallHexChar(uint8_t b) { return ((b<=0x09) ? (b+'0') : (b+'a'-10)); }
+    void AddRandURL(char *ALastSymbol);
 public:
+    void Activate(void);
     void ShowFieldExistance(FieldType_t AFType);
     // User use
 	ArtType_t Type;

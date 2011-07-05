@@ -15,8 +15,6 @@
 #include "acc_mma.h"
 #include "media.h"
 #include "sensors.h"
-#include "kl_ini.h"
-
 #include "rock_action.h"
 
 #include "lcd110x.h"
@@ -42,6 +40,7 @@ int main(void) {
         ERock.Task();
         EIRSirc.Task();
         Lcd.Task();
+
         //CC.Task();
     } // while(1)
     return 0;
@@ -79,9 +78,8 @@ void GeneralInit(void) {
     // Artifact
     ERock.Init();
 
-    //LcdTxtIni.Filename = LCD_TEXT_FILENAME;
-    LcdTxtIni.ReadString("Vyvert", "Charge1", Lcd.TextToShow, LCD_TEXT_SIZE_MAX, "lcd_text.txt");
-    Lcd.PrintText();
+    ERock.Type = atPsiKleschi;
+    ERock.ChargeCount = 3;
 }
 
 // ================================== Events ===================================
@@ -91,5 +89,7 @@ void EVENT_NewPacket(void) {
 }
 
 void EVENT_SensorsStateChanged(void) {
-    //SnsVerbose();
+    if(SnsState.KeyTouched[0]) ERock.TryToActivate(actOne);
+    if(SnsState.KeyTouched[1]) ERock.TryToActivate(actTwo);
+    if(SnsState.KeyTouched[2]) ERock.TryToActivate(actThree);
 }

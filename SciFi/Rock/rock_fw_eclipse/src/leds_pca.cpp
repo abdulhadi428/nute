@@ -13,7 +13,7 @@ void Leds_t::Init() {
     GPIO_InitStructure.GPIO_Pin = LED_OE_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
-    this->OutputDisable();
+    this->OutputEnable();
     // ==== Init variables ====
     Delay.Reset(&Timer1);
     Mode = lmEqualAll;
@@ -35,7 +35,7 @@ void Leds_t::Init() {
     // Setup i2cCmd
     i2cCmd.Address = LED_I2C_ADDR;
     i2cCmd.DataToRead.Length = 0;   // Nothing to read
-    i2cCmd.DataToWrite.Buf = (uint8_t *)&FPkt;
+    i2cCmd.DataToWrite.Buf = FPktArray;
     i2cCmd.DataToWrite.Length = LEDS_PKT_SIZE;
     i2cCmd.Callback = 0;
     // Prepare initialization packet
@@ -76,6 +76,10 @@ void Leds_t::SetRunningWithBlink() {
     Mode = lmRunAndBlink;
     LedID = 0;
     BlinkState = bsOff;
+    // Setup default values
+    if (RunDelay     < 10) RunDelay     = 100;
+    if (BlinkOnTime  < 10) BlinkOnTime  = 100;
+    if (BlinkOffTime < 10) BlinkOffTime = 100;
     Delay.Bypass(&Timer2, BlinkOffTime);
 }
 
@@ -105,6 +109,16 @@ void Leds_t::Task() {
             break;
 
         case lmRunAndBlink: // Blink: Timer2; Run: Timer1
+            if (!RunColor.IsOn() && !BlinkColor.IsOn()) {   // Switch all off if both are off
+                if (!AllAreOff) {
+                    for (i=0; i<5; i++) *Colors[i] = clBlack;
+                    i2cMgr.AddCmd(i2cCmd);
+                    AllAreOff = true;
+                }
+                return;
+            }
+            else AllAreOff = false;
+
             switch (BlinkState) {
                 case bsOn:  // Was blinking on, check if time to switch off
                     if (!Delay.Elapsed(&Timer2, BlinkOnTime)) return;

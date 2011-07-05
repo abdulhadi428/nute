@@ -6,13 +6,13 @@
 // Defines
 #define MAX_CHARGE_COUNT    3
 #define FILENAME_LEN        13  // = 8+.+3+\0
-#define ART_TYPES_COUNT     11
+#define ART_TYPES_COUNT     11  // = None + 10 mono, combo not used
 #define FIELD_TYPES_COUNT   7
 
 #define LCD_TEXT_FILENAME   "lcd_text.txt"
 
 // Timings
-#define ACTIVATED_TIME_DEFAULT   20000
+#define ACTIVATED_TIME_DEFAULT   40000
 
 // Types
 typedef enum {
@@ -37,7 +37,6 @@ typedef enum {
     atSlomo_Vyvert_Petlya=17,
     atShpala_PsiKleschi=18,
     atPsiKleschi_Vyvert_Petlya=19
-
 } ArtType_t;
 typedef enum {ftNone=0, ftHP=1, ftHM=2, ftEP=3, ftEM=4, ftCP=5, ftCM=6} FieldType_t;
 typedef enum {fidCM=42, fidCP=43, fidHM=44, fidHP=45, fidEM=46, fidEP=47} FieldID_t;
@@ -90,23 +89,23 @@ const char ChargedSounds[ART_TYPES_COUNT][FILENAME_LEN] = {
 };
 const char ActivationSounds[ART_TYPES_COUNT][FILENAME_LEN] = {
     "", // atEmpty
-    "", // atSlomo
-    "", // atFlash
-    "", // atGirya
-    "", // atPetlya
-    "", // atShpala
-    "", // atRadX
-    "", // atBlackJack
-    "", // atPsiKleschi
-    "", // atVyvert
-    "", // atKusok
+    "slo_actn.wav", // atSlomo
+    "fla_actn.wav", // atFlash
+    "gir_actn.wav", // atGirya
+    "pet_actn.wav", // atPetlya
+    "shp_actn.wav", // atShpala
+    "rad_actn.wav", // atRadX
+    "bla_actn.wav", // atBlackJack
+    "psi_actn.wav", // atPsiKleschi
+    "vyv_actn.wav", // atVyvert
+    "kus_actn.wav", // atKusok
 };
 const char ActivitySounds[ART_TYPES_COUNT][FILENAME_LEN] = {
         "", // atEmpty
         "", // atSlomo
-        "", // atFlash
-        "", // atGirya
-        "", // atPetlya
+        "fla_rpt.wav", // atFlash
+        "gir_rpt.wav", // atGirya
+        "pet_rpt.wav", // atPetlya
         "", // atShpala
         "", // atRadX
         "", // atBlackJack
@@ -127,6 +126,30 @@ const char ArtTypeStrings[ART_TYPES_COUNT][26] = {
         "PsiKleschi",   // atPsiKleschi
         "Vyvert",       // atVyvert
         "Kusok",        // atKusok
+};
+const char ArtChargeStrings[4][8] = {
+        "",
+        "Charge1",
+        "Charge2",
+        "Charge3",
+};
+const char ArtCh1RndStrings[4][8] = {
+        "",
+        "Ch1Rnd1",
+        "Ch1Rnd2",
+        "Ch1Rnd3",
+};
+const char ArtCh3RndStrings[10][8] = {
+        "",
+        "Ch3Rnd1",
+        "Ch3Rnd2",
+        "Ch3Rnd3",
+        "Ch3Rnd4",
+        "Ch3Rnd5",
+        "Ch3Rnd6",
+        "Ch3Rnd7",
+        "Ch3Rnd8",
+        "Ch3Rnd9",
 };
 
 

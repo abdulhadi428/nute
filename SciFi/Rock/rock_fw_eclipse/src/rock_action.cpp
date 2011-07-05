@@ -9,6 +9,8 @@
 #include "lcd110x.h"
 #include "media.h"
 #include "sensors.h"
+#include "kl_ini.h"
+#include "lca.h"
 
 #include "ff.h"
 #include "diskio.h"
@@ -20,15 +22,16 @@ Rock_t ERock;
 void Rock_t::Task() {
     // Random generator
     if (++Rnd13 > 3) Rnd13 = 1;
-    if (++Rnd19 > 9) Rnd13 = 1;
+    if (++Rnd19 > 9) Rnd19 = 1;
+    if (++Rnd0_97 > 97) Rnd0_97 = 0;
+
     // ==== Handle activated artifact ====
     if (!IsActivated) return;
     // Check if Showtime is over
     if (Delay.Elapsed(&Timer, ActivatedTime)) {
         Lcd.Cls();          // Clear screen
-        Lcd.BacklightOff();
+        Leds.BacklightOff();
         DecreaseCharge();
-        ChooseType();
         ESns.Enable();
         IsActivated = false;
     }
@@ -38,7 +41,10 @@ void Rock_t::Task() {
                 ESnd.Play(ActivationSounds[Type]);  // Activation sound
                 SoundPlayed = true;
             }
-            else if (HaveActivitySound) ESnd.Play(ActivitySounds[Type]);  // Sound during activity
+            else if (ActivitySoundRepeatCount != 0) {
+                ESnd.Play(ActivitySounds[Type]);  // Sound during activity
+                if (ActivitySoundRepeatCount != 0xFF) ActivitySoundRepeatCount--;
+            }
         } // if stopped
     }
 }
@@ -106,9 +112,12 @@ void Rock_t::Charge(FieldType_t AFType) {
 }
 
 void Rock_t::ChooseType() {
-    if ((H == 0) && (E == 0) && (C == 0)) Type = atEmpty;
+    if ((H == 0) && (E == 0) && (C == 0)) {
+        Type = atEmpty;
+        ChargeCount = 0;
+    }
     // ==== C field ====
-    if (C > 0) {
+    else if (C > 0) {
         Type = atBlackJack;
         ChargeCount = C.Module();
     }
@@ -171,41 +180,53 @@ void Rock_t::Activate() {
     // Variables initialization
     ActivatedTime = ACTIVATED_TIME_DEFAULT;
     SoundPlayed = false;
-    HaveActivitySound = false;
+    ActivitySoundRepeatCount = 0;
     IsActivated = true;
+    // Read string to display
+    char *LastSymbol = LcdTxtIni.ReadString(ArtTypeStrings[Type], ArtChargeStrings[ChargeCount], &Lcd.TextToShow[0], LCD_TEXT_SIZE_MAX, "lcd_text.txt");
+    if (LastSymbol == NULL) return;
     // Do what needed depending on artifact type
-    uint8_t StrID2=0;   // String to display: ArtType -> ChargeCount -> StrID2
     switch (Type) {
         // Monopolar
         case atRadX:
             if (ChargeCount == 2) ActivatedTime = 300000;   // == 5 min.
             break;
         case atPsiKleschi:
-            if (ChargeCount == 3) StrID2 = Rnd19;
+            if (ChargeCount == 3) {     // Add random string
+                *LastSymbol++ = ' ';    // Add space at end
+                LcdTxtIni.ReadString(ArtTypeStrings[Type], ArtCh3RndStrings[Rnd19], LastSymbol, LCD_TEXT_SIZE_MAX, "lcd_text.txt");
+            }
             break;
         case atPetlya:
-            if ((ChargeCount == 3) || (ChargeCount == 2)) HaveActivitySound = true;
+            if ((ChargeCount == 3) || (ChargeCount == 2)) ActivitySoundRepeatCount = 0xFF;
             break;
         // Bipolar
         case atKusok:
-            if (ChargeCount == 1) StrID2 = Rnd13;
+            if (ChargeCount == 1) {     // Add random string
+                *LastSymbol++ = ' ';    // Add space at end
+                LcdTxtIni.ReadString(ArtTypeStrings[Type], ArtCh1RndStrings[Rnd13], LastSymbol, LCD_TEXT_SIZE_MAX, "lcd_text.txt");
+            }
             break;
         case atFlash:
-            // TODO: Make URL here
+            if (ChargeCount == 3) {
+                AddRandURL(LastSymbol);
+                ActivitySoundRepeatCount = 0xFF;
+            }
             break;
         case atGirya:
-            // TODO: make 12 hong beats
+            if (ChargeCount == 3) ActivitySoundRepeatCount = 12;
             break;
         case atPsiKleschi_Flash:
-            // TODO: Make URL here
+            AddRandURL(LastSymbol);
             break;
         case atPsiKleschi_BlackJack:
-            // TODO: Make URL here
+            AddRandURL(LastSymbol);
             break;
 
         default: break;
     } // switch
-    DisplayText();// Read string from SD
+    Leds.BacklightOn();
+    Lcd.PrintText();
 
     Delay.Reset(&Timer);    // Reset delay to check if showtime is over
 }
@@ -236,33 +257,21 @@ void Rock_t::DecreaseCharge() {
         default: break;
     } // switch
     ChooseType();
-    ShowChargeCount();
 }
-void Rock_t::DisplayText() {    // ArtType -> StrID1 -> StrID2
-//    FRESULT rslt;
-//    FIL IFile;
-//    // Open file
-//    rslt = f_open(&IFile, LCD_TEXT_FILENAME, FA_READ+FA_OPEN_EXISTING);
-//    if (rslt != FR_OK) {
-//        if (rslt == FR_NO_FILE) {
-//            UART_PrintString(LCD_TEXT_FILENAME);
-//            UART_PrintString("File not found\r");
-//        }
-//        else UART_StrUint("OpenFile error: ", rslt);
-//        return;
-//    }
-//    // Check if zero file
-//    if (IFile.fsize == 0) {
-//        f_close(&IFile);
-//        UART_PrintString(LCD_TEXT_FILENAME);
-//        UART_PrintString("Empty file\r");
-//        return;
-//    }
 
-    // Read string from file
-
-    // Display string
+void Rock_t::AddRandURL(char *ALastSymbol) {
+    *ALastSymbol++ = ' ';    // Add space at end
+    strcpy(ALastSymbol, URL_Template);
+    ALastSymbol += strlen(URL_Template);
+    // Make URL end
+    uint32_t tmpu32 = idA[Rnd0_97];
+    //tmpu32 = 0xDEADBEEF;  // DEBUG
+    for(int8_t i=28; i>=0; i-=4)
+        *ALastSymbol++ = UintToSmallHexChar(((uint8_t)(tmpu32 >> i)) & 0x0F);
+    *ALastSymbol++ = '\'';
+    *ALastSymbol = '\0';
 }
+
 
 // ================================ Indication =================================
 void Rock_t::ShowFieldExistance(FieldType_t AFType) { // TODO: sound field existance
