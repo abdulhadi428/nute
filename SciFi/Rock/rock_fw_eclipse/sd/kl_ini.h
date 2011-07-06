@@ -17,6 +17,8 @@
 char *skipleading(char *S);
 char *skiptrailing(char *S, const char *base);
 char *striptrailing(char *S);
+
 char *ReadString(const char *ASection, const char *AKey, char *AOutput, uint32_t AMaxLength, const char *AFileName);
+int32_t ReadInt32(const char *ASection, const char *AKey, const char *AFileName);
 
 #endif /* KL_INI_H_ */

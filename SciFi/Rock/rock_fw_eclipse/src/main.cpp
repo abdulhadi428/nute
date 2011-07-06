@@ -16,6 +16,7 @@
 #include "media.h"
 #include "sensors.h"
 #include "rock_action.h"
+#include "kl_ini.h"
 
 #include "lcd110x.h"
 #include "images.h"
@@ -74,12 +75,19 @@ void GeneralInit(void) {
     SD.Init();
     Vs.Init();
     ESnd.Init();
-    ESnd.Play("alive.wav");
+    // Radio
+    CC.Init();
+    uint32_t Chnl = ReadInt32("Radio", "Channel", "Rock.ini");
+    UART_StrInt("Radio channel: ", Chnl);
+    CC.SetChannel((uint8_t)Chnl);
     // Artifact
     ERock.Init();
 
-    ERock.Type = atPsiKleschi;
-    ERock.ChargeCount = 3;
+
+    ESnd.Play("alive.wav");
+
+    ERock.Type = atKusok;
+    ERock.ChargeCount = 1;
 }
 
 // ================================== Events ===================================

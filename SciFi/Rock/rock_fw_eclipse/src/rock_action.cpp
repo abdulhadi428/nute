@@ -183,7 +183,7 @@ void Rock_t::Activate() {
     ActivitySoundRepeatCount = 0;
     IsActivated = true;
     // Read string to display
-    char *LastSymbol = LcdTxtIni.ReadString(ArtTypeStrings[Type], ArtChargeStrings[ChargeCount], &Lcd.TextToShow[0], LCD_TEXT_SIZE_MAX, "lcd_text.txt");
+    char *LastSymbol = ReadString(ArtTypeStrings[Type], ArtChargeStrings[ChargeCount], &Lcd.TextToShow[0], LCD_TEXT_SIZE_MAX, "lcd_text.txt");
     if (LastSymbol == NULL) return;
     // Do what needed depending on artifact type
     switch (Type) {
@@ -194,7 +194,7 @@ void Rock_t::Activate() {
         case atPsiKleschi:
             if (ChargeCount == 3) {     // Add random string
                 *LastSymbol++ = ' ';    // Add space at end
-                LcdTxtIni.ReadString(ArtTypeStrings[Type], ArtCh3RndStrings[Rnd19], LastSymbol, LCD_TEXT_SIZE_MAX, "lcd_text.txt");
+                ReadString(ArtTypeStrings[Type], ArtCh3RndStrings[Rnd19], LastSymbol, LCD_TEXT_SIZE_MAX, "lcd_text.txt");
             }
             break;
         case atPetlya:
@@ -204,7 +204,7 @@ void Rock_t::Activate() {
         case atKusok:
             if (ChargeCount == 1) {     // Add random string
                 *LastSymbol++ = ' ';    // Add space at end
-                LcdTxtIni.ReadString(ArtTypeStrings[Type], ArtCh1RndStrings[Rnd13], LastSymbol, LCD_TEXT_SIZE_MAX, "lcd_text.txt");
+                ReadString(ArtTypeStrings[Type], ArtCh1RndStrings[Rnd13], LastSymbol, LCD_TEXT_SIZE_MAX, "lcd_text.txt");
             }
             break;
         case atFlash:

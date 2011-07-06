@@ -36,9 +36,8 @@
 //#define CC_GDO0_EXTI_IRQn   EXTI0_IRQn
 
 // ============================ Types & variables ==============================
-#define CC_PKT_LEN          6
-#define CC_PKT_DATA_LEN     CC_PKT_LEN-2
-#define CC_PKT_EXTRA_LEN    CC_PKT_LEN+2
+#define CC_PKT_DATA_LEN     4
+#define CC_PKT_LEN          (2+CC_PKT_DATA_LEN)
 struct CC_Packet_t{
     uint8_t PacketID;
     uint8_t CommandID;
@@ -53,11 +52,11 @@ private:
     uint32_t Timer;
     uint8_t State;
     union {
-        uint8_t RX_PktArray[CC_PKT_EXTRA_LEN];
+        uint8_t RX_PktArray[CC_PKT_LEN+2];
         CC_Packet_t RX_Pkt;
     };
     union {
-        uint8_t TX_PktArray[CC_PKT_EXTRA_LEN];
+        uint8_t TX_PktArray[CC_PKT_LEN+2];
         CC_Packet_t TX_Pkt;
     };
     bool GDO0_WasHi;
@@ -92,6 +91,7 @@ private:
     void FlushTxFIFO(void)  { WriteStrobe(CC_SFTX); }
     void GetState(void)     { WriteStrobe(CC_SNOP); }
 public:
+    uint8_t Channel;
     // Methods
     void Init(void);
     void Task(void);
