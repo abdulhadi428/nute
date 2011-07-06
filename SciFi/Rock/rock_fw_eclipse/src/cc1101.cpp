@@ -11,11 +11,19 @@
 
 #include "uart.h"
 
+#include "rock_action.h"
+
 // ============================ Variables ======================================
 CC_t CC;
+uint8_t OthersIDs[18];
 
 // ========================== Implementation ===================================
 void CC_t::Task(void) {
+    // Reset others list
+    if (Delay.Elapsed(&Timer, 40000))
+        for (uint8_t i=0; i<18; i++)
+            OthersIDs[i] = 0;
+
     uint8_t FifoSize;
     // Do with CC what needed
     GetState();
@@ -26,19 +34,16 @@ void CC_t::Task(void) {
         case CC_STB_IDLE:
             //Uart.PrintString("\rIDLE");
             //EnterRX();
-            if (Delay.Elapsed(&Timer, 400)) {
-                UART_PrintString("\rTX");
-                // Prepare packet to send
-                TX_Pkt.CommandID = 0xCA;
-                TX_Pkt.PacketID++;
-                TX_Pkt.Data[0] = 'A';
-                TX_Pkt.Data[1] = 'i';
-                TX_Pkt.Data[2] = 'y';
-                TX_Pkt.Data[3] = 'a';
-                WriteTX(TX_PktArray, CC_PKT_LEN);
-                //CC.EnterTXAndWaitToComplete();
-                EnterTX();
-            }
+//            if (Delay.Elapsed(&Timer, 400)) {
+//                UART_PrintString("\rTX");
+//                // Prepare packet to send
+//                TX_Pkt.CommandID = 0x7C;
+//                TX_Pkt.ChargeCount = ERock.ChargeCount;
+//                TX_Pkt.ArtType = (uint8_t)ERock.Type;
+//                WriteTX(TX_PktArray, CC_PKT_LEN);
+//                //CC.EnterTXAndWaitToComplete();
+//                EnterTX();
+//            }
             break;
 
         case CC_STB_RX:
@@ -46,7 +51,7 @@ void CC_t::Task(void) {
             if (GDO0_IsHi()) GDO0_WasHi = true;
             // Check if GDO0 has fallen
             else if (GDO0_WasHi) {
-                UART_PrintString("\rIRQ\r");
+                //UART_PrintString("\rIRQ\r");
                 GDO0_WasHi = false;
                 FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
                 if (FifoSize != 0) {
@@ -126,6 +131,38 @@ void CC_t::EnterTXAndWaitToComplete(void) {
     while (!GDO0_IsHi());   // After this, SYNC word is transmitted
     while (GDO0_IsHi());    // After this, packet is transmitted
     //IRQEnable();
+}
+
+
+void CC_t::TimebaseInit() {
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
+    // Interrupt config
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = TIM5_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+    // Timebase config
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; // Up-counter needed, nothing special
+    TIM_TimeBaseStructure.TIM_Period = SUBCYCLE_DURATION;       // Auto-reload value
+    TIM_TimeBaseStructure.TIM_Prescaler = (uint16_t) (SystemCoreClock / 1000) - 1; // Input clock divisor
+    TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
+    TIM_TimeBaseInit(TIM5, &TIM_TimeBaseStructure);
+    //TIM_PrescalerConfig(TIM2, PrescalerValue, TIM_PSCReloadMode_Immediate);
+    // Output Compare Timing Mode configuration: Channel1
+    TIM_OCInitTypeDef  TIM_OCInitStructure;
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_Timing;
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;
+    TIM_OCInitStructure.TIM_Pulse = ((uint16_t)Addr) * PKT_DURATION;
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+    TIM_OC1Init(TIM5, &TIM_OCInitStructure);
+    TIM_OC1PreloadConfig(TIM5, TIM_OCPreload_Disable);
+    // Interrupts config
+    TIM_ITConfig(TIM5, TIM_IT_CC1 | TIM_IT_Update, ENABLE);
+    // Enable timer
+    TimerStart();
 }
 
 // ============================= Inner use =====================================
@@ -222,3 +259,36 @@ bool CC_t::GDO0_IsHi(void) {
     return GPIO_ReadInputDataBit(CC_GPIO, CC_GDO0);
 }
 
+
+// ============================= Interrupts ====================================
+void TIM5_IRQHandler(void) {
+    if (TIM_GetITStatus(TIM5, TIM_IT_CC1) != RESET) {   // Compare IRQ
+        TIM_ClearITPendingBit(TIM5, TIM_IT_CC1);
+        //UART_StrUint("cmp: ", TIM_GetCounter(TIM5));
+        // Time to yell
+        //CC.TimerStop();
+        // Prepare packet & transmit it
+        CC.TX_Pkt.CommandID = 0x7C;
+        CC.TX_Pkt.SenderAddr = CC.Addr;
+        CC.TX_Pkt.SenderCycle = CC.CycleCounter;
+        CC.TX_Pkt.SenderTime = TIM_GetCounter(TIM5);
+        CC.TX_Pkt.ChargeCount = ERock.ChargeCount;
+        CC.TX_Pkt.ArtType = (uint8_t)ERock.Type;
+        CC.WriteTX(CC.TX_PktArray, CC_PKT_LEN); // Write bytes to FIFO
+        CC.EnterIdle();
+        CC.EnterTX();
+    }
+    else if (TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET) {
+        // Clear TIM5 update interrupt
+        TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
+        // Subcycle ends here
+        // Handle cycle counter
+        if (++CC.CycleCounter >= CYCLE_COUNT) {  // Zero cycle begins
+            CC.CycleCounter = 0;
+            // Enter RX-before-TX
+            //CC.EnterRX();
+        }
+        //else CC_ENTER_IDLE();   // Non-zero cycle
+
+    }
+}

@@ -29,36 +29,30 @@
 // SPI
 #define CC_SPI          SPI2
 #define CC_SPI_CLK      RCC_APB1Periph_SPI2
-// IRQ
-//#define CC_GDO0_PINSOURCE   GPIO_PinSource0
-//#define CC_GDO0_PORTSOURCE  GPIO_PortSourceGPIOA
-//#define CC_GDO0_EXTI_LINE   EXTI_Line0              // As EXTI0 connected to Pin0
-//#define CC_GDO0_EXTI_IRQn   EXTI0_IRQn
+
+// Timebase
+#define CYCLE_COUNT         4
+#define PKT_DURATION        45  // ms
+#define SUBCYCLE_DURATION   (PKT_DURATION*18) // ms
 
 // ============================ Types & variables ==============================
-#define CC_PKT_DATA_LEN     4
-#define CC_PKT_LEN          (2+CC_PKT_DATA_LEN)
-struct CC_Packet_t{
-    uint8_t PacketID;
+struct CC_Packet_t {
     uint8_t CommandID;
-    uint8_t Data[CC_PKT_DATA_LEN];
+    uint8_t SenderAddr;
+    uint8_t SenderCycle;
+    uint16_t SenderTime;
+    uint8_t ArtType;
+    uint8_t ChargeCount;
     uint8_t RSSI;
     uint8_t LQI;
 };
+#define CC_PKT_LEN  (sizeof(CC_Packet_t)-2)
 
 class CC_t {
 private:
     // Variables
     uint32_t Timer;
     uint8_t State;
-    union {
-        uint8_t RX_PktArray[CC_PKT_LEN+2];
-        CC_Packet_t RX_Pkt;
-    };
-    union {
-        uint8_t TX_PktArray[CC_PKT_LEN+2];
-        CC_Packet_t TX_Pkt;
-    };
     bool GDO0_WasHi;
     // Methods
     uint8_t ReadWriteByte(uint8_t AByte);
@@ -69,41 +63,55 @@ private:
     void BusyWait(void);
 
     void RfConfig(void);
-    void WriteTX (uint8_t *PData, uint8_t ALength);
     void ReadRX  (uint8_t *PData, uint8_t ALength);
     void EnterTXAndWaitToComplete(void);
     // Registers
     void WriteRegister (const uint8_t Addr, const uint8_t AData);
     uint8_t ReadRegister (const uint8_t Addr);
     void WriteStrobe(uint8_t AStrobe);
-    // IRQ
-    //void IRQDisable(void) { /* NVIC_DisableIRQ(CC_GDO0_EXTI_IRQn);  */}   // Disable Exti line
-    //void IRQEnable (void) { /* NVIC_EnableIRQ (CC_GDO0_EXTI_IRQn); */}
-    //void IRQReset  (void) { /* EXTI_ClearFlag (CC_GDO0_EXTI_LINE); */}
     // Strobes
     void Reset(void)        { WriteStrobe(CC_SRES); }
     void FlushRxFIFO(void)  { WriteStrobe(CC_SFRX); }
-    void EnterTX(void)      { WriteStrobe(CC_STX);  }
     void EnterRX(void)      { WriteStrobe(CC_SRX);  }
-    void EnterIdle(void)    { WriteStrobe(CC_SIDLE);}
     void PowerDown(void)    { WriteStrobe(CC_SPWD); }
     void Calibrate(void)    { WriteStrobe(CC_SCAL); }
     void FlushTxFIFO(void)  { WriteStrobe(CC_SFTX); }
     void GetState(void)     { WriteStrobe(CC_SNOP); }
 public:
-    uint8_t Channel;
+    uint8_t Addr;
+    uint8_t CycleCounter;
+    union {
+        uint8_t RX_PktArray[CC_PKT_LEN+2];
+        CC_Packet_t RX_Pkt;
+    };
+    union {
+        uint8_t TX_PktArray[CC_PKT_LEN+2];
+        CC_Packet_t TX_Pkt;
+    };
     // Methods
     void Init(void);
     void Task(void);
     void SetChannel(uint8_t AChannel);
+    void TimebaseInit(void);
+    // Interrupt used
+    void TimerStart(void) { TIM_Cmd(TIM5, ENABLE); }
+    void TimerStop(void)  { TIM_Cmd(TIM5, DISABLE); }
+    void WriteTX (uint8_t *PData, uint8_t ALength);
+    void EnterTX(void)      { WriteStrobe(CC_STX);  }
+    void EnterIdle(void)    { WriteStrobe(CC_SIDLE);}
 };
 
 extern CC_t CC;
 
+extern uint8_t OthersIDs[18];
 
 // ================================ Prototypes =================================
 void EVENT_NewPacket(void);
 
+// Declare Timer IRQ. Use externC to make it visible from asm file.
+extern "C" {
+void TIM5_IRQHandler(void);
+}
 
 #endif	/* _CC1101_H */
 

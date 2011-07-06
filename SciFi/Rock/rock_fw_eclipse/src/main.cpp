@@ -42,7 +42,7 @@ int main(void) {
         EIRSirc.Task();
         Lcd.Task();
 
-        //CC.Task();
+        CC.Task();
     } // while(1)
     return 0;
 }
@@ -59,11 +59,6 @@ void GeneralInit(void) {
     CC.Init();
     // Leds
     Leds.Init();
-//    #define CHCNT 3
-//    Leds.RunDelay = ArtChargeRunDelays[CHCNT];
-//    Leds.RunColor = ArtTypeColors[atPsiKleschi];
-//    Leds.RunLedCount = CHCNT;
-//    Leds.SetRunningWithBlink();
 
     // Sensors
     ESns.Init();
@@ -77,12 +72,12 @@ void GeneralInit(void) {
     ESnd.Init();
     // Radio
     CC.Init();
-    uint32_t Chnl = ReadInt32("Radio", "Channel", "Rock.ini");
-    UART_StrInt("Radio channel: ", Chnl);
-    CC.SetChannel((uint8_t)Chnl);
+    CC.Addr = (uint8_t) ReadInt32("Radio", "Channel", "Rock.ini");
+    UART_StrInt("Radio channel: ", CC.Addr);
+    CC.TX_Pkt.SenderAddr = (uint8_t)CC.Addr;
+    CC.TimebaseInit();
     // Artifact
     ERock.Init();
-
 
     ESnd.Play("alive.wav");
 
@@ -93,11 +88,27 @@ void GeneralInit(void) {
 // ================================== Events ===================================
 // RF: new packet received
 void EVENT_NewPacket(void) {
-
+    if (CC.RX_Pkt.CommandID == 0x7C) {
+        // Count this one if did not do it yet
+        OthersIDs[CC.RX_Pkt.SenderAddr] = (uint8_t)CC.RX_Pkt.ArtType;
+        // Adjust our timer if sender address is lower, and do not otherwise
+        if (CC.RX_Pkt.SenderAddr < CC.Addr) {
+            CC.TimerStop();
+            CC.CycleCounter = CC.RX_Pkt.SenderCycle;
+            TIM_SetCounter(TIM5, (CC.RX_Pkt.SenderTime-20));
+            CC.TimerStart();
+        } // if addr
+    }
 }
 
 void EVENT_SensorsStateChanged(void) {
-    if(SnsState.KeyTouched[0]) ERock.TryToActivate(actOne);
-    if(SnsState.KeyTouched[1]) ERock.TryToActivate(actTwo);
-    if(SnsState.KeyTouched[2]) ERock.TryToActivate(actThree);
+    UART_PrintString("Sns: ");
+    UART_PrintArrAsHex((uint8_t*)&SnsState, sizeof(SnsState_t));
+    if(SnsState.KeyTouched[0] && SnsState.KeyTouched[1] && SnsState.KeyTouched[2]) ERock.TryToActivate(actOne);
+    if(SnsState.MagnetNear) ERock.TryToActivate(actTwo);
+
+//    if(SnsState.KeyTouched[0]) ERock.TryToActivate(actOne);
+//    if(SnsState.KeyTouched[1]) ERock.TryToActivate(actTwo);
+//    if(SnsState.KeyTouched[2]) ERock.TryToActivate(actThree);
+
 }
