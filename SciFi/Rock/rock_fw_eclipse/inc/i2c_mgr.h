@@ -57,6 +57,7 @@ struct I2C_Cmd_t {
 class i2cMgr_t {
 private:
     uint32_t Timer;
+    bool IsError;
     I2C_Cmd_t *CmdToWrite, *CmdToRead;
     I2C_Cmd_t Commands[I2C_CMD_QUEUE_LENGTH];
     // Task-based functions

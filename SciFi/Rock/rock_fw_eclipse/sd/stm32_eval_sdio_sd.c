@@ -1344,7 +1344,9 @@ SD_Error SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Block
 SD_Error SD_WaitReadOperation(void) {
     SD_Error errorstatus = SD_OK;
 
+    uint32_t t=0;
     while ((SD_DMAEndOfTransferStatus() == RESET) && (TransferEnd == 0) && (TransferError == SD_OK)) {
+        if(t++ > 10000) TransferError = SD_TRANSFER_ERROR;
     }
 
     if (TransferError != SD_OK) {

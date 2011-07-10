@@ -8,6 +8,10 @@ i2cMgr_t i2cMgr;
 
 // ============================ Tasking and handling ===========================
 void i2cMgr_t::Task() {
+    if (IsError) {
+        Init();
+        return;
+    }
     uint8_t IEvt;
     switch (CmdToRead->State) {
         case CmdPending:
@@ -295,6 +299,7 @@ void i2cMgr_t::Init() {
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     // I2C
+    I2C_DeInit(I2C1);
     I2C_InitTypeDef I2C_InitStructure;
     I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
     I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
@@ -315,6 +320,7 @@ void i2cMgr_t::Init() {
     }
     // ==== Init DMA ====
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+    IsError = false;
 }
 
 void i2cMgr_t::AddCmd(I2C_Cmd_t ACmd) {
@@ -334,8 +340,10 @@ void i2cMgr_t::AddCmd(I2C_Cmd_t ACmd) {
 uint8_t i2cMgr_t::BusyWait() {
     uint32_t FTimeout = I2C_TIMEOUT;
     while(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY))
-        if((FTimeout--) == 0)
+        if((FTimeout--) == 0) {
+            IsError = true;
             return I2C_ERR_TIMEOUT;
+        }
     return I2C_OK;
 }
 uint8_t i2cMgr_t::SendStart(void) {
@@ -344,6 +352,7 @@ uint8_t i2cMgr_t::SendStart(void) {
     while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT)) {
         if ((FTimeout--) == 0) {
             UART_PrintString("I2C can't enter master mode\r");
+            IsError = true;
             return I2C_ERR_NOMASTER;
         }
     }
@@ -361,6 +370,7 @@ uint8_t i2cMgr_t::SendAddrTXPoll(uint8_t AAddr) {
         }
         if ((FTimeout--) == 0) {
             UART_PrintString("I2C Slave Addr Timeout\r");
+            IsError = true;
             return I2C_ERR_TIMEOUT;
         }
     } while (IEvt != I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED);
@@ -378,6 +388,7 @@ uint8_t i2cMgr_t::SendAddrRXPoll(uint8_t AAddr) {
         }
         if ((FTimeout--) == 0) {
             UART_PrintString("I2C Slave Addr Timeout\r");
+            IsError = true;
             return I2C_ERR_TIMEOUT;
         }
     } while (IEvt != I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED);

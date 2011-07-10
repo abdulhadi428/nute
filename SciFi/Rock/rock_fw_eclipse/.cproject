@@ -21,7 +21,7 @@
 					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335." name="/" resourcePath="">
 						<toolChain id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.toolchain.debug.181865713" name="ARM Windows GCC (Yagarto)" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.toolchain.debug">
 							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.debugging.level.1191560112" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.max" valueType="enumerated"/>
-							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.createflash.1002581967" name="Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.createflash" value="false" valueType="boolean"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.createflash.1002581967" name="Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.createflash" value="true" valueType="boolean"/>
 							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.createlisting.916787115" name="Create Extended Listing" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.createlisting" value="false" valueType="boolean"/>
 							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.printsize.587061117" name="Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.printsize" value="false" valueType="boolean"/>
 							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.platform.debug.715915378" isAbstract="false" name="Windows Platform" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.platform.debug"/>
@@ -98,14 +98,16 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nodeflibs.145078896" name="Do not use default libraries (-nodefaultlibs)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nodeflibs" value="true" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.strip.876540653" name="Omit all symbol information (-s)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.strip" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostdlibs.342109716" name="No startup or default libs (-nostdlib)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostdlibs" value="true" valueType="boolean"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.gcsections.1107687563" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.gcsections" value="true" valueType="boolean"/>
+								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.gcsections.1107687563" name="Remove unused sections (-Xlinker --gc-sections)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.gcsections" value="true" valueType="boolean"/>
 								<inputType id="org.eclipse.cdt.cross.arm.gnu.cpp.linker.input.1326213978" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
 								</inputType>
 							</tool>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.archiver.base.1160177511" name="ARM Yagarto Windows GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.archiver.base"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.createflash.debug.527972993" name="ARM Yagarto Windows GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.createflash.debug"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.createflash.debug.527972993" name="ARM Yagarto Windows GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.createflash.debug">
+								<option id="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice.1963545505" superClass="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice" value="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice.binary" valueType="enumerated"/>
+							</tool>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.createlisting.debug.415257672" name="ARM Yagarto Windows GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.createlisting.debug"/>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.printsize.debug.1991510706" name="ARM Yagarto Windows GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.printsize.debug"/>
 						</toolChain>

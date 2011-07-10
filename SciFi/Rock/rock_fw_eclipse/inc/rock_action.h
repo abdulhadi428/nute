@@ -15,8 +15,8 @@
 
 class FieldPoint_t {
 private:
-    int32_t Counter;
 public:
+    int32_t Counter;
     int8_t Value;
     bool HasChanged;
     void operator++ (int);
@@ -35,7 +35,6 @@ private:
     bool SoundPlayed;
     uint8_t ActivitySoundRepeatCount;
     uint8_t Rnd13, Rnd19, Rnd0_97;   // Random numbers
-    void ChooseType(void);
     uint8_t MaxV(uint8_t a, uint8_t b) { return ((a > b)? a : b); }
     uint8_t MinV(uint8_t a, uint8_t b) { return ((a < b)? a : b); }
     // Indication
@@ -45,6 +44,7 @@ private:
     char UintToSmallHexChar(uint8_t b) { return ((b<=0x09) ? (b+'0') : (b+'a'-10)); }
     void AddRandURL(char *ALastSymbol);
 public:
+    void ChooseType(void);
     void Activate(void);
     void ShowFieldExistance(FieldType_t AFType);
     // User use

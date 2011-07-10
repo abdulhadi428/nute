@@ -46,7 +46,7 @@ void Lcd_t::Init(void) {
     USART_ClockInit(LCD_USART, &USART_ClockInitStructure);
     // Usart itself
     USART_InitTypeDef USART_InitStructure;
-    USART_InitStructure.USART_BaudRate = 45000;
+    USART_InitStructure.USART_BaudRate = 33600;
     USART_InitStructure.USART_WordLength = USART_WordLength_9b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -73,7 +73,7 @@ void Lcd_t::Init(void) {
     XCS_Hi();
     // Reset display
     XRES_Lo();
-    Delay.ms(7);
+    Delay.ms(54);
     XRES_Hi();
     // Initial commands
     Cls(); // clear LCD

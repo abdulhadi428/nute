@@ -2,7 +2,6 @@
 
 #include "uart.h"
 #include "i2c_mgr.h"
-#include "acc_mma.h"
 #include "media.h"
 
 VS_t Vs;

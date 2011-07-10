@@ -199,6 +199,7 @@ void Rock_t::Activate() {
             break;
         case atPetlya:
             if ((ChargeCount == 3) || (ChargeCount == 2)) ActivitySoundRepeatCount = 0xFF;
+            if (ChargeCount == 2) ActivatedTime = 300000;   // == 5 min.
             break;
         // Bipolar
         case atKusok:
@@ -282,14 +283,22 @@ void Rock_t::ShowFieldExistance(FieldType_t AFType) { // TODO: sound field exist
         Leds.SetRunningWithBlink();
     }
     Leds.BlinkColor = FieldColors[(uint8_t)AFType];
+    Leds.IsBlinking = true;
+    UART_StrUint("ft: ", (uint8_t)AFType);
     //UART_PrintUint((uint8_t)AFType);
-    UART_PrintUint((uint8_t)AFType);
 }
 void Rock_t::ShowChargeCount(void) {
-    Leds.RunDelay = ArtChargeRunDelays[ChargeCount];
-    Leds.RunColor = ArtTypeColors[Type];
-    Leds.RunLedCount = ChargeCount;
-    if(Leds.Mode != lmRunAndBlink) Leds.SetRunningWithBlink();
+    UART_PrintString("Type: ");
+    UART_PrintString(ArtTypeStrings[Type]);
+    UART_NewLine();
+    UART_StrUint("Charge: ", ChargeCount);
+    if (ChargeCount == 0) Leds.SetEqualAll(clBlack);
+    else {
+        Leds.RunDelay = ArtChargeRunDelays[ChargeCount];
+        Leds.RunColor = ArtTypeColors[Type];
+        Leds.RunLedCount = ChargeCount;
+        if(Leds.Mode != lmRunAndBlink) Leds.SetRunningWithBlink();
+    }
 }
 
 

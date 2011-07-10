@@ -62,6 +62,7 @@ public:
     Color_t RunColor, BlinkColor;
     uint32_t RunDelay, BlinkOnTime, BlinkOffTime;
     uint8_t RunLedCount;
+    bool IsBlinking;
     // General methods
     void Init(void);
     void Task(void);

@@ -119,47 +119,47 @@ void Leds_t::Task() {
             }
             else AllAreOff = false;
 
-            switch (BlinkState) {
-                case bsOn:  // Was blinking on, check if time to switch off
-                    if (!Delay.Elapsed(&Timer2, BlinkOnTime)) return;
-                    for (i=0; i<5; i++) *Colors[i] = clBlack;
-                    i2cMgr.AddCmd(i2cCmd);
-                    BlinkState = bsPostOn;
-                    break;
+            if(IsBlinking) {
+                switch (BlinkState) {
+                    case bsOff:
+                        for (i=0; i<5; i++) *Colors[i] = clBlack;
+                        i2cMgr.AddCmd(i2cCmd);
+                        BlinkState = bsPreOn;
+                        Delay.Reset(&Timer2);
+                        break;
 
-                case bsOff: // Blink is off, run leds if needed
-                    // Check if time to blink
-                    if (BlinkColor.IsOn()) {
-                        if (Delay.Elapsed(&Timer2, BlinkOffTime)) {
-                            for (i=0; i<5; i++) *Colors[i] = clBlack;
-                            i2cMgr.AddCmd(i2cCmd);
-                            BlinkState = bsPreOn;
-                            return;
-                        }
-                    }
-                    // Check if run
-                    if (!RunColor.IsOn()) return;
-                    if (!Delay.Elapsed(&Timer1, RunDelay)) return;
-                    if (++LedID == 5) LedID = 0;    // Circle LEDs
-                    *Colors[LedID] = RunColor;      // Shine next LED
-                    // Fade previous LED
-                    i = (LedID >= RunLedCount)? (LedID - RunLedCount) : ((5+LedID) - RunLedCount);
-                    *Colors[i] = clBlack;
-                    i2cMgr.AddCmd(i2cCmd);
-                    break;
+                    case bsPreOn:
+                        if (!Delay.Elapsed(&Timer2, BlinkOnTime)) return;
+                        for (i=0; i<5; i++) *Colors[i] = BlinkColor;
+                        i2cMgr.AddCmd(i2cCmd);
+                        BlinkState = bsOn;
+                        break;
 
-                case bsPreOn: // can be here only if blink color is not black
-                    if (!Delay.Elapsed(&Timer2, BlinkOnTime)) return;
-                    for (i=0; i<5; i++) *Colors[i] = BlinkColor;
-                    i2cMgr.AddCmd(i2cCmd);
-                    BlinkState = bsOn;
-                    break;
+                    case bsOn:  // Was blinking on, check if time to switch off
+                        if (!Delay.Elapsed(&Timer2, BlinkOnTime)) return;
+                        for (i=0; i<5; i++) *Colors[i] = clBlack;
+                        i2cMgr.AddCmd(i2cCmd);
+                        BlinkState = bsPostOn;
+                        break;
 
-                case bsPostOn:
-                    if (!Delay.Elapsed(&Timer2, BlinkOnTime)) return;
-                    BlinkState = bsOff;
-                    break;
-            } // switch LedState
+                    case bsPostOn:
+                        if (!Delay.Elapsed(&Timer2, BlinkOnTime)) return;
+                        BlinkState = bsOff;
+                        IsBlinking = false;
+                        break;
+                } // switch LedState
+            } // if blinking
+            else {
+                // Check if run
+                if (!RunColor.IsOn()) return;
+                if (!Delay.Elapsed(&Timer1, RunDelay)) return;
+                if (++LedID == 5) LedID = 0;    // Circle LEDs
+                *Colors[LedID] = RunColor;      // Shine next LED
+                // Fade previous LED
+                i = (LedID >= RunLedCount)? (LedID - RunLedCount) : ((5+LedID) - RunLedCount);
+                *Colors[i] = clBlack;
+                i2cMgr.AddCmd(i2cCmd);
+            }
             break;
 
         default: break;

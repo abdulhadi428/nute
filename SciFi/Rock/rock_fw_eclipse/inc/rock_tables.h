@@ -43,10 +43,10 @@ typedef enum {fidCM=42, fidCP=43, fidHM=44, fidHP=45, fidEM=46, fidEP=47} FieldI
 typedef enum {actOne, actTwo, actThree} ActType_t;
 
 // Field threscholds
-#define THRESHOLD1          10
-#define THRESHOLD2          20
-#define THRESHOLD3          30
-#define THRESHOLD_MAX       400
+#define THRESHOLD1          600
+#define THRESHOLD2          (THRESHOLD1*2)
+#define THRESHOLD3          (THRESHOLD1*3)
+#define THRESHOLD_MAX       (THRESHOLD1*4)
 // Field type colors & delays
 #define FIELD_BLINK_ON_TIME     126
 #define FIELD_BLINK_OFF_TIME    3000
@@ -115,7 +115,7 @@ const char ActivitySounds[ART_TYPES_COUNT][FILENAME_LEN] = {
     };
 
 const char ArtTypeStrings[ART_TYPES_COUNT][26] = {
-        "",             // atEmpty
+        "Empty",             // atEmpty
         "Slomo",        // atSlomo
         "Flash",        // atFlash
         "Girya",        // atGirya
@@ -151,6 +151,7 @@ const char ArtCh3RndStrings[10][8] = {
         "Ch3Rnd8",
         "Ch3Rnd9",
 };
+
 
 
 #endif
