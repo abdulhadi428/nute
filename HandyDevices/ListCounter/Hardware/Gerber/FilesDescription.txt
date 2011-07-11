@@ -1,0 +1,6 @@
+ListCounter-Front.gtl      - GERBER-файл верхнего слоя платы (слой компонентов)
+ListCounter-Back.gbl       - GERBER-файл нижнего слоя платы
+ListCounter-Mask_Front.gts - GERBER-файл маски верхнего слоя платы (слоя компонентов)
+ListCounter-Mask_Back.gbs  - GERBER-файл маски нижнего слоя платы 
+ListCounter.drl            - файл листа сверловки
+other_formats.xls          - заполненная карта заказа с сайта

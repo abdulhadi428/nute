@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="69">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <df name="Firmware" root="D:/Nute/ListCounter/Firmware">
+      <df name=".dep">
+      </df>
+      <df name="obj">
+      </df>
+      <in>common.h</in>
+      <in>ee_store_uint32.c</in>
+      <in>ee_store_uint32.h</in>
+      <in>list_counter.c</in>
+      <in>list_counter.h</in>
+      <in>matrix_lcd.c</in>
+      <in>matrix_lcd.h</in>
+      <in>time_utils.c</in>
+      <in>time_utils.h</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile-Firmware.mk</itemPath>
+      <itemPath>D:/Nute/ListCounter/Firmware/makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>D:\Nute\ListCounter\Firmware</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile-Firmware.mk</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>WinAVR|WinAVR</compilerSet>
+        <platform>3</platform>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>D:/Nute/ListCounter/Firmware</buildCommandWorkingDir>
+          <buildCommand>$(MAKE) -f Makefile</buildCommand>
+          <cleanCommand>$(MAKE) -f Makefile clean</cleanCommand>
+          <executablePath>C:/Program Files/Atmel/AVR Tools/AvrDragon/AVRDragon.exe</executablePath>
+          <cTool>
+            <incDir>
+              <pElem>.</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>__AVR_ATmega88__</Elem>
+              <Elem>F_CPU 1000000</Elem>
+            </preprocessorList>
+          </cTool>
+        </makeTool>
+      </makefileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

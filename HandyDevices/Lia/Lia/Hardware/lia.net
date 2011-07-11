@@ -1,0 +1,323 @@
+# EESchema Netlist Version 1.1 created  08/11/2010 09:20:07
+(
+ ( /4CD70E8C SMD1206 A1 ANTENNA2P
+  ( 1 /CCANT )
+  ( 2 GND )
+ )
+ ( /4C4F04ED BH810 B1 BAT
+  ( A +3.3V )
+  ( C GND )
+ )
+ ( /4C4F050C SMD0805 C1 10u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4BE7F6E2 SMD0402 C3 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4BE7F6DE SMD0402 C4 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4BE7F6D7 SMD0402 C5 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4CD70B93 SMD0402 C6 0.1u
+  ( 1 N-000022 )
+  ( 2 GND )
+ )
+ ( /4BE7DDE3 SMD0402 C41 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4BE7D9A3 SMD0402 C51 0.1u
+  ( 1 N-000026 )
+  ( 2 GND )
+ )
+ ( /4BE7D9C8 SMD0402 C81 12pF
+  ( 1 N-000023 )
+  ( 2 GND )
+ )
+ ( /4BE7DDCA SMD0402 C91 220pF
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4BE7D9C2 SMD0402 C101 12pF
+  ( 1 N-000031 )
+  ( 2 GND )
+ )
+ ( /4BE7DD9D SMD0402 C111 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4CD70CCF SMD0402 C121 100pF
+  ( 1 /CC03 )
+  ( 2 /CC01 )
+ )
+ ( /4CD70CE9 SMD0402 C122 1pF
+  ( 1 GND )
+  ( 2 /CC03 )
+ )
+ ( /4CD70D29 SMD0402 C123 1.8pF
+  ( 1 /CC05 )
+  ( 2 GND )
+ )
+ ( /4CD70D3A SMD0402 C124 1.5pF
+  ( 1 /CCANT )
+  ( 2 GND )
+ )
+ ( /4CD70CD7 SMD0402 C131 100pF
+  ( 1 /CC04 )
+  ( 2 /CC02 )
+ )
+ ( /4CD70CFF SMD0402 C132 1pF
+  ( 1 /CC05 )
+  ( 2 /CC04 )
+ )
+ ( /4BE7DD83 SMD0402 C141 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4BE7DD5E SMD0402 C151 220pF
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4BE7DDFD SMD0402 C181 220pF
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4C41A34A LED0603 D1 LED
+  ( A N-000032 )
+  ( C GND )
+ )
+ ( /4CD79628 LED0603 D2 LED
+  ( A N-000032 )
+  ( C GND )
+ )
+ ( /4BE7BC35 QFN32 DD1 ATMEGA88
+  ( 1 N-000012 )
+  ( 2 /CC_SCK )
+  ( 3 GND )
+  ( 4 +3.3V )
+  ( 5 GND )
+  ( 6 +3.3V )
+  ( 7 ? )
+  ( 8 ? )
+  ( 9 ? )
+  ( 10 ? )
+  ( 11 /CC_CS )
+  ( 12 ? )
+  ( 13 ? )
+  ( 14 ? )
+  ( 15 /MOSI )
+  ( 16 /MISO )
+  ( 17 /SCK )
+  ( 18 +3.3V )
+  ( 19 ? )
+  ( 20 N-000022 )
+  ( 21 GND )
+  ( 22 ? )
+  ( 23 N-000033 )
+  ( 24 N-000042 )
+  ( 25 N-000020 )
+  ( 26 ? )
+  ( 27 ? )
+  ( 28 ? )
+  ( 29 /RESET )
+  ( 30 /CC_MISO )
+  ( 31 /CC_MOSI )
+  ( 32 /CC_GDO0 )
+  ( PAD GND )
+ )
+ ( /4BE7D8B1 QLP20 DD2 CC2500
+  ( 1 /CC_SCK )
+  ( 2 /CC_MISO )
+  ( 3 ? )
+  ( 4 +3.3V )
+  ( 5 N-000026 )
+  ( 6 /CC_GDO0 )
+  ( 7 /CC_CS )
+  ( 8 N-000023 )
+  ( 9 +3.3V )
+  ( 10 N-000031 )
+  ( 11 +3.3V )
+  ( 12 /CC01 )
+  ( 13 /CC02 )
+  ( 14 +3.3V )
+  ( 15 +3.3V )
+  ( 16 GND )
+  ( 17 N-000029 )
+  ( 18 +3.3V )
+  ( 19 GND )
+  ( 20 /CC_MOSI )
+  ( PAD GND )
+ )
+ ( /4CD70D06 SMD0402 L121 1.2nH
+  ( 1 /CC05 )
+  ( 2 /CC03 )
+ )
+ ( /4CD70D32 SMD0402 L122 1.2nH
+  ( 1 /CCANT )
+  ( 2 /CC05 )
+ )
+ ( /4CD70CF6 SMD0402 L131 1.2nH
+  ( 1 /CC04 )
+  ( 2 GND )
+ )
+ ( /4C41A358 SMD0603 R1 100
+  ( 1 N-000032 )
+  ( 2 N-000012 )
+ )
+ ( /4C51334C SMD0603 R2 10k
+  ( 1 N-000020 )
+  ( 2 GND )
+ )
+ ( /4C513342 SMD0603 R3 20k
+  ( 1 N-000042 )
+  ( 2 N-000020 )
+ )
+ ( /4BE7D9B0 SMD0603 R171 56k
+  ( 1 N-000029 )
+  ( 2 GND )
+ )
+ ( /4C593329 BUTTON_6x6SMD SW1 PUSHBUTTON
+  ( 1 N-000033 )
+  ( 2 GND )
+  ( H ? )
+ )
+ ( /4CD7961B BUTTON_6x6SMD SW2 PUSHBUTTON
+  ( 1 GND )
+  ( 2 N-000033 )
+  ( H ? )
+ )
+ ( /4BE7C03A DIL2X3 XL1 ATMEL_ISP
+  ( 1 /MISO )
+  ( 2 +3.3V )
+  ( 3 /SCK )
+  ( 4 /MOSI )
+  ( 5 /RESET )
+  ( 6 GND )
+ )
+ ( /4BE7D999 CRYSTAL_0503x4-4 XTAL1 26MHz
+  ( 1 N-000023 )
+  ( 2 N-000031 )
+ )
+)
+*
+{ Allowed footprints by component:
+$component B1
+ BH*
+$endlist
+$component C1
+ SMD*
+$endlist
+$component C3
+ SMD*
+$endlist
+$component C4
+ SMD*
+$endlist
+$component C5
+ SMD*
+$endlist
+$component C6
+ SMD*
+$endlist
+$component C41
+ SMD*
+$endlist
+$component C51
+ SMD*
+$endlist
+$component C81
+ SMD*
+$endlist
+$component C91
+ SMD*
+$endlist
+$component C101
+ SMD*
+$endlist
+$component C111
+ SMD*
+$endlist
+$component C121
+ SMD*
+$endlist
+$component C122
+ SMD*
+$endlist
+$component C123
+ SMD*
+$endlist
+$component C124
+ SMD*
+$endlist
+$component C131
+ SMD*
+$endlist
+$component C132
+ SMD*
+$endlist
+$component C141
+ SMD*
+$endlist
+$component C151
+ SMD*
+$endlist
+$component C181
+ SMD*
+$endlist
+$component D1
+ LED*
+$endlist
+$component D2
+ LED*
+$endlist
+$component DD1
+ TQFP32
+ QFN32
+$endlist
+$component DD2
+ QLP20
+$endlist
+$component L121
+ INDUCTOR*
+ SMD*
+$endlist
+$component L122
+ INDUCTOR*
+ SMD*
+$endlist
+$component L131
+ INDUCTOR*
+ SMD*
+$endlist
+$component R1
+ SMD*
+$endlist
+$component R2
+ SMD*
+$endlist
+$component R3
+ SMD*
+$endlist
+$component R171
+ SMD*
+$endlist
+$component SW1
+ BUTTON*
+$endlist
+$component SW2
+ BUTTON*
+$endlist
+$component XL1
+ DIL2X3
+$endlist
+$component XTAL1
+ CRYSTAL*
+$endlist
+$endfootprintlist
+}

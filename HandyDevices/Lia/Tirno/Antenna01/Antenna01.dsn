@@ -1,0 +1,145 @@
+(pcb D:\Nute\Lia\Tirno\Antenna01\Antenna01.dsn
+  (parser
+    (string_quote ")
+    (space_in_quoted_tokens on)
+    (host_cad "Kicad's PCBNEW")
+    (host_version "(2010-05-05 BZR 2356)-stable")
+  )
+  (resolution mil 10)
+  (unit mil)
+  (structure
+    (layer Front
+      (type signal)
+      (property
+        (index 0)
+      )
+    )
+    (layer Back
+      (type signal)
+      (property
+        (index 1)
+      )
+    )
+    (boundary
+      (rect pcb -136.7 71.4 5375.8 -3617)
+    )
+    (via "Via[0-1]_31.5:19.7_mil" "Via[0-1]_31.5:0_mil")
+    (rule
+      (width 19.7)
+      (clearance 9.9)
+      (clearance 9.9 (type default_smd))
+      (clearance 2.45 (type smd_smd))
+    )
+  )
+  (placement
+    (component RF_SMA_L
+      (place XL1 4780 -3460 front 0 (PN SMA_L))
+    )
+    (component SMD0603
+      (place C1 4780 -3460 front 0 (PN C))
+      (place L1 4780 -3460 front 0 (PN L))
+    )
+    (component TESTPOINT_0_5MM
+      (place TP1 0 0 front 0 (PN TESTPOINT))
+      (place TP2 0 0 front 0 (PN TESTPOINT))
+    )
+  )
+  (library
+    (image RF_SMA_L
+      (outline (path signal 5  216.5 -118.1  236.2 118.1))
+      (outline (path signal 5  255.9 118.1  236.2 -118.1))
+      (outline (path signal 5  255.9 -118.1  275.6 118.1))
+      (outline (path signal 5  295.3 118.1  275.6 -118.1))
+      (outline (path signal 5  295.3 -118.1  315 118.1))
+      (outline (path signal 5  334.6 118.1  315 -118.1))
+      (outline (path signal 5  334.6 -118.1  354.3 118.1))
+      (outline (path signal 5  374 118.1  354.3 -118.1))
+      (outline (path signal 5  374 -118.1  393.7 118.1))
+      (outline (path signal 5  413.4 118.1  393.7 -118.1))
+      (outline (path signal 5  413.4 98.4  413.4 -98.4))
+      (outline (path signal 5  216.5 98.4  216.5 -98.4))
+      (outline (path signal 5  137.8 98.4  216.5 98.4))
+      (outline (path signal 5  216.5 98.4  216.5 118.1))
+      (outline (path signal 5  216.5 118.1  413.4 118.1))
+      (outline (path signal 5  413.4 118.1  413.4 98.4))
+      (outline (path signal 5  413.4 98.4  452.8 98.4))
+      (outline (path signal 5  452.8 98.4  452.8 -98.4))
+      (outline (path signal 5  452.8 -98.4  413.4 -98.4))
+      (outline (path signal 5  413.4 -98.4  413.4 -118.1))
+      (outline (path signal 5  413.4 -118.1  216.5 -118.1))
+      (outline (path signal 5  216.5 -118.1  216.5 -98.4))
+      (outline (path signal 5  216.5 -98.4  137.8 -98.4))
+      (outline (path signal 5  -137.8 0  -137.8 137.8))
+      (outline (path signal 5  -137.8 137.8  137.8 137.8))
+      (outline (path signal 5  137.8 137.8  137.8 -137.8))
+      (outline (path signal 5  137.8 -137.8  -137.8 -137.8))
+      (outline (path signal 5  -137.8 -137.8  -137.8 0))
+      (pin Round[A]Pad_78.7_mil RF 0 0)
+      (pin Round[A]Pad_94.5_mil GND -100 100)
+      (pin Round[A]Pad_94.5_mil GND@1 100 100)
+      (pin Round[A]Pad_94.5_mil GND@2 100 -100)
+      (pin Round[A]Pad_94.5_mil GND@3 -100 -100)
+    )
+    (image SMD0603
+      (outline (path signal 5  -45 25  45 25))
+      (outline (path signal 5  45 25  45 -25))
+      (outline (path signal 5  45 -25  -45 -25))
+      (outline (path signal 5  -45 -25  -45 25))
+      (pin Rect[T]Pad_25x45_mil 1 -30 0)
+      (pin Rect[T]Pad_25x45_mil 2 30 0)
+    )
+    (image TESTPOINT_0_5MM
+      (pin Round[T]Pad_19.7_mil 1 0 0)
+    )
+    (padstack Round[T]Pad_19.7_mil
+      (shape (circle Front 19.7))
+      (attach off)
+    )
+    (padstack Round[A]Pad_78.7_mil
+      (shape (circle Front 78.7))
+      (shape (circle Back 78.7))
+      (attach off)
+    )
+    (padstack Round[A]Pad_94.5_mil
+      (shape (circle Front 94.5))
+      (shape (circle Back 94.5))
+      (attach off)
+    )
+    (padstack Rect[T]Pad_25x45_mil
+      (shape (rect Front -12.5 -22.5 12.5 22.5))
+      (attach off)
+    )
+    (padstack "Via[0-1]_31.5:19.7_mil"
+      (shape (circle Front 31.5))
+      (shape (circle Back 31.5))
+      (attach off)
+    )
+    (padstack "Via[0-1]_31.5:0_mil"
+      (shape (circle Front 31.5))
+      (shape (circle Back 31.5))
+      (attach off)
+    )
+  )
+  (network
+    (net GND
+      (pins XL1-GND XL1-GND@1 XL1-GND@2 XL1-GND@3 C1-2 TP2-1)
+    )
+    (net "N-000002"
+      (pins L1-1 TP1-1)
+    )
+    (net "N-000003"
+      (pins XL1-RF C1-1 L1-2)
+    )
+    (class kicad_default "" GND "N-000002" "N-000003"
+      (circuit
+        (use_via Via[0-1]_31.5:19.7_mil)
+      )
+      (rule
+        (width 19.7)
+        (clearance 9.9)
+      )
+    )
+  )
+  (wiring
+  )
+)

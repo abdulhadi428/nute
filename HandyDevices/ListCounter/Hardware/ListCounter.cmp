@@ -1,0 +1,80 @@
+Cmp-Mod V01 Created by CvPCB (2010-02-09)-RC2 date = 22/07/2010 13:48:04
+
+BeginCmp
+TimeStamp = /4C47248F;
+Reference = C1;
+ValeurCmp = 0.1u;
+IdModule  = SMD0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /4C472495;
+Reference = C2;
+ValeurCmp = 0.1u;
+IdModule  = SMD0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /4C472498;
+Reference = C3;
+ValeurCmp = 0.1u;
+IdModule  = SMD0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /4C4725F4;
+Reference = C4;
+ValeurCmp = 0.1u;
+IdModule  = SMD0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /4C472326;
+Reference = D1;
+ValeurCmp = MATRIXLCD;
+IdModule  = MATRIXLCD;
+EndCmp
+
+BeginCmp
+TimeStamp = /4C472331;
+Reference = DD1;
+ValeurCmp = ATMEGA88;
+IdModule  = QFN32;
+EndCmp
+
+BeginCmp
+TimeStamp = /4C47262F;
+Reference = R1;
+ValeurCmp = 1k;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4C47263F;
+Reference = R2;
+ValeurCmp = 10k;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4C48049F;
+Reference = XL1;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4C472698;
+Reference = XL2;
+ValeurCmp = ATMEL_ISP;
+IdModule  = DIL2X3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4C47272E;
+Reference = XL3;
+ValeurCmp = PWRCONN;
+IdModule  = PWRCON2PIN;
+EndCmp
+
+EndListe

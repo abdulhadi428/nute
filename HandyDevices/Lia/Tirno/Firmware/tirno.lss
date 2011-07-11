@@ -1,0 +1,4615 @@
+
+tirno.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00001f56  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         0000001c  00800060  00001f56  00001fea  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          000000e8  0080007c  0080007c  00002006  2**0
+                  ALLOC
+  3 .debug_aranges 000000c0  00000000  00000000  00002006  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_pubnames 0000045d  00000000  00000000  000020c6  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   0000245c  00000000  00000000  00002523  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000b3b  00000000  00000000  0000497f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00001c20  00000000  00000000  000054ba  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000360  00000000  00000000  000070dc  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000062b  00000000  00000000  0000743c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000d0a  00000000  00000000  00007a67  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000120  00000000  00000000  00008771  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+       0:	0c 94 3f 04 	jmp	0x87e	; 0x87e <__ctors_end>
+       4:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+       8:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+       c:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      10:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      14:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      18:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      1c:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      20:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      24:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      28:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      2c:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      30:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      34:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      38:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      3c:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      40:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      44:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+      48:	0c 94 3f 0f 	jmp	0x1e7e	; 0x1e7e <__vector_18>
+      4c:	0c 94 5f 06 	jmp	0xcbe	; 0xcbe <__vector_19>
+      50:	0c 94 5c 04 	jmp	0x8b8	; 0x8b8 <__bad_interrupt>
+
+00000054 <Font_6x8_Data>:
+      54:	00 00 00 00 00 00 00 3e 45 51 45 3e 00 3e 6b 6f     .......>EQE>.>ko
+      64:	6b 3e 00 1c 3e 7c 3e 1c 00 18 3c 7e 3c 18 00 30     k>..>|>...<~<..0
+      74:	36 7f 36 30 00 18 5c 7e 5c 18 00 00 18 18 00 00     6.60..\~\.......
+      84:	ff ff e7 e7 ff ff 00 3c 24 24 3c 00 ff c3 db db     .......<$$<.....
+      94:	c3 ff 00 30 48 4a 36 0e 00 06 29 79 29 06 00 60     ...0HJ6...)y)..`
+      a4:	70 3f 02 04 00 60 7e 0a 35 3f 00 2a 1c 36 1c 2a     p?...`~.5?.*.6.*
+      b4:	00 00 7f 3e 1c 08 00 08 1c 3e 7f 00 00 14 36 7f     ...>.....>....6.
+      c4:	36 14 00 00 5f 00 5f 00 00 06 09 7f 01 7f 00 22     6..._._........"
+      d4:	4d 55 59 22 00 60 60 60 60 00 00 14 b6 ff b6 14     MUY".````.......
+      e4:	00 04 06 7f 06 04 00 10 30 7f 30 10 00 08 08 3e     ........0.0....>
+      f4:	1c 08 00 08 1c 3e 08 08 00 78 40 40 40 40 00 08     .....>...x@@@@..
+     104:	3e 08 3e 08 00 30 3c 3f 3c 30 00 03 0f 3f 0f 03     >.>..0<?<0...?..
+     114:	00 00 00 00 00 00 00 00 06 5f 06 00 00 07 03 00     ........._......
+     124:	07 03 00 24 7e 24 7e 24 00 24 2b 6a 12 00 00 63     ...$~$~$.$+j...c
+     134:	13 08 64 63 00 36 49 56 20 50 00 00 07 03 00 00     ..dc.6IV P......
+     144:	00 00 3e 41 00 00 00 00 41 3e 00 00 00 08 3e 1c     ..>A....A>....>.
+     154:	3e 08 00 08 08 3e 08 08 00 00 e0 60 00 00 00 08     >....>.....`....
+     164:	08 08 08 08 00 00 60 60 00 00 00 20 10 08 04 02     ......``... ....
+     174:	00 3e 41 41 41 3e 00 00 42 7f 40 00 00 62 51 49     .>AAA>..B.@..bQI
+     184:	49 46 00 22 49 49 49 36 00 18 14 12 7f 10 00 2f     IF."III6......./
+     194:	49 49 49 31 00 3c 4a 49 49 30 00 01 71 09 05 03     III1.<JII0..q...
+     1a4:	00 36 49 49 49 36 00 06 49 49 29 1e 00 00 6c 6c     .6III6..II)...ll
+     1b4:	00 00 00 00 ec 6c 00 00 00 08 14 22 41 00 00 24     .....l....."A..$
+     1c4:	24 24 24 24 00 00 41 22 14 08 00 02 01 59 09 06     $$$$..A".....Y..
+     1d4:	00 3e 41 5d 55 1e 00 7e 11 11 11 7e 00 7f 49 49     .>A]U..~...~..II
+     1e4:	49 36 00 3e 41 41 41 22 00 7f 41 41 41 3e 00 7f     I6.>AAA"..AAA>..
+     1f4:	49 49 49 41 00 7f 09 09 09 01 00 3e 41 49 49 7a     IIIA.......>AIIz
+     204:	00 7f 08 08 08 7f 00 00 41 7f 41 00 00 30 40 40     ........A.A..0@@
+     214:	40 3f 00 7f 08 14 22 41 00 7f 40 40 40 40 00 7f     @?...."A..@@@@..
+     224:	02 04 02 7f 00 7f 02 04 08 7f 00 3e 41 41 41 3e     ...........>AAA>
+     234:	00 7f 09 09 09 06 00 3e 41 51 21 5e 00 7f 09 09     .......>AQ!^....
+     244:	19 66 00 26 49 49 49 32 00 01 01 7f 01 01 00 3f     .f.&III2.......?
+     254:	40 40 40 3f 00 1f 20 40 20 1f 00 3f 40 3c 40 3f     @@@?.. @ ..?@<@?
+     264:	00 63 14 08 14 63 00 07 08 70 08 07 00 71 49 45     .c...c...p...qIE
+     274:	43 00 00 00 7f 41 41 00 00 02 04 08 10 20 00 00     C....AA...... ..
+     284:	41 41 7f 00 00 04 02 01 02 04 80 80 80 80 80 80     AA..............
+     294:	00 00 03 07 00 00 00 20 54 54 54 78 00 7f 44 44     ....... TTTx..DD
+     2a4:	44 38 00 38 44 44 44 28 00 38 44 44 44 7f 00 38     D8.8DDD(.8DDD..8
+     2b4:	54 54 54 08 00 08 7e 09 09 00 00 18 a4 a4 a4 7c     TTT...~........|
+     2c4:	00 7f 04 04 78 00 00 00 00 7d 40 00 00 40 80 84     ....x....}@..@..
+     2d4:	7d 00 00 7f 10 28 44 00 00 00 00 7f 40 00 00 7c     }....(D.....@..|
+     2e4:	04 18 04 78 00 7c 04 04 78 00 00 38 44 44 44 38     ...x.|..x..8DDD8
+     2f4:	00 fc 44 44 44 38 00 38 44 44 44 fc 00 44 78 44     ..DDD8.8DDD..DxD
+     304:	04 08 00 08 54 54 54 20 00 04 3e 44 24 00 00 3c     ....TTT ..>D$..<
+     314:	40 20 7c 00 00 1c 20 40 20 1c 00 3c 60 30 60 3c     @ |... @ ..<`0`<
+     324:	00 6c 10 10 6c 00 00 9c a0 60 3c 00 00 64 54 54     .l..l....`<..dTT
+     334:	4c 00 00 08 3e 41 41 00 00 00 00 77 00 00 00 00     L...>AA....w....
+     344:	41 41 3e 08 00 02 01 02 01 00 00 3c 26 23 26 3c     AA>........<&#&<
+     354:	44 11 44 11 44 11 aa 55 aa 55 aa 55 bb ee bb ee     D.D.D..U.U.U....
+     364:	bb ee 00 00 00 ff 00 00 08 08 08 ff 00 00 0a 0a     ................
+     374:	0a ff 00 00 08 ff 00 ff 00 00 08 f8 08 f8 00 00     ................
+     384:	0a 0a 0a fe 00 00 0a fb 00 ff 00 00 00 ff 00 ff     ................
+     394:	00 00 0a fa 02 fe 00 00 0a 0b 08 0f 00 00 08 0f     ................
+     3a4:	08 0f 00 00 0a 0a 0a 0f 00 00 08 08 08 f8 00 00     ................
+     3b4:	00 00 00 0f 08 08 08 08 08 0f 08 08 08 08 08 f8     ................
+     3c4:	08 08 00 00 00 ff 08 08 08 08 08 08 08 08 08 08     ................
+     3d4:	08 ff 08 08 00 00 00 ff 0a 0a 00 ff 00 ff 08 08     ................
+     3e4:	00 0f 08 0b 0a 0a 00 fe 02 fa 0a 0a 0a 0b 08 0b     ................
+     3f4:	0a 0a 0a fa 02 fa 0a 0a 00 ff 00 fb 0a 0a 0a 0a     ................
+     404:	0a 0a 0a 0a 0a fb 00 fb 0a 0a 0a 0a 0a 0b 0a 0a     ................
+     414:	08 0f 08 0f 08 08 0a 0a 0a fa 0a 0a 08 f8 08 f8     ................
+     424:	08 08 00 0f 08 0f 08 08 00 00 00 0f 0a 0a 00 00     ................
+     434:	00 fe 0a 0a 00 f8 08 f8 08 08 08 ff 08 ff 08 08     ................
+     444:	00 7e 4b 4a 4b 42 0a 0a 0a ff 0a 0a 08 08 08 0f     .~KJKB..........
+     454:	00 00 00 00 00 f8 08 08 ff ff ff ff ff ff f0 f0     ................
+     464:	f0 f0 f0 f0 ff ff ff 00 00 00 00 00 00 ff ff ff     ................
+     474:	0f 0f 0f 0f 0f 0f 00 3e 49 49 41 22 00 38 54 54     .......>IIA".8TT
+     484:	44 28 00 01 40 7e 40 01 00 00 01 7c 41 00 00 27     D(..@~@....|A..'
+     494:	48 4b 48 3f 00 9d a2 62 3d 00 00 06 09 09 06 00     HKH?...b=.......
+     4a4:	00 38 55 54 55 08 00 00 18 18 00 00 00 00 08 00     .8UTU...........
+     4b4:	00 00 00 30 40 3e 02 02 7f 06 18 7f 13 13 2a 3e     ...0@>........*>
+     4c4:	14 14 3e 2a 00 3c 3c 3c 3c 00 00 00 00 00 00 00     ..>*.<<<<.......
+     4d4:	00 7e 11 11 11 7e 00 7f 49 49 49 31 00 7f 49 49     .~...~..III1..II
+     4e4:	49 36 00 7f 01 01 01 01 c0 7e 41 41 7f c0 00 7f     I6.......~AA....
+     4f4:	49 49 49 41 00 77 08 7f 08 77 22 49 49 49 36 00     IIIA.w...w"III6.
+     504:	00 7f 20 10 08 7f 00 7e 21 11 09 7e 00 7f 08 14     .. ....~!..~....
+     514:	22 41 00 40 7e 01 01 7f 00 7f 02 04 02 7f 00 7f     "A.@~...........
+     524:	08 08 08 7f 00 3e 41 41 41 3e 00 7f 01 01 01 7f     .....>AAA>......
+     534:	00 7f 09 09 09 06 00 3e 41 41 41 22 00 01 01 7f     .......>AAA"....
+     544:	01 01 00 27 48 48 48 3f 00 0e 11 7f 11 0e 00 63     ...'HHH?.......c
+     554:	14 08 14 63 00 7f 40 40 7f c0 00 07 08 08 08 7f     ...c..@@........
+     564:	00 7f 40 7f 40 7f 00 7f 40 7f 40 ff 03 01 7f 48     ..@.@...@.@....H
+     574:	48 30 00 7f 48 48 30 7f 00 7f 48 48 48 30 00 22     H0..HH0...HHH0."
+     584:	41 49 49 3e 00 7f 08 3e 41 3e 00 66 19 09 09 7f     AII>...>A>.f....
+     594:	00 20 54 54 54 78 00 3c 4a 4a 4a 31 00 7c 54 54     . TTTx.<JJJ1.|TT
+     5a4:	54 28 00 7c 04 04 0c 00 c0 78 44 44 7c c0 00 38     T(.|.....xDD|..8
+     5b4:	54 54 54 08 00 6c 10 7c 10 6c 00 28 44 54 54 28     TTT..l.|.l.(DTT(
+     5c4:	00 7c 20 10 08 7c 00 7c 20 12 0a 7c 00 7c 10 28     .| ..|.| ..|.|.(
+     5d4:	44 00 40 38 04 04 7c 00 00 7c 08 10 08 7c 00 7c     D.@8..|..|...|.|
+     5e4:	10 10 10 7c 00 38 44 44 44 38 00 7c 04 04 04 7c     ...|.8DDD8.|...|
+     5f4:	00 fc 44 44 44 38 00 38 44 44 44 28 00 04 04 7c     ..DDD8.8DDD(...|
+     604:	04 04 00 9c a0 60 3c 00 00 18 24 7c 24 18 00 6c     .....`<...$|$..l
+     614:	10 10 6c 00 00 7c 40 40 7c c0 00 0c 10 10 10 7c     ..l..|@@|......|
+     624:	00 7c 40 7c 40 7c 00 7c 40 7c 40 fc 0c 04 7c 50     .|@|@|.|@|@...|P
+     634:	50 20 00 7c 50 50 20 7c 00 7c 50 50 50 20 00 28     P .|PP |.|PPP .(
+     644:	44 54 54 38 00 7c 10 38 44 38 00 48 34 14 14 7c     DTT8.|.8D8.H4..|
+
+00000654 <LCD_ImgGauge>:
+     654:	60 03 e0 8e 91 91 8e 80 80 80 80 c0 80 80 80 80     `...............
+     664:	80 80 80 80 80 c0 80 80 80 80 80 80 80 80 c0 80     ................
+     674:	80 80 80 80 80 80 80 80 c0 80 80 80 80 80 80 93     ................
+     684:	93 cd c0 8e 91 91 8e 80 80 80 80 c0 80 80 80 80     ................
+     694:	80 80 80 80 80 c0 80 80 80 80 80 80 80 80 c0 80     ................
+     6a4:	80 80 80 80 92 9f 90 80 ce 91 91 8e 80 8e 91 91     ................
+     6b4:	8e e0 ff 00 00 00 00 00 00 00 00 00 00 00 00 00     ................
+     6c4:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00     ................
+     6d4:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00     ................
+     6e4:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00     ................
+     6f4:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00     ................
+     704:	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00     ................
+     714:	00 ff 07 01 01 01 01 01 01 01 01 03 01 01 01 01     ................
+     724:	01 01 01 01 01 03 01 01 01 01 01 01 01 01 03 01     ................
+     734:	01 01 01 01 01 01 01 01 03 01 01 01 01 01 01 01     ................
+     744:	01 03 03 01 01 01 01 01 01 01 01 03 01 01 01 01     ................
+     754:	01 01 01 01 01 03 01 01 01 01 01 01 01 01 03 01     ................
+     764:	01 01 01 01 01 01 01 01 03 01 01 01 01 01 01 01     ................
+     774:	01 07                                               ..
+
+00000776 <Option0>:
+     776:	cf e5 f0 e5 e8 ec e5 ed ee e2 e0 f2 fc 00           ..............
+
+00000784 <Option1>:
+     784:	d1 ee f1 f2 fb ea ee e2 e0 f2 fc 20 20 00           ...........  .
+
+00000792 <FLLetters>:
+     792:	e0 ef f0 ff 61 70 71 80 30 3f 20 2f                 ....apq.0? /
+
+0000079e <__c.1695>:
+     79e:	ce ef f6 e8 e8 00                                   ......
+
+000007a4 <__c.1693>:
+     7a4:	cf ee e8 f1 ea 00                                   ......
+
+000007aa <__c.1673>:
+     7aa:	c3 ee f2 ee e2 ee 00                                .......
+
+000007b1 <__c.1671>:
+     7b1:	20 20 20 20 20 20 00                                      .
+
+000007b8 <__c.1668>:
+     7b8:	ce f2 ec e5 ed e0 00                                .......
+
+000007bf <__c.1666>:
+     7bf:	20 20 20 20 20 20 00                                      .
+
+000007c6 <__c.1660>:
+     7c6:	ce ef f6 e8 e8 00                                   ......
+
+000007cc <__c.1658>:
+     7cc:	20 20 20 20 20 00                                        .
+
+000007d2 <__c.1625>:
+     7d2:	c8 e7 ec e5 ed e8 f2 fc 00                          .........
+
+000007db <__c.1620>:
+     7db:	20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                     
+     7eb:	00                                                  .
+
+000007ec <__c.1617>:
+     7ec:	c3 ee f2 ee e2 ee 00                                .......
+
+000007f3 <__c.1615>:
+     7f3:	20 20 20 20 20 20 20 20 00                                  .
+
+000007fc <__c.1595>:
+     7fc:	c2 fb e1 f0 e0 f2 fc 00                             ........
+
+00000804 <__c.1593>:
+     804:	20 20 2d 3e 20 20 00                                  ->  .
+
+0000080b <__c.1591>:
+     80b:	20 20 20 20 20 20 20 20 00                                  .
+
+00000814 <__c.1588>:
+     814:	20 20 4f 6b 20 20 00                                  Ok  .
+
+0000081b <__c.1586>:
+     81b:	20 20 20 20 20 20 00                                      .
+
+00000822 <__c.1583>:
+     822:	d1 ef e8 f1 ee ea 00                                .......
+
+00000829 <__c.1581>:
+     829:	20 20 20 20 20 20 00                                      .
+
+00000830 <__c.1577>:
+     830:	cf ee e8 f1 ea 00                                   ......
+
+00000836 <__c.1575>:
+     836:	20 20 20 20 20 00                                        .
+
+0000083c <__c.1481>:
+     83c:	ce f2 ec e5 ed e0 00                                .......
+
+00000843 <__c.1479>:
+     843:	20 20 4f 6b 20 20 00                                  Ok  .
+
+0000084a <__c.1477>:
+     84a:	d1 f2 fb ea ee e2 ea e0 00                          .........
+
+00000853 <__c.1474>:
+     853:	c3 ee f2 ee e2 ee 00                                .......
+
+0000085a <__c.1472>:
+     85a:	c8 e7 ec e5 ed e8 f2 fc 00                          .........
+
+00000863 <__c.1469>:
+     863:	ce f2 ec e5 ed e0 00                                .......
+
+0000086a <__c.1467>:
+     86a:	20 20 4f 6b 20 20 00                                  Ok  .
+
+00000871 <__c.1464>:
+     871:	d1 ef e8 f1 ee ea 00                                .......
+
+00000878 <__c.1462>:
+     878:	64 42 6d 3a 00 00                                   dBm:..
+
+0000087e <__ctors_end>:
+     87e:	11 24       	eor	r1, r1
+     880:	1f be       	out	0x3f, r1	; 63
+     882:	cf e5       	ldi	r28, 0x5F	; 95
+     884:	d4 e0       	ldi	r29, 0x04	; 4
+     886:	de bf       	out	0x3e, r29	; 62
+     888:	cd bf       	out	0x3d, r28	; 61
+
+0000088a <__do_copy_data>:
+     88a:	10 e0       	ldi	r17, 0x00	; 0
+     88c:	a0 e6       	ldi	r26, 0x60	; 96
+     88e:	b0 e0       	ldi	r27, 0x00	; 0
+     890:	e6 e5       	ldi	r30, 0x56	; 86
+     892:	ff e1       	ldi	r31, 0x1F	; 31
+     894:	02 c0       	rjmp	.+4      	; 0x89a <.do_copy_data_start>
+
+00000896 <.do_copy_data_loop>:
+     896:	05 90       	lpm	r0, Z+
+     898:	0d 92       	st	X+, r0
+
+0000089a <.do_copy_data_start>:
+     89a:	ac 37       	cpi	r26, 0x7C	; 124
+     89c:	b1 07       	cpc	r27, r17
+     89e:	d9 f7       	brne	.-10     	; 0x896 <.do_copy_data_loop>
+
+000008a0 <__do_clear_bss>:
+     8a0:	11 e0       	ldi	r17, 0x01	; 1
+     8a2:	ac e7       	ldi	r26, 0x7C	; 124
+     8a4:	b0 e0       	ldi	r27, 0x00	; 0
+     8a6:	01 c0       	rjmp	.+2      	; 0x8aa <.do_clear_bss_start>
+
+000008a8 <.do_clear_bss_loop>:
+     8a8:	1d 92       	st	X+, r1
+
+000008aa <.do_clear_bss_start>:
+     8aa:	a4 36       	cpi	r26, 0x64	; 100
+     8ac:	b1 07       	cpc	r27, r17
+     8ae:	e1 f7       	brne	.-8      	; 0x8a8 <.do_clear_bss_loop>
+     8b0:	0e 94 e3 05 	call	0xbc6	; 0xbc6 <main>
+     8b4:	0c 94 a9 0f 	jmp	0x1f52	; 0x1f52 <_exit>
+
+000008b8 <__bad_interrupt>:
+     8b8:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+000008bc <eeWriteLocket>:
+        EL.L[ID].S[6] = ID < 10? ('0' + ID) : ('0' + ID - 10);
+        for(uint8_t j=7; j<LOCKET_NAME_L-1; j++) EL.L[ID].S[j] = ' ';
+        EL.L[ID].S[LOCKET_NAME_L-1] = '\0';
+    }
+}
+void eeWriteLocket(uint8_t ID) {
+     8bc:	92 e1       	ldi	r25, 0x12	; 18
+     8be:	89 9f       	mul	r24, r25
+     8c0:	b0 01       	movw	r22, r0
+     8c2:	11 24       	eor	r1, r1
+    uint16_t eeaddr = LOCKET_EE_ADDR;
+    uint8_t i=0;
+    while(i++ < ID) eeaddr += sizeof(struct Locket_t);  // Get ee address
+    eeprom_write_block(&EL.L[ID], (void*)eeaddr, sizeof(struct Locket_t));
+     8c4:	cb 01       	movw	r24, r22
+     8c6:	84 58       	subi	r24, 0x84	; 132
+     8c8:	9f 4f       	sbci	r25, 0xFF	; 255
+     8ca:	6c 5f       	subi	r22, 0xFC	; 252
+     8cc:	7f 4f       	sbci	r23, 0xFF	; 255
+     8ce:	42 e1       	ldi	r20, 0x12	; 18
+     8d0:	50 e0       	ldi	r21, 0x00	; 0
+     8d2:	0e 94 92 0f 	call	0x1f24	; 0x1f24 <__eewr_block_m16a>
+}
+     8d6:	08 95       	ret
+
+000008d8 <eeReadLocket>:
+    DelayReset(&ETirno.CC_Timer);
+    // Packet will be sent in time, no need to hurry
+}
+
+// ========================= Service routines ==================================
+void eeReadLocket(uint8_t ID) {
+     8d8:	1f 93       	push	r17
+     8da:	18 2f       	mov	r17, r24
+     8dc:	62 e1       	ldi	r22, 0x12	; 18
+     8de:	86 9f       	mul	r24, r22
+     8e0:	b0 01       	movw	r22, r0
+     8e2:	11 24       	eor	r1, r1
+    uint16_t eeaddr = LOCKET_EE_ADDR;
+    uint8_t i=0;
+    while(i++ < ID) eeaddr += sizeof(struct Locket_t);  // Get ee address
+    eeprom_read_block(&EL.L[ID], (void*)eeaddr, sizeof(struct Locket_t));
+     8e4:	cb 01       	movw	r24, r22
+     8e6:	84 58       	subi	r24, 0x84	; 132
+     8e8:	9f 4f       	sbci	r25, 0xFF	; 255
+     8ea:	6c 5f       	subi	r22, 0xFC	; 252
+     8ec:	7f 4f       	sbci	r23, 0xFF	; 255
+     8ee:	42 e1       	ldi	r20, 0x12	; 18
+     8f0:	50 e0       	ldi	r21, 0x00	; 0
+     8f2:	0e 94 82 0f 	call	0x1f04	; 0x1f04 <__eerd_block_m16a>
+    if(EL.L[ID].S[0] == 0xFF) {  // Handle uninitialized ee
+     8f6:	e1 2f       	mov	r30, r17
+     8f8:	f0 e0       	ldi	r31, 0x00	; 0
+     8fa:	ee 0f       	add	r30, r30
+     8fc:	ff 1f       	adc	r31, r31
+     8fe:	cf 01       	movw	r24, r30
+     900:	43 e0       	ldi	r20, 0x03	; 3
+     902:	88 0f       	add	r24, r24
+     904:	99 1f       	adc	r25, r25
+     906:	4a 95       	dec	r20
+     908:	e1 f7       	brne	.-8      	; 0x902 <eeReadLocket+0x2a>
+     90a:	e8 0f       	add	r30, r24
+     90c:	f9 1f       	adc	r31, r25
+     90e:	e4 58       	subi	r30, 0x84	; 132
+     910:	ff 4f       	sbci	r31, 0xFF	; 255
+     912:	83 81       	ldd	r24, Z+3	; 0x03
+     914:	8f 3f       	cpi	r24, 0xFF	; 255
+     916:	09 f0       	breq	.+2      	; 0x91a <eeReadLocket+0x42>
+     918:	9d c0       	rjmp	.+314    	; 0xa54 <eeReadLocket+0x17c>
+        EL.L[ID].S[0] = 'Ц';
+     91a:	e1 2f       	mov	r30, r17
+     91c:	f0 e0       	ldi	r31, 0x00	; 0
+     91e:	ee 0f       	add	r30, r30
+     920:	ff 1f       	adc	r31, r31
+     922:	cf 01       	movw	r24, r30
+     924:	23 e0       	ldi	r18, 0x03	; 3
+     926:	88 0f       	add	r24, r24
+     928:	99 1f       	adc	r25, r25
+     92a:	2a 95       	dec	r18
+     92c:	e1 f7       	brne	.-8      	; 0x926 <eeReadLocket+0x4e>
+     92e:	e8 0f       	add	r30, r24
+     930:	f9 1f       	adc	r31, r25
+     932:	e4 58       	subi	r30, 0x84	; 132
+     934:	ff 4f       	sbci	r31, 0xFF	; 255
+     936:	86 ed       	ldi	r24, 0xD6	; 214
+     938:	83 83       	std	Z+3, r24	; 0x03
+        EL.L[ID].S[1] = 'е';
+     93a:	e1 2f       	mov	r30, r17
+     93c:	f0 e0       	ldi	r31, 0x00	; 0
+     93e:	ee 0f       	add	r30, r30
+     940:	ff 1f       	adc	r31, r31
+     942:	cf 01       	movw	r24, r30
+     944:	a3 e0       	ldi	r26, 0x03	; 3
+     946:	88 0f       	add	r24, r24
+     948:	99 1f       	adc	r25, r25
+     94a:	aa 95       	dec	r26
+     94c:	e1 f7       	brne	.-8      	; 0x946 <eeReadLocket+0x6e>
+     94e:	e8 0f       	add	r30, r24
+     950:	f9 1f       	adc	r31, r25
+     952:	e4 58       	subi	r30, 0x84	; 132
+     954:	ff 4f       	sbci	r31, 0xFF	; 255
+     956:	85 ee       	ldi	r24, 0xE5	; 229
+     958:	84 83       	std	Z+4, r24	; 0x04
+        EL.L[ID].S[2] = 'л';
+     95a:	e1 2f       	mov	r30, r17
+     95c:	f0 e0       	ldi	r31, 0x00	; 0
+     95e:	ee 0f       	add	r30, r30
+     960:	ff 1f       	adc	r31, r31
+     962:	cf 01       	movw	r24, r30
+     964:	63 e0       	ldi	r22, 0x03	; 3
+     966:	88 0f       	add	r24, r24
+     968:	99 1f       	adc	r25, r25
+     96a:	6a 95       	dec	r22
+     96c:	e1 f7       	brne	.-8      	; 0x966 <eeReadLocket+0x8e>
+     96e:	e8 0f       	add	r30, r24
+     970:	f9 1f       	adc	r31, r25
+     972:	e4 58       	subi	r30, 0x84	; 132
+     974:	ff 4f       	sbci	r31, 0xFF	; 255
+     976:	8b ee       	ldi	r24, 0xEB	; 235
+     978:	85 83       	std	Z+5, r24	; 0x05
+        EL.L[ID].S[3] = 'ь';
+     97a:	e1 2f       	mov	r30, r17
+     97c:	f0 e0       	ldi	r31, 0x00	; 0
+     97e:	ee 0f       	add	r30, r30
+     980:	ff 1f       	adc	r31, r31
+     982:	cf 01       	movw	r24, r30
+     984:	43 e0       	ldi	r20, 0x03	; 3
+     986:	88 0f       	add	r24, r24
+     988:	99 1f       	adc	r25, r25
+     98a:	4a 95       	dec	r20
+     98c:	e1 f7       	brne	.-8      	; 0x986 <eeReadLocket+0xae>
+     98e:	e8 0f       	add	r30, r24
+     990:	f9 1f       	adc	r31, r25
+     992:	e4 58       	subi	r30, 0x84	; 132
+     994:	ff 4f       	sbci	r31, 0xFF	; 255
+     996:	8c ef       	ldi	r24, 0xFC	; 252
+     998:	86 83       	std	Z+6, r24	; 0x06
+        EL.L[ID].S[4] = ' ';
+     99a:	e1 2f       	mov	r30, r17
+     99c:	f0 e0       	ldi	r31, 0x00	; 0
+     99e:	ee 0f       	add	r30, r30
+     9a0:	ff 1f       	adc	r31, r31
+     9a2:	cf 01       	movw	r24, r30
+     9a4:	23 e0       	ldi	r18, 0x03	; 3
+     9a6:	88 0f       	add	r24, r24
+     9a8:	99 1f       	adc	r25, r25
+     9aa:	2a 95       	dec	r18
+     9ac:	e1 f7       	brne	.-8      	; 0x9a6 <eeReadLocket+0xce>
+     9ae:	e8 0f       	add	r30, r24
+     9b0:	f9 1f       	adc	r31, r25
+     9b2:	e4 58       	subi	r30, 0x84	; 132
+     9b4:	ff 4f       	sbci	r31, 0xFF	; 255
+     9b6:	80 e2       	ldi	r24, 0x20	; 32
+     9b8:	87 83       	std	Z+7, r24	; 0x07
+        EL.L[ID].S[5] = ID < 10? ('0') : ('1');
+     9ba:	1a 30       	cpi	r17, 0x0A	; 10
+     9bc:	10 f0       	brcs	.+4      	; 0x9c2 <eeReadLocket+0xea>
+     9be:	21 e3       	ldi	r18, 0x31	; 49
+     9c0:	01 c0       	rjmp	.+2      	; 0x9c4 <eeReadLocket+0xec>
+     9c2:	20 e3       	ldi	r18, 0x30	; 48
+     9c4:	e1 2f       	mov	r30, r17
+     9c6:	f0 e0       	ldi	r31, 0x00	; 0
+     9c8:	ee 0f       	add	r30, r30
+     9ca:	ff 1f       	adc	r31, r31
+     9cc:	cf 01       	movw	r24, r30
+     9ce:	a3 e0       	ldi	r26, 0x03	; 3
+     9d0:	88 0f       	add	r24, r24
+     9d2:	99 1f       	adc	r25, r25
+     9d4:	aa 95       	dec	r26
+     9d6:	e1 f7       	brne	.-8      	; 0x9d0 <eeReadLocket+0xf8>
+     9d8:	e8 0f       	add	r30, r24
+     9da:	f9 1f       	adc	r31, r25
+     9dc:	e4 58       	subi	r30, 0x84	; 132
+     9de:	ff 4f       	sbci	r31, 0xFF	; 255
+     9e0:	20 87       	std	Z+8, r18	; 0x08
+        EL.L[ID].S[6] = ID < 10? ('0' + ID) : ('0' + ID - 10);
+     9e2:	1a 30       	cpi	r17, 0x0A	; 10
+     9e4:	18 f4       	brcc	.+6      	; 0x9ec <eeReadLocket+0x114>
+     9e6:	21 2f       	mov	r18, r17
+     9e8:	20 5d       	subi	r18, 0xD0	; 208
+     9ea:	02 c0       	rjmp	.+4      	; 0x9f0 <eeReadLocket+0x118>
+     9ec:	21 2f       	mov	r18, r17
+     9ee:	2a 5d       	subi	r18, 0xDA	; 218
+     9f0:	e1 2f       	mov	r30, r17
+     9f2:	f0 e0       	ldi	r31, 0x00	; 0
+     9f4:	ee 0f       	add	r30, r30
+     9f6:	ff 1f       	adc	r31, r31
+     9f8:	cf 01       	movw	r24, r30
+     9fa:	63 e0       	ldi	r22, 0x03	; 3
+     9fc:	88 0f       	add	r24, r24
+     9fe:	99 1f       	adc	r25, r25
+     a00:	6a 95       	dec	r22
+     a02:	e1 f7       	brne	.-8      	; 0x9fc <eeReadLocket+0x124>
+     a04:	e8 0f       	add	r30, r24
+     a06:	f9 1f       	adc	r31, r25
+     a08:	e4 58       	subi	r30, 0x84	; 132
+     a0a:	ff 4f       	sbci	r31, 0xFF	; 255
+     a0c:	21 87       	std	Z+9, r18	; 0x09
+     a0e:	81 2f       	mov	r24, r17
+     a10:	90 e0       	ldi	r25, 0x00	; 0
+     a12:	88 0f       	add	r24, r24
+     a14:	99 1f       	adc	r25, r25
+     a16:	fc 01       	movw	r30, r24
+     a18:	43 e0       	ldi	r20, 0x03	; 3
+     a1a:	ee 0f       	add	r30, r30
+     a1c:	ff 1f       	adc	r31, r31
+     a1e:	4a 95       	dec	r20
+     a20:	e1 f7       	brne	.-8      	; 0xa1a <eeReadLocket+0x142>
+     a22:	e8 0f       	add	r30, r24
+     a24:	f9 1f       	adc	r31, r25
+     a26:	ea 57       	subi	r30, 0x7A	; 122
+     a28:	ff 4f       	sbci	r31, 0xFF	; 255
+     a2a:	87 e0       	ldi	r24, 0x07	; 7
+        for(uint8_t j=7; j<LOCKET_NAME_L-1; j++) EL.L[ID].S[j] = ' ';
+     a2c:	90 e2       	ldi	r25, 0x20	; 32
+     a2e:	91 93       	st	Z+, r25
+     a30:	8f 5f       	subi	r24, 0xFF	; 255
+     a32:	8e 30       	cpi	r24, 0x0E	; 14
+     a34:	e1 f7       	brne	.-8      	; 0xa2e <eeReadLocket+0x156>
+        EL.L[ID].S[LOCKET_NAME_L-1] = '\0';
+     a36:	e1 2f       	mov	r30, r17
+     a38:	f0 e0       	ldi	r31, 0x00	; 0
+     a3a:	ee 0f       	add	r30, r30
+     a3c:	ff 1f       	adc	r31, r31
+     a3e:	cf 01       	movw	r24, r30
+     a40:	23 e0       	ldi	r18, 0x03	; 3
+     a42:	88 0f       	add	r24, r24
+     a44:	99 1f       	adc	r25, r25
+     a46:	2a 95       	dec	r18
+     a48:	e1 f7       	brne	.-8      	; 0xa42 <eeReadLocket+0x16a>
+     a4a:	e8 0f       	add	r30, r24
+     a4c:	f9 1f       	adc	r31, r25
+     a4e:	e4 58       	subi	r30, 0x84	; 132
+     a50:	ff 4f       	sbci	r31, 0xFF	; 255
+     a52:	11 8a       	std	Z+17, r1	; 0x11
+    }
+}
+     a54:	1f 91       	pop	r17
+     a56:	08 95       	ret
+
+00000a58 <EVENT_StartingSearch>:
+    }
+}
+
+// Setup CC to search here
+void EVENT_StartingSearch(void) {
+    DelayReset(&ETirno.CC_Timer);
+     a58:	88 e4       	ldi	r24, 0x48	; 72
+     a5a:	91 e0       	ldi	r25, 0x01	; 1
+     a5c:	0e 94 54 06 	call	0xca8	; 0xca8 <DelayReset>
+    // Packet will be sent in time, no need to hurry
+}
+     a60:	08 95       	ret
+
+00000a62 <EVENT_NewPacket>:
+}
+
+*/
+
+// ============================== Events =======================================
+FORCE_INLINE void EVENT_NewPacket(void) {
+     a62:	1f 93       	push	r17
+    if(EState == StateSearch) {
+     a64:	80 91 4f 01 	lds	r24, 0x014F
+     a68:	81 30       	cpi	r24, 0x01	; 1
+     a6a:	f9 f4       	brne	.+62     	; 0xaaa <EVENT_NewPacket+0x48>
+        ETirno.PktRcvd = true;
+     a6c:	80 93 47 01 	sts	0x0147, r24
+        LCD_PrintString(5, 2, "     ", false);
+     a70:	85 e0       	ldi	r24, 0x05	; 5
+     a72:	62 e0       	ldi	r22, 0x02	; 2
+     a74:	40 e6       	ldi	r20, 0x60	; 96
+     a76:	50 e0       	ldi	r21, 0x00	; 0
+     a78:	20 e0       	ldi	r18, 0x00	; 0
+     a7a:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+        int8_t RSSI = CC_RSSI2dBm();
+     a7e:	0e 94 c9 0d 	call	0x1b92	; 0x1b92 <CC_RSSI2dBm>
+     a82:	18 2f       	mov	r17, r24
+        LCD_PrintInt(5, 2, RSSI);
+     a84:	48 2f       	mov	r20, r24
+     a86:	55 27       	eor	r21, r21
+     a88:	47 fd       	sbrc	r20, 7
+     a8a:	50 95       	com	r21
+     a8c:	85 e0       	ldi	r24, 0x05	; 5
+     a8e:	62 e0       	ldi	r22, 0x02	; 2
+     a90:	0e 94 0c 07 	call	0xe18	; 0xe18 <LCD_PrintInt>
+        // Draw gauge
+        RSSI += 100;
+     a94:	81 2f       	mov	r24, r17
+     a96:	8c 59       	subi	r24, 0x9C	; 156
+        if(RSSI > 95) RSSI = 95;
+     a98:	80 36       	cpi	r24, 0x60	; 96
+     a9a:	14 f0       	brlt	.+4      	; 0xaa0 <EVENT_NewPacket+0x3e>
+     a9c:	8f e5       	ldi	r24, 0x5F	; 95
+     a9e:	03 c0       	rjmp	.+6      	; 0xaa6 <EVENT_NewPacket+0x44>
+        if (RSSI < 1) RSSI = 1;
+     aa0:	18 16       	cp	r1, r24
+     aa2:	0c f0       	brlt	.+2      	; 0xaa6 <EVENT_NewPacket+0x44>
+     aa4:	81 e0       	ldi	r24, 0x01	; 1
+        LCD_GaugeValue(RSSI);
+     aa6:	0e 94 6a 07 	call	0xed4	; 0xed4 <LCD_GaugeValue>
+    }
+}
+     aaa:	1f 91       	pop	r17
+     aac:	08 95       	ret
+
+00000aae <CC_Task>:
+}
+
+// ============================== Tasks ========================================
+#define TX_PERIOD   270
+#define RX_PERIOD   200
+void CC_Task (void) {
+     aae:	1f 93       	push	r17
+    // Handle packet if received
+    if (CC.NewPacketReceived) {
+     ab0:	80 91 62 01 	lds	r24, 0x0162
+     ab4:	88 23       	and	r24, r24
+     ab6:	29 f1       	breq	.+74     	; 0xb02 <CC_Task+0x54>
+        CC.NewPacketReceived = false;
+     ab8:	10 92 62 01 	sts	0x0162, r1
+
+*/
+
+// ============================== Events =======================================
+FORCE_INLINE void EVENT_NewPacket(void) {
+    if(EState == StateSearch) {
+     abc:	80 91 4f 01 	lds	r24, 0x014F
+     ac0:	81 30       	cpi	r24, 0x01	; 1
+     ac2:	f9 f4       	brne	.+62     	; 0xb02 <CC_Task+0x54>
+        ETirno.PktRcvd = true;
+     ac4:	80 93 47 01 	sts	0x0147, r24
+        LCD_PrintString(5, 2, "     ", false);
+     ac8:	85 e0       	ldi	r24, 0x05	; 5
+     aca:	62 e0       	ldi	r22, 0x02	; 2
+     acc:	40 e6       	ldi	r20, 0x60	; 96
+     ace:	50 e0       	ldi	r21, 0x00	; 0
+     ad0:	20 e0       	ldi	r18, 0x00	; 0
+     ad2:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+        int8_t RSSI = CC_RSSI2dBm();
+     ad6:	0e 94 c9 0d 	call	0x1b92	; 0x1b92 <CC_RSSI2dBm>
+     ada:	18 2f       	mov	r17, r24
+        LCD_PrintInt(5, 2, RSSI);
+     adc:	48 2f       	mov	r20, r24
+     ade:	55 27       	eor	r21, r21
+     ae0:	47 fd       	sbrc	r20, 7
+     ae2:	50 95       	com	r21
+     ae4:	85 e0       	ldi	r24, 0x05	; 5
+     ae6:	62 e0       	ldi	r22, 0x02	; 2
+     ae8:	0e 94 0c 07 	call	0xe18	; 0xe18 <LCD_PrintInt>
+        // Draw gauge
+        RSSI += 100;
+     aec:	81 2f       	mov	r24, r17
+     aee:	8c 59       	subi	r24, 0x9C	; 156
+        if(RSSI > 95) RSSI = 95;
+     af0:	80 36       	cpi	r24, 0x60	; 96
+     af2:	14 f0       	brlt	.+4      	; 0xaf8 <CC_Task+0x4a>
+     af4:	8f e5       	ldi	r24, 0x5F	; 95
+     af6:	03 c0       	rjmp	.+6      	; 0xafe <CC_Task+0x50>
+        if (RSSI < 1) RSSI = 1;
+     af8:	18 16       	cp	r1, r24
+     afa:	0c f0       	brlt	.+2      	; 0xafe <CC_Task+0x50>
+     afc:	81 e0       	ldi	r24, 0x01	; 1
+        LCD_GaugeValue(RSSI);
+     afe:	0e 94 6a 07 	call	0xed4	; 0xed4 <LCD_GaugeValue>
+        CC.NewPacketReceived = false;
+        EVENT_NewPacket();
+    }
+
+    // Do with CC what needed
+    CC_GET_STATE();
+     b02:	8d e3       	ldi	r24, 0x3D	; 61
+     b04:	0e 94 60 0e 	call	0x1cc0	; 0x1cc0 <CC_WriteStrobe>
+    switch (CC.State){
+     b08:	80 91 55 01 	lds	r24, 0x0155
+     b0c:	80 31       	cpi	r24, 0x10	; 16
+     b0e:	81 f1       	breq	.+96     	; 0xb70 <CC_Task+0xc2>
+     b10:	81 31       	cpi	r24, 0x11	; 17
+     b12:	18 f4       	brcc	.+6      	; 0xb1a <CC_Task+0x6c>
+     b14:	88 23       	and	r24, r24
+     b16:	51 f0       	breq	.+20     	; 0xb2c <CC_Task+0x7e>
+     b18:	36 c0       	rjmp	.+108    	; 0xb86 <CC_Task+0xd8>
+     b1a:	80 36       	cpi	r24, 0x60	; 96
+     b1c:	19 f0       	breq	.+6      	; 0xb24 <CC_Task+0x76>
+     b1e:	80 37       	cpi	r24, 0x70	; 112
+     b20:	91 f5       	brne	.+100    	; 0xb86 <CC_Task+0xd8>
+     b22:	02 c0       	rjmp	.+4      	; 0xb28 <CC_Task+0x7a>
+        case CC_STB_RX_OVF:
+            CC_FLUSH_RX_FIFO();
+     b24:	8a e3       	ldi	r24, 0x3A	; 58
+     b26:	2d c0       	rjmp	.+90     	; 0xb82 <CC_Task+0xd4>
+            break;
+        case CC_STB_TX_UNDF:
+            CC_FLUSH_TX_FIFO();
+     b28:	8b e3       	ldi	r24, 0x3B	; 59
+     b2a:	2b c0       	rjmp	.+86     	; 0xb82 <CC_Task+0xd4>
+            break;
+
+        case CC_STB_IDLE:
+            if(EState == StateSearch) { // No deal if we are not in search
+     b2c:	80 91 4f 01 	lds	r24, 0x014F
+     b30:	81 30       	cpi	r24, 0x01	; 1
+     b32:	49 f5       	brne	.+82     	; 0xb86 <CC_Task+0xd8>
+                // Check if time to TX
+                if(DelayElapsed(&ETirno.CC_Timer, TX_PERIOD)) {
+     b34:	88 e4       	ldi	r24, 0x48	; 72
+     b36:	91 e0       	ldi	r25, 0x01	; 1
+     b38:	6e e0       	ldi	r22, 0x0E	; 14
+     b3a:	71 e0       	ldi	r23, 0x01	; 1
+     b3c:	0e 94 3b 06 	call	0xc76	; 0xc76 <DelayElapsed>
+     b40:	88 23       	and	r24, r24
+     b42:	09 f1       	breq	.+66     	; 0xb86 <CC_Task+0xd8>
+                    // Prepare Call packet
+                    CC.TX_Pkt.Address = ETirno.ID[0];
+     b44:	80 91 44 01 	lds	r24, 0x0144
+     b48:	80 93 5c 01 	sts	0x015C, r24
+                    CC.TX_Pkt.CommandID = PKT_ID_CALL;
+     b4c:	8a ec       	ldi	r24, 0xCA	; 202
+     b4e:	80 93 5d 01 	sts	0x015D, r24
+                    CC.TX_Pkt.Data[0] = ETirno.ID[2];
+     b52:	80 91 46 01 	lds	r24, 0x0146
+     b56:	80 93 5e 01 	sts	0x015E, r24
+                    CC.TX_Pkt.Data[1] = ETirno.ID[1];
+     b5a:	80 91 45 01 	lds	r24, 0x0145
+     b5e:	80 93 5f 01 	sts	0x015F, r24
+                    CC_WriteTX (&CC.TX_PktArray[0], CC_PKT_LENGTH); // Write bytes to FIFO
+     b62:	8c e5       	ldi	r24, 0x5C	; 92
+     b64:	91 e0       	ldi	r25, 0x01	; 1
+     b66:	64 e0       	ldi	r22, 0x04	; 4
+     b68:	0e 94 02 0e 	call	0x1c04	; 0x1c04 <CC_WriteTX>
+                    CC_ENTER_TX();  // will switch to RX automatically (ref. to RF settings)
+     b6c:	85 e3       	ldi	r24, 0x35	; 53
+     b6e:	09 c0       	rjmp	.+18     	; 0xb82 <CC_Task+0xd4>
+            } // if search
+            break;
+
+        case CC_STB_RX:
+            // Get out if time has come
+            if(DelayElapsed(&ETirno.CC_Timer, RX_PERIOD)) CC_ENTER_IDLE();
+     b70:	88 e4       	ldi	r24, 0x48	; 72
+     b72:	91 e0       	ldi	r25, 0x01	; 1
+     b74:	68 ec       	ldi	r22, 0xC8	; 200
+     b76:	70 e0       	ldi	r23, 0x00	; 0
+     b78:	0e 94 3b 06 	call	0xc76	; 0xc76 <DelayElapsed>
+     b7c:	88 23       	and	r24, r24
+     b7e:	19 f0       	breq	.+6      	; 0xb86 <CC_Task+0xd8>
+     b80:	86 e3       	ldi	r24, 0x36	; 54
+     b82:	0e 94 60 0e 	call	0x1cc0	; 0x1cc0 <CC_WriteStrobe>
+            break;
+
+        default: // Just get out in case of RX, TX, FSTXON, CALIBRATE, SETTLING
+            break;
+    }//Switch
+}
+     b86:	1f 91       	pop	r17
+     b88:	08 95       	ret
+
+00000b8a <GeneralInit>:
+        }
+        //Battery_Task();
+    } // while
+}
+
+FORCE_INLINE void GeneralInit(void) {
+     b8a:	1f 93       	push	r17
+    //wdt_enable(WDTO_2S);
+    ACSR = 1<<ACD;  // Disable analog comparator
+     b8c:	80 e8       	ldi	r24, 0x80	; 128
+     b8e:	88 b9       	out	0x08, r24	; 8
+
+    // Read self serial
+    //eeprom_read_block(ETirno.ID, 0, 3);
+    ETirno.ID[0] = 0;   // DEBUG
+     b90:	10 92 44 01 	sts	0x0144, r1
+    ETirno.ID[1] = 0;
+     b94:	10 92 45 01 	sts	0x0145, r1
+    ETirno.ID[2] = 0;
+     b98:	10 92 46 01 	sts	0x0146, r1
+     b9c:	10 e0       	ldi	r17, 0x00	; 0
+
+    // Init lockets
+    for(uint8_t i=0; i<LOCKET_COUNT; i++) eeReadLocket(i);
+     b9e:	81 2f       	mov	r24, r17
+     ba0:	0e 94 6c 04 	call	0x8d8	; 0x8d8 <eeReadLocket>
+     ba4:	1f 5f       	subi	r17, 0xFF	; 255
+     ba6:	1b 30       	cpi	r17, 0x0B	; 11
+     ba8:	d1 f7       	brne	.-12     	; 0xb9e <GeneralInit+0x14>
+
+    DelayInit();
+     baa:	0e 94 33 06 	call	0xc66	; 0xc66 <DelayInit>
+    LCD_Init();
+     bae:	0e 94 21 08 	call	0x1042	; 0x1042 <LCD_Init>
+    KeysInit();
+     bb2:	0e 94 3b 08 	call	0x1076	; 0x1076 <KeysInit>
+    sei();
+     bb6:	78 94       	sei
+
+    // CC init
+    CC_Init();
+     bb8:	0e 94 14 0f 	call	0x1e28	; 0x1e28 <CC_Init>
+    //CC_SetChannel(0);
+    CC_SetAddress(4);   //Never changes in CC itself
+     bbc:	84 e0       	ldi	r24, 0x04	; 4
+     bbe:	0e 94 5b 0e 	call	0x1cb6	; 0x1cb6 <CC_SetAddress>
+    CYC_TIMER_START();
+*/
+
+    // Battery
+    //BatteryInit();
+}
+     bc2:	1f 91       	pop	r17
+     bc4:	08 95       	ret
+
+00000bc6 <main>:
+    uint16_t CC_Timer;
+} ETirno;
+
+
+// ============================== General ======================================
+int main(void) {
+     bc6:	ff 92       	push	r15
+     bc8:	0f 93       	push	r16
+     bca:	1f 93       	push	r17
+     bcc:	df 93       	push	r29
+     bce:	cf 93       	push	r28
+     bd0:	00 d0       	rcall	.+0      	; 0xbd2 <main+0xc>
+     bd2:	cd b7       	in	r28, 0x3d	; 61
+     bd4:	de b7       	in	r29, 0x3e	; 62
+    } // while
+}
+
+FORCE_INLINE void GeneralInit(void) {
+    //wdt_enable(WDTO_2S);
+    ACSR = 1<<ACD;  // Disable analog comparator
+     bd6:	80 e8       	ldi	r24, 0x80	; 128
+     bd8:	88 b9       	out	0x08, r24	; 8
+
+    // Read self serial
+    //eeprom_read_block(ETirno.ID, 0, 3);
+    ETirno.ID[0] = 0;   // DEBUG
+     bda:	10 92 44 01 	sts	0x0144, r1
+    ETirno.ID[1] = 0;
+     bde:	10 92 45 01 	sts	0x0145, r1
+    ETirno.ID[2] = 0;
+     be2:	10 92 46 01 	sts	0x0146, r1
+     be6:	00 e0       	ldi	r16, 0x00	; 0
+
+    // Init lockets
+    for(uint8_t i=0; i<LOCKET_COUNT; i++) eeReadLocket(i);
+     be8:	80 2f       	mov	r24, r16
+     bea:	0e 94 6c 04 	call	0x8d8	; 0x8d8 <eeReadLocket>
+     bee:	0f 5f       	subi	r16, 0xFF	; 255
+     bf0:	0b 30       	cpi	r16, 0x0B	; 11
+     bf2:	d1 f7       	brne	.-12     	; 0xbe8 <main+0x22>
+
+    DelayInit();
+     bf4:	0e 94 33 06 	call	0xc66	; 0xc66 <DelayInit>
+    LCD_Init();
+     bf8:	0e 94 21 08 	call	0x1042	; 0x1042 <LCD_Init>
+    KeysInit();
+     bfc:	0e 94 3b 08 	call	0x1076	; 0x1076 <KeysInit>
+    sei();
+     c00:	78 94       	sei
+
+    // CC init
+    CC_Init();
+     c02:	0e 94 14 0f 	call	0x1e28	; 0x1e28 <CC_Init>
+    //CC_SetChannel(0);
+    CC_SetAddress(4);   //Never changes in CC itself
+     c06:	84 e0       	ldi	r24, 0x04	; 4
+     c08:	0e 94 5b 0e 	call	0x1cb6	; 0x1cb6 <CC_SetAddress>
+
+// ============================== General ======================================
+int main(void) {
+    GeneralInit();
+
+    SetState(StateList);
+     c0c:	80 e0       	ldi	r24, 0x00	; 0
+     c0e:	0e 94 b0 0a 	call	0x1560	; 0x1560 <SetState>
+
+    uint16_t FTimer;
+    DelayReset(&FTimer);
+     c12:	8e 01       	movw	r16, r28
+     c14:	0f 5f       	subi	r16, 0xFF	; 255
+     c16:	1f 4f       	sbci	r17, 0xFF	; 255
+     c18:	c8 01       	movw	r24, r16
+     c1a:	0e 94 54 06 	call	0xca8	; 0xca8 <DelayReset>
+        Keys_Task();
+        CC_Task();
+
+        // Clear dBm
+        if(EState == StateSearch) {
+            if(DelayElapsed(&FTimer, 1000)) {
+     c1e:	f0 2e       	mov	r15, r16
+     c20:	01 2f       	mov	r16, r17
+
+    uint16_t FTimer;
+    DelayReset(&FTimer);
+
+    while(1) {
+        wdt_reset();    // Reset watchdog
+     c22:	a8 95       	wdr
+        Keys_Task();
+     c24:	0e 94 4b 08 	call	0x1096	; 0x1096 <Keys_Task>
+        CC_Task();
+     c28:	0e 94 57 05 	call	0xaae	; 0xaae <CC_Task>
+
+        // Clear dBm
+        if(EState == StateSearch) {
+     c2c:	80 91 4f 01 	lds	r24, 0x014F
+     c30:	81 30       	cpi	r24, 0x01	; 1
+     c32:	b9 f7       	brne	.-18     	; 0xc22 <main+0x5c>
+            if(DelayElapsed(&FTimer, 1000)) {
+     c34:	8f 2d       	mov	r24, r15
+     c36:	90 2f       	mov	r25, r16
+     c38:	68 ee       	ldi	r22, 0xE8	; 232
+     c3a:	73 e0       	ldi	r23, 0x03	; 3
+     c3c:	0e 94 3b 06 	call	0xc76	; 0xc76 <DelayElapsed>
+     c40:	88 23       	and	r24, r24
+     c42:	79 f3       	breq	.-34     	; 0xc22 <main+0x5c>
+                if(!ETirno.PktRcvd) {
+     c44:	80 91 47 01 	lds	r24, 0x0147
+     c48:	88 23       	and	r24, r24
+     c4a:	51 f4       	brne	.+20     	; 0xc60 <main+0x9a>
+                    LCD_PrintString(5, 2, "     ", false);
+     c4c:	85 e0       	ldi	r24, 0x05	; 5
+     c4e:	62 e0       	ldi	r22, 0x02	; 2
+     c50:	40 e6       	ldi	r20, 0x60	; 96
+     c52:	50 e0       	ldi	r21, 0x00	; 0
+     c54:	20 e0       	ldi	r18, 0x00	; 0
+     c56:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+                    LCD_GaugeValue(1);
+     c5a:	81 e0       	ldi	r24, 0x01	; 1
+     c5c:	0e 94 6a 07 	call	0xed4	; 0xed4 <LCD_GaugeValue>
+                }
+                ETirno.PktRcvd = false;
+     c60:	10 92 47 01 	sts	0x0147, r1
+     c64:	de cf       	rjmp	.-68     	; 0xc22 <main+0x5c>
+
+00000c66 <DelayInit>:
+    TCCR0A = (1<<WGM01);                    // CTC mode
+    TCCR0B = (0<<CS02)|(1<<CS01)|(0<<CS00); // 1 MHz/8 = 125 kHz
+    OCR0A  = 125;                           // 125 kHz / 125 = 1000 compares per second
+    TIMSK0 |= (1<<OCIE0A);                  // Enable interrupt
+#elif defined __AVR_ATmega16A__
+    TCCR0 = (1<<WGM01)|(0<<CS02)|(1<<CS01)|(0<<CS00); // CTC mode, 1 MHz/8 = 125 kHz;
+     c66:	8a e0       	ldi	r24, 0x0A	; 10
+     c68:	83 bf       	out	0x33, r24	; 51
+    OCR0  = 125;                                      // 125 kHz / 125 = 1000 compares per second
+     c6a:	8d e7       	ldi	r24, 0x7D	; 125
+     c6c:	8c bf       	out	0x3c, r24	; 60
+    TIMSK |= (1<<OCIE0);                              // Enable interrupt 
+     c6e:	89 b7       	in	r24, 0x39	; 57
+     c70:	82 60       	ori	r24, 0x02	; 2
+     c72:	89 bf       	out	0x39, r24	; 57
+#endif
+}
+     c74:	08 95       	ret
+
+00000c76 <DelayElapsed>:
+
+bool DelayElapsed(uint16_t *AVar, const uint16_t ADelay) {
+     c76:	fc 01       	movw	r30, r24
+    bool Result = false;
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) {
+     c78:	4f b7       	in	r20, 0x3f	; 63
+    return 1;
+}
+
+static __inline__ uint8_t __iCliRetVal(void)
+{
+    cli();
+     c7a:	f8 94       	cli
+        if ((TickCounter - *AVar) >= ADelay) {
+     c7c:	80 91 4a 01 	lds	r24, 0x014A
+     c80:	90 91 4b 01 	lds	r25, 0x014B
+     c84:	20 81       	ld	r18, Z
+     c86:	31 81       	ldd	r19, Z+1	; 0x01
+     c88:	82 1b       	sub	r24, r18
+     c8a:	93 0b       	sbc	r25, r19
+     c8c:	86 17       	cp	r24, r22
+     c8e:	97 07       	cpc	r25, r23
+     c90:	10 f4       	brcc	.+4      	; 0xc96 <DelayElapsed+0x20>
+     c92:	80 e0       	ldi	r24, 0x00	; 0
+     c94:	07 c0       	rjmp	.+14     	; 0xca4 <DelayElapsed+0x2e>
+            *AVar = TickCounter;   // Reset delay
+     c96:	80 91 4a 01 	lds	r24, 0x014A
+     c9a:	90 91 4b 01 	lds	r25, 0x014B
+     c9e:	91 83       	std	Z+1, r25	; 0x01
+     ca0:	80 83       	st	Z, r24
+     ca2:	81 e0       	ldi	r24, 0x01	; 1
+    (void)__s;
+}
+
+static __inline__ void __iRestore(const  uint8_t *__s)
+{
+    SREG = *__s;
+     ca4:	4f bf       	out	0x3f, r20	; 63
+            Result = true;
+        }
+    } // Atomic
+    return Result;
+}
+     ca6:	08 95       	ret
+
+00000ca8 <DelayReset>:
+
+void DelayReset(uint16_t *AVar) {
+     ca8:	fc 01       	movw	r30, r24
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) {
+     caa:	2f b7       	in	r18, 0x3f	; 63
+    return 1;
+}
+
+static __inline__ uint8_t __iCliRetVal(void)
+{
+    cli();
+     cac:	f8 94       	cli
+        *AVar = TickCounter;
+     cae:	80 91 4a 01 	lds	r24, 0x014A
+     cb2:	90 91 4b 01 	lds	r25, 0x014B
+     cb6:	91 83       	std	Z+1, r25	; 0x01
+     cb8:	80 83       	st	Z, r24
+    (void)__s;
+}
+
+static __inline__ void __iRestore(const  uint8_t *__s)
+{
+    SREG = *__s;
+     cba:	2f bf       	out	0x3f, r18	; 63
+    }
+}
+     cbc:	08 95       	ret
+
+00000cbe <__vector_19>:
+#ifdef __AVR_ATmega88__
+ISR(TIMER0_COMPA_vect) {
+    TickCounter++;
+}
+#elif defined __AVR_ATmega16A__
+ISR(TIMER0_COMP_vect) {
+     cbe:	1f 92       	push	r1
+     cc0:	0f 92       	push	r0
+     cc2:	0f b6       	in	r0, 0x3f	; 63
+     cc4:	0f 92       	push	r0
+     cc6:	11 24       	eor	r1, r1
+     cc8:	8f 93       	push	r24
+     cca:	9f 93       	push	r25
+    TickCounter++;
+     ccc:	80 91 4a 01 	lds	r24, 0x014A
+     cd0:	90 91 4b 01 	lds	r25, 0x014B
+     cd4:	01 96       	adiw	r24, 0x01	; 1
+     cd6:	90 93 4b 01 	sts	0x014B, r25
+     cda:	80 93 4a 01 	sts	0x014A, r24
+}
+     cde:	9f 91       	pop	r25
+     ce0:	8f 91       	pop	r24
+     ce2:	0f 90       	pop	r0
+     ce4:	0f be       	out	0x3f, r0	; 63
+     ce6:	0f 90       	pop	r0
+     ce8:	1f 90       	pop	r1
+     cea:	18 95       	reti
+
+00000cec <LCD_DrawChar>:
+    LCD_GotoXY(1, GAUGE_Y+1);
+    for(uint8_t x=1; x<AValue; x++)  LCD_WriteData(0x7E);
+    for(uint8_t x=AValue; x<95; x++) LCD_WriteData(0x00);
+}
+
+void LCD_DrawChar(uint8_t AChar, bool AInvert) {
+     cec:	96 e0       	ldi	r25, 0x06	; 6
+     cee:	89 9f       	mul	r24, r25
+     cf0:	f0 01       	movw	r30, r0
+     cf2:	11 24       	eor	r1, r1
+     cf4:	ec 5a       	subi	r30, 0xAC	; 172
+     cf6:	ff 4f       	sbci	r31, 0xFF	; 255
+     cf8:	20 e0       	ldi	r18, 0x00	; 0
+    uint8_t b;
+    for(uint8_t i=0; i<6; i++) {
+        b = pgm_read_byte(&Font_6x8_Data[AChar][i]);
+     cfa:	84 91       	lpm	r24, Z+
+        if(AInvert) b = ~b;
+     cfc:	66 23       	and	r22, r22
+     cfe:	11 f4       	brne	.+4      	; 0xd04 <LCD_DrawChar+0x18>
+     d00:	98 2f       	mov	r25, r24
+     d02:	02 c0       	rjmp	.+4      	; 0xd08 <LCD_DrawChar+0x1c>
+     d04:	98 2f       	mov	r25, r24
+     d06:	90 95       	com	r25
+    LCD_WriteCmd(0x00|(x&0x0F));         // X axis initialisation: 0000 xxxx ( x3 x2 x1 x0)
+    LCD_WriteCmd(0x10|((x>>4)&0x07));    // X axis initialisation: 0010 0xxx  ( x6 x5 x4)
+}
+
+FORCE_INLINE void LCD_WriteData(uint8_t AByte) {
+    LCD_SCLK_LO();
+     d08:	92 98       	cbi	0x12, 2	; 18
+    LCD_XCS_LO();   // Select chip
+     d0a:	95 98       	cbi	0x12, 5	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+     d0c:	93 9a       	sbi	0x12, 3	; 18
+    LCD_SCLK_HI();
+     d0e:	92 9a       	sbi	0x12, 2	; 18
+    LCD_SCLK_LO();
+     d10:	92 98       	cbi	0x12, 2	; 18
+     d12:	80 e0       	ldi	r24, 0x00	; 0
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+        if(AByte & 0x80) LCD_SDA_HI();
+     d14:	97 ff       	sbrs	r25, 7
+     d16:	02 c0       	rjmp	.+4      	; 0xd1c <LCD_DrawChar+0x30>
+     d18:	93 9a       	sbi	0x12, 3	; 18
+     d1a:	01 c0       	rjmp	.+2      	; 0xd1e <LCD_DrawChar+0x32>
+        else LCD_SDA_LO();
+     d1c:	93 98       	cbi	0x12, 3	; 18
+        LCD_SCLK_HI();
+     d1e:	92 9a       	sbi	0x12, 2	; 18
+        LCD_SCLK_LO();
+     d20:	92 98       	cbi	0x12, 2	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+    LCD_SCLK_HI();
+    LCD_SCLK_LO();
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+     d22:	8f 5f       	subi	r24, 0xFF	; 255
+     d24:	88 30       	cpi	r24, 0x08	; 8
+     d26:	11 f0       	breq	.+4      	; 0xd2c <LCD_DrawChar+0x40>
+        if(AByte & 0x80) LCD_SDA_HI();
+        else LCD_SDA_LO();
+        LCD_SCLK_HI();
+        LCD_SCLK_LO();
+        AByte <<= 1;
+     d28:	99 0f       	add	r25, r25
+     d2a:	f4 cf       	rjmp	.-24     	; 0xd14 <LCD_DrawChar+0x28>
+    }
+    LCD_XCS_HI();
+     d2c:	95 9a       	sbi	0x12, 5	; 18
+    for(uint8_t x=AValue; x<95; x++) LCD_WriteData(0x00);
+}
+
+void LCD_DrawChar(uint8_t AChar, bool AInvert) {
+    uint8_t b;
+    for(uint8_t i=0; i<6; i++) {
+     d2e:	2f 5f       	subi	r18, 0xFF	; 255
+     d30:	31 96       	adiw	r30, 0x01	; 1
+     d32:	26 30       	cpi	r18, 0x06	; 6
+     d34:	11 f7       	brne	.-60     	; 0xcfa <LCD_DrawChar+0xe>
+        b = pgm_read_byte(&Font_6x8_Data[AChar][i]);
+        if(AInvert) b = ~b;
+        LCD_WriteData(b);
+    }
+ }
+     d36:	08 95       	ret
+
+00000d38 <LCD_WriteData>:
+    LCD_WriteCmd(0x00|(x&0x0F));         // X axis initialisation: 0000 xxxx ( x3 x2 x1 x0)
+    LCD_WriteCmd(0x10|((x>>4)&0x07));    // X axis initialisation: 0010 0xxx  ( x6 x5 x4)
+}
+
+FORCE_INLINE void LCD_WriteData(uint8_t AByte) {
+    LCD_SCLK_LO();
+     d38:	92 98       	cbi	0x12, 2	; 18
+    LCD_XCS_LO();   // Select chip
+     d3a:	95 98       	cbi	0x12, 5	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+     d3c:	93 9a       	sbi	0x12, 3	; 18
+    LCD_SCLK_HI();
+     d3e:	92 9a       	sbi	0x12, 2	; 18
+    LCD_SCLK_LO();
+     d40:	92 98       	cbi	0x12, 2	; 18
+     d42:	90 e0       	ldi	r25, 0x00	; 0
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+        if(AByte & 0x80) LCD_SDA_HI();
+     d44:	87 ff       	sbrs	r24, 7
+     d46:	02 c0       	rjmp	.+4      	; 0xd4c <LCD_WriteData+0x14>
+     d48:	93 9a       	sbi	0x12, 3	; 18
+     d4a:	01 c0       	rjmp	.+2      	; 0xd4e <LCD_WriteData+0x16>
+        else LCD_SDA_LO();
+     d4c:	93 98       	cbi	0x12, 3	; 18
+        LCD_SCLK_HI();
+     d4e:	92 9a       	sbi	0x12, 2	; 18
+        LCD_SCLK_LO();
+     d50:	92 98       	cbi	0x12, 2	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+    LCD_SCLK_HI();
+    LCD_SCLK_LO();
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+     d52:	9f 5f       	subi	r25, 0xFF	; 255
+     d54:	98 30       	cpi	r25, 0x08	; 8
+     d56:	11 f0       	breq	.+4      	; 0xd5c <LCD_WriteData+0x24>
+        if(AByte & 0x80) LCD_SDA_HI();
+        else LCD_SDA_LO();
+        LCD_SCLK_HI();
+        LCD_SCLK_LO();
+        AByte <<= 1;
+     d58:	88 0f       	add	r24, r24
+     d5a:	f4 cf       	rjmp	.-24     	; 0xd44 <LCD_WriteData+0xc>
+    }
+    LCD_XCS_HI();
+     d5c:	95 9a       	sbi	0x12, 5	; 18
+}
+     d5e:	08 95       	ret
+
+00000d60 <LCD_WriteCmd>:
+void LCD_WriteCmd(uint8_t AByte) {
+    LCD_SCLK_LO();
+     d60:	92 98       	cbi	0x12, 2	; 18
+    LCD_XCS_LO();   // Select chip
+     d62:	95 98       	cbi	0x12, 5	; 18
+    // Send "Cmd" bit
+    LCD_SDA_LO();
+     d64:	93 98       	cbi	0x12, 3	; 18
+    LCD_SCLK_HI();
+     d66:	92 9a       	sbi	0x12, 2	; 18
+    LCD_SCLK_LO();
+     d68:	92 98       	cbi	0x12, 2	; 18
+     d6a:	90 e0       	ldi	r25, 0x00	; 0
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+        if(AByte & 0x80) LCD_SDA_HI();
+     d6c:	87 ff       	sbrs	r24, 7
+     d6e:	02 c0       	rjmp	.+4      	; 0xd74 <LCD_WriteCmd+0x14>
+     d70:	93 9a       	sbi	0x12, 3	; 18
+     d72:	01 c0       	rjmp	.+2      	; 0xd76 <LCD_WriteCmd+0x16>
+        else LCD_SDA_LO();
+     d74:	93 98       	cbi	0x12, 3	; 18
+        LCD_SCLK_HI();
+     d76:	92 9a       	sbi	0x12, 2	; 18
+        LCD_SCLK_LO();
+     d78:	92 98       	cbi	0x12, 2	; 18
+    // Send "Cmd" bit
+    LCD_SDA_LO();
+    LCD_SCLK_HI();
+    LCD_SCLK_LO();
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+     d7a:	9f 5f       	subi	r25, 0xFF	; 255
+     d7c:	98 30       	cpi	r25, 0x08	; 8
+     d7e:	11 f0       	breq	.+4      	; 0xd84 <LCD_WriteCmd+0x24>
+        if(AByte & 0x80) LCD_SDA_HI();
+        else LCD_SDA_LO();
+        LCD_SCLK_HI();
+        LCD_SCLK_LO();
+        AByte <<= 1;
+     d80:	88 0f       	add	r24, r24
+     d82:	f4 cf       	rjmp	.-24     	; 0xd6c <LCD_WriteCmd+0xc>
+    }
+    LCD_XCS_HI();
+     d84:	95 9a       	sbi	0x12, 5	; 18
+     d86:	08 95       	ret
+
+00000d88 <LCD_GotoXYstr>:
+void LCD_GotoXY(uint8_t x, uint8_t y) {
+    LCD_WriteCmd(0xB0|(y&0x0F));         // Y axis initialisation: 0100 yyyy
+    LCD_WriteCmd(0x00|(x&0x0F));         // X axis initialisation: 0000 xxxx ( x3 x2 x1 x0)
+    LCD_WriteCmd(0x10|((x>>4)&0x07));    // X axis initialisation: 0010 0xxx  ( x6 x5 x4)
+}
+void LCD_GotoXYstr(uint8_t x, uint8_t y) {
+     d88:	1f 93       	push	r17
+     d8a:	98 2f       	mov	r25, r24
+     d8c:	86 2f       	mov	r24, r22
+    x = (x<<2)+(x<<1);                   // x=x*6
+     d8e:	19 2f       	mov	r17, r25
+     d90:	11 0f       	add	r17, r17
+     d92:	99 0f       	add	r25, r25
+     d94:	99 0f       	add	r25, r25
+     d96:	19 0f       	add	r17, r25
+    LCD_WriteCmd(0xB0|(y&0x0F));         // Y axis initialisation: 0100 yyyy
+     d98:	8f 70       	andi	r24, 0x0F	; 15
+     d9a:	80 6b       	ori	r24, 0xB0	; 176
+     d9c:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    LCD_WriteCmd(0x00|(x&0x0F));         // X axis initialisation: 0000 xxxx ( x3 x2 x1 x0)
+     da0:	81 2f       	mov	r24, r17
+     da2:	8e 70       	andi	r24, 0x0E	; 14
+     da4:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    LCD_WriteCmd(0x10|((x>>4)&0x07));    // X axis initialisation: 0010 0xxx  ( x6 x5 x4)
+     da8:	12 95       	swap	r17
+     daa:	17 70       	andi	r17, 0x07	; 7
+     dac:	81 2f       	mov	r24, r17
+     dae:	80 61       	ori	r24, 0x10	; 16
+     db0:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+}
+     db4:	1f 91       	pop	r17
+     db6:	08 95       	ret
+
+00000db8 <LCD_PrintUint>:
+        } // fx
+    } // fy
+
+}
+
+void LCD_PrintUint(const uint8_t x, const uint8_t y, uint16_t ANumber) {
+     db8:	0f 93       	push	r16
+     dba:	1f 93       	push	r17
+     dbc:	cf 93       	push	r28
+     dbe:	df 93       	push	r29
+     dc0:	8a 01       	movw	r16, r20
+    uint8_t digit = '0';
+    bool ShouldPrint = false;
+    const uint16_t FArr[9] = {10000, 1000, 100, 10};
+    LCD_GotoXYstr(x, y);
+     dc2:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+     dc6:	c6 e6       	ldi	r28, 0x66	; 102
+     dc8:	d0 e0       	ldi	r29, 0x00	; 0
+     dca:	90 e0       	ldi	r25, 0x00	; 0
+     dcc:	13 c0       	rjmp	.+38     	; 0xdf4 <LCD_PrintUint+0x3c>
+    // Iterate until ANumber > 10
+    for(uint8_t i=0; i<4; i++) {
+        while (ANumber >= FArr[i]) {
+            digit++;
+     dce:	8f 5f       	subi	r24, 0xFF	; 255
+     dd0:	04 0f       	add	r16, r20
+     dd2:	15 1f       	adc	r17, r21
+    bool ShouldPrint = false;
+    const uint16_t FArr[9] = {10000, 1000, 100, 10};
+    LCD_GotoXYstr(x, y);
+    // Iterate until ANumber > 10
+    for(uint8_t i=0; i<4; i++) {
+        while (ANumber >= FArr[i]) {
+     dd4:	02 17       	cp	r16, r18
+     dd6:	13 07       	cpc	r17, r19
+     dd8:	d0 f7       	brcc	.-12     	; 0xdce <LCD_PrintUint+0x16>
+            digit++;
+            ANumber -= FArr[i];
+        }
+        if((digit != '0') || ShouldPrint) {
+     dda:	80 33       	cpi	r24, 0x30	; 48
+     ddc:	11 f4       	brne	.+4      	; 0xde2 <LCD_PrintUint+0x2a>
+     dde:	99 23       	and	r25, r25
+     de0:	21 f0       	breq	.+8      	; 0xdea <LCD_PrintUint+0x32>
+                LCD_DrawChar(digit, false);
+     de2:	60 e0       	ldi	r22, 0x00	; 0
+     de4:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+     de8:	91 e0       	ldi	r25, 0x01	; 1
+     dea:	22 96       	adiw	r28, 0x02	; 2
+    uint8_t digit = '0';
+    bool ShouldPrint = false;
+    const uint16_t FArr[9] = {10000, 1000, 100, 10};
+    LCD_GotoXYstr(x, y);
+    // Iterate until ANumber > 10
+    for(uint8_t i=0; i<4; i++) {
+     dec:	80 e0       	ldi	r24, 0x00	; 0
+     dee:	ce 36       	cpi	r28, 0x6E	; 110
+     df0:	d8 07       	cpc	r29, r24
+     df2:	41 f0       	breq	.+16     	; 0xe04 <LCD_PrintUint+0x4c>
+        while (ANumber >= FArr[i]) {
+     df4:	28 81       	ld	r18, Y
+     df6:	39 81       	ldd	r19, Y+1	; 0x01
+     df8:	80 e3       	ldi	r24, 0x30	; 48
+            digit++;
+     dfa:	44 27       	eor	r20, r20
+     dfc:	55 27       	eor	r21, r21
+     dfe:	42 1b       	sub	r20, r18
+     e00:	53 0b       	sbc	r21, r19
+     e02:	e8 cf       	rjmp	.-48     	; 0xdd4 <LCD_PrintUint+0x1c>
+                ShouldPrint = true;
+        }
+        digit = '0';
+    }
+    // Print last digit
+    LCD_DrawChar('0'+ANumber, false);
+     e04:	80 2f       	mov	r24, r16
+     e06:	80 5d       	subi	r24, 0xD0	; 208
+     e08:	60 e0       	ldi	r22, 0x00	; 0
+     e0a:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+}
+     e0e:	df 91       	pop	r29
+     e10:	cf 91       	pop	r28
+     e12:	1f 91       	pop	r17
+     e14:	0f 91       	pop	r16
+     e16:	08 95       	ret
+
+00000e18 <LCD_PrintInt>:
+void LCD_PrintInt(const uint8_t x, const uint8_t y, int16_t ANumber) {
+     e18:	ef 92       	push	r14
+     e1a:	ff 92       	push	r15
+     e1c:	0f 93       	push	r16
+     e1e:	1f 93       	push	r17
+     e20:	cf 93       	push	r28
+     e22:	df 93       	push	r29
+     e24:	f8 2e       	mov	r15, r24
+     e26:	e6 2e       	mov	r14, r22
+     e28:	8a 01       	movw	r16, r20
+    LCD_GotoXYstr(x, y);
+     e2a:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+     e2e:	cc 27       	eor	r28, r28
+     e30:	dd 27       	eor	r29, r29
+     e32:	c0 1b       	sub	r28, r16
+     e34:	d1 0b       	sbc	r29, r17
+    if(ANumber < 0) {
+     e36:	17 ff       	sbrs	r17, 7
+     e38:	07 c0       	rjmp	.+14     	; 0xe48 <LCD_PrintInt+0x30>
+        LCD_DrawChar('-', false);
+     e3a:	8d e2       	ldi	r24, 0x2D	; 45
+     e3c:	60 e0       	ldi	r22, 0x00	; 0
+     e3e:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+        LCD_PrintUint(x+1, y, -ANumber);
+     e42:	8f 2d       	mov	r24, r15
+     e44:	8f 5f       	subi	r24, 0xFF	; 255
+     e46:	01 c0       	rjmp	.+2      	; 0xe4a <LCD_PrintInt+0x32>
+    }
+    else LCD_PrintUint(x, y, -ANumber);
+     e48:	8f 2d       	mov	r24, r15
+     e4a:	6e 2d       	mov	r22, r14
+     e4c:	ae 01       	movw	r20, r28
+     e4e:	0e 94 dc 06 	call	0xdb8	; 0xdb8 <LCD_PrintUint>
+}
+     e52:	df 91       	pop	r29
+     e54:	cf 91       	pop	r28
+     e56:	1f 91       	pop	r17
+     e58:	0f 91       	pop	r16
+     e5a:	ff 90       	pop	r15
+     e5c:	ef 90       	pop	r14
+     e5e:	08 95       	ret
+
+00000e60 <LCD_PrintString>:
+    LCD_GotoXYstr(x, y);
+    uint8_t FChar;
+    while ((FChar = pgm_read_byte(S++)) != '\0')
+        LCD_DrawChar(FChar, AInvert);
+}
+void LCD_PrintString (const uint8_t x, const uint8_t y, const char *S, bool AInvert) {
+     e60:	1f 93       	push	r17
+     e62:	cf 93       	push	r28
+     e64:	df 93       	push	r29
+     e66:	ea 01       	movw	r28, r20
+     e68:	12 2f       	mov	r17, r18
+    LCD_GotoXYstr(x, y);
+     e6a:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+     e6e:	04 c0       	rjmp	.+8      	; 0xe78 <LCD_PrintString+0x18>
+    while (*S != '\0')
+        LCD_DrawChar(*S++, AInvert);
+     e70:	21 96       	adiw	r28, 0x01	; 1
+     e72:	61 2f       	mov	r22, r17
+     e74:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+    while ((FChar = pgm_read_byte(S++)) != '\0')
+        LCD_DrawChar(FChar, AInvert);
+}
+void LCD_PrintString (const uint8_t x, const uint8_t y, const char *S, bool AInvert) {
+    LCD_GotoXYstr(x, y);
+    while (*S != '\0')
+     e78:	88 81       	ld	r24, Y
+     e7a:	88 23       	and	r24, r24
+     e7c:	c9 f7       	brne	.-14     	; 0xe70 <LCD_PrintString+0x10>
+        LCD_DrawChar(*S++, AInvert);
+}
+     e7e:	df 91       	pop	r29
+     e80:	cf 91       	pop	r28
+     e82:	1f 91       	pop	r17
+     e84:	08 95       	ret
+
+00000e86 <LCD_PrintString_P>:
+    LCD_WriteCmd(0x00);
+    for(uint16_t i=0;i<864;i++) LCD_WriteData(0x00);
+}
+
+
+void LCD_PrintString_P (const uint8_t x, const uint8_t y, const char *S, bool AInvert) {
+     e86:	1f 93       	push	r17
+     e88:	cf 93       	push	r28
+     e8a:	df 93       	push	r29
+     e8c:	ea 01       	movw	r28, r20
+     e8e:	12 2f       	mov	r17, r18
+    LCD_GotoXYstr(x, y);
+     e90:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+     e94:	03 c0       	rjmp	.+6      	; 0xe9c <LCD_PrintString_P+0x16>
+    uint8_t FChar;
+    while ((FChar = pgm_read_byte(S++)) != '\0')
+        LCD_DrawChar(FChar, AInvert);
+     e96:	61 2f       	mov	r22, r17
+     e98:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+     e9c:	fe 01       	movw	r30, r28
+
+
+void LCD_PrintString_P (const uint8_t x, const uint8_t y, const char *S, bool AInvert) {
+    LCD_GotoXYstr(x, y);
+    uint8_t FChar;
+    while ((FChar = pgm_read_byte(S++)) != '\0')
+     e9e:	21 96       	adiw	r28, 0x01	; 1
+     ea0:	84 91       	lpm	r24, Z+
+     ea2:	88 23       	and	r24, r24
+     ea4:	c1 f7       	brne	.-16     	; 0xe96 <LCD_PrintString_P+0x10>
+        LCD_DrawChar(FChar, AInvert);
+}
+     ea6:	df 91       	pop	r29
+     ea8:	cf 91       	pop	r28
+     eaa:	1f 91       	pop	r17
+     eac:	08 95       	ret
+
+00000eae <LCD_GotoXY>:
+        LCD_WriteData(b);
+    }
+ }
+
+// ============================ Inner use ======================================
+void LCD_GotoXY(uint8_t x, uint8_t y) {
+     eae:	1f 93       	push	r17
+     eb0:	18 2f       	mov	r17, r24
+     eb2:	86 2f       	mov	r24, r22
+    LCD_WriteCmd(0xB0|(y&0x0F));         // Y axis initialisation: 0100 yyyy
+     eb4:	8f 70       	andi	r24, 0x0F	; 15
+     eb6:	80 6b       	ori	r24, 0xB0	; 176
+     eb8:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    LCD_WriteCmd(0x00|(x&0x0F));         // X axis initialisation: 0000 xxxx ( x3 x2 x1 x0)
+     ebc:	81 2f       	mov	r24, r17
+     ebe:	8f 70       	andi	r24, 0x0F	; 15
+     ec0:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    LCD_WriteCmd(0x10|((x>>4)&0x07));    // X axis initialisation: 0010 0xxx  ( x6 x5 x4)
+     ec4:	12 95       	swap	r17
+     ec6:	17 70       	andi	r17, 0x07	; 7
+     ec8:	81 2f       	mov	r24, r17
+     eca:	80 61       	ori	r24, 0x10	; 16
+     ecc:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+}
+     ed0:	1f 91       	pop	r17
+     ed2:	08 95       	ret
+
+00000ed4 <LCD_GaugeValue>:
+// ============================= Special =======================================
+// Special
+FORCE_INLINE void LCD_DrawGauge(void) {
+    LCD_DrawImage(0, GAUGE_Y, LCD_ImgGauge, false);
+}
+void LCD_GaugeValue(const uint8_t AValue) {
+     ed4:	1f 93       	push	r17
+     ed6:	18 2f       	mov	r17, r24
+    LCD_GotoXY(1, GAUGE_Y+1);
+     ed8:	81 e0       	ldi	r24, 0x01	; 1
+     eda:	65 e0       	ldi	r22, 0x05	; 5
+     edc:	0e 94 57 07 	call	0xeae	; 0xeae <LCD_GotoXY>
+     ee0:	21 e0       	ldi	r18, 0x01	; 1
+     ee2:	15 c0       	rjmp	.+42     	; 0xf0e <LCD_GaugeValue+0x3a>
+    LCD_WriteCmd(0x00|(x&0x0F));         // X axis initialisation: 0000 xxxx ( x3 x2 x1 x0)
+    LCD_WriteCmd(0x10|((x>>4)&0x07));    // X axis initialisation: 0010 0xxx  ( x6 x5 x4)
+}
+
+FORCE_INLINE void LCD_WriteData(uint8_t AByte) {
+    LCD_SCLK_LO();
+     ee4:	92 98       	cbi	0x12, 2	; 18
+    LCD_XCS_LO();   // Select chip
+     ee6:	95 98       	cbi	0x12, 5	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+     ee8:	93 9a       	sbi	0x12, 3	; 18
+    LCD_SCLK_HI();
+     eea:	92 9a       	sbi	0x12, 2	; 18
+    LCD_SCLK_LO();
+     eec:	92 98       	cbi	0x12, 2	; 18
+     eee:	9e e7       	ldi	r25, 0x7E	; 126
+     ef0:	80 e0       	ldi	r24, 0x00	; 0
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+        if(AByte & 0x80) LCD_SDA_HI();
+     ef2:	97 ff       	sbrs	r25, 7
+     ef4:	02 c0       	rjmp	.+4      	; 0xefa <LCD_GaugeValue+0x26>
+     ef6:	93 9a       	sbi	0x12, 3	; 18
+     ef8:	01 c0       	rjmp	.+2      	; 0xefc <LCD_GaugeValue+0x28>
+        else LCD_SDA_LO();
+     efa:	93 98       	cbi	0x12, 3	; 18
+        LCD_SCLK_HI();
+     efc:	92 9a       	sbi	0x12, 2	; 18
+        LCD_SCLK_LO();
+     efe:	92 98       	cbi	0x12, 2	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+    LCD_SCLK_HI();
+    LCD_SCLK_LO();
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+     f00:	8f 5f       	subi	r24, 0xFF	; 255
+     f02:	88 30       	cpi	r24, 0x08	; 8
+     f04:	11 f0       	breq	.+4      	; 0xf0a <LCD_GaugeValue+0x36>
+        if(AByte & 0x80) LCD_SDA_HI();
+        else LCD_SDA_LO();
+        LCD_SCLK_HI();
+        LCD_SCLK_LO();
+        AByte <<= 1;
+     f06:	99 0f       	add	r25, r25
+     f08:	f4 cf       	rjmp	.-24     	; 0xef2 <LCD_GaugeValue+0x1e>
+    }
+    LCD_XCS_HI();
+     f0a:	95 9a       	sbi	0x12, 5	; 18
+FORCE_INLINE void LCD_DrawGauge(void) {
+    LCD_DrawImage(0, GAUGE_Y, LCD_ImgGauge, false);
+}
+void LCD_GaugeValue(const uint8_t AValue) {
+    LCD_GotoXY(1, GAUGE_Y+1);
+    for(uint8_t x=1; x<AValue; x++)  LCD_WriteData(0x7E);
+     f0c:	2f 5f       	subi	r18, 0xFF	; 255
+     f0e:	21 17       	cp	r18, r17
+     f10:	48 f3       	brcs	.-46     	; 0xee4 <LCD_GaugeValue+0x10>
+     f12:	81 2f       	mov	r24, r17
+     f14:	0e c0       	rjmp	.+28     	; 0xf32 <LCD_GaugeValue+0x5e>
+    LCD_WriteCmd(0x00|(x&0x0F));         // X axis initialisation: 0000 xxxx ( x3 x2 x1 x0)
+    LCD_WriteCmd(0x10|((x>>4)&0x07));    // X axis initialisation: 0010 0xxx  ( x6 x5 x4)
+}
+
+FORCE_INLINE void LCD_WriteData(uint8_t AByte) {
+    LCD_SCLK_LO();
+     f16:	92 98       	cbi	0x12, 2	; 18
+    LCD_XCS_LO();   // Select chip
+     f18:	95 98       	cbi	0x12, 5	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+     f1a:	93 9a       	sbi	0x12, 3	; 18
+    LCD_SCLK_HI();
+     f1c:	92 9a       	sbi	0x12, 2	; 18
+    LCD_SCLK_LO();
+     f1e:	92 98       	cbi	0x12, 2	; 18
+     f20:	90 e0       	ldi	r25, 0x00	; 0
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+        if(AByte & 0x80) LCD_SDA_HI();
+        else LCD_SDA_LO();
+     f22:	93 98       	cbi	0x12, 3	; 18
+        LCD_SCLK_HI();
+     f24:	92 9a       	sbi	0x12, 2	; 18
+        LCD_SCLK_LO();
+     f26:	92 98       	cbi	0x12, 2	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+    LCD_SCLK_HI();
+    LCD_SCLK_LO();
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+     f28:	9f 5f       	subi	r25, 0xFF	; 255
+     f2a:	98 30       	cpi	r25, 0x08	; 8
+     f2c:	d1 f7       	brne	.-12     	; 0xf22 <LCD_GaugeValue+0x4e>
+        else LCD_SDA_LO();
+        LCD_SCLK_HI();
+        LCD_SCLK_LO();
+        AByte <<= 1;
+    }
+    LCD_XCS_HI();
+     f2e:	95 9a       	sbi	0x12, 5	; 18
+    LCD_DrawImage(0, GAUGE_Y, LCD_ImgGauge, false);
+}
+void LCD_GaugeValue(const uint8_t AValue) {
+    LCD_GotoXY(1, GAUGE_Y+1);
+    for(uint8_t x=1; x<AValue; x++)  LCD_WriteData(0x7E);
+    for(uint8_t x=AValue; x<95; x++) LCD_WriteData(0x00);
+     f30:	8f 5f       	subi	r24, 0xFF	; 255
+     f32:	8f 35       	cpi	r24, 0x5F	; 95
+     f34:	80 f3       	brcs	.-32     	; 0xf16 <LCD_GaugeValue+0x42>
+}
+     f36:	1f 91       	pop	r17
+     f38:	08 95       	ret
+
+00000f3a <LCD_DrawImage>:
+    LCD_GotoXYstr(x, y);
+    while (*S != '\0')
+        LCD_DrawChar(*S++, AInvert);
+}
+
+void LCD_DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInvert) {
+     f3a:	bf 92       	push	r11
+     f3c:	cf 92       	push	r12
+     f3e:	df 92       	push	r13
+     f40:	ef 92       	push	r14
+     f42:	ff 92       	push	r15
+     f44:	0f 93       	push	r16
+     f46:	1f 93       	push	r17
+     f48:	cf 93       	push	r28
+     f4a:	df 93       	push	r29
+     f4c:	c8 2e       	mov	r12, r24
+     f4e:	b2 2e       	mov	r11, r18
+    uint8_t Width = pgm_read_byte(I++), Height = pgm_read_byte(I++);
+     f50:	9a 01       	movw	r18, r20
+     f52:	2f 5f       	subi	r18, 0xFF	; 255
+     f54:	3f 4f       	sbci	r19, 0xFF	; 255
+     f56:	fa 01       	movw	r30, r20
+     f58:	44 91       	lpm	r20, Z+
+     f5a:	79 01       	movw	r14, r18
+     f5c:	08 94       	sec
+     f5e:	e1 1c       	adc	r14, r1
+     f60:	f1 1c       	adc	r15, r1
+     f62:	f9 01       	movw	r30, r18
+     f64:	24 91       	lpm	r18, Z+
+     f66:	d6 2e       	mov	r13, r22
+    uint8_t b;
+    for(uint8_t fy=y; fy<y+Height; fy++) {
+     f68:	06 2f       	mov	r16, r22
+     f6a:	10 e0       	ldi	r17, 0x00	; 0
+     f6c:	02 0f       	add	r16, r18
+     f6e:	11 1d       	adc	r17, r1
+        LCD_GotoXY(x, fy);
+        for(uint8_t fx=x; fx<x+Width; fx++) {
+     f70:	c8 2f       	mov	r28, r24
+     f72:	d0 e0       	ldi	r29, 0x00	; 0
+     f74:	c4 0f       	add	r28, r20
+     f76:	d1 1d       	adc	r29, r1
+     f78:	2b c0       	rjmp	.+86     	; 0xfd0 <LCD_DrawImage+0x96>
+
+void LCD_DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInvert) {
+    uint8_t Width = pgm_read_byte(I++), Height = pgm_read_byte(I++);
+    uint8_t b;
+    for(uint8_t fy=y; fy<y+Height; fy++) {
+        LCD_GotoXY(x, fy);
+     f7a:	8c 2d       	mov	r24, r12
+     f7c:	6d 2d       	mov	r22, r13
+     f7e:	0e 94 57 07 	call	0xeae	; 0xeae <LCD_GotoXY>
+     f82:	2c 2d       	mov	r18, r12
+     f84:	1f c0       	rjmp	.+62     	; 0xfc4 <LCD_DrawImage+0x8a>
+        for(uint8_t fx=x; fx<x+Width; fx++) {
+            b = pgm_read_byte(I++);
+     f86:	f7 01       	movw	r30, r14
+     f88:	84 91       	lpm	r24, Z+
+            if(AInvert) b = ~b;
+     f8a:	bb 20       	and	r11, r11
+     f8c:	11 f4       	brne	.+4      	; 0xf92 <LCD_DrawImage+0x58>
+     f8e:	98 2f       	mov	r25, r24
+     f90:	02 c0       	rjmp	.+4      	; 0xf96 <LCD_DrawImage+0x5c>
+     f92:	98 2f       	mov	r25, r24
+     f94:	90 95       	com	r25
+    LCD_WriteCmd(0x00|(x&0x0F));         // X axis initialisation: 0000 xxxx ( x3 x2 x1 x0)
+    LCD_WriteCmd(0x10|((x>>4)&0x07));    // X axis initialisation: 0010 0xxx  ( x6 x5 x4)
+}
+
+FORCE_INLINE void LCD_WriteData(uint8_t AByte) {
+    LCD_SCLK_LO();
+     f96:	92 98       	cbi	0x12, 2	; 18
+    LCD_XCS_LO();   // Select chip
+     f98:	95 98       	cbi	0x12, 5	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+     f9a:	93 9a       	sbi	0x12, 3	; 18
+    LCD_SCLK_HI();
+     f9c:	92 9a       	sbi	0x12, 2	; 18
+    LCD_SCLK_LO();
+     f9e:	92 98       	cbi	0x12, 2	; 18
+     fa0:	80 e0       	ldi	r24, 0x00	; 0
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+        if(AByte & 0x80) LCD_SDA_HI();
+     fa2:	97 ff       	sbrs	r25, 7
+     fa4:	02 c0       	rjmp	.+4      	; 0xfaa <LCD_DrawImage+0x70>
+     fa6:	93 9a       	sbi	0x12, 3	; 18
+     fa8:	01 c0       	rjmp	.+2      	; 0xfac <LCD_DrawImage+0x72>
+        else LCD_SDA_LO();
+     faa:	93 98       	cbi	0x12, 3	; 18
+        LCD_SCLK_HI();
+     fac:	92 9a       	sbi	0x12, 2	; 18
+        LCD_SCLK_LO();
+     fae:	92 98       	cbi	0x12, 2	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+    LCD_SCLK_HI();
+    LCD_SCLK_LO();
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+     fb0:	8f 5f       	subi	r24, 0xFF	; 255
+     fb2:	88 30       	cpi	r24, 0x08	; 8
+     fb4:	11 f0       	breq	.+4      	; 0xfba <LCD_DrawImage+0x80>
+        if(AByte & 0x80) LCD_SDA_HI();
+        else LCD_SDA_LO();
+        LCD_SCLK_HI();
+        LCD_SCLK_LO();
+        AByte <<= 1;
+     fb6:	99 0f       	add	r25, r25
+     fb8:	f4 cf       	rjmp	.-24     	; 0xfa2 <LCD_DrawImage+0x68>
+    uint8_t Width = pgm_read_byte(I++), Height = pgm_read_byte(I++);
+    uint8_t b;
+    for(uint8_t fy=y; fy<y+Height; fy++) {
+        LCD_GotoXY(x, fy);
+        for(uint8_t fx=x; fx<x+Width; fx++) {
+            b = pgm_read_byte(I++);
+     fba:	08 94       	sec
+     fbc:	e1 1c       	adc	r14, r1
+     fbe:	f1 1c       	adc	r15, r1
+        else LCD_SDA_LO();
+        LCD_SCLK_HI();
+        LCD_SCLK_LO();
+        AByte <<= 1;
+    }
+    LCD_XCS_HI();
+     fc0:	95 9a       	sbi	0x12, 5	; 18
+void LCD_DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInvert) {
+    uint8_t Width = pgm_read_byte(I++), Height = pgm_read_byte(I++);
+    uint8_t b;
+    for(uint8_t fy=y; fy<y+Height; fy++) {
+        LCD_GotoXY(x, fy);
+        for(uint8_t fx=x; fx<x+Width; fx++) {
+     fc2:	2f 5f       	subi	r18, 0xFF	; 255
+     fc4:	82 2f       	mov	r24, r18
+     fc6:	90 e0       	ldi	r25, 0x00	; 0
+     fc8:	8c 17       	cp	r24, r28
+     fca:	9d 07       	cpc	r25, r29
+     fcc:	e4 f2       	brlt	.-72     	; 0xf86 <LCD_DrawImage+0x4c>
+}
+
+void LCD_DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInvert) {
+    uint8_t Width = pgm_read_byte(I++), Height = pgm_read_byte(I++);
+    uint8_t b;
+    for(uint8_t fy=y; fy<y+Height; fy++) {
+     fce:	d3 94       	inc	r13
+     fd0:	8d 2d       	mov	r24, r13
+     fd2:	90 e0       	ldi	r25, 0x00	; 0
+     fd4:	80 17       	cp	r24, r16
+     fd6:	91 07       	cpc	r25, r17
+     fd8:	84 f2       	brlt	.-96     	; 0xf7a <LCD_DrawImage+0x40>
+            if(AInvert) b = ~b;
+            LCD_WriteData(b);
+        } // fx
+    } // fy
+
+}
+     fda:	df 91       	pop	r29
+     fdc:	cf 91       	pop	r28
+     fde:	1f 91       	pop	r17
+     fe0:	0f 91       	pop	r16
+     fe2:	ff 90       	pop	r15
+     fe4:	ef 90       	pop	r14
+     fe6:	df 90       	pop	r13
+     fe8:	cf 90       	pop	r12
+     fea:	bf 90       	pop	r11
+     fec:	08 95       	ret
+
+00000fee <LCD_DrawGauge>:
+}
+
+// ============================= Special =======================================
+// Special
+FORCE_INLINE void LCD_DrawGauge(void) {
+    LCD_DrawImage(0, GAUGE_Y, LCD_ImgGauge, false);
+     fee:	80 e0       	ldi	r24, 0x00	; 0
+     ff0:	64 e0       	ldi	r22, 0x04	; 4
+     ff2:	44 e5       	ldi	r20, 0x54	; 84
+     ff4:	56 e0       	ldi	r21, 0x06	; 6
+     ff6:	20 e0       	ldi	r18, 0x00	; 0
+     ff8:	0e 94 9d 07 	call	0xf3a	; 0xf3a <LCD_DrawImage>
+}
+     ffc:	08 95       	ret
+
+00000ffe <LCD_Clear>:
+    LCD_WriteCmd(0xAF);   // display ON
+    LCD_Clear(); // clear LCD
+}
+
+void LCD_Clear(void) {
+    LCD_WriteCmd(0x40); // Y = 0
+     ffe:	80 e4       	ldi	r24, 0x40	; 64
+    1000:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    LCD_WriteCmd(0xB0);
+    1004:	80 eb       	ldi	r24, 0xB0	; 176
+    1006:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    LCD_WriteCmd(0x10); // X = 0
+    100a:	80 e1       	ldi	r24, 0x10	; 16
+    100c:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    LCD_WriteCmd(0x00);
+    1010:	80 e0       	ldi	r24, 0x00	; 0
+    1012:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    1016:	20 e0       	ldi	r18, 0x00	; 0
+    1018:	30 e0       	ldi	r19, 0x00	; 0
+    LCD_WriteCmd(0x00|(x&0x0F));         // X axis initialisation: 0000 xxxx ( x3 x2 x1 x0)
+    LCD_WriteCmd(0x10|((x>>4)&0x07));    // X axis initialisation: 0010 0xxx  ( x6 x5 x4)
+}
+
+FORCE_INLINE void LCD_WriteData(uint8_t AByte) {
+    LCD_SCLK_LO();
+    101a:	92 98       	cbi	0x12, 2	; 18
+    LCD_XCS_LO();   // Select chip
+    101c:	95 98       	cbi	0x12, 5	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+    101e:	93 9a       	sbi	0x12, 3	; 18
+    LCD_SCLK_HI();
+    1020:	92 9a       	sbi	0x12, 2	; 18
+    LCD_SCLK_LO();
+    1022:	92 98       	cbi	0x12, 2	; 18
+    1024:	80 e0       	ldi	r24, 0x00	; 0
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+        if(AByte & 0x80) LCD_SDA_HI();
+        else LCD_SDA_LO();
+    1026:	93 98       	cbi	0x12, 3	; 18
+        LCD_SCLK_HI();
+    1028:	92 9a       	sbi	0x12, 2	; 18
+        LCD_SCLK_LO();
+    102a:	92 98       	cbi	0x12, 2	; 18
+    // Send "Data" bit
+    LCD_SDA_HI();
+    LCD_SCLK_HI();
+    LCD_SCLK_LO();
+    // Send byte
+    for(uint8_t i=0; i<8; i++) {
+    102c:	8f 5f       	subi	r24, 0xFF	; 255
+    102e:	88 30       	cpi	r24, 0x08	; 8
+    1030:	d1 f7       	brne	.-12     	; 0x1026 <LCD_Clear+0x28>
+        else LCD_SDA_LO();
+        LCD_SCLK_HI();
+        LCD_SCLK_LO();
+        AByte <<= 1;
+    }
+    LCD_XCS_HI();
+    1032:	95 9a       	sbi	0x12, 5	; 18
+void LCD_Clear(void) {
+    LCD_WriteCmd(0x40); // Y = 0
+    LCD_WriteCmd(0xB0);
+    LCD_WriteCmd(0x10); // X = 0
+    LCD_WriteCmd(0x00);
+    for(uint16_t i=0;i<864;i++) LCD_WriteData(0x00);
+    1034:	2f 5f       	subi	r18, 0xFF	; 255
+    1036:	3f 4f       	sbci	r19, 0xFF	; 255
+    1038:	83 e0       	ldi	r24, 0x03	; 3
+    103a:	20 36       	cpi	r18, 0x60	; 96
+    103c:	38 07       	cpc	r19, r24
+    103e:	69 f7       	brne	.-38     	; 0x101a <LCD_Clear+0x1c>
+}
+    1040:	08 95       	ret
+
+00001042 <LCD_Init>:
+
+// ============================= Types & vars ==================================
+
+// ============================ Implementation =================================
+void LCD_Init(void) {
+    LCD_DDR |= (1<<LCD_SCLK)|(1<<LCD_XCS)|(1<<LCD_XRES)|(1<<LCD_SDA);
+    1042:	81 b3       	in	r24, 0x11	; 17
+    1044:	8c 63       	ori	r24, 0x3C	; 60
+    1046:	81 bb       	out	0x11, r24	; 17
+    LCD_SCLK_LO();
+    1048:	92 98       	cbi	0x12, 2	; 18
+    LCD_XCS_HI();
+    104a:	95 9a       	sbi	0x12, 5	; 18
+    // Reset display
+    LCD_XRES_LO();
+    104c:	94 98       	cbi	0x12, 4	; 18
+    milliseconds can be achieved.
+ */
+void
+_delay_loop_2(uint16_t __count)
+{
+	__asm__ volatile (
+    104e:	86 ed       	ldi	r24, 0xD6	; 214
+    1050:	96 e0       	ldi	r25, 0x06	; 6
+    1052:	01 97       	sbiw	r24, 0x01	; 1
+    1054:	f1 f7       	brne	.-4      	; 0x1052 <LCD_Init+0x10>
+    _delay_ms(7);
+    LCD_XRES_HI();
+    1056:	94 9a       	sbi	0x12, 4	; 18
+    // Initial commands
+    LCD_WriteCmd(0xA4);   // Set normal display mode
+    1058:	84 ea       	ldi	r24, 0xA4	; 164
+    105a:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    LCD_WriteCmd(0x2F);   // Charge pump on
+    105e:	8f e2       	ldi	r24, 0x2F	; 47
+    1060:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    LCD_WriteCmd(0x40);   // Set start row address = 0
+    1064:	80 e4       	ldi	r24, 0x40	; 64
+    1066:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    //LCD_Write(LCD_CMD, 0xC8); // mirror Y axis
+    //LCD_Write(LCD_CMD, 0xA1); // Mirror X axis
+    LCD_WriteCmd(0xAF);   // display ON
+    106a:	8f ea       	ldi	r24, 0xAF	; 175
+    106c:	0e 94 b0 06 	call	0xd60	; 0xd60 <LCD_WriteCmd>
+    LCD_Clear(); // clear LCD
+    1070:	0e 94 ff 07 	call	0xffe	; 0xffe <LCD_Clear>
+}
+    1074:	08 95       	ret
+
+00001076 <KeysInit>:
+    else if(!KEY_RIGHT_PRESSED() && EKeys.KeyRightPressed) EKeys.KeyRightPressed = false;
+}
+
+void KeysInit(void) {
+    // Init ports
+    KEYS_DDR  &= ~((1<<KEY_UP)|(1<<KEY_DOWN)|(1<<KEY_RIGHT)|(1<<KEY_LEFT));
+    1076:	8a b3       	in	r24, 0x1a	; 26
+    1078:	83 7c       	andi	r24, 0xC3	; 195
+    107a:	8a bb       	out	0x1a, r24	; 26
+    KEYS_PORT |=  ((1<<KEY_UP)|(1<<KEY_DOWN)|(1<<KEY_RIGHT)|(1<<KEY_LEFT));
+    107c:	8b b3       	in	r24, 0x1b	; 27
+    107e:	8c 63       	ori	r24, 0x3C	; 60
+    1080:	8b bb       	out	0x1b, r24	; 27
+    // Init variables
+    EKeys.KeyDownPressed = false;
+    1082:	80 91 4c 01 	lds	r24, 0x014C
+    EKeys.KeyUpPressed = false;
+    EKeys.KeyLeftPressed = false;
+    EKeys.KeyRightPressed = false;
+    1086:	80 7f       	andi	r24, 0xF0	; 240
+    1088:	80 93 4c 01 	sts	0x014C, r24
+    DelayReset(&EKeys.Timer);
+    108c:	8d e4       	ldi	r24, 0x4D	; 77
+    108e:	91 e0       	ldi	r25, 0x01	; 1
+    1090:	0e 94 54 06 	call	0xca8	; 0xca8 <DelayReset>
+}
+    1094:	08 95       	ret
+
+00001096 <Keys_Task>:
+    bool KeyLeftPressed:1;
+    uint16_t Timer;
+} EKeys;
+
+void Keys_Task(void) {
+    if(!DelayElapsed(&EKeys.Timer, 54)) return;
+    1096:	8d e4       	ldi	r24, 0x4D	; 77
+    1098:	91 e0       	ldi	r25, 0x01	; 1
+    109a:	66 e3       	ldi	r22, 0x36	; 54
+    109c:	70 e0       	ldi	r23, 0x00	; 0
+    109e:	0e 94 3b 06 	call	0xc76	; 0xc76 <DelayElapsed>
+    10a2:	88 23       	and	r24, r24
+    10a4:	09 f4       	brne	.+2      	; 0x10a8 <Keys_Task+0x12>
+    10a6:	54 c0       	rjmp	.+168    	; 0x1150 <Keys_Task+0xba>
+
+    if(KEY_DOWN_PRESSED() && !EKeys.KeyDownPressed) {
+    10a8:	cd 99       	sbic	0x19, 5	; 25
+    10aa:	0a c0       	rjmp	.+20     	; 0x10c0 <Keys_Task+0x2a>
+    10ac:	80 91 4c 01 	lds	r24, 0x014C
+    10b0:	80 fd       	sbrc	r24, 0
+    10b2:	06 c0       	rjmp	.+12     	; 0x10c0 <Keys_Task+0x2a>
+        EKeys.KeyDownPressed = true;
+    10b4:	81 60       	ori	r24, 0x01	; 1
+    10b6:	80 93 4c 01 	sts	0x014C, r24
+        EVENT_KeyDown();
+    10ba:	0e 94 fd 08 	call	0x11fa	; 0x11fa <EVENT_KeyDown>
+    10be:	09 c0       	rjmp	.+18     	; 0x10d2 <Keys_Task+0x3c>
+    }
+    else if(!KEY_DOWN_PRESSED() && EKeys.KeyDownPressed) EKeys.KeyDownPressed = false;
+    10c0:	cd 9b       	sbis	0x19, 5	; 25
+    10c2:	07 c0       	rjmp	.+14     	; 0x10d2 <Keys_Task+0x3c>
+    10c4:	80 91 4c 01 	lds	r24, 0x014C
+    10c8:	80 ff       	sbrs	r24, 0
+    10ca:	03 c0       	rjmp	.+6      	; 0x10d2 <Keys_Task+0x3c>
+    10cc:	8e 7f       	andi	r24, 0xFE	; 254
+    10ce:	80 93 4c 01 	sts	0x014C, r24
+
+    if(KEY_UP_PRESSED() && !EKeys.KeyUpPressed) {
+    10d2:	cc 99       	sbic	0x19, 4	; 25
+    10d4:	0a c0       	rjmp	.+20     	; 0x10ea <Keys_Task+0x54>
+    10d6:	80 91 4c 01 	lds	r24, 0x014C
+    10da:	81 fd       	sbrc	r24, 1
+    10dc:	06 c0       	rjmp	.+12     	; 0x10ea <Keys_Task+0x54>
+        EKeys.KeyUpPressed = true;
+    10de:	82 60       	ori	r24, 0x02	; 2
+    10e0:	80 93 4c 01 	sts	0x014C, r24
+        EVENT_KeyUp();
+    10e4:	0e 94 d8 09 	call	0x13b0	; 0x13b0 <EVENT_KeyUp>
+    10e8:	09 c0       	rjmp	.+18     	; 0x10fc <Keys_Task+0x66>
+    }
+    else if(!KEY_UP_PRESSED() && EKeys.KeyUpPressed) EKeys.KeyUpPressed = false;
+    10ea:	cc 9b       	sbis	0x19, 4	; 25
+    10ec:	07 c0       	rjmp	.+14     	; 0x10fc <Keys_Task+0x66>
+    10ee:	80 91 4c 01 	lds	r24, 0x014C
+    10f2:	81 ff       	sbrs	r24, 1
+    10f4:	03 c0       	rjmp	.+6      	; 0x10fc <Keys_Task+0x66>
+    10f6:	8d 7f       	andi	r24, 0xFD	; 253
+    10f8:	80 93 4c 01 	sts	0x014C, r24
+
+    if(KEY_LEFT_PRESSED() && !EKeys.KeyLeftPressed) {
+    10fc:	cb 99       	sbic	0x19, 3	; 25
+    10fe:	0a c0       	rjmp	.+20     	; 0x1114 <Keys_Task+0x7e>
+    1100:	80 91 4c 01 	lds	r24, 0x014C
+    1104:	83 fd       	sbrc	r24, 3
+    1106:	06 c0       	rjmp	.+12     	; 0x1114 <Keys_Task+0x7e>
+        EKeys.KeyLeftPressed = true;
+    1108:	88 60       	ori	r24, 0x08	; 8
+    110a:	80 93 4c 01 	sts	0x014C, r24
+        EVENT_KeyLeft();
+    110e:	0e 94 03 0c 	call	0x1806	; 0x1806 <EVENT_KeyLeft>
+    1112:	09 c0       	rjmp	.+18     	; 0x1126 <Keys_Task+0x90>
+    }
+    else if(!KEY_LEFT_PRESSED() && EKeys.KeyLeftPressed) EKeys.KeyLeftPressed = false;
+    1114:	cb 9b       	sbis	0x19, 3	; 25
+    1116:	07 c0       	rjmp	.+14     	; 0x1126 <Keys_Task+0x90>
+    1118:	80 91 4c 01 	lds	r24, 0x014C
+    111c:	83 ff       	sbrs	r24, 3
+    111e:	03 c0       	rjmp	.+6      	; 0x1126 <Keys_Task+0x90>
+    1120:	87 7f       	andi	r24, 0xF7	; 247
+    1122:	80 93 4c 01 	sts	0x014C, r24
+
+    if(KEY_RIGHT_PRESSED() && !EKeys.KeyRightPressed) {
+    1126:	ca 99       	sbic	0x19, 2	; 25
+    1128:	0a c0       	rjmp	.+20     	; 0x113e <Keys_Task+0xa8>
+    112a:	80 91 4c 01 	lds	r24, 0x014C
+    112e:	82 fd       	sbrc	r24, 2
+    1130:	06 c0       	rjmp	.+12     	; 0x113e <Keys_Task+0xa8>
+        EKeys.KeyRightPressed = true;
+    1132:	84 60       	ori	r24, 0x04	; 4
+    1134:	80 93 4c 01 	sts	0x014C, r24
+        EVENT_KeyRight();
+    1138:	0e 94 76 0b 	call	0x16ec	; 0x16ec <EVENT_KeyRight>
+    113c:	08 95       	ret
+    }
+    else if(!KEY_RIGHT_PRESSED() && EKeys.KeyRightPressed) EKeys.KeyRightPressed = false;
+    113e:	ca 9b       	sbis	0x19, 2	; 25
+    1140:	07 c0       	rjmp	.+14     	; 0x1150 <Keys_Task+0xba>
+    1142:	80 91 4c 01 	lds	r24, 0x014C
+    1146:	82 ff       	sbrs	r24, 2
+    1148:	03 c0       	rjmp	.+6      	; 0x1150 <Keys_Task+0xba>
+    114a:	8b 7f       	andi	r24, 0xFB	; 251
+    114c:	80 93 4c 01 	sts	0x014C, r24
+    1150:	08 95       	ret
+
+00001152 <GetLetter>:
+    LCD_PrintString_P(0, 7, PSTR("Поиск"), true);
+    LCD_PrintString_P(11, 7, PSTR("Опции"), true);
+}
+
+uint8_t GetLetter(void) {
+    return (ECursor.x + pgm_read_byte(&FLLetters[ECursor.y-1][0]));
+    1152:	20 91 51 01 	lds	r18, 0x0151
+    1156:	81 e0       	ldi	r24, 0x01	; 1
+    1158:	90 e0       	ldi	r25, 0x00	; 0
+    115a:	82 1b       	sub	r24, r18
+    115c:	91 09       	sbc	r25, r1
+    115e:	88 0f       	add	r24, r24
+    1160:	99 1f       	adc	r25, r25
+    1162:	e2 e9       	ldi	r30, 0x92	; 146
+    1164:	f7 e0       	ldi	r31, 0x07	; 7
+    1166:	e8 1b       	sub	r30, r24
+    1168:	f9 0b       	sbc	r31, r25
+    116a:	e4 91       	lpm	r30, Z+
+    116c:	80 91 50 01 	lds	r24, 0x0150
+}
+    1170:	8e 0f       	add	r24, r30
+    1172:	08 95       	ret
+
+00001174 <DisplayList>:
+        default: break;
+    } // switch
+}
+
+// ============================= Inner use =====================================
+void DisplayList(uint8_t StartElement) {
+    1174:	ef 92       	push	r14
+    1176:	ff 92       	push	r15
+    1178:	0f 93       	push	r16
+    117a:	1f 93       	push	r17
+    uint8_t i = StartElement;
+    EL.TopIndx = StartElement;
+    117c:	80 93 43 01 	sts	0x0143, r24
+    1180:	e8 2e       	mov	r14, r24
+    1182:	ff 24       	eor	r15, r15
+    for(uint8_t y=0; y<LCD_STR_HEIGHT-1; y++) { // -1, because we need place for menu
+        if(i >= LOCKET_COUNT) break;
+    1184:	8a e0       	ldi	r24, 0x0A	; 10
+    1186:	8e 15       	cp	r24, r14
+    1188:	28 f1       	brcs	.+74     	; 0x11d4 <DisplayList+0x60>
+        LCD_PrintUint(0, y, i+1);
+    118a:	0e 2d       	mov	r16, r14
+    118c:	10 e0       	ldi	r17, 0x00	; 0
+    118e:	a8 01       	movw	r20, r16
+    1190:	4f 5f       	subi	r20, 0xFF	; 255
+    1192:	5f 4f       	sbci	r21, 0xFF	; 255
+    1194:	80 e0       	ldi	r24, 0x00	; 0
+    1196:	6f 2d       	mov	r22, r15
+    1198:	0e 94 dc 06 	call	0xdb8	; 0xdb8 <LCD_PrintUint>
+        LCD_PrintString(LIST_INDENT, y, EL.L[i].S, (i==EL.Indx));
+    119c:	00 0f       	add	r16, r16
+    119e:	11 1f       	adc	r17, r17
+    11a0:	a8 01       	movw	r20, r16
+    11a2:	33 e0       	ldi	r19, 0x03	; 3
+    11a4:	44 0f       	add	r20, r20
+    11a6:	55 1f       	adc	r21, r21
+    11a8:	3a 95       	dec	r19
+    11aa:	e1 f7       	brne	.-8      	; 0x11a4 <DisplayList+0x30>
+    11ac:	40 0f       	add	r20, r16
+    11ae:	51 1f       	adc	r21, r17
+    11b0:	41 58       	subi	r20, 0x81	; 129
+    11b2:	5f 4f       	sbci	r21, 0xFF	; 255
+    11b4:	20 e0       	ldi	r18, 0x00	; 0
+    11b6:	80 91 42 01 	lds	r24, 0x0142
+    11ba:	e8 16       	cp	r14, r24
+    11bc:	09 f4       	brne	.+2      	; 0x11c0 <DisplayList+0x4c>
+    11be:	21 e0       	ldi	r18, 0x01	; 1
+    11c0:	82 e0       	ldi	r24, 0x02	; 2
+    11c2:	6f 2d       	mov	r22, r15
+    11c4:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+
+// ============================= Inner use =====================================
+void DisplayList(uint8_t StartElement) {
+    uint8_t i = StartElement;
+    EL.TopIndx = StartElement;
+    for(uint8_t y=0; y<LCD_STR_HEIGHT-1; y++) { // -1, because we need place for menu
+    11c8:	f3 94       	inc	r15
+    11ca:	87 e0       	ldi	r24, 0x07	; 7
+    11cc:	f8 16       	cp	r15, r24
+    11ce:	11 f0       	breq	.+4      	; 0x11d4 <DisplayList+0x60>
+        if(i >= LOCKET_COUNT) break;
+        LCD_PrintUint(0, y, i+1);
+        LCD_PrintString(LIST_INDENT, y, EL.L[i].S, (i==EL.Indx));
+        i++;
+    11d0:	e3 94       	inc	r14
+    11d2:	d8 cf       	rjmp	.-80     	; 0x1184 <DisplayList+0x10>
+    }
+    // Display pseudo-buttons
+    LCD_PrintString_P(0, 7, PSTR("Поиск"), true);
+    11d4:	80 e0       	ldi	r24, 0x00	; 0
+    11d6:	67 e0       	ldi	r22, 0x07	; 7
+    11d8:	44 ea       	ldi	r20, 0xA4	; 164
+    11da:	57 e0       	ldi	r21, 0x07	; 7
+    11dc:	21 e0       	ldi	r18, 0x01	; 1
+    11de:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    LCD_PrintString_P(11, 7, PSTR("Опции"), true);
+    11e2:	8b e0       	ldi	r24, 0x0B	; 11
+    11e4:	67 e0       	ldi	r22, 0x07	; 7
+    11e6:	4e e9       	ldi	r20, 0x9E	; 158
+    11e8:	57 e0       	ldi	r21, 0x07	; 7
+    11ea:	21 e0       	ldi	r18, 0x01	; 1
+    11ec:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+}
+    11f0:	1f 91       	pop	r17
+    11f2:	0f 91       	pop	r16
+    11f4:	ff 90       	pop	r15
+    11f6:	ef 90       	pop	r14
+    11f8:	08 95       	ret
+
+000011fa <EVENT_KeyDown>:
+
+        default: break;
+    } // switch
+}
+void EVENT_KeyDown(void) {
+    switch(EState) {
+    11fa:	80 91 4f 01 	lds	r24, 0x014F
+    11fe:	82 30       	cpi	r24, 0x02	; 2
+    1200:	09 f4       	brne	.+2      	; 0x1204 <EVENT_KeyDown+0xa>
+    1202:	4b c0       	rjmp	.+150    	; 0x129a <EVENT_KeyDown+0xa0>
+    1204:	83 30       	cpi	r24, 0x03	; 3
+    1206:	18 f4       	brcc	.+6      	; 0x120e <EVENT_KeyDown+0x14>
+    1208:	88 23       	and	r24, r24
+    120a:	41 f0       	breq	.+16     	; 0x121c <EVENT_KeyDown+0x22>
+    120c:	08 95       	ret
+    120e:	83 30       	cpi	r24, 0x03	; 3
+    1210:	09 f4       	brne	.+2      	; 0x1214 <EVENT_KeyDown+0x1a>
+    1212:	69 c0       	rjmp	.+210    	; 0x12e6 <EVENT_KeyDown+0xec>
+    1214:	84 30       	cpi	r24, 0x04	; 4
+    1216:	09 f0       	breq	.+2      	; 0x121a <EVENT_KeyDown+0x20>
+    1218:	ca c0       	rjmp	.+404    	; 0x13ae <EVENT_KeyDown+0x1b4>
+    121a:	9f c0       	rjmp	.+318    	; 0x135a <EVENT_KeyDown+0x160>
+        case StateList: // Move down by the list
+            if(EL.Indx < LOCKET_COUNT-1) EL.Indx++;
+    121c:	80 91 42 01 	lds	r24, 0x0142
+    1220:	8a 30       	cpi	r24, 0x0A	; 10
+    1222:	18 f4       	brcc	.+6      	; 0x122a <EVENT_KeyDown+0x30>
+    1224:	8f 5f       	subi	r24, 0xFF	; 255
+    1226:	80 93 42 01 	sts	0x0142, r24
+            // Handle more than 7 lockets
+            if(EL.Indx > (EL.TopIndx + 6)) {    // Bottom of screen, draw next items
+    122a:	60 91 42 01 	lds	r22, 0x0142
+    122e:	46 2f       	mov	r20, r22
+    1230:	50 e0       	ldi	r21, 0x00	; 0
+    1232:	20 91 43 01 	lds	r18, 0x0143
+    1236:	82 2f       	mov	r24, r18
+    1238:	90 e0       	ldi	r25, 0x00	; 0
+    123a:	06 96       	adiw	r24, 0x06	; 6
+    123c:	84 17       	cp	r24, r20
+    123e:	95 07       	cpc	r25, r21
+    1240:	3c f4       	brge	.+14     	; 0x1250 <EVENT_KeyDown+0x56>
+                LCD_Clear();
+    1242:	0e 94 ff 07 	call	0xffe	; 0xffe <LCD_Clear>
+                DisplayList(EL.Indx);
+    1246:	80 91 42 01 	lds	r24, 0x0142
+    124a:	0e 94 ba 08 	call	0x1174	; 0x1174 <DisplayList>
+    124e:	08 95       	ret
+            }
+            else {
+                LCD_PrintString(LIST_INDENT, (EL.Indx - EL.TopIndx - 1), EL.L[EL.Indx-1].S, false);  // Unhighlight previous element
+    1250:	61 50       	subi	r22, 0x01	; 1
+    1252:	62 1b       	sub	r22, r18
+    1254:	41 50       	subi	r20, 0x01	; 1
+    1256:	50 40       	sbci	r21, 0x00	; 0
+    1258:	44 0f       	add	r20, r20
+    125a:	55 1f       	adc	r21, r21
+    125c:	ca 01       	movw	r24, r20
+    125e:	23 e0       	ldi	r18, 0x03	; 3
+    1260:	88 0f       	add	r24, r24
+    1262:	99 1f       	adc	r25, r25
+    1264:	2a 95       	dec	r18
+    1266:	e1 f7       	brne	.-8      	; 0x1260 <EVENT_KeyDown+0x66>
+    1268:	48 0f       	add	r20, r24
+    126a:	59 1f       	adc	r21, r25
+    126c:	41 58       	subi	r20, 0x81	; 129
+    126e:	5f 4f       	sbci	r21, 0xFF	; 255
+    1270:	82 e0       	ldi	r24, 0x02	; 2
+    1272:	20 e0       	ldi	r18, 0x00	; 0
+    1274:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+                LCD_PrintString(LIST_INDENT,  EL.Indx - EL.TopIndx     , EL.L[EL.Indx  ].S, true);   // Highlight current element
+    1278:	40 91 42 01 	lds	r20, 0x0142
+    127c:	80 91 43 01 	lds	r24, 0x0143
+    1280:	64 2f       	mov	r22, r20
+    1282:	68 1b       	sub	r22, r24
+    1284:	82 e1       	ldi	r24, 0x12	; 18
+    1286:	48 9f       	mul	r20, r24
+    1288:	a0 01       	movw	r20, r0
+    128a:	11 24       	eor	r1, r1
+    128c:	41 58       	subi	r20, 0x81	; 129
+    128e:	5f 4f       	sbci	r21, 0xFF	; 255
+    1290:	82 e0       	ldi	r24, 0x02	; 2
+    1292:	21 e0       	ldi	r18, 0x01	; 1
+    1294:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+    1298:	08 95       	ret
+            }
+            break;
+
+        case StateOptions:  // Move down by the list
+            if(EIndx < OPTIONS_COUNT-1) EIndx++;
+    129a:	80 91 53 01 	lds	r24, 0x0153
+    129e:	88 23       	and	r24, r24
+    12a0:	19 f4       	brne	.+6      	; 0x12a8 <EVENT_KeyDown+0xae>
+    12a2:	81 e0       	ldi	r24, 0x01	; 1
+    12a4:	80 93 53 01 	sts	0x0153, r24
+            LCD_PrintString_P(0, (OPTIONS_TOP + EIndx-1), EOptions[EIndx-1], false);  // Unhighlight previous element
+    12a8:	60 91 53 01 	lds	r22, 0x0153
+    12ac:	e6 2f       	mov	r30, r22
+    12ae:	f0 e0       	ldi	r31, 0x00	; 0
+    12b0:	ee 0f       	add	r30, r30
+    12b2:	ff 1f       	adc	r31, r31
+    12b4:	ea 58       	subi	r30, 0x8A	; 138
+    12b6:	ff 4f       	sbci	r31, 0xFF	; 255
+    12b8:	40 81       	ld	r20, Z
+    12ba:	51 81       	ldd	r21, Z+1	; 0x01
+    12bc:	80 e0       	ldi	r24, 0x00	; 0
+    12be:	6f 5f       	subi	r22, 0xFF	; 255
+    12c0:	20 e0       	ldi	r18, 0x00	; 0
+    12c2:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            LCD_PrintString_P(0, (OPTIONS_TOP + EIndx  ), EOptions[EIndx  ], true);   // Highlight current element
+    12c6:	60 91 53 01 	lds	r22, 0x0153
+    12ca:	e6 2f       	mov	r30, r22
+    12cc:	f0 e0       	ldi	r31, 0x00	; 0
+    12ce:	ee 0f       	add	r30, r30
+    12d0:	ff 1f       	adc	r31, r31
+    12d2:	e8 58       	subi	r30, 0x88	; 136
+    12d4:	ff 4f       	sbci	r31, 0xFF	; 255
+    12d6:	40 81       	ld	r20, Z
+    12d8:	51 81       	ldd	r21, Z+1	; 0x01
+    12da:	80 e0       	ldi	r24, 0x00	; 0
+    12dc:	6e 5f       	subi	r22, 0xFE	; 254
+    12de:	21 e0       	ldi	r18, 0x01	; 1
+    12e0:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    12e4:	08 95       	ret
+            break;
+
+        case StateRename_ChoosePlace:
+            if(CharIndx < LOCKET_NAME_L-1) {
+    12e6:	80 91 54 01 	lds	r24, 0x0154
+    12ea:	8e 30       	cpi	r24, 0x0E	; 14
+    12ec:	08 f0       	brcs	.+2      	; 0x12f0 <EVENT_KeyDown+0xf6>
+    12ee:	5f c0       	rjmp	.+190    	; 0x13ae <EVENT_KeyDown+0x1b4>
+                LCD_GotoXYstr(CharIndx, 0);
+    12f0:	60 e0       	ldi	r22, 0x00	; 0
+    12f2:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+                LCD_DrawChar(EL.L[EL.Indx].S[CharIndx], false); // Unhighlight previous char
+    12f6:	20 91 54 01 	lds	r18, 0x0154
+    12fa:	e0 91 42 01 	lds	r30, 0x0142
+    12fe:	f0 e0       	ldi	r31, 0x00	; 0
+    1300:	ee 0f       	add	r30, r30
+    1302:	ff 1f       	adc	r31, r31
+    1304:	cf 01       	movw	r24, r30
+    1306:	a3 e0       	ldi	r26, 0x03	; 3
+    1308:	88 0f       	add	r24, r24
+    130a:	99 1f       	adc	r25, r25
+    130c:	aa 95       	dec	r26
+    130e:	e1 f7       	brne	.-8      	; 0x1308 <EVENT_KeyDown+0x10e>
+    1310:	e8 0f       	add	r30, r24
+    1312:	f9 1f       	adc	r31, r25
+    1314:	e4 58       	subi	r30, 0x84	; 132
+    1316:	ff 4f       	sbci	r31, 0xFF	; 255
+    1318:	e2 0f       	add	r30, r18
+    131a:	f1 1d       	adc	r31, r1
+    131c:	83 81       	ldd	r24, Z+3	; 0x03
+    131e:	60 e0       	ldi	r22, 0x00	; 0
+    1320:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+                CharIndx++;
+    1324:	20 91 54 01 	lds	r18, 0x0154
+    1328:	2f 5f       	subi	r18, 0xFF	; 255
+    132a:	20 93 54 01 	sts	0x0154, r18
+                LCD_DrawChar(EL.L[EL.Indx].S[CharIndx], true); // Highlight current char
+    132e:	e0 91 42 01 	lds	r30, 0x0142
+    1332:	f0 e0       	ldi	r31, 0x00	; 0
+    1334:	ee 0f       	add	r30, r30
+    1336:	ff 1f       	adc	r31, r31
+    1338:	cf 01       	movw	r24, r30
+    133a:	63 e0       	ldi	r22, 0x03	; 3
+    133c:	88 0f       	add	r24, r24
+    133e:	99 1f       	adc	r25, r25
+    1340:	6a 95       	dec	r22
+    1342:	e1 f7       	brne	.-8      	; 0x133c <EVENT_KeyDown+0x142>
+    1344:	e8 0f       	add	r30, r24
+    1346:	f9 1f       	adc	r31, r25
+    1348:	e4 58       	subi	r30, 0x84	; 132
+    134a:	ff 4f       	sbci	r31, 0xFF	; 255
+    134c:	e2 0f       	add	r30, r18
+    134e:	f1 1d       	adc	r31, r1
+    1350:	83 81       	ldd	r24, Z+3	; 0x03
+    1352:	61 e0       	ldi	r22, 0x01	; 1
+    1354:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+    1358:	08 95       	ret
+            }
+            break;
+
+        case StateRename_ChooseLetter:  // Move down
+            if(ECursor.y < LCD_STR_HEIGHT-2) {
+    135a:	60 91 51 01 	lds	r22, 0x0151
+    135e:	66 30       	cpi	r22, 0x06	; 6
+    1360:	30 f5       	brcc	.+76     	; 0x13ae <EVENT_KeyDown+0x1b4>
+                LCD_GotoXYstr(ECursor.x, ECursor.y);
+    1362:	80 91 50 01 	lds	r24, 0x0150
+    1366:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+                LCD_DrawChar(ECursor.Letter, false);    // Unhighlight letter
+    136a:	80 91 52 01 	lds	r24, 0x0152
+    136e:	60 e0       	ldi	r22, 0x00	; 0
+    1370:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+                ECursor.y++;
+    1374:	60 91 51 01 	lds	r22, 0x0151
+    1378:	6f 5f       	subi	r22, 0xFF	; 255
+    137a:	60 93 51 01 	sts	0x0151, r22
+    LCD_PrintString_P(0, 7, PSTR("Поиск"), true);
+    LCD_PrintString_P(11, 7, PSTR("Опции"), true);
+}
+
+uint8_t GetLetter(void) {
+    return (ECursor.x + pgm_read_byte(&FLLetters[ECursor.y-1][0]));
+    137e:	80 91 50 01 	lds	r24, 0x0150
+    1382:	e1 e0       	ldi	r30, 0x01	; 1
+    1384:	f0 e0       	ldi	r31, 0x00	; 0
+    1386:	e6 1b       	sub	r30, r22
+    1388:	f1 09       	sbc	r31, r1
+    138a:	ee 0f       	add	r30, r30
+    138c:	ff 1f       	adc	r31, r31
+    138e:	f0 95       	com	r31
+    1390:	e1 95       	neg	r30
+    1392:	ff 4f       	sbci	r31, 0xFF	; 255
+    1394:	ee 56       	subi	r30, 0x6E	; 110
+    1396:	f8 4f       	sbci	r31, 0xF8	; 248
+    1398:	e4 91       	lpm	r30, Z+
+        case StateRename_ChooseLetter:  // Move down
+            if(ECursor.y < LCD_STR_HEIGHT-2) {
+                LCD_GotoXYstr(ECursor.x, ECursor.y);
+                LCD_DrawChar(ECursor.Letter, false);    // Unhighlight letter
+                ECursor.y++;
+                ECursor.Letter = GetLetter();           // Get new letter
+    139a:	e8 0f       	add	r30, r24
+    139c:	e0 93 52 01 	sts	0x0152, r30
+                LCD_GotoXYstr(ECursor.x, ECursor.y);
+    13a0:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+                LCD_DrawChar(ECursor.Letter, true);     // Highlight letter
+    13a4:	80 91 52 01 	lds	r24, 0x0152
+    13a8:	61 e0       	ldi	r22, 0x01	; 1
+    13aa:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+    13ae:	08 95       	ret
+
+000013b0 <EVENT_KeyUp>:
+    } // switch
+}
+
+// ============================== Events =======================================
+void EVENT_KeyUp(void) {
+    switch(EState) {
+    13b0:	80 91 4f 01 	lds	r24, 0x014F
+    13b4:	82 30       	cpi	r24, 0x02	; 2
+    13b6:	09 f4       	brne	.+2      	; 0x13ba <EVENT_KeyUp+0xa>
+    13b8:	48 c0       	rjmp	.+144    	; 0x144a <EVENT_KeyUp+0x9a>
+    13ba:	83 30       	cpi	r24, 0x03	; 3
+    13bc:	18 f4       	brcc	.+6      	; 0x13c4 <EVENT_KeyUp+0x14>
+    13be:	88 23       	and	r24, r24
+    13c0:	41 f0       	breq	.+16     	; 0x13d2 <EVENT_KeyUp+0x22>
+    13c2:	08 95       	ret
+    13c4:	83 30       	cpi	r24, 0x03	; 3
+    13c6:	09 f4       	brne	.+2      	; 0x13ca <EVENT_KeyUp+0x1a>
+    13c8:	66 c0       	rjmp	.+204    	; 0x1496 <EVENT_KeyUp+0xe6>
+    13ca:	84 30       	cpi	r24, 0x04	; 4
+    13cc:	09 f0       	breq	.+2      	; 0x13d0 <EVENT_KeyUp+0x20>
+    13ce:	c7 c0       	rjmp	.+398    	; 0x155e <EVENT_KeyUp+0x1ae>
+    13d0:	9c c0       	rjmp	.+312    	; 0x150a <EVENT_KeyUp+0x15a>
+        case StateList: // Move down by the list
+            if(EL.Indx > 0) EL.Indx--;
+    13d2:	80 91 42 01 	lds	r24, 0x0142
+    13d6:	88 23       	and	r24, r24
+    13d8:	19 f0       	breq	.+6      	; 0x13e0 <EVENT_KeyUp+0x30>
+    13da:	81 50       	subi	r24, 0x01	; 1
+    13dc:	80 93 42 01 	sts	0x0142, r24
+            if(EL.Indx < EL.TopIndx) {    // Top of screen, draw previous items
+    13e0:	40 91 42 01 	lds	r20, 0x0142
+    13e4:	80 91 43 01 	lds	r24, 0x0143
+    13e8:	48 17       	cp	r20, r24
+    13ea:	40 f4       	brcc	.+16     	; 0x13fc <EVENT_KeyUp+0x4c>
+                LCD_Clear();
+    13ec:	0e 94 ff 07 	call	0xffe	; 0xffe <LCD_Clear>
+                DisplayList(EL.Indx-6);
+    13f0:	80 91 42 01 	lds	r24, 0x0142
+    13f4:	86 50       	subi	r24, 0x06	; 6
+    13f6:	0e 94 ba 08 	call	0x1174	; 0x1174 <DisplayList>
+    13fa:	08 95       	ret
+            }
+            else {
+                LCD_PrintString(LIST_INDENT, (EL.Indx - EL.TopIndx +1), EL.L[EL.Indx+1].S, false);   // Unhighlight previous element
+    13fc:	64 2f       	mov	r22, r20
+    13fe:	6f 5f       	subi	r22, 0xFF	; 255
+    1400:	68 1b       	sub	r22, r24
+    1402:	50 e0       	ldi	r21, 0x00	; 0
+    1404:	4f 5f       	subi	r20, 0xFF	; 255
+    1406:	5f 4f       	sbci	r21, 0xFF	; 255
+    1408:	44 0f       	add	r20, r20
+    140a:	55 1f       	adc	r21, r21
+    140c:	ca 01       	movw	r24, r20
+    140e:	23 e0       	ldi	r18, 0x03	; 3
+    1410:	88 0f       	add	r24, r24
+    1412:	99 1f       	adc	r25, r25
+    1414:	2a 95       	dec	r18
+    1416:	e1 f7       	brne	.-8      	; 0x1410 <EVENT_KeyUp+0x60>
+    1418:	48 0f       	add	r20, r24
+    141a:	59 1f       	adc	r21, r25
+    141c:	41 58       	subi	r20, 0x81	; 129
+    141e:	5f 4f       	sbci	r21, 0xFF	; 255
+    1420:	82 e0       	ldi	r24, 0x02	; 2
+    1422:	20 e0       	ldi	r18, 0x00	; 0
+    1424:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+                LCD_PrintString(LIST_INDENT,  EL.Indx - EL.TopIndx    , EL.L[EL.Indx  ].S, true);    // Highlight current element
+    1428:	40 91 42 01 	lds	r20, 0x0142
+    142c:	80 91 43 01 	lds	r24, 0x0143
+    1430:	64 2f       	mov	r22, r20
+    1432:	68 1b       	sub	r22, r24
+    1434:	82 e1       	ldi	r24, 0x12	; 18
+    1436:	48 9f       	mul	r20, r24
+    1438:	a0 01       	movw	r20, r0
+    143a:	11 24       	eor	r1, r1
+    143c:	41 58       	subi	r20, 0x81	; 129
+    143e:	5f 4f       	sbci	r21, 0xFF	; 255
+    1440:	82 e0       	ldi	r24, 0x02	; 2
+    1442:	21 e0       	ldi	r18, 0x01	; 1
+    1444:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+    1448:	08 95       	ret
+            }
+            break;
+
+        case StateOptions:  // Move down by the list
+            if(EIndx > 0) EIndx--;
+    144a:	80 91 53 01 	lds	r24, 0x0153
+    144e:	88 23       	and	r24, r24
+    1450:	19 f0       	breq	.+6      	; 0x1458 <EVENT_KeyUp+0xa8>
+    1452:	81 50       	subi	r24, 0x01	; 1
+    1454:	80 93 53 01 	sts	0x0153, r24
+            LCD_PrintString_P(0, (OPTIONS_TOP + EIndx+1), EOptions[EIndx+1], false);  // Unhighlight previous element
+    1458:	60 91 53 01 	lds	r22, 0x0153
+    145c:	e6 2f       	mov	r30, r22
+    145e:	f0 e0       	ldi	r31, 0x00	; 0
+    1460:	ee 0f       	add	r30, r30
+    1462:	ff 1f       	adc	r31, r31
+    1464:	e6 58       	subi	r30, 0x86	; 134
+    1466:	ff 4f       	sbci	r31, 0xFF	; 255
+    1468:	40 81       	ld	r20, Z
+    146a:	51 81       	ldd	r21, Z+1	; 0x01
+    146c:	80 e0       	ldi	r24, 0x00	; 0
+    146e:	6d 5f       	subi	r22, 0xFD	; 253
+    1470:	20 e0       	ldi	r18, 0x00	; 0
+    1472:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            LCD_PrintString_P(0, (OPTIONS_TOP + EIndx  ), EOptions[EIndx  ], true);   // Highlight current element
+    1476:	60 91 53 01 	lds	r22, 0x0153
+    147a:	e6 2f       	mov	r30, r22
+    147c:	f0 e0       	ldi	r31, 0x00	; 0
+    147e:	ee 0f       	add	r30, r30
+    1480:	ff 1f       	adc	r31, r31
+    1482:	e8 58       	subi	r30, 0x88	; 136
+    1484:	ff 4f       	sbci	r31, 0xFF	; 255
+    1486:	40 81       	ld	r20, Z
+    1488:	51 81       	ldd	r21, Z+1	; 0x01
+    148a:	80 e0       	ldi	r24, 0x00	; 0
+    148c:	6e 5f       	subi	r22, 0xFE	; 254
+    148e:	21 e0       	ldi	r18, 0x01	; 1
+    1490:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1494:	08 95       	ret
+            break;
+
+        case StateRename_ChoosePlace:
+            if(CharIndx > 0) {
+    1496:	80 91 54 01 	lds	r24, 0x0154
+    149a:	88 23       	and	r24, r24
+    149c:	09 f4       	brne	.+2      	; 0x14a0 <EVENT_KeyUp+0xf0>
+    149e:	5f c0       	rjmp	.+190    	; 0x155e <EVENT_KeyUp+0x1ae>
+                CharIndx--;
+    14a0:	81 50       	subi	r24, 0x01	; 1
+    14a2:	80 93 54 01 	sts	0x0154, r24
+                LCD_GotoXYstr(CharIndx, 0);
+    14a6:	60 e0       	ldi	r22, 0x00	; 0
+    14a8:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+                LCD_DrawChar(EL.L[EL.Indx].S[CharIndx], true);  // Highlight current char
+    14ac:	20 91 54 01 	lds	r18, 0x0154
+    14b0:	e0 91 42 01 	lds	r30, 0x0142
+    14b4:	f0 e0       	ldi	r31, 0x00	; 0
+    14b6:	ee 0f       	add	r30, r30
+    14b8:	ff 1f       	adc	r31, r31
+    14ba:	cf 01       	movw	r24, r30
+    14bc:	73 e0       	ldi	r23, 0x03	; 3
+    14be:	88 0f       	add	r24, r24
+    14c0:	99 1f       	adc	r25, r25
+    14c2:	7a 95       	dec	r23
+    14c4:	e1 f7       	brne	.-8      	; 0x14be <EVENT_KeyUp+0x10e>
+    14c6:	e8 0f       	add	r30, r24
+    14c8:	f9 1f       	adc	r31, r25
+    14ca:	e4 58       	subi	r30, 0x84	; 132
+    14cc:	ff 4f       	sbci	r31, 0xFF	; 255
+    14ce:	e2 0f       	add	r30, r18
+    14d0:	f1 1d       	adc	r31, r1
+    14d2:	83 81       	ldd	r24, Z+3	; 0x03
+    14d4:	61 e0       	ldi	r22, 0x01	; 1
+    14d6:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+                LCD_DrawChar(EL.L[EL.Indx].S[CharIndx+1], false); // Unhighlight previous char
+    14da:	20 91 54 01 	lds	r18, 0x0154
+    14de:	e0 91 42 01 	lds	r30, 0x0142
+    14e2:	f0 e0       	ldi	r31, 0x00	; 0
+    14e4:	ee 0f       	add	r30, r30
+    14e6:	ff 1f       	adc	r31, r31
+    14e8:	cf 01       	movw	r24, r30
+    14ea:	53 e0       	ldi	r21, 0x03	; 3
+    14ec:	88 0f       	add	r24, r24
+    14ee:	99 1f       	adc	r25, r25
+    14f0:	5a 95       	dec	r21
+    14f2:	e1 f7       	brne	.-8      	; 0x14ec <EVENT_KeyUp+0x13c>
+    14f4:	e8 0f       	add	r30, r24
+    14f6:	f9 1f       	adc	r31, r25
+    14f8:	e4 58       	subi	r30, 0x84	; 132
+    14fa:	ff 4f       	sbci	r31, 0xFF	; 255
+    14fc:	e2 0f       	add	r30, r18
+    14fe:	f1 1d       	adc	r31, r1
+    1500:	84 81       	ldd	r24, Z+4	; 0x04
+    1502:	60 e0       	ldi	r22, 0x00	; 0
+    1504:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+    1508:	08 95       	ret
+            }
+            break;
+
+        case StateRename_ChooseLetter:  // Move up
+            if(ECursor.y > 1) {
+    150a:	60 91 51 01 	lds	r22, 0x0151
+    150e:	62 30       	cpi	r22, 0x02	; 2
+    1510:	30 f1       	brcs	.+76     	; 0x155e <EVENT_KeyUp+0x1ae>
+                LCD_GotoXYstr(ECursor.x, ECursor.y);
+    1512:	80 91 50 01 	lds	r24, 0x0150
+    1516:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+                LCD_DrawChar(ECursor.Letter, false);    // Unhighlight letter
+    151a:	80 91 52 01 	lds	r24, 0x0152
+    151e:	60 e0       	ldi	r22, 0x00	; 0
+    1520:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+                ECursor.y--;
+    1524:	60 91 51 01 	lds	r22, 0x0151
+    1528:	61 50       	subi	r22, 0x01	; 1
+    152a:	60 93 51 01 	sts	0x0151, r22
+    LCD_PrintString_P(0, 7, PSTR("Поиск"), true);
+    LCD_PrintString_P(11, 7, PSTR("Опции"), true);
+}
+
+uint8_t GetLetter(void) {
+    return (ECursor.x + pgm_read_byte(&FLLetters[ECursor.y-1][0]));
+    152e:	80 91 50 01 	lds	r24, 0x0150
+    1532:	e1 e0       	ldi	r30, 0x01	; 1
+    1534:	f0 e0       	ldi	r31, 0x00	; 0
+    1536:	e6 1b       	sub	r30, r22
+    1538:	f1 09       	sbc	r31, r1
+    153a:	ee 0f       	add	r30, r30
+    153c:	ff 1f       	adc	r31, r31
+    153e:	f0 95       	com	r31
+    1540:	e1 95       	neg	r30
+    1542:	ff 4f       	sbci	r31, 0xFF	; 255
+    1544:	ee 56       	subi	r30, 0x6E	; 110
+    1546:	f8 4f       	sbci	r31, 0xF8	; 248
+    1548:	e4 91       	lpm	r30, Z+
+        case StateRename_ChooseLetter:  // Move up
+            if(ECursor.y > 1) {
+                LCD_GotoXYstr(ECursor.x, ECursor.y);
+                LCD_DrawChar(ECursor.Letter, false);    // Unhighlight letter
+                ECursor.y--;
+                ECursor.Letter = GetLetter();           // Get new letter
+    154a:	e8 0f       	add	r30, r24
+    154c:	e0 93 52 01 	sts	0x0152, r30
+                LCD_GotoXYstr(ECursor.x, ECursor.y);
+    1550:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+                LCD_DrawChar(ECursor.Letter, true);     // Highlight letter
+    1554:	80 91 52 01 	lds	r24, 0x0152
+    1558:	61 e0       	ldi	r22, 0x01	; 1
+    155a:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+    155e:	08 95       	ret
+
+00001560 <SetState>:
+uint8_t CharIndx;   // Indx of choosen Char in string edited
+enum State_t EState;
+
+// ========================== Implementation ===================================
+// ============================ States =========================================
+void SetState(enum State_t AState) {
+    1560:	1f 93       	push	r17
+    1562:	18 2f       	mov	r17, r24
+    LCD_Clear();
+    1564:	0e 94 ff 07 	call	0xffe	; 0xffe <LCD_Clear>
+    EState = AState;
+    1568:	10 93 4f 01 	sts	0x014F, r17
+    switch(AState) {
+    156c:	12 30       	cpi	r17, 0x02	; 2
+    156e:	99 f1       	breq	.+102    	; 0x15d6 <SetState+0x76>
+    1570:	13 30       	cpi	r17, 0x03	; 3
+    1572:	30 f4       	brcc	.+12     	; 0x1580 <SetState+0x20>
+    1574:	11 23       	and	r17, r17
+    1576:	59 f0       	breq	.+22     	; 0x158e <SetState+0x2e>
+    1578:	11 30       	cpi	r17, 0x01	; 1
+    157a:	09 f0       	breq	.+2      	; 0x157e <SetState+0x1e>
+    157c:	b5 c0       	rjmp	.+362    	; 0x16e8 <SetState+0x188>
+    157e:	0b c0       	rjmp	.+22     	; 0x1596 <SetState+0x36>
+    1580:	13 30       	cpi	r17, 0x03	; 3
+    1582:	09 f4       	brne	.+2      	; 0x1586 <SetState+0x26>
+    1584:	58 c0       	rjmp	.+176    	; 0x1636 <SetState+0xd6>
+    1586:	15 30       	cpi	r17, 0x05	; 5
+    1588:	09 f0       	breq	.+2      	; 0x158c <SetState+0x2c>
+    158a:	ae c0       	rjmp	.+348    	; 0x16e8 <SetState+0x188>
+    158c:	8b c0       	rjmp	.+278    	; 0x16a4 <SetState+0x144>
+        case StateList:
+            DisplayList(0); // Display list of lockets
+    158e:	80 e0       	ldi	r24, 0x00	; 0
+    1590:	0e 94 ba 08 	call	0x1174	; 0x1174 <DisplayList>
+    1594:	a9 c0       	rjmp	.+338    	; 0x16e8 <SetState+0x188>
+            break;
+
+        case StateSearch:
+            LCD_PrintString(0, 0, EL.L[EL.Indx].S, false);  // Print current locket name
+    1596:	40 91 42 01 	lds	r20, 0x0142
+    159a:	82 e1       	ldi	r24, 0x12	; 18
+    159c:	48 9f       	mul	r20, r24
+    159e:	a0 01       	movw	r20, r0
+    15a0:	11 24       	eor	r1, r1
+    15a2:	41 58       	subi	r20, 0x81	; 129
+    15a4:	5f 4f       	sbci	r21, 0xFF	; 255
+    15a6:	80 e0       	ldi	r24, 0x00	; 0
+    15a8:	60 e0       	ldi	r22, 0x00	; 0
+    15aa:	20 e0       	ldi	r18, 0x00	; 0
+    15ac:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+            LCD_PrintString_P(0, 2, PSTR("dBm:"), false);
+    15b0:	80 e0       	ldi	r24, 0x00	; 0
+    15b2:	62 e0       	ldi	r22, 0x02	; 2
+    15b4:	48 e7       	ldi	r20, 0x78	; 120
+    15b6:	58 e0       	ldi	r21, 0x08	; 8
+    15b8:	20 e0       	ldi	r18, 0x00	; 0
+    15ba:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            LCD_PrintString_P(0, 7, PSTR("Список"), true);
+    15be:	80 e0       	ldi	r24, 0x00	; 0
+    15c0:	67 e0       	ldi	r22, 0x07	; 7
+    15c2:	41 e7       	ldi	r20, 0x71	; 113
+    15c4:	58 e0       	ldi	r21, 0x08	; 8
+    15c6:	21 e0       	ldi	r18, 0x01	; 1
+    15c8:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            LCD_DrawGauge();
+    15cc:	0e 94 f7 07 	call	0xfee	; 0xfee <LCD_DrawGauge>
+            EVENT_StartingSearch();
+    15d0:	0e 94 2c 05 	call	0xa58	; 0xa58 <EVENT_StartingSearch>
+    15d4:	89 c0       	rjmp	.+274    	; 0x16e8 <SetState+0x188>
+            break;
+
+        case StateOptions:
+            LCD_PrintString(0, 0, EL.L[EL.Indx].S, false);  // Print current locket name
+    15d6:	40 91 42 01 	lds	r20, 0x0142
+    15da:	82 e1       	ldi	r24, 0x12	; 18
+    15dc:	48 9f       	mul	r20, r24
+    15de:	a0 01       	movw	r20, r0
+    15e0:	11 24       	eor	r1, r1
+    15e2:	41 58       	subi	r20, 0x81	; 129
+    15e4:	5f 4f       	sbci	r21, 0xFF	; 255
+    15e6:	80 e0       	ldi	r24, 0x00	; 0
+    15e8:	60 e0       	ldi	r22, 0x00	; 0
+    15ea:	20 e0       	ldi	r18, 0x00	; 0
+    15ec:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+            // Display pseudo-buttons
+            LCD_PrintString_P(0,  7, PSTR("  Ok  "), true);
+    15f0:	80 e0       	ldi	r24, 0x00	; 0
+    15f2:	67 e0       	ldi	r22, 0x07	; 7
+    15f4:	4a e6       	ldi	r20, 0x6A	; 106
+    15f6:	58 e0       	ldi	r21, 0x08	; 8
+    15f8:	21 e0       	ldi	r18, 0x01	; 1
+    15fa:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            LCD_PrintString_P(10, 7, PSTR("Отмена"), true);
+    15fe:	8a e0       	ldi	r24, 0x0A	; 10
+    1600:	67 e0       	ldi	r22, 0x07	; 7
+    1602:	43 e6       	ldi	r20, 0x63	; 99
+    1604:	58 e0       	ldi	r21, 0x08	; 8
+    1606:	21 e0       	ldi	r18, 0x01	; 1
+    1608:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            // Display options
+            LCD_PrintString_P(0, OPTIONS_TOP,   EOptions[0], true);
+    160c:	40 91 78 00 	lds	r20, 0x0078
+    1610:	50 91 79 00 	lds	r21, 0x0079
+    1614:	80 e0       	ldi	r24, 0x00	; 0
+    1616:	62 e0       	ldi	r22, 0x02	; 2
+    1618:	21 e0       	ldi	r18, 0x01	; 1
+    161a:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            LCD_PrintString_P(0, OPTIONS_TOP+1, EOptions[1], false);
+    161e:	40 91 7a 00 	lds	r20, 0x007A
+    1622:	50 91 7b 00 	lds	r21, 0x007B
+    1626:	80 e0       	ldi	r24, 0x00	; 0
+    1628:	63 e0       	ldi	r22, 0x03	; 3
+    162a:	20 e0       	ldi	r18, 0x00	; 0
+    162c:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            EIndx = 0;  // Set current temporary indx
+    1630:	10 92 53 01 	sts	0x0153, r1
+    1634:	59 c0       	rjmp	.+178    	; 0x16e8 <SetState+0x188>
+            break;
+
+        case StateRename_ChoosePlace:
+            LCD_GotoXY(0, 0);
+    1636:	80 e0       	ldi	r24, 0x00	; 0
+    1638:	60 e0       	ldi	r22, 0x00	; 0
+    163a:	0e 94 57 07 	call	0xeae	; 0xeae <LCD_GotoXY>
+            // Print current locket name with first letter highlighted
+            LCD_DrawChar(EL.L[EL.Indx].S[0], true);
+    163e:	e0 91 42 01 	lds	r30, 0x0142
+    1642:	f0 e0       	ldi	r31, 0x00	; 0
+    1644:	ee 0f       	add	r30, r30
+    1646:	ff 1f       	adc	r31, r31
+    1648:	cf 01       	movw	r24, r30
+    164a:	43 e0       	ldi	r20, 0x03	; 3
+    164c:	88 0f       	add	r24, r24
+    164e:	99 1f       	adc	r25, r25
+    1650:	4a 95       	dec	r20
+    1652:	e1 f7       	brne	.-8      	; 0x164c <SetState+0xec>
+    1654:	e8 0f       	add	r30, r24
+    1656:	f9 1f       	adc	r31, r25
+    1658:	e4 58       	subi	r30, 0x84	; 132
+    165a:	ff 4f       	sbci	r31, 0xFF	; 255
+    165c:	83 81       	ldd	r24, Z+3	; 0x03
+    165e:	61 e0       	ldi	r22, 0x01	; 1
+    1660:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+            LCD_PrintString(1, 0, &EL.L[EL.Indx].S[1], false);
+    1664:	40 91 42 01 	lds	r20, 0x0142
+    1668:	82 e1       	ldi	r24, 0x12	; 18
+    166a:	48 9f       	mul	r20, r24
+    166c:	a0 01       	movw	r20, r0
+    166e:	11 24       	eor	r1, r1
+    1670:	40 58       	subi	r20, 0x80	; 128
+    1672:	5f 4f       	sbci	r21, 0xFF	; 255
+    1674:	81 e0       	ldi	r24, 0x01	; 1
+    1676:	60 e0       	ldi	r22, 0x00	; 0
+    1678:	20 e0       	ldi	r18, 0x00	; 0
+    167a:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+            // Display pseudo-buttons
+            LCD_PrintString_P(0,  7, PSTR("Изменить"), true);
+    167e:	80 e0       	ldi	r24, 0x00	; 0
+    1680:	67 e0       	ldi	r22, 0x07	; 7
+    1682:	4a e5       	ldi	r20, 0x5A	; 90
+    1684:	58 e0       	ldi	r21, 0x08	; 8
+    1686:	21 e0       	ldi	r18, 0x01	; 1
+    1688:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            LCD_PrintString_P(10, 7, PSTR("Готово"), true);
+    168c:	8a e0       	ldi	r24, 0x0A	; 10
+    168e:	67 e0       	ldi	r22, 0x07	; 7
+    1690:	43 e5       	ldi	r20, 0x53	; 83
+    1692:	58 e0       	ldi	r21, 0x08	; 8
+    1694:	21 e0       	ldi	r18, 0x01	; 1
+    1696:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            EIndx = 0;
+    169a:	10 92 53 01 	sts	0x0153, r1
+            CharIndx = 0;
+    169e:	10 92 54 01 	sts	0x0154, r1
+    16a2:	22 c0       	rjmp	.+68     	; 0x16e8 <SetState+0x188>
+            break;
+
+        case StatePair:
+            LCD_PrintString(0, 0, EL.L[EL.Indx].S, false);  // Print current locket name
+    16a4:	40 91 42 01 	lds	r20, 0x0142
+    16a8:	82 e1       	ldi	r24, 0x12	; 18
+    16aa:	48 9f       	mul	r20, r24
+    16ac:	a0 01       	movw	r20, r0
+    16ae:	11 24       	eor	r1, r1
+    16b0:	41 58       	subi	r20, 0x81	; 129
+    16b2:	5f 4f       	sbci	r21, 0xFF	; 255
+    16b4:	80 e0       	ldi	r24, 0x00	; 0
+    16b6:	60 e0       	ldi	r22, 0x00	; 0
+    16b8:	20 e0       	ldi	r18, 0x00	; 0
+    16ba:	0e 94 30 07 	call	0xe60	; 0xe60 <LCD_PrintString>
+            LCD_PrintString_P(0, 1, PSTR("Стыковка"), false);
+    16be:	80 e0       	ldi	r24, 0x00	; 0
+    16c0:	61 e0       	ldi	r22, 0x01	; 1
+    16c2:	4a e4       	ldi	r20, 0x4A	; 74
+    16c4:	58 e0       	ldi	r21, 0x08	; 8
+    16c6:	20 e0       	ldi	r18, 0x00	; 0
+    16c8:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            // Display pseudo-buttons
+            LCD_PrintString_P(0,  7, PSTR("  Ok  "), true);
+    16cc:	80 e0       	ldi	r24, 0x00	; 0
+    16ce:	67 e0       	ldi	r22, 0x07	; 7
+    16d0:	43 e4       	ldi	r20, 0x43	; 67
+    16d2:	58 e0       	ldi	r21, 0x08	; 8
+    16d4:	21 e0       	ldi	r18, 0x01	; 1
+    16d6:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            LCD_PrintString_P(10, 7, PSTR("Отмена"), true);
+    16da:	8a e0       	ldi	r24, 0x0A	; 10
+    16dc:	67 e0       	ldi	r22, 0x07	; 7
+    16de:	4c e3       	ldi	r20, 0x3C	; 60
+    16e0:	58 e0       	ldi	r21, 0x08	; 8
+    16e2:	21 e0       	ldi	r18, 0x01	; 1
+    16e4:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            break;
+
+        default: break;
+    } // switch
+}
+    16e8:	1f 91       	pop	r17
+    16ea:	08 95       	ret
+
+000016ec <EVENT_KeyRight>:
+
+        default: break;
+    } // switch
+}
+void EVENT_KeyRight(void) {
+    switch(EState) {
+    16ec:	80 91 4f 01 	lds	r24, 0x014F
+    16f0:	83 30       	cpi	r24, 0x03	; 3
+    16f2:	18 f4       	brcc	.+6      	; 0x16fa <EVENT_KeyRight+0xe>
+    16f4:	81 30       	cpi	r24, 0x01	; 1
+    16f6:	10 f5       	brcc	.+68     	; 0x173c <EVENT_KeyRight+0x50>
+    16f8:	09 c0       	rjmp	.+18     	; 0x170c <EVENT_KeyRight+0x20>
+    16fa:	84 30       	cpi	r24, 0x04	; 4
+    16fc:	09 f4       	brne	.+2      	; 0x1700 <EVENT_KeyRight+0x14>
+    16fe:	53 c0       	rjmp	.+166    	; 0x17a6 <EVENT_KeyRight+0xba>
+    1700:	84 30       	cpi	r24, 0x04	; 4
+    1702:	98 f1       	brcs	.+102    	; 0x176a <EVENT_KeyRight+0x7e>
+    1704:	85 30       	cpi	r24, 0x05	; 5
+    1706:	09 f0       	breq	.+2      	; 0x170a <EVENT_KeyRight+0x1e>
+    1708:	7d c0       	rjmp	.+250    	; 0x1804 <EVENT_KeyRight+0x118>
+    170a:	18 c0       	rjmp	.+48     	; 0x173c <EVENT_KeyRight+0x50>
+        case StateList:
+            // Blink button
+            LCD_PrintString_P(11, 7, PSTR("     "), false);
+    170c:	8b e0       	ldi	r24, 0x0B	; 11
+    170e:	67 e0       	ldi	r22, 0x07	; 7
+    1710:	4c ec       	ldi	r20, 0xCC	; 204
+    1712:	57 e0       	ldi	r21, 0x07	; 7
+    1714:	20 e0       	ldi	r18, 0x00	; 0
+    1716:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    171a:	8c e7       	ldi	r24, 0x7C	; 124
+    171c:	92 e9       	ldi	r25, 0x92	; 146
+    171e:	01 97       	sbiw	r24, 0x01	; 1
+    1720:	f1 f7       	brne	.-4      	; 0x171e <EVENT_KeyRight+0x32>
+            _delay_ms(150);
+            LCD_PrintString_P(11, 7, PSTR("Опции"), true);
+    1722:	8b e0       	ldi	r24, 0x0B	; 11
+    1724:	67 e0       	ldi	r22, 0x07	; 7
+    1726:	46 ec       	ldi	r20, 0xC6	; 198
+    1728:	57 e0       	ldi	r21, 0x07	; 7
+    172a:	21 e0       	ldi	r18, 0x01	; 1
+    172c:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1730:	80 e5       	ldi	r24, 0x50	; 80
+    1732:	93 ec       	ldi	r25, 0xC3	; 195
+    1734:	01 97       	sbiw	r24, 0x01	; 1
+    1736:	f1 f7       	brne	.-4      	; 0x1734 <EVENT_KeyRight+0x48>
+            _delay_ms(200);
+            // Display current item options
+            SetState(StateOptions);
+    1738:	82 e0       	ldi	r24, 0x02	; 2
+    173a:	32 c0       	rjmp	.+100    	; 0x17a0 <EVENT_KeyRight+0xb4>
+
+        case StateOptions:
+        case StatePair:
+        case StateSearch:
+            // Blink button
+            LCD_PrintString_P(10, 7, PSTR("      "), false);
+    173c:	8a e0       	ldi	r24, 0x0A	; 10
+    173e:	67 e0       	ldi	r22, 0x07	; 7
+    1740:	4f eb       	ldi	r20, 0xBF	; 191
+    1742:	57 e0       	ldi	r21, 0x07	; 7
+    1744:	20 e0       	ldi	r18, 0x00	; 0
+    1746:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    174a:	8c e7       	ldi	r24, 0x7C	; 124
+    174c:	92 e9       	ldi	r25, 0x92	; 146
+    174e:	01 97       	sbiw	r24, 0x01	; 1
+    1750:	f1 f7       	brne	.-4      	; 0x174e <EVENT_KeyRight+0x62>
+            _delay_ms(150);
+            LCD_PrintString_P(10, 7, PSTR("Отмена"), true);
+    1752:	8a e0       	ldi	r24, 0x0A	; 10
+    1754:	67 e0       	ldi	r22, 0x07	; 7
+    1756:	48 eb       	ldi	r20, 0xB8	; 184
+    1758:	57 e0       	ldi	r21, 0x07	; 7
+    175a:	21 e0       	ldi	r18, 0x01	; 1
+    175c:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1760:	80 e5       	ldi	r24, 0x50	; 80
+    1762:	93 ec       	ldi	r25, 0xC3	; 195
+    1764:	01 97       	sbiw	r24, 0x01	; 1
+    1766:	f1 f7       	brne	.-4      	; 0x1764 <EVENT_KeyRight+0x78>
+    1768:	1a c0       	rjmp	.+52     	; 0x179e <EVENT_KeyRight+0xb2>
+            SetState(StateList);
+            break;
+
+        case StateRename_ChoosePlace:
+            // Blink button
+            LCD_PrintString_P(10, 7, PSTR("      "), false);
+    176a:	8a e0       	ldi	r24, 0x0A	; 10
+    176c:	67 e0       	ldi	r22, 0x07	; 7
+    176e:	41 eb       	ldi	r20, 0xB1	; 177
+    1770:	57 e0       	ldi	r21, 0x07	; 7
+    1772:	20 e0       	ldi	r18, 0x00	; 0
+    1774:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1778:	8c e7       	ldi	r24, 0x7C	; 124
+    177a:	92 e9       	ldi	r25, 0x92	; 146
+    177c:	01 97       	sbiw	r24, 0x01	; 1
+    177e:	f1 f7       	brne	.-4      	; 0x177c <EVENT_KeyRight+0x90>
+            _delay_ms(150);
+            LCD_PrintString_P(10, 7, PSTR("Готово"), true);
+    1780:	8a e0       	ldi	r24, 0x0A	; 10
+    1782:	67 e0       	ldi	r22, 0x07	; 7
+    1784:	4a ea       	ldi	r20, 0xAA	; 170
+    1786:	57 e0       	ldi	r21, 0x07	; 7
+    1788:	21 e0       	ldi	r18, 0x01	; 1
+    178a:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    178e:	80 e5       	ldi	r24, 0x50	; 80
+    1790:	93 ec       	ldi	r25, 0xC3	; 195
+    1792:	01 97       	sbiw	r24, 0x01	; 1
+    1794:	f1 f7       	brne	.-4      	; 0x1792 <EVENT_KeyRight+0xa6>
+            _delay_ms(200);
+            eeWriteLocket(EL.Indx); // Save to EEPROM
+    1796:	80 91 42 01 	lds	r24, 0x0142
+    179a:	0e 94 5e 04 	call	0x8bc	; 0x8bc <eeWriteLocket>
+            // Return to list
+            SetState(StateList);
+    179e:	80 e0       	ldi	r24, 0x00	; 0
+    17a0:	0e 94 b0 0a 	call	0x1560	; 0x1560 <SetState>
+    17a4:	08 95       	ret
+            break;
+
+        case StateRename_ChooseLetter:              // Move cursor right
+            LCD_GotoXYstr(ECursor.x, ECursor.y);
+    17a6:	80 91 50 01 	lds	r24, 0x0150
+    17aa:	60 91 51 01 	lds	r22, 0x0151
+    17ae:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+            LCD_DrawChar(ECursor.Letter, false);    // Unhighlight letter
+    17b2:	80 91 52 01 	lds	r24, 0x0152
+    17b6:	60 e0       	ldi	r22, 0x00	; 0
+    17b8:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+            if(ECursor.x == LCD_STR_WIDTH-1) ECursor.x = 0;
+    17bc:	80 91 50 01 	lds	r24, 0x0150
+    17c0:	8f 30       	cpi	r24, 0x0F	; 15
+    17c2:	19 f4       	brne	.+6      	; 0x17ca <EVENT_KeyRight+0xde>
+    17c4:	10 92 50 01 	sts	0x0150, r1
+    17c8:	03 c0       	rjmp	.+6      	; 0x17d0 <EVENT_KeyRight+0xe4>
+            else ECursor.x++;
+    17ca:	8f 5f       	subi	r24, 0xFF	; 255
+    17cc:	80 93 50 01 	sts	0x0150, r24
+    LCD_PrintString_P(0, 7, PSTR("Поиск"), true);
+    LCD_PrintString_P(11, 7, PSTR("Опции"), true);
+}
+
+uint8_t GetLetter(void) {
+    return (ECursor.x + pgm_read_byte(&FLLetters[ECursor.y-1][0]));
+    17d0:	80 91 50 01 	lds	r24, 0x0150
+    17d4:	60 91 51 01 	lds	r22, 0x0151
+    17d8:	e1 e0       	ldi	r30, 0x01	; 1
+    17da:	f0 e0       	ldi	r31, 0x00	; 0
+    17dc:	e6 1b       	sub	r30, r22
+    17de:	f1 09       	sbc	r31, r1
+    17e0:	ee 0f       	add	r30, r30
+    17e2:	ff 1f       	adc	r31, r31
+    17e4:	f0 95       	com	r31
+    17e6:	e1 95       	neg	r30
+    17e8:	ff 4f       	sbci	r31, 0xFF	; 255
+    17ea:	ee 56       	subi	r30, 0x6E	; 110
+    17ec:	f8 4f       	sbci	r31, 0xF8	; 248
+    17ee:	e4 91       	lpm	r30, Z+
+        case StateRename_ChooseLetter:              // Move cursor right
+            LCD_GotoXYstr(ECursor.x, ECursor.y);
+            LCD_DrawChar(ECursor.Letter, false);    // Unhighlight letter
+            if(ECursor.x == LCD_STR_WIDTH-1) ECursor.x = 0;
+            else ECursor.x++;
+            ECursor.Letter = GetLetter();           // Get new letter
+    17f0:	e8 0f       	add	r30, r24
+    17f2:	e0 93 52 01 	sts	0x0152, r30
+            LCD_GotoXYstr(ECursor.x, ECursor.y);
+    17f6:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+            LCD_DrawChar(ECursor.Letter, true);     // Highlight letter
+    17fa:	80 91 52 01 	lds	r24, 0x0152
+    17fe:	61 e0       	ldi	r22, 0x01	; 1
+    1800:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+    1804:	08 95       	ret
+
+00001806 <EVENT_KeyLeft>:
+            break;
+
+        default: break;
+    } // switch
+}
+void EVENT_KeyLeft(void) {
+    1806:	8f 92       	push	r8
+    1808:	9f 92       	push	r9
+    180a:	bf 92       	push	r11
+    180c:	cf 92       	push	r12
+    180e:	df 92       	push	r13
+    1810:	ef 92       	push	r14
+    1812:	ff 92       	push	r15
+    1814:	0f 93       	push	r16
+    1816:	1f 93       	push	r17
+    1818:	cf 93       	push	r28
+    181a:	df 93       	push	r29
+    switch(EState) {
+    181c:	80 91 4f 01 	lds	r24, 0x014F
+    1820:	82 30       	cpi	r24, 0x02	; 2
+    1822:	09 f4       	brne	.+2      	; 0x1826 <EVENT_KeyLeft+0x20>
+    1824:	41 c0       	rjmp	.+130    	; 0x18a8 <EVENT_KeyLeft+0xa2>
+    1826:	83 30       	cpi	r24, 0x03	; 3
+    1828:	30 f4       	brcc	.+12     	; 0x1836 <EVENT_KeyLeft+0x30>
+    182a:	88 23       	and	r24, r24
+    182c:	59 f0       	breq	.+22     	; 0x1844 <EVENT_KeyLeft+0x3e>
+    182e:	81 30       	cpi	r24, 0x01	; 1
+    1830:	09 f0       	breq	.+2      	; 0x1834 <EVENT_KeyLeft+0x2e>
+    1832:	a3 c1       	rjmp	.+838    	; 0x1b7a <EVENT_KeyLeft+0x374>
+    1834:	1f c0       	rjmp	.+62     	; 0x1874 <EVENT_KeyLeft+0x6e>
+    1836:	83 30       	cpi	r24, 0x03	; 3
+    1838:	09 f4       	brne	.+2      	; 0x183c <EVENT_KeyLeft+0x36>
+    183a:	54 c0       	rjmp	.+168    	; 0x18e4 <EVENT_KeyLeft+0xde>
+    183c:	84 30       	cpi	r24, 0x04	; 4
+    183e:	09 f0       	breq	.+2      	; 0x1842 <EVENT_KeyLeft+0x3c>
+    1840:	9c c1       	rjmp	.+824    	; 0x1b7a <EVENT_KeyLeft+0x374>
+    1842:	c4 c0       	rjmp	.+392    	; 0x19cc <EVENT_KeyLeft+0x1c6>
+        case StateList:
+            // Blink button
+            LCD_PrintString_P(0, 7, PSTR("     "), false);
+    1844:	80 e0       	ldi	r24, 0x00	; 0
+    1846:	67 e0       	ldi	r22, 0x07	; 7
+    1848:	46 e3       	ldi	r20, 0x36	; 54
+    184a:	58 e0       	ldi	r21, 0x08	; 8
+    184c:	20 e0       	ldi	r18, 0x00	; 0
+    184e:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1852:	8c e7       	ldi	r24, 0x7C	; 124
+    1854:	92 e9       	ldi	r25, 0x92	; 146
+    1856:	01 97       	sbiw	r24, 0x01	; 1
+    1858:	f1 f7       	brne	.-4      	; 0x1856 <EVENT_KeyLeft+0x50>
+            _delay_ms(150);
+            LCD_PrintString_P(0, 7, PSTR("Поиск"), true);
+    185a:	80 e0       	ldi	r24, 0x00	; 0
+    185c:	67 e0       	ldi	r22, 0x07	; 7
+    185e:	40 e3       	ldi	r20, 0x30	; 48
+    1860:	58 e0       	ldi	r21, 0x08	; 8
+    1862:	21 e0       	ldi	r18, 0x01	; 1
+    1864:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1868:	80 e5       	ldi	r24, 0x50	; 80
+    186a:	93 ec       	ldi	r25, 0xC3	; 195
+    186c:	01 97       	sbiw	r24, 0x01	; 1
+    186e:	f1 f7       	brne	.-4      	; 0x186c <EVENT_KeyLeft+0x66>
+            _delay_ms(200);
+            SetState(StateSearch);
+    1870:	81 e0       	ldi	r24, 0x01	; 1
+    1872:	17 c0       	rjmp	.+46     	; 0x18a2 <EVENT_KeyLeft+0x9c>
+            break;
+
+        case StateSearch:
+            // Blink button
+            LCD_PrintString_P(0, 7, PSTR("      "), false);
+    1874:	80 e0       	ldi	r24, 0x00	; 0
+    1876:	67 e0       	ldi	r22, 0x07	; 7
+    1878:	49 e2       	ldi	r20, 0x29	; 41
+    187a:	58 e0       	ldi	r21, 0x08	; 8
+    187c:	20 e0       	ldi	r18, 0x00	; 0
+    187e:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1882:	8c e7       	ldi	r24, 0x7C	; 124
+    1884:	92 e9       	ldi	r25, 0x92	; 146
+    1886:	01 97       	sbiw	r24, 0x01	; 1
+    1888:	f1 f7       	brne	.-4      	; 0x1886 <EVENT_KeyLeft+0x80>
+            _delay_ms(150);
+            LCD_PrintString_P(0, 7, PSTR("Список"), true);
+    188a:	80 e0       	ldi	r24, 0x00	; 0
+    188c:	67 e0       	ldi	r22, 0x07	; 7
+    188e:	42 e2       	ldi	r20, 0x22	; 34
+    1890:	58 e0       	ldi	r21, 0x08	; 8
+    1892:	21 e0       	ldi	r18, 0x01	; 1
+    1894:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1898:	80 e5       	ldi	r24, 0x50	; 80
+    189a:	93 ec       	ldi	r25, 0xC3	; 195
+    189c:	01 97       	sbiw	r24, 0x01	; 1
+    189e:	f1 f7       	brne	.-4      	; 0x189c <EVENT_KeyLeft+0x96>
+            _delay_ms(200);
+            SetState(StateList);
+    18a0:	80 e0       	ldi	r24, 0x00	; 0
+    18a2:	0e 94 b0 0a 	call	0x1560	; 0x1560 <SetState>
+    18a6:	69 c1       	rjmp	.+722    	; 0x1b7a <EVENT_KeyLeft+0x374>
+            break;
+
+        case StateOptions:
+            // Blink button
+            LCD_PrintString_P(0, 7, PSTR("      "), false);
+    18a8:	80 e0       	ldi	r24, 0x00	; 0
+    18aa:	67 e0       	ldi	r22, 0x07	; 7
+    18ac:	4b e1       	ldi	r20, 0x1B	; 27
+    18ae:	58 e0       	ldi	r21, 0x08	; 8
+    18b0:	20 e0       	ldi	r18, 0x00	; 0
+    18b2:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    18b6:	8c e7       	ldi	r24, 0x7C	; 124
+    18b8:	92 e9       	ldi	r25, 0x92	; 146
+    18ba:	01 97       	sbiw	r24, 0x01	; 1
+    18bc:	f1 f7       	brne	.-4      	; 0x18ba <EVENT_KeyLeft+0xb4>
+            _delay_ms(150);
+            LCD_PrintString_P(0, 7, PSTR("  Ok  "), true);
+    18be:	80 e0       	ldi	r24, 0x00	; 0
+    18c0:	67 e0       	ldi	r22, 0x07	; 7
+    18c2:	44 e1       	ldi	r20, 0x14	; 20
+    18c4:	58 e0       	ldi	r21, 0x08	; 8
+    18c6:	21 e0       	ldi	r18, 0x01	; 1
+    18c8:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    18cc:	80 e5       	ldi	r24, 0x50	; 80
+    18ce:	93 ec       	ldi	r25, 0xC3	; 195
+    18d0:	01 97       	sbiw	r24, 0x01	; 1
+    18d2:	f1 f7       	brne	.-4      	; 0x18d0 <EVENT_KeyLeft+0xca>
+            _delay_ms(200);
+            // Set state depending on option
+            if(EIndx == 0) SetState(StateRename_ChoosePlace);
+    18d4:	80 91 53 01 	lds	r24, 0x0153
+    18d8:	88 23       	and	r24, r24
+    18da:	11 f4       	brne	.+4      	; 0x18e0 <EVENT_KeyLeft+0xda>
+    18dc:	83 e0       	ldi	r24, 0x03	; 3
+    18de:	e1 cf       	rjmp	.-62     	; 0x18a2 <EVENT_KeyLeft+0x9c>
+            else           SetState(StatePair);
+    18e0:	85 e0       	ldi	r24, 0x05	; 5
+    18e2:	df cf       	rjmp	.-66     	; 0x18a2 <EVENT_KeyLeft+0x9c>
+            break;
+
+        case StateRename_ChoosePlace:
+            // Setup buttons
+            LCD_PrintString_P(0, 7, PSTR("        "), false);
+    18e4:	80 e0       	ldi	r24, 0x00	; 0
+    18e6:	67 e0       	ldi	r22, 0x07	; 7
+    18e8:	4b e0       	ldi	r20, 0x0B	; 11
+    18ea:	58 e0       	ldi	r21, 0x08	; 8
+    18ec:	20 e0       	ldi	r18, 0x00	; 0
+    18ee:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            LCD_PrintString_P(10, 7, PSTR("  ->  "), true);
+    18f2:	8a e0       	ldi	r24, 0x0A	; 10
+    18f4:	67 e0       	ldi	r22, 0x07	; 7
+    18f6:	44 e0       	ldi	r20, 0x04	; 4
+    18f8:	58 e0       	ldi	r21, 0x08	; 8
+    18fa:	21 e0       	ldi	r18, 0x01	; 1
+    18fc:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1900:	8c e7       	ldi	r24, 0x7C	; 124
+    1902:	92 e9       	ldi	r25, 0x92	; 146
+    1904:	01 97       	sbiw	r24, 0x01	; 1
+    1906:	f1 f7       	brne	.-4      	; 0x1904 <EVENT_KeyLeft+0xfe>
+            _delay_ms(150);
+            LCD_PrintString_P(0, 7, PSTR("Выбрать"), true);
+    1908:	80 e0       	ldi	r24, 0x00	; 0
+    190a:	67 e0       	ldi	r22, 0x07	; 7
+    190c:	4c ef       	ldi	r20, 0xFC	; 252
+    190e:	57 e0       	ldi	r21, 0x07	; 7
+    1910:	21 e0       	ldi	r18, 0x01	; 1
+    1912:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            EState = StateRename_ChooseLetter;
+    1916:	84 e0       	ldi	r24, 0x04	; 4
+    1918:	80 93 4f 01 	sts	0x014F, r24
+            // Get choosen letter
+            uint8_t Choosen = EL.L[EL.Indx].S[CharIndx];
+    191c:	20 91 54 01 	lds	r18, 0x0154
+    1920:	e0 91 42 01 	lds	r30, 0x0142
+    1924:	f0 e0       	ldi	r31, 0x00	; 0
+    1926:	ee 0f       	add	r30, r30
+    1928:	ff 1f       	adc	r31, r31
+    192a:	cf 01       	movw	r24, r30
+    192c:	33 e0       	ldi	r19, 0x03	; 3
+    192e:	88 0f       	add	r24, r24
+    1930:	99 1f       	adc	r25, r25
+    1932:	3a 95       	dec	r19
+    1934:	e1 f7       	brne	.-8      	; 0x192e <EVENT_KeyLeft+0x128>
+    1936:	e8 0f       	add	r30, r24
+    1938:	f9 1f       	adc	r31, r25
+    193a:	e4 58       	subi	r30, 0x84	; 132
+    193c:	ff 4f       	sbci	r31, 0xFF	; 255
+    193e:	e2 0f       	add	r30, r18
+    1940:	f1 1d       	adc	r31, r1
+    1942:	93 81       	ldd	r25, Z+3	; 0x03
+            if((Choosen >= 'A') && (Choosen <= 'Z')) Choosen += 'a'-'A';    // Change to uppercase
+    1944:	89 2f       	mov	r24, r25
+    1946:	81 54       	subi	r24, 0x41	; 65
+    1948:	8a 31       	cpi	r24, 0x1A	; 26
+    194a:	08 f4       	brcc	.+2      	; 0x194e <EVENT_KeyLeft+0x148>
+    194c:	90 5e       	subi	r25, 0xE0	; 224
+            if((Choosen >= 'А') && (Choosen <= 'Я')) Choosen += 'а'-'А';    // Change to uppercase
+    194e:	89 2f       	mov	r24, r25
+    1950:	80 5c       	subi	r24, 0xC0	; 192
+    1952:	80 32       	cpi	r24, 0x20	; 32
+    1954:	08 f4       	brcc	.+2      	; 0x1958 <EVENT_KeyLeft+0x152>
+    1956:	90 5e       	subi	r25, 0xE0	; 224
+    1958:	23 e9       	ldi	r18, 0x93	; 147
+    195a:	e2 2e       	mov	r14, r18
+    195c:	27 e0       	ldi	r18, 0x07	; 7
+    195e:	f2 2e       	mov	r15, r18
+    1960:	00 e0       	ldi	r16, 0x00	; 0
+            //uint8_t r = 0;
+                LCD_GotoXY(0, r+1);
+                cMax = pgm_read_byte(&FLLetters[r][1]);
+                cMin = pgm_read_byte(&FLLetters[r][0]);
+                for(uint16_t c = cMin; c <= cMax; c++)
+                    if(c == Choosen) {
+    1962:	89 2e       	mov	r8, r25
+    1964:	99 24       	eor	r9, r9
+            if((Choosen >= 'А') && (Choosen <= 'Я')) Choosen += 'а'-'А';    // Change to uppercase
+            // Display alphabet
+            uint8_t cMax, cMin;
+            for(uint8_t r=0; r<=5; r++) {   // Iterate rows
+            //uint8_t r = 0;
+                LCD_GotoXY(0, r+1);
+    1966:	0f 5f       	subi	r16, 0xFF	; 255
+    1968:	80 e0       	ldi	r24, 0x00	; 0
+    196a:	60 2f       	mov	r22, r16
+    196c:	0e 94 57 07 	call	0xeae	; 0xeae <LCD_GotoXY>
+                cMax = pgm_read_byte(&FLLetters[r][1]);
+    1970:	f7 01       	movw	r30, r14
+    1972:	84 91       	lpm	r24, Z+
+                cMin = pgm_read_byte(&FLLetters[r][0]);
+    1974:	08 94       	sec
+    1976:	e1 08       	sbc	r14, r1
+    1978:	f1 08       	sbc	r15, r1
+    197a:	f7 01       	movw	r30, r14
+    197c:	b4 90       	lpm	r11, Z+
+    197e:	08 94       	sec
+    1980:	e1 1c       	adc	r14, r1
+    1982:	f1 1c       	adc	r15, r1
+                for(uint16_t c = cMin; c <= cMax; c++)
+    1984:	cb 2d       	mov	r28, r11
+    1986:	d0 e0       	ldi	r29, 0x00	; 0
+    1988:	c8 2e       	mov	r12, r24
+    198a:	dd 24       	eor	r13, r13
+    198c:	15 c0       	rjmp	.+42     	; 0x19b8 <EVENT_KeyLeft+0x1b2>
+                    if(c == Choosen) {
+    198e:	c8 15       	cp	r28, r8
+    1990:	d9 05       	cpc	r29, r9
+    1992:	69 f4       	brne	.+26     	; 0x19ae <EVENT_KeyLeft+0x1a8>
+    1994:	1c 2f       	mov	r17, r28
+                        LCD_DrawChar(c, true);
+    1996:	8c 2f       	mov	r24, r28
+    1998:	61 e0       	ldi	r22, 0x01	; 1
+    199a:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+                        ECursor.x = c-cMin;
+    199e:	1b 19       	sub	r17, r11
+    19a0:	10 93 50 01 	sts	0x0150, r17
+                        ECursor.y = r+1;
+    19a4:	00 93 51 01 	sts	0x0151, r16
+                        ECursor.Letter = c;
+    19a8:	c0 93 52 01 	sts	0x0152, r28
+    19ac:	04 c0       	rjmp	.+8      	; 0x19b6 <EVENT_KeyLeft+0x1b0>
+                    }
+                    else LCD_DrawChar(c, false);
+    19ae:	8c 2f       	mov	r24, r28
+    19b0:	60 e0       	ldi	r22, 0x00	; 0
+    19b2:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+            for(uint8_t r=0; r<=5; r++) {   // Iterate rows
+            //uint8_t r = 0;
+                LCD_GotoXY(0, r+1);
+                cMax = pgm_read_byte(&FLLetters[r][1]);
+                cMin = pgm_read_byte(&FLLetters[r][0]);
+                for(uint16_t c = cMin; c <= cMax; c++)
+    19b6:	21 96       	adiw	r28, 0x01	; 1
+    19b8:	cc 16       	cp	r12, r28
+    19ba:	dd 06       	cpc	r13, r29
+    19bc:	40 f7       	brcc	.-48     	; 0x198e <EVENT_KeyLeft+0x188>
+    19be:	82 e0       	ldi	r24, 0x02	; 2
+    19c0:	90 e0       	ldi	r25, 0x00	; 0
+    19c2:	e8 0e       	add	r14, r24
+    19c4:	f9 1e       	adc	r15, r25
+            uint8_t Choosen = EL.L[EL.Indx].S[CharIndx];
+            if((Choosen >= 'A') && (Choosen <= 'Z')) Choosen += 'a'-'A';    // Change to uppercase
+            if((Choosen >= 'А') && (Choosen <= 'Я')) Choosen += 'а'-'А';    // Change to uppercase
+            // Display alphabet
+            uint8_t cMax, cMin;
+            for(uint8_t r=0; r<=5; r++) {   // Iterate rows
+    19c6:	06 30       	cpi	r16, 0x06	; 6
+    19c8:	71 f6       	brne	.-100    	; 0x1966 <EVENT_KeyLeft+0x160>
+    19ca:	d7 c0       	rjmp	.+430    	; 0x1b7a <EVENT_KeyLeft+0x374>
+            }// r
+            break;
+
+        case StateRename_ChooseLetter:  // Choice is done
+            // Blink button
+            LCD_PrintString_P(0, 7, PSTR("        "), false);
+    19cc:	80 e0       	ldi	r24, 0x00	; 0
+    19ce:	67 e0       	ldi	r22, 0x07	; 7
+    19d0:	43 ef       	ldi	r20, 0xF3	; 243
+    19d2:	57 e0       	ldi	r21, 0x07	; 7
+    19d4:	20 e0       	ldi	r18, 0x00	; 0
+    19d6:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            LCD_PrintString_P(10, 7, PSTR("Готово"), true);
+    19da:	8a e0       	ldi	r24, 0x0A	; 10
+    19dc:	67 e0       	ldi	r22, 0x07	; 7
+    19de:	4c ee       	ldi	r20, 0xEC	; 236
+    19e0:	57 e0       	ldi	r21, 0x07	; 7
+    19e2:	21 e0       	ldi	r18, 0x01	; 1
+    19e4:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    19e8:	84 ed       	ldi	r24, 0xD4	; 212
+    19ea:	90 e3       	ldi	r25, 0x30	; 48
+    19ec:	01 97       	sbiw	r24, 0x01	; 1
+    19ee:	f1 f7       	brne	.-4      	; 0x19ec <EVENT_KeyLeft+0x1e6>
+            _delay_ms(50);
+            // Remove letters
+            for(uint8_t i=1; i<=6; i++) LCD_PrintString_P(0, i, PSTR("                "), false);
+    19f0:	80 e0       	ldi	r24, 0x00	; 0
+    19f2:	61 e0       	ldi	r22, 0x01	; 1
+    19f4:	4b ed       	ldi	r20, 0xDB	; 219
+    19f6:	57 e0       	ldi	r21, 0x07	; 7
+    19f8:	20 e0       	ldi	r18, 0x00	; 0
+    19fa:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    19fe:	80 e0       	ldi	r24, 0x00	; 0
+    1a00:	62 e0       	ldi	r22, 0x02	; 2
+    1a02:	4b ed       	ldi	r20, 0xDB	; 219
+    1a04:	57 e0       	ldi	r21, 0x07	; 7
+    1a06:	20 e0       	ldi	r18, 0x00	; 0
+    1a08:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1a0c:	80 e0       	ldi	r24, 0x00	; 0
+    1a0e:	63 e0       	ldi	r22, 0x03	; 3
+    1a10:	4b ed       	ldi	r20, 0xDB	; 219
+    1a12:	57 e0       	ldi	r21, 0x07	; 7
+    1a14:	20 e0       	ldi	r18, 0x00	; 0
+    1a16:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1a1a:	80 e0       	ldi	r24, 0x00	; 0
+    1a1c:	64 e0       	ldi	r22, 0x04	; 4
+    1a1e:	4b ed       	ldi	r20, 0xDB	; 219
+    1a20:	57 e0       	ldi	r21, 0x07	; 7
+    1a22:	20 e0       	ldi	r18, 0x00	; 0
+    1a24:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1a28:	80 e0       	ldi	r24, 0x00	; 0
+    1a2a:	65 e0       	ldi	r22, 0x05	; 5
+    1a2c:	4b ed       	ldi	r20, 0xDB	; 219
+    1a2e:	57 e0       	ldi	r21, 0x07	; 7
+    1a30:	20 e0       	ldi	r18, 0x00	; 0
+    1a32:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+    1a36:	80 e0       	ldi	r24, 0x00	; 0
+    1a38:	66 e0       	ldi	r22, 0x06	; 6
+    1a3a:	4b ed       	ldi	r20, 0xDB	; 219
+    1a3c:	57 e0       	ldi	r21, 0x07	; 7
+    1a3e:	20 e0       	ldi	r18, 0x00	; 0
+    1a40:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            LCD_PrintString_P(0, 7, PSTR("Изменить"), true);
+    1a44:	80 e0       	ldi	r24, 0x00	; 0
+    1a46:	67 e0       	ldi	r22, 0x07	; 7
+    1a48:	42 ed       	ldi	r20, 0xD2	; 210
+    1a4a:	57 e0       	ldi	r21, 0x07	; 7
+    1a4c:	21 e0       	ldi	r18, 0x01	; 1
+    1a4e:	0e 94 43 07 	call	0xe86	; 0xe86 <LCD_PrintString_P>
+            EState = StateRename_ChoosePlace;
+    1a52:	83 e0       	ldi	r24, 0x03	; 3
+    1a54:	80 93 4f 01 	sts	0x014F, r24
+            // Replace letter
+            EL.L[EL.Indx].S[CharIndx] = ECursor.Letter;
+    1a58:	30 91 42 01 	lds	r19, 0x0142
+    1a5c:	60 91 54 01 	lds	r22, 0x0154
+    1a60:	46 2f       	mov	r20, r22
+    1a62:	50 e0       	ldi	r21, 0x00	; 0
+    1a64:	20 91 52 01 	lds	r18, 0x0152
+    1a68:	e3 2f       	mov	r30, r19
+    1a6a:	f0 e0       	ldi	r31, 0x00	; 0
+    1a6c:	ee 0f       	add	r30, r30
+    1a6e:	ff 1f       	adc	r31, r31
+    1a70:	cf 01       	movw	r24, r30
+    1a72:	03 e0       	ldi	r16, 0x03	; 3
+    1a74:	88 0f       	add	r24, r24
+    1a76:	99 1f       	adc	r25, r25
+    1a78:	0a 95       	dec	r16
+    1a7a:	e1 f7       	brne	.-8      	; 0x1a74 <EVENT_KeyLeft+0x26e>
+    1a7c:	e8 0f       	add	r30, r24
+    1a7e:	f9 1f       	adc	r31, r25
+    1a80:	e4 58       	subi	r30, 0x84	; 132
+    1a82:	ff 4f       	sbci	r31, 0xFF	; 255
+    1a84:	e4 0f       	add	r30, r20
+    1a86:	f5 1f       	adc	r31, r21
+    1a88:	23 83       	std	Z+3, r18	; 0x03
+            if(CharIndx == 0) { // Change to uppercase
+    1a8a:	66 23       	and	r22, r22
+    1a8c:	59 f5       	brne	.+86     	; 0x1ae4 <EVENT_KeyLeft+0x2de>
+                if((ECursor.Letter >= 'а') && (ECursor.Letter <= 'я')) EL.L[EL.Indx].S[CharIndx] = ECursor.Letter - ('a'-'A');
+    1a8e:	20 3e       	cpi	r18, 0xE0	; 224
+    1a90:	98 f0       	brcs	.+38     	; 0x1ab8 <EVENT_KeyLeft+0x2b2>
+    1a92:	e3 2f       	mov	r30, r19
+    1a94:	f0 e0       	ldi	r31, 0x00	; 0
+    1a96:	ee 0f       	add	r30, r30
+    1a98:	ff 1f       	adc	r31, r31
+    1a9a:	cf 01       	movw	r24, r30
+    1a9c:	b3 e0       	ldi	r27, 0x03	; 3
+    1a9e:	88 0f       	add	r24, r24
+    1aa0:	99 1f       	adc	r25, r25
+    1aa2:	ba 95       	dec	r27
+    1aa4:	e1 f7       	brne	.-8      	; 0x1a9e <EVENT_KeyLeft+0x298>
+    1aa6:	e8 0f       	add	r30, r24
+    1aa8:	f9 1f       	adc	r31, r25
+    1aaa:	e4 58       	subi	r30, 0x84	; 132
+    1aac:	ff 4f       	sbci	r31, 0xFF	; 255
+    1aae:	e4 0f       	add	r30, r20
+    1ab0:	f5 1f       	adc	r31, r21
+    1ab2:	20 52       	subi	r18, 0x20	; 32
+    1ab4:	23 83       	std	Z+3, r18	; 0x03
+    1ab6:	20 5e       	subi	r18, 0xE0	; 224
+                if((ECursor.Letter >= 'a') && (ECursor.Letter <= 'z')) EL.L[EL.Indx].S[CharIndx] = ECursor.Letter - ('a'-'A');
+    1ab8:	82 2f       	mov	r24, r18
+    1aba:	81 56       	subi	r24, 0x61	; 97
+    1abc:	8a 31       	cpi	r24, 0x1A	; 26
+    1abe:	90 f4       	brcc	.+36     	; 0x1ae4 <EVENT_KeyLeft+0x2de>
+    1ac0:	e3 2f       	mov	r30, r19
+    1ac2:	f0 e0       	ldi	r31, 0x00	; 0
+    1ac4:	ee 0f       	add	r30, r30
+    1ac6:	ff 1f       	adc	r31, r31
+    1ac8:	cf 01       	movw	r24, r30
+    1aca:	73 e0       	ldi	r23, 0x03	; 3
+    1acc:	88 0f       	add	r24, r24
+    1ace:	99 1f       	adc	r25, r25
+    1ad0:	7a 95       	dec	r23
+    1ad2:	e1 f7       	brne	.-8      	; 0x1acc <EVENT_KeyLeft+0x2c6>
+    1ad4:	e8 0f       	add	r30, r24
+    1ad6:	f9 1f       	adc	r31, r25
+    1ad8:	e4 58       	subi	r30, 0x84	; 132
+    1ada:	ff 4f       	sbci	r31, 0xFF	; 255
+    1adc:	e4 0f       	add	r30, r20
+    1ade:	f5 1f       	adc	r31, r21
+    1ae0:	20 52       	subi	r18, 0x20	; 32
+    1ae2:	23 83       	std	Z+3, r18	; 0x03
+            }
+            // Move one char right
+            LCD_GotoXYstr(CharIndx, 0);
+    1ae4:	86 2f       	mov	r24, r22
+    1ae6:	60 e0       	ldi	r22, 0x00	; 0
+    1ae8:	0e 94 c4 06 	call	0xd88	; 0xd88 <LCD_GotoXYstr>
+            if(CharIndx < LOCKET_NAME_L-1) {
+    1aec:	80 91 54 01 	lds	r24, 0x0154
+    1af0:	28 2f       	mov	r18, r24
+    1af2:	30 e0       	ldi	r19, 0x00	; 0
+    1af4:	8e 30       	cpi	r24, 0x0E	; 14
+    1af6:	60 f5       	brcc	.+88     	; 0x1b50 <EVENT_KeyLeft+0x34a>
+                LCD_DrawChar(EL.L[EL.Indx].S[CharIndx], false);
+    1af8:	e0 91 42 01 	lds	r30, 0x0142
+    1afc:	f0 e0       	ldi	r31, 0x00	; 0
+    1afe:	ee 0f       	add	r30, r30
+    1b00:	ff 1f       	adc	r31, r31
+    1b02:	cf 01       	movw	r24, r30
+    1b04:	43 e0       	ldi	r20, 0x03	; 3
+    1b06:	88 0f       	add	r24, r24
+    1b08:	99 1f       	adc	r25, r25
+    1b0a:	4a 95       	dec	r20
+    1b0c:	e1 f7       	brne	.-8      	; 0x1b06 <EVENT_KeyLeft+0x300>
+    1b0e:	e8 0f       	add	r30, r24
+    1b10:	f9 1f       	adc	r31, r25
+    1b12:	e4 58       	subi	r30, 0x84	; 132
+    1b14:	ff 4f       	sbci	r31, 0xFF	; 255
+    1b16:	e2 0f       	add	r30, r18
+    1b18:	f3 1f       	adc	r31, r19
+    1b1a:	83 81       	ldd	r24, Z+3	; 0x03
+    1b1c:	60 e0       	ldi	r22, 0x00	; 0
+    1b1e:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+                CharIndx++;
+    1b22:	20 91 54 01 	lds	r18, 0x0154
+    1b26:	2f 5f       	subi	r18, 0xFF	; 255
+    1b28:	20 93 54 01 	sts	0x0154, r18
+                LCD_DrawChar(EL.L[EL.Indx].S[CharIndx], true);
+    1b2c:	e0 91 42 01 	lds	r30, 0x0142
+    1b30:	f0 e0       	ldi	r31, 0x00	; 0
+    1b32:	ee 0f       	add	r30, r30
+    1b34:	ff 1f       	adc	r31, r31
+    1b36:	cf 01       	movw	r24, r30
+    1b38:	13 e0       	ldi	r17, 0x03	; 3
+    1b3a:	88 0f       	add	r24, r24
+    1b3c:	99 1f       	adc	r25, r25
+    1b3e:	1a 95       	dec	r17
+    1b40:	e1 f7       	brne	.-8      	; 0x1b3a <EVENT_KeyLeft+0x334>
+    1b42:	e8 0f       	add	r30, r24
+    1b44:	f9 1f       	adc	r31, r25
+    1b46:	e4 58       	subi	r30, 0x84	; 132
+    1b48:	ff 4f       	sbci	r31, 0xFF	; 255
+    1b4a:	e2 0f       	add	r30, r18
+    1b4c:	f1 1d       	adc	r31, r1
+    1b4e:	11 c0       	rjmp	.+34     	; 0x1b72 <EVENT_KeyLeft+0x36c>
+            }
+            else LCD_DrawChar(EL.L[EL.Indx].S[CharIndx], true);
+    1b50:	e0 91 42 01 	lds	r30, 0x0142
+    1b54:	f0 e0       	ldi	r31, 0x00	; 0
+    1b56:	ee 0f       	add	r30, r30
+    1b58:	ff 1f       	adc	r31, r31
+    1b5a:	cf 01       	movw	r24, r30
+    1b5c:	a3 e0       	ldi	r26, 0x03	; 3
+    1b5e:	88 0f       	add	r24, r24
+    1b60:	99 1f       	adc	r25, r25
+    1b62:	aa 95       	dec	r26
+    1b64:	e1 f7       	brne	.-8      	; 0x1b5e <EVENT_KeyLeft+0x358>
+    1b66:	e8 0f       	add	r30, r24
+    1b68:	f9 1f       	adc	r31, r25
+    1b6a:	e4 58       	subi	r30, 0x84	; 132
+    1b6c:	ff 4f       	sbci	r31, 0xFF	; 255
+    1b6e:	e2 0f       	add	r30, r18
+    1b70:	f3 1f       	adc	r31, r19
+    1b72:	83 81       	ldd	r24, Z+3	; 0x03
+    1b74:	61 e0       	ldi	r22, 0x01	; 1
+    1b76:	0e 94 76 06 	call	0xcec	; 0xcec <LCD_DrawChar>
+
+                break;
+
+        default: break;
+    } // switch
+}
+    1b7a:	df 91       	pop	r29
+    1b7c:	cf 91       	pop	r28
+    1b7e:	1f 91       	pop	r17
+    1b80:	0f 91       	pop	r16
+    1b82:	ff 90       	pop	r15
+    1b84:	ef 90       	pop	r14
+    1b86:	df 90       	pop	r13
+    1b88:	cf 90       	pop	r12
+    1b8a:	bf 90       	pop	r11
+    1b8c:	9f 90       	pop	r9
+    1b8e:	8f 90       	pop	r8
+    1b90:	08 95       	ret
+
+00001b92 <CC_RSSI2dBm>:
+
+FORCE_INLINE void CC_SetAddress(uint8_t AAddress) {
+    CC_WriteRegister(CC_ADDR, AAddress);
+}
+
+int8_t CC_RSSI2dBm(void) {
+    1b92:	80 91 5a 01 	lds	r24, 0x015A
+    1b96:	87 fd       	sbrc	r24, 7
+    1b98:	8f 5f       	subi	r24, 0xFF	; 255
+    1b9a:	85 95       	asr	r24
+    #define RSSI_OFFSET 69  // Got from datasheet
+    return ((CC.RX_Pkt.RSSI /2) - RSSI_OFFSET);
+}
+    1b9c:	85 54       	subi	r24, 0x45	; 69
+    1b9e:	08 95       	ret
+
+00001ba0 <CC_WriteBurst>:
+
+// ============================= Inner use =====================================
+FORCE_INLINE void CC_WriteBurst(uint8_t ARegAddr, uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+    1ba0:	5f b7       	in	r21, 0x3f	; 63
+    return 1;
+}
+
+static __inline__ uint8_t __iCliRetVal(void)
+{
+    cli();
+    1ba2:	f8 94       	cli
+        CC_CS_LO();                                                   // Start transmission
+    1ba4:	c4 98       	cbi	0x18, 4	; 24
+        while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+    1ba6:	b6 99       	sbic	0x16, 6	; 22
+    1ba8:	fe cf       	rjmp	.-4      	; 0x1ba6 <CC_WriteBurst+0x6>
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+    1baa:	80 64       	ori	r24, 0x40	; 64
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1bac:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1bae:	77 9b       	sbis	0x0e, 7	; 14
+    1bb0:	fe cf       	rjmp	.-4      	; 0x1bae <CC_WriteBurst+0xe>
+    uint8_t Response = SPDR;
+    1bb2:	8f b1       	in	r24, 0x0f	; 15
+    1bb4:	fb 01       	movw	r30, r22
+    1bb6:	06 c0       	rjmp	.+12     	; 0x1bc4 <CC_WriteBurst+0x24>
+FORCE_INLINE void CC_WriteBurst(uint8_t ARegAddr, uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();                                                   // Start transmission
+        while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(*PData++);   // Write bytes themselves
+    1bb8:	80 81       	ld	r24, Z
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1bba:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1bbc:	77 9b       	sbis	0x0e, 7	; 14
+    1bbe:	fe cf       	rjmp	.-4      	; 0x1bbc <CC_WriteBurst+0x1c>
+FORCE_INLINE void CC_WriteBurst(uint8_t ARegAddr, uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();                                                   // Start transmission
+        while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(*PData++);   // Write bytes themselves
+    1bc0:	31 96       	adiw	r30, 0x01	; 1
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    uint8_t Response = SPDR;
+    1bc2:	8f b1       	in	r24, 0x0f	; 15
+FORCE_INLINE void CC_WriteBurst(uint8_t ARegAddr, uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();                                                   // Start transmission
+        while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(*PData++);   // Write bytes themselves
+    1bc4:	8e 2f       	mov	r24, r30
+    1bc6:	86 1b       	sub	r24, r22
+    1bc8:	84 17       	cp	r24, r20
+    1bca:	b0 f3       	brcs	.-20     	; 0x1bb8 <CC_WriteBurst+0x18>
+        CC_CS_HI();                                                   // End transmission
+    1bcc:	c4 9a       	sbi	0x18, 4	; 24
+    (void)__s;
+}
+
+static __inline__ void __iRestore(const  uint8_t *__s)
+{
+    SREG = *__s;
+    1bce:	5f bf       	out	0x3f, r21	; 63
+    } // atomic
+}
+    1bd0:	08 95       	ret
+
+00001bd2 <CC_WriteBurst_P>:
+FORCE_INLINE void CC_WriteBurst_P(uint8_t ARegAddr, prog_uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+    1bd2:	2f b7       	in	r18, 0x3f	; 63
+    return 1;
+}
+
+static __inline__ uint8_t __iCliRetVal(void)
+{
+    cli();
+    1bd4:	f8 94       	cli
+        CC_CS_LO();                                                   // Start transmission
+    1bd6:	c4 98       	cbi	0x18, 4	; 24
+        while (CC_MISO_IS_HI());                                      // Wait for chip to become ready
+    1bd8:	b6 99       	sbic	0x16, 6	; 22
+    1bda:	fe cf       	rjmp	.-4      	; 0x1bd8 <CC_WriteBurst_P+0x6>
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+    1bdc:	80 64       	ori	r24, 0x40	; 64
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1bde:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1be0:	77 9b       	sbis	0x0e, 7	; 14
+    1be2:	fe cf       	rjmp	.-4      	; 0x1be0 <CC_WriteBurst_P+0xe>
+    uint8_t Response = SPDR;
+    1be4:	8f b1       	in	r24, 0x0f	; 15
+    1be6:	fb 01       	movw	r30, r22
+    1be8:	06 c0       	rjmp	.+12     	; 0x1bf6 <CC_WriteBurst_P+0x24>
+FORCE_INLINE void CC_WriteBurst_P(uint8_t ARegAddr, prog_uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();                                                   // Start transmission
+        while (CC_MISO_IS_HI());                                      // Wait for chip to become ready
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(pgm_read_byte (PData++));   // Write bytes themselves
+    1bea:	84 91       	lpm	r24, Z+
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1bec:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1bee:	77 9b       	sbis	0x0e, 7	; 14
+    1bf0:	fe cf       	rjmp	.-4      	; 0x1bee <CC_WriteBurst_P+0x1c>
+FORCE_INLINE void CC_WriteBurst_P(uint8_t ARegAddr, prog_uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();                                                   // Start transmission
+        while (CC_MISO_IS_HI());                                      // Wait for chip to become ready
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(pgm_read_byte (PData++));   // Write bytes themselves
+    1bf2:	31 96       	adiw	r30, 0x01	; 1
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    uint8_t Response = SPDR;
+    1bf4:	8f b1       	in	r24, 0x0f	; 15
+FORCE_INLINE void CC_WriteBurst_P(uint8_t ARegAddr, prog_uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();                                                   // Start transmission
+        while (CC_MISO_IS_HI());                                      // Wait for chip to become ready
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(pgm_read_byte (PData++));   // Write bytes themselves
+    1bf6:	8e 2f       	mov	r24, r30
+    1bf8:	86 1b       	sub	r24, r22
+    1bfa:	84 17       	cp	r24, r20
+    1bfc:	b0 f3       	brcs	.-20     	; 0x1bea <CC_WriteBurst_P+0x18>
+        CC_CS_HI();                                                   // End transmission
+    1bfe:	c4 9a       	sbi	0x18, 4	; 24
+    (void)__s;
+}
+
+static __inline__ void __iRestore(const  uint8_t *__s)
+{
+    SREG = *__s;
+    1c00:	2f bf       	out	0x3f, r18	; 63
+    } // atomic
+}
+    1c02:	08 95       	ret
+
+00001c04 <CC_WriteTX>:
+
+FORCE_INLINE void CC_WriteTX (uint8_t *PData, uint8_t ALength){
+    1c04:	48 2f       	mov	r20, r24
+    1c06:	29 2f       	mov	r18, r25
+    return ((CC.RX_Pkt.RSSI /2) - RSSI_OFFSET);
+}
+
+// ============================= Inner use =====================================
+FORCE_INLINE void CC_WriteBurst(uint8_t ARegAddr, uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+    1c08:	5f b7       	in	r21, 0x3f	; 63
+    return 1;
+}
+
+static __inline__ uint8_t __iCliRetVal(void)
+{
+    cli();
+    1c0a:	f8 94       	cli
+        CC_CS_LO();                                                   // Start transmission
+    1c0c:	c4 98       	cbi	0x18, 4	; 24
+        while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+    1c0e:	b6 99       	sbic	0x16, 6	; 22
+    1c10:	fe cf       	rjmp	.-4      	; 0x1c0e <CC_WriteTX+0xa>
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1c12:	8f e7       	ldi	r24, 0x7F	; 127
+    1c14:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1c16:	77 9b       	sbis	0x0e, 7	; 14
+    1c18:	fe cf       	rjmp	.-4      	; 0x1c16 <CC_WriteTX+0x12>
+    uint8_t Response = SPDR;
+    1c1a:	8f b1       	in	r24, 0x0f	; 15
+    1c1c:	84 2f       	mov	r24, r20
+    1c1e:	92 2f       	mov	r25, r18
+    1c20:	9c 01       	movw	r18, r24
+    1c22:	f9 01       	movw	r30, r18
+    1c24:	06 c0       	rjmp	.+12     	; 0x1c32 <CC_WriteTX+0x2e>
+FORCE_INLINE void CC_WriteBurst(uint8_t ARegAddr, uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();                                                   // Start transmission
+        while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(*PData++);   // Write bytes themselves
+    1c26:	80 81       	ld	r24, Z
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1c28:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1c2a:	77 9b       	sbis	0x0e, 7	; 14
+    1c2c:	fe cf       	rjmp	.-4      	; 0x1c2a <CC_WriteTX+0x26>
+FORCE_INLINE void CC_WriteBurst(uint8_t ARegAddr, uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();                                                   // Start transmission
+        while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(*PData++);   // Write bytes themselves
+    1c2e:	31 96       	adiw	r30, 0x01	; 1
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    uint8_t Response = SPDR;
+    1c30:	8f b1       	in	r24, 0x0f	; 15
+FORCE_INLINE void CC_WriteBurst(uint8_t ARegAddr, uint8_t *PData, uint8_t ALength){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();                                                   // Start transmission
+        while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+        CC_WriteByte(ARegAddr|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+        for (uint8_t i=0; i<ALength; i++) CC_WriteByte(*PData++);   // Write bytes themselves
+    1c32:	8e 2f       	mov	r24, r30
+    1c34:	84 1b       	sub	r24, r20
+    1c36:	86 17       	cp	r24, r22
+    1c38:	b0 f3       	brcs	.-20     	; 0x1c26 <CC_WriteTX+0x22>
+        CC_CS_HI();                                                   // End transmission
+    1c3a:	c4 9a       	sbi	0x18, 4	; 24
+    (void)__s;
+}
+
+static __inline__ void __iRestore(const  uint8_t *__s)
+{
+    SREG = *__s;
+    1c3c:	5f bf       	out	0x3f, r21	; 63
+    } // atomic
+}
+
+FORCE_INLINE void CC_WriteTX (uint8_t *PData, uint8_t ALength){
+    CC_WriteBurst(CC_FIFO, PData, ALength);
+}
+    1c3e:	08 95       	ret
+
+00001c40 <CC_ReadRX>:
+FORCE_INLINE void CC_ReadRX  (uint8_t *PData, uint8_t ALength){
+    1c40:	48 2f       	mov	r20, r24
+    1c42:	29 2f       	mov	r18, r25
+    CC_CS_LO();                                                   // Start transmission
+    1c44:	c4 98       	cbi	0x18, 4	; 24
+    while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+    1c46:	b6 99       	sbic	0x16, 6	; 22
+    1c48:	fe cf       	rjmp	.-4      	; 0x1c46 <CC_ReadRX+0x6>
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1c4a:	8f ef       	ldi	r24, 0xFF	; 255
+    1c4c:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1c4e:	77 9b       	sbis	0x0e, 7	; 14
+    1c50:	fe cf       	rjmp	.-4      	; 0x1c4e <CC_ReadRX+0xe>
+    uint8_t Response = SPDR;
+    1c52:	8f b1       	in	r24, 0x0f	; 15
+    1c54:	84 2f       	mov	r24, r20
+    1c56:	92 2f       	mov	r25, r18
+    1c58:	9c 01       	movw	r18, r24
+    1c5a:	f9 01       	movw	r30, r18
+    1c5c:	05 c0       	rjmp	.+10     	; 0x1c68 <CC_ReadRX+0x28>
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1c5e:	1f b8       	out	0x0f, r1	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1c60:	77 9b       	sbis	0x0e, 7	; 14
+    1c62:	fe cf       	rjmp	.-4      	; 0x1c60 <CC_ReadRX+0x20>
+    uint8_t Response = SPDR;
+    1c64:	8f b1       	in	r24, 0x0f	; 15
+}
+FORCE_INLINE void CC_ReadRX  (uint8_t *PData, uint8_t ALength){
+    CC_CS_LO();                                                   // Start transmission
+    while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+    CC_WriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);           // Address with read & burst flags
+    for (uint8_t i=0; i<ALength; i++) *PData++ = CC_ReadByte(); // Write bytes themselves
+    1c66:	81 93       	st	Z+, r24
+    1c68:	8e 2f       	mov	r24, r30
+    1c6a:	84 1b       	sub	r24, r20
+    1c6c:	86 17       	cp	r24, r22
+    1c6e:	b8 f3       	brcs	.-18     	; 0x1c5e <CC_ReadRX+0x1e>
+    CC_CS_HI();                                                   // End transmission
+    1c70:	c4 9a       	sbi	0x18, 4	; 24
+}
+    1c72:	08 95       	ret
+
+00001c74 <CC_ReadRegister>:
+
+uint8_t CC_ReadRegister (uint8_t ARegAddr){
+    uint8_t FReply;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+    1c74:	9f b7       	in	r25, 0x3f	; 63
+    return 1;
+}
+
+static __inline__ uint8_t __iCliRetVal(void)
+{
+    cli();
+    1c76:	f8 94       	cli
+        CC_CS_LO();                               // Start transmission
+    1c78:	c4 98       	cbi	0x18, 4	; 24
+        while (CC_MISO_IS_HI());                // Wait for chip to become ready
+    1c7a:	b6 99       	sbic	0x16, 6	; 22
+    1c7c:	fe cf       	rjmp	.-4      	; 0x1c7a <CC_ReadRegister+0x6>
+        CC_WriteByte(ARegAddr | CC_READ_FLAG);  // Transmit header byte: set READ bit and BURST flag
+    1c7e:	80 68       	ori	r24, 0x80	; 128
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1c80:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1c82:	77 9b       	sbis	0x0e, 7	; 14
+    1c84:	fe cf       	rjmp	.-4      	; 0x1c82 <CC_ReadRegister+0xe>
+    uint8_t Response = SPDR;
+    1c86:	8f b1       	in	r24, 0x0f	; 15
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1c88:	1f b8       	out	0x0f, r1	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1c8a:	77 9b       	sbis	0x0e, 7	; 14
+    1c8c:	fe cf       	rjmp	.-4      	; 0x1c8a <CC_ReadRegister+0x16>
+    uint8_t Response = SPDR;
+    1c8e:	8f b1       	in	r24, 0x0f	; 15
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();                               // Start transmission
+        while (CC_MISO_IS_HI());                // Wait for chip to become ready
+        CC_WriteByte(ARegAddr | CC_READ_FLAG);  // Transmit header byte: set READ bit and BURST flag
+        FReply = CC_ReadByte();                 // Read reply
+        CC_CS_HI();                               // End transmission
+    1c90:	c4 9a       	sbi	0x18, 4	; 24
+    (void)__s;
+}
+
+static __inline__ void __iRestore(const  uint8_t *__s)
+{
+    SREG = *__s;
+    1c92:	9f bf       	out	0x3f, r25	; 63
+    }//atomic
+    return FReply;
+}
+    1c94:	08 95       	ret
+
+00001c96 <CC_WriteRegister>:
+void CC_WriteRegister (uint8_t ARegAddr, uint8_t AData){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+    1c96:	9f b7       	in	r25, 0x3f	; 63
+    return 1;
+}
+
+static __inline__ uint8_t __iCliRetVal(void)
+{
+    cli();
+    1c98:	f8 94       	cli
+        CC_CS_LO();               // Start transmission
+    1c9a:	c4 98       	cbi	0x18, 4	; 24
+        while (CC_MISO_IS_HI());// Wait for chip to become ready
+    1c9c:	b6 99       	sbic	0x16, 6	; 22
+    1c9e:	fe cf       	rjmp	.-4      	; 0x1c9c <CC_WriteRegister+0x6>
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1ca0:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1ca2:	77 9b       	sbis	0x0e, 7	; 14
+    1ca4:	fe cf       	rjmp	.-4      	; 0x1ca2 <CC_WriteRegister+0xc>
+    uint8_t Response = SPDR;
+    1ca6:	8f b1       	in	r24, 0x0f	; 15
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1ca8:	6f b9       	out	0x0f, r22	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1caa:	77 9b       	sbis	0x0e, 7	; 14
+    1cac:	fe cf       	rjmp	.-4      	; 0x1caa <CC_WriteRegister+0x14>
+    uint8_t Response = SPDR;
+    1cae:	8f b1       	in	r24, 0x0f	; 15
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();               // Start transmission
+        while (CC_MISO_IS_HI());// Wait for chip to become ready
+        CC_WriteByte(ARegAddr); // Transmit header byte
+        CC_WriteByte(AData);    // Write data
+        CC_CS_HI();               // End transmission
+    1cb0:	c4 9a       	sbi	0x18, 4	; 24
+    (void)__s;
+}
+
+static __inline__ void __iRestore(const  uint8_t *__s)
+{
+    SREG = *__s;
+    1cb2:	9f bf       	out	0x3f, r25	; 63
+    }//atomic
+}
+    1cb4:	08 95       	ret
+
+00001cb6 <CC_SetAddress>:
+    while (CC.State != CC_STB_IDLE) CC_ENTER_IDLE();
+    // Now set channel
+    CC_WriteRegister(CC_CHANNR, AChannel);
+}
+
+FORCE_INLINE void CC_SetAddress(uint8_t AAddress) {
+    1cb6:	68 2f       	mov	r22, r24
+    CC_WriteRegister(CC_ADDR, AAddress);
+    1cb8:	89 e0       	ldi	r24, 0x09	; 9
+    1cba:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+}
+    1cbe:	08 95       	ret
+
+00001cc0 <CC_WriteStrobe>:
+        CC_WriteByte(AData);    // Write data
+        CC_CS_HI();               // End transmission
+    }//atomic
+}
+void CC_WriteStrobe (uint8_t AStrobe){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+    1cc0:	9f b7       	in	r25, 0x3f	; 63
+    return 1;
+}
+
+static __inline__ uint8_t __iCliRetVal(void)
+{
+    cli();
+    1cc2:	f8 94       	cli
+        CC_CS_LO();               // Start transmission
+    1cc4:	c4 98       	cbi	0x18, 4	; 24
+        while (CC_MISO_IS_HI());// Wait for chip to become ready
+    1cc6:	b6 99       	sbic	0x16, 6	; 22
+    1cc8:	fe cf       	rjmp	.-4      	; 0x1cc6 <CC_WriteStrobe+0x6>
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1cca:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1ccc:	77 9b       	sbis	0x0e, 7	; 14
+    1cce:	fe cf       	rjmp	.-4      	; 0x1ccc <CC_WriteStrobe+0xc>
+    uint8_t Response = SPDR;
+    1cd0:	8f b1       	in	r24, 0x0f	; 15
+void CC_WriteStrobe (uint8_t AStrobe){
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        CC_CS_LO();               // Start transmission
+        while (CC_MISO_IS_HI());// Wait for chip to become ready
+        CC.State = CC_ReadWriteByte(AStrobe);  // Write strobe
+        CC_CS_HI();               // End transmission
+    1cd2:	c4 9a       	sbi	0x18, 4	; 24
+        CC.State &= 0b01110000; // Mask needed bits
+    1cd4:	80 77       	andi	r24, 0x70	; 112
+    1cd6:	80 93 55 01 	sts	0x0155, r24
+    (void)__s;
+}
+
+static __inline__ void __iRestore(const  uint8_t *__s)
+{
+    SREG = *__s;
+    1cda:	9f bf       	out	0x3f, r25	; 63
+    } // atomic
+}
+    1cdc:	08 95       	ret
+
+00001cde <CC_SetChannel>:
+    CC_RfConfig();
+
+    CC_GDO0_IRQ_ENABLE();
+}
+
+FORCE_INLINE void CC_SetChannel(uint8_t AChannel){
+    1cde:	1f 93       	push	r17
+    1ce0:	18 2f       	mov	r17, r24
+    1ce2:	03 c0       	rjmp	.+6      	; 0x1cea <CC_SetChannel+0xc>
+    // CC must be in IDLE mode
+    while (CC.State != CC_STB_IDLE) CC_ENTER_IDLE();
+    1ce4:	86 e3       	ldi	r24, 0x36	; 54
+    1ce6:	0e 94 60 0e 	call	0x1cc0	; 0x1cc0 <CC_WriteStrobe>
+    1cea:	80 91 55 01 	lds	r24, 0x0155
+    1cee:	88 23       	and	r24, r24
+    1cf0:	c9 f7       	brne	.-14     	; 0x1ce4 <CC_SetChannel+0x6>
+    // Now set channel
+    CC_WriteRegister(CC_CHANNR, AChannel);
+    1cf2:	8a e0       	ldi	r24, 0x0A	; 10
+    1cf4:	61 2f       	mov	r22, r17
+    1cf6:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+}
+    1cfa:	1f 91       	pop	r17
+    1cfc:	08 95       	ret
+
+00001cfe <CC_RfConfig>:
+    } // atomic
+}
+
+// **** Used to setup CC with needed values ****
+void CC_RfConfig(void){
+    CC_WriteRegister(CC_FSCTRL1,  CC_FSCTRL1_VALUE);    // Frequency synthesizer control.
+    1cfe:	8b e0       	ldi	r24, 0x0B	; 11
+    1d00:	66 e0       	ldi	r22, 0x06	; 6
+    1d02:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSCTRL0,  CC_FSCTRL0_VALUE);    // Frequency synthesizer control.
+    1d06:	8c e0       	ldi	r24, 0x0C	; 12
+    1d08:	60 e0       	ldi	r22, 0x00	; 0
+    1d0a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FREQ2,    CC_FREQ2_VALUE);      // Frequency control word, high byte.
+    1d0e:	8d e0       	ldi	r24, 0x0D	; 13
+    1d10:	6c e5       	ldi	r22, 0x5C	; 92
+    1d12:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FREQ1,    CC_FREQ1_VALUE);      // Frequency control word, middle byte.
+    1d16:	8e e0       	ldi	r24, 0x0E	; 14
+    1d18:	6e e4       	ldi	r22, 0x4E	; 78
+    1d1a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FREQ0,    CC_FREQ0_VALUE);      // Frequency control word, low byte.
+    1d1e:	8f e0       	ldi	r24, 0x0F	; 15
+    1d20:	65 ec       	ldi	r22, 0xC5	; 197
+    1d22:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_MDMCFG4,  CC_MDMCFG4_VALUE);    // Modem configuration.
+    1d26:	80 e1       	ldi	r24, 0x10	; 16
+    1d28:	68 e7       	ldi	r22, 0x78	; 120
+    1d2a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_MDMCFG3,  CC_MDMCFG3_VALUE);    // Modem configuration.
+    1d2e:	81 e1       	ldi	r24, 0x11	; 17
+    1d30:	63 e9       	ldi	r22, 0x93	; 147
+    1d32:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_MDMCFG2,  CC_MDMCFG2_VALUE);    // Modem configuration.
+    1d36:	82 e1       	ldi	r24, 0x12	; 18
+    1d38:	63 e0       	ldi	r22, 0x03	; 3
+    1d3a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_MDMCFG1,  CC_MDMCFG1_VALUE);    // Modem configuration.
+    1d3e:	83 e1       	ldi	r24, 0x13	; 19
+    1d40:	63 ea       	ldi	r22, 0xA3	; 163
+    1d42:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_MDMCFG0,  CC_MDMCFG0_VALUE);    // Modem configuration.
+    1d46:	84 e1       	ldi	r24, 0x14	; 20
+    1d48:	68 e9       	ldi	r22, 0x98	; 152
+    1d4a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_CHANNR,   CC_CHANNR_VALUE);     // Channel number.
+    1d4e:	8a e0       	ldi	r24, 0x0A	; 10
+    1d50:	60 e0       	ldi	r22, 0x00	; 0
+    1d52:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_DEVIATN,  CC_DEVIATN_VALUE);    // Modem deviation setting (when FSK modulation is enabled).
+    1d56:	85 e1       	ldi	r24, 0x15	; 21
+    1d58:	64 e4       	ldi	r22, 0x44	; 68
+    1d5a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FREND1,   CC_FREND1_VALUE);     // Front end RX configuration.
+    1d5e:	81 e2       	ldi	r24, 0x21	; 33
+    1d60:	66 e5       	ldi	r22, 0x56	; 86
+    1d62:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FREND0,   CC_FREND0_VALUE);     // Front end RX configuration.
+    1d66:	82 e2       	ldi	r24, 0x22	; 34
+    1d68:	60 e1       	ldi	r22, 0x10	; 16
+    1d6a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_MCSM0,    CC_MCSM0_VALUE);      // Main Radio Control State Machine configuration.
+    1d6e:	88 e1       	ldi	r24, 0x18	; 24
+    1d70:	68 e1       	ldi	r22, 0x18	; 24
+    1d72:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FOCCFG,   CC_FOCCFG_VALUE);     // Frequency Offset Compensation Configuration.
+    1d76:	89 e1       	ldi	r24, 0x19	; 25
+    1d78:	66 e1       	ldi	r22, 0x16	; 22
+    1d7a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_BSCFG,    CC_BSCFG_VALUE);      // Bit synchronization Configuration.
+    1d7e:	8a e1       	ldi	r24, 0x1A	; 26
+    1d80:	6c e6       	ldi	r22, 0x6C	; 108
+    1d82:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_AGCCTRL2, CC_AGCCTRL2_VALUE);   // AGC control.
+    1d86:	8b e1       	ldi	r24, 0x1B	; 27
+    1d88:	63 e4       	ldi	r22, 0x43	; 67
+    1d8a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_AGCCTRL1, CC_AGCCTRL1_VALUE);   // AGC control.
+    1d8e:	8c e1       	ldi	r24, 0x1C	; 28
+    1d90:	60 e4       	ldi	r22, 0x40	; 64
+    1d92:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_AGCCTRL0, CC_AGCCTRL0_VALUE);   // AGC control.
+    1d96:	8d e1       	ldi	r24, 0x1D	; 29
+    1d98:	61 e9       	ldi	r22, 0x91	; 145
+    1d9a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSCAL3,   CC_FSCAL3_VALUE);     // Frequency synthesizer calibration.
+    1d9e:	83 e2       	ldi	r24, 0x23	; 35
+    1da0:	69 ea       	ldi	r22, 0xA9	; 169
+    1da2:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSCAL2,   CC_FSCAL2_VALUE);     // Frequency synthesizer calibration.
+    1da6:	84 e2       	ldi	r24, 0x24	; 36
+    1da8:	6a e0       	ldi	r22, 0x0A	; 10
+    1daa:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSCAL1,   CC_FSCAL1_VALUE);     // Frequency synthesizer calibration.
+    1dae:	85 e2       	ldi	r24, 0x25	; 37
+    1db0:	60 e0       	ldi	r22, 0x00	; 0
+    1db2:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSCAL0,   CC_FSCAL0_VALUE);     // Frequency synthesizer calibration.
+    1db6:	86 e2       	ldi	r24, 0x26	; 38
+    1db8:	61 e1       	ldi	r22, 0x11	; 17
+    1dba:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FSTEST,   CC_FSTEST_VALUE);     // Frequency synthesizer calibration.
+    1dbe:	89 e2       	ldi	r24, 0x29	; 41
+    1dc0:	69 e5       	ldi	r22, 0x59	; 89
+    1dc2:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_TEST2,    CC_TEST2_VALUE);      // Various test settings.
+    1dc6:	8c e2       	ldi	r24, 0x2C	; 44
+    1dc8:	68 e8       	ldi	r22, 0x88	; 136
+    1dca:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_TEST1,    CC_TEST1_VALUE);      // Various test settings.
+    1dce:	8d e2       	ldi	r24, 0x2D	; 45
+    1dd0:	61 e3       	ldi	r22, 0x31	; 49
+    1dd2:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_TEST0,    CC_TEST0_VALUE);      // Various test settings.
+    1dd6:	8e e2       	ldi	r24, 0x2E	; 46
+    1dd8:	6b e0       	ldi	r22, 0x0B	; 11
+    1dda:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_FIFOTHR,  CC_FIFOTHR_VALUE);    // fifo threshold
+    1dde:	83 e0       	ldi	r24, 0x03	; 3
+    1de0:	67 e0       	ldi	r22, 0x07	; 7
+    1de2:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_IOCFG2,   CC_IOCFG2_VALUE);     // GDO2 output pin configuration.
+    1de6:	80 e0       	ldi	r24, 0x00	; 0
+    1de8:	6e e0       	ldi	r22, 0x0E	; 14
+    1dea:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_IOCFG0,   CC_IOCFG0_VALUE);     // GDO0 output pin configuration.
+    1dee:	82 e0       	ldi	r24, 0x02	; 2
+    1df0:	66 e0       	ldi	r22, 0x06	; 6
+    1df2:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_PKTCTRL1, CC_PKTCTRL1_VALUE);   // Packet automation control.
+    1df6:	87 e0       	ldi	r24, 0x07	; 7
+    1df8:	6e e0       	ldi	r22, 0x0E	; 14
+    1dfa:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_PKTCTRL0, CC_PKTCTRL0_VALUE);   // Packet automation control.
+    1dfe:	88 e0       	ldi	r24, 0x08	; 8
+    1e00:	64 e4       	ldi	r22, 0x44	; 68
+    1e02:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_PKTLEN,   CC_PKTLEN_VALUE);     // Packet length.
+    1e06:	86 e0       	ldi	r24, 0x06	; 6
+    1e08:	64 e0       	ldi	r22, 0x04	; 4
+    1e0a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+
+    CC_WriteRegister(CC_PATABLE, CC_PATABLE0_VALUE);
+    1e0e:	8e e3       	ldi	r24, 0x3E	; 62
+    1e10:	6e ef       	ldi	r22, 0xFE	; 254
+    1e12:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    
+    CC_WriteRegister(CC_MCSM2, CC_MCSM2_VALUE);
+    1e16:	86 e1       	ldi	r24, 0x16	; 22
+    1e18:	67 e0       	ldi	r22, 0x07	; 7
+    1e1a:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+    CC_WriteRegister(CC_MCSM1, CC_MCSM1_VALUE);
+    1e1e:	87 e1       	ldi	r24, 0x17	; 23
+    1e20:	63 e0       	ldi	r22, 0x03	; 3
+    1e22:	0e 94 4b 0e 	call	0x1c96	; 0x1c96 <CC_WriteRegister>
+}
+    1e26:	08 95       	ret
+
+00001e28 <CC_Init>:
+
+void CC_Init(void){
+    // ******** Hardware init section *******
+    // Interrupts
+
+    CC_GDO0_IRQ_DISABLE();
+    1e28:	8b b7       	in	r24, 0x3b	; 59
+    1e2a:	8f 7d       	andi	r24, 0xDF	; 223
+    1e2c:	8b bf       	out	0x3b, r24	; 59
+#ifdef __AVR_ATmega88__
+    EICRA |= (1<<ISC01)|(0<<ISC00); // Falling edge generates an interrupt
+    EIFR  |= (1<<INTF0);            // Clear IRQ flag
+#elif defined __AVR_ATmega16A__
+    MCUCSR &= ~(1<<ISC2);   // Falling edge generates an interrupt
+    1e2e:	84 b7       	in	r24, 0x34	; 52
+    1e30:	8f 7b       	andi	r24, 0xBF	; 191
+    1e32:	84 bf       	out	0x34, r24	; 52
+    GIFR   |= (1<<INTF2);   // Clear IRQ flag
+    1e34:	8a b7       	in	r24, 0x3a	; 58
+    1e36:	80 62       	ori	r24, 0x20	; 32
+    1e38:	8a bf       	out	0x3a, r24	; 58
+#endif
+    // Setup ports
+    CC_DDR  &= ~((1<<CC_GDO0)|(1<<CC_MISO));
+    1e3a:	87 b3       	in	r24, 0x17	; 23
+    1e3c:	8b 7b       	andi	r24, 0xBB	; 187
+    1e3e:	87 bb       	out	0x17, r24	; 23
+    CC_DDR  |=   (1<<CC_CS)|(1<<CC_MOSI)|(1<<CC_SCLK);
+    1e40:	87 b3       	in	r24, 0x17	; 23
+    1e42:	80 6b       	ori	r24, 0xB0	; 176
+    1e44:	87 bb       	out	0x17, r24	; 23
+    CC_PORT |=   (1<<CC_GDO0)|(CC_MISO); // Enable pull-ups
+    1e46:	88 b3       	in	r24, 0x18	; 24
+    1e48:	86 60       	ori	r24, 0x06	; 6
+    1e4a:	88 bb       	out	0x18, r24	; 24
+    // Set initial values
+    CC_SCLK_LO();
+    1e4c:	c7 98       	cbi	0x18, 7	; 24
+    CC_CS_HI();
+    1e4e:	c4 9a       	sbi	0x18, 4	; 24
+    UCSR0C = (1<<UMSEL01)|(1<<UMSEL00)|(0<<UDORD0)|(0<<UCPHA0)|(0<<UCPOL0);
+    UCSR0B = (1<<TXEN0)|(1<<RXEN0);
+    UBRR0 = 1;
+#elif defined __AVR_ATmega16A__
+    // Setup SPI: MSB first, master, SCK idle low, f/4
+    SPCR = (0<<SPIE)|(1<<SPE)|(0<<DORD)|(1<<MSTR)|(0<<CPOL)|(0<<CPHA)|(0<<SPR1)|(0<<SPR0);
+    1e50:	80 e5       	ldi	r24, 0x50	; 80
+    1e52:	8d b9       	out	0x0d, r24	; 13
+    SPSR = (1<<SPI2X);
+    1e54:	81 e0       	ldi	r24, 0x01	; 1
+    1e56:	8e b9       	out	0x0e, r24	; 14
+#endif
+
+    // ******* Firmware init section *******
+    CC.NewPacketReceived = false;
+    1e58:	10 92 62 01 	sts	0x0162, r1
+    CC_RESET();
+    1e5c:	80 e3       	ldi	r24, 0x30	; 48
+    1e5e:	0e 94 60 0e 	call	0x1cc0	; 0x1cc0 <CC_WriteStrobe>
+    CC_FLUSH_RX_FIFO();
+    1e62:	8a e3       	ldi	r24, 0x3A	; 58
+    1e64:	0e 94 60 0e 	call	0x1cc0	; 0x1cc0 <CC_WriteStrobe>
+    CC_RfConfig();
+    1e68:	0e 94 7f 0e 	call	0x1cfe	; 0x1cfe <CC_RfConfig>
+
+    CC_GDO0_IRQ_ENABLE();
+    1e6c:	8b b7       	in	r24, 0x3b	; 59
+    1e6e:	80 62       	ori	r24, 0x20	; 32
+    1e70:	8b bf       	out	0x3b, r24	; 59
+}
+    1e72:	08 95       	ret
+
+00001e74 <CC_ReadWriteByte>:
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1e74:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1e76:	77 9b       	sbis	0x0e, 7	; 14
+    1e78:	fe cf       	rjmp	.-4      	; 0x1e76 <CC_ReadWriteByte+0x2>
+    uint8_t Response = SPDR;
+    1e7a:	8f b1       	in	r24, 0x0f	; 15
+    return Response;
+#endif
+}
+    1e7c:	08 95       	ret
+
+00001e7e <__vector_18>:
+
+// ============================ Interrupts =====================================
+ISR(CC_IRQ_vect) {    // TODO: Carefully rewrite this handler, as it can easily destroy memory in case of RX_FIFO is bigger than PKT_LENGTH. Replace GDO_0 behavior, too.
+    1e7e:	1f 92       	push	r1
+    1e80:	0f 92       	push	r0
+    1e82:	0f b6       	in	r0, 0x3f	; 63
+    1e84:	0f 92       	push	r0
+    1e86:	11 24       	eor	r1, r1
+    1e88:	2f 93       	push	r18
+    1e8a:	3f 93       	push	r19
+    1e8c:	4f 93       	push	r20
+    1e8e:	5f 93       	push	r21
+    1e90:	6f 93       	push	r22
+    1e92:	7f 93       	push	r23
+    1e94:	8f 93       	push	r24
+    1e96:	9f 93       	push	r25
+    1e98:	af 93       	push	r26
+    1e9a:	bf 93       	push	r27
+    1e9c:	ef 93       	push	r30
+    1e9e:	ff 93       	push	r31
+    //PORTC |= (1<<PC0); // DEBUG
+    // Packet has been successfully recieved
+    uint8_t FifoSize = CC_ReadRegister(CC_RXBYTES); // Get bytes in FIFO
+    1ea0:	8b e7       	ldi	r24, 0x7B	; 123
+    1ea2:	0e 94 3a 0e 	call	0x1c74	; 0x1c74 <CC_ReadRegister>
+    1ea6:	98 2f       	mov	r25, r24
+    if (FifoSize > 0) {
+    1ea8:	88 23       	and	r24, r24
+    1eaa:	d9 f0       	breq	.+54     	; 0x1ee2 <__vector_18+0x64>
+
+FORCE_INLINE void CC_WriteTX (uint8_t *PData, uint8_t ALength){
+    CC_WriteBurst(CC_FIFO, PData, ALength);
+}
+FORCE_INLINE void CC_ReadRX  (uint8_t *PData, uint8_t ALength){
+    CC_CS_LO();                                                   // Start transmission
+    1eac:	c4 98       	cbi	0x18, 4	; 24
+    while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+    1eae:	b6 99       	sbic	0x16, 6	; 22
+    1eb0:	fe cf       	rjmp	.-4      	; 0x1eae <__vector_18+0x30>
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1eb2:	8f ef       	ldi	r24, 0xFF	; 255
+    1eb4:	8f b9       	out	0x0f, r24	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1eb6:	77 9b       	sbis	0x0e, 7	; 14
+    1eb8:	fe cf       	rjmp	.-4      	; 0x1eb6 <__vector_18+0x38>
+    uint8_t Response = SPDR;
+    1eba:	8f b1       	in	r24, 0x0f	; 15
+    1ebc:	e6 e5       	ldi	r30, 0x56	; 86
+    1ebe:	f1 e0       	ldi	r31, 0x01	; 1
+}
+FORCE_INLINE void CC_ReadRX  (uint8_t *PData, uint8_t ALength){
+    CC_CS_LO();                                                   // Start transmission
+    while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+    CC_WriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);           // Address with read & burst flags
+    for (uint8_t i=0; i<ALength; i++) *PData++ = CC_ReadByte(); // Write bytes themselves
+    1ec0:	29 2f       	mov	r18, r25
+    1ec2:	30 e0       	ldi	r19, 0x00	; 0
+    1ec4:	2e 0f       	add	r18, r30
+    1ec6:	3f 1f       	adc	r19, r31
+    1ec8:	05 c0       	rjmp	.+10     	; 0x1ed4 <__vector_18+0x56>
+    //while (bit_is_clear (UCSR0A, TXC0));    // Wait until transmission completed
+    while (bit_is_clear (UCSR0A, RXC0));    // Wait until reception completed
+    uint8_t Response = UDR0;
+    return Response;
+#elif defined __AVR_ATmega16A__
+    SPDR = AByte;	// Start transmission
+    1eca:	1f b8       	out	0x0f, r1	; 15
+    // Wait for transmission to complete
+    while (bit_is_clear (SPSR, SPIF));
+    1ecc:	77 9b       	sbis	0x0e, 7	; 14
+    1ece:	fe cf       	rjmp	.-4      	; 0x1ecc <__vector_18+0x4e>
+    uint8_t Response = SPDR;
+    1ed0:	8f b1       	in	r24, 0x0f	; 15
+}
+FORCE_INLINE void CC_ReadRX  (uint8_t *PData, uint8_t ALength){
+    CC_CS_LO();                                                   // Start transmission
+    while (CC_MISO_IS_HI());                                    // Wait for chip to become ready
+    CC_WriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);           // Address with read & burst flags
+    for (uint8_t i=0; i<ALength; i++) *PData++ = CC_ReadByte(); // Write bytes themselves
+    1ed2:	81 93       	st	Z+, r24
+    1ed4:	e2 17       	cp	r30, r18
+    1ed6:	f3 07       	cpc	r31, r19
+    1ed8:	c1 f7       	brne	.-16     	; 0x1eca <__vector_18+0x4c>
+    CC_CS_HI();                                                   // End transmission
+    1eda:	c4 9a       	sbi	0x18, 4	; 24
+    //PORTC |= (1<<PC0); // DEBUG
+    // Packet has been successfully recieved
+    uint8_t FifoSize = CC_ReadRegister(CC_RXBYTES); // Get bytes in FIFO
+    if (FifoSize > 0) {
+        CC_ReadRX(&CC.RX_PktArray[0], FifoSize);
+        CC.NewPacketReceived = true;
+    1edc:	81 e0       	ldi	r24, 0x01	; 1
+    1ede:	80 93 62 01 	sts	0x0162, r24
+    }
+    //PORTC &= ~(1<<PC0);
+    1ee2:	ff 91       	pop	r31
+    1ee4:	ef 91       	pop	r30
+    1ee6:	bf 91       	pop	r27
+    1ee8:	af 91       	pop	r26
+    1eea:	9f 91       	pop	r25
+    1eec:	8f 91       	pop	r24
+    1eee:	7f 91       	pop	r23
+    1ef0:	6f 91       	pop	r22
+    1ef2:	5f 91       	pop	r21
+    1ef4:	4f 91       	pop	r20
+    1ef6:	3f 91       	pop	r19
+    1ef8:	2f 91       	pop	r18
+    1efa:	0f 90       	pop	r0
+    1efc:	0f be       	out	0x3f, r0	; 63
+    1efe:	0f 90       	pop	r0
+    1f00:	1f 90       	pop	r1
+    1f02:	18 95       	reti
+
+00001f04 <__eerd_block_m16a>:
+    1f04:	dc 01       	movw	r26, r24
+    1f06:	cb 01       	movw	r24, r22
+
+00001f08 <__eerd_blraw_m16a>:
+    1f08:	fc 01       	movw	r30, r24
+    1f0a:	e1 99       	sbic	0x1c, 1	; 28
+    1f0c:	fe cf       	rjmp	.-4      	; 0x1f0a <__eerd_blraw_m16a+0x2>
+    1f0e:	06 c0       	rjmp	.+12     	; 0x1f1c <__eerd_blraw_m16a+0x14>
+    1f10:	ff bb       	out	0x1f, r31	; 31
+    1f12:	ee bb       	out	0x1e, r30	; 30
+    1f14:	e0 9a       	sbi	0x1c, 0	; 28
+    1f16:	31 96       	adiw	r30, 0x01	; 1
+    1f18:	0d b2       	in	r0, 0x1d	; 29
+    1f1a:	0d 92       	st	X+, r0
+    1f1c:	41 50       	subi	r20, 0x01	; 1
+    1f1e:	50 40       	sbci	r21, 0x00	; 0
+    1f20:	b8 f7       	brcc	.-18     	; 0x1f10 <__eerd_blraw_m16a+0x8>
+    1f22:	08 95       	ret
+
+00001f24 <__eewr_block_m16a>:
+    1f24:	dc 01       	movw	r26, r24
+    1f26:	cb 01       	movw	r24, r22
+    1f28:	03 c0       	rjmp	.+6      	; 0x1f30 <__eewr_block_m16a+0xc>
+    1f2a:	2d 91       	ld	r18, X+
+    1f2c:	0e 94 9d 0f 	call	0x1f3a	; 0x1f3a <__eewr_r18_m16a>
+    1f30:	41 50       	subi	r20, 0x01	; 1
+    1f32:	50 40       	sbci	r21, 0x00	; 0
+    1f34:	d0 f7       	brcc	.-12     	; 0x1f2a <__eewr_block_m16a+0x6>
+    1f36:	08 95       	ret
+
+00001f38 <__eewr_byte_m16a>:
+    1f38:	26 2f       	mov	r18, r22
+
+00001f3a <__eewr_r18_m16a>:
+    1f3a:	e1 99       	sbic	0x1c, 1	; 28
+    1f3c:	fe cf       	rjmp	.-4      	; 0x1f3a <__eewr_r18_m16a>
+    1f3e:	9f bb       	out	0x1f, r25	; 31
+    1f40:	8e bb       	out	0x1e, r24	; 30
+    1f42:	2d bb       	out	0x1d, r18	; 29
+    1f44:	0f b6       	in	r0, 0x3f	; 63
+    1f46:	f8 94       	cli
+    1f48:	e2 9a       	sbi	0x1c, 2	; 28
+    1f4a:	e1 9a       	sbi	0x1c, 1	; 28
+    1f4c:	0f be       	out	0x3f, r0	; 63
+    1f4e:	01 96       	adiw	r24, 0x01	; 1
+    1f50:	08 95       	ret
+
+00001f52 <_exit>:
+    1f52:	f8 94       	cli
+
+00001f54 <__stop_program>:
+    1f54:	ff cf       	rjmp	.-2      	; 0x1f54 <__stop_program>

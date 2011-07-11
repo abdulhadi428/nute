@@ -1,0 +1,42 @@
+# EESchema Netlist Version 1.1 created  16/11/2010 17:37:16
+(
+ ( /4CE28B8F SMD0603 C1 C
+  ( 1 N-000003 )
+  ( 2 GND )
+ )
+ ( /4CE292FA SMD0603 L1 L
+  ( 1 N-000002 )
+  ( 2 N-000003 )
+ )
+ ( /4CE2963D TESTPOINT_0_5MM TP1 TESTPOINT
+  ( 1 N-000002 )
+ )
+ ( /4CE29642 TESTPOINT_0_5MM TP2 TESTPOINT
+  ( 1 GND )
+ )
+ ( /4CE28B5C RF_SMA_L XL1 SMA_L
+  ( GND GND )
+  ( RF N-000003 )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C1
+ SMD*
+$endlist
+$component L1
+ INDUCTOR*
+ SMD*
+$endlist
+$component TP1
+ TESTPOINT*
+$endlist
+$component TP2
+ TESTPOINT*
+$endlist
+$component XL1
+ RF_SMA_L
+ RF_SMA
+$endlist
+$endfootprintlist
+}

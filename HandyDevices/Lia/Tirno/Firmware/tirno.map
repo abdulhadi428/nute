@@ -1,0 +1,714 @@
+Archive member included because of file (symbol)
+
+c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                              c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o (exit)
+c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+                              obj/tirno.o (__do_copy_data)
+c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+                              obj/tirno.o (__do_clear_bss)
+c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eerd_block_atmega16a.o)
+                              obj/tirno.o (__eerd_block_m16a)
+c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_block_atmega16a.o)
+                              obj/tirno.o (__eewr_block_m16a)
+c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_byte_atmega16a.o)
+                              c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_block_atmega16a.o) (__eewr_r18_m16a)
+
+Allocating common symbols
+Common symbol       size              file
+
+TickCounter         0x2               obj/delay_util.o
+EState              0x1               obj/menu.o
+ECursor             0x3               obj/menu.o
+EIndx               0x1               obj/menu.o
+EL                  0xc8              obj/tirno.o
+CC                  0xf               obj/cc2500.o
+ETirno              0x6               obj/tirno.o
+EKeys               0x3               obj/keys.o
+CharIndx            0x1               obj/menu.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x00000000         0x00020000         xr
+data             0x00800060         0x0000ffa0         rw !x
+eeprom           0x00810000         0x00010000         rw !x
+fuse             0x00820000         0x00000400         rw !x
+lock             0x00830000         0x00000400         rw !x
+signature        0x00840000         0x00000400         rw !x
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+LOAD obj/tirno.o
+LOAD obj/delay_util.o
+LOAD obj/lcd110x.o
+LOAD obj/lcd_font.o
+LOAD obj/keys.o
+LOAD obj/menu.o
+LOAD obj/cc2500.o
+LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libm.a
+LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
+LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a
+LOAD c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x00000000     0x1f56
+ *(.vectors)
+ .vectors       0x00000000       0x54 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+                0x00000000                __vectors
+                0x00000000                __vector_default
+ *(.vectors)
+ *(.progmem.gcc*)
+ *(.progmem*)
+ .progmem.data  0x00000054      0x722 obj/lcd_font.o
+                0x00000054                Font_6x8_Data
+                0x00000654                LCD_ImgGauge
+ .progmem.data  0x00000776      0x107 obj/menu.o
+                0x00000776                Option0
+                0x00000784                Option1
+                0x00000792                FLLetters
+                0x0000087e                . = ALIGN (0x2)
+ *fill*         0x0000087d        0x1 00
+                0x0000087e                __trampolines_start = .
+ *(.trampolines)
+ .trampolines   0x0000087e        0x0 linker stubs
+ *(.trampolines*)
+                0x0000087e                __trampolines_end = .
+ *(.jumptables)
+ *(.jumptables*)
+ *(.lowtext)
+ *(.lowtext*)
+                0x0000087e                __ctors_start = .
+ *(.ctors)
+                0x0000087e                __ctors_end = .
+                0x0000087e                __dtors_start = .
+ *(.dtors)
+                0x0000087e                __dtors_end = .
+ SORT(*)(.ctors)
+ SORT(*)(.dtors)
+ *(.init0)
+ .init0         0x0000087e        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+                0x0000087e                __init
+ *(.init0)
+ *(.init1)
+ *(.init1)
+ *(.init2)
+ .init2         0x0000087e        0xc c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+ *(.init2)
+ *(.init3)
+ *(.init3)
+ *(.init4)
+ .init4         0x0000088a       0x16 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+                0x0000088a                __do_copy_data
+ .init4         0x000008a0       0x10 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+                0x000008a0                __do_clear_bss
+ *(.init4)
+ *(.init5)
+ *(.init5)
+ *(.init6)
+ *(.init6)
+ *(.init7)
+ *(.init7)
+ *(.init8)
+ *(.init8)
+ *(.init9)
+ .init9         0x000008b0        0x8 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+ *(.init9)
+ *(.text)
+ .text          0x000008b8        0x4 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+                0x000008b8                __vector_1
+                0x000008b8                __vector_12
+                0x000008b8                __bad_interrupt
+                0x000008b8                __vector_6
+                0x000008b8                __vector_3
+                0x000008b8                __vector_11
+                0x000008b8                __vector_13
+                0x000008b8                __vector_17
+                0x000008b8                __vector_7
+                0x000008b8                __vector_5
+                0x000008b8                __vector_4
+                0x000008b8                __vector_9
+                0x000008b8                __vector_2
+                0x000008b8                __vector_15
+                0x000008b8                __vector_8
+                0x000008b8                __vector_14
+                0x000008b8                __vector_10
+                0x000008b8                __vector_16
+                0x000008b8                __vector_20
+ .text          0x000008bc      0x3aa obj/tirno.o
+                0x00000aae                CC_Task
+                0x000008d8                eeReadLocket
+                0x000008bc                eeWriteLocket
+                0x00000bc6                main
+                0x00000a62                EVENT_NewPacket
+                0x00000b8a                GeneralInit
+                0x00000a58                EVENT_StartingSearch
+ .text          0x00000c66       0x86 obj/delay_util.o
+                0x00000ca8                DelayReset
+                0x00000c76                DelayElapsed
+                0x00000cbe                __vector_19
+                0x00000c66                DelayInit
+ .text          0x00000cec      0x38a obj/lcd110x.o
+                0x00000eae                LCD_GotoXY
+                0x00000e60                LCD_PrintString
+                0x00000f3a                LCD_DrawImage
+                0x00000ffe                LCD_Clear
+                0x00000cec                LCD_DrawChar
+                0x00000ed4                LCD_GaugeValue
+                0x00000e18                LCD_PrintInt
+                0x00000db8                LCD_PrintUint
+                0x00000d60                LCD_WriteCmd
+                0x00000e86                LCD_PrintString_P
+                0x00001042                LCD_Init
+                0x00000d38                LCD_WriteData
+                0x00000fee                LCD_DrawGauge
+                0x00000d88                LCD_GotoXYstr
+ .text          0x00001076        0x0 obj/lcd_font.o
+ .text          0x00001076       0xdc obj/keys.o
+                0x00001076                KeysInit
+                0x00001096                Keys_Task
+ .text          0x00001152      0xa40 obj/menu.o
+                0x00001152                GetLetter
+                0x000013b0                EVENT_KeyUp
+                0x00001560                SetState
+                0x00001174                DisplayList
+                0x000016ec                EVENT_KeyRight
+                0x000011fa                EVENT_KeyDown
+                0x00001806                EVENT_KeyLeft
+ .text          0x00001b92      0x372 obj/cc2500.o
+                0x00001c74                CC_ReadRegister
+                0x00001e28                CC_Init
+                0x00001bd2                CC_WriteBurst_P
+                0x00001c40                CC_ReadRX
+                0x00001cfe                CC_RfConfig
+                0x00001c96                CC_WriteRegister
+                0x00001b92                CC_RSSI2dBm
+                0x00001cc0                CC_WriteStrobe
+                0x00001cb6                CC_SetAddress
+                0x00001e74                CC_ReadWriteByte
+                0x00001cde                CC_SetChannel
+                0x00001c04                CC_WriteTX
+                0x00001e7e                __vector_18
+                0x00001ba0                CC_WriteBurst
+ .text          0x00001f04        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text          0x00001f04        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .text          0x00001f04        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .text          0x00001f04        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eerd_block_atmega16a.o)
+ .text          0x00001f04        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_block_atmega16a.o)
+ .text          0x00001f04        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_byte_atmega16a.o)
+                0x00001f04                . = ALIGN (0x2)
+ *(.text.*)
+ .text.libgcc   0x00001f04        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text.libgcc   0x00001f04        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .text.libgcc   0x00001f04        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .text.avr-libc
+                0x00001f04       0x20 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eerd_block_atmega16a.o)
+                0x00001f04                __eerd_block_m16a
+                0x00001f08                __eerd_blraw_m16a
+ .text.avr-libc
+                0x00001f24       0x14 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_block_atmega16a.o)
+                0x00001f24                __eewr_block_m16a
+ .text.avr-libc
+                0x00001f38       0x1a c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_byte_atmega16a.o)
+                0x00001f3a                __eewr_r18_m16a
+                0x00001f38                __eewr_byte_m16a
+                0x00001f52                . = ALIGN (0x2)
+ *(.fini9)
+ .fini9         0x00001f52        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                0x00001f52                exit
+                0x00001f52                _exit
+ *(.fini9)
+ *(.fini8)
+ *(.fini8)
+ *(.fini7)
+ *(.fini7)
+ *(.fini6)
+ *(.fini6)
+ *(.fini5)
+ *(.fini5)
+ *(.fini4)
+ *(.fini4)
+ *(.fini3)
+ *(.fini3)
+ *(.fini2)
+ *(.fini2)
+ *(.fini1)
+ *(.fini1)
+ *(.fini0)
+ .fini0         0x00001f52        0x4 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ *(.fini0)
+                0x00001f56                _etext = .
+
+.data           0x00800060       0x1c load address 0x00001f56
+                0x00800060                PROVIDE (__data_start, .)
+ *(.data)
+ .data          0x00800060        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+ .data          0x00800060        0x6 obj/tirno.o
+ .data          0x00800066        0x0 obj/delay_util.o
+ .data          0x00800066       0x12 obj/lcd110x.o
+ .data          0x00800078        0x0 obj/lcd_font.o
+ .data          0x00800078        0x0 obj/keys.o
+ .data          0x00800078        0x4 obj/menu.o
+                0x00800078                EOptions
+ .data          0x0080007c        0x0 obj/cc2500.o
+ .data          0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .data          0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .data          0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .data          0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eerd_block_atmega16a.o)
+ .data          0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_block_atmega16a.o)
+ .data          0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_byte_atmega16a.o)
+ *(.data*)
+ *(.rodata)
+ *(.rodata*)
+ *(.gnu.linkonce.d*)
+                0x0080007c                . = ALIGN (0x2)
+                0x0080007c                _edata = .
+                0x0080007c                PROVIDE (__data_end, .)
+
+.bss            0x0080007c       0xe8
+                0x0080007c                PROVIDE (__bss_start, .)
+ *(.bss)
+ .bss           0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+ .bss           0x0080007c        0x0 obj/tirno.o
+ .bss           0x0080007c        0x0 obj/delay_util.o
+ .bss           0x0080007c        0x0 obj/lcd110x.o
+ .bss           0x0080007c        0x0 obj/lcd_font.o
+ .bss           0x0080007c        0x0 obj/keys.o
+ .bss           0x0080007c        0x0 obj/menu.o
+ .bss           0x0080007c        0x0 obj/cc2500.o
+ .bss           0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .bss           0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .bss           0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .bss           0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eerd_block_atmega16a.o)
+ .bss           0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_block_atmega16a.o)
+ .bss           0x0080007c        0x0 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_byte_atmega16a.o)
+ *(.bss*)
+ *(COMMON)
+ COMMON         0x0080007c       0xce obj/tirno.o
+                0x0080007c                EL
+                0x00800144                ETirno
+ COMMON         0x0080014a        0x2 obj/delay_util.o
+                0x0080014a                TickCounter
+ COMMON         0x0080014c        0x3 obj/keys.o
+                0x0080014c                EKeys
+ COMMON         0x0080014f        0x6 obj/menu.o
+                0x0080014f                EState
+                0x00800150                ECursor
+                0x00800153                EIndx
+                0x00800154                CharIndx
+ COMMON         0x00800155        0xf obj/cc2500.o
+                0x00800155                CC
+                0x00800164                PROVIDE (__bss_end, .)
+                0x00001f56                __data_load_start = LOADADDR (.data)
+                0x00001f72                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x00800164        0x0
+                0x00800164                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                0x00800164                PROVIDE (__noinit_end, .)
+                0x00800164                _end = .
+                0x00800164                PROVIDE (__heap_start, .)
+
+.eeprom         0x00810000        0x0
+ *(.eeprom*)
+                0x00810000                __eeprom_end = .
+
+.fuse
+ *(.fuse)
+ *(.lfuse)
+ *(.hfuse)
+ *(.efuse)
+
+.lock
+ *(.lock*)
+
+.signature
+ *(.signature*)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment
+ *(.comment)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000       0xc0
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x20 obj/tirno.o
+ .debug_aranges
+                0x00000020       0x20 obj/delay_util.o
+ .debug_aranges
+                0x00000040       0x20 obj/lcd110x.o
+ .debug_aranges
+                0x00000060       0x20 obj/keys.o
+ .debug_aranges
+                0x00000080       0x20 obj/menu.o
+ .debug_aranges
+                0x000000a0       0x20 obj/cc2500.o
+
+.debug_pubnames
+                0x00000000      0x45d
+ *(.debug_pubnames)
+ .debug_pubnames
+                0x00000000       0x99 obj/tirno.o
+ .debug_pubnames
+                0x00000099       0x60 obj/delay_util.o
+ .debug_pubnames
+                0x000000f9      0x106 obj/lcd110x.o
+ .debug_pubnames
+                0x000001ff       0x35 obj/lcd_font.o
+ .debug_pubnames
+                0x00000234       0x37 obj/keys.o
+ .debug_pubnames
+                0x0000026b       0xe5 obj/menu.o
+ .debug_pubnames
+                0x00000350      0x10d obj/cc2500.o
+
+.debug_info     0x00000000     0x245c
+ *(.debug_info)
+ .debug_info    0x00000000      0x477 obj/tirno.o
+ .debug_info    0x00000477      0x1f7 obj/delay_util.o
+ .debug_info    0x0000066e      0x72b obj/lcd110x.o
+ .debug_info    0x00000d99       0xc5 obj/lcd_font.o
+ .debug_info    0x00000e5e      0x105 obj/keys.o
+ .debug_info    0x00000f63      0xb2f obj/menu.o
+ .debug_info    0x00001a92      0x9ca obj/cc2500.o
+ *(.gnu.linkonce.wi.*)
+
+.debug_abbrev   0x00000000      0xb3b
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000      0x226 obj/tirno.o
+ .debug_abbrev  0x00000226      0x14a obj/delay_util.o
+ .debug_abbrev  0x00000370      0x1dc obj/lcd110x.o
+ .debug_abbrev  0x0000054c       0x84 obj/lcd_font.o
+ .debug_abbrev  0x000005d0       0x8e obj/keys.o
+ .debug_abbrev  0x0000065e      0x250 obj/menu.o
+ .debug_abbrev  0x000008ae      0x28d obj/cc2500.o
+
+.debug_line     0x00000000     0x1c20
+ *(.debug_line)
+ .debug_line    0x00000000      0x3ba obj/tirno.o
+ .debug_line    0x000003ba      0x188 obj/delay_util.o
+ .debug_line    0x00000542      0x677 obj/lcd110x.o
+ .debug_line    0x00000bb9       0x82 obj/lcd_font.o
+ .debug_line    0x00000c3b      0x142 obj/keys.o
+ .debug_line    0x00000d7d      0x6e1 obj/menu.o
+ .debug_line    0x0000145e      0x7c2 obj/cc2500.o
+
+.debug_frame    0x00000000      0x360
+ *(.debug_frame)
+ .debug_frame   0x00000000       0x80 obj/tirno.o
+ .debug_frame   0x00000080       0x50 obj/delay_util.o
+ .debug_frame   0x000000d0       0xf0 obj/lcd110x.o
+ .debug_frame   0x000001c0       0x30 obj/keys.o
+ .debug_frame   0x000001f0       0x80 obj/menu.o
+ .debug_frame   0x00000270       0xf0 obj/cc2500.o
+
+.debug_str      0x00000000      0x62b
+ *(.debug_str)
+ .debug_str     0x00000000      0x1df obj/tirno.o
+                                0x24c (size before relaxing)
+ .debug_str     0x000001df       0x83 obj/delay_util.o
+                                0x128 (size before relaxing)
+ .debug_str     0x00000262      0x187 obj/lcd110x.o
+                                0x239 (size before relaxing)
+ .debug_str     0x000003e9        0xb obj/lcd_font.o
+                                 0xc1 (size before relaxing)
+ .debug_str     0x000003f4       0x5b obj/keys.o
+                                 0xfe (size before relaxing)
+ .debug_str     0x0000044f       0xc7 obj/menu.o
+                                0x258 (size before relaxing)
+ .debug_str     0x00000516      0x115 obj/cc2500.o
+                                0x289 (size before relaxing)
+
+.debug_loc      0x00000000      0xd0a
+ *(.debug_loc)
+ .debug_loc     0x00000000       0xd2 obj/tirno.o
+ .debug_loc     0x000000d2       0x6e obj/delay_util.o
+ .debug_loc     0x00000140      0x55d obj/lcd110x.o
+ .debug_loc     0x0000069d      0x2e5 obj/menu.o
+ .debug_loc     0x00000982      0x388 obj/cc2500.o
+
+.debug_macinfo
+ *(.debug_macinfo)
+OUTPUT(tirno.elf elf32-avr)
+LOAD linker stubs
+
+.debug_ranges   0x00000000      0x120
+ .debug_ranges  0x00000000       0x18 obj/tirno.o
+ .debug_ranges  0x00000018       0x48 obj/lcd110x.o
+ .debug_ranges  0x00000060       0x18 obj/menu.o
+ .debug_ranges  0x00000078       0xa8 obj/cc2500.o
+
+Cross Reference Table
+
+Symbol                                            File
+CC                                                obj/cc2500.o
+                                                  obj/tirno.o
+CC_Init                                           obj/cc2500.o
+                                                  obj/tirno.o
+CC_RSSI2dBm                                       obj/cc2500.o
+                                                  obj/tirno.o
+CC_ReadRX                                         obj/cc2500.o
+CC_ReadRegister                                   obj/cc2500.o
+CC_ReadWriteByte                                  obj/cc2500.o
+CC_RfConfig                                       obj/cc2500.o
+CC_SetAddress                                     obj/cc2500.o
+                                                  obj/tirno.o
+CC_SetChannel                                     obj/cc2500.o
+CC_Task                                           obj/tirno.o
+CC_WriteBurst                                     obj/cc2500.o
+CC_WriteBurst_P                                   obj/cc2500.o
+CC_WriteRegister                                  obj/cc2500.o
+CC_WriteStrobe                                    obj/cc2500.o
+                                                  obj/tirno.o
+CC_WriteTX                                        obj/cc2500.o
+                                                  obj/tirno.o
+CharIndx                                          obj/menu.o
+DelayElapsed                                      obj/delay_util.o
+                                                  obj/keys.o
+                                                  obj/tirno.o
+DelayInit                                         obj/delay_util.o
+                                                  obj/tirno.o
+DelayReset                                        obj/delay_util.o
+                                                  obj/keys.o
+                                                  obj/tirno.o
+DisplayList                                       obj/menu.o
+ECursor                                           obj/menu.o
+EIndx                                             obj/menu.o
+EKeys                                             obj/keys.o
+EL                                                obj/menu.o
+                                                  obj/tirno.o
+EOptions                                          obj/menu.o
+EState                                            obj/menu.o
+                                                  obj/tirno.o
+ETirno                                            obj/tirno.o
+EVENT_KeyDown                                     obj/menu.o
+                                                  obj/keys.o
+EVENT_KeyLeft                                     obj/menu.o
+                                                  obj/keys.o
+EVENT_KeyRight                                    obj/menu.o
+                                                  obj/keys.o
+EVENT_KeyUp                                       obj/menu.o
+                                                  obj/keys.o
+EVENT_NewPacket                                   obj/tirno.o
+EVENT_StartingSearch                              obj/tirno.o
+                                                  obj/menu.o
+FLLetters                                         obj/menu.o
+Font_6x8_Data                                     obj/lcd_font.o
+                                                  obj/lcd110x.o
+GeneralInit                                       obj/tirno.o
+GetLetter                                         obj/menu.o
+KeysInit                                          obj/keys.o
+                                                  obj/tirno.o
+Keys_Task                                         obj/keys.o
+                                                  obj/tirno.o
+LCD_Clear                                         obj/lcd110x.o
+                                                  obj/menu.o
+LCD_DrawChar                                      obj/lcd110x.o
+                                                  obj/menu.o
+LCD_DrawGauge                                     obj/lcd110x.o
+                                                  obj/menu.o
+LCD_DrawImage                                     obj/lcd110x.o
+LCD_GaugeValue                                    obj/lcd110x.o
+                                                  obj/tirno.o
+LCD_GotoXY                                        obj/lcd110x.o
+                                                  obj/menu.o
+LCD_GotoXYstr                                     obj/lcd110x.o
+                                                  obj/menu.o
+LCD_ImgGauge                                      obj/lcd_font.o
+                                                  obj/lcd110x.o
+LCD_Init                                          obj/lcd110x.o
+                                                  obj/tirno.o
+LCD_PrintInt                                      obj/lcd110x.o
+                                                  obj/tirno.o
+LCD_PrintString                                   obj/lcd110x.o
+                                                  obj/menu.o
+                                                  obj/tirno.o
+LCD_PrintString_P                                 obj/lcd110x.o
+                                                  obj/menu.o
+LCD_PrintUint                                     obj/lcd110x.o
+                                                  obj/menu.o
+LCD_WriteCmd                                      obj/lcd110x.o
+LCD_WriteData                                     obj/lcd110x.o
+Option0                                           obj/menu.o
+Option1                                           obj/menu.o
+SetState                                          obj/menu.o
+                                                  obj/tirno.o
+TickCounter                                       obj/delay_util.o
+__bad_interrupt                                   c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__bss_end                                         c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+__bss_start                                       c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+__data_end                                        c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+__data_load_start                                 c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+__data_start                                      c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+__do_clear_bss                                    c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+                                                  obj/cc2500.o
+                                                  obj/menu.o
+                                                  obj/keys.o
+                                                  obj/delay_util.o
+                                                  obj/tirno.o
+__do_copy_data                                    c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+                                                  obj/menu.o
+                                                  obj/lcd110x.o
+                                                  obj/tirno.o
+__eerd_block_m16a                                 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eerd_block_atmega16a.o)
+                                                  obj/tirno.o
+__eerd_blraw_m16a                                 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eerd_block_atmega16a.o)
+__eewr_block_m16a                                 c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_block_atmega16a.o)
+                                                  obj/tirno.o
+__eewr_byte_m16a                                  c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_byte_atmega16a.o)
+__eewr_r18_m16a                                   c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_byte_atmega16a.o)
+                                                  c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5\libc.a(eewr_block_atmega16a.o)
+__heap_end                                        c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__init                                            c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__stack                                           c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_1                                        c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_10                                       c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_11                                       c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_12                                       c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_13                                       c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_14                                       c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_15                                       c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_16                                       c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_17                                       c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_18                                       obj/cc2500.o
+                                                  c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_19                                       obj/delay_util.o
+                                                  c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_2                                        c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_20                                       c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_3                                        c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_4                                        c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_5                                        c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_6                                        c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_7                                        c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_8                                        c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_9                                        c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vector_default                                  c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+__vectors                                         c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+_exit                                             c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+eeReadLocket                                      obj/tirno.o
+eeWriteLocket                                     obj/tirno.o
+                                                  obj/menu.o
+exit                                              c:/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                                                  c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o
+main                                              obj/tirno.o
+                                                  c:/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm16a.o

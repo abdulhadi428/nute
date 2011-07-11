@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df name="Firmware" root=".">
+      <df name="obj">
+      </df>
+      <df name="output">
+      </df>
+      <df name="QTouch">
+        <in>qt_asm_tiny_mega.S</in>
+        <in>touch_api.h</in>
+        <in>touch_qt_config.h</in>
+      </df>
+      <in>battery.c</in>
+      <in>battery.h</in>
+      <in>beep.c</in>
+      <in>beep.h</in>
+      <in>common.h</in>
+      <in>delay_util.c</in>
+      <in>delay_util.h</in>
+      <in>images.c</in>
+      <in>images.h</in>
+      <in>lcd110x.c</in>
+      <in>lcd110x.h</in>
+      <in>lcd_font.c</in>
+      <in>lcd_font.h</in>
+      <in>main.c</in>
+      <in>main.h</in>
+      <in>menu.c</in>
+      <in>menu.h</in>
+      <in>messages.h</in>
+      <in>sensors.c</in>
+      <in>sensors.h</in>
+      <in>time.c</in>
+      <in>time.h</in>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile-Firmware.mk</itemPath>
+      <itemPath>makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile-Firmware.mk</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>WinAVR|WinAVR</compilerSet>
+      </toolsSet>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>$(MAKE) -f Makefile</buildCommand>
+          <cleanCommand>$(MAKE) -f Makefile clean</cleanCommand>
+          <executablePath>C:/Program Files/Atmel/AVR Tools/AvrDragon/AVRDragon.exe</executablePath>
+          <cTool>
+            <incDir>
+              <pElem>.</pElem>
+              <pElem>QTouch</pElem>
+            </incDir>
+            <preprocessorList>
+              <Elem>__AVR_ATmega16A__</Elem>
+              <Elem>F_CPU 4000000</Elem>
+            </preprocessorList>
+          </cTool>
+        </makeTool>
+      </makefileType>
+    </conf>
+  </confs>
+</configurationDescriptor>
