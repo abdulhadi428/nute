@@ -1,6 +1,6 @@
 #include "lcd110x.h"
 #include "lcd_font.h"
-#include "images.h"
+#include "images.h" 
 #include "string.h"
 
 #include "delay_util.h"
@@ -9,6 +9,21 @@
 Lcd_t Lcd;
 
 void Lcd_t::Task(void) {
+    // Restart DMA if needed
+    if (DMA_GetFlagStatus(DMA1_FLAG_TC2) == SET) {
+        if (USART_GetFlagStatus(LCD_USART, USART_FLAG_TC) == SET) {  // Wait until last byte transmitted
+            // Clear DMA Half Transfer, Transfer Complete and Global interrupt pending bits
+            DMA_ClearITPendingBit(DMA1_IT_GL2);
+            USART_ClearFlag(LCD_USART, USART_FLAG_TC);
+            XCS_Hi();   // End transmission
+            USART_Cmd(LCD_USART, DISABLE);
+            LCD_DMA_Init();
+            XCS_Lo();   // Start transmission
+            DMA_Cmd(LCD_DMA_CHNL, ENABLE);          // Enable USARTy DMA TX Channel
+            USART_Cmd(LCD_USART, ENABLE);
+        }
+    }
+    // Handle text displaying
     if (!DisplayingText) return;
     if (!Delay.Elapsed(&Timer, LCD_PAGE_DELAY)) return;
     if (EndOfScroll) PrintText();
@@ -46,28 +61,26 @@ void Lcd_t::Init(void) {
     USART_ClockInit(LCD_USART, &USART_ClockInitStructure);
     // Usart itself
     USART_InitTypeDef USART_InitStructure;
-    USART_InitStructure.USART_BaudRate = 33600;
+    USART_InitStructure.USART_BaudRate = 500000;
     USART_InitStructure.USART_WordLength = USART_WordLength_9b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_InitStructure.USART_Mode = USART_Mode_Tx;
     USART_Init(LCD_USART, &USART_InitStructure);
-    // Enable USART
-    USART_Cmd(LCD_USART, ENABLE);
 
     // ==== DMA ====
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
     LCD_DMA_Init();
 
     // ==== DMA IRQ ====
-    NVIC_InitTypeDef NVIC_InitStructure;
-    // Enable DMA1 channel3 IRQ Channel
-    NVIC_InitStructure.NVIC_IRQChannel = LCD_DMA_IRQ;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
+//    NVIC_InitTypeDef NVIC_InitStructure;
+//    // Enable DMA1 channel3 IRQ Channel
+//    NVIC_InitStructure.NVIC_IRQChannel = LCD_DMA_IRQ;
+//    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+//    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+//    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+//    NVIC_Init(&NVIC_InitStructure);
 
     // ========================= Init LCD ======================================
     XCS_Hi();
@@ -92,6 +105,8 @@ void Lcd_t::Init(void) {
     // Start transmission
     XCS_Lo();
     DMA_Cmd(LCD_DMA_CHNL, ENABLE);          // Enable USARTy DMA TX Channel
+    // Enable USART
+    USART_Cmd(LCD_USART, ENABLE);
 }
 
 void Lcd_t::LCD_DMA_Init() {
@@ -105,14 +120,14 @@ void Lcd_t::LCD_DMA_Init() {
     DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
     DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
     DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-    DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-    DMA_InitStructure.DMA_Priority = DMA_Priority_Low;
+    DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+    DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(LCD_DMA_CHNL, &DMA_InitStructure);
     // Enable USARTy DMA TX request
     USART_DMACmd(LCD_USART, USART_DMAReq_Tx, ENABLE);
     // Enable DMA Transfer Complete interrupt
-    DMA_ITConfig(LCD_DMA_CHNL, DMA_IT_TC, ENABLE);
+//    DMA_ITConfig(LCD_DMA_CHNL, DMA_IT_TC, ENABLE);
 }
 
 void Lcd_t::Shutdown(void) {
@@ -154,6 +169,27 @@ void Lcd_t::PrintString(const uint8_t x, const uint8_t y, const char* S, Invert_
 void Lcd_t::PrintStringLen(const char *S, uint16_t ALen, Invert_t AInvert) {
     for (uint16_t i=0; ((i<ALen) && (*S != '\0')); i++)
         DrawChar(*S++, AInvert);
+}
+
+void Lcd_t::PrintBigUint(const uint8_t y, uint16_t ANumber) {
+    if(ANumber > 999) return;
+    uint8_t digit = 0, x = 0;
+    bool ShouldPrint = false;
+    const uint16_t m[2] = {100, 10};
+
+    for(uint8_t i=0; i<2; i++) {
+        while (ANumber >= m[i]) {
+            digit++;
+            ANumber -= m[i];
+        }
+        if (digit != 0 || ShouldPrint) {
+            DrawImage(x, y, &Font_32x48_Digits[digit][0], NotInverted);
+            ShouldPrint = true;
+            x += 32;
+        }
+        digit = 0;
+    } // for
+    DrawImage(x, y, &Font_32x48_Digits[ANumber][0], NotInverted);
 }
 
 void Lcd_t::PrintText() {
@@ -228,6 +264,7 @@ void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img, Inve
     } // fy
 }
 
+
 // ============================ Inner use ======================================
 uint16_t Lcd_t::Distort(uint16_t CmdDta, uint8_t AByte) {
     uint32_t Itmp = (uint32_t) AByte;
@@ -239,17 +276,21 @@ uint16_t Lcd_t::Distort(uint16_t CmdDta, uint8_t AByte) {
 }
 
 // ================================== Interrupts ===============================
-void DMA1_Channel2_IRQHandler(void) {
-    // Test on DMA1 Channel3 Transfer Complete interrupt
-    if(DMA_GetITStatus(DMA1_IT_TC2)) {
-        // Clear DMA Half Transfer, Transfer Complete and Global interrupt pending bits
-        DMA_ClearITPendingBit(DMA1_IT_GL2);
-        DMA_Cmd(LCD_DMA_CHNL, DISABLE);
-        // Wait for current byte to finish transfer
-        while(USART_GetFlagStatus(LCD_USART, USART_FLAG_TC) == RESET);
-        Lcd.XCS_Hi();   // End transmission
-        Delay.Loop(9);
-        Lcd.XCS_Lo();   // Start transmission
-        DMA_Cmd(LCD_DMA_CHNL, ENABLE);
-    } // if
-}
+//void DMA1_Channel2_IRQHandler(void) {
+//    // Test on DMA1 Channel3 Transfer Complete interrupt
+//    if(DMA_GetITStatus(DMA1_IT_TC2)) {
+//        // Clear DMA Half Transfer, Transfer Complete and Global interrupt pending bits
+//        DMA_ClearITPendingBit(DMA1_IT_GL2);
+//        //DMA_Cmd(LCD_DMA_CHNL, DISABLE);
+//        // Wait for current byte to finish transfer
+//        while(USART_GetFlagStatus(LCD_USART, USART_FLAG_TC) == RESET);
+//        Lcd.XCS_Hi();   // End transmission
+//        USART_Cmd(LCD_USART, DISABLE);
+//        Delay.Loop(18);
+//        Lcd.LCD_DMA_Init();
+//        DMA_Cmd(LCD_DMA_CHNL, ENABLE);          // Enable USARTy DMA TX Channel
+//        Lcd.XCS_Lo();   // Start transmission
+//        //DMA_Cmd(LCD_DMA_CHNL, ENABLE);
+//        USART_Cmd(LCD_USART, ENABLE);
+//    } // if
+//}

@@ -1,5 +1,5 @@
 /*
- * File:   lcd110x.h
+ * File:   lcd110x.h 
  * Author: Kreyl Laurelindo
  *
  * Created on 24 �������� 2010 �., 14:25
@@ -37,7 +37,7 @@
 #define LCD_PAGE_DELAY  999
 
 // Uncomment this line, if image need to be turned upside down
-//#define LCD_UPSIDEDOWN
+#define LCD_UPSIDEDOWN
 
 // Data sizes
 #define LCD_VIDEOBUF_SIZE       864     // = 96 * 9
@@ -96,17 +96,19 @@ public:
     void PrintStringLen(const char *S, uint16_t ALen, Invert_t AInvert);
     void PrintText(void);
 
+    void PrintBigUint(const uint8_t y, uint16_t ANumber);
+
     void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img, Invert_t AInvert);
 };
 
 extern Lcd_t Lcd;
 
 // DMA transfer complete interrupt handler
-#ifdef __cplusplus
-extern "C" {
-void DMA1_Channel2_IRQHandler(void);
-}
-#endif
+//#ifdef __cplusplus
+//extern "C" {
+//void DMA1_Channel2_IRQHandler(void);
+//}
+//#endif
 
 
 #endif	/* LCD110X_H */
