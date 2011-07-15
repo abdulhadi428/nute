@@ -12,7 +12,7 @@ void TimeInit(void) {
     // Timer2: realtime clock counter
     ASSR  = (1<<AS2);				// Set Async mode of the timer
     //TCCR2 = (0<<CS22)|(0<<CS21)|(1<<CS20);	// DEBUG: no division
-    //TCCR2B = (0<<CS22)|(1<<CS21)|(0<<CS20);	// DEBUG: div 8
+    //TCCR2 = (0<<CS22)|(1<<CS21)|(0<<CS20);	// DEBUG: div 8
     //TCCR2 = (0<<CS22)|(1<<CS21)|(1<<CS20);	// DEBUG: div 32
     TCCR2 = (1<<CS22)|(0<<CS21)|(1<<CS20);	// RELEASE: div 128, once per second
     TIMSK |= (1<<TOIE2);

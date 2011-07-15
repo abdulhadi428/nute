@@ -55,8 +55,8 @@
       <makefileType>
         <makeTool>
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
-          <buildCommand>$(MAKE) -f Makefile</buildCommand>
-          <cleanCommand>$(MAKE) -f Makefile clean</cleanCommand>
+          <buildCommand>make all</buildCommand>
+          <cleanCommand>make clean</cleanCommand>
           <executablePath>C:/Program Files/Atmel/AVR Tools/AvrDragon/AVRDragon.exe</executablePath>
           <cTool>
             <incDir>
