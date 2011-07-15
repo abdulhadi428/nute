@@ -1,0 +1,9 @@
+#Fri Jul 15 11:12:16 MSD 2011
+avrtarget/ClockFrequency=4000000
+avrtarget/ExtRAMSize=0
+avrtarget/ExtendedRAM=false
+avrtarget/MCUType=atmega16a
+avrtarget/UseEEPROM=false
+avrtarget/UseExtendedRAMforHeap=true
+avrtarget/perConfig=false
+eclipse.preferences.version=1
