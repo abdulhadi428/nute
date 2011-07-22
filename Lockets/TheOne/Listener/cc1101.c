@@ -55,6 +55,7 @@ FORCE_INLINE void CC_SetAddress(uint8_t AAddress) {
 }
 
 FORCE_INLINE void CC_SetPwr(uint8_t APower) {
+    while (CC.State != CC_STB_IDLE) CC_ENTER_IDLE();
     CC_WriteRegister(CC_PATABLE, APower);
 }
 
@@ -174,6 +175,7 @@ uint8_t CC_ReadWriteByte(uint8_t AByte){
 // ============================ Interrupts =====================================
 ISR(INT2_vect){
     // Packet has been successfully recieved
+    PORTA |= 1<<PA0;
     uint8_t FifoSize = CC_ReadRegister(CC_RXBYTES); // Get bytes in FIFO
     if (FifoSize > 0) {
         CC_ReadRX(&CC.RX_PktArray[0], FifoSize);
