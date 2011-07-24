@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   menu.h
  * Author: Kreyl Laurelindo
  *
@@ -18,9 +18,9 @@
 
 // ============================ Types ==========================================
 // States
-enum State_t {StIdle, StBacklight, StShowChannel, StOfferSetTime, StShowBattery, StManualAqua, \
+enum State_t {StIdle, StBacklight, StMainMenu, StShowChannel, StOfferSetTime, StShowBattery, StManualAqua, \
 StSetEnable, StSetPeriodType, StSetPeriodValue, StSetPeriodLeft, StSetStartTime, StSetDuration, \
-StSetTimeHours, StSetTimeMinTens, StSetTimeMinUnits};
+StSetTimeHours, StSetTimeMinTens, StSetTimeMinUnits, StExit};
 
 extern enum State_t EState;
 
@@ -39,6 +39,7 @@ void EVENT_AnyKey(void);
 
 // Inner use
 void ShowChannelSummary(uint8_t Highlight);
+void ShowMainMenu(void);
 
 #endif	/* MENU_H */
 

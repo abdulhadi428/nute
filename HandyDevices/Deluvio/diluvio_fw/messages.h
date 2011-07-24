@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   messages.h
  * Author: Kreyl Laurelindo
  *
@@ -12,6 +12,8 @@
 #define MSG_PUMP                "Насос "
 #define MSG_MANUAL_ON           "Ручное включение"
 #define MSG_AUTO_ON             "Авто-включение"
+#define MSG_EXIT                "Выход  "
+#define MSG_EXIT_Y              7
 
 #define MSG_SHOW_BATTERY        "Заряд батареи"
 
@@ -22,8 +24,9 @@
 #define MSG_NO_WATER            "В баке нет воды"
 #define MSG_WATER_OK            "               "
 
-// Time 
+// Time
 #define MSG_SET_CORRECT_TIME    "Установите время"
+#define MSG_MENU_SET_TIME       "Время  "
 #define MSG_SET_TIME_HOURS      "Измените часы"
 #define MSG_SET_TIME_MINUTES    "Измените минуты"
 
@@ -38,10 +41,10 @@
 #define MSG_PERIOD_HOURS        "часы: "
 #define MSG_PERIOD_X            8
 #define MSG_PERIOD_LEFT         "Осталось:"
-#define MSG_START_TIME          "Время включения:"
+#define MSG_START_TIME          "Включать в "
 #define MSG_START_TIME_Y        4
-#define MSG_DURATION            "Длительность, с:"
-#define MSG_DURATION_Y          6
+#define MSG_DURATION            "Поливать "
+#define MSG_DURATION_Y          5
 #define MSG_AQUA                "Aqua"
 #define MSG_AQUA_X              11
 
@@ -53,6 +56,7 @@
 #define HIGHLIGHT_PERIOD_LEFT   4
 #define HIGHLIGHT_START_TIME    5
 #define HIGHLIGHT_DURATION      6
+#define HIGHLIGHT_EXIT          7
 
 
 #endif	/* MESSAGES_H */

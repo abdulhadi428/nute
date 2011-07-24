@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   main.c
  * Author: Kreyl Laurelindo
  *
@@ -31,7 +31,7 @@ int main(void) {
     GeneralInit();
     sei();
     SetState(StIdle);
-    
+
     while(1) {
         if(POWER_OK()) {
             Task_Sensors();
@@ -62,6 +62,7 @@ int main(void) {
             SetState(StIdle);
         }
     } // while(1)
+    return 0;
 }
 
 FORCE_INLINE void GeneralInit(void) {
@@ -74,7 +75,7 @@ FORCE_INLINE void GeneralInit(void) {
     PORTA &=  ~(1<<PA2);
     DDRD  |=   (1<<PD0)|(1<<PD1);
     PORTD &= ~((1<<PD0)|(1<<PD1));
-    
+
     // Different modules init
     LCD_Init();
     // Show Logo
@@ -243,7 +244,7 @@ FORCE_INLINE void EVENT_NewSecond(void) {
     } // if state
 }
 FORCE_INLINE void EVENT_NewMinute(void) {
-    if ((EState == StIdle) && POWER_OK()) {
+    if (((EState == StIdle) || (EState == StBacklight)) && POWER_OK()) {
         LCD_PrintTime(PRINT_TIME_X, PRINT_TIME_Y, false, false, false);
         CheckBattery();
         // Beep if needed
