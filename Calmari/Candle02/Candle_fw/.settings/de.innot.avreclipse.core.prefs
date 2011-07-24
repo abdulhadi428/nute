@@ -1,8 +1,9 @@
-#Mon Jul 18 19:27:06 MSD 2011
-avrtarget/ClockFrequency=4000000
+#Sun Jul 24 18:40:18 MSD 2011
+avrtarget/ClockFrequency=1000000
 avrtarget/ExtRAMSize=0
 avrtarget/ExtendedRAM=false
 avrtarget/MCUType=atmega88pa
 avrtarget/UseEEPROM=false
 avrtarget/UseExtendedRAMforHeap=true
+avrtarget/perConfig=false
 eclipse.preferences.version=1

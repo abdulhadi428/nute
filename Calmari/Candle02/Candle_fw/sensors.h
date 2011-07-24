@@ -23,15 +23,32 @@
  */
 
 // ================================= Defines ===================================
-#define SNS             PC0
-#define SNSK            PC1
-#define BOTH_LO()       DDRC  |= (1<<SNS)|(1<<SNSK); \
-                        PORTC &= ~((1<<SNS)|(1<<SNSK))
-#define SNS_HIZ()       DDRC  &= ~(1<<SNS)
-#define SNSK_PULSE()    PORTC |= (1<<SNSK); \
-                        DDRC  &= ~(1<<SNSK); \
-                        PORTC &= ~(1<<SNSK)
-#define SNS_LO()        DDRC  |=  (1<<PC2)
+#define KEY0_SNS    PC0
+#define KEY0_SNSK   PC1
+#define KEY0_DDR    DDRC
+#define KEY0_PORT   PORTC
+#define KEY0_PIN    PINC
+
+#define KEY1_SNS    PC2
+#define KEY1_SNSK   PC3
+#define KEY1_DDR    DDRC
+#define KEY1_PORT   PORTC
+#define KEY1_PIN    PINC
+
+#define KEY2_SNS    PB0
+#define KEY2_SNSK   PB1
+#define KEY2_DDR    DDRB
+#define KEY2_PORT   PORTB
+#define KEY2_PIN    PINB
+
+#define KEY3_SNS    PB6
+#define KEY3_SNSK   PB7
+#define KEY3_DDR    DDRB
+#define KEY3_PORT   PORTB
+#define KEY3_PIN    PINB
+
+#define KEY_THRESHOLD           30
+#define KEY_CALIBRATION_TIMEOUT 8
 
 #define nop( )  asm volatile ("nop\n\t" ::)
 
@@ -46,16 +63,17 @@ struct Key_t {
     bool IsDown;
     bool MayRepeat;
     uint16_t Timer, Delay;
+    uint16_t CapValue, CapDefault;
     void (*EventPress)(void);
+    uint16_t (*Measure)(void);
+    void Calibrate(void);
+    bool IsTouched(void) { return ((CapValue > (CapDefault + KEY_THRESHOLD)) || (CapValue < (CapDefault - KEY_THRESHOLD))); }
 };
 
 class Keys_t {
 private:
     Key_t Key[4];
     uint16_t Timer;
-    // Pin manipulating
-
-    //bool IsTouched(uint8_t ASensor) { return (qt_measure_data.qt_touch_status.sensor_states[0] & (1<<ASensor)); }
 public:
     void Init(void);
     void Task(void);

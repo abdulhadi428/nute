@@ -32,7 +32,9 @@ int main(void) {
 void GeneralInit(void) {
     wdt_enable(WDTO_2S);
     ACSR = 1<<ACD;  // Disable analog comparator
-    clock_prescale_set(clock_div_2);    // 4 MHz
+    //clock_prescale_set(clock_div_2);    // 4 MHz
+    //clock_prescale_set(clock_div_4);    // 2 MHz
+    clock_prescale_set(clock_div_8);    // 1 MHz
 
     Delay.Init();
     UARTInit();
