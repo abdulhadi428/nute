@@ -14,21 +14,14 @@
 #include "touch_api.h"
 
 // ================================= Defines ===================================
-// Ports & pins
-
-
-
 // Measurement period in msec.
 #define QT_MEASUREMENT_PERIOD   25
 
 #define KEY_REPEAT_TIMEOUT      702 // Time before repeat
-#define KEY_REPEAT_DELAY        252 // Time between repeat
+#define KEY_REPEAT_DELAY        504 // Time between repeat
 
 // ========================= Variables & types =================================
-//typedef enum {keyUp=0, keyDown=1, keyOnOff=2, keyLit=3} Key_t;
-
 struct Key_t {
-    uint8_t ID;
     bool IsDown;
     bool MayRepeat;
     uint16_t Timer, Delay;
@@ -43,11 +36,9 @@ private:
 public:
     void Init(void);
     void Task(void);
-
 };
 
 extern Keys_t EKeys;
-//extern uint16_t current_time_ms_touch;
 
 // ================================ Prototypes =================================
 void Task_Sensors(void);

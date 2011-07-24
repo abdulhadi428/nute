@@ -22,7 +22,7 @@ int main(void) {
     while(1) {
         wdt_reset();
         if(Delay.Elapsed(&ELight.Timer, 1000)) {
-            LED_PORT ^= (1<<GREEN_P);
+            //LED_PORT ^= (1<<GREEN_P);
         }
         EKeys.Task();
     }
@@ -62,5 +62,5 @@ void EVENT_KeyOnOff(void) {
 
 }
 void EVENT_KeyLit(void) {
-
+    LED_PORT ^= (1<<GREEN_P);
 }

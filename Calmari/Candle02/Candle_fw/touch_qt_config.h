@@ -49,18 +49,14 @@ extern "C" {
 *
 * Possible values: 4, 8, 12, 16.
 */
-#ifndef QT_NUM_CHANNELS
-    #define QT_NUM_CHANNELS 4
-#endif
+#define QT_NUM_CHANNELS 8
 
 /*
 * Delay cycles that determine the capacitance charge pulse width.
 *
 * Possible values: 1 to 255
 */
-#ifndef QT_DELAY_CYCLES
-    #define QT_DELAY_CYCLES 1
-#endif
+#define QT_DELAY_CYCLES 1
 
 /*
 * Enabling the _ROTOR_SLIDER_ constant will link the library need for using rotors
@@ -68,9 +64,7 @@ extern "C" {
 *
 * Possible values: comment/uncomment the define
 */
-#ifndef _ROTOR_SLIDER_
-    //#define _ROTOR_SLIDER_
-#endif
+//#define _ROTOR_SLIDER_
 
 /*
 * Define the ports to be used for SNS1 and SNSK1 pins. SNS1 and SNSK1 port pins
@@ -78,12 +72,8 @@ extern "C" {
 *
 * Possible values: refer to the device data sheet and QTouch libraries user guide.
 */
-#ifndef SNS1
-    #define SNS1            B
-#endif
-#ifndef SNSK1
-    #define SNSK1           B
-#endif
+#define SNS1            C
+#define SNSK1           C
 
 /*
 * If the same port is being used for SNS1 and SNSK1 then the _SNS1_SNSK1_SAME_PORT_
@@ -91,9 +81,7 @@ extern "C" {
 *
 * Possible values: comment/uncomment the define
 */
-#ifndef _SNS1_SNSK1_SAME_PORT_
-    #define _SNS1_SNSK1_SAME_PORT_
-#endif
+#define _SNS1_SNSK1_SAME_PORT_
 
 /*
 * Define the ports to be used for SNS2 and SNSK2 pins. SNS2 and SNSK2 port pins
@@ -101,12 +89,8 @@ extern "C" {
 *
 * Possible values: refer to the device data sheet and QTouch libraries user guide.
 */
-#ifndef SNS2
-    #define SNS2            C
-#endif
-#ifndef SNSK2
-    #define SNSK2           C
-#endif
+#define SNS2            B
+#define SNSK2           B
 
 /*
 * If the same port is being used for SNS2 and SNSK2 then the _SNS2_SNSK2_SAME_PORT_
@@ -114,9 +98,7 @@ extern "C" {
 *
 * Possible values: comment/uncomment the define
 */
-#ifndef _SNS2_SNSK2_SAME_PORT_
-    #define _SNS2_SNSK2_SAME_PORT_
-#endif
+#define _SNS2_SNSK2_SAME_PORT_
 
 /*
 * Enabling _POWER_OPTIMIZATION_ will lead to a 40% reduction in power consumed
@@ -129,9 +111,7 @@ extern "C" {
 *                  0 (For ATxmega devices)
 */
 
-#ifndef _POWER_OPTIMIZATION_
-    #define _POWER_OPTIMIZATION_ 0
-#endif
+#define _POWER_OPTIMIZATION_ 0
 
 /*
 * Enabling _DEBUG_INTERFACE_ will add QDEBUG code to the existing projects. This
@@ -139,9 +119,8 @@ extern "C" {
 *
 * Possible values: comment/uncomment the define
 */
-#ifndef _DEBUG_INTERFACE_
-    //#define _DEBUG_INTERFACE_
-#endif
+//#define _DEBUG_INTERFACE_
+
 
 /**************************************************************/
 /* Please do not change any part of the code below this line. */
@@ -165,7 +144,9 @@ extern "C" {
 
 			#if (QT_NUM_CHANNELS == 4)
 				#define QTOUCH_SNS_PORT_COUNT 1
-				#define INTRABURST_2 0
+                #define INTRABURST_2 0
+                //#define QTOUCH_SNS_PORT_COUNT 2
+                //#define INTRABURST_2 1
 			#elif (QT_NUM_CHANNELS == 8)
 				#define QTOUCH_SNS_PORT_COUNT 2
 				#define INTRABURST_2 1
@@ -173,9 +154,9 @@ extern "C" {
 		#else
 			#ifndef _STATIC_PORT_PIN_CONF_
 				#define _STATIC_PORT_PIN_CONF_ 0
-				#else
+		    #else
 				#define _STATIC_PORT_PIN_CONF_ 1
-				#endif
+            #endif
 			#define QTOUCH_SNS_PORT_COUNT 1
 			#define INTRABURST_1 0
 			#define INTRABURST_2 0

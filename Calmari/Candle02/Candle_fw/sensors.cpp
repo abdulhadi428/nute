@@ -7,12 +7,7 @@
 
 // ============================= Variables =====================================
 extern qt_touch_lib_config_data_t qt_config_data;
-// touch output - measurement data
-extern qt_touch_lib_measure_data_t qt_measure_data;
-
-/* Timer period in msec. */
-uint16_t qt_measurement_period_msec = 25u;
-
+extern qt_touch_lib_measure_data_t qt_measure_data; // touch output - measurement data
 
 /* current time, set by timer ISR */
 static volatile uint16_t current_time_ms_touch = 0u;
@@ -29,14 +24,14 @@ struct Keys_t EKeys;
 void Keys_t::Init(void) {
     MCUCR |= (1<<PUD);  // Disable all pull-ups
     #ifdef QTOUCH_STUDIO_MASKS
-    SNS_array[0][0]= 0x41;
+    SNS_array[0][0]= 0x5;
     SNS_array[0][1]= 0x0;
-    SNS_array[1][0]= 0x5;
+    SNS_array[1][0]= 0x41;
     SNS_array[1][1]= 0x0;
 
-    SNSK_array[0][0]= 0x82;
+    SNSK_array[0][0]= 0xA;
     SNSK_array[0][1]= 0x0;
-    SNSK_array[1][0]= 0xa;
+    SNSK_array[1][0]= 0x82;
     SNSK_array[1][1]= 0x0;
     #endif
 
@@ -44,10 +39,7 @@ void Keys_t::Init(void) {
     qt_enable_key( CHANNEL_0, AKS_GROUP_1, 10u, HYST_6_25 );
     qt_enable_key( CHANNEL_1, AKS_GROUP_1, 10u, HYST_6_25 );
     qt_enable_key( CHANNEL_2, AKS_GROUP_1, 10u, HYST_6_25 );
-    qt_enable_key( CHANNEL_3, AKS_GROUP_1, 10u, HYST_6_25 );
-
-    qt_init_sensing();  // initialise touch sensing
-    //qt_init_sensing_with_burst(BURST_FUNC_NAME, CALCULATE_MASKS);
+    qt_enable_key( CHANNEL_3, AKS_GROUP_1, 5u, HYST_6_25 );
 
     //  Set the parameters like recalibration threshold, Max_On_Duration etc in this function by the user
     /*  This will be modified by the user to different values   */
@@ -59,15 +51,13 @@ void Keys_t::Init(void) {
     qt_config_data.qt_recal_threshold = DEF_QT_RECAL_THRESHOLD;
     qt_config_data.qt_pos_recal_delay = DEF_QT_POS_RECAL_DELAY;
 
-
-    //BURST_JOIN( _STATIC_PORT_PIN_CONF_, QTOUCH_SNS_PORT_COUNT, INTRABURST_1, INTRABURST_2, _POWER_OPTIMIZATION_ )
-    //qt_init_sensing_with_burst(BURST_FUNC_NAME, CALCULATE_MASKS);
-
     /*  Address to pass address of user functions   */
     /*  This function is called after the library has made capacitive measurements,
     *   but before it has processed them. The user can use this hook to apply filter
     *   functions to the measured signal values.(Possibly to fix sensor layout faults)    */
     qt_filter_callback = 0;
+
+    qt_init_sensing();  // initialise touch sensing
 
     // Init variables
     Key[0].EventPress = &EVENT_KeyDown;
@@ -79,9 +69,9 @@ void Keys_t::Init(void) {
 }
 
 void Keys_t::Task(void) {
-    if(!Delay.Elapsed(&Timer, qt_measurement_period_msec)) return;
+    if(!Delay.Elapsed(&Timer, QT_MEASUREMENT_PERIOD)) return;
     // Update the current time
-    current_time_ms_touch += qt_measurement_period_msec;
+    current_time_ms_touch += QT_MEASUREMENT_PERIOD;
     // Measure
     // Status flags to indicate the re-burst for library
     uint16_t status_flag = 0u;

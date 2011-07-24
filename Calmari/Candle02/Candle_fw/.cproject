@@ -48,7 +48,7 @@
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.debug.1423073792" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.debug"/>
 							<tool id="de.innot.avreclipse.tool.cpplinker.app.debug.1060940277" name="AVR C++ Linker" superClass="de.innot.avreclipse.tool.cpplinker.app.debug">
 								<option id="de.innot.avreclipse.cpplinker.option.libs.2081854886" name="Libraries (-l)" superClass="de.innot.avreclipse.cpplinker.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="avr4g1-4qt-k-0rs"/>
+									<listOptionValue builtIn="false" value="avr4g1-8qt-k-0rs"/>
 								</option>
 								<option id="de.innot.avreclipse.cpplinker.option.libpath.201534651" name="Libraries Path (-L)" superClass="de.innot.avreclipse.cpplinker.option.libpath" valueType="stringList">
 									<listOptionValue builtIn="false" value="&quot;d:\Nute\Calmari\Candle02\Candle_fw&quot;"/>
@@ -1602,6 +1602,7 @@
 				</scannerConfigBuildInfo>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
