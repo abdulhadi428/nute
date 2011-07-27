@@ -47,8 +47,8 @@
 							</tool>
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.debug.1423073792" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.debug"/>
 							<tool id="de.innot.avreclipse.tool.cpplinker.app.debug.1060940277" name="AVR C++ Linker" superClass="de.innot.avreclipse.tool.cpplinker.app.debug">
-								<option id="de.innot.avreclipse.cpplinker.option.libs.2081854886" name="Libraries (-l)" superClass="de.innot.avreclipse.cpplinker.option.libs" valueType="libs"/>
-								<option id="de.innot.avreclipse.cpplinker.option.libpath.201534651" name="Libraries Path (-L)" superClass="de.innot.avreclipse.cpplinker.option.libpath" valueType="stringList"/>
+								<option id="de.innot.avreclipse.cpplinker.option.libs.2081854886" name="Libraries (-l)" superClass="de.innot.avreclipse.cpplinker.option.libs"/>
+								<option id="de.innot.avreclipse.cpplinker.option.libpath.201534651" name="Libraries Path (-L)" superClass="de.innot.avreclipse.cpplinker.option.libpath"/>
 								<inputType id="de.innot.avreclipse.tool.cpplinker.input.1397776832" name="OBJ Files" superClass="de.innot.avreclipse.tool.cpplinker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

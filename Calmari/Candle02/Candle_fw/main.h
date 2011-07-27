@@ -13,10 +13,11 @@
 #include <avr/wdt.h>
 
 #include "delay_util.h"
+#include "color_table.h"
 
 // ================================== Light ====================================
 // Timings
-#define LED_STEP_DELAY  36  // ms
+#define LED_STEP_DELAY  11  // ms
 
 // Ports & pins
 #define LED_DDR     DDRD
@@ -41,9 +42,23 @@ struct Color_t {
 };
 #define clBlack     {0, 0, 0}
 
-struct Light_t {
+struct Channel_t {
+    uint8_t Desired, Current, Saved;
+    void Adjust(void);
+    volatile uint8_t *TCCRxA, *OCRx;
+    uint8_t TccrOnValue, TccrOffValue;
+};
+
+class Light_t {
+private:
     uint16_t Timer;
-    struct Color_t DesiredColor, CurrentColor;
+    Channel_t R, G, B;
+    void SetDesiredColor(uint8_t ARed, uint8_t AGreen, uint8_t ABlue);
+public:
+    uint8_t Indx;
+    void Init(void);
+    void Task(void);
+    void SetTableColor(void);
 };
 
 // ============================== Prototypes ===================================

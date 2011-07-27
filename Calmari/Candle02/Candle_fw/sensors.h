@@ -47,16 +47,16 @@
 #define KEY3_PORT   PORTB
 #define KEY3_PIN    PINB
 
-#define KEY_THRESHOLD           30
+#define KEY_THRESHOLD           27
 #define KEY_CALIBRATION_TIMEOUT 8
 
 #define nop( )  asm volatile ("nop\n\t" ::)
 
 // Measurement period in msec.
-#define KEY_MEASUREMENT_PERIOD  25
+#define KEY_MEASUREMENT_PERIOD  200
 
-#define KEY_REPEAT_TIMEOUT      702 // Time before repeat
-#define KEY_REPEAT_DELAY        504 // Time between repeat
+#define KEY_REPEAT_TIMEOUT      999 // Time before repeat
+#define KEY_REPEAT_DELAY        999 // Time between repeat
 
 // ========================= Variables & types =================================
 struct Key_t {
