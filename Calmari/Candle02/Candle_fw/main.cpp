@@ -56,11 +56,17 @@ void EVENT_KeyUp(void) {
 void EVENT_KeyOnOff(void) {
     UARTSendString("OnOff\r");
 
-    LED_PORT ^= (1<<RED_P);
+
 }
 void EVENT_KeyLit(void) {
     UARTSendString("Lit\r");
-    LED_PORT ^= (1<<GREEN_P);
+    if (ELight.BlinkState == BlinkDisabled) {
+        ELight.BlinkState = BlinkOn;
+        Delay.Bypass(&ELight.BlinkTimer, LED_BLINK_ON_T);
+    }
+    else {
+        ELight.BlinkState = BlinkDisabled;
+    }
 }
 
 // ============================= Light =========================================
@@ -90,11 +96,6 @@ void Light_t::Init() {
     //IsOn = false;
 }
 
-void Light_t::SetDesiredColor (uint8_t ARed, uint8_t AGreen, uint8_t ABlue) {
-    R.Desired = ARed;
-    G.Desired = AGreen;
-    B.Desired = ABlue;
-}
 void Light_t::SetTableColor(void) {
     R.Desired = GetColor(Indx, 0);
     G.Desired = GetColor(Indx, 1);
@@ -110,21 +111,33 @@ void Light_t::SetTableColor(void) {
 }
 
 void Light_t::Task() {
-    if (!Delay.Elapsed(&Timer, LED_STEP_DELAY)) return;
-    R.Adjust();
-    G.Adjust();
-    B.Adjust();
+    if (BlinkState == BlinkOff) {
+        if (Delay.Elapsed(&BlinkTimer, LED_BLINK_OFF_T)) {
+            BlinkState = BlinkOn;
+            AllOn();
+        }
+    }
+    else {
+        if (BlinkState == BlinkOn) {
+            if (Delay.Elapsed(&BlinkTimer, LED_BLINK_ON_T)) {
+                BlinkState = BlinkOff;
+                AllOff();
+                return;
+            }
+        }
+        // Adjust colors
+        if (Delay.Elapsed(&Timer, LED_STEP_T)) AllAdjust();
+    }
 }
 
 void Channel_t::Adjust() {
-    if (Current == Desired) return;
     if (Desired < Current) {
         Current--;
-        if (Current == 0) *TCCRxA &= TccrOffValue;
+        if (Current == 0) ATOMIC_BLOCK(ATOMIC_FORCEON) { *TCCRxA &= TccrOffValue; }
     }
-    else {
-        if (Current == 0) *TCCRxA |= TccrOnValue;
+    else if (Desired > Current) {
+        if (Current == 0) ATOMIC_BLOCK(ATOMIC_FORCEON) { *TCCRxA |= TccrOnValue; }
         Current++;
     }
-    *OCRx = Current;
+    ATOMIC_BLOCK(ATOMIC_FORCEON) { *OCRx = Current; }
 }

@@ -17,7 +17,9 @@
 
 // ================================== Light ====================================
 // Timings
-#define LED_STEP_DELAY  11  // ms
+#define LED_STEP_T          11  // ms
+#define LED_BLINK_ON_T      999
+#define LED_BLINK_OFF_T     45
 
 // Ports & pins
 #define LED_DDR     DDRD
@@ -33,29 +35,29 @@
 #define LED_BLUE_DISABLE()  TCCR2A &= ~((1<<COM2B1)|(1<<COM2B0));
 #define LED_BLUE_ENABLE()   TCCR2A |=  ((1<<COM2B1)|(0<<COM2B0));
 
-
-struct Color_t {
-    uint8_t Red, Green, Blue;
-    //bool operator == (const Color_t AColor) { return ((this->Red == AColor.Red) && (this->Green == AColor.Green) && (this->Blue == AColor.Blue)); }
-    //bool operator != (const Color_t AColor) { return ((this->Red != AColor.Red) || (this->Green != AColor.Green) || (this->Blue != AColor.Blue)); }
-    const bool IsOn(void) const { return (Red || Green || Blue); }
-};
-#define clBlack     {0, 0, 0}
-
 struct Channel_t {
     uint8_t Desired, Current, Saved;
-    void Adjust(void);
     volatile uint8_t *TCCRxA, *OCRx;
     uint8_t TccrOnValue, TccrOffValue;
+    void Adjust(void);
+    void Off(void)  { *OCRx = 0; }
+    void On(void) { *OCRx = Current; }
 };
+
+typedef enum {BlinkDisabled, BlinkOff, BlinkOn} BlinkState_t;
 
 class Light_t {
 private:
     uint16_t Timer;
     Channel_t R, G, B;
-    void SetDesiredColor(uint8_t ARed, uint8_t AGreen, uint8_t ABlue);
+    void AllOn (void)    { R.On();     G.On();     B.On(); }
+    void AllOff(void)    { R.Off();    G.Off();    B.Off(); }
+    void AllAdjust(void) { R.Adjust(); G.Adjust(); B.Adjust(); }
+    void SetDesiredColor(uint8_t ARed, uint8_t AGreen, uint8_t ABlue) { R.Desired = ARed; G.Desired = AGreen; B.Desired = ABlue; }
 public:
     uint8_t Indx;
+    uint16_t BlinkTimer;
+    BlinkState_t BlinkState;
     void Init(void);
     void Task(void);
     void SetTableColor(void);

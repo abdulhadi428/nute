@@ -51,6 +51,12 @@ bool Delay_t::Elapsed(uint16_t *AVar, const uint16_t ADelay) {
     return Result;
 }
 
+void Delay_t::Bypass(uint16_t *AVar, const uint16_t ADelay) {
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) {
+        *AVar = TickCounter - ADelay - 1;   // Reset delay
+    } // Atomic
+}
+
 void Delay_t::Reset(uint16_t *AVar) {
     ATOMIC_BLOCK (ATOMIC_RESTORESTATE) {
         *AVar = TickCounter;

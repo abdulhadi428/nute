@@ -22,6 +22,7 @@ struct Delay_t {
     void Init(void);
     void Reset(uint16_t *AVar);
     bool Elapsed(uint16_t *AVar, const uint16_t ADelay);
+    void Bypass(uint16_t *AVar, const uint16_t ADelay);
 };
 
 extern Delay_t Delay;
