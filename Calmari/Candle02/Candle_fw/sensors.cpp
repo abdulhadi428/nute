@@ -7,6 +7,8 @@
 #include "delay_util.h"
 #include "uart_soft.h"
 
+// #define PRINT_CAP    // DEBUG
+
 // ============================= Variables etc. ================================
 Keys_t EKeys;
 
@@ -17,6 +19,7 @@ uint16_t Measure3(void);
 
 // =========================== Implementation ==================================
 void Keys_t::Init(void) {
+    Enabled = keAll;
     // Init variables
     Key[0].EventPress = &EVENT_KeyDown;
     Key[0].MayRepeat  = true;
@@ -33,14 +36,18 @@ void Keys_t::Init(void) {
 }
 
 void Keys_t::Task(void) {
+    if (Enabled == keDisable) return;
     if(!Delay.Elapsed(&Timer, KEY_MEASUREMENT_PERIOD)) return;
 
     for (uint8_t i=0; i<4; i++) {
         // Measure
+        if ((Enabled == keOnOff) && (i != 2)) continue; // Work with only OnOff key
         Key[i].CapValue = Key[i].Measure();
-//        UARTSendUint(Key[i].CapValue);
-//        if (Key[i].IsTouched()) UARTSendString(" T");
-//        UARTNewLine();
+#ifdef PRINT_CAP
+        UARTSendUint(Key[i].CapValue);
+        if (Key[i].IsTouched()) UARTSendString(" T");
+        UARTNewLine();
+#endif
         if (Key[i].IsTouched() && !Key[i].IsDown) {
             Key[i].IsDown = true;
             if (Key[i].MayRepeat) ATOMIC_BLOCK(ATOMIC_FORCEON) {
@@ -61,7 +68,9 @@ void Keys_t::Task(void) {
             } // if is down && delay elapsed
         } // if may repeat
     } // for
-//    UARTNewLine();
+#ifdef PRINT_CAP
+    UARTNewLine();
+#endif
 }
 
 void Key_t::Calibrate() {

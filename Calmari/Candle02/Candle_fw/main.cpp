@@ -11,6 +11,7 @@
 
 #include "uart_soft.h"
 #include "sensors.h"
+#include "battery.h"
 
 Light_t ELight;
 
@@ -23,6 +24,8 @@ int main(void) {
         wdt_reset();
         EKeys.Task();
         ELight.Task();
+        Battery.Task();
+        IndicateCharging_Task();
     }
     return 0;
 }
@@ -36,9 +39,31 @@ void GeneralInit(void) {
     UARTInit();
     EKeys.Init();
     ELight.Init();
+    Battery.Init();
 
     sei();
 }
+
+void Shutdown (void) {
+
+}
+
+// ============================== Tasks ========================================
+void IndicateCharging_Task(void) {
+    if (!Battery.IsCharging) return;
+    // Fade and brighten
+    if (Delay.Elapsed(&ELight.BlinkTimer, CHARGE_BLINK_T)) {
+        if (ELight.Ramp == RampUp) {
+            ELight.Ramp = RampDown;
+            ELight.SetDesiredColor(0, 0, 4);
+        }
+        else {
+            ELight.Ramp = RampUp;
+            ELight.SetDesiredColor(0, 0, 255);
+        }
+    }
+}
+
 
 // ============================= Events ========================================
 void EVENT_KeyDown(void) {
@@ -55,8 +80,16 @@ void EVENT_KeyUp(void) {
 }
 void EVENT_KeyOnOff(void) {
     UARTSendString("OnOff\r");
-
-
+    if (ELight.IsOn) {
+        ELight.IsOn = false;
+        ELight.SetDesiredColor(0, 0, 0);
+        EKeys.DisableAllButOnOff();
+    }
+    else {
+        ELight.IsOn = true;
+        ELight.SetTableColor();
+        EKeys.EnableAll();
+    }
 }
 void EVENT_KeyLit(void) {
     UARTSendString("Lit\r");
@@ -67,6 +100,24 @@ void EVENT_KeyLit(void) {
     else {
         ELight.BlinkState = BlinkDisabled;
     }
+}
+
+void EVENT_ChargeStarted(void) {
+    // Shutdown CC
+//    CC_ENTER_IDLE();
+//    CC_POWERDOWN();
+    EKeys.DisableAll();
+    ELight.BlinkState = BlinkDisabled;
+    ELight.Ramp = RampUp;
+}
+void EVENT_ChargeEnded(void) {
+    EKeys.EnableAll();
+    ELight.Ramp = RampDown;
+    ELight.SetDesiredColor(0, 0, 0);
+}
+
+void EVENT_ADCMeasureCompleted(void) {
+
 }
 
 // ============================= Light =========================================
@@ -93,7 +144,7 @@ void Light_t::Init() {
 
     Indx = 0;
     SetTableColor();
-    //IsOn = false;
+    IsOn = true;
 }
 
 void Light_t::SetTableColor(void) {

@@ -70,13 +70,19 @@ struct Key_t {
     bool IsTouched(void) { return ((CapValue > (CapDefault + KEY_THRESHOLD)) || (CapValue < (CapDefault - KEY_THRESHOLD))); }
 };
 
+enum KeysEnabled_t {keAll, keOnOff, keDisable};
+
 class Keys_t {
 private:
     Key_t Key[4];
     uint16_t Timer;
+    KeysEnabled_t Enabled;
 public:
     void Init(void);
     void Task(void);
+    void DisableAll(void) { Enabled = keDisable; }
+    void DisableAllButOnOff(void) { Enabled = keOnOff; }
+    void EnableAll(void)  { Enabled = keAll;  }
 };
 
 extern Keys_t EKeys;

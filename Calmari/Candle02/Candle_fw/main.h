@@ -20,6 +20,7 @@
 #define LED_STEP_T          11  // ms
 #define LED_BLINK_ON_T      999
 #define LED_BLINK_OFF_T     45
+#define CHARGE_BLINK_T      2504
 
 // Ports & pins
 #define LED_DDR     DDRD
@@ -45,6 +46,7 @@ struct Channel_t {
 };
 
 typedef enum {BlinkDisabled, BlinkOff, BlinkOn} BlinkState_t;
+typedef enum {RampUp, RampDown} Ramp_t;
 
 class Light_t {
 private:
@@ -53,18 +55,22 @@ private:
     void AllOn (void)    { R.On();     G.On();     B.On(); }
     void AllOff(void)    { R.Off();    G.Off();    B.Off(); }
     void AllAdjust(void) { R.Adjust(); G.Adjust(); B.Adjust(); }
-    void SetDesiredColor(uint8_t ARed, uint8_t AGreen, uint8_t ABlue) { R.Desired = ARed; G.Desired = AGreen; B.Desired = ABlue; }
 public:
     uint8_t Indx;
+    bool IsOn;
     uint16_t BlinkTimer;
     BlinkState_t BlinkState;
+    Ramp_t Ramp;
     void Init(void);
     void Task(void);
     void SetTableColor(void);
+    void SetDesiredColor(uint8_t ARed, uint8_t AGreen, uint8_t ABlue) { R.Desired = ARed; G.Desired = AGreen; B.Desired = ABlue; }
 };
 
 // ============================== Prototypes ===================================
 void GeneralInit(void);
+void Shutdown(void);
+void IndicateCharging_Task(void);
 
 extern Light_t ELight;
 
