@@ -7,6 +7,7 @@
 
 #include "battery.h"
 #include "delay_util.h"
+#include <util/delay.h>
 
 Battery_t Battery;
 
@@ -16,6 +17,13 @@ void Battery_t::Init() {
     BAT_CHRG_PORT |=  (1<<BAT_CHRG_P);
     IsCharging = false;
     ADCState = ADCNoMeasure;
+    ADC_REF_ENABLE();
+}
+void Battery_t::Shutdown() {
+    ADC_DISABLE();
+    ADC_REF_DISABLE();
+    ADC_START_MEASUREMENT();
+    _delay_ms(270);
 }
 
 void Battery_t::Task() {
@@ -35,7 +43,6 @@ void Battery_t::Task() {
     switch (ADCState) {
         case ADCNoMeasure:
             if (Delay.Elapsed(&ADCTimer, ADC_MEASURE_T)) { // Check if timeout has passed
-                ADC_REF_ENABLE();           // Start ADC
                 ADC_START_MEASUREMENT();    // Start new measure - dummy one for the first time
                 ADCState = ADCInit;
             }
@@ -59,9 +66,6 @@ void Battery_t::Task() {
                 } // atomic
                 // Check if series of measurements is completed
                 if (MeasuresCounter >= ADC_NUMBER_OF_MEASURES) {
-                    // Disable ADC to save energy
-                    ADC_DISABLE();
-                    ADC_REF_DISABLE();
                     // Prepare result
                     ATOMIC_BLOCK(ATOMIC_FORCEON) {
                         ADCValue >>= ADC_POWER_OF_MEASURES;

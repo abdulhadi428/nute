@@ -7,7 +7,7 @@
 #include "delay_util.h"
 #include "uart_soft.h"
 
-// #define PRINT_CAP    // DEBUG
+//#define PRINT_CAP    // DEBUG
 
 // ============================= Variables etc. ================================
 Keys_t EKeys;

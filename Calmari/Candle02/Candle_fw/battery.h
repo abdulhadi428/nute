@@ -44,6 +44,7 @@ class Battery_t {
 public:
     bool IsCharging;
     void Init(void);
+    void Shutdown(void);
     void Task(void);
     bool IsDischarged(void) { return (ADCValue < BAT_U_DISCHARGED); }
 };

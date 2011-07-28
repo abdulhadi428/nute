@@ -35,11 +35,11 @@ void GeneralInit(void) {
     ACSR = 1<<ACD;  // Disable analog comparator
     clock_prescale_set(clock_div_8);    // 1 MHz
 
+    Battery.Init();
     Delay.Init();
     UARTInit();
     EKeys.Init();
     ELight.Init();
-    Battery.Init();
 
     sei();
 }
