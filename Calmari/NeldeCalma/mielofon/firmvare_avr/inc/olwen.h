@@ -46,10 +46,13 @@
 #define COVER_PORT   PORTB
 #define COVER_P    PB7
 #define COVER_PIN    PINB
-//#define COVER_DDR    DDRC
-//#define COVER_PORT   PORTC
-//#define COVER_P    PC4
-//#define COVER_PIN    PINC
+
+// cristal hol sensor
+#define CRISTAL_DDR    DDRC
+#define CRISTAL_PORT   PORTC
+#define CRISTAL_P      PC3
+#define CRISTAL_PIN    PINC
+#define CRISTAL_IS_INSERT()     bit_is_set (CRISTAL_PIN, CRISTAL_P)
 
 // IRQ датчик крышки на PB6
 #define COVER_IRQ_SETUP_MASK() PCMSK0 |=  (1<<PCINT7)
@@ -65,14 +68,12 @@
 #define SENS_UP_IS_ON()     bit_is_set (SENS_PIN, SENS_UP)
 #define SENS_DOWN_IS_ON()   bit_is_set (SENS_PIN, SENS_DOWN)
 #define SENS_UF_SWITCH_IS_ON() bit_is_set (SENS_PIN, SENS_UF_SWITCH)
-//#define SENS_PWR_OFF()      SENS_PORT &= ~(1<<SENS_PWR);
-//#define SENS_PWR_ON()       SENS_PORT |=  (1<<SENS_PWR);
 #define COVER_IS_UP()     bit_is_set (COVER_PIN, COVER_P)
 
-
+ 
 // ================================== Light ====================================
 // Timings
-#define LED_STEP_DELAY  4  // ms
+#define LED_STEP_DELAY  5  // ms
 // "Shutdown" color
 #define CLR_SHDN_RED    7
 #define CLR_SHDN_GREEN  0

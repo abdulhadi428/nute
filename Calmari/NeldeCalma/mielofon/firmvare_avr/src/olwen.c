@@ -19,7 +19,7 @@
 #include <util/delay.h>
 // ============================= Types =========================================
 struct {
-    bool CoverIsOpen;//, DownIsOn, UfIsOn, BothIsOn;
+    bool CoverIsOpen,CristalIsExtracted;//, DownIsOn, UfIsOn, BothIsOn;
     uint16_t Timer, HoldTimer;
     uint16_t PollTime;
     uint8_t Step;
@@ -30,7 +30,7 @@ struct Color_t {
 };
 struct {
     uint16_t Timer;
-    struct Color_t DesiredColor, CurrentColor, OldColor, SavedColor, SavedUfColor, SleepColor;
+    struct Color_t CristalColor,DesiredColor, CurrentColor, OldColor, SavedColor, SavedUfColor, SleepColor;
     uint8_t Indx;
     bool UfIsOn;
     bool ShdnIsOn;
@@ -54,6 +54,7 @@ int main(void) {
 
 FORCE_INLINE void GeneralInit(void) {
     wdt_enable(WDTO_2S);
+	
     ACSR = 1<<ACD;  // Disable analog comparator
     // Shutdown all unneeded
     PRR = (1<<PRTWI)|(1<<PRSPI)|(1<<PRADC);
@@ -76,7 +77,7 @@ FORCE_INLINE void GeneralInit(void) {
     TCCR1A = (1<<WGM11)|(1<<WGM10);
     TCCR1B = (0<<WGM12)|(0<<CS12)|(0<<CS11)|(1<<CS10);
     TimerResetDelay(&ELight.Timer);
-    ELight.Indx =0;
+    ELight.Indx =1;
    // SetTableColor();
     SetDesiredColor(0, 0x90,0 ,0);   // Initial fade
     ELight.UfIsOn = false;
@@ -89,7 +90,11 @@ FORCE_INLINE void GeneralInit(void) {
 	COVER_DDR  &= ~(1<<COVER_P);
 	//COVER_PORT &= ~(1<<COVER_P);// No pull-up
 	COVER_PORT|= (1<<COVER_P); // Yes pull-up
-
+	
+	CRISTAL_DDR  &= ~(1<<CRISTAL_P);
+	CRISTAL_PORT|= (1<<CRISTAL_P); // Yes pull-up
+	
+	ESens.CristalIsExtracted=false;
     ESens.PollTime   = SENS_POLL_TIME;
     ESens.Step=SENS_STATE_START;
     TimerResetDelay (&ESens.Timer);
@@ -105,11 +110,18 @@ FORCE_INLINE void SetDesiredColor (uint8_t ARed, uint8_t AGreen, uint8_t ABlue, 
     ELight.DesiredColor.Blue  = ABlue;
     ELight.DesiredColor.Uf  = AUf;
 }
+FORCE_INLINE void SetCurrentColor (uint8_t ARed, uint8_t AGreen, uint8_t ABlue, uint8_t AUf) {
+    ELight.CurrentColor.Red   = ARed;
+    ELight.CurrentColor.Green = AGreen;
+    ELight.CurrentColor.Blue  = ABlue;
+    ELight.CurrentColor.Uf  = AUf;
+}
 void SetTableColor(void) {
     ELight.DesiredColor.Red   = pgm_read_byte(&ColorTable[ELight.Indx][0]);
     ELight.DesiredColor.Green = pgm_read_byte(&ColorTable[ELight.Indx][1]);
     ELight.DesiredColor.Blue  = pgm_read_byte(&ColorTable[ELight.Indx][2]);
-    ELight.DesiredColor.Uf = 0;
+   // ELight.DesiredColor.Blue=ELight.DesiredColor.Blue *0.95; // так нельзяшеньки
+	ELight.DesiredColor.Uf = 0;
 }
 
 
@@ -123,6 +135,10 @@ void SENS_Task (void) {
 	if (!(COVER_IS_UP()) )EVENT_CoverClosed();
 		else EVENT_CoverOpened();
 	if (!(ESens.CoverIsOpen))return;  // при закрытой крышке игнорируем все датчики
+	
+   if (CRISTAL_IS_INSERT()) EVENT_CristalInserted();
+		else EVENT_CristalExtract();
+	if 	(ESens.CristalIsExtracted) return;// при извлеченном кристале игнорируем все датчики
 		
     switch (ESens.Step)
     {
@@ -334,10 +350,8 @@ void EVENT_UpHoldTick(void) {   // Fires every N ms when Up is holded
         if (ELight.DesiredColor.Uf<0xFF) ELight.DesiredColor.Uf+= 0x0f;
         return;
     }
-    
-    if (ELight.Indx == COLOR_COUNT-1) return;
     SetTableColor();
-    ELight.Indx++;
+    if (ELight.Indx != COLOR_COUNT-1)  ELight.Indx++;
 }
 void EVENT_DownHoldTick(void) { // Fires every N ms when Down is holded
     if (ELight.ShdnIsOn)  // убирам "Shutdown" color и выставляем значение сохраненного цвета
@@ -351,9 +365,9 @@ void EVENT_DownHoldTick(void) { // Fires every N ms when Down is holded
         if (ELight.DesiredColor.Uf>0x0f) ELight.DesiredColor.Uf-= 0x0f;
         return;
     }
-    if (ELight.Indx == 0) return;
-    SetTableColor();
-    ELight.Indx--;
+	SetTableColor();
+    if (ELight.Indx != 0)  ELight.Indx--;
+
 }
 
 
@@ -370,5 +384,19 @@ void EVENT_CoverOpened(void) {
 	MustSleep=false;
 	ESens.CoverIsOpen=true;
 }
+
+void EVENT_CristalExtract(void) {
+	if (ESens.CristalIsExtracted)return; // уже отработали извлечение кристала
+	ELight.CristalColor = ELight.DesiredColor; // Сохраняем цвет , который был до извлечения.
+	SetDesiredColor(0, 0, 0,0);
+	SetCurrentColor(1,1,1,1); // это чтоб сразу выключалась
+	ESens.CristalIsExtracted=true;
+}
+void EVENT_CristalInserted(void) {
+	if (!(ESens.CristalIsExtracted))return; // уже отработали вставку кристала
+	ELight.DesiredColor = ELight.CristalColor; // Востонавливаем цвет  который был до извлечения.
+	ESens.CristalIsExtracted=false;
+}
+
 // =========================== Interrupts ======================================
 EMPTY_INTERRUPT (PCINT0_vect);
