@@ -9,41 +9,65 @@
 #include <avr/pgmspace.h>
 #include "battery.h"
 
-// ============================= Global variables ==============================
-prog_char chrPumps[4][8] = {
-        "Насос 1",
-        "Насос 2",
-        "Насос 3",
-        "Насос 4",
-};
+// ============================= Strings =======================================
+prog_char chrPumps[4][8] = {"Насос 1", "Насос 2", "Насос 3", "Насос 4"};
+prog_char chrBack[] = "Назад";
 
+// ============================ Prototypes =====================================
+void EvtMainPump(void);
 
+void EvtPumpOnOff(void);
+void EvtPumpExit(void);
+
+void EvtExit(void);
+
+// ============================= Types =========================================
 typedef struct {
     prog_char *Title;
+    void *PrevMenu;
+    uint8_t CurrentItem;
     uint8_t ItemCount;
     Item_t Items[];
 } Menu_t;
 
-struct {
-    prog_char *Title;
-    uint8_t ItemCount;
-    Item_t Items[3];
-} MainMenu;
-struct {
-    prog_char *Title;
-    uint8_t ItemCount;
-    Item_t Items[7];
-} PumpMenu;
+Menu_t MainMenu = {
+    Title: 0,
+    PrevMenu: 0,
+    CurrentItem: 0,
+    ItemCount: 5,
+    Items: {
+        { x: 2, y: 1, tag: 0, Next: 1, Prev: 4, Text: (prog_char*)chrPumps[0], EventMenu: &EvtMainPump },
+        { x: 2, y: 2, tag: 1, Next: 2, Prev: 0, Text: (prog_char*)chrPumps[1], EventMenu: &EvtMainPump },
+        { x: 2, y: 3, tag: 2, Next: 3, Prev: 1, Text: (prog_char*)chrPumps[2], EventMenu: &EvtMainPump },
+        { x: 2, y: 4, tag: 3, Next: 4, Prev: 2, Text: (prog_char*)chrPumps[3], EventMenu: &EvtMainPump },
+        { x: 2, y: 7,         Next: 0, Prev: 3, Text: (prog_char*)chrBack }
+    }
+};
 
-struct {
-    prog_char *Title;
-    uint8_t ItemCount;
-    Item_t Items[3];
-} OnOffMenu;
+Menu_t PumpMenu = {
+    Title: 0,
+    PrevMenu: &MainMenu,
+    CurrentItem: 0,
+    ItemCount: 2,
+    Items: {
+        { x: 8, y: 0, Next: 1, Prev: 1,                            EventMenu: &EvtPumpOnOff },
+        { x: 2, y: 7, Next: 0, Prev: 0, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
+    }
+};
 
+Menu_t OnOffMenu = {
+    Title: 0,
+    PrevMenu: &PumpMenu,
+    CurrentItem: 0,
+    ItemCount: 3,
+    Items: {
+        { x: 8, y: 0,  },
+        { x: 2, y: 2, tag: 1 },
+        { x: 2, y: 4, tag: 2 }
+    }
+};
 
-Item_t *CurrentItem;
-Menu_t *CurrentMenu, *PrevMenu;
+Menu_t *CurrentMenu;
 uint8_t CurrentPump;
 
 void DrawMenu(void);
@@ -57,85 +81,37 @@ struct {
     struct pump_t *Pmp;
 } EMenu;
 
-void EvtMainPump(void);
 
-void EvtPumpOnOff(void);
-void EvtPumpExit(void);
-
-void EvtExit(void);
 
 // ========================== Implementation ===================================
 void MenuInit(void) {
-    // ==== Main menu ====
-    MainMenu.ItemCount = 3;
-    MainMenu.Title = 0;     // no title
-    MainMenu.Items[0].x = 2;
-    MainMenu.Items[0].y = 1;
-    MainMenu.Items[0].tag = 0;
-    MainMenu.Items[0].Text = PSTR("Насос 1");
-    MainMenu.Items[0].Next = (void*)&MainMenu.Items[1];
-    MainMenu.Items[0].Prev = (void*)&MainMenu.Items[2];
-    MainMenu.Items[0].EventMenu = &EvtMainPump;
-
-    MainMenu.Items[1].x = 2;
-    MainMenu.Items[1].y = 2;
-    MainMenu.Items[1].tag = 1;
-    MainMenu.Items[1].Text = PSTR("Насос 2");
-    MainMenu.Items[1].Next = (void*)&MainMenu.Items[2];
-    MainMenu.Items[1].Prev = (void*)&MainMenu.Items[0];
-    MainMenu.Items[1].EventMenu = &EvtMainPump;
-
-    MainMenu.Items[2].x = 2;
-    MainMenu.Items[2].y = 4;
-    MainMenu.Items[2].tag = 2;
-    MainMenu.Items[2].Text = PSTR("Насос 3");
-    MainMenu.Items[2].Next = (void*)&MainMenu.Items[0];
-    MainMenu.Items[2].Prev = (void*)&MainMenu.Items[1];
-    MainMenu.Items[2].EventMenu = &EvtMainPump;
-
-    // ==== Pump menu ====
-    PumpMenu.ItemCount = 2;
-    PumpMenu.Title = 0;
-    PumpMenu.Items[0].x = 8;
-    PumpMenu.Items[0].y = 0;
-    PumpMenu.Items[0].Text = 0;
-    PumpMenu.Items[0].Next = (void*)&PumpMenu.Items[1];
-    PumpMenu.Items[0].Prev = (void*)&PumpMenu.Items[1];
-    PumpMenu.Items[0].EventMenu = &EvtPumpOnOff;
-
-    PumpMenu.Items[1].x = 0;
-    PumpMenu.Items[1].y = 7;
-    PumpMenu.Items[1].Text = PSTR("Назад");
-    PumpMenu.Items[1].Next = (void*)&PumpMenu.Items[0];
-    PumpMenu.Items[1].Prev = (void*)&PumpMenu.Items[0];
-    PumpMenu.Items[1].EventMenu = &EvtPumpExit;
-
-    // ==== OnOff menu ====
-    OnOffMenu.ItemCount = 3;
-    OnOffMenu.Title = 0;
-    OnOffMenu.Items[0].x = 2;
-    OnOffMenu.Items[0].y = 3;
-    OnOffMenu.Items[0].tag = 0;
-    OnOffMenu.Items[0].Text = PSTR("Включить");
-    OnOffMenu.Items[0].Next = (void*)&OnOffMenu.Items[1];
-    OnOffMenu.Items[0].Prev = (void*)&OnOffMenu.Items[2];
-    //OnOffMenu.Items[0].EventMenu = &;
-
-    OnOffMenu.Items[1].x = 2;
-    OnOffMenu.Items[1].y = 4;
-    OnOffMenu.Items[1].tag = 1;
-    OnOffMenu.Items[1].Text = PSTR("Выключить");
-    OnOffMenu.Items[1].Next = (void*)&OnOffMenu.Items[2];
-    OnOffMenu.Items[1].Prev = (void*)&OnOffMenu.Items[0];
-    //OnOffMenu.Items[1].EventMenu = &EvtMainPump;
-
-    OnOffMenu.Items[2].x = 0;
-    OnOffMenu.Items[2].y = 7;
-    OnOffMenu.Items[2].tag = 2;
-    OnOffMenu.Items[2].Text = PSTR("Назад");
-    OnOffMenu.Items[2].Next = (void*)&OnOffMenu.Items[0];
-    OnOffMenu.Items[2].Prev = (void*)&OnOffMenu.Items[1];
-    //OnOffMenu.Items[2].EventMenu = &EvtMainPump;
+//
+//    // ==== OnOff menu ====
+//    OnOffMenu.ItemCount = 3;
+//    OnOffMenu.Title = 0;
+//    OnOffMenu.Items[0].x = 2;
+//    OnOffMenu.Items[0].y = 3;
+//    OnOffMenu.Items[0].tag = 0;
+//    OnOffMenu.Items[0].Text = PSTR("Включить");
+//    OnOffMenu.Items[0].Next = (void*)&OnOffMenu.Items[1];
+//    OnOffMenu.Items[0].Prev = (void*)&OnOffMenu.Items[2];
+//    //OnOffMenu.Items[0].EventMenu = &;
+//
+//    OnOffMenu.Items[1].x = 2;
+//    OnOffMenu.Items[1].y = 4;
+//    OnOffMenu.Items[1].tag = 1;
+//    OnOffMenu.Items[1].Text = PSTR("Выключить");
+//    OnOffMenu.Items[1].Next = (void*)&OnOffMenu.Items[2];
+//    OnOffMenu.Items[1].Prev = (void*)&OnOffMenu.Items[0];
+//    //OnOffMenu.Items[1].EventMenu = &EvtMainPump;
+//
+//    OnOffMenu.Items[2].x = 0;
+//    OnOffMenu.Items[2].y = 7;
+//    OnOffMenu.Items[2].tag = 2;
+//    OnOffMenu.Items[2].Text = PSTR("Назад");
+//    OnOffMenu.Items[2].Next = (void*)&OnOffMenu.Items[0];
+//    OnOffMenu.Items[2].Prev = (void*)&OnOffMenu.Items[1];
+//    //OnOffMenu.Items[2].EventMenu = &EvtMainPump;
 
 
 }
@@ -178,7 +154,7 @@ void DrawMenu(void) {
     Item_t *itm;
     for (uint8_t i=0; i<fcount; i++) {
         itm = &CurrentMenu->Items[i];
-        LCD_PrintString_P(itm->x, itm->y, itm->Text, (itm == CurrentItem));
+        LCD_PrintString_P(itm->x, itm->y, itm->Text, (i == CurrentMenu->CurrentItem));
     }
 }
 
@@ -286,45 +262,48 @@ void EVENT_AnyKey(void) {
 
 // New life
 void EVENT_KeyUp(void) {
-    CurrentItem = (Item_t*)CurrentItem->Prev;
+    Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
+    CurrentMenu->CurrentItem = itm->Prev;
     DrawMenu();
 }
 void EVENT_KeyDown(void) {
-    CurrentItem = (Item_t*)CurrentItem->Next;
+    Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
+    CurrentMenu->CurrentItem = itm->Next;
     DrawMenu();
 }
 void EVENT_KeyMenu(void) {
     if (EState == StBacklight) {
         EState = StMenu;
-        CurrentItem = &MainMenu.Items[0];
-        CurrentMenu = (Menu_t*)&MainMenu;
+        MainMenu.CurrentItem = 0;
+        CurrentMenu = &MainMenu;
         DrawMenu();
     }
     else {
-        if (CurrentItem->EventMenu != 0) CurrentItem->EventMenu();
+        Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
+        if (itm->EventMenu != 0) itm->EventMenu();
     }
 }
 
 // ============================== Item handlers ================================
 void EvtMainPump(void) {
-    CurrentPump = CurrentItem->tag;
-    PrevMenu = CurrentMenu;
-    CurrentMenu = (Menu_t*)&PumpMenu;
-    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
-    CurrentItem = &PumpMenu.Items[0];
-    CurrentItem->Text = (Pumps[CurrentPump].Enabled)? PSTR("включен") : PSTR("отключен");
+    CurrentPump = MainMenu.CurrentItem;
+    CurrentMenu = &PumpMenu;                // Move to Pump menu
+    CurrentMenu.Title = (prog_char*)&chrPumps[CurrentPump];
+    CurrentMenu.CurrentItem = 0;
+    PumpMenu.Items[0].Text = (Pumps[CurrentPump].Enabled)? PSTR("включен") : PSTR("отключен");
     DrawMenu();
 }
 
 void EvtPumpOnOff(void) {
-    PrevMenu = CurrentMenu;
-    CurrentMenu = (Menu_t*)&OnOffMenu;
-    CurrentItem = (Pumps[CurrentPump].Enabled)? &(OnOffMenu.Items[0]) : &(OnOffMenu.Items[1]);
+    CurrentMenu = &OnOffMenu;
+    CurrentMenu.Title = (prog_char*)&chrPumps[CurrentPump];
+    OnOffMenu.CurrentItem = (Pumps[CurrentPump].Enabled)? 0 : 1;
     DrawMenu();
 }
+
+
 void EvtExit(void) {
-    CurrentMenu = PrevMenu;
-    CurrentItem = &MainMenu.Items[CurrentPump];
+    CurrentMenu = CurrentMenu->PrevMenu;
     DrawMenu();
 }
 

@@ -20,7 +20,7 @@
 // ============================ Types ==========================================
 typedef struct {
     uint8_t x, y, tag;
-    void *Next, *Prev;
+    uint8_t Next, Prev;
     void (*EventMenu)(void);
     prog_char *Text;
 } Item_t;
