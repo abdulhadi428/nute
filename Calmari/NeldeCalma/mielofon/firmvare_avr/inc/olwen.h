@@ -24,8 +24,8 @@
 
 // Ports & pins
 #define SENS_UP     PC1
-#define SENS_DOWN   PC2
-#define SENS_UF_SWITCH PC0
+#define SENS_DOWN   PC0
+#define SENS_UF_SWITCH PC2
 //#define SENS_PWR    PC5
 #define SENS_DDR    DDRC
 #define SENS_PORT   PORTC
