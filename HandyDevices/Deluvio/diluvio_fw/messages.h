@@ -8,6 +8,10 @@
 #ifndef MESSAGES_H
 #define	MESSAGES_H
 
+#include <avr/pgmspace.h>
+
+
+
 #define MSG_SETUP_TIME          "Настроить время"
 #define MSG_PUMP                "Насос "
 #define MSG_MANUAL_ON           "Ручное включение"

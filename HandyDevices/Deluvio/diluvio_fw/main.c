@@ -103,6 +103,7 @@ FORCE_INLINE void GeneralInit(void) {
     // Pumps
     PUMP_DDR |= (1<<PUMP1P)|(1<<PUMP2P)|(1<<PUMP3P)|(1<<PUMP4P);
     PumpsLoad();
+    MenuInit();
 }
 
 FORCE_INLINE void Task_Sleep(void) {

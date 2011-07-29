@@ -9,6 +9,7 @@
 #define	MENU_H
 
 #include <inttypes.h>
+#include <avr/pgmspace.h>
 
 #define PRINT_TIME_X    6
 #define PRINT_TIME_Y    4
@@ -17,8 +18,16 @@
 #define MENU_EXIT_TIMEOUT   7000
 
 // ============================ Types ==========================================
+typedef struct {
+    uint8_t x, y, tag;
+    void *Next, *Prev;
+    void (*EventMenu)(void);
+    prog_char *Text;
+} Item_t;
+
+
 // States
-enum State_t {StIdle, StBacklight, StMainMenu, StShowChannel, StOfferSetTime, StShowBattery, StManualAqua, \
+enum State_t {StIdle, StBacklight, StMenu, StMainMenu, StShowChannel, StOfferSetTime, StShowBattery, StManualAqua, \
 StSetEnable, StSetPeriodType, StSetPeriodValue, StSetPeriodLeft, StSetStartTime, StSetDuration, \
 StSetTimeHours, StSetTimeMinTens, StSetTimeMinUnits, StExit, StScreenSetEnable, StScreenSetEnableExit};
 
@@ -35,6 +44,7 @@ pmiIsOn, pmiIsOff
 void SetState(enum State_t AState);
 
 void Task_Menu(void);
+void MenuInit(void);
 
 // Events
 void EVENT_KeyDown(void);

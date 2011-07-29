@@ -10,6 +10,45 @@
 #include "battery.h"
 
 // ============================= Global variables ==============================
+prog_char chrPumps[4][8] = {
+        "Насос 1",
+        "Насос 2",
+        "Насос 3",
+        "Насос 4",
+};
+
+
+typedef struct {
+    prog_char *Title;
+    uint8_t ItemCount;
+    Item_t Items[];
+} Menu_t;
+
+struct {
+    prog_char *Title;
+    uint8_t ItemCount;
+    Item_t Items[3];
+} MainMenu;
+struct {
+    prog_char *Title;
+    uint8_t ItemCount;
+    Item_t Items[7];
+} PumpMenu;
+
+struct {
+    prog_char *Title;
+    uint8_t ItemCount;
+    Item_t Items[3];
+} OnOffMenu;
+
+
+Item_t *CurrentItem;
+Menu_t *CurrentMenu, *PrevMenu;
+uint8_t CurrentPump;
+
+void DrawMenu(void);
+
+
 enum State_t EState;
 struct {
     uint16_t ExitTimer;
@@ -18,7 +57,90 @@ struct {
     struct pump_t *Pmp;
 } EMenu;
 
+void EvtMainPump(void);
+
+void EvtPumpOnOff(void);
+void EvtPumpExit(void);
+
+void EvtExit(void);
+
 // ========================== Implementation ===================================
+void MenuInit(void) {
+    // ==== Main menu ====
+    MainMenu.ItemCount = 3;
+    MainMenu.Title = 0;     // no title
+    MainMenu.Items[0].x = 2;
+    MainMenu.Items[0].y = 1;
+    MainMenu.Items[0].tag = 0;
+    MainMenu.Items[0].Text = PSTR("Насос 1");
+    MainMenu.Items[0].Next = (void*)&MainMenu.Items[1];
+    MainMenu.Items[0].Prev = (void*)&MainMenu.Items[2];
+    MainMenu.Items[0].EventMenu = &EvtMainPump;
+
+    MainMenu.Items[1].x = 2;
+    MainMenu.Items[1].y = 2;
+    MainMenu.Items[1].tag = 1;
+    MainMenu.Items[1].Text = PSTR("Насос 2");
+    MainMenu.Items[1].Next = (void*)&MainMenu.Items[2];
+    MainMenu.Items[1].Prev = (void*)&MainMenu.Items[0];
+    MainMenu.Items[1].EventMenu = &EvtMainPump;
+
+    MainMenu.Items[2].x = 2;
+    MainMenu.Items[2].y = 4;
+    MainMenu.Items[2].tag = 2;
+    MainMenu.Items[2].Text = PSTR("Насос 3");
+    MainMenu.Items[2].Next = (void*)&MainMenu.Items[0];
+    MainMenu.Items[2].Prev = (void*)&MainMenu.Items[1];
+    MainMenu.Items[2].EventMenu = &EvtMainPump;
+
+    // ==== Pump menu ====
+    PumpMenu.ItemCount = 2;
+    PumpMenu.Title = 0;
+    PumpMenu.Items[0].x = 8;
+    PumpMenu.Items[0].y = 0;
+    PumpMenu.Items[0].Text = 0;
+    PumpMenu.Items[0].Next = (void*)&PumpMenu.Items[1];
+    PumpMenu.Items[0].Prev = (void*)&PumpMenu.Items[1];
+    PumpMenu.Items[0].EventMenu = &EvtPumpOnOff;
+
+    PumpMenu.Items[1].x = 0;
+    PumpMenu.Items[1].y = 7;
+    PumpMenu.Items[1].Text = PSTR("Назад");
+    PumpMenu.Items[1].Next = (void*)&PumpMenu.Items[0];
+    PumpMenu.Items[1].Prev = (void*)&PumpMenu.Items[0];
+    PumpMenu.Items[1].EventMenu = &EvtPumpExit;
+
+    // ==== OnOff menu ====
+    OnOffMenu.ItemCount = 3;
+    OnOffMenu.Title = 0;
+    OnOffMenu.Items[0].x = 2;
+    OnOffMenu.Items[0].y = 3;
+    OnOffMenu.Items[0].tag = 0;
+    OnOffMenu.Items[0].Text = PSTR("Включить");
+    OnOffMenu.Items[0].Next = (void*)&OnOffMenu.Items[1];
+    OnOffMenu.Items[0].Prev = (void*)&OnOffMenu.Items[2];
+    //OnOffMenu.Items[0].EventMenu = &;
+
+    OnOffMenu.Items[1].x = 2;
+    OnOffMenu.Items[1].y = 4;
+    OnOffMenu.Items[1].tag = 1;
+    OnOffMenu.Items[1].Text = PSTR("Выключить");
+    OnOffMenu.Items[1].Next = (void*)&OnOffMenu.Items[2];
+    OnOffMenu.Items[1].Prev = (void*)&OnOffMenu.Items[0];
+    //OnOffMenu.Items[1].EventMenu = &EvtMainPump;
+
+    OnOffMenu.Items[2].x = 0;
+    OnOffMenu.Items[2].y = 7;
+    OnOffMenu.Items[2].tag = 2;
+    OnOffMenu.Items[2].Text = PSTR("Назад");
+    OnOffMenu.Items[2].Next = (void*)&OnOffMenu.Items[0];
+    OnOffMenu.Items[2].Prev = (void*)&OnOffMenu.Items[1];
+    //OnOffMenu.Items[2].EventMenu = &EvtMainPump;
+
+
+}
+
+
 FORCE_INLINE void Task_Menu(void) {
     switch(EState) {
         case StIdle:
@@ -44,6 +166,19 @@ FORCE_INLINE void Task_Menu(void) {
         default:    // check if time to get out of menu
             if(DelayElapsed(&EMenu.ExitTimer, MENU_EXIT_TIMEOUT)) SetState(StIdle);
             break;
+    }
+}
+
+void DrawMenu(void) {
+    LCD_Clear();
+    // Print Title
+    if (CurrentMenu->Title != 0) LCD_PrintString_P(0, 0, CurrentMenu->Title, false);
+    // Print items
+    uint8_t fcount = CurrentMenu->ItemCount;
+    Item_t *itm;
+    for (uint8_t i=0; i<fcount; i++) {
+        itm = &CurrentMenu->Items[i];
+        LCD_PrintString_P(itm->x, itm->y, itm->Text, (itm == CurrentItem));
     }
 }
 
@@ -149,287 +284,333 @@ void EVENT_AnyKey(void) {
     if (EState == StIdle) EState = StBacklight;
 }
 
+// New life
 void EVENT_KeyUp(void) {
-    switch(EState) {
-        case StMainMenu:
-            if (EMenu.Item != mmiPump1) EMenu.Item--;
-            else                        EMenu.Item = mmiExit;
-            ShowMainMenu();
-            break;
-//        case StOfferSetTime:
-//            SetState(StShowBattery);
-//            break;
-//        case StShowBattery:
-//            EMenu.Pump = 1;
-//            SetState(StShowChannel);
-//            break;
-
-        // Channel setup
-        case StShowChannel:
-            if (EMenu.Item != pmiOnOff) EMenu.Item--;
-            else                        EMenu.Item = pmiExit;
-            ShowChannelSummary();
-            break;
-//        case StSetEnable:   // Toggle enabled/disabled
-//            Pumps[EMenu.Pump-1].Enabled = !Pumps[EMenu.Pump-1].Enabled;
-//            PumpsSettingsChanged = true;
-//            SetState(StSetEnable);
-//            break;
-//        case StSetPeriodType:   // Toggle period type
-//            if(Pumps[EMenu.Pump-1].DelayMode == ModeDays) Pumps[EMenu.Pump-1].DelayMode = ModeHours;
-//            else Pumps[EMenu.Pump-1].DelayMode = ModeDays;
-//            Pumps[EMenu.Pump-1].PeriodLeft = Pumps[EMenu.Pump-1].Period;    // Set left period to period value
-//            PumpsSettingsChanged = true;
-//            SetState(StSetPeriodType);
-//            break;
-//        case StSetPeriodValue:
-//            if(Pumps[EMenu.Pump-1].Period < 250) Pumps[EMenu.Pump-1].Period++;
-//            Pumps[EMenu.Pump-1].PeriodLeft = Pumps[EMenu.Pump-1].Period;    // Set left period to period value
-//            PumpsSettingsChanged = true;
-//            SetState(StSetPeriodValue);
-//            break;
-//        case StSetPeriodLeft:
-//            if(Pumps[EMenu.Pump-1].PeriodLeft < 250) Pumps[EMenu.Pump-1].PeriodLeft++;
-//            SetState(StSetPeriodLeft);
-//            break;
-//        case StSetStartTime:
-//            if(Pumps[EMenu.Pump-1].StartHour == 23) Pumps[EMenu.Pump-1].StartHour = 0;
-//            else Pumps[EMenu.Pump-1].StartHour++;
-//            PumpsSettingsChanged = true;
-//            SetState(StSetStartTime);
-//            break;
-//        case StSetDuration:
-//            if(Pumps[EMenu.Pump-1].Duration < PUMP_MAX_DURATION) Pumps[EMenu.Pump-1].Duration++;
-//            PumpsSettingsChanged = true;
-//            SetState(StSetDuration);
-//            break;
-
-        // Time setup
-        case StSetTimeHours:
-            if(Time.Hour == 23) Time.Hour = 0;
-            else Time.Hour++;
-            LCD_PrintTime(PRINT_TIME_X, 4, true, false, false);
-            break;
-        case StSetTimeMinTens:
-            if(Time.Minute >= 50) Time.Minute -= 50;
-            else Time.Minute += 10;
-            LCD_PrintTime(PRINT_TIME_X, 4, false, true, false);
-            break;
-        case StSetTimeMinUnits:
-            if(TimeGetMinuteUnits() == 9) Time.Minute -= 9;
-            else Time.Minute++;
-            LCD_PrintTime(PRINT_TIME_X, 4, false, false, true);
-            break;
-
-        default: break;
-    } // switch
+    CurrentItem = (Item_t*)CurrentItem->Prev;
+    DrawMenu();
 }
 void EVENT_KeyDown(void) {
-    switch(EState) {
-        case StMainMenu:
-            if (EMenu.Item != mmiExit) EMenu.Item++;
-            else                       EMenu.Item = mmiPump1;
-            ShowMainMenu();
-            break;
-
-        case StShowBattery:
-            SetState(StOfferSetTime);
-            break;
-//        case StOfferSetTime:
-//            EMenu.Pump = PUMP_COUNT;
-//            SetState(StShowChannel);
-//            break;
-
-        // Channel setup
-        case StShowChannel:
-            if (EMenu.Pmp->Enabled){
-                if (EMenu.Item != pmiExit) EMenu.Item++;
-                else                       EMenu.Item = pmiOnOff;
-            }
-            else {
-                EMenu.Item = (EMenu.Item == pmiExit)? pmiOnOff : pmiExit;
-            }
-            ShowChannelSummary();
-            break;
-        case StSetEnable:   // Toggle enabled/disabled
-            switch (EMenu.Item) {
-                case pmiIsOn:  EMenu.Item = pmiIsOff; break;
-                case pmiIsOff: EMenu.Item = pmiExit;  break;
-                case pmiExit:  EMenu.Item = pmiIsOn;  break;
-            }
-            ShowEnableScreen();
-            break;
-//            Pumps[EMenu.Pump-1].Enabled = !Pumps[EMenu.Pump-1].Enabled;
-//            PumpsSettingsChanged = true;
-//            SetState(StSetEnable);
-//            break;
-//        case StSetPeriodType:   // Toggle period type
-//            if(Pumps[EMenu.Pump-1].DelayMode == ModeDays) Pumps[EMenu.Pump-1].DelayMode = ModeHours;
-//            else Pumps[EMenu.Pump-1].DelayMode = ModeDays;
-//            Pumps[EMenu.Pump-1].PeriodLeft = Pumps[EMenu.Pump-1].Period;    // Set left period to period value
-//            PumpsSettingsChanged = true;
-//            SetState(StSetPeriodType);
-//            break;
-//        case StSetPeriodValue:
-//            if(Pumps[EMenu.Pump-1].Period > 1) Pumps[EMenu.Pump-1].Period--;
-//            Pumps[EMenu.Pump-1].PeriodLeft = Pumps[EMenu.Pump-1].Period;    // Set left period to period value
-//            PumpsSettingsChanged = true;
-//            SetState(StSetPeriodValue);
-//            break;
-//        case StSetPeriodLeft:
-//            if(Pumps[EMenu.Pump-1].PeriodLeft > 1) Pumps[EMenu.Pump-1].PeriodLeft--;
-//            SetState(StSetPeriodLeft);
-//            break;
-//        case StSetStartTime:
-//            if(Pumps[EMenu.Pump-1].StartHour == 0) Pumps[EMenu.Pump-1].StartHour = 23;
-//            else Pumps[EMenu.Pump-1].StartHour--;
-//            PumpsSettingsChanged = true;
-//            SetState(StSetStartTime);
-//            break;
-//        case StSetDuration:
-//            if(Pumps[EMenu.Pump-1].Duration > 1) Pumps[EMenu.Pump-1].Duration--;
-//            PumpsSettingsChanged = true;
-//            SetState(StSetDuration);
-//            break;
-
-//        case StShowChannel:
-//            SetState(StSetEnable);
-//            break;
-//        case StSetEnable:
-//            if(Pumps[EMenu.Pump-1].Enabled) SetState(StSetPeriodType);
-//            else SetState(StShowChannel);
-//            break;
-        case StSetPeriodType:
-            SetState(StSetPeriodValue);
-            break;
-        case StSetPeriodValue:
-            SetState(StSetPeriodLeft);
-            break;
-//        case StSetPeriodLeft:
-//            if(Pumps[EMenu.Pump-1].DelayMode == ModeDays) SetState(StSetStartTime);
-//            else SetState(StSetDuration);
-//            break;
-        case StSetStartTime:
-            SetState(StSetDuration);
-            break;
-        case StSetDuration:
-            SetState(StExit);
-            break;
-        case StExit:
-            SetState(StSetEnable);
-            break;
-//        case StScreenSetEnable:
-//            ShowEnableScreen(HIGHLIGHT_SCR_ENABLED);
-
-            // Time setup
-        case StSetTimeHours:
-            if(Time.Hour == 0) Time.Hour = 23;
-            else Time.Hour--;
-            LCD_PrintTime(PRINT_TIME_X, 4, true, false, false);
-            break;
-        case StSetTimeMinTens:
-            if(Time.Minute < 10) Time.Minute += 50;
-            else Time.Minute -= 10;
-            LCD_PrintTime(PRINT_TIME_X, 4, false, true, false);
-            break;
-        case StSetTimeMinUnits:
-            if(TimeGetMinuteUnits() == 0) Time.Minute += 9;
-            else Time.Minute--;
-            LCD_PrintTime(PRINT_TIME_X, 4, false, false, true);
-            break;
-
-        default: break;
-    } // switch
+    CurrentItem = (Item_t*)CurrentItem->Next;
+    DrawMenu();
 }
 void EVENT_KeyMenu(void) {
-    switch(EState) {
-        case StIdle:
-        case StBacklight:
-            EMenu.Pmp = &Pumps[0];
-            SetState(StMainMenu);
-            break;
-        case StMainMenu:
-            switch(EMenu.Item) {
-                case mmiPump1:
-                case mmiPump2:
-                case mmiPump3:
-                case mmiPump4:
-                    SetState(StShowChannel);
-                    break;
-                case mmiSetTime:  SetState(StOfferSetTime); break;
-                case mmiExit:  SetState(StBacklight);    break;
-            }
-            break;
-        // Channel setup
-
-        case StShowChannel:
-            switch(EMenu.Item) {
-                case pmiOnOff: SetState(StSetEnable); break;
-                case pmiExit:  SetState(StMainMenu);  break;
-            }
-            break;
-        case StSetEnable:   // Go to enabled/disabled screen
-            switch (EMenu.Item) {
-                //case pmiIsOn:  EMenu.Item = pmiIsOff; break;
-                //case pmiIsOff: EMenu.Item = pmiExit;  break;
-                case pmiExit:
-                    SetState(StShowChannel);
-                    break;
-            }
-
-            break;
-//        case StScreenSetEnable: //
-//            Pumps[EMenu.Pump-1].Enabled = !Pumps[EMenu.Pump-1].Enabled;
-//            PumpsSettingsChanged = true;
-//            SetState(StScreenSetEnableExit);
-//            break;
-        case StScreenSetEnableExit:
-            SetState(StShowChannel);
-            break;
-
-
-        case StSetPeriodType:
-            SetState(StSetPeriodValue);
-            break;
-        case StSetPeriodValue:
-            SetState(StSetPeriodLeft);
-            break;
-//        case StSetPeriodLeft:
-//            if(Pumps[EMenu.Pump-1].DelayMode == ModeDays) SetState(StSetStartTime);
-//            else SetState(StSetDuration);
-//            break;
-        case StSetStartTime:
-            SetState(StSetDuration);
-            break;
-        case StSetDuration:
-            SetState(StExit);
-            break;
-        case StExit:
-            SetState(StShowChannel);
-            break;
-
-        // Time setup
-        case StOfferSetTime:
-            Time.IsSetCorrectly = true; // If we has changed time, think we know what is wrong or right.
-            SetState(StSetTimeHours);
-            break;
-        case StSetTimeHours:
-            SetState(StSetTimeMinTens);
-            break;
-        case StSetTimeMinTens:
-            SetState(StSetTimeMinUnits);
-            break;
-        case StSetTimeMinUnits:
-            SetState(StOfferSetTime);
-            break;
-
-        default: break;
-    } // switch
+    if (EState == StBacklight) {
+        EState = StMenu;
+        CurrentItem = &MainMenu.Items[0];
+        CurrentMenu = (Menu_t*)&MainMenu;
+        DrawMenu();
+    }
+    else {
+        if (CurrentItem->EventMenu != 0) CurrentItem->EventMenu();
+    }
 }
 
+// ============================== Item handlers ================================
+void EvtMainPump(void) {
+    CurrentPump = CurrentItem->tag;
+    PrevMenu = CurrentMenu;
+    CurrentMenu = (Menu_t*)&PumpMenu;
+    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
+    CurrentItem = &PumpMenu.Items[0];
+    CurrentItem->Text = (Pumps[CurrentPump].Enabled)? PSTR("включен") : PSTR("отключен");
+    DrawMenu();
+}
+
+void EvtPumpOnOff(void) {
+    PrevMenu = CurrentMenu;
+    CurrentMenu = (Menu_t*)&OnOffMenu;
+    CurrentItem = (Pumps[CurrentPump].Enabled)? &(OnOffMenu.Items[0]) : &(OnOffMenu.Items[1]);
+    DrawMenu();
+}
+void EvtExit(void) {
+    CurrentMenu = PrevMenu;
+    CurrentItem = &MainMenu.Items[CurrentPump];
+    DrawMenu();
+}
+
+
+
+//void EVENT_KeyUp(void) {
+//    switch(EState) {
+//        case StMainMenu:
+//            if (EMenu.Item != mmiPump1) EMenu.Item--;
+//            else                        EMenu.Item = mmiExit;
+//            ShowMainMenu();
+//            break;
+////        case StOfferSetTime:
+////            SetState(StShowBattery);
+////            break;
+////        case StShowBattery:
+////            EMenu.Pump = 1;
+////            SetState(StShowChannel);
+////            break;
+//
+//        // Channel setup
+//        case StShowChannel:
+//            if (EMenu.Item != pmiOnOff) EMenu.Item--;
+//            else                        EMenu.Item = pmiExit;
+//            ShowChannelSummary();
+//            break;
+////        case StSetEnable:   // Toggle enabled/disabled
+////            Pumps[EMenu.Pump-1].Enabled = !Pumps[EMenu.Pump-1].Enabled;
+////            PumpsSettingsChanged = true;
+////            SetState(StSetEnable);
+////            break;
+////        case StSetPeriodType:   // Toggle period type
+////            if(Pumps[EMenu.Pump-1].DelayMode == ModeDays) Pumps[EMenu.Pump-1].DelayMode = ModeHours;
+////            else Pumps[EMenu.Pump-1].DelayMode = ModeDays;
+////            Pumps[EMenu.Pump-1].PeriodLeft = Pumps[EMenu.Pump-1].Period;    // Set left period to period value
+////            PumpsSettingsChanged = true;
+////            SetState(StSetPeriodType);
+////            break;
+////        case StSetPeriodValue:
+////            if(Pumps[EMenu.Pump-1].Period < 250) Pumps[EMenu.Pump-1].Period++;
+////            Pumps[EMenu.Pump-1].PeriodLeft = Pumps[EMenu.Pump-1].Period;    // Set left period to period value
+////            PumpsSettingsChanged = true;
+////            SetState(StSetPeriodValue);
+////            break;
+////        case StSetPeriodLeft:
+////            if(Pumps[EMenu.Pump-1].PeriodLeft < 250) Pumps[EMenu.Pump-1].PeriodLeft++;
+////            SetState(StSetPeriodLeft);
+////            break;
+////        case StSetStartTime:
+////            if(Pumps[EMenu.Pump-1].StartHour == 23) Pumps[EMenu.Pump-1].StartHour = 0;
+////            else Pumps[EMenu.Pump-1].StartHour++;
+////            PumpsSettingsChanged = true;
+////            SetState(StSetStartTime);
+////            break;
+////        case StSetDuration:
+////            if(Pumps[EMenu.Pump-1].Duration < PUMP_MAX_DURATION) Pumps[EMenu.Pump-1].Duration++;
+////            PumpsSettingsChanged = true;
+////            SetState(StSetDuration);
+////            break;
+//
+//        // Time setup
+//        case StSetTimeHours:
+//            if(Time.Hour == 23) Time.Hour = 0;
+//            else Time.Hour++;
+//            LCD_PrintTime(PRINT_TIME_X, 4, true, false, false);
+//            break;
+//        case StSetTimeMinTens:
+//            if(Time.Minute >= 50) Time.Minute -= 50;
+//            else Time.Minute += 10;
+//            LCD_PrintTime(PRINT_TIME_X, 4, false, true, false);
+//            break;
+//        case StSetTimeMinUnits:
+//            if(TimeGetMinuteUnits() == 9) Time.Minute -= 9;
+//            else Time.Minute++;
+//            LCD_PrintTime(PRINT_TIME_X, 4, false, false, true);
+//            break;
+//
+//        default: break;
+//    } // switch
+//}
+//void EVENT_KeyDown(void) {
+//    switch(EState) {
+//        case StMainMenu:
+//            if (EMenu.Item != mmiExit) EMenu.Item++;
+//            else                       EMenu.Item = mmiPump1;
+//            ShowMainMenu();
+//            break;
+//
+//        case StShowBattery:
+//            SetState(StOfferSetTime);
+//            break;
+////        case StOfferSetTime:
+////            EMenu.Pump = PUMP_COUNT;
+////            SetState(StShowChannel);
+////            break;
+//
+//        // Channel setup
+//        case StShowChannel:
+//            if (EMenu.Pmp->Enabled){
+//                if (EMenu.Item != pmiExit) EMenu.Item++;
+//                else                       EMenu.Item = pmiOnOff;
+//            }
+//            else {
+//                EMenu.Item = (EMenu.Item == pmiExit)? pmiOnOff : pmiExit;
+//            }
+//            ShowChannelSummary();
+//            break;
+//        case StSetEnable:   // Toggle enabled/disabled
+//            switch (EMenu.Item) {
+//                case pmiIsOn:  EMenu.Item = pmiIsOff; break;
+//                case pmiIsOff: EMenu.Item = pmiExit;  break;
+//                case pmiExit:  EMenu.Item = pmiIsOn;  break;
+//            }
+//            ShowEnableScreen();
+//            break;
+////            Pumps[EMenu.Pump-1].Enabled = !Pumps[EMenu.Pump-1].Enabled;
+////            PumpsSettingsChanged = true;
+////            SetState(StSetEnable);
+////            break;
+////        case StSetPeriodType:   // Toggle period type
+////            if(Pumps[EMenu.Pump-1].DelayMode == ModeDays) Pumps[EMenu.Pump-1].DelayMode = ModeHours;
+////            else Pumps[EMenu.Pump-1].DelayMode = ModeDays;
+////            Pumps[EMenu.Pump-1].PeriodLeft = Pumps[EMenu.Pump-1].Period;    // Set left period to period value
+////            PumpsSettingsChanged = true;
+////            SetState(StSetPeriodType);
+////            break;
+////        case StSetPeriodValue:
+////            if(Pumps[EMenu.Pump-1].Period > 1) Pumps[EMenu.Pump-1].Period--;
+////            Pumps[EMenu.Pump-1].PeriodLeft = Pumps[EMenu.Pump-1].Period;    // Set left period to period value
+////            PumpsSettingsChanged = true;
+////            SetState(StSetPeriodValue);
+////            break;
+////        case StSetPeriodLeft:
+////            if(Pumps[EMenu.Pump-1].PeriodLeft > 1) Pumps[EMenu.Pump-1].PeriodLeft--;
+////            SetState(StSetPeriodLeft);
+////            break;
+////        case StSetStartTime:
+////            if(Pumps[EMenu.Pump-1].StartHour == 0) Pumps[EMenu.Pump-1].StartHour = 23;
+////            else Pumps[EMenu.Pump-1].StartHour--;
+////            PumpsSettingsChanged = true;
+////            SetState(StSetStartTime);
+////            break;
+////        case StSetDuration:
+////            if(Pumps[EMenu.Pump-1].Duration > 1) Pumps[EMenu.Pump-1].Duration--;
+////            PumpsSettingsChanged = true;
+////            SetState(StSetDuration);
+////            break;
+//
+////        case StShowChannel:
+////            SetState(StSetEnable);
+////            break;
+////        case StSetEnable:
+////            if(Pumps[EMenu.Pump-1].Enabled) SetState(StSetPeriodType);
+////            else SetState(StShowChannel);
+////            break;
+//        case StSetPeriodType:
+//            SetState(StSetPeriodValue);
+//            break;
+//        case StSetPeriodValue:
+//            SetState(StSetPeriodLeft);
+//            break;
+////        case StSetPeriodLeft:
+////            if(Pumps[EMenu.Pump-1].DelayMode == ModeDays) SetState(StSetStartTime);
+////            else SetState(StSetDuration);
+////            break;
+//        case StSetStartTime:
+//            SetState(StSetDuration);
+//            break;
+//        case StSetDuration:
+//            SetState(StExit);
+//            break;
+//        case StExit:
+//            SetState(StSetEnable);
+//            break;
+////        case StScreenSetEnable:
+////            ShowEnableScreen(HIGHLIGHT_SCR_ENABLED);
+//
+//            // Time setup
+//        case StSetTimeHours:
+//            if(Time.Hour == 0) Time.Hour = 23;
+//            else Time.Hour--;
+//            LCD_PrintTime(PRINT_TIME_X, 4, true, false, false);
+//            break;
+//        case StSetTimeMinTens:
+//            if(Time.Minute < 10) Time.Minute += 50;
+//            else Time.Minute -= 10;
+//            LCD_PrintTime(PRINT_TIME_X, 4, false, true, false);
+//            break;
+//        case StSetTimeMinUnits:
+//            if(TimeGetMinuteUnits() == 0) Time.Minute += 9;
+//            else Time.Minute--;
+//            LCD_PrintTime(PRINT_TIME_X, 4, false, false, true);
+//            break;
+//
+//        default: break;
+//    } // switch
+//}
+//void EVENT_KeyMenu(void) {
+//    switch(EState) {
+//        case StIdle:
+//        case StBacklight:
+//            EMenu.Pmp = &Pumps[0];
+//            SetState(StMainMenu);
+//            break;
+//        case StMainMenu:
+//            switch(EMenu.Item) {
+//                case mmiPump1:
+//                case mmiPump2:
+//                case mmiPump3:
+//                case mmiPump4:
+//                    SetState(StShowChannel);
+//                    break;
+//                case mmiSetTime:  SetState(StOfferSetTime); break;
+//                case mmiExit:  SetState(StBacklight);    break;
+//            }
+//            break;
+//        // Channel setup
+//
+//        case StShowChannel:
+//            switch(EMenu.Item) {
+//                case pmiOnOff: SetState(StSetEnable); break;
+//                case pmiExit:  SetState(StMainMenu);  break;
+//            }
+//            break;
+//        case StSetEnable:   // Go to enabled/disabled screen
+//            switch (EMenu.Item) {
+//                //case pmiIsOn:  EMenu.Item = pmiIsOff; break;
+//                //case pmiIsOff: EMenu.Item = pmiExit;  break;
+//                case pmiExit:
+//                    SetState(StShowChannel);
+//                    break;
+//            }
+//
+//            break;
+////        case StScreenSetEnable: //
+////            Pumps[EMenu.Pump-1].Enabled = !Pumps[EMenu.Pump-1].Enabled;
+////            PumpsSettingsChanged = true;
+////            SetState(StScreenSetEnableExit);
+////            break;
+//        case StScreenSetEnableExit:
+//            SetState(StShowChannel);
+//            break;
+//
+//
+//        case StSetPeriodType:
+//            SetState(StSetPeriodValue);
+//            break;
+//        case StSetPeriodValue:
+//            SetState(StSetPeriodLeft);
+//            break;
+////        case StSetPeriodLeft:
+////            if(Pumps[EMenu.Pump-1].DelayMode == ModeDays) SetState(StSetStartTime);
+////            else SetState(StSetDuration);
+////            break;
+//        case StSetStartTime:
+//            SetState(StSetDuration);
+//            break;
+//        case StSetDuration:
+//            SetState(StExit);
+//            break;
+//        case StExit:
+//            SetState(StShowChannel);
+//            break;
+//
+//        // Time setup
+//        case StOfferSetTime:
+//            Time.IsSetCorrectly = true; // If we has changed time, think we know what is wrong or right.
+//            SetState(StSetTimeHours);
+//            break;
+//        case StSetTimeHours:
+//            SetState(StSetTimeMinTens);
+//            break;
+//        case StSetTimeMinTens:
+//            SetState(StSetTimeMinUnits);
+//            break;
+//        case StSetTimeMinUnits:
+//            SetState(StOfferSetTime);
+//            break;
+//
+//        default: break;
+//    } // switch
+//}
+
 void EVENT_KeyAquaPressed(void) {
-    if(IsPumping) return;   // Not allowed if pumping yet
-    switch(EState) {
+//    if(IsPumping) return;   // Not allowed if pumping yet
+//    switch(EState) {
 //        case StShowChannel:
 //            SetState(StManualAqua);
 //            PumpOn(EMenu.Pump);
@@ -444,18 +625,18 @@ void EVENT_KeyAquaPressed(void) {
 //            PumpsSettingsChanged = true;
 //            PumpOn(EMenu.Pump);
 //            break;
-
-        default: break;
-    } // switch
+//
+//        default: break;
+//    } // switch
 }
 void EVENT_KeyAquaDepressed(void) {
-    PumpOffAll();                   // Switch water off in any mode
-    DelayReset(&EMenu.ExitTimer);   // Othewise we will exit in IDLE
-    switch(EState) {
-        case StSetDuration: SetState(StSetDuration); break;
-        case StManualAqua:  SetState(StShowChannel); break;
-        default: break;
-    }
+//    PumpOffAll();                   // Switch water off in any mode
+//    DelayReset(&EMenu.ExitTimer);   // Othewise we will exit in IDLE
+//    switch(EState) {
+//        case StSetDuration: SetState(StSetDuration); break;
+//        case StManualAqua:  SetState(StShowChannel); break;
+//        default: break;
+//    }
 }
 
 // ============================= Inner use =====================================
