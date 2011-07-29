@@ -33,6 +33,8 @@
 // Channel summary
 #define MSG_ENABLED             "включен"
 #define MSG_DISABLED            "отключен"
+#define MSG_TO_ENABLE           "Включить"
+#define MSG_TO_DISABLE          "Выключить"
 #define MSG_ENABLED_X           8
 #define MSG_ENABLED_Y           0
 #define MSG_PERIOD              "Период,"
@@ -48,15 +50,6 @@
 #define MSG_AQUA                "Aqua"
 #define MSG_AQUA_X              11
 
-// Highlight values
-#define HIGHLIGHT_NONE          0
-#define HIGHLIGHT_ENABLED       1
-#define HIGHLIGHT_PERIOD_TYPE   2
-#define HIGHLIGHT_PERIOD_VALUE  3
-#define HIGHLIGHT_PERIOD_LEFT   4
-#define HIGHLIGHT_START_TIME    5
-#define HIGHLIGHT_DURATION      6
-#define HIGHLIGHT_EXIT          7
 
 
 #endif	/* MESSAGES_H */

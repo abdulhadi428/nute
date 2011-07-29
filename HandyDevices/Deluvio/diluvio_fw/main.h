@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   main.h
  * Author: Kreyl Laurelindo
  *
@@ -17,12 +17,12 @@
 #define PWROK_PORT  PORTA
 #define PWROK_PIN   PINA
 #define PWROK_P     PA3
-#define POWER_OK()  bit_is_set(PWROK_PIN, PWROK_P)  
+#define POWER_OK()  bit_is_set(PWROK_PIN, PWROK_P)
 
 // Pumps
 #define PUMP_COUNT  4
 #define PUMP_DDR    DDRA
-#define PUMP_PORT   PORTA 
+#define PUMP_PORT   PORTA
 #define PUMP1P      PA4
 #define PUMP2P      PA5
 #define PUMP3P      PA6
@@ -51,6 +51,7 @@ struct pump_t {
     uint16_t Duration;
     enum PumpState_t State;
     uint16_t Counter;
+    uint8_t ID;
 };
 
 extern struct pump_t Pumps[PUMP_COUNT];

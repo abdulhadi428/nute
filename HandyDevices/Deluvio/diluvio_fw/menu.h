@@ -20,9 +20,16 @@
 // States
 enum State_t {StIdle, StBacklight, StMainMenu, StShowChannel, StOfferSetTime, StShowBattery, StManualAqua, \
 StSetEnable, StSetPeriodType, StSetPeriodValue, StSetPeriodLeft, StSetStartTime, StSetDuration, \
-StSetTimeHours, StSetTimeMinTens, StSetTimeMinUnits, StExit};
+StSetTimeHours, StSetTimeMinTens, StSetTimeMinUnits, StExit, StScreenSetEnable, StScreenSetEnableExit};
 
 extern enum State_t EState;
+
+// Main menu items
+enum iMainMenu_t {mmiPump1, mmiPump2, mmiPump3, mmiPump4, mmiSetTime, mmiExit};
+//Channel menu items
+enum iPumpMenu_t {pmiOnOff, pmiPeriodTypeValue, pmiPeriodLeft, pmiStartTime, pmiDuration, pmiExit, \
+pmiIsOn, pmiIsOff
+};
 
 // ============================ Prototypes =====================================
 void SetState(enum State_t AState);
@@ -38,8 +45,9 @@ void EVENT_KeyAquaDepressed(void);
 void EVENT_AnyKey(void);
 
 // Inner use
-void ShowChannelSummary(uint8_t Highlight);
+void ShowChannelSummary(void);
 void ShowMainMenu(void);
+void ShowEnableScreen(void);
 
 #endif	/* MENU_H */
 

@@ -188,6 +188,7 @@ void PumpsLoad(void) {
             Pumps[i].Period = 1;
             Pumps[i].PeriodLeft = 1;
             Pumps[i].Duration = 1;
+            Pumps[i].ID = i+1;
         }
         Pumps[0].Enabled = true;
         Pumps[0].Duration = 30;
