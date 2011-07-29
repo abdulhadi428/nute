@@ -12,6 +12,9 @@
 #include "uart_soft.h"
 #include "sensors.h"
 #include "battery.h"
+#include "cc2500.h"
+
+#define PRINT_RX_PKT
 
 Light_t ELight;
 
@@ -19,13 +22,13 @@ Light_t ELight;
 int main(void) {
     GeneralInit();
     UARTSendString("Candle\r");
-
     while(1) {
         wdt_reset();
         EKeys.Task();
         ELight.Task();
         Battery.Task();
         IndicateCharging_Task();
+        CC.Task();
     }
     return 0;
 }
@@ -34,13 +37,12 @@ void GeneralInit(void) {
     wdt_enable(WDTO_2S);
     ACSR = 1<<ACD;  // Disable analog comparator
     clock_prescale_set(clock_div_8);    // 1 MHz
-
     Battery.Init();
     Delay.Init();
     UARTInit();
-    EKeys.Init();
+    CC.Init();
     ELight.Init();
-
+    EKeys.Init();
     sei();
 }
 
@@ -64,6 +66,62 @@ void IndicateCharging_Task(void) {
     }
 }
 
+void CC_t::Task() {
+    if (NewPacketReceived) {    // Load data from FIFO
+        NewPacketReceived = false;
+        uint8_t FifoSize = ReadRegister(CC_RXBYTES); // Get FIFO bytes count
+        if (FifoSize > 0) {
+            ReadRX((uint8_t*)&CC.RX_Pkt, CC_PKT_DATA_LENGTH+2);
+            EVENT_NewPacket();
+        }
+    }
+
+    // If in sleep mode, check if it is time to wake-up; otherwise return
+    if (IsSleeping) {
+        if(Delay.Elapsed(&Timer, CC_RX_OFF_PERIOD)) IsSleeping = false;
+        else return;
+    }
+
+    GetState();
+    switch (State) {
+        case CC_STB_RX_OVF:  FlushRxFifo(); break;
+        case CC_STB_TX_UNDF: FlushTxFifo(); break;
+        case CC_STB_IDLE:
+            switch (ELight.ActiveState) {
+                case NotActive: // Receive color
+                    EnterRx();
+                    CC_GDO0_IRQ_ENABLE();
+                    Delay.Reset(&Timer);
+                    break;
+                case Active:    // Transmit color
+                    CC_GDO0_IRQ_DISABLE();
+                    TX_Pkt.R = ELight.R.Desired;
+                    TX_Pkt.G = ELight.G.Desired;
+                    TX_Pkt.B = ELight.B.Desired;
+                    WriteTX((uint8_t *)&TX_Pkt, CC_PKT_DATA_LENGTH);
+                    EnterTx();
+                    break;
+                case ActiveShutdown:    // Transmit shutdown
+                    CC_GDO0_IRQ_DISABLE();
+                    TX_Pkt.R = 0;
+                    TX_Pkt.G = 0;
+                    TX_Pkt.B = 0;
+                    WriteTX((uint8_t *)&TX_Pkt, CC_PKT_DATA_LENGTH);
+                    EnterTx();
+                    break;
+            } // switch
+            break;
+            case CC_STB_RX:
+                // Check if CC_RX_ON_PERIOD delay elapsed
+                if (Delay.Elapsed(&Timer, CC_RX_ON_PERIOD)) { // Time to switch off
+                    CC_GDO0_IRQ_DISABLE();
+                    EnterIdle();
+                    PowerDown();
+                    IsSleeping = true;
+                }// if timer
+                break;
+    } // switch
+}
 
 // ============================= Events ========================================
 void EVENT_KeyDown(void) {
@@ -82,6 +140,7 @@ void EVENT_KeyOnOff(void) {
     UARTSendString("OnOff\r");
     if (ELight.IsOn) {
         ELight.IsOn = false;
+        ELight.ActiveState = NotActive;
         ELight.SetDesiredColor(0, 0, 0);
         EKeys.DisableAllButOnOff();
     }
@@ -93,11 +152,13 @@ void EVENT_KeyOnOff(void) {
 }
 void EVENT_KeyLit(void) {
     UARTSendString("Lit\r");
-    if (ELight.BlinkState == BlinkDisabled) {
+    if (ELight.ActiveState == NotActive) {
+        ELight.ActiveState = Active;
         ELight.BlinkState = BlinkOn;
         Delay.Bypass(&ELight.BlinkTimer, LED_BLINK_ON_T);
     }
     else {
+        ELight.ActiveState = NotActive;
         ELight.BlinkState = BlinkDisabled;
     }
 }
@@ -118,6 +179,23 @@ void EVENT_ChargeEnded(void) {
 
 void EVENT_ADCMeasureCompleted(void) {
 
+}
+
+void EVENT_NewPacket(void) {
+    ELight.SetDesiredColor(CC.RX_Pkt.R, CC.RX_Pkt.G, CC.RX_Pkt.B);
+    #ifdef PRINT_RX_PKT
+    UARTSendUint(CC.RX_Pkt.R);
+    UARTSend(' ');
+    UARTSendAsHex(CC.RX_Pkt.G);
+    UARTSend(' ');
+    UARTSendAsHex(CC.RX_Pkt.B);
+    UARTSend(' ');
+    UARTSend(' ');
+    UARTSendUint(CC.RX_Pkt.RSSI);
+    UARTSend(' ');
+    UARTSendAsHex(CC.RX_Pkt.LQI);
+    UARTNewLine();
+    #endif
 }
 
 // ============================= Light =========================================

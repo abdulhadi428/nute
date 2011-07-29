@@ -22,6 +22,9 @@
 #define LED_BLINK_OFF_T     45
 #define CHARGE_BLINK_T      2504
 
+#define CC_RX_ON_PERIOD     504
+#define CC_RX_OFF_PERIOD    2700
+
 // Ports & pins
 #define LED_DDR     DDRD
 #define LED_PORT    PORTD
@@ -47,17 +50,19 @@ struct Channel_t {
 
 typedef enum {BlinkDisabled, BlinkOff, BlinkOn} BlinkState_t;
 typedef enum {RampUp, RampDown} Ramp_t;
+typedef enum {NotActive, Active, ActiveShutdown} ActiveState_t;
 
 class Light_t {
 private:
     uint16_t Timer;
-    Channel_t R, G, B;
     void AllOn (void)    { R.On();     G.On();     B.On(); }
     void AllOff(void)    { R.Off();    G.Off();    B.Off(); }
     void AllAdjust(void) { R.Adjust(); G.Adjust(); B.Adjust(); }
 public:
+    Channel_t R, G, B;
     uint8_t Indx;
     bool IsOn;
+    ActiveState_t ActiveState;
     uint16_t BlinkTimer;
     BlinkState_t BlinkState;
     Ramp_t Ramp;
@@ -71,6 +76,8 @@ public:
 void GeneralInit(void);
 void Shutdown(void);
 void IndicateCharging_Task(void);
+
+void EVENT_NewPacket(void);
 
 extern Light_t ELight;
 
