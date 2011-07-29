@@ -19,7 +19,7 @@
 
 // ============================ Types ==========================================
 typedef struct {
-    uint8_t x, y, tag;
+    uint8_t x, y;
     uint8_t Next, Prev;
     void (*EventMenu)(void);
     prog_char *Text;
@@ -41,10 +41,8 @@ pmiIsOn, pmiIsOff
 };
 
 // ============================ Prototypes =====================================
-void SetState(enum State_t AState);
-
 void Task_Menu(void);
-void MenuInit(void);
+void EnterIdle(void);
 
 // Events
 void EVENT_KeyDown(void);
@@ -54,10 +52,6 @@ void EVENT_KeyAquaPressed(void);
 void EVENT_KeyAquaDepressed(void);
 void EVENT_AnyKey(void);
 
-// Inner use
-void ShowChannelSummary(void);
-void ShowMainMenu(void);
-void ShowEnableScreen(void);
 
 #endif	/* MENU_H */
 

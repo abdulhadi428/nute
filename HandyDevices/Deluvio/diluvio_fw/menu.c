@@ -11,13 +11,16 @@
 
 // ============================= Strings =======================================
 prog_char chrPumps[4][8] = {"Насос 1", "Насос 2", "Насос 3", "Насос 4"};
+prog_char chrSetTime[] = {MSG_MENU_SET_TIME};
 prog_char chrBack[] = "Назад";
+prog_char chrOnOff[4][11] = {"  Включен", "  Выключен", "* Включен", "* Выключен"};
 
 // ============================ Prototypes =====================================
-void EvtMainPump(void);
+void PumpMenuSetup(void);
 
+void EvtMainPump(void);
 void EvtPumpOnOff(void);
-void EvtPumpExit(void);
+void EvtOnOff(void);
 
 void EvtExit(void);
 
@@ -27,6 +30,7 @@ typedef struct {
     void *PrevMenu;
     uint8_t CurrentItem;
     uint8_t ItemCount;
+    void (*Setup)(void);
     Item_t Items[];
 } Menu_t;
 
@@ -34,23 +38,26 @@ Menu_t MainMenu = {
     Title: 0,
     PrevMenu: 0,
     CurrentItem: 0,
-    ItemCount: 5,
+    ItemCount: 6,
     Items: {
-        { x: 2, y: 1, tag: 0, Next: 1, Prev: 4, Text: (prog_char*)chrPumps[0], EventMenu: &EvtMainPump },
-        { x: 2, y: 2, tag: 1, Next: 2, Prev: 0, Text: (prog_char*)chrPumps[1], EventMenu: &EvtMainPump },
-        { x: 2, y: 3, tag: 2, Next: 3, Prev: 1, Text: (prog_char*)chrPumps[2], EventMenu: &EvtMainPump },
-        { x: 2, y: 4, tag: 3, Next: 4, Prev: 2, Text: (prog_char*)chrPumps[3], EventMenu: &EvtMainPump },
-        { x: 2, y: 7,         Next: 0, Prev: 3, Text: (prog_char*)chrBack }
+        { x: 2, y: 1, Next: 1, Prev: 5, Text: (prog_char*)chrPumps[0], EventMenu: &EvtMainPump },
+        { x: 2, y: 2, Next: 2, Prev: 0, Text: (prog_char*)chrPumps[1], EventMenu: &EvtMainPump },
+        { x: 2, y: 3, Next: 3, Prev: 1, Text: (prog_char*)chrPumps[2], EventMenu: &EvtMainPump },
+        { x: 2, y: 4, Next: 4, Prev: 2, Text: (prog_char*)chrPumps[3], EventMenu: &EvtMainPump },
+        { x: 2, y: 5, Next: 5, Prev: 3, Text: (prog_char*)chrSetTime,  EventMenu: 0},
+        { x: 2, y: 7, Next: 0, Prev: 4, Text: (prog_char*)chrBack }
     }
 };
 
 Menu_t PumpMenu = {
     Title: 0,
     PrevMenu: &MainMenu,
+    Setup: &PumpMenuSetup,
     CurrentItem: 0,
     ItemCount: 2,
     Items: {
         { x: 8, y: 0, Next: 1, Prev: 1,                            EventMenu: &EvtPumpOnOff },
+
         { x: 2, y: 7, Next: 0, Prev: 0, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
     }
 };
@@ -61,9 +68,9 @@ Menu_t OnOffMenu = {
     CurrentItem: 0,
     ItemCount: 3,
     Items: {
-        { x: 8, y: 0,  },
-        { x: 2, y: 2, tag: 1 },
-        { x: 2, y: 4, tag: 2 }
+        { x: 0, y: 3, Next: 1, Prev: 2,                            EventMenu: &EvtOnOff},
+        { x: 0, y: 4, Next: 2, Prev: 0,                            EventMenu: &EvtOnOff},
+        { x: 2, y: 7, Next: 0, Prev: 1, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
     }
 };
 
@@ -84,39 +91,6 @@ struct {
 
 
 // ========================== Implementation ===================================
-void MenuInit(void) {
-//
-//    // ==== OnOff menu ====
-//    OnOffMenu.ItemCount = 3;
-//    OnOffMenu.Title = 0;
-//    OnOffMenu.Items[0].x = 2;
-//    OnOffMenu.Items[0].y = 3;
-//    OnOffMenu.Items[0].tag = 0;
-//    OnOffMenu.Items[0].Text = PSTR("Включить");
-//    OnOffMenu.Items[0].Next = (void*)&OnOffMenu.Items[1];
-//    OnOffMenu.Items[0].Prev = (void*)&OnOffMenu.Items[2];
-//    //OnOffMenu.Items[0].EventMenu = &;
-//
-//    OnOffMenu.Items[1].x = 2;
-//    OnOffMenu.Items[1].y = 4;
-//    OnOffMenu.Items[1].tag = 1;
-//    OnOffMenu.Items[1].Text = PSTR("Выключить");
-//    OnOffMenu.Items[1].Next = (void*)&OnOffMenu.Items[2];
-//    OnOffMenu.Items[1].Prev = (void*)&OnOffMenu.Items[0];
-//    //OnOffMenu.Items[1].EventMenu = &EvtMainPump;
-//
-//    OnOffMenu.Items[2].x = 0;
-//    OnOffMenu.Items[2].y = 7;
-//    OnOffMenu.Items[2].tag = 2;
-//    OnOffMenu.Items[2].Text = PSTR("Назад");
-//    OnOffMenu.Items[2].Next = (void*)&OnOffMenu.Items[0];
-//    OnOffMenu.Items[2].Prev = (void*)&OnOffMenu.Items[1];
-//    //OnOffMenu.Items[2].EventMenu = &EvtMainPump;
-
-
-}
-
-
 FORCE_INLINE void Task_Menu(void) {
     switch(EState) {
         case StIdle:
@@ -140,9 +114,20 @@ FORCE_INLINE void Task_Menu(void) {
 //            break;
 
         default:    // check if time to get out of menu
-            if(DelayElapsed(&EMenu.ExitTimer, MENU_EXIT_TIMEOUT)) SetState(StIdle);
+            if(DelayElapsed(&EMenu.ExitTimer, MENU_EXIT_TIMEOUT)) EnterIdle();
             break;
     }
+}
+
+void EnterIdle(void) {
+    LCD_Clear();
+    EState = StIdle;
+    LCD_BCKLT_OFF();
+    EVENT_NewMinute();
+    if(!Time.IsSetCorrectly) LCD_PrintString_P(0, PRINT_TIME_Y+2, PSTR(MSG_SET_CORRECT_TIME), false);
+    CheckBattery();
+    // Save settings if needed
+    if(PumpsSettingsChanged) PumpsSave();
 }
 
 void DrawMenu(void) {
@@ -160,96 +145,96 @@ void DrawMenu(void) {
 
 // ============================ States =========================================
 void SetState(enum State_t AState) {
-    LCD_Clear();
-    EState = AState;
-    switch(AState) {
-        case StIdle:
-            LCD_BCKLT_OFF();
-        case StBacklight:
-            EVENT_NewMinute();  // print time
-            if(!Time.IsSetCorrectly) LCD_PrintString_P(0, PRINT_TIME_Y+2, PSTR(MSG_SET_CORRECT_TIME), false);
-            CheckBattery();
-            // Save settings if needed
-            if(PumpsSettingsChanged) PumpsSave();
-            break;
-
-        case StMainMenu:  //Show main menu
-            EMenu.Item = EMenu.Pmp->ID-1;
-            ShowMainMenu();
-            break;
-
-        case StOfferSetTime:
-            LCD_PrintString_P(0, 0, PSTR(MSG_SETUP_TIME), false);
-            LCD_PrintTime(PRINT_TIME_X, 4, false, false, false);
-            break;
-        case StShowBattery:
-            LCD_PrintString_P(0, 0, PSTR(MSG_SHOW_BATTERY), false);
-            BatteryMeasure();
-            LCD_DrawGauge();
-            LCD_GaugeValue(BatteryGaugeValue());
-            break;
-        case StManualAqua:
-            LCD_PrintString_P(0, 0, PSTR(MSG_PUMP), false);
-            //LCD_PrintUint(6, 0, EMenu.Pump, false);
-            LCD_PrintString_P(0, 4, PSTR(MSG_MANUAL_ON), false);
-            break;
-
-        // Channel setup
-        case StShowChannel: //Show all channel prefs
-            EMenu.AquaWasPressed = false;       // Reset Aqua keypress
-            EMenu.Pmp = &Pumps[(uint8_t)EMenu.Item];    // Store address of highlighted pump
-            EMenu.Item = pmiOnOff;
-            ShowChannelSummary(); // highlight enabled-disabled
-            break;
-        case StSetEnable:
-            EMenu.Item = (EMenu.Pmp->Enabled)? pmiIsOn : pmiIsOff;
-            ShowEnableScreen();
-            break;
-
-//        case StScreenSetEnable: // screen for enable-disable
-//            if(Pmp->Enabled)
-//                ShowEnableScreen(HIGHLIGHT_SCR_ENABLED);
-//            else ShowEnableScreen(HIGHLIGHT_SCR_DISABLED);
+//    LCD_Clear();
+//    EState = AState;
+//    switch(AState) {
+//        case StIdle:
+//            LCD_BCKLT_OFF();
+//        case StBacklight:
+//            EVENT_NewMinute();  // print time
+//            if(!Time.IsSetCorrectly) LCD_PrintString_P(0, PRINT_TIME_Y+2, PSTR(MSG_SET_CORRECT_TIME), false);
+//            CheckBattery();
+//            // Save settings if needed
+//            if(PumpsSettingsChanged) PumpsSave();
 //            break;
-//        case StScreenSetEnableExit:
-//            ShowEnableScreen(HIGHLIGHT_EXIT);
+//
+//        case StMainMenu:  //Show main menu
+//            EMenu.Item = EMenu.Pmp->ID-1;
+//            ShowMainMenu();
 //            break;
-
-//        case StSetPeriodType:
-//            ShowChannelSummary(HIGHLIGHT_PERIOD_TYPE);
+//
+//        case StOfferSetTime:
+//            LCD_PrintString_P(0, 0, PSTR(MSG_SETUP_TIME), false);
+//            LCD_PrintTime(PRINT_TIME_X, 4, false, false, false);
 //            break;
-//        case StSetPeriodValue:
-//            ShowChannelSummary(HIGHLIGHT_PERIOD_VALUE);
+//        case StShowBattery:
+//            LCD_PrintString_P(0, 0, PSTR(MSG_SHOW_BATTERY), false);
+//            BatteryMeasure();
+//            LCD_DrawGauge();
+//            LCD_GaugeValue(BatteryGaugeValue());
 //            break;
-//        case StSetPeriodLeft:
-//            ShowChannelSummary(HIGHLIGHT_PERIOD_LEFT);
+//        case StManualAqua:
+//            LCD_PrintString_P(0, 0, PSTR(MSG_PUMP), false);
+//            //LCD_PrintUint(6, 0, EMenu.Pump, false);
+//            LCD_PrintString_P(0, 4, PSTR(MSG_MANUAL_ON), false);
 //            break;
-//        case StSetStartTime:
-//            ShowChannelSummary(HIGHLIGHT_START_TIME);
+//
+//        // Channel setup
+//        case StShowChannel: //Show all channel prefs
+//            EMenu.AquaWasPressed = false;       // Reset Aqua keypress
+//            EMenu.Pmp = &Pumps[(uint8_t)EMenu.Item];    // Store address of highlighted pump
+//            EMenu.Item = pmiOnOff;
+//            ShowChannelSummary(); // highlight enabled-disabled
 //            break;
-//        case StSetDuration:
-//            ShowChannelSummary(HIGHLIGHT_DURATION);
+//        case StSetEnable:
+//            EMenu.Item = (EMenu.Pmp->Enabled)? pmiIsOn : pmiIsOff;
+//            ShowEnableScreen();
 //            break;
-//        case StExit:
-//            ShowChannelSummary(HIGHLIGHT_EXIT);
-//            break;
-
-        // Time setup
-        case StSetTimeHours:
-            LCD_PrintString_P(0, 0, PSTR(MSG_SET_TIME_HOURS), false);
-            LCD_PrintTime(PRINT_TIME_X, 4, true, false, false);
-            break;
-        case StSetTimeMinTens:
-            LCD_PrintString_P(0, 0, PSTR(MSG_SET_TIME_MINUTES), false);
-            LCD_PrintTime(PRINT_TIME_X, 4, false, true, false);
-            break;
-        case StSetTimeMinUnits:
-            LCD_PrintString_P(0, 0, PSTR(MSG_SET_TIME_MINUTES), false);
-            LCD_PrintTime(PRINT_TIME_X, 4, false, false, true);
-            break;
-
-        default: break;
-    } // switch
+//
+////        case StScreenSetEnable: // screen for enable-disable
+////            if(Pmp->Enabled)
+////                ShowEnableScreen(HIGHLIGHT_SCR_ENABLED);
+////            else ShowEnableScreen(HIGHLIGHT_SCR_DISABLED);
+////            break;
+////        case StScreenSetEnableExit:
+////            ShowEnableScreen(HIGHLIGHT_EXIT);
+////            break;
+//
+////        case StSetPeriodType:
+////            ShowChannelSummary(HIGHLIGHT_PERIOD_TYPE);
+////            break;
+////        case StSetPeriodValue:
+////            ShowChannelSummary(HIGHLIGHT_PERIOD_VALUE);
+////            break;
+////        case StSetPeriodLeft:
+////            ShowChannelSummary(HIGHLIGHT_PERIOD_LEFT);
+////            break;
+////        case StSetStartTime:
+////            ShowChannelSummary(HIGHLIGHT_START_TIME);
+////            break;
+////        case StSetDuration:
+////            ShowChannelSummary(HIGHLIGHT_DURATION);
+////            break;
+////        case StExit:
+////            ShowChannelSummary(HIGHLIGHT_EXIT);
+////            break;
+//
+////        // Time setup
+////        case StSetTimeHours:
+////            LCD_PrintString_P(0, 0, PSTR(MSG_SET_TIME_HOURS), false);
+////            LCD_PrintTime(PRINT_TIME_X, 4, true, false, false);
+////            break;
+////        case StSetTimeMinTens:
+////            LCD_PrintString_P(0, 0, PSTR(MSG_SET_TIME_MINUTES), false);
+////            LCD_PrintTime(PRINT_TIME_X, 4, false, true, false);
+////            break;
+////        case StSetTimeMinUnits:
+////            LCD_PrintString_P(0, 0, PSTR(MSG_SET_TIME_MINUTES), false);
+////            LCD_PrintTime(PRINT_TIME_X, 4, false, false, true);
+////            break;
+//
+//        default: break;
+//    } // switch
 }
 
 // ============================== Events =======================================
@@ -285,25 +270,43 @@ void EVENT_KeyMenu(void) {
 }
 
 // ============================== Item handlers ================================
-void EvtMainPump(void) {
+void PumpMenuSetup(void) {
     CurrentPump = MainMenu.CurrentItem;
-    CurrentMenu = &PumpMenu;                // Move to Pump menu
-    CurrentMenu.Title = (prog_char*)&chrPumps[CurrentPump];
-    CurrentMenu.CurrentItem = 0;
+    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
+    CurrentMenu->CurrentItem = 0;
     PumpMenu.Items[0].Text = (Pumps[CurrentPump].Enabled)? PSTR("включен") : PSTR("отключен");
+}
+
+void EvtMainPump(void) {
+    CurrentMenu = &PumpMenu;
+    if (CurrentMenu->Setup != 0) CurrentMenu->Setup();
     DrawMenu();
 }
 
 void EvtPumpOnOff(void) {
     CurrentMenu = &OnOffMenu;
-    CurrentMenu.Title = (prog_char*)&chrPumps[CurrentPump];
-    OnOffMenu.CurrentItem = (Pumps[CurrentPump].Enabled)? 0 : 1;
+    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
+    if (Pumps[CurrentPump].Enabled) {
+        OnOffMenu.CurrentItem = 0;
+        OnOffMenu.Items[0].Text = (prog_char*)chrOnOff[2];  // Marked ON
+        OnOffMenu.Items[1].Text = (prog_char*)chrOnOff[1];  // Non-Marked OFF
+    }
+    else {
+        OnOffMenu.CurrentItem = 1;
+        OnOffMenu.Items[0].Text = (prog_char*)chrOnOff[0];  // Non-Marked ON
+        OnOffMenu.Items[1].Text = (prog_char*)chrOnOff[3];  // Marked OFF
+    }
     DrawMenu();
 }
-
+void EvtOnOff(void) {
+    Pumps[CurrentPump].Enabled = !Pumps[CurrentPump].Enabled;
+    PumpsSettingsChanged = true;
+    EvtPumpOnOff();
+}
 
 void EvtExit(void) {
     CurrentMenu = CurrentMenu->PrevMenu;
+    if (CurrentMenu->Setup != 0) CurrentMenu->Setup();
     DrawMenu();
 }
 
@@ -621,67 +624,46 @@ void EVENT_KeyAquaDepressed(void) {
 // ============================= Inner use =====================================
 // Highlight needed option
 void ShowChannelSummary() {
-    // Pump number
-    LCD_PrintString_P(0, 0, PSTR(MSG_PUMP), false);
-    LCD_PrintUint(6, 0, EMenu.Pmp->ID, false);
-    // Enabled/disabled
-    if(EMenu.Pmp->Enabled) {
-        // Enabled
-        LCD_PrintString_P(MSG_ENABLED_X, MSG_ENABLED_Y, PSTR(MSG_ENABLED), EMenu.Item == pmiOnOff);
-
-        // Delay period mode
-        LCD_PrintString_P(0, MSG_PERIOD_Y, PSTR(MSG_PERIOD), false);
-        if(EMenu.Pmp->DelayMode == ModeDays)
-            LCD_PrintString_P(MSG_PERIOD_X, MSG_PERIOD_Y, PSTR(MSG_PERIOD_DAYS), EMenu.Item == pmiPeriodTypeValue);
-        else
-            LCD_PrintString_P(MSG_PERIOD_X, MSG_PERIOD_Y, PSTR(MSG_PERIOD_HOURS), EMenu.Item == pmiPeriodTypeValue);
-
-        // Delay period value
-        LCD_PrintUint(13, MSG_PERIOD_Y, EMenu.Pmp->Period, EMenu.Item == pmiPeriodTypeValue);
-
-        // Period left
-        LCD_PrintString_P(0, MSG_PERIOD_Y+1, PSTR(MSG_PERIOD_LEFT), false);
-        LCD_PrintUint(13, MSG_PERIOD_Y+1, EMenu.Pmp->PeriodLeft, EMenu.Item == pmiPeriodLeft);
-
-        // In case of DAYS mode, display start hour
-        if(EMenu.Pmp->DelayMode == ModeDays) {
-            LCD_PrintString_P(0, MSG_START_TIME_Y, PSTR(MSG_START_TIME), false);
-            LCD_PrintUint0_99(11, MSG_START_TIME_Y, EMenu.Pmp->StartHour, EMenu.Item == pmiStartTime);
-            LCD_PrintString_P(13, MSG_START_TIME_Y, PSTR(":00"), false);
-        }
-
-        // Duration
-        LCD_PrintString_P(0, MSG_DURATION_Y, PSTR(MSG_DURATION), false);
-        LCD_PrintUint(9, MSG_DURATION_Y, EMenu.Pmp->Duration, EMenu.Item == pmiDuration);
-        LCD_PrintString_P(11, MSG_DURATION_Y, PSTR("сек."), false);
-        // Display Aqua if pressed
-        if(EKeys.KeyAquaPressed) LCD_PrintString_P(MSG_AQUA_X, MSG_DURATION_Y+1, PSTR(MSG_AQUA), false);
-    }
-    // When channel is disabled
-    else LCD_PrintString_P(MSG_ENABLED_X, MSG_ENABLED_Y, PSTR(MSG_DISABLED), EMenu.Item == pmiOnOff);
-    LCD_PrintString_P(0, MSG_EXIT_Y, PSTR(MSG_EXIT), EMenu.Item == pmiExit);
-}
-void ShowMainMenu() {
-    LCD_PrintString_P(2, 1, PSTR(MSG_PUMP), (EMenu.Item == mmiPump1));
-    LCD_PrintUint    (8, 1, 1,              (EMenu.Item == mmiPump1));
-    LCD_PrintString_P(2, 2, PSTR(MSG_PUMP), (EMenu.Item == mmiPump2));
-    LCD_PrintUint    (8, 2, 2,              (EMenu.Item == mmiPump2));
-    LCD_PrintString_P(2, 3, PSTR(MSG_PUMP), (EMenu.Item == mmiPump3));
-    LCD_PrintUint    (8, 3, 3,              (EMenu.Item == mmiPump3));
-    LCD_PrintString_P(2, 4, PSTR(MSG_PUMP), (EMenu.Item == mmiPump4));
-    LCD_PrintUint    (8, 4, 4,              (EMenu.Item == mmiPump4));
-
-    LCD_PrintString_P(2, 5, PSTR(MSG_MENU_SET_TIME), EMenu.Item == mmiSetTime);
-    LCD_PrintString_P(2, MSG_EXIT_Y, PSTR(MSG_EXIT), EMenu.Item == mmiExit);
+//    // Pump number
+//    LCD_PrintString_P(0, 0, PSTR(MSG_PUMP), false);
+//    LCD_PrintUint(6, 0, EMenu.Pmp->ID, false);
+//    // Enabled/disabled
+//    if(EMenu.Pmp->Enabled) {
+//        // Enabled
+//        LCD_PrintString_P(MSG_ENABLED_X, MSG_ENABLED_Y, PSTR(MSG_ENABLED), EMenu.Item == pmiOnOff);
+//
+//        // Delay period mode
+//        LCD_PrintString_P(0, MSG_PERIOD_Y, PSTR(MSG_PERIOD), false);
+//        if(EMenu.Pmp->DelayMode == ModeDays)
+//            LCD_PrintString_P(MSG_PERIOD_X, MSG_PERIOD_Y, PSTR(MSG_PERIOD_DAYS), EMenu.Item == pmiPeriodTypeValue);
+//        else
+//            LCD_PrintString_P(MSG_PERIOD_X, MSG_PERIOD_Y, PSTR(MSG_PERIOD_HOURS), EMenu.Item == pmiPeriodTypeValue);
+//
+//        // Delay period value
+//        LCD_PrintUint(13, MSG_PERIOD_Y, EMenu.Pmp->Period, EMenu.Item == pmiPeriodTypeValue);
+//
+//        // Period left
+//        LCD_PrintString_P(0, MSG_PERIOD_Y+1, PSTR(MSG_PERIOD_LEFT), false);
+//        LCD_PrintUint(13, MSG_PERIOD_Y+1, EMenu.Pmp->PeriodLeft, EMenu.Item == pmiPeriodLeft);
+//
+//        // In case of DAYS mode, display start hour
+//        if(EMenu.Pmp->DelayMode == ModeDays) {
+//            LCD_PrintString_P(0, MSG_START_TIME_Y, PSTR(MSG_START_TIME), false);
+//            LCD_PrintUint0_99(11, MSG_START_TIME_Y, EMenu.Pmp->StartHour, EMenu.Item == pmiStartTime);
+//            LCD_PrintString_P(13, MSG_START_TIME_Y, PSTR(":00"), false);
+//        }
+//
+//        // Duration
+//        LCD_PrintString_P(0, MSG_DURATION_Y, PSTR(MSG_DURATION), false);
+//        LCD_PrintUint(9, MSG_DURATION_Y, EMenu.Pmp->Duration, EMenu.Item == pmiDuration);
+//        LCD_PrintString_P(11, MSG_DURATION_Y, PSTR("сек."), false);
+//        // Display Aqua if pressed
+//        if(EKeys.KeyAquaPressed) LCD_PrintString_P(MSG_AQUA_X, MSG_DURATION_Y+1, PSTR(MSG_AQUA), false);
+//    }
+//    // When channel is disabled
+//    else LCD_PrintString_P(MSG_ENABLED_X, MSG_ENABLED_Y, PSTR(MSG_DISABLED), EMenu.Item == pmiOnOff);
+//    LCD_PrintString_P(0, MSG_EXIT_Y, PSTR(MSG_EXIT), EMenu.Item == pmiExit);
 }
 
-void ShowEnableScreen() {
-    LCD_PrintString_P(0, 0, PSTR(MSG_PUMP), false);
-    LCD_PrintUint(6, 0, EMenu.Pmp->ID, false);
-    if(EMenu.Pmp->Enabled) LCD_PrintString_P(MSG_ENABLED_X, MSG_ENABLED_Y, PSTR(MSG_ENABLED), false);
-    else                   LCD_PrintString_P(MSG_ENABLED_X, MSG_ENABLED_Y, PSTR(MSG_DISABLED), false);
 
-    LCD_PrintString_P(3, 3, PSTR(MSG_TO_ENABLE),  (EMenu.Item == pmiIsOn));
-    LCD_PrintString_P(3, 4, PSTR(MSG_TO_DISABLE), (EMenu.Item == pmiIsOff));
-    LCD_PrintString_P(0, MSG_EXIT_Y, PSTR("save&exit"), (EMenu.Item == pmiExit));
-}
+
