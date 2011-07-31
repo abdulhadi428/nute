@@ -7,6 +7,7 @@
 #include "time.h"
 #include "messages.h"
 #include <avr/pgmspace.h>
+#include <util/delay.h>
 #include "battery.h"
 
 // ============================= Strings =======================================
@@ -14,8 +15,13 @@ prog_char chrPumps[4][8] = {"Насос 1", "Насос 2", "Насос 3", "Насос 4"};
 prog_char chrSetTime[] = {MSG_MENU_SET_TIME};
 prog_char chrBack[] = "Назад";
 prog_char chrOnOff[4][11] = {"  Включен", "  Выключен", "* Включен", "* Выключен"};
+prog_char chrPeriod[] = "Период ";
+prog_char chrDays[] = "дни";
+prog_char chrHours[] = "часы";
+
 
 // ============================ Prototypes =====================================
+void MainmenuExit(void);
 void PumpMenuSetup(void);
 
 void EvtMainPump(void);
@@ -25,6 +31,16 @@ void EvtOnOff(void);
 void EvtExit(void);
 
 // ============================= Types =========================================
+typedef struct {
+    uint8_t x, y;
+    uint8_t Next, Prev;
+    void (*EventMenu)(void);
+    prog_char *Text;
+    uint8_t Value;
+    prog_char *TextAfterValue;
+    bool PrintValue;
+} Item_t;
+
 typedef struct {
     prog_char *Title;
     void *PrevMenu;
@@ -45,7 +61,7 @@ Menu_t MainMenu = {
         { x: 2, y: 3, Next: 3, Prev: 1, Text: (prog_char*)chrPumps[2], EventMenu: &EvtMainPump },
         { x: 2, y: 4, Next: 4, Prev: 2, Text: (prog_char*)chrPumps[3], EventMenu: &EvtMainPump },
         { x: 2, y: 5, Next: 5, Prev: 3, Text: (prog_char*)chrSetTime,  EventMenu: 0},
-        { x: 2, y: 7, Next: 0, Prev: 4, Text: (prog_char*)chrBack }
+        { x: 2, y: 7, Next: 0, Prev: 4, Text: (prog_char*)chrBack,     EventMenu: &MainmenuExit }
     }
 };
 
@@ -54,11 +70,12 @@ Menu_t PumpMenu = {
     PrevMenu: &MainMenu,
     Setup: &PumpMenuSetup,
     CurrentItem: 0,
-    ItemCount: 2,
+    ItemCount: 3,
     Items: {
-        { x: 8, y: 0, Next: 1, Prev: 1,                            EventMenu: &EvtPumpOnOff },
+        { x: 8,  y: 0, Next: 1, Prev: 2,                            EventMenu: &EvtPumpOnOff },
+        { x: 1,  y: 2, Next: 2, Prev: 0, Text: (prog_char*)chrPeriod, EventMenu: &EvtExit, PrintValue: true},
 
-        { x: 2, y: 7, Next: 0, Prev: 0, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
+        { x: 2, y: 7, Next: 0, Prev: 1, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
     }
 };
 
@@ -84,12 +101,10 @@ enum State_t EState;
 struct {
     uint16_t ExitTimer;
     bool AquaWasPressed;
-    uint8_t Item;
-    struct pump_t *Pmp;
 } EMenu;
 
 
-
+bool NeedToExit;
 // ========================== Implementation ===================================
 FORCE_INLINE void Task_Menu(void) {
     switch(EState) {
@@ -114,7 +129,13 @@ FORCE_INLINE void Task_Menu(void) {
 //            break;
 
         default:    // check if time to get out of menu
-            if(DelayElapsed(&EMenu.ExitTimer, MENU_EXIT_TIMEOUT)) EnterIdle();
+            if (NeedToExit) {
+                if(DelayElapsed(&EMenu.ExitTimer, 261)) {
+                    NeedToExit = false;
+                    EnterIdle();
+                }
+            }
+            else if(DelayElapsed(&EMenu.ExitTimer, MENU_EXIT_TIMEOUT)) EnterIdle();
             break;
     }
 }
@@ -122,6 +143,8 @@ FORCE_INLINE void Task_Menu(void) {
 void EnterIdle(void) {
     LCD_Clear();
     EState = StIdle;
+    CurrentMenu = &MainMenu;
+    MainMenu.CurrentItem = 0;
     LCD_BCKLT_OFF();
     EVENT_NewMinute();
     if(!Time.IsSetCorrectly) LCD_PrintString_P(0, PRINT_TIME_Y+2, PSTR(MSG_SET_CORRECT_TIME), false);
@@ -137,9 +160,16 @@ void DrawMenu(void) {
     // Print items
     uint8_t fcount = CurrentMenu->ItemCount;
     Item_t *itm;
+    uint8_t fx;
+    bool fHighlight;
     for (uint8_t i=0; i<fcount; i++) {
         itm = &CurrentMenu->Items[i];
-        LCD_PrintString_P(itm->x, itm->y, itm->Text, (i == CurrentMenu->CurrentItem));
+        fHighlight = (i == CurrentMenu->CurrentItem);
+        fx = LCD_PrintString_P(itm->x, itm->y, itm->Text, fHighlight);
+        if(itm->PrintValue)
+            fx = LCD_PrintUint(fx, itm->y, itm->Value, fHighlight);
+        if(itm->TextAfterValue != 0)
+            LCD_PrintString_P(fx, itm->y, itm->TextAfterValue, fHighlight);
     }
 }
 
@@ -247,11 +277,13 @@ void EVENT_AnyKey(void) {
 
 // New life
 void EVENT_KeyUp(void) {
+    if (EState != StMenu) return;
     Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
     CurrentMenu->CurrentItem = itm->Prev;
     DrawMenu();
 }
 void EVENT_KeyDown(void) {
+    if (EState != StMenu) return;
     Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
     CurrentMenu->CurrentItem = itm->Next;
     DrawMenu();
@@ -259,8 +291,6 @@ void EVENT_KeyDown(void) {
 void EVENT_KeyMenu(void) {
     if (EState == StBacklight) {
         EState = StMenu;
-        MainMenu.CurrentItem = 0;
-        CurrentMenu = &MainMenu;
         DrawMenu();
     }
     else {
@@ -270,11 +300,31 @@ void EVENT_KeyMenu(void) {
 }
 
 // ============================== Item handlers ================================
+void MainmenuExit(void) {
+    NeedToExit = true;
+}
+
 void PumpMenuSetup(void) {
     CurrentPump = MainMenu.CurrentItem;
     CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
     CurrentMenu->CurrentItem = 0;
+    // On/Off
     PumpMenu.Items[0].Text = (Pumps[CurrentPump].Enabled)? PSTR("включен") : PSTR("отключен");
+    // Period setup
+    PumpMenu.Items[1].Value = Pumps[CurrentPump].Period;
+    if (Pumps[CurrentPump].DelayMode == ModeDays)
+         PumpMenu.Items[1].TextAfterValue = (prog_char*)&chrDays;
+    else PumpMenu.Items[1].TextAfterValue = (prog_char*)&chrHours;
+
+//        // Delay period mode
+//        LCD_PrintString_P(0, MSG_PERIOD_Y, PSTR(MSG_PERIOD), false);
+//        if(EMenu.Pmp->DelayMode == ModeDays)
+//            LCD_PrintString_P(MSG_PERIOD_X, MSG_PERIOD_Y, PSTR(MSG_PERIOD_DAYS), EMenu.Item == pmiPeriodTypeValue);
+//        else
+//            LCD_PrintString_P(MSG_PERIOD_X, MSG_PERIOD_Y, PSTR(MSG_PERIOD_HOURS), EMenu.Item == pmiPeriodTypeValue);
+//
+//        // Delay period value
+//        LCD_PrintUint(13, MSG_PERIOD_Y, EMenu.Pmp->Period, EMenu.Item == pmiPeriodTypeValue);
 }
 
 void EvtMainPump(void) {

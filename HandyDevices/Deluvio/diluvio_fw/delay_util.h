@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   time_utils.h
  * Author: Laurelindo
  *
@@ -18,6 +18,7 @@
 void DelayInit(void);
 bool DelayElapsed(uint16_t *AVar, const uint16_t ADelay);
 void DelayReset(uint16_t *AVar);
+void DelayBypass(uint16_t *AVar, const uint16_t ADelay);
 
 #endif	/* _TIME_UTILS_H */
 

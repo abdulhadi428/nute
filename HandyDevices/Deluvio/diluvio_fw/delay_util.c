@@ -25,8 +25,8 @@ FORCE_INLINE void DelayInit(void) {
     TIMSK0 |= (1<<OCIE0A);                  // Enable interrupt
 #elif defined __AVR_ATmega16A__
     TCCR0 = (1<<WGM01)|DELAY_TCCR; // CTC mode
-    OCR0  = DELAY_OCRA;        
-    TIMSK |= (1<<OCIE0);                              // Enable interrupt 
+    OCR0  = DELAY_OCRA;
+    TIMSK |= (1<<OCIE0);                              // Enable interrupt
 #endif
 }
 
@@ -39,6 +39,12 @@ bool DelayElapsed(uint16_t *AVar, const uint16_t ADelay) {
         }
     } // Atomic
     return Result;
+}
+
+void DelayBypass(uint16_t *AVar, const uint16_t ADelay) {
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) {
+        *AVar = TickCounter - ADelay - 1;   // Reset delay
+    } // Atomic
 }
 
 void DelayReset(uint16_t *AVar) {

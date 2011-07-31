@@ -18,12 +18,7 @@
 #define MENU_EXIT_TIMEOUT   7000
 
 // ============================ Types ==========================================
-typedef struct {
-    uint8_t x, y;
-    uint8_t Next, Prev;
-    void (*EventMenu)(void);
-    prog_char *Text;
-} Item_t;
+
 
 
 // States

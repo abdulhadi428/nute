@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   lcd110x.h
  * Author: Kreyl Laurelindo
  *
@@ -56,10 +56,10 @@ void LCD_Shutdown(void);
 void LCD_Clear(void);
 void LCD_DrawChar(uint8_t AChar, bool AInvert);
 void LCD_PrintString(const uint8_t x, const uint8_t y, const char *S, bool AInvert);
-void LCD_PrintString_P(const uint8_t x, const uint8_t y, const char *S, bool AInvert);
+uint8_t LCD_PrintString_P(const uint8_t x, const uint8_t y, const char *S, bool AInvert);
 void LCD_DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInvert);
 
-void LCD_PrintUint(const uint8_t x, const uint8_t y, uint16_t ANumber, bool AInvert);
+uint8_t LCD_PrintUint(const uint8_t x, const uint8_t y, uint16_t ANumber, bool AInvert);
 void LCD_PrintInt(const uint8_t x, const uint8_t y, int16_t ANumber, bool AInvert);
 void LCD_PrintUint0_99(const uint8_t x, const uint8_t y, uint8_t ANumber, bool AInvert);
 

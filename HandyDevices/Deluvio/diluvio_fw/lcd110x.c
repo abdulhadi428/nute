@@ -45,11 +45,14 @@ void LCD_Clear(void) {
 }
 
 
-void LCD_PrintString_P (const uint8_t x, const uint8_t y, const char *S, bool AInvert) {
+uint8_t LCD_PrintString_P (const uint8_t x, const uint8_t y, const char *S, bool AInvert) {
     LCD_GotoXYstr(x, y);
-    uint8_t FChar;
-    while ((FChar = pgm_read_byte(S++)) != '\0')
+    uint8_t FChar, fx=x;
+    while ((FChar = pgm_read_byte(S++)) != '\0') {
         LCD_DrawChar(FChar, AInvert);
+        fx++;
+    }
+    return fx;
 }
 void LCD_PrintString (const uint8_t x, const uint8_t y, const char *S, bool AInvert) {
     LCD_GotoXYstr(x, y);
@@ -71,8 +74,8 @@ void LCD_DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInve
 
 }
 
-void LCD_PrintUint(const uint8_t x, const uint8_t y, uint16_t ANumber, bool AInvert) {
-    uint8_t digit = '0';
+uint8_t LCD_PrintUint(const uint8_t x, const uint8_t y, uint16_t ANumber, bool AInvert) {
+    uint8_t digit = '0', fx=x;
     bool ShouldPrint = false;
     const uint16_t FArr[9] = {10000, 1000, 100, 10};
     LCD_GotoXYstr(x, y);
@@ -85,11 +88,14 @@ void LCD_PrintUint(const uint8_t x, const uint8_t y, uint16_t ANumber, bool AInv
         if((digit != '0') || ShouldPrint) {
                 LCD_DrawChar(digit, AInvert);
                 ShouldPrint = true;
+                fx++;
         }
         digit = '0';
     }
     // Print last digit
     LCD_DrawChar('0'+ANumber, AInvert);
+    fx++;
+    return fx;
 }
 void LCD_PrintInt(const uint8_t x, const uint8_t y, int16_t ANumber, bool AInvert) {
     LCD_GotoXYstr(x, y);
