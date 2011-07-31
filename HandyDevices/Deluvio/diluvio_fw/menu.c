@@ -16,8 +16,12 @@ prog_char chrSetTime[] = {MSG_MENU_SET_TIME};
 prog_char chrBack[] = "Назад";
 prog_char chrOnOff[4][11] = {"  Включен", "  Выключен", "* Включен", "* Выключен"};
 prog_char chrPeriod[] = "Период ";
-prog_char chrDays[] = "дни";
-prog_char chrHours[] = "часы";
+prog_char chrDaysShort[] = " д.";
+prog_char chrLeft[] = "Осталось:";
+prog_char chrStartTime[] = "Полить в ";
+prog_char chrDuration[] = "Поливать ";
+prog_char chrTime[] = ":00";
+prog_char chrSec[] = " с.";
 
 
 // ============================ Prototypes =====================================
@@ -29,8 +33,12 @@ void EvtPumpOnOff(void);
 void EvtOnOff(void);
 
 void EvtExit(void);
+//prog_char* WordForm (uint8_t, MUnit_t);
 
 // ============================= Types =========================================
+// Measure days&hours
+typedef enum {muDays, muHours} MUnit_t;
+
 typedef struct {
     uint8_t x, y;
     uint8_t Next, Prev;
@@ -70,12 +78,20 @@ Menu_t PumpMenu = {
     PrevMenu: &MainMenu,
     Setup: &PumpMenuSetup,
     CurrentItem: 0,
-    ItemCount: 3,
+    ItemCount: 6,
     Items: {
-        { x: 8,  y: 0, Next: 1, Prev: 2,                            EventMenu: &EvtPumpOnOff },
-        { x: 1,  y: 2, Next: 2, Prev: 0, Text: (prog_char*)chrPeriod, EventMenu: &EvtExit, PrintValue: true},
-
-        { x: 2, y: 7, Next: 0, Prev: 1, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
+        //0
+        {                      Prev: 5,                            EventMenu: &EvtPumpOnOff },
+        //1
+        { x: 0, y: 2,          Prev: 0,                            EventMenu: &EvtExit, PrintValue: true},
+        //2
+        { x: 0, y: 3, Next: 3, Prev: 1,                            EventMenu: &EvtExit, PrintValue: true},
+        //3
+        { x: 0, y: 4, Next: 4,                                     EventMenu: &EvtExit, PrintValue: true},
+        //4
+        { x: 0, y: 5, Next: 5, Prev: 3,                            EventMenu: &EvtExit, PrintValue: true},
+        //5
+        { x: 0, y: 7, Next: 0,          Text: (prog_char*)chrBack, EventMenu: &EvtExit },
     }
 };
 
@@ -105,6 +121,8 @@ struct {
 
 
 bool NeedToExit;
+
+
 // ========================== Implementation ===================================
 FORCE_INLINE void Task_Menu(void) {
     switch(EState) {
@@ -164,6 +182,7 @@ void DrawMenu(void) {
     bool fHighlight;
     for (uint8_t i=0; i<fcount; i++) {
         itm = &CurrentMenu->Items[i];
+        if(itm->Text == 0) continue;
         fHighlight = (i == CurrentMenu->CurrentItem);
         fx = LCD_PrintString_P(itm->x, itm->y, itm->Text, fHighlight);
         if(itm->PrintValue)
@@ -304,27 +323,68 @@ void MainmenuExit(void) {
     NeedToExit = true;
 }
 
+prog_char* WordForm (uint8_t N, MUnit_t MUnit) {
+    if (N >= 10 && N <= 20) {
+        return ((MUnit == muDays)? PSTR(" дней") : PSTR(" часов"));
+    }
+    while (N >= 10) N-=10;
+    if (N == 0 || (N > 4 && N < 10))
+        return ((MUnit == muDays)? PSTR(" дней") : PSTR(" часов"));
+    if (N == 1)
+        return ((MUnit == muDays)? PSTR(" день") : PSTR(" час"));
+    else
+        return ((MUnit == muDays)? PSTR(" дня") : PSTR(" часа"));
+}
+
 void PumpMenuSetup(void) {
     CurrentPump = MainMenu.CurrentItem;
     CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
     CurrentMenu->CurrentItem = 0;
+
+
     // On/Off
     PumpMenu.Items[0].Text = (Pumps[CurrentPump].Enabled)? PSTR("включен") : PSTR("отключен");
-    // Period setup
-    PumpMenu.Items[1].Value = Pumps[CurrentPump].Period;
-    if (Pumps[CurrentPump].DelayMode == ModeDays)
-         PumpMenu.Items[1].TextAfterValue = (prog_char*)&chrDays;
-    else PumpMenu.Items[1].TextAfterValue = (prog_char*)&chrHours;
+    PumpMenu.Items[0].x = (Pumps[CurrentPump].Enabled )? 8 : 3;
+    PumpMenu.Items[0].y = (Pumps[CurrentPump].Enabled )? 0 : 3;
+    //If pump is on
+    if (Pumps[CurrentPump].Enabled) {
+        PumpMenu.Items[0].Next = 1;
+        // Period setup
+        PumpMenu.Items[1].Text = (prog_char*)&chrPeriod;
+        PumpMenu.Items[1].Value = Pumps[CurrentPump].Period;
+        if (Pumps[CurrentPump].DelayMode == ModeDays) {
+            PumpMenu.Items[1].TextAfterValue = WordForm(Pumps[CurrentPump].Period, muDays);
+            PumpMenu.Items[1].Next = 2;
+            PumpMenu.Items[3].Prev = 2;
+            //Period Left
+            PumpMenu.Items[2].Text = (prog_char*)&chrLeft;
+            PumpMenu.Items[2].Value = Pumps[CurrentPump].PeriodLeft;
+            PumpMenu.Items[2].TextAfterValue = WordForm(Pumps[CurrentPump].Period, muDays);
+        }
+        else {
+            PumpMenu.Items[1].TextAfterValue = WordForm(Pumps[CurrentPump].Period, muHours);
+            //Don't show PeriodLeft if PeriodMode is hours
+            PumpMenu.Items[2].Text = 0;
+            PumpMenu.Items[1].Next = 3;
+            PumpMenu.Items[3].Prev = 1;
+        }
+        //Start time
+        PumpMenu.Items[3].Text = (prog_char*)&chrStartTime;
+        PumpMenu.Items[3].Value = Pumps[CurrentPump].StartHour;
+        PumpMenu.Items[3].TextAfterValue = (prog_char*)&chrTime;
+        PumpMenu.Items[4].Text = (prog_char*)&chrDuration;
+        PumpMenu.Items[4].TextAfterValue = (prog_char*)&chrSec;
 
-//        // Delay period mode
-//        LCD_PrintString_P(0, MSG_PERIOD_Y, PSTR(MSG_PERIOD), false);
-//        if(EMenu.Pmp->DelayMode == ModeDays)
-//            LCD_PrintString_P(MSG_PERIOD_X, MSG_PERIOD_Y, PSTR(MSG_PERIOD_DAYS), EMenu.Item == pmiPeriodTypeValue);
-//        else
-//            LCD_PrintString_P(MSG_PERIOD_X, MSG_PERIOD_Y, PSTR(MSG_PERIOD_HOURS), EMenu.Item == pmiPeriodTypeValue);
-//
-//        // Delay period value
-//        LCD_PrintUint(13, MSG_PERIOD_Y, EMenu.Pmp->Period, EMenu.Item == pmiPeriodTypeValue);
+        PumpMenu.Items[5].Prev = 4;
+    }
+    else {
+        PumpMenu.Items[1].Text = 0;
+        PumpMenu.Items[2].Text = 0;
+        PumpMenu.Items[3].Text = 0;
+        PumpMenu.Items[4].Text = 0;
+        PumpMenu.Items[0].Next = 5;
+        PumpMenu.Items[5].Prev = 0;
+    }
 }
 
 void EvtMainPump(void) {
