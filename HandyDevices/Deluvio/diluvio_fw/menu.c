@@ -18,11 +18,14 @@ prog_char chrOnOff[4][11] = {"  Включен", "  Выключен", "* Включен", "* Выключен
 prog_char chrPeriod[] = "Период ";
 prog_char chrDaysShort[] = " д.";
 prog_char chrLeft[] = "Осталось:";
+prog_char chrDaysLeft[] = "Дней до полива:";
 prog_char chrStartTime[] = "Полить в ";
 prog_char chrDuration[] = "Поливать ";
 prog_char chrTime[] = ":00";
 prog_char chrSec[] = " с.";
-
+prog_char chrSpace[] = " ";
+prog_char chrBracketLeft[] = "[";
+prog_char chrBracketRight[] = "]";
 
 // ============================ Prototypes =====================================
 void MainmenuExit(void);
@@ -31,6 +34,8 @@ void PumpMenuSetup(void);
 void EvtMainPump(void);
 void EvtPumpOnOff(void);
 void EvtOnOff(void);
+void EvtPumpTimeLeft(void);
+void EvtTimeLeft(void);
 
 void EvtExit(void);
 //prog_char* WordForm (uint8_t, MUnit_t);
@@ -85,7 +90,7 @@ Menu_t PumpMenu = {
         //1
         { x: 0, y: 2,          Prev: 0,                            EventMenu: &EvtExit, PrintValue: true},
         //2
-        { x: 0, y: 3, Next: 3, Prev: 1,                            EventMenu: &EvtExit, PrintValue: true},
+        { x: 0, y: 3, Next: 3, Prev: 1,                            EventMenu: &EvtPumpTimeLeft, PrintValue: true},
         //3
         { x: 0, y: 4, Next: 4,                                     EventMenu: &EvtExit, PrintValue: true},
         //4
@@ -107,6 +112,18 @@ Menu_t OnOffMenu = {
     }
 };
 
+Menu_t TimeLeftMenu ={
+    Title: 0,
+    PrevMenu: &PumpMenu,
+    CurrentItem: 2,
+    ItemCount: 3,
+    Items: {
+        { x: 0, y: 2, Next: 1, Prev: 2, Text: (prog_char*)chrDaysLeft                                          },
+        { x: 3, y: 4, Next: 2, Prev: 2,                              EventMenu: &EvtTimeLeft, PrintValue: true },
+        { x: 2, y: 7, Next: 1, Prev: 1, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
+    }
+};
+
 Menu_t *CurrentMenu;
 uint8_t CurrentPump;
 
@@ -121,6 +138,7 @@ struct {
 
 
 bool NeedToExit;
+bool EditEnabled = false;
 
 
 // ========================== Implementation ===================================
@@ -297,10 +315,24 @@ void EVENT_AnyKey(void) {
 // New life
 void EVENT_KeyUp(void) {
     if (EState != StMenu) return;
-    Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
-    CurrentMenu->CurrentItem = itm->Prev;
+    //Period left
+    if (CurrentMenu == &TimeLeftMenu && EditEnabled == true) {
+        if (Pumps[CurrentPump].PeriodLeft < 99) Pumps[CurrentPump].PeriodLeft++;
+        else Pumps[CurrentPump].PeriodLeft = 1;
+        PumpsSettingsChanged = true;
+    }
+    //Main and Channel menu
+    else {
+        Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
+        CurrentMenu->CurrentItem = itm->Prev;
+    }
     DrawMenu();
 }
+
+////case StSetPeriodLeft:
+////            if(Pumps[EMenu.Pump-1].PeriodLeft < 250) Pumps[EMenu.Pump-1].PeriodLeft++;
+////            SetState(StSetPeriodLeft);
+////            break;
 void EVENT_KeyDown(void) {
     if (EState != StMenu) return;
     Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
@@ -315,8 +347,15 @@ void EVENT_KeyMenu(void) {
     else {
         Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
         if (itm->EventMenu != 0) itm->EventMenu();
+        if (itm->PrintValue == true) EditEnabled = !EditEnabled;
     }
+
+
 }
+
+
+
+
 
 // ============================== Item handlers ================================
 void MainmenuExit(void) {
@@ -340,8 +379,6 @@ void PumpMenuSetup(void) {
     CurrentPump = MainMenu.CurrentItem;
     CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
     CurrentMenu->CurrentItem = 0;
-
-
     // On/Off
     PumpMenu.Items[0].Text = (Pumps[CurrentPump].Enabled)? PSTR("включен") : PSTR("отключен");
     PumpMenu.Items[0].x = (Pumps[CurrentPump].Enabled )? 8 : 3;
@@ -420,6 +457,27 @@ void EvtExit(void) {
     DrawMenu();
 }
 
+void EvtPumpTimeLeft(void) {
+    CurrentMenu = &TimeLeftMenu;
+    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
+    TimeLeftMenu.Items[1].Value = Pumps[CurrentPump].PeriodLeft;
+    if (EditEnabled == false) {
+        TimeLeftMenu.Items[1].Text = (prog_char*)&chrSpace;
+        TimeLeftMenu.Items[1].TextAfterValue = (prog_char*)&chrSpace;
+    }
+    else {
+        TimeLeftMenu.Items[1].Value = Pumps[CurrentPump].PeriodLeft;
+        TimeLeftMenu.Items[1].Text = (prog_char*)&chrBracketLeft;
+        TimeLeftMenu.Items[1].TextAfterValue = (prog_char*)&chrBracketRight;
+    }
+    DrawMenu();
+}
+
+void EvtTimeLeft(void) {
+    EditEnabled = true;
+    PumpsSettingsChanged = true;
+    EvtPumpTimeLeft();
+}
 
 
 //void EVENT_KeyUp(void) {
@@ -700,7 +758,7 @@ void EvtExit(void) {
 //    } // switch
 //}
 
-void EVENT_KeyAquaPressed(void) {
+ void EVENT_KeyAquaPressed(void) {
 //    if(IsPumping) return;   // Not allowed if pumping yet
 //    switch(EState) {
 //        case StShowChannel:
