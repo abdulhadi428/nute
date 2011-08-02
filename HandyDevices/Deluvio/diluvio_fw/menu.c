@@ -49,7 +49,7 @@ typedef struct {
     uint8_t Next, Prev;
     void (*EventMenu)(void);
     prog_char *Text;
-    uint8_t Value;
+    uint8_t *Value;
     prog_char *TextAfterValue;
     bool PrintValue;
 } Item_t;
@@ -115,11 +115,11 @@ Menu_t OnOffMenu = {
 Menu_t TimeLeftMenu ={
     Title: 0,
     PrevMenu: &PumpMenu,
-    CurrentItem: 2,
+    CurrentItem: 1,
     ItemCount: 3,
     Items: {
         { x: 0, y: 2, Next: 1, Prev: 2, Text: (prog_char*)chrDaysLeft                                          },
-        { x: 3, y: 4, Next: 2, Prev: 2,                              EventMenu: &EvtTimeLeft, PrintValue: true },
+        { x: 3, y: 4, Next: 2, Prev: 2,                            EventMenu: &EvtTimeLeft, PrintValue: true },
         { x: 2, y: 7, Next: 1, Prev: 1, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
     }
 };
@@ -181,6 +181,7 @@ void EnterIdle(void) {
     EState = StIdle;
     CurrentMenu = &MainMenu;
     MainMenu.CurrentItem = 0;
+    EditEnabled = false;
     LCD_BCKLT_OFF();
     EVENT_NewMinute();
     if(!Time.IsSetCorrectly) LCD_PrintString_P(0, PRINT_TIME_Y+2, PSTR(MSG_SET_CORRECT_TIME), false);
@@ -204,7 +205,7 @@ void DrawMenu(void) {
         fHighlight = (i == CurrentMenu->CurrentItem);
         fx = LCD_PrintString_P(itm->x, itm->y, itm->Text, fHighlight);
         if(itm->PrintValue)
-            fx = LCD_PrintUint(fx, itm->y, itm->Value, fHighlight);
+            fx = LCD_PrintUint(fx, itm->y, *(itm->Value), fHighlight);
         if(itm->TextAfterValue != 0)
             LCD_PrintString_P(fx, itm->y, itm->TextAfterValue, fHighlight);
     }
@@ -315,10 +316,9 @@ void EVENT_AnyKey(void) {
 // New life
 void EVENT_KeyUp(void) {
     if (EState != StMenu) return;
-    //Period left
-    if (CurrentMenu == &TimeLeftMenu && EditEnabled == true) {
-        if (Pumps[CurrentPump].PeriodLeft < 99) Pumps[CurrentPump].PeriodLeft++;
-        else Pumps[CurrentPump].PeriodLeft = 1;
+    // Increase value if needed
+    if (EditEnabled) {
+        (*(CurrentMenu->Items[CurrentMenu->CurrentItem].Value))++;
         PumpsSettingsChanged = true;
     }
     //Main and Channel menu
@@ -347,7 +347,6 @@ void EVENT_KeyMenu(void) {
     else {
         Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
         if (itm->EventMenu != 0) itm->EventMenu();
-        if (itm->PrintValue == true) EditEnabled = !EditEnabled;
     }
 
 
@@ -388,14 +387,14 @@ void PumpMenuSetup(void) {
         PumpMenu.Items[0].Next = 1;
         // Period setup
         PumpMenu.Items[1].Text = (prog_char*)&chrPeriod;
-        PumpMenu.Items[1].Value = Pumps[CurrentPump].Period;
+        PumpMenu.Items[1].Value = &Pumps[CurrentPump].Period;
         if (Pumps[CurrentPump].DelayMode == ModeDays) {
             PumpMenu.Items[1].TextAfterValue = WordForm(Pumps[CurrentPump].Period, muDays);
             PumpMenu.Items[1].Next = 2;
             PumpMenu.Items[3].Prev = 2;
             //Period Left
             PumpMenu.Items[2].Text = (prog_char*)&chrLeft;
-            PumpMenu.Items[2].Value = Pumps[CurrentPump].PeriodLeft;
+            PumpMenu.Items[2].Value = &Pumps[CurrentPump].PeriodLeft;
             PumpMenu.Items[2].TextAfterValue = WordForm(Pumps[CurrentPump].Period, muDays);
         }
         else {
@@ -407,7 +406,7 @@ void PumpMenuSetup(void) {
         }
         //Start time
         PumpMenu.Items[3].Text = (prog_char*)&chrStartTime;
-        PumpMenu.Items[3].Value = Pumps[CurrentPump].StartHour;
+        PumpMenu.Items[3].Value = &Pumps[CurrentPump].StartHour;
         PumpMenu.Items[3].TextAfterValue = (prog_char*)&chrTime;
         PumpMenu.Items[4].Text = (prog_char*)&chrDuration;
         PumpMenu.Items[4].TextAfterValue = (prog_char*)&chrSec;
@@ -454,19 +453,19 @@ void EvtOnOff(void) {
 void EvtExit(void) {
     CurrentMenu = CurrentMenu->PrevMenu;
     if (CurrentMenu->Setup != 0) CurrentMenu->Setup();
+    EditEnabled = false;
     DrawMenu();
 }
 
 void EvtPumpTimeLeft(void) {
     CurrentMenu = &TimeLeftMenu;
     CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
-    TimeLeftMenu.Items[1].Value = Pumps[CurrentPump].PeriodLeft;
+    TimeLeftMenu.Items[1].Value = &Pumps[CurrentPump].PeriodLeft;
     if (EditEnabled == false) {
         TimeLeftMenu.Items[1].Text = (prog_char*)&chrSpace;
         TimeLeftMenu.Items[1].TextAfterValue = (prog_char*)&chrSpace;
     }
     else {
-        TimeLeftMenu.Items[1].Value = Pumps[CurrentPump].PeriodLeft;
         TimeLeftMenu.Items[1].Text = (prog_char*)&chrBracketLeft;
         TimeLeftMenu.Items[1].TextAfterValue = (prog_char*)&chrBracketRight;
     }
@@ -474,8 +473,7 @@ void EvtPumpTimeLeft(void) {
 }
 
 void EvtTimeLeft(void) {
-    EditEnabled = true;
-    PumpsSettingsChanged = true;
+    EditEnabled = !EditEnabled;
     EvtPumpTimeLeft();
 }
 
