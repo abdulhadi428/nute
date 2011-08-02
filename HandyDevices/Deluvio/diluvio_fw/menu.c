@@ -20,27 +20,19 @@ prog_char chrDaysShort[] = " д.";
 prog_char chrLeft[] = "Осталось:";
 prog_char chrDaysLeft[] = "Дней до полива:";
 prog_char chrStartTime[] = "Полить в ";
+prog_char chrSetStartTime[] = "Время полива";
 prog_char chrDuration[] = "Поливать ";
-prog_char chrTime[] = ":00";
-prog_char chrSec[] = " с.";
+prog_char chrSetDuration[] = "Длительность";
+prog_char chrTime[] = ":00 ";
+prog_char chrTimeBracket[] = ":00]";
+prog_char chrSec[] = " с";
+prog_char chrSecBracket[] = " с]";
+
 prog_char chrSpace[] = " ";
 prog_char chrBracketLeft[] = "[";
 prog_char chrBracketRight[] = "]";
 
-// ============================ Prototypes =====================================
-void MainmenuExit(void);
-void PumpMenuSetup(void);
-
-void EvtMainPump(void);
-void EvtPumpOnOff(void);
-void EvtOnOff(void);
-void EvtPumpTimeLeft(void);
-void EvtTimeLeft(void);
-
-void EvtExit(void);
-//prog_char* WordForm (uint8_t, MUnit_t);
-
-// ============================= Types =========================================
+// =============================== Types =======================================
 // Measure days&hours
 typedef enum {muDays, muHours} MUnit_t;
 
@@ -50,51 +42,78 @@ typedef struct {
     void (*EventMenu)(void);
     prog_char *Text;
     uint8_t *Value;
+    uint8_t MaxValue;
+    uint8_t MinValue;
     prog_char *TextAfterValue;
     bool PrintValue;
 } Item_t;
 
 typedef struct {
     prog_char *Title;
-    void *PrevMenu;
-    uint8_t CurrentItem;
+    void *ParentMenu;
+    uint8_t CurrentItem;    // Highlighted item
     uint8_t ItemCount;
     void (*Setup)(void);
     Item_t Items[];
 } Menu_t;
 
+// ============================ Prototypes =====================================
+//Common
+void DrawMenu(void);
+
+void MainMenuExit(void);
+
+// Menu setup
+void MainMenuSetup(void);
+void PumpMenuSetup(void);
+void OnOffMenuSetup(void);
+void TimeLeftMenuSetup(void);
+void StartTimeMenuSetup(void);
+void DurationMenuSetup (void);
+
+// Parameters change
+void EvtOnOff(void);
+
+void ToggleNumberEditEnable(void);
+
+// Common
+void EvtExit(void);
+prog_char* WordForm (uint8_t N, MUnit_t MUnit);
+
+// ============================= Variables =====================================
 Menu_t MainMenu = {
     Title: 0,
-    PrevMenu: 0,
+    ParentMenu: 0,
     CurrentItem: 0,
+    Setup: &MainMenuSetup,
     ItemCount: 6,
     Items: {
-        { x: 2, y: 1, Next: 1, Prev: 5, Text: (prog_char*)chrPumps[0], EventMenu: &EvtMainPump },
-        { x: 2, y: 2, Next: 2, Prev: 0, Text: (prog_char*)chrPumps[1], EventMenu: &EvtMainPump },
-        { x: 2, y: 3, Next: 3, Prev: 1, Text: (prog_char*)chrPumps[2], EventMenu: &EvtMainPump },
-        { x: 2, y: 4, Next: 4, Prev: 2, Text: (prog_char*)chrPumps[3], EventMenu: &EvtMainPump },
+        { x: 2, y: 1, Next: 1, Prev: 5, Text: (prog_char*)chrPumps[0], EventMenu: &PumpMenuSetup },
+        { x: 2, y: 2, Next: 2, Prev: 0, Text: (prog_char*)chrPumps[1], EventMenu: &PumpMenuSetup },
+        { x: 2, y: 3, Next: 3, Prev: 1, Text: (prog_char*)chrPumps[2], EventMenu: &PumpMenuSetup },
+        { x: 2, y: 4, Next: 4, Prev: 2, Text: (prog_char*)chrPumps[3], EventMenu: &PumpMenuSetup },
         { x: 2, y: 5, Next: 5, Prev: 3, Text: (prog_char*)chrSetTime,  EventMenu: 0},
-        { x: 2, y: 7, Next: 0, Prev: 4, Text: (prog_char*)chrBack,     EventMenu: &MainmenuExit }
+        { x: 2, y: 7, Next: 0, Prev: 4, Text: (prog_char*)chrBack,     EventMenu: &MainMenuExit }
     }
 };
 
 Menu_t PumpMenu = {
     Title: 0,
-    PrevMenu: &MainMenu,
+    ParentMenu: &MainMenu,
     Setup: &PumpMenuSetup,
     CurrentItem: 0,
     ItemCount: 6,
     Items: {
         //0
-        {                      Prev: 5,                            EventMenu: &EvtPumpOnOff },
+        {                      Prev: 5,                            EventMenu: &OnOffMenuSetup },
         //1
-        { x: 0, y: 2,          Prev: 0,                            EventMenu: &EvtExit, PrintValue: true},
+        { x: 0, y: 2,          Prev: 0,                            EventMenu: &EvtExit, PrintValue: true}, // FIXME
         //2
-        { x: 0, y: 3, Next: 3, Prev: 1,                            EventMenu: &EvtPumpTimeLeft, PrintValue: true},
+        { x: 0, y: 3, Next: 3, Prev: 1,                            EventMenu: &TimeLeftMenuSetup, PrintValue: true},
         //3
-        { x: 0, y: 4, Next: 4,                                     EventMenu: &EvtExit, PrintValue: true},
+        { x: 0, y: 4, Next: 4, /*Prev in PumpMenuSetup*/           EventMenu: &StartTimeMenuSetup, PrintValue: true},
         //4
-        { x: 0, y: 5, Next: 5, Prev: 3,                            EventMenu: &EvtExit, PrintValue: true},
+        { x: 0, y: 5, Next: 5, Prev: 3,                            EventMenu: &DurationMenuSetup, PrintValue: true},
         //5
         { x: 0, y: 7, Next: 0,          Text: (prog_char*)chrBack, EventMenu: &EvtExit },
     }
@@ -102,7 +121,8 @@ Menu_t PumpMenu = {
 
 Menu_t OnOffMenu = {
     Title: 0,
-    PrevMenu: &PumpMenu,
+    ParentMenu: &PumpMenu,
+    Setup: &OnOffMenuSetup,
     CurrentItem: 0,
     ItemCount: 3,
     Items: {
@@ -114,32 +134,53 @@ Menu_t OnOffMenu = {
 
 Menu_t TimeLeftMenu ={
     Title: 0,
-    PrevMenu: &PumpMenu,
+    ParentMenu: &PumpMenu,
+    Setup: &TimeLeftMenuSetup,
     CurrentItem: 1,
     ItemCount: 3,
     Items: {
         { x: 0, y: 2, Next: 1, Prev: 2, Text: (prog_char*)chrDaysLeft                                          },
-        { x: 3, y: 4, Next: 2, Prev: 2,                            EventMenu: &EvtTimeLeft, PrintValue: true },
+        { x: 3, y: 4, Next: 2, Prev: 2,                            EventMenu: &ToggleNumberEditEnable, MinValue: 1, MaxValue: 10, PrintValue: true },
+        { x: 2, y: 7, Next: 1, Prev: 1, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
+    }
+};
+
+Menu_t StartTimeMenu = {
+    Title: 0,
+    ParentMenu: &PumpMenu,
+    Setup: &StartTimeMenuSetup,
+    CurrentItem: 1,
+    ItemCount: 3,
+    Items: {
+        { x: 0, y: 2, Next: 1, Prev: 2, Text: (prog_char*)chrSetStartTime                                          },
+        { x: 3, y: 4, Next: 2, Prev: 2,                            EventMenu: &ToggleNumberEditEnable, MinValue: 1, MaxValue: 23, PrintValue: true },
+        { x: 2, y: 7, Next: 1, Prev: 1, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
+    }
+};
+
+Menu_t DurationMenu = {
+    Title: 0,
+    ParentMenu: &PumpMenu,
+    Setup: &DurationMenuSetup,
+    CurrentItem: 1,
+    ItemCount: 3,
+    Items: {
+        { x: 0, y: 2, Next: 1, Prev: 2, Text: (prog_char*)chrSetDuration                                          },
+        { x: 3, y: 4, Next: 2, Prev: 2,                            EventMenu: &ToggleNumberEditEnable, MinValue: 1, MaxValue: 250, PrintValue: true },
         { x: 2, y: 7, Next: 1, Prev: 1, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
     }
 };
 
 Menu_t *CurrentMenu;
 uint8_t CurrentPump;
-
-void DrawMenu(void);
-
+bool NeedToExit;
+bool EditEnabled = false;
 
 enum State_t EState;
 struct {
     uint16_t ExitTimer;
     bool AquaWasPressed;
 } EMenu;
-
-
-bool NeedToExit;
-bool EditEnabled = false;
-
 
 // ========================== Implementation ===================================
 FORCE_INLINE void Task_Menu(void) {
@@ -305,7 +346,7 @@ void SetState(enum State_t AState) {
 //    } // switch
 }
 
-// ============================== Events =======================================
+// ============================ Key Events =====================================
 void EVENT_AnyKey(void) {
     Beep(BEEP_SHORT);
     DelayReset(&EMenu.ExitTimer);
@@ -313,12 +354,14 @@ void EVENT_AnyKey(void) {
     if (EState == StIdle) EState = StBacklight;
 }
 
-// New life
 void EVENT_KeyUp(void) {
     if (EState != StMenu) return;
     // Increase value if needed
     if (EditEnabled) {
-        (*(CurrentMenu->Items[CurrentMenu->CurrentItem].Value))++;
+        if (*(CurrentMenu->Items[CurrentMenu->CurrentItem].Value) < CurrentMenu->Items[CurrentMenu->CurrentItem].MaxValue)
+                (*(CurrentMenu->Items[CurrentMenu->CurrentItem].Value))++;
+        else
+                *(CurrentMenu->Items[CurrentMenu->CurrentItem].Value) = CurrentMenu->Items[CurrentMenu->CurrentItem].MinValue;
         PumpsSettingsChanged = true;
     }
     //Main and Channel menu
@@ -329,16 +372,24 @@ void EVENT_KeyUp(void) {
     DrawMenu();
 }
 
-////case StSetPeriodLeft:
-////            if(Pumps[EMenu.Pump-1].PeriodLeft < 250) Pumps[EMenu.Pump-1].PeriodLeft++;
-////            SetState(StSetPeriodLeft);
-////            break;
 void EVENT_KeyDown(void) {
     if (EState != StMenu) return;
-    Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
-    CurrentMenu->CurrentItem = itm->Next;
+    //Decrease value if needed
+    if (EditEnabled) {
+        if (*(CurrentMenu->Items[CurrentMenu->CurrentItem].Value) > CurrentMenu->Items[CurrentMenu->CurrentItem].MinValue)
+                (*(CurrentMenu->Items[CurrentMenu->CurrentItem].Value))--;
+        else
+                *(CurrentMenu->Items[CurrentMenu->CurrentItem].Value) = CurrentMenu->Items[CurrentMenu->CurrentItem].MaxValue;
+        PumpsSettingsChanged = true;
+    }
+    //Main and Channel menu
+    else {
+        Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
+        CurrentMenu->CurrentItem = itm->Next;
+    }
     DrawMenu();
 }
+
 void EVENT_KeyMenu(void) {
     if (EState == StBacklight) {
         EState = StMenu;
@@ -348,40 +399,34 @@ void EVENT_KeyMenu(void) {
         Item_t *itm = &CurrentMenu->Items[CurrentMenu->CurrentItem];
         if (itm->EventMenu != 0) itm->EventMenu();
     }
-
-
 }
-
-
-
-
 
 // ============================== Item handlers ================================
-void MainmenuExit(void) {
+// Exits
+void MainMenuExit(void) {
     NeedToExit = true;
 }
-
-prog_char* WordForm (uint8_t N, MUnit_t MUnit) {
-    if (N >= 10 && N <= 20) {
-        return ((MUnit == muDays)? PSTR(" дней") : PSTR(" часов"));
-    }
-    while (N >= 10) N-=10;
-    if (N == 0 || (N > 4 && N < 10))
-        return ((MUnit == muDays)? PSTR(" дней") : PSTR(" часов"));
-    if (N == 1)
-        return ((MUnit == muDays)? PSTR(" день") : PSTR(" час"));
-    else
-        return ((MUnit == muDays)? PSTR(" дня") : PSTR(" часа"));
+void EvtExit(void) {
+    Menu_t *ParentMenu = CurrentMenu->ParentMenu;
+    EditEnabled = false;
+    ParentMenu->Setup();
 }
 
+// Menu setups
+void MainMenuSetup(void) {
+    CurrentMenu = &MainMenu;
+    DrawMenu();
+}
 void PumpMenuSetup(void) {
+    if (CurrentMenu == &MainMenu) PumpMenu.CurrentItem = 0;
+    CurrentMenu = &PumpMenu;
     CurrentPump = MainMenu.CurrentItem;
+
     CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
-    CurrentMenu->CurrentItem = 0;
     // On/Off
     PumpMenu.Items[0].Text = (Pumps[CurrentPump].Enabled)? PSTR("включен") : PSTR("отключен");
-    PumpMenu.Items[0].x = (Pumps[CurrentPump].Enabled )? 8 : 3;
-    PumpMenu.Items[0].y = (Pumps[CurrentPump].Enabled )? 0 : 3;
+    PumpMenu.Items[0].x    = (Pumps[CurrentPump].Enabled)? 8 : 3;
+    PumpMenu.Items[0].y    = (Pumps[CurrentPump].Enabled)? 0 : 3;
     //If pump is on
     if (Pumps[CurrentPump].Enabled) {
         PumpMenu.Items[0].Next = 1;
@@ -395,7 +440,7 @@ void PumpMenuSetup(void) {
             //Period Left
             PumpMenu.Items[2].Text = (prog_char*)&chrLeft;
             PumpMenu.Items[2].Value = &Pumps[CurrentPump].PeriodLeft;
-            PumpMenu.Items[2].TextAfterValue = WordForm(Pumps[CurrentPump].Period, muDays);
+            PumpMenu.Items[2].TextAfterValue = WordForm(Pumps[CurrentPump].PeriodLeft, muDays);
         }
         else {
             PumpMenu.Items[1].TextAfterValue = WordForm(Pumps[CurrentPump].Period, muHours);
@@ -409,6 +454,7 @@ void PumpMenuSetup(void) {
         PumpMenu.Items[3].Value = &Pumps[CurrentPump].StartHour;
         PumpMenu.Items[3].TextAfterValue = (prog_char*)&chrTime;
         PumpMenu.Items[4].Text = (prog_char*)&chrDuration;
+        PumpMenu.Items[4].Value = &Pumps[CurrentPump].Duration;
         PumpMenu.Items[4].TextAfterValue = (prog_char*)&chrSec;
 
         PumpMenu.Items[5].Prev = 4;
@@ -421,15 +467,10 @@ void PumpMenuSetup(void) {
         PumpMenu.Items[0].Next = 5;
         PumpMenu.Items[5].Prev = 0;
     }
-}
 
-void EvtMainPump(void) {
-    CurrentMenu = &PumpMenu;
-    if (CurrentMenu->Setup != 0) CurrentMenu->Setup();
     DrawMenu();
 }
-
-void EvtPumpOnOff(void) {
+void OnOffMenuSetup(void) {
     CurrentMenu = &OnOffMenu;
     CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
     if (Pumps[CurrentPump].Enabled) {
@@ -444,39 +485,61 @@ void EvtPumpOnOff(void) {
     }
     DrawMenu();
 }
+void TimeLeftMenuSetup(void) {
+    CurrentMenu = &TimeLeftMenu;
+    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
+    CurrentMenu->Items[1].Value = &Pumps[CurrentPump].PeriodLeft;
+    if (EditEnabled == false) {
+        CurrentMenu->Items[1].Text = (prog_char*)&chrSpace;
+        CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrSpace;
+    }
+    else {
+        CurrentMenu->Items[1].Text = (prog_char*)&chrBracketLeft;
+        CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrBracketRight;
+    }
+    DrawMenu();
+}
+void StartTimeMenuSetup(void) {
+    CurrentMenu = &StartTimeMenu;
+    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
+    CurrentMenu->Items[1].Value = &Pumps[CurrentPump].StartHour;
+    if (EditEnabled == false) {
+        CurrentMenu->Items[1].Text = (prog_char*)&chrSpace;
+        CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrTime;
+    }
+    else {
+        CurrentMenu->Items[1].Text = (prog_char*)&chrBracketLeft;
+        CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrTimeBracket;
+    }
+    DrawMenu();
+}
+void DurationMenuSetup (void) {
+    CurrentMenu = &DurationMenu;
+    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
+    CurrentMenu->Items[1].Value = &Pumps[CurrentPump].Duration;
+    if (EditEnabled == false) {
+        CurrentMenu->Items[1].Text = (prog_char*)&chrSpace;
+        CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrSec;
+    }
+    else {
+        CurrentMenu->Items[1].Text = (prog_char*)&chrBracketLeft;
+        CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrSecBracket;
+    }
+    DrawMenu();
+}
+
+
+// Parameters change events
 void EvtOnOff(void) {
     Pumps[CurrentPump].Enabled = !Pumps[CurrentPump].Enabled;
     PumpsSettingsChanged = true;
-    EvtPumpOnOff();
+    CurrentMenu->Setup();
 }
 
-void EvtExit(void) {
-    CurrentMenu = CurrentMenu->PrevMenu;
-    if (CurrentMenu->Setup != 0) CurrentMenu->Setup();
-    EditEnabled = false;
-    DrawMenu();
-}
-
-void EvtPumpTimeLeft(void) {
-    CurrentMenu = &TimeLeftMenu;
-    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
-    TimeLeftMenu.Items[1].Value = &Pumps[CurrentPump].PeriodLeft;
-    if (EditEnabled == false) {
-        TimeLeftMenu.Items[1].Text = (prog_char*)&chrSpace;
-        TimeLeftMenu.Items[1].TextAfterValue = (prog_char*)&chrSpace;
-    }
-    else {
-        TimeLeftMenu.Items[1].Text = (prog_char*)&chrBracketLeft;
-        TimeLeftMenu.Items[1].TextAfterValue = (prog_char*)&chrBracketRight;
-    }
-    DrawMenu();
-}
-
-void EvtTimeLeft(void) {
+void ToggleNumberEditEnable(void) {
     EditEnabled = !EditEnabled;
-    EvtPumpTimeLeft();
+    CurrentMenu->Setup();
 }
-
 
 //void EVENT_KeyUp(void) {
 //    switch(EState) {
@@ -755,8 +818,7 @@ void EvtTimeLeft(void) {
 //        default: break;
 //    } // switch
 //}
-
- void EVENT_KeyAquaPressed(void) {
+void EVENT_KeyAquaPressed(void) {
 //    if(IsPumping) return;   // Not allowed if pumping yet
 //    switch(EState) {
 //        case StShowChannel:
@@ -788,6 +850,22 @@ void EVENT_KeyAquaDepressed(void) {
 }
 
 // ============================= Inner use =====================================
+prog_char* WordForm (uint8_t N, MUnit_t MUnit) {
+    if ((N >= 10) && (N <= 20))
+        return ((MUnit == muDays)? PSTR(" дней") : PSTR(" часов"));
+
+    while (N >= 10) N-=10;
+
+    if ((N == 0) || ((N > 4) && (N < 10)))
+        return ((MUnit == muDays)? PSTR(" дней") : PSTR(" часов"));
+    if (N == 1)
+        return ((MUnit == muDays)? PSTR(" день") : PSTR(" час"));
+    else
+        return ((MUnit == muDays)? PSTR(" дня") : PSTR(" часа"));
+}
+
+
+
 // Highlight needed option
 void ShowChannelSummary() {
 //    // Pump number

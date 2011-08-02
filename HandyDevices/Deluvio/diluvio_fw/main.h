@@ -48,7 +48,7 @@ struct pump_t {
     uint8_t Period;
     uint8_t PeriodLeft;
     uint8_t StartHour;
-    uint16_t Duration;
+    uint8_t Duration;
     enum PumpState_t State;
     uint16_t Counter;
     uint8_t ID;
