@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# AvrStudio Solution File, Format Version 11.00
+Project("{D1100916-62DA-4D80-A9B4-55A1E7CCEEB3}") = "MagnetSword", "MagnetSword.avrgccproj", "{72EB6186-4B7B-4A4D-AD35-2A5D2E2F0113}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72EB6186-4B7B-4A4D-AD35-2A5D2E2F0113}.Debug|AVR.ActiveCfg = Debug|AVR
+		{72EB6186-4B7B-4A4D-AD35-2A5D2E2F0113}.Debug|AVR.Build.0 = Debug|AVR
+		{72EB6186-4B7B-4A4D-AD35-2A5D2E2F0113}.Release|AVR.ActiveCfg = Release|AVR
+		{72EB6186-4B7B-4A4D-AD35-2A5D2E2F0113}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
