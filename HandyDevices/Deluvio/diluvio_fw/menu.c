@@ -15,9 +15,10 @@ prog_char chrPumps[4][8] = {"Насос 1", "Насос 2", "Насос 3", "Насос 4"};
 prog_char chrSetTime[] = {MSG_MENU_SET_TIME};
 prog_char chrBack[] = "Назад";
 prog_char chrOnOff[4][11] = {"  Включен", "  Выключен", "* Включен", "* Выключен"};
-prog_char chrDaysHours[4][7] = {"days", "hours", "days *", "hours *"}; //FIXME  //can't add cyrillic on mac
+prog_char chrDaysHours[4][8] = {"  дней", "  часов", " [дней", " [часов"};
+
 prog_char chrPeriod[] = "Период ";
-prog_char chrSetPeriod[] = "Period"; //FIXME  //can't add cyrillic on mac
+prog_char chrSetPeriod[] = "Период полива";
 prog_char chrDaysShort[] = " д.";
 prog_char chrLeft[] = "Осталось:";
 prog_char chrDaysLeft[] = "Дней до полива:";
@@ -35,9 +36,6 @@ prog_char chrBracketLeft[] = "[";
 prog_char chrBracketRight[] = "]";
 
 // =============================== Types =======================================
-// Measure days&hours
-typedef enum {muDays, muHours} MUnit_t;
-
 typedef struct {
     uint8_t x, y;
     uint8_t Next, Prev;
@@ -76,12 +74,13 @@ void DurationMenuSetup (void);
 
 // Parameters change
 void EvtOnOff(void);
+void TogglePeriodMode(void);
 
 void ToggleNumberEditEnable(void);
 
 // Common
 void EvtExit(void);
-prog_char* WordForm (uint8_t N, MUnit_t MUnit);
+prog_char* WordForm (uint8_t N, PumpDelayMode_t MUnit);
 
 // ============================= Variables =====================================
 Menu_t MainMenu = {
@@ -140,13 +139,13 @@ Menu_t PeriodMenu = {
      ParentMenu: &PumpMenu,
      Setup: &PeriodMenuSetup,
      CurrentItem: 1,
-     ItemCount: 5,
+     ItemCount: 4,
      Items: {
          { x: 0, y: 2, Next: 1, Prev: 1, Text: (prog_char*)chrSetPeriod },
-         { x: 2, y: 3, Next: 2, Prev: 4,                                                EventMenu: &ToggleNumberEditEnable, MinValue: 1, MaxValue: 11, PrintValue: true},
-         { x: 5, y: 3, Next: 3, Prev: 1, /*Text in PeriodMenuSetup*/  EventMenu: &EvtExit},
-         { x: 5, y: 4, Next: 4, Prev: 1, /*Text in PeriodMenuSetup*/  EventMenu: &EvtExit},
-         { x: 2, y: 7, Next: 1, Prev: 3, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
+         { x: 2, y: 4, Next: 2, Prev: 3,                              EventMenu: &ToggleNumberEditEnable, MinValue: 1, MaxValue: 11, PrintValue: true},
+         { x: 5, y: 4, Next: 3, Prev: 1, /*Text in PeriodMenuSetup*/  EventMenu: &TogglePeriodMode},
+//         { x: 2, y: 5, Next: 4, Prev: 2, /*Text in PeriodMenuSetup*/  EventMenu: &TogglePeriodMode},
+         { x: 2, y: 7, Next: 1, Prev: 2, Text: (prog_char*)chrBack,   EventMenu: &EvtExit }
      }
 
 };
@@ -415,24 +414,44 @@ void OnOffMenuSetup(void) {
 
 void PeriodMenuSetup(void) {
     CurrentMenu = &PeriodMenu;
+    CurrentMenu->CurrentItem = 1;
     CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
+    CurrentMenu->Items[1].Value = &Pumps[CurrentPump].Period;
     //Set a number
-    if (PeriodMenu.CurrentItem == 1) {
-        if (EditEnabled == false) {
-             CurrentMenu->Items[1].Text = (prog_char*)&chrSpace;
-             CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrSpace;
+    if (CurrentMenu->CurrentItem == 1) {
+        if (EditEnabled) {
+            CurrentMenu->Items[1].Text = (prog_char*)&chrBracketLeft;
+            CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrBracketRight;
         }
         else {
-             CurrentMenu->Items[1].Text = (prog_char*)&chrBracketLeft;
-             CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrBracketRight;
+            CurrentMenu->Items[1].Text = (prog_char*)&chrSpace;
+            CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrSpace;
         }
-     //Set days-hours
-     CurrentMenu->Items[2].Text = PSTR("days");
-     CurrentMenu->Items[3].Text = PSTR("hours");
     }
-
+    //Set days-hours
+    if (CurrentMenu->CurrentItem == 2) {
+        if (EditEnabled) {
+            CurrentMenu->Items[2].Text = (prog_char*)&chrDaysHours[3];
+            CurrentMenu->Items[2].TextAfterValue = (prog_char*)&chrBracketRight;
+        }
+        else {
+            CurrentMenu->Items[2].Text = (prog_char*)&chrDaysHours[1];
+            CurrentMenu->Items[2].TextAfterValue = (prog_char*)&chrSpace;
+        }
+    }
+    else CurrentMenu->Items[2].Text = (Pumps[CurrentPump].DelayMode == ModeDays)? (prog_char*)&chrDaysHours[0] : (prog_char*)&chrDaysHours[1];
     DrawMenu();
 }
+//    if (Pumps[CurrentPump].DelayMode == ModeHours) {
+//        CurrentMenu->Items[2].Text = (prog_char*)chrDaysHours[2]; // marked, ON
+//        CurrentMenu->Items[3].Text = (prog_char*)chrDaysHours[1]; // not marked, OFF
+//    }
+//    else {
+//        CurrentMenu->Items[2].Text = (prog_char*)chrDaysHours[0]; // not marked, OFF
+//        CurrentMenu->Items[3].Text = (prog_char*)chrDaysHours[3]; // marked, ON
+//    }
+
+
 void TimeLeftMenuSetup(void) {
     CurrentMenu = &TimeLeftMenu;
     CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
@@ -484,6 +503,12 @@ void EvtOnOff(void) {
     CurrentMenu->Setup();
 }
 
+void TogglePeriodMode (void) {
+    if (Pumps[CurrentPump].DelayMode == ModeDays) Pumps[CurrentPump].DelayMode = ModeHours;
+    else Pumps[CurrentPump].DelayMode = ModeDays;
+    CurrentMenu->Setup();
+}
+
 void ToggleNumberEditEnable(void) {
     EditEnabled = !EditEnabled;
     CurrentMenu->Setup();
@@ -491,18 +516,18 @@ void ToggleNumberEditEnable(void) {
 
 
 // ============================= Inner use =====================================
-prog_char* WordForm (uint8_t N, MUnit_t MUnit) {
+prog_char* WordForm (uint8_t N, PumpDelayMode_t MUnit) {
     if ((N >= 10) && (N <= 20))
-        return ((MUnit == muDays)? PSTR(" дней") : PSTR(" часов"));
+        return ((MUnit == ModeDays)? PSTR(" дней") : PSTR(" часов"));
 
     while (N >= 10) N-=10;
 
     if ((N == 0) || ((N > 4) && (N < 10)))
-        return ((MUnit == muDays)? PSTR(" дней") : PSTR(" часов"));
+        return ((MUnit == ModeDays)? PSTR(" дней") : PSTR(" часов"));
     if (N == 1)
-        return ((MUnit == muDays)? PSTR(" день") : PSTR(" час"));
+        return ((MUnit == ModeDays)? PSTR(" день") : PSTR(" час"));
     else
-        return ((MUnit == muDays)? PSTR(" дня") : PSTR(" часа"));
+        return ((MUnit == ModeDays)? PSTR(" дня") : PSTR(" часа"));
 }
 
 //Old life

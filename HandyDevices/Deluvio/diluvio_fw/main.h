@@ -40,11 +40,11 @@
 #define WATER_SNS_OFF() WATER_SNS_PORT &= ~(1<<WATER_PWR_P)
 #define WATER_SNS_ON()  WATER_SNS_PORT |=  (1<<WATER_PWR_P)
 
-enum PumpDelayMode_t {ModeDays, ModeHours};
+typedef enum {ModeDays, ModeHours} PumpDelayMode_t;
 enum PumpState_t {PmpIdle, PmpMustPump, PmpBeeping, PmpPumping};
 struct pump_t {
     bool Enabled;
-    enum PumpDelayMode_t DelayMode;
+    PumpDelayMode_t DelayMode;
     uint8_t Period;
     uint8_t PeriodLeft;
     uint8_t StartHour;
