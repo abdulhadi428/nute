@@ -13,6 +13,7 @@
 // ============================= Strings =======================================
 prog_char chrPumps[4][8] = {"Насос 1", "Насос 2", "Насос 3", "Насос 4"};
 prog_char chrSetTime[] = {MSG_MENU_SET_TIME};
+prog_char chrMenuSetTime[] = {MSG_SET_CORRECT_TIME};
 prog_char chrBack[] = "Назад";
 prog_char chrOnOff[4][11] = {"  Включен", "  Выключен", "* Включен", "* Выключен"};
 prog_char chrDaysHours[4][8] = {"  дней", "  часов", " [дней", " [часов"};
@@ -28,6 +29,7 @@ prog_char chrDuration[] = "Поливать ";
 prog_char chrSetDuration[] = "Длительность";
 prog_char chrTime[] = ":00 ";
 prog_char chrTimeBracket[] = ":00]";
+prog_char chrColon[] = ":";
 prog_char chrSec[] = " с";
 prog_char chrSecBracket[] = " с]";
 
@@ -65,6 +67,7 @@ void MainMenuExit(void);
 
 // Menu setup
 void MainMenuSetup(void);
+void SetTimeMenuSetup(void);
 void PumpMenuSetup(void);
 void OnOffMenuSetup(void);
 void PeriodMenuSetup(void);
@@ -94,8 +97,25 @@ Menu_t MainMenu = {
         { x: 2, y: 2, Next: 2, Prev: 0, Text: (prog_char*)chrPumps[1], EventMenu: &PumpMenuSetup },
         { x: 2, y: 3, Next: 3, Prev: 1, Text: (prog_char*)chrPumps[2], EventMenu: &PumpMenuSetup },
         { x: 2, y: 4, Next: 4, Prev: 2, Text: (prog_char*)chrPumps[3], EventMenu: &PumpMenuSetup },
-        { x: 2, y: 5, Next: 5, Prev: 3, Text: (prog_char*)chrSetTime,  EventMenu: 0},
+        { x: 2, y: 5, Next: 5, Prev: 3, Text: (prog_char*)chrSetTime,  EventMenu: &SetTimeMenuSetup },
         { x: 2, y: 7, Next: 0, Prev: 4, Text: (prog_char*)chrBack,     EventMenu: &MainMenuExit }
+    }
+};
+
+Menu_t SetTimeMenu = {
+    Title: 0,
+    ParentMenu: &MainMenu,
+    CurrentItem: 1,
+    Setup: &SetTimeMenuSetup,
+    ItemCount: 4,
+    Items: {
+        { x: 0, y: 1, Next: 1, Prev: 1, Text: (prog_char*)chrMenuSetTime, EventMenu:0 },
+        //set hours
+        { x: 4, y: 4, Next: 2, Prev: 3,                             EventMenu: &ToggleNumberEditEnable, MinValue: 0, MaxValue: 23, PrintValue: true },
+        //set minutes
+        { x: 9, y: 4, Next: 3, Prev: 1,                             EventMenu: &ToggleNumberEditEnable, MinValue: 0, MaxValue: 59,  PrintValue: true },
+        //exit
+        { x: 0, y: 7, Next: 1, Prev: 2, Text: (prog_char*)chrBack,  EventMenu: &EvtExit },
     }
 };
 
@@ -107,9 +127,9 @@ Menu_t PumpMenu = {
     ItemCount: 6,
     Items: {
         //0
-        {                              Prev: 5,                            EventMenu: &OnOffMenuSetup },
+        {                      Prev: 5,                            EventMenu: &OnOffMenuSetup },
         //1
-        { x: 0, y: 2,              Prev: 0,                            EventMenu: &PeriodMenuSetup, PrintValue: true}, // FIXME
+        { x: 0, y: 2,          Prev: 0,                            EventMenu: &PeriodMenuSetup, PrintValue: true}, // FIXME
         //2
         { x: 0, y: 3, Next: 3, Prev: 1,                            EventMenu: &TimeLeftMenuSetup, PrintValue: true},
         //3
@@ -342,6 +362,44 @@ void MainMenuSetup(void) {
     CurrentMenu = &MainMenu;
     DrawMenu();
 }
+
+void SetTimeMenuSetup(void) {
+    CurrentMenu = &SetTimeMenu;
+    CurrentMenu->Items[1].Value = &Time.Hour;
+    CurrentMenu->Items[1].Text = (prog_char*)&chrSpace;
+    CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrSpace;
+    CurrentMenu->Items[2].Value = &Time.Minute;
+    CurrentMenu->Items[2].Text = (prog_char*)&chrSpace;
+    CurrentMenu->Items[2].TextAfterValue = (prog_char*)&chrSpace;
+    if ((CurrentMenu->CurrentItem == 1) && (EditEnabled)) {
+            CurrentMenu->Items[1].Text = (prog_char*)&chrBracketLeft;
+            CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrBracketRight;
+    }
+    if ((CurrentMenu->CurrentItem == 2) && (EditEnabled)) {
+            CurrentMenu->Items[2].Text = (prog_char*)&chrBracketLeft;
+            CurrentMenu->Items[2].TextAfterValue = (prog_char*)&chrBracketRight;
+    }
+
+    DrawMenu();
+
+}
+
+//        case StSetTimeHours:
+//            if(Time.Hour == 0) Time.Hour = 23;
+//            else Time.Hour--;
+//            LCD_PrintTime(PRINT_TIME_X, 4, true, false, false);
+//            break;
+//        case StSetTimeMinTens:
+//            if(Time.Minute < 10) Time.Minute += 50;
+//            else Time.Minute -= 10;
+//            LCD_PrintTime(PRINT_TIME_X, 4, false, true, false);
+//            break;
+//        case StSetTimeMinUnits:
+//           if(TimeGetMinuteUnits() == 0) Time.Minute += 9;
+//            else Time.Minute--;
+//            LCD_PrintTime(PRINT_TIME_X, 4, false, false, true);
+//            break;
+
 void PumpMenuSetup(void) {
     if (CurrentMenu == &MainMenu) PumpMenu.CurrentItem = 0;
     CurrentMenu = &PumpMenu;
@@ -359,16 +417,16 @@ void PumpMenuSetup(void) {
         PumpMenu.Items[1].Text = (prog_char*)&chrPeriod;
         PumpMenu.Items[1].Value = &Pumps[CurrentPump].Period;
         if (Pumps[CurrentPump].DelayMode == ModeDays) {
-            PumpMenu.Items[1].TextAfterValue = WordForm(Pumps[CurrentPump].Period, muDays);
+            PumpMenu.Items[1].TextAfterValue = WordForm(Pumps[CurrentPump].Period, ModeDays);
             PumpMenu.Items[1].Next = 2;
             PumpMenu.Items[3].Prev = 2;
             //Period Left
             PumpMenu.Items[2].Text = (prog_char*)&chrLeft;
             PumpMenu.Items[2].Value = &Pumps[CurrentPump].PeriodLeft;
-            PumpMenu.Items[2].TextAfterValue = WordForm(Pumps[CurrentPump].PeriodLeft, muDays);
+            PumpMenu.Items[2].TextAfterValue = WordForm(Pumps[CurrentPump].PeriodLeft, ModeDays);
         }
         else {
-            PumpMenu.Items[1].TextAfterValue = WordForm(Pumps[CurrentPump].Period, muHours);
+            PumpMenu.Items[1].TextAfterValue = WordForm(Pumps[CurrentPump].Period, ModeHours);
             //Don't show PeriodLeft if PeriodMode is hours
             PumpMenu.Items[2].Text = 0;
             PumpMenu.Items[1].Next = 3;
@@ -412,7 +470,7 @@ void OnOffMenuSetup(void) {
     DrawMenu();
 }
 
-void PeriodMenuSetup(void) {
+void PeriodMenuSetup(void) {   //FIXME
     CurrentMenu = &PeriodMenu;
     CurrentMenu->CurrentItem = 1;
     CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
