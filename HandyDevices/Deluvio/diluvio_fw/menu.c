@@ -16,6 +16,7 @@ prog_char chrSetTime[] = {MSG_MENU_SET_TIME};
 prog_char chrBack[] = "Назад";
 prog_char chrOnOff[4][11] = {"  Включен", "  Выключен", "* Включен", "* Выключен"};
 prog_char chrDaysHours[4][8] = {"  дней", "  часов", " [дней", " [часов"};
+prog_char chrPump[] = "Насос";
 
 prog_char chrPeriod[] = "Период ";
 prog_char chrSetPeriod[] = "Период полива";
@@ -173,15 +174,13 @@ Menu_t PeriodMenu = {
 };
 
 Menu_t TimeLeftMenu = {
-    Title: 0,
     ParentMenu: &PumpMenu,
     Setup: &TimeLeftMenuSetup,
-    CurrentItem: 1,
-    ItemCount: 3,
+    CurrentItem: 0,
+    ItemCount: 2,
     Items: {
-        { x: 0, y: 2, Next: 1, Prev: 2, Text: (prog_char*)chrDaysLeft                                          },
-        { x: 3, y: 4, Next: 2, Prev: 2,                            EventMenu: &ToggleNumberEditEnable, MinValue: 1, MaxValue: 10, PrintValue: true },
-        { x: 2, y: 7, Next: 1, Prev: 1, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
+        { x: 3, y: 4, Next: 1, Prev: 1, EventMenu: &ToggleNumberEditEnable, MinValue: 0, MaxValue: 10, PrintValue: true },
+        { x: 2, y: 7, Next: 0, Prev: 0, EventMenu: &EvtExit }
     }
 };
 
@@ -197,15 +196,13 @@ Menu_t StartTimeMenu = {
 };
 
 Menu_t DurationMenu = {
-    Title: 0,
     ParentMenu: &PumpMenu,
     Setup: &DurationMenuSetup,
-    CurrentItem: 1,
-    ItemCount: 3,
+    CurrentItem: 0,
+    ItemCount: 2,
     Items: {
-        { x: 0, y: 2, Next: 1, Prev: 2, Text: (prog_char*)chrSetDuration                                          },
-        { x: 3, y: 4, Next: 2, Prev: 2,                            EventMenu: &ToggleNumberEditEnable, MinValue: 1, MaxValue: 250, PrintValue: true },
-        { x: 2, y: 7, Next: 1, Prev: 1, Text: (prog_char*)chrBack, EventMenu: &EvtExit }
+        { x: 3, y: 4, Next: 1, Prev: 1, EventMenu: &ToggleNumberEditEnable, MinValue: 1, MaxValue: 250, PrintValue: true },
+        { x: 1, y: 7, Next: 0, Prev: 0, EventMenu: &EvtExit }
     }
 };
 
@@ -469,18 +466,23 @@ void PumpMenuSetup(void) {
 
 void OnOffMenuSetup(void) {
     CurrentMenu = &OnOffMenu;
-    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
+    // = Draw menu =
+    LCD_Clear();
+    // Title
+    LCD_PrintString_P(0, 0, PSTR("Насос "), false);
+    LCD_PrintUint(7, 0, (CurrentPump+1), false);
+    // Items
     if (Pumps[CurrentPump].Enabled) {
         OnOffMenu.CurrentItem = 0;
-        OnOffMenu.Items[0].Text = (prog_char*)chrOnOff[2];  // Marked ON
-        OnOffMenu.Items[1].Text = (prog_char*)chrOnOff[1];  // Non-Marked OFF
+        LCD_PrintString_P(0, 3, PSTR("* Включен"), (CurrentMenu->CurrentItem == 0));
+        LCD_PrintString_P(0, 4, PSTR("  Выключен"), (CurrentMenu->CurrentItem == 1));
     }
     else {
         OnOffMenu.CurrentItem = 1;
-        OnOffMenu.Items[0].Text = (prog_char*)chrOnOff[0];  // Non-Marked ON
-        OnOffMenu.Items[1].Text = (prog_char*)chrOnOff[3];  // Marked OFF
+        LCD_PrintString_P(0, 3, PSTR("  Включен"), (CurrentMenu->CurrentItem == 0));
+        LCD_PrintString_P(0, 4, PSTR("* Выключен"), (CurrentMenu->CurrentItem == 1));
     }
-    DrawMenu();
+    LCD_PrintString_P(1, 7, PSTR("Назад"), (CurrentMenu->CurrentItem == 2));
 }
 
 void PeriodMenuSetup(void) {   //FIXME
@@ -525,17 +527,22 @@ void PeriodMenuSetup(void) {   //FIXME
 
 void TimeLeftMenuSetup(void) {
     CurrentMenu = &TimeLeftMenu;
-    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
-    CurrentMenu->Items[1].PValue = &Pumps[CurrentPump].PeriodLeft;
-    if (EditEnabled == false) {
-        CurrentMenu->Items[1].Text = (prog_char*)&chrSpace;
-        CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrSpace;
+    //Values to edit
+    CurrentMenu->Items[0].PValue = &Pumps[CurrentPump].PeriodLeft;
+    // = Draw menu =
+    LCD_Clear();
+    FlickerDisable();
+    //Title
+    LCD_PrintString_P(0, 0, PSTR("Насос "), false);
+    LCD_PrintUint(7, 0, (CurrentPump+1), false);
+    LCD_PrintString_P(0, 2, PSTR("Дней до полива:"), false);
+    //Items
+    LCD_PrintUint(5, 4, (Pumps[CurrentPump].PeriodLeft), (CurrentMenu->CurrentItem == 0));
+    if (EditEnabled) {
+        FlickerEnableValuePText(5, 4, (Pumps[CurrentPump].PeriodLeft), 0);
     }
-    else {
-        CurrentMenu->Items[1].Text = (prog_char*)&chrBracketLeft;
-        CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrBracketRight;
-    }
-    DrawMenu();
+    LCD_PrintString_P(1, 7, PSTR("Назад"), (CurrentMenu->CurrentItem == 1));
+
 }
 void StartTimeMenuSetup(void) {
     CurrentMenu = &StartTimeMenu;
@@ -547,7 +554,7 @@ void StartTimeMenuSetup(void) {
     FlickerDisable();
     // Not changing
     fx = LCD_PrintString_P(0, 0, PSTR("Насос "), false);
-    LCD_PrintUint(fx, 0, CurrentPump, false);
+    LCD_PrintUint(fx, 0, (CurrentPump+1), false);
     LCD_PrintString_P(0, 2, PSTR("Время полива"), false);
     // Items
     uint8_t FValue = *CurrentMenu->Items[0].PValue;
@@ -557,21 +564,29 @@ void StartTimeMenuSetup(void) {
         LCD_PrintString_P(fx, 4, PSTR(":00"), (CurrentMenu->CurrentItem == 0));
     }
     // Back
-    LCD_PrintString_P(2, 7, PSTR("Назад"), (CurrentMenu->CurrentItem == 1));
+    LCD_PrintString_P(1, 7, PSTR("Назад"), (CurrentMenu->CurrentItem == 1));
 }
 void DurationMenuSetup (void) {
     CurrentMenu = &DurationMenu;
-    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
-    CurrentMenu->Items[1].PValue = &Pumps[CurrentPump].Duration;
-    if (EditEnabled == false) {
-        CurrentMenu->Items[1].Text = (prog_char*)&chrSpace;
-        CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrSec;
+    //Value to edit
+    CurrentMenu->Items[0].PValue = &Pumps[CurrentPump].Duration;
+    // = Draw menu =
+    uint8_t fx;
+    LCD_Clear();
+    FlickerDisable();
+    // Title
+    LCD_PrintString_P(0, 0, PSTR("Насос"), false);
+    LCD_PrintUint(7, 0, (CurrentPump+1), false);
+    LCD_PrintString_P(0, 2, PSTR("Длительность"), false);
+    // Items
+    fx = LCD_PrintUint(4, 4, Pumps[CurrentPump].Duration, (CurrentMenu->CurrentItem == 0));
+    LCD_PrintString_P(fx, 4, PSTR(" c"), (CurrentMenu->CurrentItem == 0));
+    if (EditEnabled) {
+        FlickerEnableValuePText(4, 4, Pumps[CurrentPump].Duration, PSTR(" c"));
     }
-    else {
-        CurrentMenu->Items[1].Text = (prog_char*)&chrBracketLeft;
-        CurrentMenu->Items[1].TextAfterValue = (prog_char*)&chrSecBracket;
-    }
-    DrawMenu();
+    // Back
+    LCD_PrintString_P(1, 7, PSTR("Назад"), (CurrentMenu->CurrentItem == 1));
+
 }
 
 
