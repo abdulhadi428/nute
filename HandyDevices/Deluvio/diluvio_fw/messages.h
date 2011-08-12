@@ -29,7 +29,6 @@
 #define MSG_WATER_OK            "               "
 
 // Time
-#define MSG_SET_CORRECT_TIME    "Установите время"
 #define MSG_MENU_SET_TIME       "Время  "
 #define MSG_SET_TIME_HOURS      "Измените часы"
 #define MSG_SET_TIME_MINUTES    "Измените минуты"

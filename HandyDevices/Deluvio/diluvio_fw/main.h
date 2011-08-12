@@ -71,9 +71,5 @@ void CheckBattery(void);
 
 void Task_Sleep(void);
 
-void EVENT_NewMinute(void);
-void EVENT_NewHour(void);
-void EVENT_NewDay(void);
-
 #endif	/* MAIN_H */
 

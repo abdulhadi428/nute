@@ -18,22 +18,10 @@
 #define MENU_EXIT_TIMEOUT   7000
 
 // ============================ Types ==========================================
-
-
-
 // States
-enum State_t {StIdle, StBacklight, StMenu, StMainMenu, StShowChannel, StOfferSetTime, StShowBattery, StManualAqua, \
-StSetEnable, StSetPeriodType, StSetPeriodValue, StSetPeriodLeft, StSetStartTime, StSetDuration, \
-StSetTimeHours, StSetTimeMinTens, StSetTimeMinUnits, StExit, StScreenSetEnable, StScreenSetEnableExit};
+enum State_t {StIdle, StBacklight, StMenu};
 
 extern enum State_t EState;
-
-// Main menu items
-enum iMainMenu_t {mmiPump1, mmiPump2, mmiPump3, mmiPump4, mmiSetTime, mmiExit};
-//Channel menu items
-enum iPumpMenu_t {pmiOnOff, pmiPeriodTypeValue, pmiPeriodLeft, pmiStartTime, pmiDuration, pmiExit, \
-pmiIsOn, pmiIsOff
-};
 
 // ============================ Prototypes =====================================
 void Task_Menu(void);

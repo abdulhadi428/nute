@@ -1,6 +1,4 @@
 #include "time.h"
-#include "main.h"
-#include "menu.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
@@ -19,36 +17,36 @@ void TimeInit(void) {
 
     // Setup initial values
     Time.Second = 0;
-    Time.Minute = 36;
-    Time.Hour = 18;
+    Time.MinTens = 3;
+    Time.MinUnits = 6;
+    Time.Hour = 9;
     Time.IsSetCorrectly = false;    // At start-up, time is not set
-}
-
-uint8_t TimeGetMinuteUnits(void) {
-    uint8_t Result = Time.Minute;
-    while(Result >= 10) Result -= 10;
-    return Result;
+    Time.FlowEnabled = true;
 }
 
 // =========================== Interrupts ======================================
 // Time counter
 ISR(TIMER2_OVF_vect) {
     wdt_enable(WDTO_1S);
-    if((EState == StSetTimeHours) || (EState == StSetTimeMinTens) || (EState == StSetTimeMinUnits)) return;
+    if(!Time.FlowEnabled) return;
     Time.SecondPassed = true;
     Time.Second++;
     if(Time.Second > 59) {
         Time.Second = 0;
-        Time.Minute++;
-        if(Time.Minute > 59) { // 24 HyperMinutes in one hour
-            Time.Minute = 0;
-            Time.Hour++;
-            if(Time.Hour > 23) {
-                Time.Hour = 0;
-                EVENT_NewDay();
-            }
-            EVENT_NewHour();
-        } // if minute > 59
+        Time.MinUnits++;
+        if(Time.MinUnits > 9) {
+            Time.MinUnits = 0;
+            Time.MinTens++;
+            if(Time.MinTens > 5) {
+                Time.MinTens = 0;
+                Time.Hour++;
+                if(Time.Hour > 23) {
+                    Time.Hour = 0;
+                    EVENT_NewDay();
+                }
+                EVENT_NewHour();
+            } // if(Time.MinTens > 5)
+        } // if MinUnits > 59
         EVENT_NewMinute();
     }// Second
     EVENT_NewSecond();

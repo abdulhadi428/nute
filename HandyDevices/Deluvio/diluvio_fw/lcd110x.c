@@ -54,7 +54,7 @@ uint8_t LCD_PrintString_P (const uint8_t x, const uint8_t y, const char *S, bool
     }
     return fx;
 }
-void LCD_PrintString (const uint8_t x, const uint8_t y, const char *S, bool AInvert) {
+void LCD_PrintString (const uint8_t x, const uint8_t y, char *S, bool AInvert) {
     LCD_GotoXYstr(x, y);
     while (*S != '\0')
         LCD_DrawChar(*S++, AInvert);
@@ -77,7 +77,7 @@ void LCD_DrawImage(const uint8_t x, const uint8_t y, prog_uint8_t *I, bool AInve
 uint8_t LCD_PrintUint(const uint8_t x, const uint8_t y, uint16_t ANumber, bool AInvert) {
     uint8_t digit = '0', fx=x;
     bool ShouldPrint = false;
-    const uint16_t FArr[9] = {10000, 1000, 100, 10};
+    const uint16_t FArr[4] = {10000, 1000, 100, 10};
     LCD_GotoXYstr(x, y);
     // Iterate until ANumber > 10
     for(uint8_t i=0; i<4; i++) {
@@ -117,30 +117,14 @@ void LCD_PrintUint0_99(const uint8_t x, const uint8_t y, uint8_t ANumber, bool A
     LCD_DrawChar('0'+ANumber, AInvert);
 }
 
-
-
-void LCD_PrintTime(uint8_t x, uint8_t y, bool InvertHours, bool InvertMinTens, bool InvertMinUnits) {
-    LCD_GotoXYstr(x, y);
-    // Print hours
-    uint8_t t = Time.Hour;
-    uint8_t digit = '0';
-    while(t >= 10) {
-        digit++;
-        t -= 10;
-    }
-    LCD_DrawChar(digit, InvertHours);
-    LCD_DrawChar('0'+t, InvertHours);
-    // Print delimiter
-    LCD_DrawChar(':', false);
-    // Print minutes
-    t = Time.Minute;
-    digit = '0';
-    while(t >= 10) {
-        digit++;
-        t -= 10;
-    }
-    LCD_DrawChar(digit, InvertMinTens);
-    LCD_DrawChar('0'+t, InvertMinUnits);
+void LCD_PrintTime(uint8_t x, uint8_t y) {
+    uint8_t fx=x;
+    // Offset hour by one ' ' if hour < 10 (workaround one and two digit)
+    if (Time.Hour < 10) fx = LCD_PrintString_P(x, y, PSTR(" "), false);
+    fx = LCD_PrintUint(fx, y, Time.Hour, false);
+    fx = LCD_PrintString_P(fx, y, PSTR(":"), false);
+    fx = LCD_PrintUint(fx, y, Time.MinTens, false);
+    LCD_PrintUint(fx, y, Time.MinUnits, false);
 }
 
 // ============================= Special =======================================

@@ -246,12 +246,17 @@ FORCE_INLINE void EVENT_NewSecond(void) {
 }
 FORCE_INLINE void EVENT_NewMinute(void) {
     if (((EState == StIdle) || (EState == StBacklight)) && POWER_OK()) {
-        LCD_PrintTime(PRINT_TIME_X, PRINT_TIME_Y, false, false, false);
+        LCD_PrintTime(PRINT_TIME_X, PRINT_TIME_Y);
         CheckBattery();
         // Beep if needed
         if(!WaterOk || !BatteryOk || !Time.IsSetCorrectly) {
             // Beep every 15 minutes
-            if ((Time.Minute == 1) || (Time.Minute == 15) || (Time.Minute == 30) || (Time.Minute == 45)) {
+            if (
+                ((Time.MinTens == 0) && (Time.MinUnits == 1)) ||    // 01, not 00 for not ot mess with pumping
+                ((Time.MinTens == 1) && (Time.MinUnits == 5)) ||    // 15
+                ((Time.MinTens == 3) && (Time.MinUnits == 0)) ||    // 30
+                ((Time.MinTens == 4) && (Time.MinUnits == 5))       // 45
+            ) {
                 Beep(BEEP_LONG);
                 MustSleep = false;   // Get out of sleep cycle in Sleep_Task to beep correctly
             } // if time
