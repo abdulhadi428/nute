@@ -148,7 +148,6 @@ Menu_t OnOffMenu = {
     Title: 0,
     ParentMenu: &PumpMenu,
     Setup: &OnOffMenuSetup,
-    CurrentItem: 0,
     ItemCount: 3,
     Items: {
         { x: 0, y: 3, Next: 1, Prev: 2,                            EventMenu: &EvtOnOff},
@@ -414,16 +413,25 @@ void PumpMenuSetup(void) {
     if (CurrentMenu == &MainMenu) PumpMenu.CurrentItem = 0;
     CurrentMenu = &PumpMenu;
     CurrentPump = MainMenu.CurrentItem;
-
-    CurrentMenu->Title = (prog_char*)&chrPumps[CurrentPump];
+    // = Draw menu =
+    LCD_Clear();
+    FlickerDisable();
+    //Title
+    LCD_PrintString_P(0, 0, PSTR("Насос "), false);
+    LCD_PrintUint(6, 0, (CurrentPump+1), false);
     // On/Off
-    PumpMenu.Items[0].Text = (Pumps[CurrentPump].Enabled)? PSTR("включен") : PSTR("отключен");
-    PumpMenu.Items[0].x    = (Pumps[CurrentPump].Enabled)? 8 : 3;
-    PumpMenu.Items[0].y    = (Pumps[CurrentPump].Enabled)? 0 : 3;
+//    PumpMenu.Items[0].Text = (Pumps[CurrentPump].Enabled)? PSTR("включен") : PSTR("отключен");
+//    PumpMenu.Items[0].x    = (Pumps[CurrentPump].Enabled)? 8 : 3;
+//    PumpMenu.Items[0].y    = (Pumps[CurrentPump].Enabled)? 0 : 3;
     //If pump is on
     if (Pumps[CurrentPump].Enabled) {
         PumpMenu.Items[0].Next = 1;
+        // On/Off
+        LCD_PrintString_P(8, 0, PSTR("включен"), (CurrentMenu->CurrentItem == 0));
         // Period setup
+
+
+
         PumpMenu.Items[1].Text = (prog_char*)&chrPeriod;
         PumpMenu.Items[1].PValue = &Pumps[CurrentPump].Period;
         if (Pumps[CurrentPump].DelayMode == ModeDays) {
@@ -472,16 +480,18 @@ void OnOffMenuSetup(void) {
     LCD_PrintString_P(0, 0, PSTR("Насос "), false);
     LCD_PrintUint(7, 0, (CurrentPump+1), false);
     // Items
-    if (Pumps[CurrentPump].Enabled) {
-        OnOffMenu.CurrentItem = 0;
-        LCD_PrintString_P(0, 3, PSTR("* Включен"), (CurrentMenu->CurrentItem == 0));
-        LCD_PrintString_P(0, 4, PSTR("  Выключен"), (CurrentMenu->CurrentItem == 1));
-    }
-    else {
-        OnOffMenu.CurrentItem = 1;
-        LCD_PrintString_P(0, 3, PSTR("  Включен"), (CurrentMenu->CurrentItem == 0));
-        LCD_PrintString_P(0, 4, PSTR("* Выключен"), (CurrentMenu->CurrentItem == 1));
-    }
+    LCD_PrintString_P(0, 3, PSTR("* Включен"), (CurrentMenu->CurrentItem == 0));
+    LCD_PrintString_P(0, 4, PSTR("  Выключен"), (CurrentMenu->CurrentItem == 1));
+//    if (Pumps[CurrentPump].Enabled) {
+//        OnOffMenu.CurrentItem = 0;
+//        LCD_PrintString_P(0, 3, PSTR("* Включен"), (CurrentMenu->CurrentItem == 0));
+//        LCD_PrintString_P(0, 4, PSTR("  Выключен"), (CurrentMenu->CurrentItem == 1));
+//    }
+//    else {
+//        OnOffMenu.CurrentItem = 1;
+//        LCD_PrintString_P(0, 3, PSTR("  Включен"), (CurrentMenu->CurrentItem == 0));
+//        LCD_PrintString_P(0, 4, PSTR("* Выключен"), (CurrentMenu->CurrentItem == 1));
+//    }
     LCD_PrintString_P(1, 7, PSTR("Назад"), (CurrentMenu->CurrentItem == 2));
 }
 
@@ -541,7 +551,7 @@ void TimeLeftMenuSetup(void) {
     if (EditEnabled) {
         FlickerEnableValuePText(5, 4, (Pumps[CurrentPump].PeriodLeft), 0);
     }
-    LCD_PrintString_P(1, 7, PSTR("Назад"), (CurrentMenu->CurrentItem == 1));
+    LCD_PrintString_P(2, 7, PSTR("Назад"), (CurrentMenu->CurrentItem == 1));
 
 }
 void StartTimeMenuSetup(void) {
