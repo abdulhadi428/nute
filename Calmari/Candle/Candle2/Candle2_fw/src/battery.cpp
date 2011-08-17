@@ -18,12 +18,13 @@ void Battery_t::Init() {
     IsCharging = false;
     ADCState = ADCNoMeasure;
     ADC_REF_ENABLE();
+    ADC_START_MEASUREMENT();    // first dummy measurement
+    Delay.Reset(&ADCTimer);
 }
 void Battery_t::Shutdown() {
     ADC_DISABLE();
     ADC_REF_DISABLE();
-    ADC_START_MEASUREMENT();
-    _delay_ms(270);
+    BAT_CHRG_PORT &= ~(1<<BAT_CHRG_P);  // switch pull-up off
 }
 
 void Battery_t::Task() {

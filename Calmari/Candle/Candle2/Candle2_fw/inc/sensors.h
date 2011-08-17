@@ -74,8 +74,8 @@ enum KeysEnabled_t {keAll, keOnOff, keDisable};
 
 class Keys_t {
 private:
-    Key_t Key[4];
-    uint16_t Timer;
+    Key_t Key[3];
+    uint16_t Timer, CalibrationTimer;
     KeysEnabled_t Enabled;
 public:
     void Init(void);
@@ -93,7 +93,6 @@ void Task_Sensors(void);
 void EVENT_KeyDown(void);
 void EVENT_KeyUp(void);
 void EVENT_KeyOnOff(void);
-void EVENT_KeyLit(void);
 
 
 #endif	/* SENSORS_H */

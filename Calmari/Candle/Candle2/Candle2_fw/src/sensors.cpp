@@ -15,7 +15,6 @@ Keys_t EKeys;
 uint16_t Measure0(void);
 uint16_t Measure1(void);
 uint16_t Measure2(void);
-uint16_t Measure3(void);
 
 // =========================== Implementation ==================================
 void Keys_t::Init(void) {
@@ -29,17 +28,18 @@ void Keys_t::Init(void) {
     Key[1].Measure    = &Measure1;
     Key[2].EventPress = &EVENT_KeyOnOff;
     Key[2].Measure    = &Measure2;
-    Key[3].EventPress = &EVENT_KeyLit;
-    Key[3].Measure    = &Measure3;
     // Calibrate
-    for (uint8_t i=0; i<4; i++) Key[i].Calibrate();
+    for (uint8_t i=0; i<3; i++) Key[i].Calibrate();
 }
 
 void Keys_t::Task(void) {
     if (Enabled == keDisable) return;
+    if (Delay.Elapsed(&CalibrationTimer, 9000)) {   // Calibrate
+        for (uint8_t i=0; i<3; i++) Key[i].Calibrate();
+    }
     if(!Delay.Elapsed(&Timer, KEY_MEASUREMENT_PERIOD)) return;
 
-    for (uint8_t i=0; i<4; i++) {
+    for (uint8_t i=0; i<3; i++) {
         // Measure
         if ((Enabled == keOnOff) && (i != 2)) continue; // Work with only OnOff key
         Key[i].CapValue = Key[i].Measure();
@@ -114,6 +114,4 @@ uint16_t Measure1(void) {
 uint16_t Measure2(void) {
     MEASURE_F(KEY2_SNS, KEY2_SNSK, KEY2_DDR, KEY2_PORT, KEY2_PIN);
 }
-uint16_t Measure3(void) {
-    MEASURE_F(KEY3_SNS, KEY3_SNSK, KEY3_DDR, KEY3_PORT, KEY3_PIN);
-}
+

@@ -15,11 +15,12 @@
 #define BAT_CHRG_PORT       PORTC
 #define BAT_CHRG_PIN        PINC
 
+// Timings
 #define BAT_CHARGE_T        801
 #define ADC_MEASURE_T       999
 #define ADC_PREPARE_T       50
 
-#define BAT_U_DISCHARGED    703
+#define BAT_U_DISCHARGED    780 // 3.6 V
 
 // Enable ADC, no IRQ, CLK/8 = 1 Mhz/8 = 125 kHz
 #define ADC_START_MEASUREMENT()     ADCSRA = (1<<ADEN)|(1<<ADSC)|(0<<ADATE)|(0<<ADIE)|(0<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)
@@ -36,12 +37,13 @@
 enum Bat_ADC_State_t {ADCNoMeasure, ADCInit, ADCMeasuring};
 
 class Battery_t {
+private:
     uint16_t ChargeTimer, ADCTimer;
     uint8_t MeasuresCounter;
-    uint16_t ADCValue;
     Bat_ADC_State_t ADCState;
     bool IsChargingSignalled(void) { return bit_is_clear (BAT_CHRG_PIN, BAT_CHRG_P); }
 public:
+    uint16_t ADCValue;
     bool IsCharging;
     void Init(void);
     void Shutdown(void);
