@@ -50,9 +50,9 @@ void GeneralInit(void) {
     PORTB = (0<<KEY_P)|(1<<LED_P); // P-Channel transistor, GND-pulled key
 
     // Init LED
-    ELED.PWMDesired = PWM_START_VALUE;    // Light-up at power-on
+    ELED.PWMDesired = 0;
     ELED.PWM = 0;
-    ELED.IsOn = true;
+    ELED.IsOn = true;       // Light-up at power-on
     // ADC
     EADC.Measuring = false;
     // Key
@@ -158,9 +158,6 @@ FORCE_INLINE void EVENT_KeyPressed(void) {
     }
     else {
         ELED.IsOn = true;
-        // Left existing PWM if key pressed during fade-out
-        if (ELED.PWM > PWM_START_VALUE) ELED.PWMDesired = ELED.PWM;
-        else ELED.PWMDesired = PWM_START_VALUE;
     }
 }
 

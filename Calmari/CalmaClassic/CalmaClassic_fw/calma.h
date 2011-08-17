@@ -22,7 +22,6 @@
 
 // Light constants
 #define PWM_MAX             250
-#define PWM_START_VALUE     45  // Initial LED brightness
 #define PWM_STEPOVER1       36  // Where to switch to quick PWM change mode
 #define PWM_STEPOVER2       54
 
@@ -39,7 +38,8 @@
 //#define ILedNominal         372 // 20 mA @ 1.1V ARef, 1R0
 //#define ILedNominal         465 // 25 mA @ 1.1V ARef, 1R0
 //#define ILedNominal         640 // 800 mA @ 2.56V ARef, 0R1
-#define ILedNominal         279 // 150 mA @ 1V1 ARef, 0R1
+//#define ILedNominal         279 // 150 mA @ 1V1 ARef, 0R1
+#define ILedNominal         223 // 120 mA @ 1V1 ARef, 0R1
 
 // 1.1 V reference w/o capacitor, not left-adjusted, channel dif ADC2-ADC3 x20
 #define CALMA_ADMUX         ((0<<REFS2)|(1<<REFS1)|(0<<REFS0)|(0<<ADLAR)|(0<<MUX3)|(1<<MUX2)|(1<<MUX1)|(1<<MUX0))
