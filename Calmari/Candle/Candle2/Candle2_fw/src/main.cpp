@@ -47,7 +47,6 @@ void GeneralInit(void) {
 void Shutdown (void) {
     ELight.IsOn = false;
     ELight.SetDesiredColor(0, 0, 0);
-    EKeys.DisableAllButOnOff();
 }
 
 // ============================== Tasks ========================================
@@ -82,35 +81,34 @@ void Light_t::Task() {
 // ============================= Events ========================================
 void EVENT_KeyDown(void) {
     UARTSendString("Down\r");
+    if (!ELight.IsOn) return;
     if (ELight.Indx == 0) return;
     ELight.Indx--;
     ELight.SetTableColor();
 }
 void EVENT_KeyUp(void) {
     UARTSendString("Up\r");
+    if (!ELight.IsOn) return;
     if (ELight.Indx == (COLOR_COUNT-1)) return;
     ELight.Indx++;
     ELight.SetTableColor();
 }
-void EVENT_KeyOnOff(void) {
-    UARTSendString("OnOff\r");
+void EVENT_KeyBoth(void) {
+    UARTSendString("Both\r");
     if (ELight.IsOn) {
         Shutdown();
     }
     else {
         ELight.IsOn = true;
         ELight.SetTableColor();
-        EKeys.EnableAll();
     }
 }
 
 // ==== Battery ====
 void EVENT_ChargeStarted(void) {
-    EKeys.DisableAll();
     ELight.Ramp = RampUp;
 }
 void EVENT_ChargeEnded(void) {
-    EKeys.EnableAll();
     ELight.Ramp = RampDown;
     Shutdown();
 }
