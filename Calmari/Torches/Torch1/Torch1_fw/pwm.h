@@ -10,23 +10,36 @@
 
 #include "inttypes.h"
 #include "stm32l1xx_tim.h"
+#include "system_stm32l1xx.h"
 
-#define PWM_MAX 250
+// Timer setup constants
+#define PWM_MAX         2000     // Equals to Period
+#define PWM_FREQ        999     // Hz
+#define PWM_PRESCALER   (uint16_t)((SystemCoreClock / (PWM_FREQ * PWM_MAX)) - 1)
+
+
+enum PwmState_t {psRampUp, psRampDown};
 
 class Pwm_t {
 private:
     uint16_t IPwm, IPwmDesired;
-    uint32_t ITimer;
-    void Set(uint8_t APWM) { TIM_SetCompare4(TIM4, APWM); }
-    bool MayChange(void);
-    void Init(void);
+    uint32_t ITicker;
+    void Set(uint16_t APWM) { TIM_SetCompare4(TIM4, APWM); }
+
 public:
-    void RampUp(void)   { IPwmDesired = PWM_MAX; }
-    void RampDown(void) { IPwmDesired = 0; }
+    PwmState_t State;
+    void Init(void);
+    void RampUp(void)    { IPwmDesired = PWM_MAX; State = psRampUp;   }
+    void RampDown(void)  { IPwmDesired = 0;       State = psRampDown; }
     bool IsReached(void) { return (IPwm == IPwmDesired); }
-    void Task(void);
+    void IrqHandler(void);
 };
 
 extern Pwm_t Pwm;
+
+// Declare Timer IRQ. Use externC to make it visible from asm file.
+extern "C" {
+void TIM4_IRQHandler(void);
+}
 
 #endif /* PWM_H_ */

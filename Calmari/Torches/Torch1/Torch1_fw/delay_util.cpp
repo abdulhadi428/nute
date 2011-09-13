@@ -7,7 +7,7 @@ Delay_t Delay;
 // =============================== Implementation ==============================
 
 void Delay_t::Init(void) {
-//    // Interrupt config
+    // Interrupt config
     NVIC_InitTypeDef NVIC_InitStructure;
     NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;

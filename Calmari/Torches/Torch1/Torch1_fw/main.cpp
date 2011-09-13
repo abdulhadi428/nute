@@ -49,22 +49,22 @@ int main(void) {
     // Delay init
     Delay.Init();
 
+    Pwm.Init();
     Pwm.RampUp();
 
     // ==== Main cycle ====
     while (1) {
-        Pwm.Task();
-
-        if (Pwm.IsReached()) Pwm.RampDown();
-
-//        TSL_Action();
-//        if ((TSL_GlobalSetting.b.CHANGED) && (TSLState == TSL_IDLE_STATE)) {
-//            TSL_GlobalSetting.b.CHANGED = 0;
-//            if (KEY_DETECTED()) {
-//                UART_PrintString("Key\r");
-//                //GPIOB->ODR ^= GPIO_Pin_7;
-//                //GPIO_ResetBits(GPIOB, GPIO_Pin_7);
-//            }
-//        }
+        //GPIOA->ODR ^= GPIO_Pin_2;
+        TSL_Action();
+        if ((TSL_GlobalSetting.b.CHANGED) && (TSLState == TSL_IDLE_STATE)) {
+            TSL_GlobalSetting.b.CHANGED = 0;
+            if (KEY_DETECTED()) {
+                UART_PrintString("Key\r");
+                if (Pwm.State == psRampDown) Pwm.RampUp();
+                else Pwm.RampDown();
+                //GPIOB->ODR ^= GPIO_Pin_7;
+                //GPIO_ResetBits(GPIOB, GPIO_Pin_7);
+            }
+        }
     } // while
 }

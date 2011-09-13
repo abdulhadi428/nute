@@ -140,7 +140,7 @@
 
 #define SCKEY_P1_CH   (CH1) /**< Possible values are CH1, CH2, CH3 and CH4 */
 
-#define SCKEY_P1_A  (GROUP2)
+#define SCKEY_P1_A  (GROUP1)
 #define SCKEY_P1_B  (0)
 #define SCKEY_P1_C  (0)
 #define SCKEY_P1_D  (0)
@@ -297,7 +297,7 @@
 #define SCKEY_RECALIBRATIONTHRESHOLD_DEFAULT       (-10)  /**< Single channel key calibration threshold (value from -1 to -128) */
 
 // Single-channel keys Acquisition values limits
-#define SCKEY_MIN_ACQUISITION                       (50)  /**< Single channel key minimum acquisition value */
+#define SCKEY_MIN_ACQUISITION                       (18)  /**< Single channel key minimum acquisition value */
 #define SCKEY_MAX_ACQUISITION                     (3000)  /**< Single channel key maximum acquisition value */
 
 /** @} SCKeys_Parameters */

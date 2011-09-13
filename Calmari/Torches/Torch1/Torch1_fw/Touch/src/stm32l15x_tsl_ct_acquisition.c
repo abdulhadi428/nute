@@ -4520,7 +4520,8 @@ void TSL_IO_Clamp(void)
 #endif
 
   /* Wait a while for a good discharging of all capacitors */
-  wait(100); // ~25탎 with fHCLK = 32MHz
+//  wait(100); // ~25탎 with fHCLK = 32MHz
+  wait(6); // ~25탎 with fHCLK = 2MHz
 
   /* Open the analog switches */
 #ifdef COMP1
@@ -4611,7 +4612,8 @@ void TSL_IO_Acquisition_P1(void)
 #endif
 
   /* Wait a while for a good discharging of all capacitors */
-  wait(50); // ~14탎 with fHCLK = 32MHz
+  //wait(50); // ~14탎 with fHCLK = 32MHz
+  wait(3); // ~14탎 with fHCLK = 2MHz
 
   /* All IO in input floating */
 
@@ -4952,7 +4954,8 @@ void TSL_IO_Acquisition_P2(void)
 #endif
 
   /* Wait a while for a good discharging of all capacitors */
-  wait(50); // ~14탎 with fHCLK = 32MHz
+  //wait(50); // ~14탎 with fHCLK = 32MHz
+  wait(3); // ~14탎 with fHCLK = 2MHz
 
   /* All IO in input floating */
 
@@ -5314,7 +5317,8 @@ void TSL_IO_Acquisition_P3(void)
 #endif
 
   /* Wait a while for a good discharging of all capacitors */
-  wait(50); // ~14탎 with fHCLK = 32MHz
+  //wait(50); // ~14탎 with fHCLK = 32MHz
+  wait(3); // ~14탎 with fHCLK = 2MHz
 
   /* All IO in input floating */
 
