@@ -297,7 +297,7 @@
 #define SCKEY_RECALIBRATIONTHRESHOLD_DEFAULT       (-10)  /**< Single channel key calibration threshold (value from -1 to -128) */
 
 // Single-channel keys Acquisition values limits
-#define SCKEY_MIN_ACQUISITION                       (18)  /**< Single channel key minimum acquisition value */
+#define SCKEY_MIN_ACQUISITION                       (1)  /**< Single channel key minimum acquisition value */
 #define SCKEY_MAX_ACQUISITION                     (3000)  /**< Single channel key maximum acquisition value */
 
 /** @} SCKeys_Parameters */
@@ -364,9 +364,9 @@
                                                 the acquisition sequence */
 
 // Capacitance Loading Waiting HIGH Time Adjustment
-#define CLWHTA                             (1)  /**< Waiting time during capacitor charging: value from 0 to 50 (= 1.56탎 @ 32MHz) */
+#define CLWHTA                             (0)  /**< Waiting time during capacitor charging: value from 0 to 50 (= 1.56탎 @ 32MHz) */
 // Capacitance Loading Waiting LOW Time Adjustment
-#define CLWLTA                             (1)  /**< Waiting time during transfer phase: value from 0 to 50 (= 1.56탎 @ 32MHz) */
+#define CLWLTA                             (0)  /**< Waiting time during transfer phase: value from 0 to 50 (= 1.56탎 @ 32MHz) */
 
 // Spread spectrum
 #define SPREAD_SPECTRUM                    (0)  /**< Spread spectrum enabled (=1) */

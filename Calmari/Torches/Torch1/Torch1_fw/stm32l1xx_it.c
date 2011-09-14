@@ -1,11 +1,11 @@
 /**
   ******************************************************************************
-  * @file    Project/STM32L1xx_StdPeriph_Template/stm32l1xx_it.c 
+  * @file    Project/STM32L1xx_StdPeriph_Template/stm32l1xx_it.c
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    31-December-2010
   * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and 
+  *          This file provides template for all exceptions handler and
   *          peripherals interrupt service routine.
   ******************************************************************************
   * @attention
@@ -19,7 +19,7 @@
   *
   * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
   ******************************************************************************
-  */ 
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l1xx_it.h"
@@ -135,7 +135,7 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-  TSL_Timer_ISR();
+  //TSL_Timer_ISR();
 }
 
 /******************************************************************************/
@@ -156,7 +156,7 @@ void SysTick_Handler(void)
 
 /**
   * @}
-  */ 
+  */
 
 
 /******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

@@ -31,39 +31,21 @@ int main(void) {
 
     // ==== General ====
     UART_Init();
-    Delay.ms(7);
     UART_PrintString("Torch1\r");
-
-    // LED init
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
-    GPIO_InitTypeDef  GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_2;
-    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_OUT;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
-    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-    GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-    GPIO_SetBits(GPIOA, GPIO_Pin_2);
-
-    // Delay init
-    Delay.Init();
-
     Pwm.Init();
+//    Delay.ms(999);
+    //Pwm.RampDown();
     Pwm.RampUp();
 
     // ==== Main cycle ====
     while (1) {
-        //GPIOA->ODR ^= GPIO_Pin_2;
         TSL_Action();
         if ((TSL_GlobalSetting.b.CHANGED) && (TSLState == TSL_IDLE_STATE)) {
             TSL_GlobalSetting.b.CHANGED = 0;
             if (KEY_DETECTED()) {
-                UART_PrintString("Key\r");
+                // UART_PrintString("Key\r");
                 if (Pwm.State == psRampDown) Pwm.RampUp();
                 else Pwm.RampDown();
-                //GPIOB->ODR ^= GPIO_Pin_7;
-                //GPIO_ResetBits(GPIOB, GPIO_Pin_7);
             }
         }
     } // while
