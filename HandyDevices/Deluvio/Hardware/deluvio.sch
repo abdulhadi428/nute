@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 20/12/2010 14:51:39
+EESchema Schematic File Version 2  date 01/10/2011 22:02:44
 LIBS:Atmel_kl
 LIBS:Connectors_kl
 LIBS:display_kl
@@ -8,12 +8,13 @@ LIBS:Power_kl
 LIBS:Tittar_kl
 LIBS:Transistors_kl
 LIBS:deluvio-cache
-EELAYER 24  0
+EELAYER 25  0
 EELAYER END
 $Descr A3 16535 11700
+encoding utf-8
 Sheet 1 1
 Title ""
-Date "20 dec 2010"
+Date "1 oct 2011"
 Rev ""
 Comp ""
 Comment1 ""
@@ -21,6 +22,44 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Text Notes 3350 6800 0    60   ~ 12
+Change this to 1M
+Text Notes 1150 6350 0    60   ~ 0
+Tank-side\nconnector
+Text Notes 5150 7550 0    60   ~ 0
+LD1117 is incorrect. Use TPS71533 instead.
+$Comp
+L GND #PWR?
+U 1 1 4E8754E0
+P 8200 8350
+F 0 "#PWR?" H 8290 8330 30  0001 C CNN
+F 1 "GND" H 8200 8270 30  0001 C CNN
+	1    8200 8350
+	1    0    0    -1  
+$EndComp
+$Comp
+L TPS71533 DA?
+U 1 1 4E8754DF
+P 8200 7850
+F 0 "DA?" H 8050 8100 60  0000 C CNN
+F 1 "TPS71533" H 8200 8000 60  0000 C CNN
+	1    8200 7850
+	1    0    0    -1  
+$EndComp
+NoConn ~ 8300 8300
+NoConn ~ 8100 8300
+Wire Wire Line
+	8200 8300 8200 8350
+Connection ~ 1200 7400
+Wire Wire Line
+	800  7400 1300 7400
+Wire Wire Line
+	1100 7100 1300 7100
+Connection ~ 1200 7200
+Wire Wire Line
+	1200 7200 1200 7300
+Wire Wire Line
+	1200 7300 1300 7300
 Wire Wire Line
 	8950 6350 8250 6350
 Wire Wire Line
@@ -28,21 +67,21 @@ Wire Wire Line
 Wire Wire Line
 	5750 1500 5950 1500
 Wire Wire Line
-	1850 7100 2700 7100
+	2450 7100 3300 7100
 Wire Wire Line
-	1900 7900 1900 7400
+	2500 7900 2500 7400
 Wire Wire Line
-	1900 7400 1850 7400
+	2500 7400 2450 7400
 Wire Wire Line
-	1500 7800 1500 7900
+	2100 7800 2100 7900
 Wire Wire Line
-	1850 7000 2000 7000
+	2450 7000 2600 7000
 Wire Wire Line
-	1850 6900 2000 6900
+	2450 6900 2600 6900
 Wire Wire Line
-	1850 6800 2000 6800
+	2450 6800 2600 6800
 Wire Wire Line
-	1850 6700 2000 6700
+	2450 6700 2600 6700
 Wire Wire Line
 	7500 9800 7650 9800
 Wire Wire Line
@@ -109,9 +148,9 @@ Wire Wire Line
 	2750 9050 2650 9050
 Wire Wire Line
 	2800 9250 2700 9250
-Connection ~ 2600 7100
+Connection ~ 3200 7100
 Wire Wire Line
-	2600 7000 2600 7100
+	3200 7000 3200 7100
 Wire Wire Line
 	8400 5050 8250 5050
 Wire Wire Line
@@ -472,7 +511,7 @@ Wire Wire Line
 Wire Wire Line
 	8250 4950 8400 4950
 Wire Wire Line
-	2600 6500 2750 6500
+	3200 6500 3350 6500
 Wire Wire Line
 	2250 9050 2350 9050
 Connection ~ 2250 9250
@@ -565,19 +604,59 @@ Wire Wire Line
 Wire Wire Line
 	7200 10300 7200 10450
 Wire Wire Line
-	1850 7500 1900 7500
-Connection ~ 1900 7500
+	2450 7500 2500 7500
+Connection ~ 2500 7500
 Wire Wire Line
-	1850 7200 2100 7200
+	2450 7200 2700 7200
 Wire Wire Line
-	1850 7300 1900 7300
+	2450 7300 2500 7300
 Wire Wire Line
-	1900 7300 1900 7200
-Connection ~ 1900 7200
+	2500 7300 2500 7200
+Connection ~ 2500 7200
 Wire Wire Line
 	5950 1750 5750 1750
 Wire Wire Line
 	5950 2250 5750 2250
+Wire Wire Line
+	1200 7400 1200 7500
+Wire Wire Line
+	1200 7500 1300 7500
+Wire Wire Line
+	600  7100 600  7200
+Wire Wire Line
+	600  7200 1300 7200
+Wire Wire Line
+	850  6950 1200 6950
+Wire Wire Line
+	1200 6950 1200 7100
+Connection ~ 1200 7100
+Text Label 800  7400 0    60   ~ 0
+Sensor2
+Text Label 850  6950 0    60   ~ 0
+Sensor1
+Text Notes 850  6850 0    60   ~ 0
+Motors
+Text Notes 1000 7500 0    60   ~ 0
+GND
+$Comp
+L R R?
+U 1 1 4E8751CB
+P 850 7100
+F 0 "R?" V 930 7100 50  0000 C CNN
+F 1 "10k" V 850 7100 50  0000 C CNN
+	1    850  7100
+	0    -1   -1   0   
+$EndComp
+NoConn ~ 1650 7800
+$Comp
+L DB9 XL?
+U 1 1 4E87519F
+P 1650 7100
+F 0 "XL?" H 1550 7650 60  0000 C CNN
+F 1 "DB9" H 1900 7650 60  0000 C CNN
+	1    1650 7100
+	-1   0    0    -1  
+$EndComp
 $Comp
 L C C?
 U 1 1 4D073656
@@ -626,46 +705,46 @@ $EndComp
 $Comp
 L DB9 XL1
 U 1 1 4CE6FB84
-P 1500 7100
-F 0 "XL1" H 1400 7650 60  0000 C CNN
-F 1 "DB9" H 1750 7650 60  0000 C CNN
-	1    1500 7100
+P 2100 7100
+F 0 "XL1" H 2000 7650 60  0000 C CNN
+F 1 "DB9" H 2350 7650 60  0000 C CNN
+	1    2100 7100
 	1    0    0    -1  
 $EndComp
 $Comp
 L +BATT #PWR01
 U 1 1 4CE6FB66
-P 2100 7200
-F 0 "#PWR01" H 2100 7150 20  0001 C CNN
-F 1 "+BATT" H 2160 7240 30  0000 C CNN
-	1    2100 7200
+P 2700 7200
+F 0 "#PWR01" H 2700 7150 20  0001 C CNN
+F 1 "+BATT" H 2760 7240 30  0000 C CNN
+	1    2700 7200
 	1    0    0    -1  
 $EndComp
 $Comp
 L GND #PWR02
 U 1 1 4CE6F928
-P 1900 7900
-F 0 "#PWR02" H 1990 7880 30  0001 C CNN
-F 1 "GND" H 1900 7820 30  0001 C CNN
-	1    1900 7900
+P 2500 7900
+F 0 "#PWR02" H 2590 7880 30  0001 C CNN
+F 1 "GND" H 2500 7820 30  0001 C CNN
+	1    2500 7900
 	1    0    0    -1  
 $EndComp
 $Comp
 L GND #PWR03
 U 1 1 4CE6F921
-P 1500 7900
-F 0 "#PWR03" H 1590 7880 30  0001 C CNN
-F 1 "GND" H 1500 7820 30  0001 C CNN
-	1    1500 7900
+P 2100 7900
+F 0 "#PWR03" H 2190 7880 30  0001 C CNN
+F 1 "GND" H 2100 7820 30  0001 C CNN
+	1    2100 7900
 	1    0    0    -1  
 $EndComp
-Text Label 2000 6700 0    60   ~ 0
+Text Label 2600 6700 0    60   ~ 0
 CH1_OUT
-Text Label 2000 6800 0    60   ~ 0
+Text Label 2600 6800 0    60   ~ 0
 CH2_OUT
-Text Label 2000 6900 0    60   ~ 0
+Text Label 2600 6900 0    60   ~ 0
 CH3_OUT
-Text Label 2000 7000 0    60   ~ 0
+Text Label 2600 7000 0    60   ~ 0
 CH4_OUT
 Text Label 7650 9800 0    60   ~ 0
 CH1_OUT
@@ -1055,19 +1134,19 @@ F 1 "D_SHOTTKY" H 2500 9150 40  0000 C CNN
 	1    2500 9250
 	1    0    0    -1  
 $EndComp
-Text Label 2750 6500 0    60   ~ 0
-SensorPWR
+Text Label 3350 6500 0    60   ~ 0
+WATER_R
 $Comp
 L R R6
 U 1 1 4CD92F21
-P 2600 6750
-F 0 "R6" V 2680 6750 50  0000 C CNN
-F 1 "10k" V 2600 6750 50  0000 C CNN
-	1    2600 6750
+P 3200 6750
+F 0 "R6" V 3280 6750 50  0000 C CNN
+F 1 "1M" V 3200 6750 50  0000 C CNN
+	1    3200 6750
 	1    0    0    -1  
 $EndComp
 Text Label 8400 4950 0    60   ~ 0
-SensorPWR
+WATER_R
 NoConn ~ 2050 10250
 $Comp
 L BARREL_SOCKET XL8
@@ -1256,8 +1335,8 @@ F 1 "PWRCONN" H 1850 9550 40  0000 C CNN
 	1    1850 9350
 	1    0    0    -1  
 $EndComp
-Text Label 2700 7100 0    60   ~ 0
-WaterSensor
+Text Label 3300 7100 0    60   ~ 0
+WATER_IN
 $Comp
 L R R17
 U 1 1 4C472249
@@ -1874,7 +1953,7 @@ $EndComp
 Text Label 8450 5250 0    60   ~ 0
 BatterySensor
 Text Label 8400 5050 0    60   ~ 0
-WaterSensor
+WATER_IN
 $Comp
 L BUZZER BZ1
 U 1 1 4C44AF39
