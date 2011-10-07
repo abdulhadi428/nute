@@ -3,6 +3,7 @@
  * Author: Kreyl Laurelindo
  *
  * Created on 29-11-2010 г., 19:48
+ *
  */
 
 #include "main.h"
@@ -18,19 +19,19 @@
 #include "time.h"
 #include "menu.h"
 #include "battery.h"
-#include "messages.h"
 #include "images.h"
 
-struct pump_t Pumps[PUMP_COUNT];
+pump_t Pumps[PUMP_COUNT];
 bool IsPumping, PumpsSettingsChanged;
 bool MustSleep;
-volatile bool WaterOk = true, BatteryOk = false;
+volatile bool WaterOk = true, CableOk = true, BatteryOk = true;
 
 // =============================== Implementation ==============================
 int main(void) {
     GeneralInit();
     sei();
     EnterIdle();
+    CheckBattery();
 
     while(1) {
         if(POWER_OK()) {
@@ -58,20 +59,22 @@ int main(void) {
             } while(!POWER_OK());
             // Power restored, reinit all needed
             wdt_enable(WDTO_1S);
+            BatteryOk = true;
             LCD_Init();
             EnterIdle();
         }
     } // while(1)
-    return 0;
+    return 0;   // Calm compiler
 }
 
 FORCE_INLINE void GeneralInit(void) {
     wdt_enable(WDTO_1S);
     // Disable all unneeded
-    ACSR = (1<<ACD);
+    ACSR = (1<<ACD);    // Disable comparator
     DDRC  |=   (1<<PC0)|(1<<PC1);
     PORTC &= ~((1<<PC0)|(1<<PC1));
     DDRA  |=   (1<<PA2);
+    PWROK_DDR &= ~(1<<PWROK_P);
     PORTA &=  ~(1<<PA2);
     DDRD  |=   (1<<PD0)|(1<<PD1);
     PORTD &= ~((1<<PD0)|(1<<PD1));
@@ -89,17 +92,6 @@ FORCE_INLINE void GeneralInit(void) {
     DelayInit();
     BeepInit();
     TimeInit();
-    // Battery sensor init
-    PWROK_DDR &= ~(1<<PWROK_P);
-    BatteryMeasure();
-    BatteryOk = !BATTERY_OK();
-    // Water sensor
-    WATER_SNS_DDR &= ~(1<<WATER_SNS_P);
-    WATER_SNS_DDR |=  (1<<WATER_PWR_P);
-    WATER_SNS_ON(); // Force check water after start
-    _delay_us(9);
-    WaterOk = !WATER_OK();
-    WATER_SNS_OFF();
     // Pumps
     PUMP_DDR |= (1<<PUMP1P)|(1<<PUMP2P)|(1<<PUMP3P)|(1<<PUMP4P);
     PumpsLoad();
@@ -130,10 +122,10 @@ FORCE_INLINE void Task_Sleep(void) {
 void PumpOn(uint8_t APump) {
     IsPumping = true;
     switch (APump) {
-        case 1: PUMP_PORT |= (1<<PUMP1P); break;
-        case 2: PUMP_PORT |= (1<<PUMP2P); break;
-        case 3: PUMP_PORT |= (1<<PUMP3P); break;
-        case 4: PUMP_PORT |= (1<<PUMP4P); break;
+        case 0: PUMP_PORT |= (1<<PUMP1P); break;
+        case 1: PUMP_PORT |= (1<<PUMP2P); break;
+        case 2: PUMP_PORT |= (1<<PUMP3P); break;
+        case 3: PUMP_PORT |= (1<<PUMP4P); break;
         default:
             IsPumping = false;
             break;
@@ -162,7 +154,7 @@ FORCE_INLINE void Task_Pump(void) {
                 // Reset second counter
                 Time.SecondPassed = false;
                 Pumps[i].Counter = 0;
-                PumpOn(i+1);
+                PumpOn(i);
             }
         }
         // Check if time to shutdown
@@ -171,6 +163,8 @@ FORCE_INLINE void Task_Pump(void) {
                 Time.SecondPassed = false;
                 Pumps[i].Counter++;
                 if(Pumps[i].Counter >= Pumps[i].Duration) {
+                    // Check battery before shutdown
+                    CheckBattery();
                     PumpOffAll();
                     Pumps[i].State = PmpIdle;
                 }
@@ -194,40 +188,60 @@ void PumpsLoad(void) {
         Pumps[0].Duration = 30;
         Pumps[0].Period = 1;
         Pumps[0].PeriodLeft = 1;
-        Pumps[0].DelayMode = ModeHours;
+        Pumps[0].PeriodMode = ModeHours;
         PumpsSave();
     }   // if empty
     else
-        eeprom_read_block(&Pumps, 0, (PUMP_COUNT * sizeof(struct pump_t)));
+        eeprom_read_block(&Pumps, 0, (PUMP_COUNT * sizeof(pump_t)));
 }
 FORCE_INLINE void PumpsSave(void) {
     PumpsSettingsChanged = false;
-    eeprom_write_block(&Pumps, 0, (PUMP_COUNT * sizeof(struct pump_t)));
+    eeprom_write_block(&Pumps, 0, (PUMP_COUNT * sizeof(pump_t)));
 }
 
 // ===================== Check water and battery ===============================
 void CheckWater(void) {
     if(!POWER_OK()) return;
-    WATER_SNS_ON();
-    _delay_us(9);
-    // Check if water state changed
-    WaterOk = WATER_OK();
-    WATER_SNS_OFF();
-    if(WaterOk) LCD_PrintString_P(0, 0, PSTR(MSG_WATER_OK), false);
-    else        LCD_PrintString_P(0, 0, PSTR(MSG_NO_WATER), false);
+    WATER_SNS_DDR &= ~(1<<WATER_IN_P);  // Sensor input
+    WATER_SNS_DDR |=  (1<<WATER_R_P);   // Sensor R output
+    // Set R output HI
+    WATER_R_LO();
+    _delay_us(207);
+    // Check input
+    if (WATER_IN_IS_HI()) { // Hi when Lo => cable ok, water ok
+        WaterOk = true;
+        CableOk = true;
+        LCD_PrintString_P(0, 0, PSTR("               "), false);
+    }
+    else {
+        // IN is Lo => bad cable or no water
+        WATER_R_HI();
+        _delay_us(207);
+        // Check input
+        if (WATER_IN_IS_HI()) { // Lo when Lo and Hi when Hi => bad cable
+            CableOk = false;
+            LCD_PrintString_P(0, 0, PSTR("Кабель отключен"), false);
+        }
+        else { // Lo when Lo and Lo when Hi => cable ok, no water
+            WaterOk = false;
+            CableOk = true;
+            LCD_PrintString_P(0, 0, PSTR("В баке нет воды"), false);
+        }
+    }
+    WATER_SNS_DDR &= ~(1<<WATER_R_P);   // Sensor R input - to save power
 }
 void CheckBattery(void) {
     if(!POWER_OK()) return;
+    PWROK_DDR &= ~(1<<PWROK_P);
     BatteryMeasure();
-    // Check if battery state changed
     BatteryOk = BATTERY_OK();
     if(BatteryOk) {
-        LCD_PrintString_P(4, 1, PSTR(MSG_BATTERY_OK1), false);
-        LCD_PrintString_P(3, 2, PSTR(MSG_BATTERY_OK2), false);
+        LCD_PrintString_P(4, 1, PSTR("       "), false);
+        LCD_PrintString_P(3, 2, PSTR("         "), false);
     }
     else {
-        LCD_PrintString_P(4, 1, PSTR(MSG_BATTERY_DISCHARGED1), false);
-        LCD_PrintString_P(3, 2, PSTR(MSG_BATTERY_DISCHARGED2), false);
+        LCD_PrintString_P(4, 1, PSTR("Батарея"), false);
+        LCD_PrintString_P(3, 2, PSTR("разряжена"), false);
     }
 }
 
@@ -249,7 +263,7 @@ FORCE_INLINE void EVENT_NewMinute(void) {
         LCD_PrintTime(PRINT_TIME_X, PRINT_TIME_Y);
         CheckBattery();
         // Beep if needed
-        if(!WaterOk || !BatteryOk || !Time.IsSetCorrectly) {
+        if(!WaterOk || !CableOk || !BatteryOk || !Time.IsSetCorrectly) {
             // Beep every 15 minutes
             if (
                 ((Time.MinTens == 0) && (Time.MinUnits == 1)) ||    // 01, not 00 for not ot mess with pumping
@@ -269,9 +283,9 @@ FORCE_INLINE void EVENT_NewHour(void) {
     // Iterate pumps, switch on if needed
     for(uint8_t i=0; i<PUMP_COUNT; i++) if(Pumps[i].Enabled) {
         // Decrease PeriodLeft counter for hours mode
-        if(Pumps[i].DelayMode == ModeHours) if(Pumps[i].PeriodLeft > 0) Pumps[i].PeriodLeft--;
+        if(Pumps[i].PeriodMode == ModeHours) if(Pumps[i].PeriodLeft > 0) Pumps[i].PeriodLeft--;
         // Check if time to wake-up and pump
-        if((Pumps[i].PeriodLeft == 0) && ((Pumps[i].DelayMode == ModeHours) || (Pumps[i].StartHour == Time.Hour))) {
+        if((Pumps[i].PeriodLeft == 0) && ((Pumps[i].PeriodMode == ModeHours) || (Pumps[i].StartHour == Time.Hour))) {
             Pumps[i].State = PmpMustPump;
             Pumps[i].PeriodLeft = Pumps[i].Period;
             MustSleep = false;   // Get out of sleep cycle in Sleep_Task
@@ -282,5 +296,5 @@ FORCE_INLINE void EVENT_NewDay(void) {
     if((EState != StIdle) || !Time.IsSetCorrectly) return;
     // Decrease PeriodLeft counter for days mode
     for(uint8_t i=0; i<PUMP_COUNT; i++) if(Pumps[i].Enabled)
-        if(Pumps[i].DelayMode == ModeDays) if(Pumps[i].PeriodLeft > 0) Pumps[i].PeriodLeft--;
+        if(Pumps[i].PeriodMode == ModeDays) if(Pumps[i].PeriodLeft > 0) Pumps[i].PeriodLeft--;
 }

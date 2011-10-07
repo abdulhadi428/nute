@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   battery.h
  * Author: Kreyl Laurelindo
  *
@@ -21,7 +21,7 @@
 #define BAT_POWER_OF_MEASURES   3   // Power of 2
 #define BAT_NUMBER_OF_MEASURES  (1<<BAT_POWER_OF_MEASURES)
 
-#define BAT_U_DISCHARGED    616 // About 8 V
+#define BAT_U_DISCHARGED    828
 #define BAT_U_FULL          924 // About 12 V
 
 // ============================== Types ========================================

@@ -28,33 +28,35 @@
 #define PUMP3P      PA6
 #define PUMP4P      PA7
 // Max pump ON duration, s
-#define PUMP_MAX_DURATION   3600
+#define PUMP_MAX_DURATION   252
 
 // Water sensor
-#define WATER_SNS_DDR   DDRA
-#define WATER_SNS_PORT  PORTA
-#define WATER_SNS_PIN   PINA
-#define WATER_SNS_P     PA1
-#define WATER_PWR_P     PA0
-#define WATER_OK()      bit_is_set(WATER_SNS_PIN, WATER_SNS_P)
-#define WATER_SNS_OFF() WATER_SNS_PORT &= ~(1<<WATER_PWR_P)
-#define WATER_SNS_ON()  WATER_SNS_PORT |=  (1<<WATER_PWR_P)
+#define WATER_SNS_DDR    DDRA
+#define WATER_SNS_PORT   PORTA
+#define WATER_SNS_PIN    PINA
+#define WATER_IN_P       PA1
+#define WATER_R_P        PA0
 
-typedef enum {ModeDays, ModeHours} PumpDelayMode_t;
-enum PumpState_t {PmpIdle, PmpMustPump, PmpBeeping, PmpPumping};
-struct pump_t {
+#define WATER_IN_IS_HI() bit_is_set  (WATER_SNS_PIN, WATER_IN_P)
+#define WATER_IN_IS_LO() bit_is_clear(WATER_SNS_PIN, WATER_IN_P)
+#define WATER_R_LO()     WATER_SNS_PORT &= ~(1<<WATER_R_P)
+#define WATER_R_HI()     WATER_SNS_PORT |=  (1<<WATER_R_P)
+
+typedef enum {ModeDays, ModeHours} PumpPeriodMode_t;
+typedef enum {PmpIdle, PmpMustPump, PmpBeeping, PmpPumping} PumpState_t;
+typedef struct {
     bool Enabled;
-    PumpDelayMode_t DelayMode;
+    PumpPeriodMode_t PeriodMode;
     uint8_t Period;
     uint8_t PeriodLeft;
     uint8_t StartHour;
     uint8_t Duration;
-    enum PumpState_t State;
+    PumpState_t State;
     uint16_t Counter;
     uint8_t ID;
-};
+} pump_t;
 
-extern struct pump_t Pumps[PUMP_COUNT];
+extern pump_t Pumps[PUMP_COUNT];
 extern bool IsPumping, PumpsSettingsChanged;
 
 // ============================== Prototypes ===================================
