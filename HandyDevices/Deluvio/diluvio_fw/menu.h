@@ -15,7 +15,7 @@
 #define PRINT_TIME_Y    4
 
 // Time to get out of menu, ms
-#define MENU_EXIT_TIMEOUT   9000
+#define MENU_EXIT_TIMEOUT   18000
 
 // ============================ Types ==========================================
 // States

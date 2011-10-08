@@ -10,7 +10,7 @@
 #include "battery.h"
 
 // =============================== Types =======================================
-#define FLICKER_DELAY   207 // ms
+#define FLICKER_DELAY   522 // ms
 struct {
     bool IsHighlighted;
     char Text[17];
