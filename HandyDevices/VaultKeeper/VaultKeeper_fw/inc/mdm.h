@@ -18,7 +18,7 @@ private:
 
 public:
     void Init(void);
-
+    void SendSMSWithTime(char* AStrNumber, char *AMsg);
 };
 
 extern mdm_t Mdm;

@@ -7,6 +7,9 @@
 
 #include "sensors.h"
 #include "uart.h"
+#include "led.h"
+
+//#define SNS_VERBOSE
 
 WaterSns_t WaterSensor;
 
@@ -54,14 +57,44 @@ void WaterSns_t::Init() {
 void WaterSns_t::Task() {
     if(Delay.Elapsed(&SearchTimer, WATER_SEARCH_PERIOD)) {
         // Search for water
-        UART_PrintString("StC\r");
         ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+    }
+    // Handle event
+    if (WaterIsHere && !WaterWasHere) {
+        WaterWasHere = true;
+#ifdef SNS_VERBOSE
+        UART_PrintString("Water is here!\r");
+#endif
+        if (EVT_WaterHere != 0) EVT_WaterHere();
+    }
+    else if (!WaterIsHere && WaterWasHere) {
+        WaterWasHere = false;
+#ifdef SNS_VERBOSE
+        UART_PrintString("Water gone.\r");
+#endif
+    }
+}
+
+void WaterSns_t::IRQHandler() {
+    ADCValue = ADC_GetConversionValue(ADC1);
+#ifdef SNS_VERBOSE
+    UART_StrUint("ADC: ", WaterSensor.ADCValue);
+#endif
+    if (ADCValue <= WATER_THRESHOLD) {
+        Led.Blink();
+        ThresholdCounter++;
+        if (ThresholdCounter > WATER_COUNTER_MAX) {
+            ThresholdCounter = WATER_COUNTER_MAX;
+            WaterIsHere = true;
+        }
+    }
+    else {
+        if (ThresholdCounter == 0) WaterIsHere = false;
+        else ThresholdCounter--;
     }
 }
 
 // ============================= Interrupt ====================================
 void ADC1_2_IRQHandler(void) {
-    WaterSensor.ADCValue = ADC_GetConversionValue(ADC1);
-    UART_StrUint("EOC: ", WaterSensor.ADCValue);
-
+    WaterSensor.IRQHandler();
 }

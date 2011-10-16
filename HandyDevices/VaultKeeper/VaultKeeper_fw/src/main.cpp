@@ -9,12 +9,15 @@
 #include "delay_util.h"
 #include "mdm.h"
 #include "sensors.h"
+#include "led.h"
 #include "uart.h"
 
 void GeneralInit(void);
 void LedOn(void);
 void LedOff(void);
 void LedToggle(void);
+
+void EVENT_WaterHere(void);
 
 int main(void) {
     UART_Init();
@@ -23,13 +26,14 @@ int main(void) {
 
     GeneralInit();
 
-    uint32_t FTimr;
+    //uint32_t FTimr;
     // ==== Main cycle ====
     while(1) {
-        if(Delay.Elapsed(&FTimr, 400)) {
-            LedToggle();
-        }
+//        if(Delay.Elapsed(&FTimr, 999)) {
+//            LedToggle();
+//        }
         WaterSensor.Task();
+        Led.Task();
     } // while(1)
     return 0;
 }
@@ -42,6 +46,9 @@ void GeneralInit(void) {
 
     Delay.Init();
     WaterSensor.Init();
+    Led.Init();
+    WaterSensor.EVT_WaterHere = &EVENT_WaterHere;
+
     // Led
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -62,4 +69,7 @@ void LedToggle(void) {
 }
 
 // ================================== Events ===================================
-
+void EVENT_WaterHere(void) {
+    LedOn();
+    Mdm.SendSMSWithTime("+79169895800", "(!)Utechka: podval 45, blok 27");
+}
