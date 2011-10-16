@@ -48,8 +48,18 @@ void mdm_t::Init() {
 
     // ==== Setup modem ====
     // Cycle PowerKey
+    Delay.ms(999);
     PwrKeyLo();
     Delay.ms(999);
     PwrKeyHi();
 
+}
+
+void mdm_t::Send(char *AString) {
+    while (*AString != '\0') {
+        USART_SendData(USART2, *AString++);
+        // Loop until the end of transmission
+        while (USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
+    }
+    USART_SendData(USART2, '\r');   // Send CR (13 or 0x0D)
 }

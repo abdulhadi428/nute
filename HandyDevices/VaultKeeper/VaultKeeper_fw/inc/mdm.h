@@ -13,11 +13,16 @@
 
 class mdm_t {
 private:
+    // Pins operations
     void PwrKeyHi(void) { GPIOA->BSRR = GPIO_Pin_4; }
     void PwrKeyLo(void) { GPIOA->BRR  = GPIO_Pin_4; }
-
+    // UART operations
+    void Send(char *AString);
 public:
     void Init(void);
+    void EnterPowersave(void);
+    void PowerDown(void) { Send("AT+CFUN=0"); } // Enter minimum functionality
+    void PowerUp(void)   { Send("AT+CFUN=1"); } // Enter full functionality
     void SendSMSWithTime(char* AStrNumber, char *AMsg);
 };
 
