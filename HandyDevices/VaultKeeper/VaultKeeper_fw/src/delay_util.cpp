@@ -48,6 +48,11 @@ void Delay_t::ms(uint32_t Ams) {
     Loop(__ticks);
 }
 
+void Delay_t::us(uint32_t Aus) {
+    uint32_t __ticks = (SystemCoreClock * Aus)/ 10000000;
+    Loop(__ticks);
+}
+
 // ================================ Interrupts =================================
 // Delay counter
 void TIM2_IRQHandler(void) {

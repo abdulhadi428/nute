@@ -20,6 +20,7 @@ public:
     // Simple loop-based delays, no init needed
     void Loop (volatile uint32_t ACounter);
     void ms (uint32_t Ams);
+    void us (uint32_t Aus);
     // Interrupt-driven delays
     bool Elapsed(uint32_t *AVar, const uint32_t ADelay);
     void Reset  (uint32_t *AVar) { *AVar = TickCounter; }

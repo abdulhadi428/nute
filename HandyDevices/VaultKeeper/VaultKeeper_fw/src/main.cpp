@@ -48,6 +48,7 @@ void GeneralInit(void) {
     WaterSensor.Init();
     Led.Init();
     WaterSensor.EVT_WaterHere = &EVENT_WaterHere;
+    Mdm.Init();
 
     // Led
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
