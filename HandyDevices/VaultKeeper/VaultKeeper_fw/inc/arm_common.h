@@ -11,7 +11,7 @@
 #define FORCE_INLINE inline __attribute__ ((__always_inline__))
 
 // Common types
-typedef enum {erOK, erTimeout} Error_t;
+typedef enum {erOk, erTimeout, erError, erBuzy} Error_t;
 
 // Functional types
 typedef void(*ftVoid_Void)(void);

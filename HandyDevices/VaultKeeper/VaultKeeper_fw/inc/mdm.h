@@ -10,19 +10,24 @@
 #define MDM_H_
 
 #include "arm_common.h"
+#include <string.h>
 #include "misc.h"
 #include "stm32f10x_usart.h"
 
 
 // PA0=CTS, PA1=RTS, PA2=TX, PA3=RX, PA4=PWR_KEY
 
-#define MDM_BUF_SIZE    250
+#define MDM_LINE_LEN    54
+#define MDM_LINE_COUNT  4
 #define MDM_RX_TIMEOUT  450 // ms
 
 class mdm_t {
 private:
-    //uint8_t Buf[MDM_BUF_SIZE];
-    uint32_t RxCounter;
+    Error_t State;
+    bool NewLineReceived;
+    char Line[54];
+    uint8_t CharCounter;
+    Error_t Reply;
     // Init
     void GPIOInit(void);
     void USARTInit(void);
@@ -30,11 +35,13 @@ private:
     void PwrKeyHi(void) { GPIOA->BSRR = GPIO_Pin_4; }
     void PwrKeyLo(void) { GPIOA->BRR  = GPIO_Pin_4; }
     // UART operations
-    void SendString(const char *S);
-    Error_t ReceiveByte(uint8_t *AByte);
-    Error_t SendAndWaitOk(const char *S);
+    void SendString(char *S);
+    Error_t SendRequest(const char *ARequest);
+    Error_t SendAndWaitString(const char *ACmd, const char *AReply);
     void DisableRxIrq(void) { USART_ITConfig(USART2, USART_IT_RXNE, DISABLE); }
-    void EnableRxIrq (void) { USART_ClearFlag(USART2, USART_IT_RXNE); USART_ITConfig(USART2, USART_IT_RXNE, ENABLE); }
+    void EnableRxIrq (void) { USART_ITConfig(USART2, USART_IT_RXNE, ENABLE); }
+    // Card, call, sms
+    Error_t ProcessSIM(void);
 public:
     void Init(void);
     void EnterPowersave(void);
