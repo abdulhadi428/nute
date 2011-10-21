@@ -9,6 +9,7 @@
 #include "arm_common.h"
 #include "mdm.h"
 #include "delay_util.h"
+#include <stdlib.h>
 #include "uart.h"
 
 #define MDM_VERBOSE_IO
@@ -20,26 +21,37 @@ void mdm_t::Init() {
     PwrKeyHi();
     //BufLength = 0;
     USARTInit();
+    EnableRxIrq();
 
     // ==== Setup modem ====
     State = erBuzy;
     Delay.ms(1008);
     Error_t r = erError;
     while (r != erOk) {     // Try to setup modem
-        while (1) { // Cycle PwrKey and send AT
+        fRDY = false;
+        while (!fRDY) {     // Cycle PwrKey and send AT
             UART_PrintString("#\r");
+            fRDY = false;
             PwrKeyLo();
+            // Init variables
+            fCFUN = 0;
+            Cmd[0] = 0;
+            // Wait
             Delay.ms(540);
             PwrKeyHi();
             Delay.ms(540);
-            if(SendAndWaitString("AT", "OK") == erOk) break;
-            if(SendAndWaitString("AT", "OK") == erOk) break;
-            if(SendAndWaitString("AT", "OK") == erOk) break;
-        }
+            for(uint8_t i=0; i<4; i++) {
+                SendString("AT");
+                Delay.ms(7);
+                if (fRDY) break;
+            }
+        } // while !RDY
+        Delay.ms(720);
+        UART_PrintString("== Init ==\r");
         // Send initialization commands
-        //if(SendAndWaitString("ATE0", "OK") != erOk) return; // Echo off
-        if((r = SendAndWaitString("AT+IPR=9600", "OK")) != erOk) continue; // Setup speed
-        if((r = ProcessSIM()) != erOk) continue;
+        if((r = Command("AT+IPR=9600")) != erOk) continue;  // Setup speed
+        if((r = Command("AT+CPIN?"))    != erOk) continue;  // Get SIM state
+        //if((r = ProcessSIM()) != erOk) continue;
     } // while r
     UART_PrintString("Modem is ready\r");
     State = erOk;
@@ -62,11 +74,38 @@ Error_t mdm_t::ProcessSIM() {
 }
 
 // =========================== AT commands ====================================
+Error_t mdm_t::Command(const char *ACmd) {
+    strcpy(Cmd, ACmd);  // Valid echo needed
+    do {
+        fEchoRcvd = false;
+        fReply = flNone;
+        SendString(ACmd);
+        for (uint32_t i=0; i<MDM_RX_TIMEOUT; i++) {
+            Delay.ms(4);
+            if (fEchoRcvd) {    // Check fReply only if valid echo received
+                if (fReply == flOk) {
+                    UART_PrintString(" Ok\r");
+                    return erOk;
+                }
+                if (fReply == flError) {
+                    UART_PrintString(" Err\r");
+                    return erError;
+                }
+                if (fReply == flRepeatNeeded) {
+                    UART_PrintString(" Repeat Needed\r");
+                    Delay.ms(108);
+                    break;
+                }
+            } // if Echo rcvd
+        } // for
+    } while(fReply == flRepeatNeeded);
+    return erTimeout;
+}
+
 Error_t mdm_t::SendAndWaitString(const char *ACmd, const char *AReply) {
     Reply = erBuzy;
     CharCounter = 0;
     strcpy(Line, ACmd);
-    EnableRxIrq();
     SendString(Line);
     for (uint32_t i=0; i<MDM_RX_TIMEOUT; i++) {
         Delay.us(450);
@@ -145,7 +184,7 @@ Error_t mdm_t::SendRequest(const char *ARequest) {
     return erTimeout;
 }
 
-void mdm_t::SendString(char *S) {
+void mdm_t::SendString(const char *S) {
     //UART_Print('>');
     while (*S != '\0') {
         //UART_Print(*S);
@@ -154,6 +193,82 @@ void mdm_t::SendString(char *S) {
         while (USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
     }
     USART_SendData(USART2, '\r');   // Send CR (13 or 0x0D)
+}
+
+void mdm_t::ProcessRxLine(void) {
+    //UART_PrintString(Line);
+    //UART_NewLine();
+    char *S, c;
+    uint32_t k;
+    // Check RDY
+    if (fRDY == false) {
+        if (strcmp(Line, "RDY") == 0) {
+            UART_PrintString("> RDY rcvd\r");
+            fRDY = true;
+        }
+        return; // only RDY is an option
+    }
+    // Check if echo
+    if (strncmp(Line, "AT", 2) == 0) {
+        UART_PrintString("> Echo\r");
+        if (Cmd[0] != 0) {  // waiting for echo
+            if (strcmp(Line, Cmd) == 0) {
+                fEchoRcvd = true;
+                fReply = flNone;
+            }
+        }
+        return;
+    }
+    // Check OK/ERROR
+    if (fReply == flNone) {
+        if (strcmp(Line, "OK") == 0) {
+            //UART_PrintString("> OK rcvd\r");
+            fReply = flOk;
+            return;
+        }
+        if (strcmp(Line, "ERROR") == 0) {
+            //UART_PrintString("> ERR rcvd\r");
+            fReply = flError;
+            return;
+        }
+        if (strncmp(Line, "+CME ERROR:", 11) == 0) {
+            S = &Line[12];  // first char of number
+            k = atoi(S);
+            UART_StrUint(" cme err=", k);
+            ProcessCMEError(k);
+            return;
+        }
+
+    } // if flNone
+    // ==== Other stuff ====
+    // Functionality
+    if (strncmp(Line, "+CFUN:", 6) == 0) {
+        //UART_PrintString("> CFUN\r");
+        c = Line[7];
+        k = c - 48; // convert char to digit
+        if ((k==0) || (k==1) || (k==4)) {
+            fCFUN = (uint8_t)k;
+            UART_StrUint(" cfun=", k);
+        }
+        return;
+    }
+
+
+}
+
+void mdm_t::ProcessCMEError(uint32_t AErr) {
+    switch (AErr) {
+        // SIM
+        case 10:    // SIM not inserted
+        case 11:    // SIM failure
+            fReply = flError;
+            break;
+        case 14:    // SIM busy
+            fReply = flRepeatNeeded;
+            break;
+
+        default: break;
+    } // switch
 }
 
 // ================================ Low-level =================================
@@ -212,8 +327,11 @@ void mdm_t::IRQHandler() {
     if (b == '\n') return;  // ignore LF
     if (b == '\r') {
         if (CharCounter != 0) {
-            Line[CharCounter] = 0;  // line end
-            Reply = erOk;
+            Line[CharCounter] = 0;  // \0 at line end
+            // Process received line
+            ProcessRxLine();
+            // Reset line
+            CharCounter = 0;
         }
         return;
     }

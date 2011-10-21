@@ -21,8 +21,16 @@
 #define MDM_LINE_COUNT  4
 #define MDM_RX_TIMEOUT  450 // ms
 
+typedef enum {flOk, flError, flNone, flRepeatNeeded} flReply_t;
+
 class mdm_t {
 private:
+    // State flags
+    bool fRDY, fEchoRcvd;
+    flReply_t fReply;
+    uint8_t fCFUN;
+    char Cmd[54];
+
     Error_t State;
     bool NewLineReceived;
     char Line[54];
@@ -35,11 +43,14 @@ private:
     void PwrKeyHi(void) { GPIOA->BSRR = GPIO_Pin_4; }
     void PwrKeyLo(void) { GPIOA->BRR  = GPIO_Pin_4; }
     // UART operations
-    void SendString(char *S);
+    void SendString(const char *S);
+    Error_t Command(const char *ACmd);
     Error_t SendRequest(const char *ARequest);
     Error_t SendAndWaitString(const char *ACmd, const char *AReply);
     void DisableRxIrq(void) { USART_ITConfig(USART2, USART_IT_RXNE, DISABLE); }
     void EnableRxIrq (void) { USART_ITConfig(USART2, USART_IT_RXNE, ENABLE); }
+    void ProcessRxLine(void);
+    void ProcessCMEError(uint32_t AErr);
     // Card, call, sms
     Error_t ProcessSIM(void);
 public:
