@@ -21,10 +21,9 @@ void mdm_t::Init() {
     PwrKeyHi();
     //BufLength = 0;
     USARTInit();
-    EnableRxIrq();
 
     // ==== Setup modem ====
-    State = erBuzy;
+    State = erBusy;
     Delay.ms(1008);
     Error_t r = erError;
     while (r != erOk) {     // Try to setup modem
@@ -33,12 +32,16 @@ void mdm_t::Init() {
             UART_PrintString("#\r");
             fRDY = false;
             PwrKeyLo();
+            DisableRxIrq();
             // Init variables
             fCFUN = 0;
+            SimState = ssUnknown;
+            NetState = nsUnknown;
             Cmd[0] = 0;
             // Wait
             Delay.ms(540);
             PwrKeyHi();
+            EnableRxIrq();
             Delay.ms(540);
             for(uint8_t i=0; i<4; i++) {
                 SendString("AT");
@@ -50,8 +53,10 @@ void mdm_t::Init() {
         UART_PrintString("== Init ==\r");
         // Send initialization commands
         if((r = Command("AT+IPR=9600")) != erOk) continue;  // Setup speed
-        if((r = Command("AT+CPIN?"))    != erOk) continue;  // Get SIM state
-        //if((r = ProcessSIM()) != erOk) continue;
+        if((r = Command("ATX0"))        != erOk) continue;  // CONNECT result code returned only
+        if(ProcessSIM()             != erOk) continue;  // Wait for SIM to activate
+        if(WaitForNetRegistration() != erOk) continue;  // Wait for modem to connect
+
     } // while r
     UART_PrintString("Modem is ready\r");
     State = erOk;
@@ -63,14 +68,44 @@ void mdm_t::SendSMSWithTime(const char* AStrNumber, const char *AMsg) {
 }
 
 Error_t mdm_t::ProcessSIM() {
-    Error_t r = SendRequest("AT+CPIN?");
-    if (r != erOk) return r;
-    // Check what was answered
-    UART_Print('>');
-    UART_PrintString(Line);
-    UART_NewLine();
-    if (strcmp(Line, "READY") == 0) return erOk;
-    return erError;
+    Error_t r;
+    Delay.Reset(&Timer);
+    while (!Delay.Elapsed(&Timer, MDM_SIM_TIMEOUT)) {
+        SimState = ssUnknown;
+        if ((r = Command("AT+CPIN?")) != erOk) return r;
+        switch (SimState) {
+            case ssReady:
+                return erOk;
+                break;
+            default: break;
+        }
+        Delay.ms(450);
+    } // while !elapsed
+    return erTimeout;;
+}
+
+Error_t mdm_t::WaitForNetRegistration() {
+    Error_t r;
+    Delay.Reset(&Timer);
+    while (!Delay.Elapsed(&Timer, MDM_NETREG_TIMEOUT)) {
+        NetState = nsUnknown;
+        if ((r = Command("AT+CREG?")) != erOk) return r;
+        switch (NetState) {
+            case nsRegistered:
+            case nsRegRoaming:
+                return erOk;
+                break;
+            case nsNotRegNoSearch:
+            case nsRegDenied:
+                return erError;
+                break;
+            case nsUnknown:     // Not answered yet
+            case nsSearching:   // Searching
+                break;
+        } // switch
+        Delay.ms(1800);
+    } // while !elapsed
+    return erTimeout;
 }
 
 // =========================== AT commands ====================================
@@ -83,105 +118,18 @@ Error_t mdm_t::Command(const char *ACmd) {
         for (uint32_t i=0; i<MDM_RX_TIMEOUT; i++) {
             Delay.ms(4);
             if (fEchoRcvd) {    // Check fReply only if valid echo received
-                if (fReply == flOk) {
-                    UART_PrintString(" Ok\r");
-                    return erOk;
-                }
-                if (fReply == flError) {
-                    UART_PrintString(" Err\r");
-                    return erError;
-                }
-                if (fReply == flRepeatNeeded) {
-                    UART_PrintString(" Repeat Needed\r");
-                    Delay.ms(108);
-                    break;
-                }
+                if (fReply == flRepeatNeeded) Delay.ms(108);
+                if (fReply != flNone) break;    // Get out of for()
             } // if Echo rcvd
         } // for
     } while(fReply == flRepeatNeeded);
-    return erTimeout;
-}
-
-Error_t mdm_t::SendAndWaitString(const char *ACmd, const char *AReply) {
-    Reply = erBuzy;
-    CharCounter = 0;
-    strcpy(Line, ACmd);
-    SendString(Line);
-    for (uint32_t i=0; i<MDM_RX_TIMEOUT; i++) {
-        Delay.us(450);
-        if (Reply == erOk) { // Check what received
-//            UART_Print('>');
-//            UART_PrintString(Line);
-//            UART_NewLine();
-            if (strstr(Line, ACmd) == 0) {   // Substr not found: not echo
-                if (strcmp(Line, AReply) == 0) {
-                    //UART_PrintString("Reply got\r");
-                    DisableRxIrq();
-                    return erOk;
-                }
-            }
-            else { // Echo
-                //UART_PrintString("Echo\r");
-            } // if echo
-            // Reset line
-            Reply = erBuzy;
-            CharCounter = 0;
-        }
+    // Do not wait echo now
+    Cmd[0] = 0;
+    switch (fReply) {
+        case flOk:   return erOk; break;
+        case flNone: return erTimeout; break;
+        default:     return erError; break;
     }
-    DisableRxIrq();
-    return erTimeout;
-}
-
-Error_t mdm_t::SendRequest(const char *ARequest) {
-    Reply = erBuzy;
-    CharCounter = 0;
-    char S[18];
-    // Copy command part of request: AT+CPIN? => +CPIN
-    //UART_Print('1');
-    char *c = strchr(ARequest, '+');    // Find '+' in request
-    if (c == 0) return erError;
-    //UART_Print('2');
-    //c++;    // point to next char
-    uint8_t L = strcspn(c, "?");
-    strlcpy(S, c, L+1);
-    //UART_PrintString(S);
-    //return erOk;
-    // Copy request
-    strcpy(Line, ARequest);
-    EnableRxIrq();
-    SendString(Line);
-
-    UART_Print('q');
-    Delay.ms(400);
-    DisableRxIrq();
-    return erError;
-
-    for (uint32_t i=0; i<MDM_RX_TIMEOUT; i++) {
-        Delay.us(100000);
-        if (Reply == erOk) { // New line received, check it
-            UART_Print('3');
-            if (strstr(Line, ARequest) == 0) {  // Substr not found: not echo
-                UART_Print('4');
-                // Check if reply contains what requested
-                if (strstr(Line, S) != 0) {     // Substr found (+CPIN: READY)
-                    UART_Print('5');
-                    c = strchr(Line, ':');      // Find ':' in reply
-                    if (c == 0) return erError;
-                    c += 2;                     // Point to first char of reply
-                    L = strlen(c);
-                    if (L == 0) return erError;
-                    strlcpy(Line, c, L+1);      // Copy reply to Line
-                    DisableRxIrq();
-                    return erOk;
-                } // if reply contains
-            } // if not echo
-            // Reset line
-            Reply = erBuzy;
-            CharCounter = 0;
-        }
-    }
-    DisableRxIrq();
-    return erTimeout;
 }
 
 void mdm_t::SendString(const char *S) {
@@ -210,7 +158,7 @@ void mdm_t::ProcessRxLine(void) {
     }
     // Check if echo
     if (strncmp(Line, "AT", 2) == 0) {
-        UART_PrintString("> Echo\r");
+        //UART_PrintString("> Echo\r");
         if (Cmd[0] != 0) {  // waiting for echo
             if (strcmp(Line, Cmd) == 0) {
                 fEchoRcvd = true;
@@ -253,9 +201,20 @@ void mdm_t::ProcessRxLine(void) {
         return;
     }
 
-
+    else if (strncmp(Line, "+CPIN:", 6) == 0) ParseCPIN(&Line[7]);      // SIM state
+    // Network registration: "+CREG: n,s"
+    else if (strncmp(Line, "+CREG:", 6) == 0) {
+        //UART_PrintString("> CFUN\r");
+        c = Line[9];    // <stat>
+        k = c - 48; // convert char to digit
+        if ((k>=0) && (k<=5)) {
+            NetState = (NetState_t)k;
+            UART_StrUint(" NetState=", k);
+        }
+    }
 }
 
+// Parsing
 void mdm_t::ProcessCMEError(uint32_t AErr) {
     switch (AErr) {
         // SIM
@@ -269,6 +228,13 @@ void mdm_t::ProcessCMEError(uint32_t AErr) {
 
         default: break;
     } // switch
+}
+
+void mdm_t::ParseCPIN(char *S) {
+    if (strcmp(S, "READY") == 0) SimState = ssReady;
+    else if (strcmp(S, "SIM PIN") == 0) SimState = ssPinNeeded;
+    else if (strcmp(S, "SIM PUK") == 0) SimState = ssPukNeeded;
+    else SimState = ssUnknown;
 }
 
 // ================================ Low-level =================================
