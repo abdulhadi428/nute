@@ -38,6 +38,7 @@ void mdm_t::Init() {
             SimState = ssUnknown;
             NetState = nsUnknown;
             Cmd[0] = 0;
+            CharCounter = 0;
             // Wait
             Delay.ms(540);
             PwrKeyHi();
@@ -54,23 +55,74 @@ void mdm_t::Init() {
         // Send initialization commands
         if((r = Command("AT+IPR=9600")) != erOk) continue;  // Setup speed
         if((r = Command("ATX0"))        != erOk) continue;  // CONNECT result code returned only
-        if(ProcessSIM()             != erOk) continue;  // Wait for SIM to activate
-        if(WaitForNetRegistration() != erOk) continue;  // Wait for modem to connect
-
+        if((r = Command("AT+CMGF=1"))   != erOk) continue;  // Setup SMS text mode
+        if(ProcessSIM()                 != erOk) continue;  // Wait for SIM to activate
+        if(WaitForNetRegistration()     != erOk) continue;  // Wait for modem to connect
     } // while r
     UART_PrintString("Modem is ready\r");
     State = erOk;
 }
 
-// ========================== Card, call, sms =================================
-void mdm_t::SendSMSWithTime(const char* AStrNumber, const char *AMsg) {
-
+void mdm_t::PowerDown() {
+    if (State == erOk) {    // Modem is on, cycle PWRKEY
+        PwrKeyLo();
+        Delay.ms(540);
+        PwrKeyHi();
+    }
 }
 
+// ========================== Card, call, sms =================================
+void mdm_t::SendSMS(const char *ANumber, const char *AMsg) {
+    fEchoRcvd = false;
+    fReply = flNone;
+    SmsSent = false;
+    uint32_t FTimer;
+    Delay.Reset(&FTimer);
+    // Build command: surround number with double quotes
+    uint8_t L = strlen(ANumber);
+    strcpy(Cmd, "AT+CMGS=\"");
+    strcpy(&Cmd[9], ANumber);
+    Cmd[9+L]  = '\"';
+    Cmd[10+L] = 0;
+    // Send cmd
+    SendString(Cmd);
+    // Send message
+    while (*AMsg != 0) {
+        USART_SendData(USART2, *AMsg++);
+        // Loop until the end of transmission
+        while (USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
+    }
+    // Send Ctrl-Z
+    USART_SendData(USART2, 26);
+    // Wait for echo
+    while (!Delay.Elapsed(&FTimer, MDM_SMS_TIMEOUT)) {
+        if (fEchoRcvd) {    // Check fReply only if valid echo received
+            if (fReply == flOk) {
+                //UART_PrintString("# SMS ok\r");
+                SmsSent = true;
+                break;
+            }
+            else if (fReply != flNone) {
+                //UART_StrUint("# SMS rpl: ", (uint8_t) fReply);
+                break;
+            }
+        } // if Echo rcvd
+    } // while
+    Cmd[0] = 0;
+}
+
+
+Error_t ReceiveAllSMS(void) {
+
+    return erOk;
+}
+
+// =========================== Strings ========================================
 Error_t mdm_t::ProcessSIM() {
     Error_t r;
-    Delay.Reset(&Timer);
-    while (!Delay.Elapsed(&Timer, MDM_SIM_TIMEOUT)) {
+    uint32_t FTimer;
+    Delay.Reset(&FTimer);
+    while (!Delay.Elapsed(&FTimer, MDM_SIM_TIMEOUT)) {
         SimState = ssUnknown;
         if ((r = Command("AT+CPIN?")) != erOk) return r;
         switch (SimState) {
@@ -83,11 +135,11 @@ Error_t mdm_t::ProcessSIM() {
     } // while !elapsed
     return erTimeout;;
 }
-
 Error_t mdm_t::WaitForNetRegistration() {
+    uint32_t FTimer;
     Error_t r;
-    Delay.Reset(&Timer);
-    while (!Delay.Elapsed(&Timer, MDM_NETREG_TIMEOUT)) {
+    Delay.Reset(&FTimer);
+    while (!Delay.Elapsed(&FTimer, MDM_NETREG_TIMEOUT)) {
         NetState = nsUnknown;
         if ((r = Command("AT+CREG?")) != erOk) return r;
         switch (NetState) {
@@ -141,12 +193,13 @@ void mdm_t::SendString(const char *S) {
         while (USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
     }
     USART_SendData(USART2, '\r');   // Send CR (13 or 0x0D)
+    while (USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
 }
 
+
+// ================================ Parsing ===================================
 void mdm_t::ProcessRxLine(void) {
-    //UART_PrintString(Line);
-    //UART_NewLine();
-    char *S, c;
+    char *S;
     uint32_t k;
     // Check RDY
     if (fRDY == false) {
@@ -158,9 +211,9 @@ void mdm_t::ProcessRxLine(void) {
     }
     // Check if echo
     if (strncmp(Line, "AT", 2) == 0) {
-        //UART_PrintString("> Echo\r");
         if (Cmd[0] != 0) {  // waiting for echo
             if (strcmp(Line, Cmd) == 0) {
+                //UART_PrintString("# Echo\r");
                 fEchoRcvd = true;
                 fReply = flNone;
             }
@@ -170,12 +223,12 @@ void mdm_t::ProcessRxLine(void) {
     // Check OK/ERROR
     if (fReply == flNone) {
         if (strcmp(Line, "OK") == 0) {
-            //UART_PrintString("> OK rcvd\r");
+            //UART_PrintString("## OK rcvd\r");
             fReply = flOk;
             return;
         }
         if (strcmp(Line, "ERROR") == 0) {
-            //UART_PrintString("> ERR rcvd\r");
+            //UART_PrintString(">## ERR rcvd\r");
             fReply = flError;
             return;
         }
@@ -186,32 +239,13 @@ void mdm_t::ProcessRxLine(void) {
             ProcessCMEError(k);
             return;
         }
-
     } // if flNone
-    // ==== Other stuff ====
-    // Functionality
-    if (strncmp(Line, "+CFUN:", 6) == 0) {
-        //UART_PrintString("> CFUN\r");
-        c = Line[7];
-        k = c - 48; // convert char to digit
-        if ((k==0) || (k==1) || (k==4)) {
-            fCFUN = (uint8_t)k;
-            UART_StrUint(" cfun=", k);
-        }
-        return;
-    }
 
-    else if (strncmp(Line, "+CPIN:", 6) == 0) ParseCPIN(&Line[7]);      // SIM state
-    // Network registration: "+CREG: n,s"
-    else if (strncmp(Line, "+CREG:", 6) == 0) {
-        //UART_PrintString("> CFUN\r");
-        c = Line[9];    // <stat>
-        k = c - 48; // convert char to digit
-        if ((k>=0) && (k<=5)) {
-            NetState = (NetState_t)k;
-            UART_StrUint(" NetState=", k);
-        }
-    }
+    // ==== Other stuff ====
+    if      (strncmp(Line, "+CFUN:", 6) == 0) ParseCFUN();  // Functionality
+    else if (strncmp(Line, "+CPIN:", 6) == 0) ParseCPIN();  // SIM state
+    else if (strncmp(Line, "+CREG:", 6) == 0) ParseCREG();  // Network registration: "+CREG: n,s"
+
 }
 
 // Parsing
@@ -230,14 +264,31 @@ void mdm_t::ProcessCMEError(uint32_t AErr) {
     } // switch
 }
 
-void mdm_t::ParseCPIN(char *S) {
+void mdm_t::ParseCFUN() {
+    char c = Line[7];
+    uint8_t k = c - 48; // convert char to digit
+    if ((k==0) || (k==1) || (k==4)) {
+        fCFUN = k;
+        UART_StrUint(" cfun=", k);
+    }
+}
+void mdm_t::ParseCPIN() {
+    char *S = &Line[7];
     if (strcmp(S, "READY") == 0) SimState = ssReady;
     else if (strcmp(S, "SIM PIN") == 0) SimState = ssPinNeeded;
     else if (strcmp(S, "SIM PUK") == 0) SimState = ssPukNeeded;
     else SimState = ssUnknown;
 }
+void mdm_t::ParseCREG() {
+    char c = Line[9];    // <stat>
+    uint8_t k = c - 48; // convert char to digit
+    if ((k>=0) && (k<=5)) {
+        NetState = (NetState_t)k;
+        //UART_StrUint(" NetState=", k);
+    }
+}
 
-// ================================ Low-level =================================
+// ================================ Init ======================================
 void mdm_t::GPIOInit() {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
     // PA0=CTS, PA1=RTS, PA2=TX, PA3=RX, PA4=PWR_KEY

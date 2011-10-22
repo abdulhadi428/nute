@@ -20,7 +20,7 @@ void WaterSns_t::Init() {
     // ==== NVIC ====  Configure and enable ADC interrupt
     NVIC_InitTypeDef NVIC_InitStructure;
     NVIC_InitStructure.NVIC_IRQChannel = ADC1_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
@@ -95,6 +95,6 @@ void WaterSns_t::IRQHandler() {
 }
 
 // ============================= Interrupt ====================================
-void ADC1_2_IRQHandler(void) {
+void ADC1_IRQHandler(void) {
     WaterSensor.IRQHandler();
 }

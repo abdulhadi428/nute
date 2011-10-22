@@ -26,12 +26,18 @@ int main(void) {
 
     GeneralInit();
 
-    //uint32_t FTimr;
+    uint32_t FTimr;
+    Delay.Reset(&FTimr);
+    bool MsgSent = false;
     // ==== Main cycle ====
     while(1) {
-//        if(Delay.Elapsed(&FTimr, 999)) {
-//            LedToggle();
-//        }
+        if(Delay.Elapsed(&FTimr, 3006)) {
+            //LedToggle();
+            if (!MsgSent) {
+                MsgSent = true;
+                EVENT_WaterHere();
+            }
+        }
         WaterSensor.Task();
         Led.Task();
     } // while(1)
@@ -48,7 +54,7 @@ void GeneralInit(void) {
     WaterSensor.Init();
     Led.Init();
     WaterSensor.EVT_WaterHere = &EVENT_WaterHere;
-    Mdm.Init();
+    //Mdm.Init();
 
     // Led
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
@@ -72,5 +78,13 @@ void LedToggle(void) {
 // ================================== Events ===================================
 void EVENT_WaterHere(void) {
     LedOn();
-    Mdm.SendSMSWithTime("+79169895800", "(!)Utechka: podval 45, blok 27");
+    UART_PrintString(" Water is here\r");
+    Mdm.Init();
+    if (Mdm.State == erOk) {
+        //Mdm.SendSMS("+79169895800", "(!)Utechka4: podval 45, blok 27");
+        //Mdm.SendSMS("111", "11");
+        //if (Mdm.SmsSent) UART_PrintString("# SMS sent\r");
+        Mdm.ReceiveAllSMS();
+        Mdm.PowerDown();
+    }
 }

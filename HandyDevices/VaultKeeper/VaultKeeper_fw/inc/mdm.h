@@ -22,6 +22,7 @@
 #define MDM_RX_TIMEOUT  450 // ms
 #define MDM_SIM_TIMEOUT     4000  // ms
 #define MDM_NETREG_TIMEOUT  20000 // ms
+#define MDM_SMS_TIMEOUT     18000 // ms
 
 typedef enum {flOk, flError, flNone, flRepeatNeeded} flReply_t;
 typedef enum {ssReady, ssPinNeeded, ssPukNeeded, ssUnknown} SimState_t;
@@ -29,20 +30,16 @@ typedef enum {nsNotRegNoSearch=0, nsRegistered=1, nsSearching=2, nsRegDenied=3, 
 
 class mdm_t {
 private:
-    uint32_t Timer;
     // State flags
     bool fRDY, fEchoRcvd;
     flReply_t fReply;
     uint8_t fCFUN;
-
     SimState_t SimState;
     NetState_t NetState;
-    Error_t State;  // Modem state
     // Strings
     char Cmd[54];   // Command to compare with
     char Line[54];  // Received line
     uint8_t CharCounter;
-
     // Init
     void GPIOInit(void);
     void USARTInit(void);
@@ -57,16 +54,22 @@ private:
     Error_t Command(const char *ACmd);
     void ProcessRxLine(void);
     void ProcessCMEError(uint32_t AErr);
-    void ParseCPIN(char *S);
+    void ParseCFUN(void);
+    void ParseCPIN(void);
+    void ParseCREG(void);
     // Card, call, sms
     Error_t WaitForNetRegistration(void);
     Error_t ProcessSIM(void);
 public:
+    Error_t State;  // Modem state
+    bool SmsSent;
     void Init(void);
     void EnterPowersave(void);
-    //void PowerDown(void) { SendString("AT+CFUN=0"); } // Enter minimum functionality
-    //void PowerUp(void)   { SendString("AT+CFUN=1"); } // Enter full functionality
-    void SendSMSWithTime(const char* AStrNumber, const char *AMsg);
+    void PowerDown(void);
+    //void PowerUp(void);
+    void SendSMS(const char *ANumber, const char *AMsg);
+    Error_t ReceiveAllSMS(void);
+    // Service
     void IRQHandler(void);
 };
 

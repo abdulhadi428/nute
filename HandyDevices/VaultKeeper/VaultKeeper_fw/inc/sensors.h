@@ -36,7 +36,7 @@ extern WaterSns_t WaterSensor;
 
 // Interrupt
 extern "C" {
-void ADC1_2_IRQHandler(void);
+void ADC1_IRQHandler(void);
 }
 
 #endif /* WATER_SENSOR_H_ */
