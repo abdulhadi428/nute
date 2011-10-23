@@ -12,15 +12,15 @@
 #include "stm32f10x_gpio.h"
 #include "delay_util.h"
 
-
+#define LED_PIN         GPIO_Pin_12
 #define LED_ON_TIME     108
 
 class Led_t {
 private:
     uint32_t Timer;
-    void On(void)  { GPIOA->BSRR = GPIO_Pin_0; }
-    void Off(void) { GPIOA->BRR  = GPIO_Pin_0; }
 public:
+    void On(void)  { GPIOA->BSRR = LED_PIN; }
+    void Off(void) { GPIOA->BRR  = LED_PIN; }
     void Init(void);
     void Task(void);
     void Blink(void) { On(); Delay.Reset(&Timer); }

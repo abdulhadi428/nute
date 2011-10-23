@@ -26,18 +26,21 @@ int main(void) {
 
     GeneralInit();
 
-    uint32_t FTimr;
-    Delay.Reset(&FTimr);
-    bool MsgSent = false;
+    Led.On();
+    LedOn();
+    while(1);
+    //uint32_t FTimr;
+    //Delay.Reset(&FTimr);
+    //bool MsgSent = false;
     // ==== Main cycle ====
     while(1) {
-        if(Delay.Elapsed(&FTimr, 3006)) {
-            //LedToggle();
-            if (!MsgSent) {
-                MsgSent = true;
-                EVENT_WaterHere();
-            }
-        }
+//        if(Delay.Elapsed(&FTimr, 3006)) {
+//            //LedToggle();
+//            if (!MsgSent) {
+//                MsgSent = true;
+//                EVENT_WaterHere();
+//            }
+//        }
         WaterSensor.Task();
         Led.Task();
     } // while(1)
@@ -81,10 +84,10 @@ void EVENT_WaterHere(void) {
     UART_PrintString(" Water is here\r");
     Mdm.Init();
     if (Mdm.State == erOk) {
-        //Mdm.SendSMS("+79169895800", "(!)Utechka4: podval 45, blok 27");
+        Mdm.SendSMS("+79169895800", "(!)Utechka: podval 45, blok 27");
         //Mdm.SendSMS("111", "11");
-        //if (Mdm.SmsSent) UART_PrintString("# SMS sent\r");
-        Mdm.ReceiveAllSMS();
+        if (Mdm.SmsSent) UART_PrintString("# SMS sent\r");
+        //Mdm.ReceiveAllSMS();
         Mdm.PowerDown();
     }
 }

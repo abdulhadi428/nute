@@ -45,17 +45,21 @@ void mdm_t::Init() {
             EnableRxIrq();
             Delay.ms(540);
             for(uint8_t i=0; i<4; i++) {
-                SendString("AT");
+                fReply = flNone;
+                strcpy(Cmd, "AT");
+                SendString(Cmd);
                 Delay.ms(7);
-                if (fRDY) break;
+                if (fRDY || (fReply == flOk)) break;
             }
         } // while !RDY
+        Cmd[0] = 0; // reset Cmd
         Delay.ms(720);
         UART_PrintString("== Init ==\r");
         // Send initialization commands
         if((r = Command("AT+IPR=9600")) != erOk) continue;  // Setup speed
         if((r = Command("ATX0"))        != erOk) continue;  // CONNECT result code returned only
         if((r = Command("AT+CMGF=1"))   != erOk) continue;  // Setup SMS text mode
+        if((r = Command("AT+CPMS=\"SM\",\"SM\",\"SM\"")) != erOk) continue;  // Use SIM memory for all operations
         if(ProcessSIM()                 != erOk) continue;  // Wait for SIM to activate
         if(WaitForNetRegistration()     != erOk) continue;  // Wait for modem to connect
     } // while r
@@ -112,8 +116,12 @@ void mdm_t::SendSMS(const char *ANumber, const char *AMsg) {
 }
 
 
-Error_t ReceiveAllSMS(void) {
+Error_t mdm_t::ReceiveAllSMS(void) {
+    //Error_t r = erError;
 
+    //SendString("AT+CMGL=\"ALL\"");
+    SendString("AT+CPMS=?");
+    Delay.ms(9000);
     return erOk;
 }
 
@@ -245,7 +253,7 @@ void mdm_t::ProcessRxLine(void) {
     if      (strncmp(Line, "+CFUN:", 6) == 0) ParseCFUN();  // Functionality
     else if (strncmp(Line, "+CPIN:", 6) == 0) ParseCPIN();  // SIM state
     else if (strncmp(Line, "+CREG:", 6) == 0) ParseCREG();  // Network registration: "+CREG: n,s"
-
+    else if (strncmp(Line, "+CMTI:", 6) == 0) ParseCMTI();  // New message received
 }
 
 // Parsing
@@ -287,6 +295,13 @@ void mdm_t::ParseCREG() {
         //UART_StrUint(" NetState=", k);
     }
 }
+void mdm_t::ParseCMTI() {   // +CMTI: <mem>, <index> => remove first two substrings
+    ReplaceCommas(Line);
+    //unsigned int MsgID = 0xFF;
+
+}
+
+
 
 // ================================ Init ======================================
 void mdm_t::GPIOInit() {

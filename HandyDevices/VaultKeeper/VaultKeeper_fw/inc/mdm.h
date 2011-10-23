@@ -54,9 +54,11 @@ private:
     Error_t Command(const char *ACmd);
     void ProcessRxLine(void);
     void ProcessCMEError(uint32_t AErr);
+    void ReplaceCommas(char *S) { while((S = strchr(S, ',')) != 0) *S = ' '; }
     void ParseCFUN(void);
     void ParseCPIN(void);
     void ParseCREG(void);
+    void ParseCMTI(void);
     // Card, call, sms
     Error_t WaitForNetRegistration(void);
     Error_t ProcessSIM(void);
