@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 11/10/2011 23:47:11
+EESchema Schematic File Version 2  date 19/10/2011 10:35:25
 LIBS:Connectors_kl
 LIBS:modules
 LIBS:pcb_details
@@ -16,7 +16,7 @@ $Descr A3 16535 11700
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "11 oct 2011"
+Date "18 oct 2011"
 Rev ""
 Comp ""
 Comment1 ""
@@ -24,11 +24,8 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-Text Label 9250 4100 0    60   ~ 0
-RTS
-Text Label 9250 4000 0    60   ~ 0
-CTS
-NoConn ~ 9800 3800
+Wire Wire Line
+	5900 3450 5250 3450
 Wire Wire Line
 	9800 4000 9000 4000
 Wire Wire Line
@@ -310,8 +307,6 @@ Wire Bus Line
 Wire Bus Line
 	6000 3150 6000 3900
 Wire Wire Line
-	5900 3450 5250 3450
-Wire Wire Line
 	5900 3650 5250 3650
 Wire Wire Line
 	8100 9550 8100 9650
@@ -343,6 +338,21 @@ Wire Wire Line
 	13550 5300 13100 5300
 Wire Wire Line
 	9000 4100 9800 4100
+Wire Wire Line
+	5250 3350 5900 3350
+Entry Wire Line
+	5900 3450 6000 3550
+Entry Wire Line
+	5900 3350 6000 3450
+Text Label 5400 3350 0    60   ~ 0
+CTS
+Text Label 5400 3450 0    60   ~ 0
+RTS
+Text Label 9250 4100 0    60   ~ 0
+RTS
+Text Label 9250 4000 0    60   ~ 0
+CTS
+NoConn ~ 9800 3800
 Entry Wire Line
 	8900 3900 9000 4000
 Entry Wire Line
@@ -629,8 +639,6 @@ Entry Wire Line
 	5900 3650 6000 3750
 Entry Wire Line
 	5900 3550 6000 3650
-Entry Wire Line
-	5900 3450 6000 3550
 Text Label 5350 4050 0    60   ~ 0
 ADC_SNS
 $Comp
@@ -846,8 +854,6 @@ F 1 "PWR_FLAG" H 2850 5880 30  0000 C CNN
 $EndComp
 Text Label 5400 3750 0    60   ~ 0
 PWR_KEY
-Text Label 5400 3450 0    60   ~ 0
-RING
 Text Label 5400 3650 0    60   ~ 0
 TXD
 Text Label 5400 3550 0    60   ~ 0

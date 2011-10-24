@@ -26,9 +26,9 @@ int main(void) {
 
     GeneralInit();
 
-    Led.On();
-    LedOn();
-    while(1);
+    //Led.On();
+    //LedOn();
+    //while(1);
     //uint32_t FTimr;
     //Delay.Reset(&FTimr);
     //bool MsgSent = false;
@@ -84,7 +84,7 @@ void EVENT_WaterHere(void) {
     UART_PrintString(" Water is here\r");
     Mdm.Init();
     if (Mdm.State == erOk) {
-        Mdm.SendSMS("+79169895800", "(!)Utechka: podval 45, blok 27");
+        Mdm.SendSMS("+79035188727", "(!)Utechka: podval 45, blok 27");
         //Mdm.SendSMS("111", "11");
         if (Mdm.SmsSent) UART_PrintString("# SMS sent\r");
         //Mdm.ReceiveAllSMS();

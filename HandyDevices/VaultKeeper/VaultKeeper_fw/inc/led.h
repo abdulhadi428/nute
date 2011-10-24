@@ -12,7 +12,7 @@
 #include "stm32f10x_gpio.h"
 #include "delay_util.h"
 
-#define LED_PIN         GPIO_Pin_12
+#define LED_PIN         GPIO_Pin_15
 #define LED_ON_TIME     108
 
 class Led_t {
