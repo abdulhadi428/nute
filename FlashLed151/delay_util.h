@@ -9,9 +9,7 @@
 #define	_TIME_UTILS_H
 
 #include <inttypes.h>
-//#include <stdbool.h>
-//#include
-//#include "stm32f10x.h"
+#include <stdbool.h>
 
 class Delay_t {
 public:
@@ -21,19 +19,19 @@ public:
     void Loop (volatile uint32_t ACounter);
     void ms (uint32_t Ams);
     // Interrupt-driven delays
-//    bool Elapsed(uint32_t *AVar, const uint32_t ADelay);
-//    void Reset  (uint32_t *AVar) { *AVar = TickCounter; }
-//    void Bypass (uint32_t *AVar, const uint32_t ADelay) { *AVar = TickCounter - ADelay; }
-//
-//    void IncreaseTickCounter(void) { TickCounter++; }
+    bool Elapsed(uint32_t *AVar, const uint32_t ADelay);
+    void Reset  (uint32_t *AVar) { *AVar = TickCounter; }
+    void Bypass (uint32_t *AVar, const uint32_t ADelay) { *AVar = TickCounter - ADelay; }
+
+    void IncreaseTickCounter(void) { TickCounter++; }
 };
 
 extern Delay_t Delay;
 
 // Declare Timer IRQ. Use externC to make it visible from asm file.
-//extern "C" {
-//void TIM2_IRQHandler(void);
-//}
+extern "C" {
+void TIM2_IRQHandler(void);
+}
 
 
 #endif	/* _TIME_UTILS_H */
