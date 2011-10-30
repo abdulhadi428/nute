@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 27/08/2011 00:48:07
+EESchema Schematic File Version 2  date 13/09/2011 10:33:43
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -14,7 +14,7 @@ $Descr A3 16535 11700
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "26 aug 2011"
+Date "13 sep 2011"
 Rev ""
 Comp ""
 Comment1 ""
@@ -1091,7 +1091,7 @@ L C C2
 U 1 1 4E46EE46
 P 1850 2100
 F 0 "C2" H 1900 2200 50  0000 L CNN
-F 1 "47n" H 1900 2000 50  0000 L CNN
+F 1 "10n" H 1900 2000 50  0000 L CNN
 	1    1850 2100
 	1    0    0    -1  
 $EndComp

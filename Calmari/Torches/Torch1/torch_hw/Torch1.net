@@ -1,4 +1,4 @@
-# EESchema Netlist Version 1.1 created  26/08/2011 20:39:11
+# EESchema Netlist Version 1.1 created  13/09/2011 10:34:05
 (
  ( /4E4538A1 BALUN_MONO_2_4 ANT1 ANT_PCB_NOCNTR
   ( 1 /Ant1 )
@@ -8,7 +8,7 @@
   ( 1 +BATT )
   ( 2 GND )
  )
- ( /4E46EE46 SMD0603 C2 47n
+ ( /4E46EE46 SMD0603 C2 10n
   ( 1 /GRP1_CH2 )
   ( 2 GND )
  )
