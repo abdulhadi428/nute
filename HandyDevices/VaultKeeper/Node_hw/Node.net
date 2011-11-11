@@ -1,0 +1,827 @@
+# EESchema Netlist Version 1.1 created  12/11/2011 02:10:55
+(
+ ( /4EBC4EDF $noname  F1 FUSE {Lib=FUSE}
+  (    1 VCC )
+  (    2 /PWR )
+ )
+ ( /4EBC4D67 $noname  FU2 SOLDERFUSE {Lib=SOLDERFUSE}
+  (    1 /A )
+  (    2 /RS485_A )
+ )
+ ( /4EBC4D5C $noname  FU3 SOLDERFUSE {Lib=SOLDERFUSE}
+  (    1 /B )
+  (    2 /RS485_B )
+ )
+ ( /4EBC4D30 $noname  R25 0R {Lib=R}
+  (    1 /A )
+  (    2 /RS485_A )
+ )
+ ( /4EBC4CF8 $noname  R26 0R {Lib=R}
+  (    1 /RS485_B )
+  (    2 /B )
+ )
+ ( /4EB6EAB5 $noname  FU1 SOLDERFUSE {Lib=SOLDERFUSE}
+  (    1 +3.3V )
+  (    2 VDD )
+ )
+ ( /4EB6EAA8 $noname  R24 0R {Lib=R}
+  (    1 VDD )
+  (    2 +3.3V )
+ )
+ ( /4EB6E634 $noname  D3 BAXXXC {Lib=BAXXXC}
+  (    1 +3.3V )
+  (    2 N-000063 )
+  (    3 VDD )
+ )
+ ( /4EB44B05 $noname  B1 BAT {Lib=BAT}
+  (    A N-000063 )
+  (    C GND )
+ )
+ ( /4EB3C191 $noname  RP2 REFPOINT {Lib=REFPOINT}
+ )
+ ( /4EB3C18E $noname  RP1 REFPOINT {Lib=REFPOINT}
+ )
+ ( /4EB3C182 $noname  HOLE2 HOLE_METALLED {Lib=HOLE_METALLED}
+  (  Hle GND )
+ )
+ ( /4EB3C17C $noname  HOLE1 HOLE_METALLED {Lib=HOLE_METALLED}
+  (  Hle GND )
+ )
+ ( /4EB3B03D $noname  XL2 CONN_7 {Lib=CONN_7}
+  (    1 N-000037 )
+  (    2 N-000060 )
+  (    3 N-000041 )
+  (    4 N-000061 )
+  (    5 N-000034 )
+  (    6 N-000062 )
+  (    7 GND )
+ )
+ ( /4EB3AD23 $noname  DA7 PESD1CAN {Lib=PESD1CAN}
+  (    1 /SNS4B_ADC )
+  (    2 /SNS4A_ADC )
+  (    3 GND )
+ )
+ ( /4EB3AD13 $noname  DA5 PESD1CAN {Lib=PESD1CAN}
+  (    1 /SNS3B_ADC )
+  (    2 /SNS3A_ADC )
+  (    3 GND )
+ )
+ ( /4EB3AD09 $noname  DA6 PESD1CAN {Lib=PESD1CAN}
+  (    1 /SNS2B_ADC )
+  (    2 /SNS2A_ADC )
+  (    3 GND )
+ )
+ ( /4EB3AB1D $noname  XL7 RJ11 {Lib=RJ11}
+  (    2 N-000058 )
+  (    3 N-000009 )
+  (    4 N-000010 )
+  (    5 N-000058 )
+ )
+ ( /4EB3AB1C $noname  R9 200k {Lib=R}
+  (    1 /SNS3A_ADC )
+  (    2 /SNS3A_PWR )
+ )
+ ( /4EB3AB1B $noname  R17 100k {Lib=R}
+  (    1 /SNS3A_ADC )
+  (    2 N-000009 )
+ )
+ ( /4EB3AB1A $noname  R18 100k {Lib=R}
+  (    1 /SNS3B_ADC )
+  (    2 N-000010 )
+ )
+ ( /4EB3AB19 $noname  R19 100k {Lib=R}
+  (    1 GND )
+  (    2 N-000058 )
+ )
+ ( /4EB3AB17 $noname  R5 200k {Lib=R}
+  (    1 /SNS3B_ADC )
+  (    2 /SNS3B_PWR )
+ )
+ ( /4EB3AB16 $noname  R6 200k {Lib=R}
+  (    1 /SNS4B_ADC )
+  (    2 /SNS4B_PWR )
+ )
+ ( /4EB3AB14 $noname  R22 100k {Lib=R}
+  (    1 GND )
+  (    2 N-000022 )
+ )
+ ( /4EB3AB13 $noname  R21 100k {Lib=R}
+  (    1 /SNS4B_ADC )
+  (    2 N-000024 )
+ )
+ ( /4EB3AB12 $noname  R20 100k {Lib=R}
+  (    1 /SNS4A_ADC )
+  (    2 N-000023 )
+ )
+ ( /4EB3AB11 $noname  R10 200k {Lib=R}
+  (    1 /SNS4A_ADC )
+  (    2 /SNS4A_PWR )
+ )
+ ( /4EB3AB10 $noname  XL8 RJ11 {Lib=RJ11}
+  (    2 N-000022 )
+  (    3 N-000023 )
+  (    4 N-000024 )
+  (    5 N-000022 )
+ )
+ ( /4EB3AB03 $noname  XL6 RJ11 {Lib=RJ11}
+  (    2 N-000054 )
+  (    3 N-000025 )
+  (    4 N-000026 )
+  (    5 N-000054 )
+ )
+ ( /4EB3AB02 $noname  R8 200k {Lib=R}
+  (    1 /SNS2A_ADC )
+  (    2 /SNS2A_PWR )
+ )
+ ( /4EB3AB01 $noname  R14 100k {Lib=R}
+  (    1 /SNS2A_ADC )
+  (    2 N-000025 )
+ )
+ ( /4EB3AB00 $noname  R15 100k {Lib=R}
+  (    1 /SNS2B_ADC )
+  (    2 N-000026 )
+ )
+ ( /4EB3AAFF $noname  R16 100k {Lib=R}
+  (    1 GND )
+  (    2 N-000054 )
+ )
+ ( /4EB3AAFD $noname  R4 200k {Lib=R}
+  (    1 /SNS2B_ADC )
+  (    2 /SNS2B_PWR )
+ )
+ ( /4EB3A9D2 $noname  R3 200k {Lib=R}
+  (    1 /SNS1B_ADC )
+  (    2 /SNS1B_PWR )
+ )
+ ( /4EB3A971 $noname  R13 100k {Lib=R}
+  (    1 GND )
+  (    2 N-000057 )
+ )
+ ( /4EB3A96B $noname  R12 100k {Lib=R}
+  (    1 /SNS1B_ADC )
+  (    2 N-000048 )
+ )
+ ( /4EB384C3 $noname  XL10 RJ45 {Lib=RJ45}
+  (    1 GND )
+  (    2 /PWR )
+  (    3 GND )
+  (    4 /RS485_A )
+  (    5 /RS485_B )
+  (    6 /PWR )
+  (    7 GND )
+  (    8 /PWR )
+ )
+ ( /4EAE3FF8 $noname  C4 1000pF {Lib=C}
+  (    1 VCC )
+  (    2 GND )
+ )
+ ( /4EACFA52 $noname  U1 DLW21SN900SQ2 {Lib=EMIFILTER}
+  (    1 /B )
+  (    2 /RS485_B )
+  (    3 /RS485_A )
+  (    4 /A )
+ )
+ ( /4EAC780B $noname  D2 BAT54SW {Lib=BAXXXS}
+  (    1 GND )
+  (    2 +3.3V )
+  (    3 /RS485_B )
+ )
+ ( /4EAC7721 $noname  D1 BAT54SW {Lib=BAXXXS}
+  (    1 GND )
+  (    2 +3.3V )
+  (    3 /RS485_A )
+ )
+ ( /4EAC6FFC $noname  DA2 ADM3485 {Lib=RS485HALF}
+  (    1 /UART2_RX )
+  (    2 /Tx/Rx )
+  (    3 /Tx/Rx )
+  (    4 /UART2_TX )
+  (    5 GND )
+  (    6 /A )
+  (    7 /B )
+  (    8 +3.3V )
+ )
+ ( /4EAC60DF $noname  R11 100k {Lib=R}
+  (    1 /SNS1A_ADC )
+  (    2 N-000047 )
+ )
+ ( /4EAC5F4E $noname  XL4 CONN_3 {Lib=CONN_3}
+  (    1 /UART2_RX )
+  (    2 /UART2_TX )
+  (    3 /Tx/Rx )
+ )
+ ( /4EAC59CD $noname  R23 10k {Lib=R}
+  (    1 /Tx/Rx )
+  (    2 GND )
+ )
+ ( /4EAC4DF0 $noname  XL3 CONN_2 {Lib=CONN_2}
+  (    1 /UART1_TX )
+  (    2 GND )
+ )
+ ( /4EAC43C3 $noname  C7 0.1u {Lib=C}
+  (    1 N-000031 )
+  (    2 GND )
+ )
+ ( /4EAC41F0 $noname  C10 1000pF {Lib=C}
+  (    1 +3.3V )
+  (    2 N-000052 )
+ )
+ ( /4EAC41A0 $noname  R2 1200k {Lib=R}
+  (    1 N-000052 )
+  (    2 GND )
+ )
+ ( /4EAC419B $noname  R1 2000k {Lib=R}
+  (    1 +3.3V )
+  (    2 N-000052 )
+ )
+ ( /4EABEFAD $noname  DA1 LP2951 {Lib=LP2951}
+  (    1 +3.3V )
+  (    2 ? )
+  (    3 GND )
+  (    4 GND )
+  (    5 /PWR_ERROR )
+  (    6 ? )
+  (    7 N-000052 )
+  (    8 VCC )
+ )
+ ( /4EABDE14 $noname  C13 0.1u {Lib=C}
+  (    1 +3.3V )
+  (    2 GND )
+ )
+ ( /4EABD303 $noname  DA8 PESD1CAN {Lib=PESD1CAN}
+  (    1 VCC )
+  (    2 VCC )
+  (    3 GND )
+ )
+ ( /4EABD2FE $noname  DA4 PESD1CAN {Lib=PESD1CAN}
+  (    1 /SNS1B_ADC )
+  (    2 /SNS1A_ADC )
+  (    3 GND )
+ )
+ ( /4EAB139A $noname  C2 1u {Lib=C}
+  (    1 VCC )
+  (    2 GND )
+ )
+ ( /4EAB1399 $noname  C11 1u {Lib=C}
+  (    1 +3.3V )
+  (    2 GND )
+ )
+ ( /4EAB1394 $noname  C12 10u {Lib=C}
+  (    1 +3.3V )
+  (    2 GND )
+ )
+ ( /4EAB09B2 $noname  R7 200k {Lib=R}
+  (    1 /SNS1A_ADC )
+  (    2 /SNS1A_PWR )
+ )
+ ( /4EAB097E $noname  XL5 RJ11 {Lib=RJ11}
+  (    2 N-000057 )
+  (    3 N-000047 )
+  (    4 N-000048 )
+  (    5 N-000057 )
+ )
+ ( /4EAB01F7 $noname  XL9 RJ45 {Lib=RJ45}
+  (    1 GND )
+  (    2 /PWR )
+  (    3 GND )
+  (    4 /RS485_A )
+  (    5 /RS485_B )
+  (    6 /PWR )
+  (    7 GND )
+  (    8 /PWR )
+ )
+ ( /4EAB004E $noname  XL1 ST_SWD {Lib=ST_SWD}
+  (    1 +3.3V )
+  (    2 /SWCLK )
+  (    3 GND )
+  (    4 /SWDIO )
+ )
+ ( /4EAAFEB4 $noname  C6 1u {Lib=C}
+  (    1 VDD )
+  (    2 GND )
+ )
+ ( /4EAAFEB3 $noname  C5 0.1u {Lib=C}
+  (    1 VDD )
+  (    2 GND )
+ )
+ ( /4EAAFEB2 $noname  C3 0.1u {Lib=C}
+  (    1 VDD )
+  (    2 GND )
+ )
+ ( /4EAAFEA9 $noname  C8 0.1u {Lib=C}
+  (    1 N-000051 )
+  (    2 GND )
+ )
+ ( /4EAAFEA8 $noname  C9 1u {Lib=C}
+  (    1 N-000051 )
+  (    2 GND )
+ )
+ ( /4EAAFEA7 $noname  L1 TB160808 {Lib=L}
+  (    1 N-000051 )
+  (    2 VDD )
+ )
+ ( /4EAAFE98 $noname  DD1 STM32F100c8-48 {Lib=STM32F10X-48}
+  (    1 VDD )
+  (    2 /PWR_ERROR )
+  (    3 ? )
+  (    4 ? )
+  (    5 ? )
+  (    6 ? )
+  (    7 N-000031 )
+  (    8 GND )
+  (    9 N-000051 )
+  (   10 /SNS1A_ADC )
+  (   11 /SNS1B_ADC )
+  (   12 /UART2_TX )
+  (   13 /UART2_RX )
+  (   14 /SNS2A_ADC )
+  (   15 /SNS2B_ADC )
+  (   16 /SNS3A_ADC )
+  (   17 /SNS3B_ADC )
+  (   18 /SNS4A_ADC )
+  (   19 /SNS4B_ADC )
+  (   20 /SNS1A_PWR )
+  (   21 N-000037 )
+  (   22 N-000060 )
+  (   23 GND )
+  (   24 VDD )
+  (   25 N-000041 )
+  (   26 N-000061 )
+  (   27 N-000034 )
+  (   28 N-000062 )
+  (   29 ? )
+  (   30 /UART1_TX )
+  (   31 ? )
+  (   32 /Tx/Rx )
+  (   33 ? )
+  (   34 /SWDIO )
+  (   35 GND )
+  (   36 VDD )
+  (   37 /SWCLK )
+  (   38 ? )
+  (   39 /SNS1B_PWR )
+  (   40 /SNS2A_PWR )
+  (   41 /SNS2B_PWR )
+  (   42 /SNS3A_PWR )
+  (   43 /SNS3B_PWR )
+  (   44 GND )
+  (   45 /SNS4A_PWR )
+  (   46 /SNS4B_PWR )
+  (   47 GND )
+  (   48 VDD )
+ )
+ ( /4EAAFE95 $noname  C1 0.1u {Lib=C}
+  (    1 VDD )
+  (    2 GND )
+ )
+)
+*
+{ Allowed footprints by component:
+$component R25
+ SMD*
+$endlist
+$component R26
+ SMD*
+$endlist
+$component R24
+ SMD*
+$endlist
+$component D3
+ SOT23
+$endlist
+$component B1
+ BH*
+ CH*
+$endlist
+$component RP2
+ REF_POINT*
+$endlist
+$component RP1
+ REF_POINT*
+$endlist
+$component HOLE2
+ HOLE*
+$endlist
+$component HOLE1
+ HOLE*
+$endlist
+$component DA7
+ SOT23
+$endlist
+$component DA5
+ SOT23
+$endlist
+$component DA6
+ SOT23
+$endlist
+$component R9
+ SMD*
+$endlist
+$component R17
+ SMD*
+$endlist
+$component R18
+ SMD*
+$endlist
+$component R19
+ SMD*
+$endlist
+$component R5
+ SMD*
+$endlist
+$component R6
+ SMD*
+$endlist
+$component R22
+ SMD*
+$endlist
+$component R21
+ SMD*
+$endlist
+$component R20
+ SMD*
+$endlist
+$component R10
+ SMD*
+$endlist
+$component R8
+ SMD*
+$endlist
+$component R14
+ SMD*
+$endlist
+$component R15
+ SMD*
+$endlist
+$component R16
+ SMD*
+$endlist
+$component R4
+ SMD*
+$endlist
+$component R3
+ SMD*
+$endlist
+$component R13
+ SMD*
+$endlist
+$component R12
+ SMD*
+$endlist
+$component C4
+ SMD*
+$endlist
+$component D2
+ SOT23
+$endlist
+$component D1
+ SOT23
+$endlist
+$component R11
+ SMD*
+$endlist
+$component R23
+ SMD*
+$endlist
+$component C7
+ SMD*
+$endlist
+$component C10
+ SMD*
+$endlist
+$component R2
+ SMD*
+$endlist
+$component R1
+ SMD*
+$endlist
+$component C13
+ SMD*
+$endlist
+$component DA8
+ SOT23
+$endlist
+$component DA4
+ SOT23
+$endlist
+$component C2
+ SMD*
+$endlist
+$component C11
+ SMD*
+$endlist
+$component C12
+ SMD*
+$endlist
+$component R7
+ SMD*
+$endlist
+$component XL1
+ SIL-4
+$endlist
+$component C6
+ SMD*
+$endlist
+$component C5
+ SMD*
+$endlist
+$component C3
+ SMD*
+$endlist
+$component C8
+ SMD*
+$endlist
+$component C9
+ SMD*
+$endlist
+$component L1
+ INDUCTOR*
+ SMD*
+$endlist
+$component DD1
+ LQFP48
+$endlist
+$component C1
+ SMD*
+$endlist
+$endfootprintlist
+}
+{ Pin List by Nets
+Net 1 "GND" "GND"
+ R22 1
+ C12 2
+ DA7 3
+ DA5 3
+ DA6 3
+ R16 1
+ C6 2
+ C5 2
+ C3 2
+ DD1 35
+ R2 2
+ DA4 3
+ DA8 3
+ DD1 47
+ C13 2
+ C1 2
+ DD1 44
+ DD1 23
+ C8 2
+ C9 2
+ C11 2
+ C2 2
+ XL9 3
+ XL9 1
+ DD1 8
+ XL9 7
+ XL1 3
+ DA1 4
+ DA1 3
+ R23 2
+ XL3 2
+ HOLE1 Hle
+ HOLE2 Hle
+ B1 C
+ C7 2
+ C4 2
+ D2 1
+ R13 1
+ XL10 1
+ XL10 3
+ XL10 7
+ R19 1
+ DA2 5
+ XL2 7
+ D1 1
+Net 2 "+3.3V" "+3.3V"
+ DA1 1
+ R1 1
+ D2 2
+ C13 1
+ C10 1
+ D1 2
+ D3 1
+ C12 1
+ DA2 8
+ R24 2
+ FU1 1
+ XL1 1
+ C11 1
+Net 3 "/RS485_A" "RS485_A"
+ R25 2
+ XL9 4
+ FU2 2
+ XL10 4
+ D1 3
+ U1 3
+Net 7 "/Tx/Rx" "Tx/Rx"
+ DA2 2
+ R23 1
+ DA2 3
+ XL4 3
+ DD1 32
+Net 8 "/SNS3A_ADC" "SNS3A_ADC"
+ DD1 16
+ R17 1
+ R9 1
+ DA5 2
+Net 9 "" ""
+ R17 2
+ XL7 3
+Net 10 "" ""
+ XL7 4
+ R18 2
+Net 11 "/SNS3B_PWR" "SNS3B_PWR"
+ DD1 43
+ R5 2
+Net 12 "/SNS3A_PWR" "SNS3A_PWR"
+ R9 2
+ DD1 42
+Net 13 "/SNS4A_ADC" "SNS4A_ADC"
+ DA7 2
+ R10 1
+ R20 1
+ DD1 18
+Net 14 "/SNS4B_ADC" "SNS4B_ADC"
+ R6 1
+ DA7 1
+ DD1 19
+ R21 1
+Net 15 "/SNS2B_ADC" "SNS2B_ADC"
+ R15 1
+ R4 1
+ DD1 15
+ DA6 1
+Net 16 "/SNS2A_ADC" "SNS2A_ADC"
+ DA6 2
+ DD1 14
+ R8 1
+ R14 1
+Net 17 "/SNS2B_PWR" "SNS2B_PWR"
+ R4 2
+ DD1 41
+Net 18 "/SNS2A_PWR" "SNS2A_PWR"
+ R8 2
+ DD1 40
+Net 19 "/SNS1B_PWR" "SNS1B_PWR"
+ R3 2
+ DD1 39
+Net 20 "/SNS4B_PWR" "SNS4B_PWR"
+ R6 2
+ DD1 46
+Net 21 "/SNS4A_PWR" "SNS4A_PWR"
+ R10 2
+ DD1 45
+Net 22 "" ""
+ XL8 5
+ XL8 2
+ R22 2
+Net 23 "" ""
+ XL8 3
+ R20 2
+Net 24 "" ""
+ XL8 4
+ R21 2
+Net 25 "" ""
+ XL6 3
+ R14 2
+Net 26 "" ""
+ R15 2
+ XL6 4
+Net 31 "" ""
+ C7 1
+ DD1 7
+Net 32 "/SWCLK" "SWCLK"
+ XL1 2
+ DD1 37
+Net 33 "/SWDIO" "SWDIO"
+ XL1 4
+ DD1 34
+Net 34 "" ""
+ XL2 5
+ DD1 27
+Net 37 "" ""
+ DD1 21
+ XL2 1
+Net 38 "/UART2_TX" "UART2_TX"
+ XL4 2
+ DA2 4
+ DD1 12
+Net 39 "/UART2_RX" "UART2_RX"
+ DA2 1
+ XL4 1
+ DD1 13
+Net 41 "" ""
+ XL2 3
+ DD1 25
+Net 42 "VCC" "VCC"
+ DA8 2
+ DA8 1
+ C4 1
+ F1 1
+ C2 1
+ DA1 8
+Net 43 "/SNS1B_ADC" "SNS1B_ADC"
+ R3 1
+ DD1 11
+ R12 1
+ DA4 1
+Net 44 "/SNS1A_ADC" "SNS1A_ADC"
+ R11 1
+ R7 1
+ DD1 10
+ DA4 2
+Net 45 "/PWR_ERROR" "PWR_ERROR"
+ DA1 5
+ DD1 2
+Net 46 "/SNS1A_PWR" "SNS1A_PWR"
+ R7 2
+ DD1 20
+Net 47 "" ""
+ R11 2
+ XL5 3
+Net 48 "" ""
+ XL5 4
+ R12 2
+Net 49 "/UART1_TX" "UART1_TX"
+ XL3 1
+ DD1 30
+Net 50 "/RS485_B" "RS485_B"
+ U1 2
+ D2 3
+ XL9 5
+ XL10 5
+ FU3 2
+ R26 1
+Net 51 "" ""
+ C9 1
+ L1 1
+ DD1 9
+ C8 1
+Net 52 "" ""
+ DA1 7
+ R1 2
+ R2 1
+ C10 2
+Net 53 "VDD" "VDD"
+ D3 3
+ L1 2
+ R24 1
+ FU1 2
+ C6 1
+ C5 1
+ C3 1
+ DD1 36
+ DD1 48
+ C1 1
+ DD1 24
+ DD1 1
+Net 54 "" ""
+ XL6 2
+ R16 2
+ XL6 5
+Net 55 "/B" "B"
+ DA2 7
+ R26 2
+ U1 1
+ FU3 1
+Net 56 "/A" "A"
+ U1 4
+ R25 1
+ DA2 6
+ FU2 1
+Net 57 "" ""
+ XL5 5
+ R13 2
+ XL5 2
+Net 58 "" ""
+ R19 2
+ XL7 5
+ XL7 2
+Net 59 "/PWR" "PWR"
+ XL10 2
+ XL10 8
+ F1 2
+ XL10 6
+ XL9 8
+ XL9 6
+ XL9 2
+Net 60 "" ""
+ DD1 22
+ XL2 2
+Net 61 "" ""
+ XL2 4
+ DD1 26
+Net 62 "" ""
+ DD1 28
+ XL2 6
+Net 63 "" ""
+ D3 2
+ B1 A
+Net 64 "/SNS3B_ADC" "SNS3B_ADC"
+ DA5 1
+ DD1 17
+ R18 1
+ R5 1
+}
+#End
