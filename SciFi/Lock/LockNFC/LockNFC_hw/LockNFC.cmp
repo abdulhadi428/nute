@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPCB (2011-04-29 BZR 2986)-stable date = 16/11/2011 18:55:34
+Cmp-Mod V01 Created by CvPCB (2011-07-08 BZR 3044)-stable date = 16/11/2011 22:07:22
 
 BeginCmp
 TimeStamp = /4EC3B11D;
@@ -75,20 +75,6 @@ TimeStamp = /4EC3B916;
 Reference = C10;
 ValeurCmp = 10uF;
 IdModule  = SMD0805;
-EndCmp
-
-BeginCmp
-TimeStamp = /4EC3AF85;
-Reference = C11;
-ValeurCmp = 10pF;
-IdModule  = SMD0603;
-EndCmp
-
-BeginCmp
-TimeStamp = /4EC3AF84;
-Reference = C12;
-ValeurCmp = 10pF;
-IdModule  = SMD0603;
 EndCmp
 
 BeginCmp
@@ -249,7 +235,14 @@ BeginCmp
 TimeStamp = /4EC3BDC0;
 Reference = D1;
 ValeurCmp = LED;
-IdModule  = LED-3MM;
+IdModule  = LED0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EC3FB7F;
+Reference = D2;
+ValeurCmp = LED;
+IdModule  = LED0603;
 EndCmp
 
 BeginCmp
@@ -491,9 +484,9 @@ IdModule  = SMD0603;
 EndCmp
 
 BeginCmp
-TimeStamp = /4EC3AF83;
+TimeStamp = /4EC3FACF;
 Reference = R8;
-ValeurCmp = 220;
+ValeurCmp = 100R;
 IdModule  = SMD0603;
 EndCmp
 
@@ -554,15 +547,15 @@ IdModule  = REF_POINT_1MM;
 EndCmp
 
 BeginCmp
-TimeStamp = /4EAFF7C9;
-Reference = RP3;
-ValeurCmp = REFPOINT;
-IdModule  = REF_POINT_1MM;
+TimeStamp = /4EC3B5E4;
+Reference = SW1;
+ValeurCmp = BUTTON;
+IdModule  = BUTTON_6x6SMD;
 EndCmp
 
 BeginCmp
-TimeStamp = /4EC3B5E4;
-Reference = SW1;
+TimeStamp = /4EC3E956;
+Reference = SW2;
 ValeurCmp = BUTTON;
 IdModule  = BUTTON_6x6SMD;
 EndCmp
@@ -610,13 +603,6 @@ IdModule  = SIL1_ROUND_1MM5;
 EndCmp
 
 BeginCmp
-TimeStamp = /4EC3B47B;
-Reference = XL7;
-ValeurCmp = CONN_7;
-IdModule  = SIL-7;
-EndCmp
-
-BeginCmp
 TimeStamp = /4AB77CCB;
 Reference = XL8;
 ValeurCmp = CONN_2;
@@ -635,13 +621,6 @@ TimeStamp = /4EC3CE30;
 Reference = XL11;
 ValeurCmp = RJ11;
 IdModule  = RJ11_TJ6_6P6C;
-EndCmp
-
-BeginCmp
-TimeStamp = /4EC3CB9D;
-Reference = XTAL1;
-ValeurCmp = 8MHz;
-IdModule  = CRYSTAL_HC49;
 EndCmp
 
 BeginCmp
