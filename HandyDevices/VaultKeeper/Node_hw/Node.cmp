@@ -1,10 +1,10 @@
-Cmp-Mod V01 Created by CvPCB (2011-07-08 BZR 3044)-stable date = 12/11/2011 01:05:10
+Cmp-Mod V01 Created by CvPCB (2011-07-08 BZR 3044)-stable date = 16/11/2011 02:16:35
 
 BeginCmp
 TimeStamp = /4EB44B05;
 Reference = B1;
 ValeurCmp = BAT;
-IdModule  = CH7410;
+IdModule  = BH810;
 EndCmp
 
 BeginCmp
@@ -183,24 +183,24 @@ IdModule  = SMD1812;
 EndCmp
 
 BeginCmp
-TimeStamp = /4EB6EAB5;
-Reference = FU1;
-ValeurCmp = SOLDERFUSE;
-IdModule  = SOLDERFUSE;
+TimeStamp = /4EC16F52;
+Reference = F2;
+ValeurCmp = FUSE0R;
+IdModule  = SMD0603_FUSE;
 EndCmp
 
 BeginCmp
-TimeStamp = /4EBC4D67;
-Reference = FU2;
-ValeurCmp = SOLDERFUSE;
-IdModule  = SOLDERFUSE;
+TimeStamp = /4EC16FF6;
+Reference = F3;
+ValeurCmp = FUSE0R;
+IdModule  = SMD0603_FUSE;
 EndCmp
 
 BeginCmp
-TimeStamp = /4EBC4D5C;
-Reference = FU3;
-ValeurCmp = SOLDERFUSE;
-IdModule  = SOLDERFUSE;
+TimeStamp = /4EC16FFC;
+Reference = F4;
+ValeurCmp = FUSE0R;
+IdModule  = SMD0603_FUSE;
 EndCmp
 
 BeginCmp
@@ -386,27 +386,6 @@ IdModule  = SMD0603;
 EndCmp
 
 BeginCmp
-TimeStamp = /4EB6EAA8;
-Reference = R24;
-ValeurCmp = 0R;
-IdModule  = SMD0603;
-EndCmp
-
-BeginCmp
-TimeStamp = /4EBC4D30;
-Reference = R25;
-ValeurCmp = 0R;
-IdModule  = SMD0603;
-EndCmp
-
-BeginCmp
-TimeStamp = /4EBC4CF8;
-Reference = R26;
-ValeurCmp = 0R;
-IdModule  = SMD0603;
-EndCmp
-
-BeginCmp
 TimeStamp = /4EB3C18E;
 Reference = RP1;
 ValeurCmp = REFPOINT;
@@ -459,42 +438,42 @@ BeginCmp
 TimeStamp = /4EAB097E;
 Reference = XL5;
 ValeurCmp = RJ11;
-IdModule  = RJ11_TJ6_6P4C;
+IdModule  = RJ11_TJ6_6P6C;
 EndCmp
 
 BeginCmp
 TimeStamp = /4EB3AB03;
 Reference = XL6;
 ValeurCmp = RJ11;
-IdModule  = RJ11_TJ6_6P4C;
+IdModule  = RJ11_TJ6_6P6C;
 EndCmp
 
 BeginCmp
 TimeStamp = /4EB3AB1D;
 Reference = XL7;
 ValeurCmp = RJ11;
-IdModule  = RJ11_TJ6_6P4C;
+IdModule  = RJ11_TJ6_6P6C;
 EndCmp
 
 BeginCmp
 TimeStamp = /4EB3AB10;
 Reference = XL8;
 ValeurCmp = RJ11;
-IdModule  = RJ11_TJ6_6P4C;
+IdModule  = RJ11_TJ6_6P6C;
 EndCmp
 
 BeginCmp
-TimeStamp = /4EAB01F7;
+TimeStamp = /4EC16E3A;
 Reference = XL9;
-ValeurCmp = RJ45;
-IdModule  = RJ45_TJ8_8P8C;
+ValeurCmp = RJ11;
+IdModule  = RJ11_TJ6_6P6C;
 EndCmp
 
 BeginCmp
-TimeStamp = /4EB384C3;
+TimeStamp = /4EC16E79;
 Reference = XL10;
-ValeurCmp = RJ45;
-IdModule  = RJ45_TJ8_8P8C;
+ValeurCmp = RJ11;
+IdModule  = RJ11_TJ6_6P6C;
 EndCmp
 
 EndListe
