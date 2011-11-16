@@ -8,112 +8,172 @@
 #include "cc2500.h"
 #include "cc2500_rf_settings.h"
 #include "delay_util.h"
+#include "stm32l1xx_exti.h"
 
-//#include "uart.h"
+#include "uart.h"
 
 // ============================ Variables ======================================
 CC_t CC;
 
 // ========================== Implementation ===================================
 void CC_t::Task(void) {
-    uint8_t FifoSize;
+    // Handle New Packet
+    if(NewPktRcvd) {
+        klPrintf("ogo\r");
+        if(EvtNewPkt != 0) EvtNewPkt();
+        NewPktRcvd = false;
+    }
+
     // Do with CC what needed
     GetState();
-    switch (State){
-        case CC_STB_RX_OVF:  FlushRxFIFO(); break;
-        case CC_STB_TX_UNDF: FlushTxFIFO(); break;
+    switch (State) {
+        case CC_STB_RX_OVF:
+            klPrintf("RX ovf\r");
+            FlushRxFIFO();
+            break;
+        case CC_STB_TX_UNDF:
+            klPrintf("TX undf\r");
+            FlushTxFIFO();
+            break;
 
         case CC_STB_IDLE:
-//            UART_PrintString("\rIDLE");
-            EnterRX();
-//            if (Delay.Elapsed(&Timer, 400)) {
-//                UART_PrintString("\rTX");
-//                // Prepare packet to send
-//                TX_Pkt.CommandID = 0x7C;
-//                TX_Pkt.ChargeCount = 4;
-//                TX_Pkt.ArtType = 27;
-//                WriteTX(TX_PktArray, CC_PKT_LEN);
-//                //CC.EnterTXAndWaitToComplete();
-//                EnterTX();
-//            }
+            //klPrintf("IDLE\r");
+#ifdef CC_MODE_RX
+//            EnterRX();
+#else
+            if (Delay.Elapsed(&Timer, 300)) {
+                klPrintf("TX\r");
+                // Prepare packet to send
+                TX_Pkt.ToAddr = 0x04;
+                TX_Pkt.CommandID = 0xCA;
+                TX_Pkt.SenderAddr = 18;
+                WriteTX(TX_PktArray, CC_PKT_LEN);
+                ////CC.EnterTXAndWaitToComplete();
+                IRQDisable();
+                EnterTX();
+            }
+#endif
             break;
 
         case CC_STB_RX:
-            //UART_PrintString("\rRX");
-            if (GDO0_IsHi()) GDO0_WasHi = true;
-            // Check if GDO0 has fallen
-            else if (GDO0_WasHi) {
-                //UART_PrintString("\rIRQ\r");
-                GDO0_WasHi = false;
-                FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
-                if (FifoSize != 0) {
-                    ReadRX(RX_PktArray, (CC_PKT_LEN+2));    // Read two extra bytes of RSSI & LQI
-                    EVENT_NewPacket();
-                } // if size>0
-            } // if falling edge
+//            //klPrintf("RX\r");
+//            if (GDO0_IsHi()) GDO0_WasHi = true;
+//            // Check if GDO0 has fallen
+//            else if (GDO0_WasHi) {
+//                klPrintf(" IRQ\r");
+//                GDO0_WasHi = false;
+//                FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
+//                if (FifoSize != 0) {
+//                    ReadRX(RX_PktArray, (CC_PKT_LEN+2));    // Read two extra bytes of RSSI & LQI
+//                    if(EvtNewPkt != 0) EvtNewPkt();
+//                } // if size>0
+//            } // if falling edge
             break;
 
         case CC_STB_TX:
-            //UART_PrintString("\rTX");
+            //klPrintf("TX1\r");
             break;
 
         default: // Just get out in other cases
+            klPrintf("Other: %X\r", State);
             //Uart.PrintString("\rOther: ");
             //Uart.PrintUint(CC.State);
             break;
     }//Switch
 }
 
+void CC_t::IRQHandler() {
+    uint8_t FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
+    FifoSize &= 0x7F;   // Remove MSB
+    if (FifoSize != 0) {
+        ReadRX(RX_PktArray, FifoSize);    // Read two extra bytes of RSSI & LQI
+        //klPrintf("Rx Fifo: %X\r", FifoSize);
+        if (FifoSize == (6+2)) {
+            NewPktRcvd = true;
+            klPrintf("aga\r");
+        }
+    } // if size>0
+}
+
 void CC_t::Init(void) {
     // ******** Hardware init section *******
     // ==== Clocks init ====
-//    RCC_APB2PeriphClockCmd(CC_GPIO_CLK | CC_AFIO_CLK, ENABLE);
-//    RCC_APB1PeriphClockCmd(CC_SPI_CLK, ENABLE);
-//    // ==== GPIO init ====
-//    GPIO_InitTypeDef GPIO_InitStructure;
-//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//    // Configure CC_CS as Push-Pull output
-//    GPIO_InitStructure.GPIO_Pin  = CC_CS;
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-//    GPIO_Init(CC_GPIO, &GPIO_InitStructure);
-//    this->CS_Hi();
-//    // Configure MOSI & SCK as Alternate Function Push Pull
-//    GPIO_InitStructure.GPIO_Pin  = CC_SCLK | CC_MOSI;
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-//    GPIO_Init(CC_GPIO, &GPIO_InitStructure);
-//    // Configure MISO as Input Floating
-//    GPIO_InitStructure.GPIO_Pin  = CC_MISO;
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-//    GPIO_Init(CC_GPIO, &GPIO_InitStructure);
-//    // ==== IRQ ====
-//    // Configure CC_GDO as Input Pull-up
-//    GPIO_InitStructure.GPIO_Pin  = CC_GDO0;
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-//    GPIO_Init(CC_GPIO, &GPIO_InitStructure);
-//    // ==== SPI init ====    MSB first, master, SCK idle low
-//    SPI_InitTypeDef SPI_InitStructure;
-//    SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
-//    SPI_InitStructure.SPI_Mode      = SPI_Mode_Master;
-//    SPI_InitStructure.SPI_DataSize  = SPI_DataSize_8b;
-//    SPI_InitStructure.SPI_CPOL      = SPI_CPOL_Low;
-//    SPI_InitStructure.SPI_CPHA      = SPI_CPHA_1Edge;
-//    SPI_InitStructure.SPI_NSS       = SPI_NSS_Soft;
-//    SPI_InitStructure.SPI_FirstBit  = SPI_FirstBit_MSB;
-//    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
-//    SPI_Init(CC_SPI, &SPI_InitStructure);
-//    SPI_Cmd(CC_SPI, ENABLE);
-//    // ******* Firmware init section *******
-//    GDO0_WasHi = false;
-//    Reset();
-//    FlushRxFIFO();
-//    RfConfig();
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
+    // ==== GPIO init ====
+    // Enable pin alternate functions
+    GPIO_PinAFConfig(GPIOA, GPIO_PinSource5, GPIO_AF_SPI1); // SCK
+    GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_SPI1); // MISO
+    GPIO_PinAFConfig(GPIOA, GPIO_PinSource7, GPIO_AF_SPI1); // MOSI
+    // Init pins
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
+    // SPI pins
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_DOWN;
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    // Configure CC_CS as Push-Pull output
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    CS_Hi();
+
+    // === DEBUG ===
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_DOWN;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+    // ==== IRQ ====
+    IRQDisable();   // Do not enable IRQ before CC init
+    // Configure CC_GDO as Input Pull-up
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    // Enable SYSCFG clock
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
+    // Connect EXTI0 Line to PA3 pin
+    SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource3);
+    // Configure EXTI3 line
+    EXTI_InitTypeDef   EXTI_InitStructure;
+    EXTI_InitStructure.EXTI_Line = EXTI_Line3;
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+    EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+    EXTI_Init(&EXTI_InitStructure);
+    // ==== SPI init ====    MSB first, master, SCK idle low
+    SPI_I2S_DeInit(SPI1);
+    SPI_InitTypeDef SPI_InitStructure;
+    SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+    SPI_InitStructure.SPI_Mode      = SPI_Mode_Master;
+    SPI_InitStructure.SPI_DataSize  = SPI_DataSize_8b;
+    SPI_InitStructure.SPI_CPOL      = SPI_CPOL_Low;
+    SPI_InitStructure.SPI_CPHA      = SPI_CPHA_1Edge;
+    SPI_InitStructure.SPI_NSS       = SPI_NSS_Soft;
+    SPI_InitStructure.SPI_FirstBit  = SPI_FirstBit_MSB;
+    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
+    SPI_Init(SPI1, &SPI_InitStructure);
+    SPI_Cmd(SPI1, ENABLE);
+    // =========== Firmware init section ===========
+    Reset();
+    FlushRxFIFO();
+    RfConfig();
+    SetChannel(100);
+    SetAddress(4);
 }
 
 void CC_t::SetChannel(uint8_t AChannel) {
     // CC must be in IDLE mode
-    while (CC.State != CC_STB_IDLE) this->EnterIdle();
+    while (State != CC_STB_IDLE) EnterIdle();
     // Now set channel
-    this->WriteRegister(CC_CHANNR, AChannel);
+    WriteRegister(CC_CHANNR, AChannel);
 }
 
 void CC_t::EnterTXAndWaitToComplete(void) {
@@ -124,6 +184,28 @@ void CC_t::EnterTXAndWaitToComplete(void) {
 }
 
 // ============================= Inner use =====================================
+void CC_t::IRQEnable(void) {
+    // Enable and set EXTI3 Interrupt to the lowest priority
+    NVIC_InitTypeDef   NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0F;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+}
+void CC_t::IRQDisable(void) {
+    NVIC_InitTypeDef   NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+    NVIC_Init(&NVIC_InitStructure);
+}
+
+void CC_t::EnterRX(void) {
+    NewPktRcvd = false;
+    WriteStrobe(CC_SRX);
+    IRQEnable();
+}
+
 void CC_t::WriteTX (uint8_t *PData, uint8_t ALength) {
     CS_Lo();                 // Start transmission
     BusyWait();              // Wait for chip to become ready
@@ -206,10 +288,16 @@ void CC_t::RfConfig(void){
 }
 
 uint8_t CC_t::ReadWriteByte(uint8_t AByte) {
-//    CC_SPI->DR = AByte;
-//    while (!(CC_SPI->SR & SPI_I2S_FLAG_RXNE));  // Wait for SPI transmission to complete
-//    return CC_SPI->DR;
-    return 0;
+    SPI1->DR = AByte;
+    while (!(SPI1->SR & SPI_I2S_FLAG_RXNE));  // Wait for SPI transmission to complete
+    return SPI1->DR;
 }
 
-
+// ================================= Interrupt ================================
+void EXTI3_IRQHandler(void) {
+    if(EXTI_GetITStatus(EXTI_Line3) != RESET) {
+        EXTI_ClearITPendingBit(EXTI_Line3); // Clear the EXTI line pending bit
+        //klPrintf(" IRQ\r");
+        CC.IRQHandler();
+    }
+}

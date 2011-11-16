@@ -1,4 +1,4 @@
-update=26/08/2011 20:39:51
+update=14/11/2011 01:43:52
 version=1
 last_client=pcbnew
 [cvpcb]
@@ -55,9 +55,9 @@ LibName7=Tittar_kl
 LibName8=Transistors_kl
 [pcbnew]
 version=1
-PadDrlX=320
-PadDimH=600
-PadDimV=600
+PadDrlX=0
+PadDimH=394
+PadDimV=110
 BoardThickness=630
 TxtPcbV=800
 TxtPcbH=600
@@ -69,7 +69,7 @@ DrawLar=150
 EdgeLar=150
 TxtLar=120
 MSegLar=150
-LastNetListRead=Torch1.net
+LastNetListRead=AlienTransmitter.net
 [pcbnew/libraries]
 LibDir=D:/libs/Kicad
 LibName1=Antennas_kl

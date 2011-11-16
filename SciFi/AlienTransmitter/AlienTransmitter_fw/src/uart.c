@@ -4,6 +4,16 @@
 #include "stm32l1xx_rcc.h"
 #include <stdarg.h>
 
+void UART_Print (uint8_t AByte);
+char UintToHexChar (uint8_t b);
+void UART_PrintAsHex (uint8_t AByte);
+void UART_PrintUint (uint32_t ANumber);
+void UART_PrintInt (int32_t ANumber);
+void UART_PrintString (const char *S);
+void UART_PrintArrAsString (uint8_t *Arr, uint8_t ALength);
+void UART_PrintArrAsHex(uint8_t *Arr, uint8_t ALength);
+void UART_NewLine (void);
+
 // ************** Implementation ***********************
 void UART_Init(void) {
     // ==== Clocks init ====

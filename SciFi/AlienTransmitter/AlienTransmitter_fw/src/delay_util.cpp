@@ -2,6 +2,7 @@
 #include "stm32l1xx_tim.h"
 #include "misc.h"
 #include "stm32l1xx_rcc.h"
+#include "uart.h"
 
 Delay_t Delay;
 // =============================== Implementation ==============================

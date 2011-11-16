@@ -32,45 +32,19 @@
 #define CC_SNOP     0x3D
 
 // Status registers
-#define CC_VERSION      0x31|CC_BURST_FLAG
-#define CC_FREQEST      0x32|CC_BURST_FLAG
-#define CC_LQI          0x33|CC_BURST_FLAG
-#define CC_RSSI         0x34|CC_BURST_FLAG
-#define CC_MARCSTATE    0x35|CC_BURST_FLAG
-#define CC_WORTIME1     0x36|CC_BURST_FLAG
-#define CC_WORTIME0     0x37|CC_BURST_FLAG
-#define CC_PKTSTATUS    0x38|CC_BURST_FLAG
-#define CC_VCO_VC_DAC   0x39|CC_BURST_FLAG
-#define CC_TXBYTES      0x3A|CC_BURST_FLAG
-#define CC_RXBYTES      0x3B|CC_BURST_FLAG
+#define CC_VERSION        0x31|CC_BURST_FLAG
+#define CC_FREQEST        0x32|CC_BURST_FLAG
+#define CC_LQI            0x33|CC_BURST_FLAG
+#define CC_RSSI           0x34|CC_BURST_FLAG
+#define CC_MARCSTATE      0x35|CC_BURST_FLAG
+#define CC_WORTIME1       0x36|CC_BURST_FLAG
+#define CC_WORTIME0       0x37|CC_BURST_FLAG
+#define CC_PKTSTATUS      0x38|CC_BURST_FLAG
+#define CC_VCO_VC_DAC     0x39|CC_BURST_FLAG
+#define CC_TXBYTES        0x3A|CC_BURST_FLAG
+#define CC_RXBYTES        0x3B|CC_BURST_FLAG
 #define CC_RCCTRL1_STATUS 0x3C|CC_BURST_FLAG
 #define CC_RCCTRL0_STATUS 0x3D|CC_BURST_FLAG
-
-
-// States
-#define CC_ST_SLEEP         0
-#define CC_ST_IDLE          1
-#define CC_ST_XOFF          2
-#define CC_ST_MANCAL3       3
-#define CC_ST_MANCAL4       4
-#define CC_ST_MANCAL5       5
-#define CC_ST_FS_WAKEUP6    6
-#define CC_ST_FS_WAKEUP7    7
-#define CC_ST_CALIBRATE8    8
-#define CC_ST_SETTLING9     9
-#define CC_ST_SETTLING10    10
-#define CC_ST_SETTLING11    11
-#define CC_ST_CALIBRATE12   12
-#define CC_ST_RX13          13
-#define CC_ST_RX14          14
-#define CC_ST_RX15          15
-#define CC_ST_TXRX_SETTLING 16
-#define CC_ST_RX_OVERFLOW   17
-#define CC_ST_FSTXON        18
-#define CC_ST_TX19          19
-#define CC_ST_TX20          20
-#define CC_ST_RXTX_SETTLING 21
-#define CC_ST_TX_UNDERFLOW  22
 
 // Status byte states
 #define CC_STB_IDLE         0x00
