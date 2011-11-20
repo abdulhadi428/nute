@@ -20,10 +20,14 @@ void LCD_Init(void) {
     LCD_WriteCmd(0xA4); // Set normal display mode
     LCD_WriteCmd(0x2F); // Charge pump on
     LCD_WriteCmd(0x40); // Set start row address = 0
+//    LCD_WriteCmd(0xB0); // set Y-address = 0
+//    LCD_WriteCmd(0x10); // set X-address, upper 3 bits
+//    LCD_WriteCmd(0x00); // set X-address, lower 4 bits
 #ifdef LCD_UPSIDEDOWN
     LCD_WriteCmd(0xC8); // mirror Y axis
     LCD_WriteCmd(0xA1); // Mirror X axis
 #endif
+//    LCD_WriteCmd(0x07);
     LCD_WriteCmd(0xAF); // display ON
     LCD_Clear(); // clear LCD
 }

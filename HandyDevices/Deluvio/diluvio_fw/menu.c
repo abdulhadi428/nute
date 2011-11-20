@@ -157,11 +157,12 @@ FORCE_INLINE void Task_Menu(void) {
                 CurrentPump->Duration++;
                 FlickerEnableValue(PumpMenu.Items[5].Tag, 5, CurrentPump->Duration);
                 PumpMenuSetup();
+                DelayReset(&EMenu.ExitTimer);   // Prevent immediate exit after key depress
             }
         }
     }
-
-    if (EState != StIdle) {
+    // Test if get out - but only when Aqua key is not pressed
+    else if (EState != StIdle) {
         if (NeedToExit) {
             if(DelayElapsed(&EMenu.ExitTimer, 261)) {
                 NeedToExit = false;

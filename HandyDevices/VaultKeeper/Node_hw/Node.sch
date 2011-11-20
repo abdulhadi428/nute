@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 16/11/2011 10:59:43
+EESchema Schematic File Version 2  date 18/11/2011 12:02:59
 LIBS:Connectors_kl
 LIBS:Interface_kl
 LIBS:pcb_details
@@ -13,7 +13,7 @@ $Descr A3 16535 11700
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "16 nov 2011"
+Date "18 nov 2011"
 Rev ""
 Comp ""
 Comment1 ""
@@ -231,8 +231,6 @@ Wire Bus Line
 	8550 1750 6050 1750
 Wire Bus Line
 	6050 1750 6050 2950
-Wire Wire Line
-	5250 3200 5300 3200
 Wire Wire Line
 	9250 5950 9350 5950
 Wire Wire Line

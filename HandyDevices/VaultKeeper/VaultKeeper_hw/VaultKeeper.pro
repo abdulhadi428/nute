@@ -1,4 +1,4 @@
-update=11/10/2011 20:23:28
+update=18/11/2011 12:11:31
 version=1
 last_client=eeschema
 [cvpcb]
@@ -121,3 +121,4 @@ LibName7=st_kl
 LibName8=Tittar_kl
 LibName9=Transistors_kl
 LibName10=SmartCard_kl
+LibName11=Interface_kl

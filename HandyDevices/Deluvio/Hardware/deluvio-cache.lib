@@ -1,4 +1,4 @@
-EESchema-LIBRARY Version 2.3  Date: 01/10/2011 22:02:44
+EESchema-LIBRARY Version 2.3  Date: 12/11/2011 23:45:26
 #encoding utf-8
 #
 # +3.3V
@@ -150,6 +150,7 @@ F0 "B" 150 200 60 H V C CNN
 F1 "BAT" -250 200 60 H V C CNN
 $FPLIST
  BH*
+ CH*
 $ENDFPLIST
 DRAW
 P 3 0 1 0  -200 0  200 0  200 0 f

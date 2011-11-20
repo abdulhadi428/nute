@@ -7,11 +7,13 @@
  */
 
 #include "main.h"
+#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
 #include <avr/sleep.h>
 #include <util/delay.h>
 #include <avr/eeprom.h>
+#include <util/atomic.h>
 #include "lcd110x.h"
 #include "sensors.h"
 #include "delay_util.h"
@@ -60,6 +62,8 @@ int main(void) {
             // Power restored, reinit all needed
             wdt_enable(WDTO_1S);
             BatteryOk = true;
+            WaterOk = true;
+            CableOk = true;
             LCD_Init();
             EnterIdle();
         }
@@ -205,30 +209,45 @@ void CheckWater(void) {
     WATER_SNS_DDR &= ~(1<<WATER_IN_P);  // Sensor input
     WATER_SNS_DDR |=  (1<<WATER_R_P);   // Sensor R output
     // Set R output HI
-    WATER_R_LO();
-    _delay_us(207);
-    // Check input
-    if (WATER_IN_IS_HI()) { // Hi when Lo => cable ok, water ok
+    WATER_R_HI();
+    // Start ADC
+    uint16_t WaterADC=0;
+    ADMUX = (0<<REFS1)|(1<<REFS0)|(0<<ADLAR)|(0<<MUX4)|(0<<MUX3)|(0<<MUX2)|(0<<MUX1)|(1<<MUX0); // Aref= AVCC, Input=ADC1
+    ADC_START_MEASUREMENT();    // First fake measurement
+    while(!ADC_MEASUREMENT_COMPLETED());
+    for(uint8_t i=0; i<BAT_NUMBER_OF_MEASURES; i++) {
+        ADC_START_MEASUREMENT();
+        while(!ADC_MEASUREMENT_COMPLETED());
+        ATOMIC_BLOCK(ATOMIC_FORCEON) {
+            WaterADC += ADC;
+        }
+    } // for
+    // Disable all
+    ADC_REF_DISABLE();
+    ADC_DISABLE();
+    //WATER_SNS_DDR &= ~(1<<WATER_R_P);
+    //WATER_R_LO();
+    // divide result
+    ATOMIC_BLOCK(ATOMIC_FORCEON) {
+        WaterADC >>= BAT_POWER_OF_MEASURES;
+    }
+    //LCD_PrintUint(0,0,WaterADC,false);
+    // Check value
+    if (WaterADC < 100) {   // Uin low => no water
+        LCD_PrintString_P(0, 0, PSTR("В баке нет воды"), false);
+        WaterOk = false;
+        CableOk = true;
+    }
+    else if (WaterADC < 800) {  // Uin within 100...800 => cable ok, water ok
+        LCD_PrintString_P(0, 0, PSTR("               "), false);
         WaterOk = true;
         CableOk = true;
-        LCD_PrintString_P(0, 0, PSTR("               "), false);
     }
-    else {
-        // IN is Lo => bad cable or no water
-        WATER_R_HI();
-        _delay_us(207);
-        // Check input
-        if (WATER_IN_IS_HI()) { // Lo when Lo and Hi when Hi => bad cable
-            CableOk = false;
-            LCD_PrintString_P(0, 0, PSTR("Кабель отключен"), false);
-        }
-        else { // Lo when Lo and Lo when Hi => cable ok, no water
-            WaterOk = false;
-            CableOk = true;
-            LCD_PrintString_P(0, 0, PSTR("В баке нет воды"), false);
-        }
+    else {  // Uin > 800 => cable is disconnected
+        LCD_PrintString_P(0, 0, PSTR("Кабель отключен"), false);
+        WaterOk = true;
+        CableOk = false;
     }
-    WATER_SNS_DDR &= ~(1<<WATER_R_P);   // Sensor R input - to save power
 }
 void CheckBattery(void) {
     if(!POWER_OK()) return;
@@ -266,7 +285,7 @@ FORCE_INLINE void EVENT_NewMinute(void) {
         if(!WaterOk || !CableOk || !BatteryOk || !Time.IsSetCorrectly) {
             // Beep every 15 minutes
             if (
-                ((Time.MinTens == 0) && (Time.MinUnits == 1)) ||    // 01, not 00 for not ot mess with pumping
+                ((Time.MinTens == 0) && (Time.MinUnits == 1)) ||    // 01, not 00 for not to mess with pumping
                 ((Time.MinTens == 1) && (Time.MinUnits == 5)) ||    // 15
                 ((Time.MinTens == 3) && (Time.MinUnits == 0)) ||    // 30
                 ((Time.MinTens == 4) && (Time.MinUnits == 5))       // 45

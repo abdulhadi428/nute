@@ -54,7 +54,7 @@ private:
     void WriteStrobe(uint8_t AStrobe);
     // Strobes
     void Reset(void)        { WriteStrobe(CC_SRES); }
-    void FlushRxFIFO(void)  { WriteStrobe(CC_SFRX); }
+    void FlushRxFIFO(void)  { WriteStrobe(CC_SFRX); } //!! enter idle first
     void EnterTX(void)      { WriteStrobe(CC_STX);  }
     void EnterRX(void);
     void EnterIdle(void)    { WriteStrobe(CC_SIDLE);}
