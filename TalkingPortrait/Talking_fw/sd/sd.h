@@ -16,6 +16,7 @@
 
 #include "diskio.h"
 #include "ff.h"
+//#include "stm32_eval_sdio_sd.h"
 
 // ============================ Defines ========================================
 #define SD_BUF_SIZE 4096
@@ -150,7 +151,7 @@ typedef struct {
     uint32_t CardCapacity;  /*!< Card Capacity */
     uint32_t CardBlockSize; /*!< Card Block Size */
     uint16_t RCA;
-    uint8_t Type;
+    uint8_t CardType;
 } SD_CardInfo;
 
 class sd_t {
@@ -172,22 +173,14 @@ private:
 public:
     // Files data
     FATFS FatFilesystem;
-//    FIL file1;
-//    DIR dir;
-//    uint8_t Buf[SD_BUF_SIZE];
     // SD data
     SD_Error Status;
     SD_Error Init(void);
-    //SD_Error Mount(void)
+    // Read/write
+    SD_Error ReadBlock(uint8_t *ABuf, uint32_t AAddr, uint16_t ABlockSize);
 };
 
 extern sd_t SD;
-
-// ==== Declare Timer IRQ. Use externC to make it visible from asm file. =======
-extern "C" {
-    void SDIO_IRQHandler(void);
-}
-
 
 
 #endif	/* SD_H */

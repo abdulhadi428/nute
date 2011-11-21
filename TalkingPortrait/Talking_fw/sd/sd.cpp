@@ -2,6 +2,7 @@
 #include "sd.h"
 #include <stdarg.h>
 
+
 #include "uart.h"
 #include "ff.h"
 #include "delay_util.h"
@@ -47,10 +48,10 @@ sd_t SD;
  * SD_Error: SD Card Error code.
  */
 SD_Error sd_t::Init() {
-#define SD_VERBOSE_INIT
-    klPrintf("SD Init\r");
+//#define SD_VERBOSE_INIT
+    //klPrintf("SD Init\r");
     SD_Error errorstatus = SD_OK;
-    CardInfo.Type = SDIO_STD_CAPACITY_SD_CARD_V1_1;
+    CardInfo.CardType = SDIO_STD_CAPACITY_SD_CARD_V1_1;
     LowLevelInit();                         // Initialize clocks, pins, etc.
     InitSDIO(SDIO_INIT_CLK_DIV, SDIO_BusWide_1b);  // Set 400 kHz clk
     SDIO_SetPowerState(SDIO_PowerState_ON); // Set Power State to ON
@@ -88,21 +89,11 @@ SD_Error sd_t::Init() {
 #endif
     if (errorstatus != SD_OK) return (errorstatus);
 
-while(1);
-//
-//    // KL: Send block size
-//    SDIO_CmdInitStructure.SDIO_Argument = (uint32_t)512;
-//    SDIO_CmdInitStructure.SDIO_CmdIndex = SD_CMD_SET_BLOCKLEN;
-//    SDIO_CmdInitStructure.SDIO_Response = SDIO_Response_Short;
-//    SDIO_CmdInitStructure.SDIO_Wait = SDIO_Wait_No;
-//    SDIO_CmdInitStructure.SDIO_CPSM = SDIO_CPSM_Enable;
-//    SDIO_SendCommand(&SDIO_CmdInitStructure);
-//
-//    errorstatus = CmdResp1Error();
-//#ifdef SD_VERBOSE_INIT
-//    klPrintf("SD_CMD_SET_BLOCKLEN: %u\r", errorstatus);
-//#endif
-
+    // KL: Send block size
+    errorstatus = Cmd(16, (uint32_t)512, rsp1);
+#ifdef SD_VERBOSE_INIT
+    klPrintf("SD_CMD_SET_BLOCKLEN: %u\r", errorstatus);
+#endif
     return (errorstatus);
 //            Status = SD_ReadBlock(Buffer_Rx, (0x0083 * 512), 512);
 //            if (Status == SD_OK) {
@@ -147,11 +138,12 @@ void sd_t::InitSDIO(uint8_t AClkDiv, uint32_t ABusWide) {
     SDIO_InitStructure.SDIO_ClockPowerSave = SDIO_ClockPowerSave_Disable;
     SDIO_InitStructure.SDIO_BusWide = ABusWide;
     SDIO_InitStructure.SDIO_HardwareFlowControl = SDIO_HardwareFlowControl_Disable;
+    //SDIO_InitStructure.SDIO_HardwareFlowControl = SDIO_HardwareFlowControl_Enable;
     SDIO_Init(&SDIO_InitStructure);
 }
 
 SD_Error sd_t::PowerOn() {
-#define SD_VERBOSE_POWER_ON
+//#define SD_VERBOSE_POWER_ON
 #ifdef SD_VERBOSE_POWER_ON
     klPrintf("SD Power on\r");
 #endif
@@ -165,7 +157,7 @@ SD_Error sd_t::PowerOn() {
     // Argument: - [31:12]: Reserved (shall be set to '0') - [11:8]: Supply Voltage (VHS) 0x1 (Range: 2.7-3.6 V) - [7:0]: Check Pattern (recommended 0xAA) */
     errorstatus = Cmd(8, (uint32_t)0x1AA, rsp7);
     if (errorstatus == SD_OK) {
-        CardInfo.Type = SDIO_STD_CAPACITY_SD_CARD_V2_0;
+        CardInfo.CardType = SDIO_STD_CAPACITY_SD_CARD_V2_0;
         SDType = SD_HIGH_CAPACITY;  // needed later
     } else errorstatus = Cmd(55, 0, rsp1);
 
@@ -191,17 +183,17 @@ SD_Error sd_t::PowerOn() {
 #endif
             if (counter++ == 0xFFFF) return SD_INVALID_VOLTRANGE;
         } while (!validvoltage);
-        if (response &= SD_HIGH_CAPACITY) CardInfo.Type = SDIO_HIGH_CAPACITY_SD_CARD;
+        if (response &= SD_HIGH_CAPACITY) CardInfo.CardType = SDIO_HIGH_CAPACITY_SD_CARD;
     } // if SD_OK; else this is MMC card
     return (SD_OK);
 }
 
 SD_Error sd_t::InitCards() {
-    klPrintf("InitCards\r");
+    //klPrintf("InitCards\r");
     if (SDIO_GetPowerState() == SDIO_PowerState_OFF) return SD_REQUEST_NOT_APPLICABLE;
     SD_Error errorstatus = SD_OK;
 
-    if (CardInfo.Type != SDIO_SECURE_DIGITAL_IO_CARD) {
+    if (CardInfo.CardType != SDIO_SECURE_DIGITAL_IO_CARD) {
         // Send CMD2: ALL_SEND_CID
         errorstatus = Cmd(2, 0, rsp2);
         if (errorstatus != SD_OK) return (errorstatus);
@@ -211,10 +203,10 @@ SD_Error sd_t::InitCards() {
         CID_Tab[3] = SDIO_GetResponse(SDIO_RESP4);
     }
 
-    if (    (CardInfo.Type == SDIO_STD_CAPACITY_SD_CARD_V1_1) ||
-            (CardInfo.Type == SDIO_STD_CAPACITY_SD_CARD_V2_0) ||
-            (CardInfo.Type == SDIO_SECURE_DIGITAL_IO_COMBO_CARD) ||
-            (CardInfo.Type == SDIO_HIGH_CAPACITY_SD_CARD)
+    if (    (CardInfo.CardType == SDIO_STD_CAPACITY_SD_CARD_V1_1) ||
+            (CardInfo.CardType == SDIO_STD_CAPACITY_SD_CARD_V2_0) ||
+            (CardInfo.CardType == SDIO_SECURE_DIGITAL_IO_COMBO_CARD) ||
+            (CardInfo.CardType == SDIO_HIGH_CAPACITY_SD_CARD)
         )
     {
         // Send CMD3 = SET_REL_ADDR with argument 0. SD Card publishes its RCA.
@@ -222,7 +214,7 @@ SD_Error sd_t::InitCards() {
         if (errorstatus != SD_OK) return (errorstatus);
     }
 
-    if (CardInfo.Type != SDIO_SECURE_DIGITAL_IO_CARD) {
+    if (CardInfo.CardType != SDIO_SECURE_DIGITAL_IO_CARD) {
         // Send CMD9 SEND_CSD with argument as card's RCA
         errorstatus = Cmd(9, (uint32_t)(CardInfo.RCA << 16), rsp2);
         if (errorstatus != SD_OK) return (errorstatus);
@@ -265,7 +257,7 @@ void sd_t::GetCardInfo(void) {
     CardInfo.SD_csd.DSRImpl = (tmp & 0x10) >> 4;
     CardInfo.SD_csd.Reserved2 = 0; /*!< Reserved */
 
-    if ((CardInfo.Type == SDIO_STD_CAPACITY_SD_CARD_V1_1) || (CardInfo.Type == SDIO_STD_CAPACITY_SD_CARD_V2_0)) {
+    if ((CardInfo.CardType == SDIO_STD_CAPACITY_SD_CARD_V1_1) || (CardInfo.CardType == SDIO_STD_CAPACITY_SD_CARD_V2_0)) {
         CardInfo.SD_csd.DeviceSize = (tmp & 0x03) << 10;
         /*!< Byte 7 */
         tmp = (uint8_t) (CSD_Tab[1] & 0x000000FF);
@@ -287,7 +279,7 @@ void sd_t::GetCardInfo(void) {
         CardInfo.CardCapacity *= (1 << (CardInfo.SD_csd.DeviceSizeMul + 2));
         CardInfo.CardBlockSize = 1 << (CardInfo.SD_csd.RdBlockLen);
         CardInfo.CardCapacity *= CardInfo.CardBlockSize;
-    } else if (CardInfo.Type == SDIO_HIGH_CAPACITY_SD_CARD) {
+    } else if (CardInfo.CardType == SDIO_HIGH_CAPACITY_SD_CARD) {
         /*!< Byte 7 */
         tmp = (uint8_t) (CSD_Tab[1] & 0x000000FF);
         CardInfo.SD_csd.DeviceSize = (tmp & 0x3F) << 16;
@@ -390,7 +382,7 @@ void sd_t::GetCardInfo(void) {
 * pscr: pointer to the buffer that will contain the SCR value.
 */
 SD_Error sd_t::FindSCR(uint32_t *pscr) {
-   uint32_t i = 0;
+   uint32_t i = 0, tmp;
    SD_Error errorstatus = SD_OK;
    uint32_t tempscr[2] = {0, 0};
 
@@ -416,9 +408,9 @@ SD_Error sd_t::FindSCR(uint32_t *pscr) {
 
    while (!(SDIO->STA & (SDIO_FLAG_RXOVERR | SDIO_FLAG_DCRCFAIL | SDIO_FLAG_DTIMEOUT | SDIO_FLAG_DBCKEND | SDIO_FLAG_STBITERR))) {
        if (SDIO_GetFlagStatus(SDIO_FLAG_RXDAVL) != RESET) {
-           *(tempscr + i) = SDIO_ReadData();
+           tmp = SDIO_ReadData();
+           if ((i == 0) || (i == 1)) tempscr[i] = tmp;
            i++;
-           if (i > 1) break;
        }
    }
 
@@ -442,7 +434,6 @@ SD_Error sd_t::FindSCR(uint32_t *pscr) {
 
    return SD_OK;
 }
-
 
 SD_Error sd_t::SDEnWideBus(FunctionalState NewState) {
     if (SDIO_GetResponse(SDIO_RESP1) & SD_CARD_LOCKED) return SD_LOCK_UNLOCK_FAILED;
@@ -472,10 +463,7 @@ SD_Error sd_t::SDEnWideBus(FunctionalState NewState) {
             return (errorstatus);
         } else return SD_REQUEST_NOT_APPLICABLE;
     }
-
-
 } // SDEnWideBus
-
 
 /**
  * Enables wide bus opeartion for the requeseted card if supported by card.
@@ -488,11 +476,11 @@ SD_Error sd_t::SDEnWideBus(FunctionalState NewState) {
 SD_Error sd_t::EnableWideBusOperation(uint32_t WideMode) {
     SD_Error errorstatus = SD_OK;
     // MMC Card doesn't support this feature
-    if (CardInfo.Type == SDIO_MULTIMEDIA_CARD) return SD_UNSUPPORTED_FEATURE;
+    if (CardInfo.CardType == SDIO_MULTIMEDIA_CARD) return SD_UNSUPPORTED_FEATURE;
     else if (
-            (CardInfo.Type == SDIO_STD_CAPACITY_SD_CARD_V1_1) ||
-            (CardInfo.Type == SDIO_STD_CAPACITY_SD_CARD_V2_0) ||
-            (CardInfo.Type == SDIO_HIGH_CAPACITY_SD_CARD)) {
+            (CardInfo.CardType == SDIO_STD_CAPACITY_SD_CARD_V1_1) ||
+            (CardInfo.CardType == SDIO_STD_CAPACITY_SD_CARD_V2_0) ||
+            (CardInfo.CardType == SDIO_HIGH_CAPACITY_SD_CARD)) {
         if (WideMode == SDIO_BusWide_8b) return SD_UNSUPPORTED_FEATURE;
         else if (WideMode == SDIO_BusWide_4b) {
             errorstatus = SDEnWideBus(ENABLE);
@@ -504,7 +492,6 @@ SD_Error sd_t::EnableWideBusOperation(uint32_t WideMode) {
     }
     return (errorstatus);
 }
-
 
 // ========================== Commands and responses ==========================
 SD_Error sd_t::Cmd(uint32_t AIndx, uint32_t AArgument, SD_RespType_t ARespType, ...) {
@@ -577,29 +564,66 @@ SD_Error sd_t::Cmd(uint32_t AIndx, uint32_t AArgument, SD_RespType_t ARespType, 
     return errorstatus;
 }
 
+// =============================== Read/Write =================================
+SD_Error sd_t::ReadBlock(uint8_t *ABuf, uint32_t AAddr, uint16_t ABlockSize) {
+    SD_Error errorstatus = SD_OK;
+    SDIO->DCTRL = 0x0;
+
+    if (CardInfo.CardType == SDIO_HIGH_CAPACITY_SD_CARD) {
+        ABlockSize = 512;
+        AAddr /= 512;
+    }
+    SDIO_DataInitTypeDef SDIO_DataInitStructure;
+    SDIO_DataInitStructure.SDIO_DataTimeOut = 0xFFFFFFFF;;
+    SDIO_DataInitStructure.SDIO_DataLength = (uint32_t)ABlockSize;
+    SDIO_DataInitStructure.SDIO_DataBlockSize = (uint32_t) 9 << 4;  // 512 bytes
+    SDIO_DataInitStructure.SDIO_TransferDir = SDIO_TransferDir_ToSDIO;
+    SDIO_DataInitStructure.SDIO_TransferMode = SDIO_TransferMode_Block;
+    SDIO_DataInitStructure.SDIO_DPSM = SDIO_DPSM_Enable;
+    SDIO_DataConfig(&SDIO_DataInitStructure);
+
+    // Send CMD17: READ_SINGLE_BLOCK
+    errorstatus = Cmd(17, (uint32_t)AAddr, rsp1);
+    if (errorstatus != SD_OK) return (errorstatus);
+
+    SDIO_DMACmd(ENABLE);
+    // Init DMA
+    DMA_InitTypeDef DMA_InitStructure;
+    DMA_ClearFlag(DMA2_FLAG_TC4 | DMA2_FLAG_TE4 | DMA2_FLAG_HT4 | DMA2_FLAG_GL4);
+    // DMA2 Channel4 disable
+    DMA_Cmd(DMA2_Channel4, DISABLE);
+    // DMA2 Channel4 Config
+    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) SDIO_FIFO_ADDRESS;
+    DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t) ABuf;
+    DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
+    DMA_InitStructure.DMA_BufferSize = ABlockSize / 4;
+    DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+    DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+    DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
+    DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;
+    DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+    DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
+    DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+    DMA_Init(DMA2_Channel4, &DMA_InitStructure);
+    // DMA2 Channel4 enable
+    DMA_Cmd(DMA2_Channel4, ENABLE);
+
+    return SD_OK;
+}
+
 
 // ========================= FAT needed functions ==============================
 // Physical drive number (0), Pointer to the data buffer to store read data, Start sector number (LBA), Sector count (1..255)
 DRESULT disk_read (BYTE drv, BYTE *buff, DWORD sector, BYTE count) {
 	if (drv || !count) return RES_PARERR;
-    klPrintf("Sector: %u\r", sector);
-    klPrintf("Count: %u\r", count);
-    //uint32_t Tmr1, Tmr2;
-    //Tmr1 = Delay.TickCounter;
-    //SD.Status = SD_ReadBlock(buff, (sector * 512), 512);
-    //Tmr2 = Delay.TickCounter;
-    //UART_StrUint("Tmr1: ", Tmr1);
-    //UART_StrUint("Tmr2: ", Tmr2);
+    SD.Status = SD.ReadBlock(buff, (sector * 512), 512);
     if (SD.Status != SD_OK) {
         klPrintf("Err1: %u\r", SD.Status);
         return RES_ERROR;
     }
     // Wait for DMA transfer to finish
-  //  SD.Status = SD_WaitReadOperation();
-    if (SD.Status != SD_OK) {
-        klPrintf("Err2: %u\r", SD.Status);
-        return RES_ERROR;
-    }
+    uint32_t t=0;
+    while (DMA_GetFlagStatus(DMA2_FLAG_TC4) == RESET) if(t++ > 10000) return RES_ERROR;
     return RES_OK;
 }
 DSTATUS disk_status (BYTE drv) {
@@ -608,23 +632,11 @@ DSTATUS disk_status (BYTE drv) {
 }
 DSTATUS disk_initialize (BYTE drv) {
     if (drv) return STA_NOINIT;			// Supports only single drive
-    //klPrintf("41\r");
-
     SD.Status = SD.Init();
-    //klPrintf("42\r");
     if (SD.Status != SD_OK) {
         klPrintf("SD init error: %u\r", SD.Status);
         return STA_NOINIT;
     }
-
     klPrintf("Crd on\r");
     return 0;
-}
-
-// ============================= Interrupts ====================================
-
-void SDIO_IRQHandler(void) {
-    klPrintf("SDIO IRQ\r");
-    /* Process All SDIO Interrupt Sources */
-    //SD_ProcessIRQSrc();
 }

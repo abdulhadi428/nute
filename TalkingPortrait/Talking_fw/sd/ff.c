@@ -1978,7 +1978,7 @@ BYTE check_fs (	/* 0:The FAT BR, 1:Valid BR but not an FAT, 2:Not a BR, 3:Disk e
 	DWORD sect	/* Sector# (lba) to check if it is an FAT boot record or not */
 )
 {
-    klPrintf("check_fs\r");
+    //klPrintf("check_fs\r");
 	if (disk_read(fs->drv, fs->win, sect, 1) != RES_OK)	/* Load boot record */
 		return 3;
 	if (LD_WORD(&fs->win[BS_55AA]) != 0xAA55)		/* Check record signature (always placed at offset 510 even if the sector size is >512) */
@@ -2014,7 +2014,7 @@ FRESULT chk_mounted (	/* FR_OK(0): successful, !=0: any error occurred */
 	const TCHAR *p = *path;
 	FATFS *fs;
 
-    klPrintf("chk_mounted\r");
+    //klPrintf("chk_mounted\r");
 	/* Get logical drive number from the path name */
 	vol = p[0] - '0';					/* Is there a drive number? */
 	if (vol <= 9 && p[1] == ':') {		/* Found a drive number, get and strip it */
@@ -2032,7 +2032,6 @@ FRESULT chk_mounted (	/* FR_OK(0): successful, !=0: any error occurred */
 		return FR_INVALID_DRIVE;
 	*rfs = fs = FatFs[vol];				/* Return pointer to the corresponding file system object */
 	if (!fs) return FR_NOT_ENABLED;		/* Is the file system object available? */
-	klPrintf("31\r");
 	ENTER_FF(fs);						/* Lock file system */
 
 	if (fs->fs_type) {					/* If the logical drive has been mounted */
@@ -2045,15 +2044,12 @@ FRESULT chk_mounted (	/* FR_OK(0): successful, !=0: any error occurred */
 			return FR_OK;				/* The file system object is valid */
 		}
 	}
-	klPrintf("32\r");
 	/* The logical drive must be mounted. */
 	/* Following code attempts to mount a volume. (analyze BPB and initialize the fs object) */
 
 	fs->fs_type = 0;					/* Clear the file system object */
 	fs->drv = (BYTE)LD2PD(vol);			/* Bind the logical drive and a physical drive */
-	klPrintf("33\r");
 	stat = disk_initialize(fs->drv);	/* Initialize low level disk I/O layer */
-	klPrintf("34\r");
 	if (stat & STA_NOINIT)				/* Check if the initialization succeeded */
 		return FR_NOT_READY;			/* Failed to initialize due to no media or hard error */
 #if _MAX_SS != 512						/* Get disk sector size (variable sector size cfg only) */
@@ -2066,7 +2062,6 @@ FRESULT chk_mounted (	/* FR_OK(0): successful, !=0: any error occurred */
 #endif
 	/* Search FAT partition on the drive. Supports only generic partitionings, FDISK and SFD. */
 	fmt = check_fs(fs, bsect = 0);		/* Check sector 0 if it is a VBR */
-	klPrintf("34: %u\r", fmt);
 	if (fmt == 1) {						/* Not an FAT-VBR, the disk may be partitioned */
 		/* Check the partition listed in top of the partition table */
 		tbl = &fs->win[MBR_Table + LD2PT(vol) * SZ_PTE];/* Partition table */
@@ -2251,8 +2246,7 @@ FRESULT f_open (
 	BYTE *dir;
 	DEF_NAMEBUF;
 
-    klPrintf("f_open\r");
-
+    //klPrintf("f_open\r");
 	fp->fs = 0;			/* Clear file object */
 
 #if !_FS_READONLY
@@ -2262,12 +2256,10 @@ FRESULT f_open (
 	mode &= FA_READ;
 	res = chk_mounted(&path, &dj.fs, 0);
 #endif
-	klPrintf("21\r");
 	INIT_BUF(dj);
 	if (res == FR_OK)
 		res = follow_path(&dj, path);	/* Follow the file path */
 	dir = dj.dir;
-	klPrintf("22\r");
 #if !_FS_READONLY	/* R/W configuration */
 	if (res == FR_OK) {
 		if (!dir)	/* Current dir itself */
@@ -2349,7 +2341,6 @@ FRESULT f_open (
 	}
 #endif
 	FREE_BUF();
-	klPrintf("23\r");
 	if (res == FR_OK) {
 		fp->flag = mode;					/* File access mode */
 		fp->sclust = LD_CLUST(dir);			/* File start cluster */
@@ -2361,7 +2352,6 @@ FRESULT f_open (
 #endif
 		fp->fs = dj.fs; fp->id = dj.fs->id;	/* Validate file object */
 	}
-	klPrintf("24\r");
 	LEAVE_FF(dj.fs, res);
 }
 

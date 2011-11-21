@@ -35,14 +35,12 @@ void Sound_t::Play(const char* AFilename) {
         else klPrintf("OpenFile error: %u", rslt);
         return;
     }
-    klPrintf("1\r");
     // Check if zero file
     if (IFile.fsize == 0) {
         f_close(&IFile);
         klPrintf("Empty file\r");
         return;
     }
-    klPrintf("2\r");
     // Fill buffer
     rslt = f_read(&IFile, Buf1.Arr, SND_BUF_SIZE, &Buf1.Size);
     if (rslt != FR_OK) {
@@ -50,7 +48,6 @@ void Sound_t::Play(const char* AFilename) {
         State = sndStopped;
         return;
     }
-    klPrintf("3\r");
 //    if (Buf1.Size == SND_BUF_SIZE) {    // if first block is filled, there is reason to read second block
 //        rslt = f_read(&IFile, Buf2.Arr, SND_BUF_SIZE, &Buf2.Size);
 //        if (rslt != FR_OK) {

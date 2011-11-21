@@ -13,48 +13,53 @@
 
 char IBuf[INI_BUF_SIZE];
 
-char* ReadString(const char *ASection, const char *AKey, char *AOutput, uint32_t AMaxLength, const char *AFileName) {
+char *skipleading(char *S);
+char *skiptrailing(char *S, const char *base);
+char *striptrailing(char *S);
+
+// ======================= Implementation =====================================
+bool ReadString(const char *ASection, const char *AKey, const char *AFileName, char *AOutput) {
     FRESULT rslt;
     FIL IFile;
     // Open file
     rslt = f_open(&IFile, AFileName, FA_READ+FA_OPEN_EXISTING);
     if (rslt != FR_OK) {
         klPrintf(AFileName);
-        if (rslt == FR_NO_FILE) klPrintf("File not found\r");
-        else klPrintf("OpenFile error: %u", rslt);
-        return NULL;
+        if (rslt == FR_NO_FILE) klPrintf(": file not found\r");
+        else klPrintf(": openFile error: %u", rslt);
+        return false;
     }
     // Check if zero file
     if (IFile.fsize == 0) {
         f_close(&IFile);
         klPrintf("Empty file\r");
-        return NULL;
+        return false;
     }
 
-    // Move through file 1 line at a time until a section is matched or EOF.
+    // Move through file one line at a time until a section is matched or EOF.
     char *StartP, *EndP;
-    int16_t len = strlen(ASection);
+    uint32_t len = strlen(ASection);
     do {
         if (!f_gets(IBuf, INI_BUF_SIZE, &IFile)) {
             f_close(&IFile);
-            return NULL;
+            return false;
         }
         StartP = skipleading(IBuf);
         EndP = strchr(StartP, ']');
-    } while (*StartP != '[' || EndP == NULL || ((int)(EndP-StartP-1) != len || strnicmp(StartP+1, ASection, len) != 0));
+    } while ((*StartP != '[') || (EndP == NULL) || ((int)(EndP-StartP-1) != len || strnicmp(StartP+1, ASection, len) != 0));
 
     // Section found, find the key
     len = strlen(AKey);
     do {
         if (!f_gets(IBuf, INI_BUF_SIZE, &IFile) || *(StartP = skipleading(IBuf)) == '[') {
             f_close(&IFile);
-            return NULL;
+            return false;
         }
         StartP = skipleading(IBuf);
         EndP = strchr(StartP, '='); /* Parse out the equal sign */
-    } while (*StartP == ';' || *StartP == '#' || EndP == NULL || ((int)(skiptrailing(EndP, StartP)-StartP) != len || strnicmp(StartP, AKey, len) != 0));
+    } while ((*StartP == ';') || (*StartP == '#') || (EndP == NULL) || ((int)(skiptrailing(EndP, StartP)-StartP) != len || strnicmp(StartP, AKey, len) != 0));
 
-    // Copy up to AMaxLength chars to AOutput
+    // Copy up to ALength chars to AOutput
     StartP = skipleading(EndP + 1);
     // Remove a trailing comment
     uint8_t isstring = 0;
@@ -72,10 +77,13 @@ char* ReadString(const char *ASection, const char *AKey, char *AOutput, uint32_t
     return &AOutput[EndP-StartP-2]; // Pointer to last '\0'
 }
 
-int32_t ReadInt32(const char *ASection, const char *AKey, const char *AFileName) {
+bool ReadInt32 (const char *ASection, const char *AKey, const char *AFileName, int32_t *AOutput) {
     char FBuf[64];
-    ReadString(ASection, AKey, FBuf, 64, AFileName);
-    return strtol(FBuf, NULL, 10);
+    if (ReadString(ASection, AKey, AFileName, FBuf)) {
+        *AOutput = strtol(FBuf, NULL, 10);
+        return true;
+    }
+    else return false;
 }
 
 // ============================== Inner use ====================================
