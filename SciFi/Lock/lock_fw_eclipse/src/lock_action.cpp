@@ -9,7 +9,7 @@
 //#include "lcd110x.h"
 #include "media.h"
 //#include "sensors.h"
-//#include "kl_ini.h"
+#include "kl_ini.h"
 //#include "lca.h"
 
 #include "ff.h"
@@ -33,7 +33,7 @@ void Lock_t::Task()
 	  NormalTask();
 	  break;
 	case LOCK_BREAKED:
-	  //BreakTask();
+	  //BreakedTask();
       break;
     case LOCK_HACKED:
       //HackedTask();
@@ -140,6 +140,10 @@ void Lock_t::ReadPasswordFromSD()
   chPassword[1]=0;
   chPassword[2]=0;
   chPassword[3]=0;
-  chPasswordLength=4;// но не более MAX_PASS_LEN
+  //chPasswordLength=4;// но не более MAX_PASS_LEN
+  chPasswordLength = ReadInt32("PASSWORD", "PASSLENGTH","lock.ini");
+  if (chPasswordLength>MAX_PASS_LEN)  chPasswordLength=MAX_PASS_LEN;
+  ReadString("PASSWORD", "PASS", chPassword, chPasswordLength , "lock.ini");
+
   chMaxCodeError=5;
 }

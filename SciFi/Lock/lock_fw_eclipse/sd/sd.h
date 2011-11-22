@@ -33,6 +33,7 @@ public:
 //    uint8_t Buf[SD_BUF_SIZE];
     // SD data
     SD_Error Status;
+    SDTransferState TrState;
     void Init(void);
     void Test(void);
 };

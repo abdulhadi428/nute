@@ -47,8 +47,9 @@ private:
   uint8_t chNewKey;
   uint8_t chLockState;
   uint8_t chNormState;
-  uint8_t chPassword[MAX_PASS_LEN];
-  uint8_t chPasswordLength,chMaxCodeError;
+  char chPassword[MAX_PASS_LEN];
+  uint8_t chPasswordLength; // длинна пароля
+  uint8_t chMaxCodeError; // количество допустимых ошибок, до блокировки
   uint8_t chKeyCount, chErrorCount;
   uint32_t wOpenTimer,wBlockTimer;//, ActivatedTime;
 //    bool IsActivated;

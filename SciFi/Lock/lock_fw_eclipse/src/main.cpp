@@ -32,6 +32,9 @@ int main(void) {
 
     GeneralInit();
 
+    PrintFileToUART("lock.ini");
+    WriteString("PASSWORD", "PASSLENGTH", "5", "lock.ini");
+    PrintFileToUART("lock.ini");
     // ==== Main cycle ====
     while(1) {
         //i2cMgr.Task();
