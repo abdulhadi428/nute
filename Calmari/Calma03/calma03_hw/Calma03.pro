@@ -1,16 +1,6 @@
-update=23.11.2011 1:20:08
+update=23.11.2011 20:56:16
 version=1
-last_client=eeschema
-[cvpcb]
-version=1
-NetITyp=0
-NetIExt=.net
-PkgIExt=.pkg
-NetDir=
-LibDir=
-NetType=0
-[cvpcb/libraries]
-EquName1=devcms
+last_client=cvpcb
 [general]
 version=1
 [pcbnew]
@@ -31,12 +21,12 @@ TxtLar=120
 MSegLar=150
 LastNetListRead=Torch1.net
 [pcbnew/libraries]
+LibName1=Common_kl
+LibName2=Connectors_kl
+LibName3=Tittar_kl
+LibName4=Batteries_kl
+LibName5=Sensors
 LibDir=D:/libs/Kicad
-LibName1=Antennas_kl
-LibName2=Common_kl
-LibName3=Connectors_kl
-LibName4=pcb_details
-LibName5=Tittar_kl
 [eeschema]
 version=1
 LibDir=D:/libs/Kicad
@@ -78,3 +68,8 @@ LibName6=st_kl
 LibName7=Tittar_kl
 LibName8=Transistors_kl
 LibName9=Sensors
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms
