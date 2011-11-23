@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 23.11.2011 20:35:20
+EESchema Schematic File Version 2  date 23.11.2011 22:16:38
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -1348,24 +1348,6 @@ F 0 "#PWR047" H 4850 1310 30  0001 C CNN
 F 1 "+BATT" H 4930 1380 30  0000 C CNN
 	1    4850 1350
 	0    1    -1   0   
-$EndComp
-$Comp
-L REFPOINT RP2
-U 1 1 4DC4533D
-P 13800 8000
-F 0 "RP2" H 13500 8000 60  0000 C CNN
-F 1 "REFPOINT" H 13150 8000 60  0000 C CNN
-	1    13800 8000
-	1    0    0    -1  
-$EndComp
-$Comp
-L REFPOINT RP1
-U 1 1 4DC45333
-P 13800 7750
-F 0 "RP1" H 13500 7750 60  0000 C CNN
-F 1 "REFPOINT" H 13150 7750 60  0000 C CNN
-	1    13800 7750
-	1    0    0    -1  
 $EndComp
 $Comp
 L GND #PWR048

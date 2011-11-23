@@ -1,4 +1,4 @@
-# EESchema Netlist Version 1.1 created  23.11.2011 21:58:56
+# EESchema Netlist Version 1.1 created  23/11/2011 22:16:55
 (
  ( /4ECC140F BH810 B1 BAT
   ( A +3.3V )
@@ -249,10 +249,6 @@
   ( 1 N-000021 )
   ( 2 GND )
  )
- ( /4DC45333 REF_POINT_1MM RP1 REFPOINT
- )
- ( /4DC4533D REF_POINT_1MM RP2 REFPOINT
- )
  ( /4E57A59D SIL-1 XL1 CONN_1
   ( 1 +BATT )
  )
@@ -441,12 +437,6 @@ $component R12
 $endlist
 $component R13
  SMD*
-$endlist
-$component RP1
- REF_POINT*
-$endlist
-$component RP2
- REF_POINT*
 $endlist
 $component XL5
  SIL-4
