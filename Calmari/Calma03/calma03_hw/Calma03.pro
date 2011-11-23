@@ -1,8 +1,6 @@
-update=23.11.2011 20:56:16
+update=23.11.2011 21:59:16
 version=1
-last_client=cvpcb
-[general]
-version=1
+last_client=kicad
 [pcbnew]
 version=1
 PadDrlX=320
@@ -73,3 +71,5 @@ version=1
 NetIExt=net
 [cvpcb/libraries]
 EquName1=devcms
+[general]
+version=1
