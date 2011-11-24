@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 24/11/2011 15:21:23
+EESchema Schematic File Version 2  date 24/11/2011 20:00:22
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -23,6 +23,13 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+NoConn ~ 5450 3150
+NoConn ~ 5450 3050
+NoConn ~ 5450 2950
+NoConn ~ 5450 2850
+NoConn ~ 5450 2750
+NoConn ~ 5450 1950
+NoConn ~ 5450 1850
 Text Label 4300 8000 0    60   ~ 0
 LOUT
 Wire Wire Line
@@ -73,18 +80,6 @@ Wire Wire Line
 	4250 6650 4350 6650
 Wire Wire Line
 	5850 5400 5050 5400
-Wire Wire Line
-	5450 1950 4650 1950
-Wire Wire Line
-	4650 1950 4650 2650
-Wire Wire Line
-	4650 2650 4050 2650
-Wire Wire Line
-	5450 3150 4050 3150
-Wire Wire Line
-	5450 2950 4050 2950
-Wire Wire Line
-	5450 2750 4050 2750
 Wire Wire Line
 	5100 2650 5450 2650
 Wire Wire Line
@@ -210,8 +205,6 @@ Wire Wire Line
 Wire Wire Line
 	2050 4900 1850 4900
 Wire Wire Line
-	4050 3250 4050 3300
-Wire Wire Line
 	1500 1750 1500 1650
 Connection ~ 5400 4100
 Wire Wire Line
@@ -310,8 +303,6 @@ Wire Wire Line
 Wire Wire Line
 	5150 3950 5450 3950
 Wire Wire Line
-	4050 2550 4550 2550
-Wire Wire Line
 	1950 4850 1950 4900
 Connection ~ 1950 4900
 Connection ~ 13550 1550
@@ -344,14 +335,6 @@ Wire Wire Line
 	7900 2450 8000 2450
 Wire Wire Line
 	5450 1750 3550 1750
-Wire Wire Line
-	5450 2850 4050 2850
-Wire Wire Line
-	5450 3050 4050 3050
-Wire Wire Line
-	4550 2550 4550 1850
-Wire Wire Line
-	4550 1850 5450 1850
 Wire Wire Line
 	4250 5400 3750 5400
 Wire Wire Line
@@ -1231,26 +1214,6 @@ F 1 "CONN_1" V 1660 4920 40  0000 C CNN
 	1    1650 4900
 	-1   0    0    1   
 $EndComp
-$Comp
-L GND #PWR038
-U 1 1 4E57A3A5
-P 4050 3300
-F 0 "#PWR038" H 4140 3280 30  0001 C CNN
-F 1 "GND" H 4050 3220 30  0001 C CNN
-	1    4050 3300
-	1    0    0    -1  
-$EndComp
-$Comp
-L CONN_8 XL4
-U 1 1 4E57A39A
-P 3850 2900
-F 0 "XL4" V 3800 2900 50  0000 C CNN
-F 1 "CONN_8" V 3900 2900 50  0000 C CNN
-	1    3850 2900
-	-1   0    0    -1  
-$EndComp
-Text Notes 3400 2950 0    60   ~ 0
-GPIOs
 NoConn ~ 4750 5850
 NoConn ~ 4550 5850
 $Comp
