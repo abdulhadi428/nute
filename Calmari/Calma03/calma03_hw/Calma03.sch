@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 24/11/2011 13:47:57
+EESchema Schematic File Version 2  date 24/11/2011 15:21:23
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -222,11 +222,6 @@ Wire Wire Line
 	4850 3800 5450 3800
 Wire Wire Line
 	4350 3600 5450 3600
-Connection ~ 5650 5400
-Wire Wire Line
-	5650 5400 5650 5500
-Wire Wire Line
-	5650 5900 5650 5950
 Wire Wire Line
 	1850 1900 1850 1550
 Wire Wire Line
@@ -1299,24 +1294,6 @@ P 5400 4350
 F 0 "C12" H 5350 4450 50  0000 L CNN
 F 1 "1u" H 5350 4250 50  0000 L CNN
 	1    5400 4350
-	1    0    0    -1  
-$EndComp
-$Comp
-L GND #PWR040
-U 1 1 4E47AC53
-P 5650 5950
-F 0 "#PWR040" H 5740 5930 30  0001 C CNN
-F 1 "GND" H 5650 5870 30  0001 C CNN
-	1    5650 5950
-	1    0    0    -1  
-$EndComp
-$Comp
-L C C13
-U 1 1 4E47AC52
-P 5650 5700
-F 0 "C13" H 5700 5800 50  0000 L CNN
-F 1 "10u" H 5700 5600 50  0000 L CNN
-	1    5650 5700
 	1    0    0    -1  
 $EndComp
 $Comp
