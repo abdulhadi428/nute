@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPCB (2011-07-08 BZR 3044)-stable date = 23/11/2011 22:16:55
+Cmp-Mod V01 Created by CvPCB (2011-07-08 BZR 3044)-stable date = 24/11/2011 13:34:58
 
 BeginCmp
 TimeStamp = /4ECC140F;
@@ -113,6 +113,34 @@ IdModule  = SMD0603;
 EndCmp
 
 BeginCmp
+TimeStamp = /4ECE0BF9;
+Reference = C15;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0BEE;
+Reference = C16;
+ValeurCmp = 10u;
+IdModule  = SMD0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0B2A;
+Reference = C17;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0B37;
+Reference = C18;
+ValeurCmp = 10u;
+IdModule  = SMD0805;
+EndCmp
+
+BeginCmp
 TimeStamp = /4ECBB65A;
 Reference = D1;
 ValeurCmp = D_SHOTTKY;
@@ -148,6 +176,13 @@ IdModule  = LED-3MM;
 EndCmp
 
 BeginCmp
+TimeStamp = /4ECE0A71;
+Reference = D6;
+ValeurCmp = D_SHOTTKY;
+IdModule  = DIODE_SOD323;
+EndCmp
+
+BeginCmp
 TimeStamp = /4ECC0618;
 Reference = DA1;
 ValeurCmp = AAT3221;
@@ -166,6 +201,13 @@ TimeStamp = /4ECC1268;
 Reference = DA3;
 ValeurCmp = AH1888;
 IdModule  = SOT553;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0A29;
+Reference = DA4;
+ValeurCmp = NCP1400;
+IdModule  = SOT23-5;
 EndCmp
 
 BeginCmp
@@ -200,6 +242,13 @@ BeginCmp
 TimeStamp = /4ECBDAC5;
 Reference = L4;
 ValeurCmp = 100uH;
+IdModule  = INDUCTOR_1812;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0BC3;
+Reference = L5;
+ValeurCmp = 22uH;
 IdModule  = INDUCTOR_1812;
 EndCmp
 
@@ -333,7 +382,7 @@ BeginCmp
 TimeStamp = /4E57A59D;
 Reference = XL1;
 ValeurCmp = CONN_1;
-IdModule  = SIL-1;
+IdModule  = SIL1_SQUARE_1MM5;
 EndCmp
 
 BeginCmp
@@ -347,7 +396,7 @@ BeginCmp
 TimeStamp = /4ECBDDB5;
 Reference = XL3;
 ValeurCmp = CONN_1;
-IdModule  = SIL-3;
+IdModule  = SIL1_ROUND_1MM5;
 EndCmp
 
 BeginCmp
@@ -397,6 +446,13 @@ TimeStamp = /4ECBDAC2;
 Reference = XL10;
 ValeurCmp = CONN_2;
 IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0D4A;
+Reference = XL11;
+ValeurCmp = CONN_1;
+IdModule  = SIL1_SQUARE_1MM5;
 EndCmp
 
 EndListe
