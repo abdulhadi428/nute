@@ -12,12 +12,12 @@
 
 // Prototypes
 void GeneralInit(void);
+void Event_CardAppeared(void);
 
 // ============================ Implementation ================================
 int main(void) {
     UART_Init();
-    Delay.ms(100);
-    klPrintf(" Lock is here\r");
+    klPrintf("==== Lock is here ===\r");
 
     GeneralInit();
     // ==== Main cycle ====
@@ -35,7 +35,11 @@ void GeneralInit(void) {
     // Init peripheral
     Delay.Init();
     PN.Init();
+    PN.Evt_CardAppeared = Event_CardAppeared;
 }
 
 
 // ================================== Events ===================================
+void Event_CardAppeared(void) {
+    klPrintf("NewCard\r");
+}

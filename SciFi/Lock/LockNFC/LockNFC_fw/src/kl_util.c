@@ -44,6 +44,7 @@ void UART_PrintAsHex (uint32_t ANumber);
 void UART_PrintUint (uint32_t ANumber);
 void UART_PrintInt (int32_t ANumber);
 void UART_PrintString (const char *S);
+void UART_Print8HexArray(uint8_t *Arr, uint32_t ALength);
 
 // ************** Implementation ***********************
 void UART_Init(void) {
@@ -84,6 +85,7 @@ void UART_Print (uint8_t AByte) {
  * s, S: string
  * X: hexadecimal, capital letters
  * (1...9) width - Minimum number of characters to be printed
+ * H - array as 8-bit hexadecimal, length is to be next after uint8_t*
  */
 void klPrintf(const char *S, ...) {
     char c;
@@ -100,13 +102,14 @@ void klPrintf(const char *S, ...) {
         }
         else { // not %
             if (WasPercent) {
-                if      (c == 'c') UART_Print((uint8_t)va_arg(Arg, int32_t));
+                if (c == 'c') UART_Print((uint8_t)va_arg(Arg, int32_t));
                 else if (c == 'u') UART_PrintUint(va_arg(Arg, uint32_t));
                 else if (c == 'i') UART_PrintInt(va_arg(Arg, int32_t));
                 else if (c == 'X') UART_PrintAsHex(va_arg(Arg, uint32_t));
                 else if ((c == 's') || (c == 'S')) UART_PrintString(va_arg(Arg, char*));
+                else if (c == 'H') UART_Print8HexArray(va_arg(Arg, uint8_t*), va_arg(Arg, uint32_t));
                 WasPercent = false;
-            }
+            } // if was percent
             else UART_Print(c);
         }
         S++;
@@ -169,4 +172,11 @@ void UART_PrintInt (int32_t ANumber) {
 
 void UART_PrintString (const char *S) {
     while (*S != '\0') UART_Print (*S++);
+}
+
+void UART_Print8HexArray(uint8_t *Arr, uint32_t ALength) {
+    for (uint32_t i=0; i<ALength; i++) {
+        UART_PrintAsHex(Arr[i]);
+        UART_Print(' ');
+    }
 }

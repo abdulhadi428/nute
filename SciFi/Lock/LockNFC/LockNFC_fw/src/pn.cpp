@@ -7,61 +7,27 @@
 
 #include "pn.h"
 #include <string.h>
-#include "kl_util.h"
+#include <stdarg.h>
 
 //#define PN_PRINT_EXCHANGE
 //#define PN_PRINT_ACK
 //#define PN_PRINT_IN_OUT_DATA
-#define PN_PRINT_TAGS
+//#define PN_PRINT_TAGS
 
 PN_t PN;
 Card_t Card;
 
+// ============================ Implementation ================================
 void PN_t::Init() {
-    // ==== Hardware init ====
-    // Clocks init
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_SPI1 | RCC_APB2Periph_AFIO, ENABLE);
-    // ==== GPIO init ====
-    GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    // Configure RST & NSS as Push-Pull output
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_2 | GPIO_Pin_3;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-    ResetLo();
-    NssHi();
-    // Configure IRQ as input Pull-Up
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-    // Configure CLK & MOSI as Alternate Function Push Pull
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_5 | GPIO_Pin_7;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-    // Configure MISO as Input Floating
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_6;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    HardwareInit();
 
-    // ==== SPI init ====    LSB first, master, SCK idle low, First edge
-    SPI_InitTypeDef SPI_InitStructure;
-    SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
-    SPI_InitStructure.SPI_Mode      = SPI_Mode_Master;
-    SPI_InitStructure.SPI_DataSize  = SPI_DataSize_8b;
-    SPI_InitStructure.SPI_CPOL      = SPI_CPOL_Low;
-    SPI_InitStructure.SPI_CPHA      = SPI_CPHA_1Edge;
-    SPI_InitStructure.SPI_NSS       = SPI_NSS_Soft;
-    SPI_InitStructure.SPI_FirstBit  = SPI_FirstBit_LSB;
-    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
-    SPI_Init(SPI1, &SPI_InitStructure);
-    SPI_Cmd(SPI1, ENABLE);
-
-    Card.Data = &Buf[2];
     // Time to wake-up
     Delay.ms(4);   // Let the reset to act
     ResetHi();     // Remove reset
     Delay.ms(9);   // Allow PN to wakeup.
+
     // ==== Setup PN ====
+    // Read status until ready
     uint8_t r=0xFF;
     do {
         NssLo();
@@ -73,88 +39,58 @@ void PN_t::Init() {
         //klPrintf("R=%X\r", r);
     } while (r == 0xFF);
 
-    // First pkt will be discarded
-    Buf[0] = PN_CMD_GET_FIRMWARE_VERSION;
-    Length = 1;
-    WriteAndWaitReply();
-    Delay.ms(40);
-
-    // Disable SAM to calm PN
-    Buf[0] = PN_CMD_SAM_CONFIGURATION;
-    Buf[1] = 0x01;    // Normal mode, the SAM is not used
-    Length = 2;
-    WriteAndWaitData();
-    Delay.ms(40);
-
-    Buf[0] = PN_CMD_RF_CONFIGURATION;
-    Buf[1] = 0x05;   // Max retries
-    Buf[2] = 0x00;   // ATR: once
-    Buf[3] = 0x00;   // PSL: once
-    Buf[4] = 0x05;   // Activation: 5
-    Length = 5;
-    WriteAndWaitData();
-    Delay.ms(40);
+    // Initial commands
+    Cmd(PN_CMD_GET_FIRMWARE_VERSION, 0);    // First Cmd will be discarded
+    Cmd(PN_CMD_SAM_CONFIGURATION, 1, 0x01); // Disable SAM to calm PN: Normal mode, the SAM is not used
 
     // ======= Card =======
     Card.State = csCardOut;
-
-//    Buf[0] = PN_CMD_SET_PARAMETERS;
-//    //Buf[1] = 0x14; // fAutoATR_RES=1, AutoRATS=1
-//    Buf[1] = 0x24;
-//    Length = 2;
-//    WriteAndWaitData();
-//    _delay_ms(40);
-//    PN.Buf[0] = PN_CMD_WRITE_REGISTER;
-//    PN.Buf[1] = 0x63;   // }
-//    PN.Buf[2] = 0x0D;   // } Address CIU_ManualRcv
-//    PN.Buf[3] = 0x07;   // Value
-//    PN.Length = 4;
-//    PN.WriteAndWaitData();
-//    PN.Buf[0] = PN_CMD_WRITE_REGISTER;
-//    PN.Buf[1] = 0x63;   // }
-//    PN.Buf[2] = 0x16;   // } Address CIU_RFCfg
-//    PN.Buf[3] = 0x68;   // Value
-//    PN.Length = 4;
-//    PN.WriteAndWaitData();
+    Card.Data = &Buf[2];
 }
 
 void PN_t::Task() {
     if (Delay.Elapsed(&Timer, 450)) {
         if (Card.State != csCardOk) {
             if (CardIsAppeared()) {
-                klPrintf("CardOk\r");
+                //klPrintf("CardOk\r");
                 Card.State = csCardOk;
-                // Mifare read
-                MifareRead();
+                if(Evt_CardAppeared != 0) Evt_CardAppeared();
             }
         }
         else {
             if (!CheckIfCardStillNear()) {
-                klPrintf("Card Out\r");
+                //klPrintf("Card Out\r");
                 Card.State = csCardOut;
             }
         } // if Card is ok
     } // if delay
 }
 
+// ============================= General ======================================
+/*
+ * Send Cmd to PN and get reply.
+ * ALength is count of bytes to send excluding ACmd, i.e. ALength == count of arguments
+ */
+PN_PktRslt_t PN_t::Cmd(uint8_t ACmd, uint32_t ALength, ...) {
+    Length = ALength + 1;
+    Buf[0] = ACmd;
+    if (ALength != 0) {
+        va_list Arg;
+        va_start(Arg, ALength);    // Set pointer to last argument
+        for(uint32_t i=0; i<ALength; i++) Buf[i+1] = (uint8_t)va_arg(Arg, int);
+        va_end(Arg);
+    }
+    return WriteAndWaitData();
+}
 
 
 // ============================ Initiator =====================================
 uint8_t PN_t::InSelect(uint8_t ATagID) {
-    Buf[0] = PN_CMD_IN_SELECT;
-    Buf[1] = ATagID;
-    Length = 2;
-    PN_PktRslt_t rslt = WriteAndWaitData();
-    if (rslt != pnPktOK) return 0x01;   // timeout
+    if (Cmd(PN_CMD_IN_SELECT, 1, ATagID) != pnPktOK) return 0x01;   // timeout
     else return (Buf[1]);
 }
 uint8_t PN_t::InATR(uint8_t ATagID) {
-    Buf[0] = PN_CMD_IN_ATR;
-    Buf[1] = ATagID;
-    Buf[2] = 0;
-    Length = 3;
-    PN_PktRslt_t rslt = WriteAndWaitData();
-    if (rslt != pnPktOK) return 0x01;   // timeout
+    if (Cmd(PN_CMD_IN_ATR, 2, ATagID, 0) != pnPktOK) return 0x01;   // timeout
     else return (Buf[1]);
 }
 
@@ -165,16 +101,17 @@ uint8_t PN_t::InATR(uint8_t ATagID) {
 bool PN_t::CardIsAppeared() {
     uint16_t NFCIDLength, ATSLength=0, NumberOfHistoricalBytes=0;
     uint8_t *ATS = 0;
+    // Setup RF config: Max retries, ATR: once, PSL: once, Activation: 5
+    Cmd(PN_CMD_RF_CONFIGURATION, 4, 0x05, 0x00, 0x00, 0x05);
+    FieldOn();
     // Check if something is near
-    Buf[0] = PN_CMD_IN_LIST_PASSIVE_TARGET;
-    Buf[1] = 0x01;   // Max number of targets
-    Buf[2] = 0x00;   // Baudrate: 106kbps type A
-    Length = 3;
-    PN_PktRslt_t rslt = WriteAndWaitData();
-    if (rslt != pnPktOK) return false;
-    // Pn tried to find something, lets look what happened
-    if (Buf[0] != PN_RPL_IN_LIST_PASSIVE_TARGET) return false;
-    if (Buf[1] == 0) return false;    // Nothing found
+    if ( // Max number of targets = 1, Baudrate: 106kbps type A
+        (Cmd(PN_CMD_IN_LIST_PASSIVE_TARGET, 2, 0x01, 0x00) != pnPktOK) ||   // }
+        (Buf[0] != PN_RPL_IN_LIST_PASSIVE_TARGET) ||                        // } Incorrect reply
+        (Buf[1] == 0)) {                                                    // Nothing found
+        FieldOff();
+        return false;
+    }
     // ==== Tag is found ====
 #ifdef PN_PRINT_TAGS
     klPrintf("Tag found\r");
@@ -214,73 +151,22 @@ bool PN_t::CardIsAppeared() {
 }
 
 bool PN_t::CheckIfCardStillNear() {
-    // Diagnose
-    Buf[0] = PN_CMD_DIAGNOSE;
-    Buf[1] = 0x06;  // Attention request test
-    Length = 2;
-    if (WriteAndWaitData() == pnPktOK) {
-        klPrintf("PN_CMD_DIAGNOSE: ");
-        for (uint16_t i=0; i<Length; i++) klPrintf("%X ", Buf[i]);
-        klPrintf("\r");
-        if ((Buf[0] == 0x01) && (Buf[1] == 0x00)) return true;
-    }
+    // Try to read data from Mifare to determine if it still near
+    if (MifareRead(0, 0)) return true;
+    // Else nothing left near
+    FieldOff();
     return false;
 }
 
-uint8_t PN_t::MifareRead(void) {
-    Card.DataLength = 0;
-    Buf[0] = PN_CMD_IN_DATA_EXCHANGE;
-    Buf[1] = 0x01;   // Tag ID
-    Buf[2] = 0x30;
-    Buf[3] = 0x00;
-    Length = 4;
-    PN_PktRslt_t rslt = WriteAndWaitData();
-    if (rslt == pnPktOK) {
-        if (Buf[1] == 0x00) {   // if status ok
-            Card.DataLength = Length-2;
-            klPrintf("<");
-            for (uint16_t i=0; i<Card.DataLength; i++) klPrintf(" %X", Card.Data[i]);
-            klPrintf("\r");
-
-//            Buf[0] = PN_CMD_IN_DATA_EXCHANGE;
-//            Buf[1] = 0x01;   // Tag ID
-//            Buf[2] = 0xA2;
-//            Buf[3] = 0x02;
-//
-//            Buf[4] = 0x00;
-//            Buf[5] = 0x00;
-//            Buf[6] = 0xF1;
-//            Buf[7] = 0x00;
-//
-//            Length = 8;
-//            rslt = WriteAndWaitData();
-//
-//            Card.DataLength = Length-2;
-//            klPrintf("<");
-//            for (uint16_t i=0; i<Card.DataLength; i++) klPrintf(" %X", Card.Data[i]);
-//            klPrintf("\r");
-
-
-
-//            if( (Card.Data[1] == 0xD9) &&
-//                (Card.Data[2] == 0x10) &&
-//                (Card.Data[3] == 0x45) &&
-//                (Card.Data[4] == 0x0A) &&
-//                (Card.Data[5] == 0xB4) &&
-//                (Card.Data[6] == 0x24) ) {
-//                Led.Off();
-//            }
-//            else Led.On();
-//
-//            _delay_ms(1107);
-
-            return 0;
-        } // if status ok
-        klPrintf("Buf !=0\r");
-        return 1;
-    } // if pkt ok
-    klPrintf("Rslt != Ok\r");
-    return 2;
+bool PN_t::MifareRead(uint8_t *ABuf, uint32_t AAddr) {
+    if (Cmd(PN_CMD_IN_DATA_EXCHANGE, 3, 0x01, MIFARE_CMD_READ, AAddr) == pnPktOK) {
+        //klPrintf("PN reply: %H\r", Buf, Length);
+        if ((Buf[0] == 0x41) && (Buf[1] == 0x00)) { // Correct reply & errorcode == 0
+            if (ABuf != 0) memcpy(ABuf, &Buf[2], 16);
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -468,3 +354,41 @@ uint8_t PN_t::WriteReadByte(uint8_t AByte) {
     return Response;
 }
 
+void PN_t::HardwareInit(void) {
+    // Clocks init
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_SPI1 | RCC_APB2Periph_AFIO, ENABLE);
+    // ==== GPIO init ====
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    // Configure RST & NSS as Push-Pull output
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_2 | GPIO_Pin_3;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    ResetLo();
+    NssHi();
+    // Configure IRQ as input Pull-Up
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_4;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    // Configure CLK & MOSI as Alternate Function Push Pull
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_5 | GPIO_Pin_7;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    // Configure MISO as Input Floating
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_6;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    // ==== SPI init ====    LSB first, master, SCK idle low, First edge
+    SPI_InitTypeDef SPI_InitStructure;
+    SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+    SPI_InitStructure.SPI_Mode      = SPI_Mode_Master;
+    SPI_InitStructure.SPI_DataSize  = SPI_DataSize_8b;
+    SPI_InitStructure.SPI_CPOL      = SPI_CPOL_Low;
+    SPI_InitStructure.SPI_CPHA      = SPI_CPHA_1Edge;
+    SPI_InitStructure.SPI_NSS       = SPI_NSS_Soft;
+    SPI_InitStructure.SPI_FirstBit  = SPI_FirstBit_LSB;
+    SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
+    SPI_Init(SPI1, &SPI_InitStructure);
+    SPI_Cmd(SPI1, ENABLE);
+}
