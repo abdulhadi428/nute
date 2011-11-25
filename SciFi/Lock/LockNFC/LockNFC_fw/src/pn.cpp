@@ -49,7 +49,7 @@ void PN_t::Init() {
 }
 
 void PN_t::Task() {
-    if (Delay.Elapsed(&Timer, 450)) {
+    if (Delay.Elapsed(&Timer, 250)) {
         if (Card.State != csCardOk) {
             if (CardIsAppeared()) {
                 //klPrintf("CardOk\r");
@@ -158,6 +158,9 @@ bool PN_t::CheckIfCardStillNear() {
     return false;
 }
 
+/*
+ * Read 16 bytes starting from address AAddr into ABuf.
+ */
 bool PN_t::MifareRead(uint8_t *ABuf, uint32_t AAddr) {
     if (Cmd(PN_CMD_IN_DATA_EXCHANGE, 3, 0x01, MIFARE_CMD_READ, AAddr) == pnPktOK) {
         //klPrintf("PN reply: %H\r", Buf, Length);
@@ -169,6 +172,18 @@ bool PN_t::MifareRead(uint8_t *ABuf, uint32_t AAddr) {
     return false;
 }
 
+bool Card_t::ReadID() {
+    if (!PN.MifareRead(0, 0)) return false;
+    // Construct ID
+    ID = Data[0];
+    for(uint32_t i=1; i<8; i++) {
+        if (i==3) continue;
+        ID <<= 8;
+        ID |= Data[i];
+    }
+    klPrintf("%X%X\r", (uint32_t)((ID >> 32)& 0xFFFFFFFF), (uint32_t)(ID & 0xFFFFFFFF));
+    return true;
+}
 
 // ============================ Private =======================================
 PN_PktRslt_t PN_t::WriteAndWaitReply(void) {

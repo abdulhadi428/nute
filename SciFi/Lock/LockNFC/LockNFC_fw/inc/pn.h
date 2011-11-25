@@ -17,11 +17,14 @@
 
 typedef enum {csCardOk, csCardOut, csCardError, csCardHalted} CardState_t;
 
-typedef struct {
+class Card_t {
+public:
     CardState_t State;
     uint8_t *Data;
     uint16_t DataLength;
-} Card_t;
+    uint64_t ID;
+    bool ReadID(void);
+};
 
 
 enum PN_PktRslt_t {pnPktACK, pnPktErrFrame, pnPktOK, pnPktFail, pnPktCRC};
