@@ -49,7 +49,7 @@ void PN_t::Init() {
 }
 
 void PN_t::Task() {
-    if (Delay.Elapsed(&Timer, 999)) {
+    if (Delay.Elapsed(&Timer, 702)) {
         if (Card.State != csCardOk) {
             if (CardIsAppeared()) {
                 //klPrintf("CardOk\r");

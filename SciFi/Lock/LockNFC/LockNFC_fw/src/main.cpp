@@ -45,6 +45,7 @@ int main(void) {
         // Handle state
         if (State != sWaiting) {
             if (Delay.Elapsed(&StateTimer, STATE_TIMEOUT)) {
+                if (IDStore.IsChanged) IDStore.Save();
                 State = sWaiting;
                 LedRed.Disable();
                 LedGreen.Disable();
@@ -96,7 +97,6 @@ void Event_CardAppeared(void) {
     switch (State) {
         case sWaiting:
             if (IDStore.IsPresent(Card.ID)) DoorToggle();
-            else klPrintf("Key does not fit\r");
             break;
         case sAdding:
             LedGreen.Blink();
@@ -111,9 +111,11 @@ void Event_CardAppeared(void) {
     } // switch
 }
 
+// ==== Keypress events ====
 void Event_KeyAdd(void) {
     if (State == sAdding) {
         State = sWaiting;
+        if (IDStore.IsChanged) IDStore.Save();
         LedGreen.Disable();
     }
     else {
@@ -126,6 +128,7 @@ void Event_KeyAdd(void) {
 void Event_KeyRemove(void) {
     if (State == sRemoving) {
         State = sWaiting;
+        if (IDStore.IsChanged) IDStore.Save();
         LedRed.Disable();
     }
     else {
