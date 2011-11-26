@@ -37,7 +37,7 @@ private:
     void HardwareInit(void);
     void ResetLo(void) { GPIO_ResetBits(GPIOA, GPIO_Pin_2); }
     void ResetHi(void) { GPIO_SetBits(GPIOA, GPIO_Pin_2); }
-    void NssLo(void)   { GPIO_ResetBits(GPIOA, GPIO_Pin_3); Delay.us(18); } // Delay allows PN to wakeup, do not remove it
+    void NssLo(void)   { GPIO_ResetBits(GPIOA, GPIO_Pin_3); Delay.us(135); } // Delay allows PN to wakeup, do not remove it
     void NssHi(void)   { GPIO_SetBits(GPIOA, GPIO_Pin_3); }
     bool ReplyIsReady(void) { return (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4) == Bit_RESET); } // Low level means that reply is ready
     uint8_t WriteReadByte(uint8_t AByte);

@@ -49,7 +49,7 @@ void PN_t::Init() {
 }
 
 void PN_t::Task() {
-    if (Delay.Elapsed(&Timer, 250)) {
+    if (Delay.Elapsed(&Timer, 999)) {
         if (Card.State != csCardOk) {
             if (CardIsAppeared()) {
                 //klPrintf("CardOk\r");
@@ -189,13 +189,13 @@ bool Card_t::ReadID() {
 PN_PktRslt_t PN_t::WriteAndWaitReply(void) {
     WritePkt();
     // Now wait for ACK for about 27 ms
-    Delay.us(10);
+    Delay.us(11);
     uint32_t i=0;
     while (!ReplyIsReady()) {
         Delay.ms(1);
         // Check timeout, get out if fired
         if (++i > 27) {
-            klPrintf("Reply Timeout\r");
+            klPrintf("Cmd %X timeout\r", Buf[0]);
             return pnPktFail;
         }
     }
@@ -207,7 +207,7 @@ PN_PktRslt_t PN_t::WriteAndWaitReply(void) {
 PN_PktRslt_t PN_t::WriteAndWaitData(void) {
     PN_PktRslt_t Response = WriteAndWaitReply();
     if (Response == pnPktACK) {    // ACK => proceed with getting reply packet
-        Delay.us(10);
+        Delay.us(11);
         while (!ReplyIsReady());
         // Some reply is ready
         Response = ReadPkt();

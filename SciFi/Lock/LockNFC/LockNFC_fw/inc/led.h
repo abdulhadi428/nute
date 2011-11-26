@@ -8,28 +8,29 @@
 #ifndef LED_H_
 #define LED_H_
 
-//#include <avr/io.h>
-#include <delay_util.h>
+#include "stm32f10x.h"
+#include "stm32f10x_gpio.h"
+#include "delay_util.h"
 
-//#define LED_PORT        PORTB
-//#define LED_DDR         DDRB
-//#define LED_P           ((1<<PB4)|(1<<PB5)|(1<<PB6)|(1<<PB7))
+#define LED_BLINK_DELAY 144
 
 class Led_t {
 private:
-    uint16_t Timer;
-    bool IsOn;
+    uint32_t Timer;
+    GPIO_TypeDef* IGPIO;
+    uint16_t IPin;
+    bool IsOn, IsInsideBlink;
 public:
-//    void Init(void)   { LED_DDR |= LED_P; On(); }
-//    void Deinit(void) { Off(); }
-   // void Task(void)   { if(!IsOn) if(DelayElapsed(&Timer, 126)) On(); }
+    void On(void)      { GPIO_SetBits(IGPIO, IPin); IsOn = true;}
+    void Off(void)     { GPIO_ResetBits(IGPIO, IPin); IsOn = false; }
+    void Disable(void) { Off(); IsInsideBlink = false; }
+    void Init(GPIO_TypeDef* AGPIO, uint16_t APin);
     void Blink(void);
-//    void On(void)     { LED_PORT |=  LED_P; IsOn = true;  }
-//    void Off(void)    { LED_PORT &= ~LED_P; IsOn = false; }
-//    void Toggle(void) { LED_PORT ^=  LED_P; IsOn = !IsOn; }
+    void Task(void);
+    void Toggle(void)  { IGPIO->ODR ^= IPin; IsOn = !IsOn; }
 };
 
-extern Led_t Led;
+extern Led_t LedGreen, LedRed;
 
 
 #endif /* LED_H_ */
