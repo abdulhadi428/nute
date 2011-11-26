@@ -14,6 +14,13 @@
 #include "keys.h"
 
 #define STATE_TIMEOUT   7000    // ms
+// Colors in RGB
+#define DOOR_CLOSED_COLOR   {4, 0, 0}
+#define DOOR_OPEN_COLOR     {45, 0, 45}
+#define DOOR_CLOSED_BLINK   {45, 0, 0}
+#define DOOR_OPEN_BLINK     {135, 0, 135}
+
+
 
 // Types
 typedef enum {sWaiting, sAdding, sRemoving} State_t;
@@ -41,6 +48,7 @@ int main(void) {
         PN.Task();
         LedGreen.Task();
         LedRed.Task();
+        Crystal.Task();
         Keys.Task();
         // Handle state
         if (State != sWaiting) {
@@ -62,9 +70,12 @@ void GeneralInit(void) {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
     // Init peripheral
     Delay.Init();
-
+    // Leds
     LedGreen.Init(GPIOB, GPIO_Pin_11);
     LedRed.Init(GPIOB, GPIO_Pin_10);
+    Crystal.Init();
+    Crystal.On();
+    Crystal.SetColorSmoothly(DOOR_CLOSED_COLOR);
 
     Keys.Init();
     Keys.EvtKeyPress[0] = Event_KeyAdd;
@@ -83,9 +94,11 @@ void DoorToggle(void) {
     DoorIsOpen = !DoorIsOpen;
     if (DoorIsOpen) {
         klPrintf("Door is open\r");
+        Crystal.SetColorSmoothly(DOOR_OPEN_COLOR);
     }
     else {
         klPrintf("Door is closed\r");
+        Crystal.SetColorSmoothly(DOOR_CLOSED_COLOR);
     }
 }
 
@@ -97,6 +110,14 @@ void Event_CardAppeared(void) {
     switch (State) {
         case sWaiting:
             if (IDStore.IsPresent(Card.ID)) DoorToggle();
+            else {  // Blink to inform detection
+                if (DoorIsOpen) {
+                    Crystal.SetColor(DOOR_OPEN_BLINK);
+                }
+                else {
+                    Crystal.SetColor(DOOR_CLOSED_BLINK);
+                }
+            }
             break;
         case sAdding:
             LedGreen.Blink();

@@ -25,7 +25,7 @@ class IDStore_t {
 private:
     ID_Array_t IDArr;
     bool IsPresentIndx(uint64_t AID, uint32_t *AIndx);
-    void dbgPrintIDs(void);
+    void PrintIDs(void);
 public:
     bool IsChanged;
     // ID operations

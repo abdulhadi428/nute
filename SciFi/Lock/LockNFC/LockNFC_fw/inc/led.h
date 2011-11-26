@@ -10,6 +10,7 @@
 
 #include "stm32f10x.h"
 #include "stm32f10x_gpio.h"
+#include "stm32f10x_tim.h"
 #include "delay_util.h"
 
 #define LED_BLINK_DELAY 144
@@ -30,7 +31,29 @@ public:
     void Toggle(void)  { IGPIO->ODR ^= IPin; IsOn = !IsOn; }
 };
 
-extern Led_t LedGreen, LedRed;
+// Colors
+struct Color_t {
+    uint8_t Red, Green, Blue;
+    bool operator == (const Color_t AColor) { return ((this->Red == AColor.Red) && (this->Green == AColor.Green) && (this->Blue == AColor.Blue)); }
+    //bool operator != (const Color_t AColor) { return ((this->Red != AColor.Red) || (this->Green != AColor.Green) || (this->Blue != AColor.Blue)); }
+    bool IsOn(void) const { return (Red || Green || Blue); }
+};
+#define clBlack     {0, 0, 0}
 
+class RGBLed_t {
+private:
+    uint32_t Timer;
+    Color_t CurrentColor, NeededColor;
+public:
+    void Init(void);
+    void Task(void);
+    void On(void);
+    void Off(void);
+    void SetColor(Color_t AColor);
+    void SetColorSmoothly(Color_t AColor) { NeededColor = AColor; }
+};
+
+extern RGBLed_t Crystal;
+extern Led_t LedGreen, LedRed;
 
 #endif /* LED_H_ */

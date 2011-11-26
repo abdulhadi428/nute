@@ -11,6 +11,8 @@
 #include "stm32f10x.h"
 #include "stm32f10x_flash.h"
 
+//#define FLASH_DO_NOT_SAVE   // Use this to save Flash when debugging
+
 #define FLASH_PAGE_SIZE     1024
 #define SAVED_DATA_SIZE     2048    // must be multiple of FlashPageSize
 #define PAGE_COUNT          (SAVED_DATA_SIZE / FLASH_PAGE_SIZE)
@@ -21,13 +23,15 @@ IDStore_t IDStore;
 const uint32_t SaveAddr __attribute__ ((aligned(SAVED_DATA_SIZE))) = 0;
 ID_Array_t *SavedIDs = (ID_Array_t*)&SaveAddr;
 
-void IDStore_t::dbgPrintIDs(void) {
+
+// ============================== Implementation ===============================
+void IDStore_t::PrintIDs(void) {
     klPrintf(" Count = %u\r", IDArr.Count);
     for (uint32_t i=0; i<IDArr.Count; i++)
         klPrintf(" %u %X%X\r", i, (uint32_t)((IDArr.ID[i] >> 32)& 0xFFFFFFFF), (uint32_t)(IDArr.ID[i] & 0xFFFFFFFF));
 }
 
-// ========================== ID operations ===================================
+// ========================== ID operations ====================================
 bool IDStore_t::IsPresentIndx(uint64_t AID, uint32_t *AIndx) {
     for (uint32_t i=0; i<IDArr.Count; i++) {
         if (IDArr.ID[i] == AID) {
@@ -71,23 +75,24 @@ void IDStore_t::Remove(uint64_t AID) {
     else klPrintf("No such key in base\r");
 }
 
-// Load/save
+// =============================== Load/save ===================================
 void IDStore_t::Load(void) {
     IsChanged = false;
     IDArr.FlashEraseCounter = SavedIDs->FlashEraseCounter;
     IDArr.Count = SavedIDs->Count;
-    klPrintf("Loading IDs...\r");
+    //klPrintf("Loading IDs...\r");
     klPrintf("Flash Erase counter = %u\r", SavedIDs->FlashEraseCounter);
     if (IDArr.Count == 0) {   // nothing interesting there
         klPrintf("Flash is empty\r");
     }
     else {
         for(uint32_t i=0; i<IDArr.Count; i++) IDArr.ID[i] = SavedIDs->ID[i];
-        dbgPrintIDs();
+        PrintIDs();
         klPrintf("Loading completed\r\r");
     }
 }
 void IDStore_t::Save(void) {
+#ifndef FLASH_DO_NOT_SAVE
     FLASH_Status FLASHStatus;
     uint32_t FAddr = (uint32_t)&SaveAddr;
     klPrintf("Saving IDs...\r");
@@ -97,23 +102,26 @@ void IDStore_t::Save(void) {
     FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPRTERR);   // Clear All pending flags
     for (uint32_t i=0; i<PAGE_COUNT; i++) {
         FLASHStatus = FLASH_ErasePage(FAddr + (FLASH_PAGE_SIZE * i));
-        klPrintf("  Flash erase %u: %u\r", i, FLASHStatus);
-        if (FLASHStatus != FLASH_COMPLETE) return;
+        //klPrintf("  Flash erase %u: %u\r", i, FLASHStatus);
+        if (FLASHStatus != FLASH_COMPLETE) {
+            klPrintf("  Flash erase error");
+            return;
+        }
     }
 
     IDArr.FlashEraseCounter++;  // increase flash erase counter
     // Write flash
     uint32_t *PRAM = (uint32_t*)&IDArr;    // What to write
     uint32_t DataWordCount = (IDArr.Count * 2) + 2; // 64-bit ID fills two 32-bit words; and two 32-bit values are added for Count and EraseCounter
-    klPrintf("  Flash write %u words: ", DataWordCount);
+    //klPrintf("  Flash write %u words: ", DataWordCount);
     for(uint32_t i=0; i<DataWordCount; i++) {
         FLASHStatus = FLASH_ProgramWord(FAddr, *PRAM);
         //klPrintf("%X", *PRAM);
         if (FLASHStatus != FLASH_COMPLETE) {
-            klPrintf("  Flash write error %u: %u\r", i, FLASHStatus);
+            klPrintf("  Flash write error");
             return;
         }
-        else klPrintf("#");
+        //else klPrintf("#");
         FAddr += 4;
         PRAM++;
     }
@@ -126,13 +134,14 @@ void IDStore_t::Save(void) {
     for(uint32_t i=0; i<DataWordCount; i++) {
         //klPrintf("PRAM: %X; PFLASH: %X\r", *PRAM, *PFLASH);
         if ((*PFLASH) != (*PRAM)) {
-            klPrintf("Data check failed at %u\r", i);
+            klPrintf("  Data check failed");
             //return;
         }
         PFLASH++;
         PRAM++;
     } // for
 
-    klPrintf("\r  Flash write completed\r\r");
+    klPrintf("\r  Write completed\r\r");
     IsChanged = false;
+#endif
 }
