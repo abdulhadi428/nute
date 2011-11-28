@@ -12,6 +12,7 @@
 #include "IDStore.h"
 #include "led.h"
 #include "keys.h"
+#include "adc.h"
 
 #define STATE_TIMEOUT   7000    // ms
 // Colors in RGB
@@ -50,6 +51,13 @@ int main(void) {
         LedRed.Task();
         Crystal.Task();
         Keys.Task();
+        Battery.Task();
+
+        // Handle battery discharge indication
+        if ((State == sWaiting) && Battery.IsDischarged()) {
+            if (Delay.Elapsed(&StateTimer, 81)) LedRed.Toggle();
+        }
+
         // Handle state
         if (State != sWaiting) {
             if (Delay.Elapsed(&StateTimer, STATE_TIMEOUT)) {
@@ -86,6 +94,8 @@ void GeneralInit(void) {
     // ID store
     IDStore.Load();
 
+    Battery.Init();
+
     State = sWaiting;
 }
 
@@ -111,12 +121,8 @@ void Event_CardAppeared(void) {
         case sWaiting:
             if (IDStore.IsPresent(Card.ID)) DoorToggle();
             else {  // Blink to inform detection
-                if (DoorIsOpen) {
-                    Crystal.SetColor(DOOR_OPEN_BLINK);
-                }
-                else {
-                    Crystal.SetColor(DOOR_CLOSED_BLINK);
-                }
+                if (DoorIsOpen) Crystal.SetColor(DOOR_OPEN_BLINK);
+                else            Crystal.SetColor(DOOR_CLOSED_BLINK);
             }
             break;
         case sAdding:
