@@ -1,7 +1,6 @@
 #include "uart.h"
 #include "stm32f10x_usart.h"
 #include "stm32f10x_gpio.h"
-
 // ************** Implementation ***********************
 void UART_Init(void) {
 #ifdef UART_HARDWARE

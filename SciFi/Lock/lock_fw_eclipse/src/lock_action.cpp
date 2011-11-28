@@ -15,6 +15,7 @@
 #include "ff.h"
 #include "diskio.h"
 //#include "uart.h"
+#include <stdio.h>
 
 Lock_t ELock;
 
@@ -133,6 +134,27 @@ void Lock_t::Close()
 void Lock_t::Open()
 {
 }
+
+/*****  UsbRecData *******************/
+/* вызывается извне, заполняет внутренний буфер
+   данными, полученными по USB */
+/*************************************/
+void Lock_t::UsbRecData(uint8_t* pData, uint8_t iSize)
+{
+  if (pData==NULL) return;
+  uint8_t i=0;
+  while (i<iSize)
+    {
+     if (chUsbRxCounter==USB_RX_BUF_SIZE) return; // чтобы буфер не переполнился
+     chUsbRxBuf[chUsbRxCounter]=*pData;
+     pData++;
+     chUsbRxCounter++;
+     i++;
+    }
+  return;
+}
+
+
 
 void Lock_t::ReadPasswordFromSD()
 {

@@ -20,6 +20,7 @@
 
 #include "lcd110x.h"
 #include "images.h"
+#include "usb_unit.h"
 
 #include "uart.h"
 
@@ -40,6 +41,7 @@ int main(void) {
         //i2cMgr.Task();
         ESnd.Task();
         //ESns.Task();
+        EUSB.Task();
         //Leds.Task();
         ELock.Task();
         EKeyboard.Task();
@@ -72,6 +74,9 @@ void GeneralInit(void) {
     ESnd.Init();
     ELock.Init();
     EKeyboard.Init();
+    EUSB.Init();
+
+
     // LCD
     //Lcd.Init();
     //Lcd.DrawImage(0,0, ImageLogo, NotInverted);    // Artifact
@@ -103,6 +108,21 @@ void EVENT_KeyPressed(uint8_t chRow,uint8_t chCol)
  UART_PrintInt(chRes);
  UART_PrintString(" \r");
  if (ELock.KeyPressed(chRes)==1) UART_PrintString("New key event not accepted.\r");
+}
+
+/*******************************************************************************
+* Function Name  : EVENT_USBDataRx.
+* Description    : get the received data from USB.
+* Input          : data_buffer: data address.
+                   Nb_bytes: number of bytes to send.
+* Return         : none.
+*******************************************************************************/
+void EVENT_USBDataRx(uint8_t* data_buffer, uint8_t Nb_bytes)
+{
+  ELock.UsbRecData(data_buffer,Nb_bytes);
+  UART_PrintString("Get USB data, ");
+  UART_PrintInt(Nb_bytes);
+  UART_PrintString(" bytes \r");
 }
 
 void EVENT_SensorsStateChanged(void) {

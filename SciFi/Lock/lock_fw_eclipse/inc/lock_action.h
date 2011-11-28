@@ -14,6 +14,7 @@
 #define MAX_CODE_ERROR           5// количество допустимых ошибок, до блокировки
 #define LOCK_BLOCK_TIME         10000 // врем€ блокировки
 #define LOCK_OPEN_TIME         1000 // врем€, которое замок будет открыт
+#define USB_RX_BUF_SIZE         64
 
 #define SOUND_BEEP_PASS                 "beep_p.wav"  // звук правильно нажатой кнопки
 #define SOUND_BEEP_FAIL                 "beep_f.wav" // «¬”  Ќ≈ѕ–ј¬»Ћ№Ќќ Ќјжј“ќ…  Ќќѕ »
@@ -47,11 +48,19 @@ private:
   uint8_t chNewKey;
   uint8_t chLockState;
   uint8_t chNormState;
+  uint8_t chUsbRxBuf[USB_RX_BUF_SIZE];
+  uint8_t chUsbRxCounter;
   char chPassword[MAX_PASS_LEN];
   uint8_t chPasswordLength; // длинна парол€
   uint8_t chMaxCodeError; // количество допустимых ошибок, до блокировки
   uint8_t chKeyCount, chErrorCount;
   uint32_t wOpenTimer,wBlockTimer;//, ActivatedTime;
+
+  bool GetCharFromUsb(uint8_t* pData);
+  void NormalTask(void);
+  void ReadPasswordFromSD(void);
+  void Open(void);
+  void Close(void);
 //    bool IsActivated;
 //    bool SoundPlayed;
 //    uint8_t ActivitySoundRepeatCount;
@@ -67,10 +76,7 @@ private:
 
 public:
   uint8_t KeyPressed(uint8_t chKey);
-  void NormalTask(void);
-  void ReadPasswordFromSD(void);
-  void Open(void);
-  void Close(void);
+  void UsbRecData(uint8_t* pData, uint8_t iSize);
 //    void ChooseType(void);
 //    void Activate(void);
 //    void ShowFieldExistance(FieldType_t AFType);
