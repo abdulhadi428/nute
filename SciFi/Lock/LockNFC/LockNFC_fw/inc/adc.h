@@ -8,7 +8,9 @@
 #ifndef ADC_H_
 #define ADC_H_
 
-#define BATTERY_DISCHARGED_U    100
+#include <inttypes.h>
+
+#define BATTERY_DISCHARGED_U    2050
 
 #define ADC_AVERAGE_COUNT       16  // Number of times to measure
 

@@ -44,6 +44,7 @@ int main(void) {
     klPrintf(" === Lock is here ===\r");
     GeneralInit();
 
+    uint32_t LedTmr;
     // ==== Main cycle ====
     while(1) {
         PN.Task();
@@ -54,8 +55,11 @@ int main(void) {
         Battery.Task();
 
         // Handle battery discharge indication
-        if ((State == sWaiting) && Battery.IsDischarged()) {
-            if (Delay.Elapsed(&StateTimer, 81)) LedRed.Toggle();
+        if (State == sWaiting) {
+            if(Battery.IsDischarged()) {
+                if (Delay.Elapsed(&LedTmr, 108)) LedRed.Toggle();
+            }
+            else LedRed.Disable();
         }
 
         // Handle state

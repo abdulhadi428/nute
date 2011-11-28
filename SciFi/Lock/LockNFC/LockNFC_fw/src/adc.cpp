@@ -8,18 +8,20 @@
 #include "adc.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_adc.h"
+#include "kl_util.h"
+#include "delay_util.h"
 
 Battery_t Battery;
 
 void Adc_t::Init() {
     RCC_ADCCLKConfig(RCC_PCLK2_Div4);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOA, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 | RCC_APB2Periph_GPIOB, ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
     // ==== GPIO ====
     GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
     // ==== ADC's DMA ====
     DMA_DeInit(DMA1_Channel1);
     DMA_InitTypeDef DMA_InitStructure;
@@ -46,7 +48,7 @@ void Adc_t::Init() {
     ADC_InitStructure.ADC_NbrOfChannel = 1;
     ADC_Init(ADC1, &ADC_InitStructure);
     // ADC1 regular channels configuration
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_71Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 1, ADC_SampleTime_71Cycles5);
     ADC_DMACmd(ADC1, ENABLE);                   // Enable ADC1 DMA
     ADC_Cmd(ADC1, ENABLE);                      // Enable ADC1
     // Calibrate ADC
@@ -64,5 +66,8 @@ void Adc_t::Task() {
 }
 
 void Adc_t::Measure() {
-
+    IValue=0;
+    for(uint32_t i=0; i<ADC_AVERAGE_COUNT; i++) IValue += ADCValues[i];
+    IValue /= ADC_AVERAGE_COUNT;
+    //klPrintf("adc = %u\r", IValue);
 }
