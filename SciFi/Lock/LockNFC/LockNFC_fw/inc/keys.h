@@ -12,20 +12,20 @@
 #include <inttypes.h>
 #include "stm32f10x_gpio.h"
 
-#define KEY_COUNT   2
 #define KEY_DELAY   108 // ms
-
-const uint16_t KeyPin[KEY_COUNT] = {GPIO_Pin_0, GPIO_Pin_1};
 
 class Keys_t {
 private:
     uint32_t Timer;
-    bool KeyIsDown[KEY_COUNT];
+    bool Key1IsDown, Key2IsDown;
+    bool Key1HwPressed(void) { return (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == Bit_RESET); }
+    bool Key2HwPressed(void) { return (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1) == Bit_RESET); }
 public:
     void Init(void);
     void Task(void);
     // Events
-    ftVoid_Void EvtKeyPress[KEY_COUNT];
+    ftVoid_Void EvtKey1Press, EvtKey2Press;
+    ftVoid_Void EvtKeyPressBoth;
 };
 
 extern Keys_t Keys;

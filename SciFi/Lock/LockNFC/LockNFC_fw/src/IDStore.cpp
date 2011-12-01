@@ -31,6 +31,11 @@ void IDStore_t::PrintIDs(void) {
         klPrintf(" %u %X%X\r", i, (uint32_t)((IDArr.ID[i] >> 32)& 0xFFFFFFFF), (uint32_t)(IDArr.ID[i] & 0xFFFFFFFF));
 }
 
+void IDStore_t::EraseAll() {
+    IDArr.Count = 0;
+    Save();
+}
+
 // ========================== ID operations ====================================
 bool IDStore_t::IsPresentIndx(uint64_t AID, uint32_t *AIndx) {
     for (uint32_t i=0; i<IDArr.Count; i++) {

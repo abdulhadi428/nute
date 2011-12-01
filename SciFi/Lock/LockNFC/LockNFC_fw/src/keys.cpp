@@ -19,22 +19,41 @@ void Keys_t::Init() {
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    for(uint32_t i=0; i<KEY_COUNT; i++) {
-        GPIO_InitStructure.GPIO_Pin  = KeyPin[i];
-        GPIO_Init(GPIOA, &GPIO_InitStructure);
-        KeyIsDown[i] = false;
-    }
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0 | GPIO_Pin_1;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    Key1IsDown = false;
+    Key2IsDown = false;
 }
 
 void Keys_t::Task() {
     if (!Delay.Elapsed(&Timer, KEY_DELAY)) return;
-    for (uint32_t i=0; i<KEY_COUNT; i++) {
-        if ((GPIO_ReadInputDataBit(GPIOA, KeyPin[i]) == Bit_RESET) && !KeyIsDown[i]) {
-            KeyIsDown[i] = true;
-            if(EvtKeyPress[i] != 0) EvtKeyPress[i]();
+    // Key1
+    if (Key1HwPressed() && !Key1IsDown) {
+        Key1IsDown = true;
+        // Check if both
+        if (Key2IsDown) {
+            if (EvtKeyPressBoth != 0) EvtKeyPressBoth();
         }
-        else if ((GPIO_ReadInputDataBit(GPIOA, KeyPin[i]) == Bit_SET) && KeyIsDown[i]) {
-            KeyIsDown[i] = false;
+        else {
+            if(EvtKey1Press != 0) EvtKey1Press();
         }
+    }
+    else if (!Key1HwPressed() && Key1IsDown) {
+        Key1IsDown = false;
+    }
+
+    // Key2
+    if (Key2HwPressed() && !Key2IsDown) {
+        Key2IsDown = true;
+        // Check if both
+        if (Key1IsDown) {
+            if (EvtKeyPressBoth != 0) EvtKeyPressBoth();
+        }
+        else {
+            if(EvtKey2Press != 0) EvtKey2Press();
+        }
+    }
+    else if (!Key2HwPressed() && Key2IsDown) {
+        Key2IsDown = false;
     }
 }

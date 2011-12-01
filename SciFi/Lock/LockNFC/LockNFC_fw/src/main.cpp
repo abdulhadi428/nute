@@ -14,7 +14,8 @@
 #include "keys.h"
 #include "adc.h"
 
-#define STATE_TIMEOUT   7000    // ms
+#define STATE_TIMEOUT       7000    // ms
+#define DOOR_CLOSE_TIMEOUT  9999    // ms
 // Colors in RGB
 #define DOOR_CLOSED_COLOR   {4, 0, 0}
 #define DOOR_OPEN_COLOR     {45, 0, 45}
@@ -26,9 +27,18 @@
 // Types
 typedef enum {sWaiting, sAdding, sRemoving} State_t;
 
+struct Door_t {
+    uint32_t Timer;
+    bool IsOpen;
+    void Task(void);
+};
+
+Door_t Door;
 State_t State;
-bool DoorIsOpen = false;
+
 uint32_t StateTimer;
+
+
 
 // Prototypes
 void GeneralInit(void);
@@ -37,6 +47,7 @@ void DoorToggle(void);
 void Event_CardAppeared(void);
 void Event_KeyAdd(void);
 void Event_KeyRemove(void);
+void Event_KeyBoth(void);
 
 // ============================ Implementation ================================
 int main(void) {
@@ -53,6 +64,7 @@ int main(void) {
         Crystal.Task();
         Keys.Task();
         Battery.Task();
+        Door.Task();
 
         // Handle battery discharge indication
         if (State == sWaiting) {
@@ -89,9 +101,12 @@ void GeneralInit(void) {
     Crystal.On();
     Crystal.SetColorSmoothly(DOOR_CLOSED_COLOR);
 
+    Door.IsOpen = false;
+
     Keys.Init();
-    Keys.EvtKeyPress[0] = Event_KeyAdd;
-    Keys.EvtKeyPress[1] = Event_KeyRemove;
+    Keys.EvtKey1Press = Event_KeyAdd;
+    Keys.EvtKey2Press = Event_KeyRemove;
+    Keys.EvtKeyPressBoth = Event_KeyBoth;
 
     PN.Init();
     PN.Evt_CardAppeared = Event_CardAppeared;
@@ -104,13 +119,9 @@ void GeneralInit(void) {
 }
 
 // ================================== Door =====================================
-void DoorToggle(void) {
-    DoorIsOpen = !DoorIsOpen;
-    if (DoorIsOpen) {
-        klPrintf("Door is open\r");
-        Crystal.SetColorSmoothly(DOOR_OPEN_COLOR);
-    }
-    else {
+void Door_t::Task() {
+    if (IsOpen) if(Delay.Elapsed(&Timer, DOOR_CLOSE_TIMEOUT)) {
+        IsOpen = false;
         klPrintf("Door is closed\r");
         Crystal.SetColorSmoothly(DOOR_CLOSED_COLOR);
     }
@@ -123,10 +134,16 @@ void Event_CardAppeared(void) {
     if (!Card.ReadID()) return;
     switch (State) {
         case sWaiting:
-            if (IDStore.IsPresent(Card.ID)) DoorToggle();
-            else {  // Blink to inform detection
-                if (DoorIsOpen) Crystal.SetColor(DOOR_OPEN_BLINK);
-                else            Crystal.SetColor(DOOR_CLOSED_BLINK);
+            if (!Door.IsOpen) {
+                if (IDStore.IsPresent(Card.ID)) {
+                    Door.IsOpen = true;
+                    Crystal.SetColorSmoothly(DOOR_OPEN_COLOR);
+                    Delay.Reset(&Door.Timer);
+                    klPrintf("Door is open\r");
+                }
+                else {  // Blink to inform detection
+                    Crystal.SetColor(DOOR_CLOSED_BLINK);
+                }
             }
             break;
         case sAdding:
@@ -169,4 +186,17 @@ void Event_KeyRemove(void) {
         Delay.Reset(&StateTimer);   // Reset state timeout
     }
 }
-
+void Event_KeyBoth(void) {
+    // Inform action
+    LedGreen.Disable();
+    LedRed.Disable();
+    State = sWaiting;
+    for(uint32_t i=0; i<4; i++) {
+        LedGreen.On();
+        Delay.ms(99);
+        LedGreen.Off();
+        Delay.ms(99);
+    }
+    // Clear memory
+    IDStore.EraseAll();
+}

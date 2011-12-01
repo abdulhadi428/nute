@@ -35,6 +35,7 @@ public:
     // Load/save
     void Load(void);
     void Save(void);
+    void EraseAll(void);
 };
 
 extern IDStore_t IDStore;
