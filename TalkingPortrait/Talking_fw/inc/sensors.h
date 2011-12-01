@@ -11,13 +11,15 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"
 #include "delay_util.h"
-#include "arm_common.h"
+#include "kl_util.h"
+
+#define DETECTION_MAX_DELAY     11  // seconds
 
 class Sns_t {
 private:
-    uint32_t Timer;
+    uint32_t Timer, TimerDetection;
     bool WasDetected;
-    bool Detected(void) { return GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_3); }
+    bool Detected(void) { return (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_1) == Bit_SET); }
 public:
     ftVoid_Void EvtDetected;
     void Init(void);

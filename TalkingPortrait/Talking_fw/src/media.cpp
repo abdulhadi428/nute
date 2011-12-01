@@ -1,7 +1,6 @@
 #include "media.h"
 #include <string.h>
-
-#include "uart.h"
+#include "kl_util.h"
 #include "vs.h"
 
 Sound_t ESnd;

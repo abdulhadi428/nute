@@ -92,7 +92,7 @@
 #include "ff.h"			/* FatFs configurations and declarations */
 #include "diskio.h"		/* Declarations of low level disk I/O functions */
 
-#include "uart.h"   // DEBUG
+#include "kl_util.h"   // DEBUG
 
 /*--------------------------------------------------------------------------
 

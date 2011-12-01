@@ -16,7 +16,6 @@
 #include "misc.h"
 
 #include "vs_defs.h"
-#include "arm_common.h"
 
 // ==== Defines ====
 // Pins

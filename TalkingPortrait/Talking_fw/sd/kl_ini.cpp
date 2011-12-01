@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "uart.h"
+#include "kl_util.h"
 
 char IBuf[INI_BUF_SIZE];
 

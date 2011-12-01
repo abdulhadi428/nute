@@ -15,8 +15,21 @@
 extern "C" {
 #endif
 
-char *UintToStr(uint32_t AValue, char* S);
+// Types
+#define FORCE_INLINE inline __attribute__ ((__always_inline__))
+#define PACKED __attribute__ ((__packed__))
 
+// Common types
+typedef enum {erOk, erTimeout, erError, erBusy} Error_t;
+
+// Functional types
+typedef void(*ftVoid_Void)(void);
+
+
+// Prototypes
+char *UintToStr(uint32_t AValue, char* S);
+void UART_Init(void);
+void klPrintf(const char *S, ...);
 
 
 #ifdef __cplusplus

@@ -1,6 +1,6 @@
 #include "vs.h"
 
-#include "uart.h"
+#include "kl_util.h"
 #include "media.h"
 
 VS_t Vs;

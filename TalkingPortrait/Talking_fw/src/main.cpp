@@ -15,7 +15,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "kl_util.h"
-#include "uart.h"
 
 #define SND_COUNT_MAX   100
 #define FNAME_LNG_MAX   13
@@ -31,10 +30,10 @@ typedef struct {
     uint32_t ProbSumm;
 } SndList_t;
 
-struct {
-    uint32_t count;
-    uint32_t c[4];
-} DebugProb;
+//struct {
+//    uint32_t count;
+//    uint32_t c[4];
+//} DebugProb;
 
 SndList_t SndList;
 
@@ -50,13 +49,13 @@ int main(void) {
     klPrintf("Portrait is here\r");
 
     GeneralInit();
-    uint32_t tmr;
-    Delay.Reset(&tmr);
+//    uint32_t tmr;
+//    Delay.Reset(&tmr);
     // ==== Main cycle ====
     while(1) {
         ESnd.Task();
         Sensor.Task();
-        if (Delay.Elapsed(&tmr, 2000)) EVENT_SomeoneDetected();
+        //if (Delay.Elapsed(&tmr, 2000)) EVENT_SomeoneDetected();
     } // while(1)
     return 0;
 }
@@ -70,8 +69,8 @@ void GeneralInit(void) {
     // Init peripheral
     Delay.Init();
     // Sensor
-    //Sensor.Init();
-    //Sensor.EvtDetected = EVENT_SomeoneDetected;
+    Sensor.Init();
+    Sensor.EvtDetected = EVENT_SomeoneDetected;
     // Sound
     Vs.Init();
     ESnd.Init();
@@ -127,7 +126,7 @@ void EVENT_SomeoneDetected(void) {
         if((r >= SndList.Phrases[i].ProbBottom) && (r <= SndList.Phrases[i].ProbTop)) break;
     // Play phrase
     ESnd.Play(SndList.Phrases[i].Filename);
-    DebugProb.count++;
-    DebugProb.c[i]++;
-    klPrintf("Total: %u   c1: %u  c2: %u  c3: %u  c4: %u\r", DebugProb.count, DebugProb.c[0], DebugProb.c[1], DebugProb.c[2], DebugProb.c[3]);
+    //DebugProb.count++;
+    //DebugProb.c[i]++;
+    //klPrintf("Total: %u   c1: %u  c2: %u  c3: %u  c4: %u\r", DebugProb.count, DebugProb.c[0], DebugProb.c[1], DebugProb.c[2], DebugProb.c[3]);
 }
