@@ -22,7 +22,10 @@
 #include "images.h"
 #include "usb_unit.h"
 
+
 #include "uart.h"
+uint32_t wDelayTimer;
+void DebagTask(void);
 
 void GeneralInit(void);
 
@@ -30,22 +33,25 @@ int main(void) {
     UART_Init();
     Delay.ms(100);
     UART_PrintString("Let's rock!\r");
-
+    Delay.ms(100);
+    //MyUsbInit();
     GeneralInit();
 
+
     PrintFileToUART("lock.ini");
-    WriteString("PASSWORD", "PASSLENGTH", "5", "lock.ini");
-    PrintFileToUART("lock.ini");
+    //WriteString("PASSWORD", "PASSLENGTH", "5", "lock.ini");
+    //PrintFileToUART("lock.ini");
     // ==== Main cycle ====
     while(1) {
         //i2cMgr.Task();
         ESnd.Task();
-        //ESns.Task();
-        EUSB.Task();
+       // ESns.Task();
+        //USBTask();
         //Leds.Task();
         ELock.Task();
         EKeyboard.Task();
-        EIRSirc.Task();
+        //DebagTask();
+        //EIRSirc.Task();
         //Lcd.Task();
     } // while(1)
     return 0;
@@ -65,8 +71,8 @@ void GeneralInit(void) {
     // Leds
     //Leds.Init();
     // Sensors
-    //ESns.Init();
-    EIRSirc.Init();
+    ESns.Init();
+    //EIRSirc.Init();
 
     // Sound
     SD.Init();
@@ -74,7 +80,8 @@ void GeneralInit(void) {
     ESnd.Init();
     ELock.Init();
     EKeyboard.Init();
-    EUSB.Init();
+
+
 
 
     // LCD
@@ -91,21 +98,41 @@ void GeneralInit(void) {
 //    ERock.C.Value   = ReadInt32("Init", "CValue",   "rock.ini");
 //    ERock.ChooseType();
 
-    ESnd.Play("magnet.wav");
+    ESnd.Play(SOUND_LOCK_WARNING);
+
 }
 
+//void DebagTask(void)
+//{
+//  if (Delay.Elapsed(&wDelayTimer,1000))
+//  {
+//      UART_PrintString("carrent frame counter= ");
+//      UART_PrintInt(return_SOF_counter());
+//      UART_PrintString(" \r");
+//      UART_PrintString("USB interrupt counter= ");
+//      UART_PrintInt(return_INT_counter());
+//      UART_PrintString(" \r");
+//
+//  }
+//
+//}
 // ================================== Events ===================================
+void EVENT_USART1_RX(uint8_t chByte)
+{
+  ELock.UsartRxEvent(chByte);
+}
 void EVENT_KeyPressed(uint8_t chRow,uint8_t chCol)
 {
  uint8_t chRes=0;
 
  chRes+=(chCol-1)*3;
  chRes+=chRow;
- if (chRes==11) chRes=0; // там ноль на 11-ом месте
- if (chRes==10) chRes='*';
- if (chRes==12) chRes='#';
+ chRes+='0'; // приводим к символам
+ if (chRes==(11+'0')) chRes='0'; // там ноль на 11-ом месте
+ if (chRes==(10+'0')) chRes='*';
+ if (chRes==(12+'0')) chRes='#';
  UART_PrintString("New key event. Press ");
- UART_PrintInt(chRes);
+ UART_Print(chRes);
  UART_PrintString(" \r");
  if (ELock.KeyPressed(chRes)==1) UART_PrintString("New key event not accepted.\r");
 }
@@ -117,13 +144,13 @@ void EVENT_KeyPressed(uint8_t chRow,uint8_t chCol)
                    Nb_bytes: number of bytes to send.
 * Return         : none.
 *******************************************************************************/
-void EVENT_USBDataRx(uint8_t* data_buffer, uint8_t Nb_bytes)
-{
-  ELock.UsbRecData(data_buffer,Nb_bytes);
-  UART_PrintString("Get USB data, ");
-  UART_PrintInt(Nb_bytes);
-  UART_PrintString(" bytes \r");
-}
+//void EVENT_USBDataRx(uint8_t* data_buffer, uint8_t Nb_bytes)
+//{
+//  //ELock.UsbRecData(data_buffer,Nb_bytes);
+//  UART_PrintString("Get USB data, ");
+//  UART_PrintInt(Nb_bytes);
+//  UART_PrintString(" bytes \r");
+//}
 
 void EVENT_SensorsStateChanged(void) {
 //    UART_PrintString("Sns: ");

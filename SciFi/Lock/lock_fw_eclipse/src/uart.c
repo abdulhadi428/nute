@@ -25,8 +25,17 @@ void UART_Init(void) {
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    USART_InitStructure.USART_Mode = USART_Mode_Tx;
+    USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
     USART_Init(USART1, &USART_InitStructure);
+
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+    USART_ITConfig( USART1, USART_IT_TXE, DISABLE ); // ну передача нам не нужна
+    USART_ITConfig( USART1, USART_IT_RXNE, ENABLE ); // а прием нужно обрабатывать, иначе можем байты потерять
     // Enable USART
     USART_Cmd(USART1, ENABLE);
 #endif
@@ -55,6 +64,8 @@ void UART_Print (uint8_t AByte) {
     } //ATOMIC_BLOCK
 #endif
 }
+
+
 void UART_PrintAsHex (uint8_t AByte){
     UART_Print(UintToHexChar (AByte >> 4));
     UART_Print(UintToHexChar (AByte & 0x0F));
@@ -136,4 +147,19 @@ void UART_StrHex16(const char *S, uint16_t ANumber) {
     UART_PrintAsHex((uint8_t)(ANumber>>8));
     UART_PrintAsHex((uint8_t)(ANumber & 0x00FF));
     UART_NewLine();
+}
+
+void USART1_IRQHandler(void)
+{
+  if( USART_GetITStatus( USART1, USART_IT_TXE ) == SET )
+    {
+      USART_ITConfig( USART1, USART_IT_TXE, DISABLE );   // прерывание по передаче не используется
+    }
+
+  if( USART_GetITStatus( USART1, USART_IT_RXNE ) == SET )
+    {
+      EVENT_USART1_RX(USART_ReceiveData( USART1 ));
+      //USART_ITConfig( pUART, USART_IT_RXNE, DISABLE );
+    }
+
 }
