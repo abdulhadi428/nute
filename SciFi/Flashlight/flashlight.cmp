@@ -1,0 +1,143 @@
+Cmp-Mod V01 Created by CvPCB (2010-00-09 BZR 23xx)-stable date = Thu 22 Dec 2011 03:36:50 PM MSK
+
+BeginCmp
+TimeStamp = /4EBAE64E;
+Reference = C1;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EBAE654;
+Reference = C2;
+ValeurCmp = 10u;
+IdModule  = SMD0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE0D66A;
+Reference = C3;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EBAE71B;
+Reference = C4;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EBAE71A;
+Reference = C5;
+ValeurCmp = 10u;
+IdModule  = SMD0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EF31328;
+Reference = C6;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EBAE6D4;
+Reference = D1;
+ValeurCmp = D_SHOTTKY;
+IdModule  = Diode_SMA;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE0D154;
+Reference = D2;
+ValeurCmp = LED;
+IdModule  = LED1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE0CFCD;
+Reference = DD1;
+ValeurCmp = ATTINY45;
+IdModule  = 8S2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EC00D19;
+Reference = F1;
+ValeurCmp = FUSE0R;
+IdModule  = SMD0603_FUSE;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EBAE696;
+Reference = L1;
+ValeurCmp = 22uH;
+IdModule  = INDUCTOR_SR0604;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE0D29B;
+Reference = Q1;
+ValeurCmp = 2N7002;
+IdModule  = SOT23;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE0D189;
+Reference = R1;
+ValeurCmp = 1M;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE0D314;
+Reference = R2;
+ValeurCmp = R;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE0D048;
+Reference = XL1;
+ValeurCmp = ATMEL_ISP;
+IdModule  = DIL2X3;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE11F77;
+Reference = XL2;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE11F87;
+Reference = XL3;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE12478;
+Reference = XL4;
+ValeurCmp = CON1;
+IdModule  = SIL1_ROUND_1MM5;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE1247E;
+Reference = XL5;
+ValeurCmp = CON1;
+IdModule  = SIL1_SQUARE_1MM5;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EE12487;
+Reference = XL6;
+ValeurCmp = CON1;
+IdModule  = SIL-1;
+EndCmp
+
+EndListe
