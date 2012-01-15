@@ -1,29 +1,20 @@
-EESchema Schematic File Version 2  date Thu 22 Dec 2011 03:43:05 PM MSK
-LIBS:Transistors_kl
-LIBS:adc_kl
+EESchema Schematic File Version 2  date 12/01/2012 14:58:36
 LIBS:Atmel_kl
-LIBS:Audio_kl
 LIBS:Connectors_kl
-LIBS:display_kl
-LIBS:Interface_kl
-LIBS:memory
-LIBS:modules
-LIBS:OpAmp_kl
 LIBS:pcb_details
 LIBS:power
 LIBS:Power_kl
-LIBS:RF ICs
 LIBS:Sensors
-LIBS:SmartCard_kl
-LIBS:st_kl
-LIBS:standard_logic
 LIBS:Tittar_kl
-EELAYER 24  0
+LIBS:Transistors_kl
+LIBS:flashlight-cache
+EELAYER 25  0
 EELAYER END
 $Descr A3 16535 11700
+encoding utf-8
 Sheet 1 1
 Title ""
-Date "22 dec 2011"
+Date "12 jan 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -31,27 +22,26 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Wire Wire Line
+	12000 4250 12100 4250
+Wire Wire Line
+	6850 1800 6850 1950
+Wire Wire Line
+	8350 3300 8200 3300
+Wire Wire Line
+	11100 4250 11500 4250
+Wire Wire Line
+	10900 4650 10300 4650
+Wire Wire Line
+	10300 4650 10300 3200
 Connection ~ 10150 3000
 Wire Wire Line
 	10150 2850 10150 3000
-Connection ~ 10950 4050
 Wire Wire Line
-	11050 4050 10900 4050
-Connection ~ 7850 4300
-Wire Wire Line
-	7850 4300 7650 4300
-Connection ~ 7850 3750
-Wire Wire Line
-	7650 3750 7850 3750
+	7650 3950 7850 3950
 Connection ~ 7150 1700
 Wire Wire Line
 	7150 1950 7150 1700
-Wire Wire Line
-	10300 3200 10300 4550
-Wire Wire Line
-	10950 4050 10950 4400
-Wire Wire Line
-	10300 4550 10700 4550
 Connection ~ 10300 3200
 Wire Wire Line
 	8350 3200 7850 3200
@@ -62,17 +52,10 @@ Wire Wire Line
 	4100 5950 5900 5950
 Wire Wire Line
 	8350 3100 7200 3100
-Connection ~ 10300 3000
-Wire Wire Line
-	10300 3000 10300 2800
-Wire Wire Line
-	10300 2800 10350 2800
 Wire Wire Line
 	7950 3000 8350 3000
 Wire Wire Line
 	10600 3200 10050 3200
-Wire Wire Line
-	10600 3000 10050 3000
 Wire Wire Line
 	6850 1700 7300 1700
 Wire Wire Line
@@ -138,14 +121,9 @@ Wire Wire Line
 Wire Wire Line
 	6850 1600 7300 1600
 Wire Wire Line
-	6850 1800 7300 1800
-Wire Wire Line
 	10050 3100 10600 3100
 Wire Wire Line
 	10050 3300 10600 3300
-Wire Wire Line
-	8350 3300 7950 3300
-Connection ~ 8200 3300
 Wire Wire Line
 	7200 3500 7200 3600
 Wire Wire Line
@@ -154,24 +132,74 @@ Wire Wire Line
 	7400 5950 7400 6800
 Connection ~ 7400 6800
 Wire Wire Line
-	8200 3450 8200 3300
-Wire Wire Line
-	10950 4800 10950 5050
-Wire Wire Line
-	10400 4050 10300 4050
-Connection ~ 10300 4050
+	8200 3300 8200 3450
 Wire Wire Line
 	7150 2600 7150 2350
 Wire Wire Line
-	7850 3200 7850 3950
+	7650 4150 7850 4150
 Wire Wire Line
-	7850 3950 7650 3950
-Wire Wire Line
-	7650 4100 7850 4100
-Wire Wire Line
-	7850 4100 7850 4450
+	7850 4150 7850 4500
 Wire Wire Line
 	10150 2450 10150 2350
+Wire Wire Line
+	10600 4250 10700 4250
+Wire Wire Line
+	10850 4500 10850 4650
+Connection ~ 10850 4650
+Wire Wire Line
+	11400 4650 11450 4650
+Wire Wire Line
+	11450 4650 11450 4250
+Connection ~ 11450 4250
+Wire Wire Line
+	7850 3200 7850 3950
+Wire Wire Line
+	10050 3000 10300 3000
+$Comp
+L R R?
+U 1 1 4F0EBCCB
+P 11750 4250
+F 0 "R?" V 11830 4250 50  0000 C CNN
+F 1 "R" V 11750 4250 50  0000 C CNN
+	1    11750 4250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L VCC #PWR?
+U 1 1 4F0EBBF4
+P 7300 1400
+F 0 "#PWR?" H 7300 1450 30  0001 C CNN
+F 1 "VCC" H 7370 1430 30  0000 C CNN
+	1    7300 1400
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 4F0EB75C
+P 6850 1950
+F 0 "#PWR?" H 6940 1930 30  0001 C CNN
+F 1 "GND" H 6850 1870 30  0001 C CNN
+	1    6850 1950
+	1    0    0    -1  
+$EndComp
+$Comp
+L VCC #PWR?
+U 1 1 4F0EB6AD
+P 10600 4250
+F 0 "#PWR?" H 10600 4300 30  0001 C CNN
+F 1 "VCC" H 10670 4280 30  0000 C CNN
+	1    10600 4250
+	-1   0    0    1   
+$EndComp
+$Comp
+L IRLML6302 Q?
+U 1 1 4F0EB5F0
+P 10900 4300
+F 0 "Q?" V 11200 4450 60  0000 C CNN
+F 1 "IRLML6302" V 11100 4300 60  0000 C CNN
+	1    10900 4300
+	0    -1   -1   0   
+$EndComp
 $Comp
 L GND #PWR01
 U 1 1 4EF3133D
@@ -193,10 +221,10 @@ $EndComp
 $Comp
 L CON1 XL6
 U 1 1 4EE12487
-P 11200 4050
-F 0 "XL6" H 11200 4200 60  0000 C CNN
-F 1 "CON1" H 11200 3900 60  0000 C CNN
-	1    11200 4050
+P 12250 4250
+F 0 "XL6" H 12250 4400 60  0000 C CNN
+F 1 "CON1" H 12250 4100 60  0000 C CNN
+	1    12250 4250
 	-1   0    0    1   
 $EndComp
 $Comp
@@ -218,21 +246,12 @@ F 1 "CON1" H 3800 6650 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L CONN_2 XL3
-U 1 1 4EE11F87
-P 7450 4200
-F 0 "XL3" V 7400 4200 40  0000 C CNN
-F 1 "CONN_2" V 7500 4200 40  0000 C CNN
-	1    7450 4200
-	-1   0    0    1   
-$EndComp
-$Comp
 L CONN_2 XL2
 U 1 1 4EE11F77
-P 7450 3850
-F 0 "XL2" V 7400 3850 40  0000 C CNN
-F 1 "CONN_2" V 7500 3850 40  0000 C CNN
-	1    7450 3850
+P 7450 4050
+F 0 "XL2" V 7400 4050 40  0000 C CNN
+F 1 "CONN_2" V 7500 4050 40  0000 C CNN
+	1    7450 4050
 	-1   0    0    1   
 $EndComp
 $Comp
@@ -253,13 +272,13 @@ F 1 "0.1u" H 7100 2050 50  0000 L CNN
 	1    7150 2150
 	-1   0    0    1   
 $EndComp
-Text Notes 11250 4300 0    60   ~ 0
+Text Notes 12500 4300 0    60   ~ 0
 OUTPUT
 Text Notes 10400 3600 0    60   ~ 0
 This resistor can be used for \ndirect output-to-controller connection
 Text Notes 5900 3250 0    60   ~ 0
 This LED isn't realy used,\nso we should just\nkeep some place for it.
-Text Notes 5000 4050 0    60   ~ 0
+Text Notes 4950 4050 0    60   ~ 0
 The jolt sensor is presented as a 4-pin plug.\nI hope there will be a good square footprint for it.
 Text Notes 4900 5700 0    60   ~ 0
 This resistor can be used for direct power supply connection\nin case the DC-DC convertor is not necessery.
@@ -268,31 +287,12 @@ DC-DC converter with friends. the whole schema is taken from the aliensTransmitt
 $Comp
 L R R2
 U 1 1 4EE0D314
-P 10650 4050
-F 0 "R2" V 10730 4050 50  0000 C CNN
-F 1 "R" V 10650 4050 50  0000 C CNN
-F 2 "SMD" V 10780 4000 60  0001 C CNN
-	1    10650 4050
+P 11150 4650
+F 0 "R2" V 11230 4650 50  0000 C CNN
+F 1 "R" V 11150 4650 50  0000 C CNN
+F 2 "SMD" V 11280 4600 60  0001 C CNN
+	1    11150 4650
 	0    1    1    0   
-$EndComp
-$Comp
-L GND #PWR03
-U 1 1 4EE0D2AE
-P 10950 5050
-F 0 "#PWR03" H 11040 5030 30  0001 C CNN
-F 1 "GND" H 10950 4970 30  0001 C CNN
-	1    10950 5050
-	1    0    0    -1  
-$EndComp
-$Comp
-L 2N7002 Q1
-U 1 1 4EE0D29B
-P 10900 4600
-F 0 "Q1" H 11100 4650 60  0000 C CNN
-F 1 "2N7002" H 11250 4550 60  0000 C CNN
-F 2 "SOT23" H 11160 4710 60  0001 C CNN
-	1    10900 4600
-	1    0    0    -1  
 $EndComp
 $Comp
 L GND #PWR04
@@ -334,43 +334,35 @@ $EndComp
 $Comp
 L GND #PWR06
 U 1 1 4EE0D136
-P 7850 4450
-F 0 "#PWR06" H 7940 4430 30  0001 C CNN
-F 1 "GND" H 7850 4370 30  0001 C CNN
-	1    7850 4450
+P 7850 4500
+F 0 "#PWR06" H 7940 4480 30  0001 C CNN
+F 1 "GND" H 7850 4420 30  0001 C CNN
+	1    7850 4500
 	1    0    0    -1  
 $EndComp
 $Comp
 L VCC #PWR07
 U 1 1 4EE0D11D
-P 10350 2800
-F 0 "#PWR07" H 10350 2850 30  0001 C CNN
-F 1 "VCC" H 10420 2830 30  0000 C CNN
-	1    10350 2800
+P 10300 3000
+F 0 "#PWR07" H 10300 3050 30  0001 C CNN
+F 1 "VCC" H 10370 3030 30  0000 C CNN
+	1    10300 3000
 	1    0    0    -1  
 $EndComp
 Text Label 10600 3200 0    60   ~ 0
 MISO
-Text Label 10600 3000 0    60   ~ 0
-VCC
 Text Label 10600 3100 0    60   ~ 0
 SCK
 Text Label 10600 3300 0    60   ~ 0
 MOSI
 Text Label 7950 3000 0    60   ~ 0
 RESET
-Text Label 7950 3300 0    60   ~ 0
-GND
-Text Label 7300 1800 0    60   ~ 0
-GND
 Text Label 7300 1700 0    60   ~ 0
 RESET
 Text Label 7300 1600 0    60   ~ 0
 MOSI
 Text Label 7300 1500 0    60   ~ 0
 SCK
-Text Label 7300 1400 0    60   ~ 0
-VCC
 Text Label 7300 1300 0    60   ~ 0
 MISO
 $Comp
