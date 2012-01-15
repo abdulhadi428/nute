@@ -11,6 +11,7 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_usart.h"
 #include <stdarg.h>
+#include <stdbool.h>
 
 /*
  * Converts AValue to NULL-terminated string S.

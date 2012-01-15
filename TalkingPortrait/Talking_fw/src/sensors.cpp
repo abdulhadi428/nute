@@ -32,4 +32,6 @@ void Sns_t::Init() {
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
     WasDetected = false;
+    // Check if ok
+    Delay.ms(18);
 }
