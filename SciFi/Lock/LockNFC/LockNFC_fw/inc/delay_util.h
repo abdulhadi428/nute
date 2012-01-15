@@ -8,9 +8,6 @@
 #ifndef _TIME_UTILS_H
 #define	_TIME_UTILS_H
 
-//#include <inttypes.h>
-//#include <stdbool.h>
-//#include
 #include "stm32f10x.h"
 
 class Delay_t {

@@ -38,11 +38,8 @@ State_t State;
 
 uint32_t StateTimer;
 
-
-
 // Prototypes
 void GeneralInit(void);
-void DoorToggle(void);
 // Events
 void Event_CardAppeared(void);
 void Event_KeyAdd(void);
