@@ -10,14 +10,12 @@
 #include "media.h"
 //#include "sensors.h"
 #include "kl_ini.h"
-#include "uart.h"
+//#include "lca.h"
 
 #include "ff.h"
 #include "diskio.h"
 //#include "uart.h"
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
 Lock_t ELock;
 
@@ -25,40 +23,26 @@ void Lock_t::Init()
 {
 	chLockState=LOCK_NORMAL;
 	chNormState=NORMAL_START;
-	ReadSettingsFromSD();
+	ReadPasswordFromSD();
 }
 
 void Lock_t::Task()
 {
-  if (bNewCommandFlag)  //пришла новая команда по UART-у
+    switch (chLockState)
     {
-      if (chLockState==LOCK_NORMAL) UART_PrintString("SERV MODE  \r");
-      chLockState=LOCK_HACKED; // режим взлома
-      chNormState=NORMAL_START; // сбрасываем автомат нормальной работы
-      Delay.Reset(&wHackTimer);
-    }
-
-  switch (chLockState)
-    {
-      case LOCK_NORMAL:
+	case LOCK_NORMAL:
 	  NormalTask();
 	  break;
-      case LOCK_HACKED:
-          if (Delay.Elapsed(&wHackTimer, HACK_DELAY_TIME)) // слишком долго небыло команд
-          {
-            chLockState=LOCK_NORMAL;
-            UART_PrintString("NORMAL MODE  \r");
-          }
-          HackedTask();
-          break;
-
-      case LOCK_BREAKED:
-          //BreakedTask();
-          break;
-      case LOCK_RESTART:
-        //RestartTask();
+	case LOCK_BREAKED:
+	  //BreakedTask();
       break;
-    }
+    case LOCK_HACKED:
+      //HackedTask();
+       break;
+    case LOCK_RESTART:
+      //RestartTask();
+      break;
+	}
 }
 /*
 принимает код нажатой кнопки, возвращает 0-успешно 1- переполнение
@@ -84,7 +68,6 @@ void Lock_t::NormalTask()
       if (ESnd.State!=sndPlaying) chNormState=NORMAL_ON; //закончились все сообщения
       break;
     case NORMAL_ON: // исходное состояние, замок закрыт
-      if (ESnd.State==sndPlaying) bKeyFlag=false; // игонорим кнопки, пока проигрывается звук
       if (bKeyFlag) // была нажата кнопка
       {
           bKeyFlag=false;
@@ -92,34 +75,30 @@ void Lock_t::NormalTask()
             {
               ESnd.Play(SOUND_BEEP_PASS);
               chKeyCount++;
-              chErrorCount=0;
             }
           else                                  // неправильная кнопка
             {
               ESnd.Play(SOUND_BEEP_FAIL);
+              //if (chKeyCount>1)  ESnd.Play(SOUND_CODE_RESET);
               chKeyCount=0;
               chErrorCount++;
             }
+          if (chKeyCount==chPasswordLength)
+            {
+              ESnd.Play(SOUND_LOCK_OPEN);
+              chNormState=NORMAL_OPEN;
+              Open();
+              Delay.Reset(&wOpenTimer);
+            }
+          if (chErrorCount==chMaxCodeError) // слишком много ошибок при наборе кода
+            {
+              chNormState=NORMAL_BLOCK;
+              ESnd.Play(SOUND_LOCK_BLOCK_LONG);
+            }
       }
-      if ((chKeyCount==(chPasswordLength-1)) & (ESnd.State!=sndPlaying))
-        {
-          ESnd.Play(SOUND_LOCK_OPEN);
-          chNormState=NORMAL_OPEN;
-          Open();
-          Delay.Reset(&wOpenTimer);
-        }
-
-      if ((chErrorCount>=chMaxCodeError) & (ESnd.State!=sndPlaying)) // слишком много ошибок при наборе кода
-      {
-          chNormState=NORMAL_BLOCK;
-          ESnd.Play(SOUND_LOCK_BLOCK_LONG);
-          Delay.Reset(&wBlockTimer);
-      }
-
       break;
     case NORMAL_OPEN:  // замок открыт некоторое время
-      if (ESnd.State==sndPlaying) break;
-      if (Delay.Elapsed(&wOpenTimer, wTimeToOpen))
+      if (Delay.Elapsed(&wOpenTimer, LOCK_OPEN_TIME))
         {
           ESnd.Play(SOUND_LOCK_CLOSE);
           chNormState=NORMAL_CLOSE;
@@ -133,17 +112,13 @@ void Lock_t::NormalTask()
         }
       break;
     case NORMAL_BLOCK:           // замок заблокирован
-      if (ESnd.State==sndPlaying)
-        {
-          bKeyFlag=false; // игонорим кнопки
-          break;    // не очень красиво, но работает.
-        }
+      if (ESnd.State==sndPlaying) bKeyFlag=false; // игонорим кнопки
       if (bKeyFlag) // была нажата кнопка
       {
           ESnd.Play(SOUND_LOCK_BLOCK_SHORT);
           bKeyFlag=false; // хотя, при нормальной работе аудио, это не нужно вовсе.
       }
-      if (Delay.Elapsed(&wBlockTimer, wTimeToBlock)) // пришло время разблокировать замок
+      if (Delay.Elapsed(&wBlockTimer, LOCK_BLOCK_TIME)) // пришло время разблокировать замок
       {
           ESnd.Play(SOUND_LOCK_UNBOCK);
           chNormState=NORMAL_START;
@@ -155,140 +130,42 @@ void Lock_t::NormalTask()
 
 void Lock_t::Close()
 {
-  UART_PrintString("Lock Close \r");
 }
 void Lock_t::Open()
 {
-  UART_PrintString("Lock Open \r");
 }
-
-/*************** UsartRxEvent *************************
- * Эта функция вызывается в прерывании UART-а
- * и принимает байт из UART-а
- * ВНИМАНИЕ, в ней нельзя вызывать UART_Print
- *****************************************************/
-void Lock_t::UsartRxEvent(uint8_t chByte)
-{
-  //UART_Print(chByte);
-
-  *(strRxBuf+iRxCounter)=chByte;
-  if ((chByte=='\r') | (chByte=='\n') | (chByte=='\0')) // конец строки
-    {
-      *(strRxBuf+iRxCounter+1)=0;
-      ParsCommand();                      // можно парсить
-      iRxCounter=0;
-    }
-  else
-    {
-        iRxCounter++;
-        if (iRxCounter==(MAX_HACK_RX_BUF_SIZE-1)) iRxCounter=0;  // чтоб не переполнялось
-    }
-}
-
-
-void Lock_t::ParsCommand(void)
-{
-  char *pchPrefix, *pchPostfix, *pch;
-  pchPrefix = strstr (strRxBuf,HACK_COMMAND_PREFIX);
-  pchPostfix = strstr (strRxBuf,HACK_COMMAND_POSTFIX);
-  if (pchPrefix==NULL) return;
-  if (pchPostfix==NULL) return;
-  uint8_t iCommandLen=pchPostfix-pchPrefix;
-  if (iCommandLen>0)
-    {
-      strncpy(strCommand,pchPrefix+HACK_COMMAND_PREFIX_LEN,iCommandLen);
-      strCommand[iCommandLen]='\0';
-      bNewCommandFlag=true;
-      iNewCommandCode=HACK_COMMAND_CODE_BLANK;
-      //UART_PrintString(strCommand);
-      pch=strstr(strCommand,HACK_COMMAND_TEST);
-      //UART_PrintString(pch);
-      if (pch==strCommand) iNewCommandCode=HACK_COMMAND_CODE_TEST;
-    }
-}
-
-/*
- * Автомат работы замка в режиме взлома
- * принимаем команды, выполняем действия
- */
-void Lock_t::HackedTask()
-{
-  if (bNewCommandFlag==false) return; // нет новых команд
-  bNewCommandFlag=false;
-
-  switch (iNewCommandCode)
-    {
-      case HACK_COMMAND_CODE_TEST:
-        UART_PrintString("get HACK_COMMAND_TEST \r");
-        break;
-    }
-  iNewCommandCode=HACK_COMMAND_CODE_BLANK;
- }
 
 /*****  UsbRecData *******************/
 /* вызывается извне, заполняет внутренний буфер
    данными, полученными по USB */
 /*************************************/
-//void Lock_t::UsbRecData(uint8_t* pData, uint8_t iSize)
-//{
-//  if (pData==NULL) return;
-//  uint8_t i=0;
-//  while (i<iSize)
-//    {
-//     if (chUsbRxCounter==USB_RX_BUF_SIZE) return; // чтобы буфер не переполнился
-//     chUsbRxBuf[chUsbRxCounter]=*pData;
-//     pData++;
-//     chUsbRxCounter++;
-//     i++;
-//    }
-//  return;
-//}
-
-
-
-void Lock_t::ReadSettingsFromSD()
+void Lock_t::UsbRecData(uint8_t* pData, uint8_t iSize)
 {
- // получаем длинну пароля
-  if (ParamIsExists("PASSWORD", "PASSLENGTH","lock.ini"))
+  if (pData==NULL) return;
+  uint8_t i=0;
+  while (i<iSize)
     {
-      chPasswordLength = ReadInt32("PASSWORD", "PASSLENGTH","lock.ini");
-      if (chPasswordLength>MAX_PASS_LEN)  chPasswordLength=MAX_PASS_LEN;
+     if (chUsbRxCounter==USB_RX_BUF_SIZE) return; // чтобы буфер не переполнился
+     chUsbRxBuf[chUsbRxCounter]=*pData;
+     pData++;
+     chUsbRxCounter++;
+     i++;
     }
-  else chPasswordLength=4;// не более MAX_PASS_LEN
+  return;
+}
 
-// получаем пароль
-  if (ParamIsExists("PASSWORD", "PASS", "lock.ini"))
-    {
-      ReadString("PASSWORD", "PASS", chPassword, chPasswordLength , "lock.ini");
-    }
-  else
-    {
-      uint16_t i=0;
-      while (i<MAX_PASS_LEN)
-        {
-          chPassword[i]='0'; // по умолчанию 4 нуля
-          i++;
-        }
-    }
-   chPassword[chPasswordLength]=0; // конец строки
 
-   // получаем максимальное допустимое количество ошибок
-   if (ParamIsExists("SECURITY", "MAXERROR", "lock.ini"))
-     {
-       chMaxCodeError = ReadInt32("SECURITY", "MAXERROR","lock.ini");
-     }
-   else  chMaxCodeError=5; // по умолчанию
 
-   // получаем время, которое замок будет открыт
-   if (ParamIsExists("SECURITY", "OPEN_TIME", "lock.ini"))
-     {
-       wTimeToOpen = ReadInt32("SECURITY", "OPEN_TIME","lock.ini");
-     }
-   else  wTimeToOpen=5000; // по умолчанию
-   // получаем время, на которое замок будет блокироваться
-   if (ParamIsExists("SECURITY", "BLOCK_TIME", "lock.ini"))
-     {
-       wTimeToBlock = ReadInt32("SECURITY", "BLOCK_TIME","lock.ini");
-     }
-   else  wTimeToBlock=20000; // по умолчанию 10000=примерно 15 сек
+void Lock_t::ReadPasswordFromSD()
+{
+  chPassword[0]=0;
+  chPassword[1]=0;
+  chPassword[2]=0;
+  chPassword[3]=0;
+  //chPasswordLength=4;// но не более MAX_PASS_LEN
+  chPasswordLength = ReadInt32("PASSWORD", "PASSLENGTH","lock.ini");
+  if (chPasswordLength>MAX_PASS_LEN)  chPasswordLength=MAX_PASS_LEN;
+  ReadString("PASSWORD", "PASS", chPassword, chPasswordLength , "lock.ini");
+
+  chMaxCodeError=5;
 }

@@ -102,17 +102,6 @@ void WriteString(const char *ASection, const char *AKey,const char *AInput, cons
 
 }
 
-//для проверки существования данного параметра
-// можно сильно оптимизировать позже
-bool ParamIsExists(const char *ASection, const char *AKey,const char *AFileName)
-{
-  char str[INI_STR_BUF_SIZE];
-  char* pstr;
-  pstr=ReadString(ASection,AKey,str,INI_STR_BUF_SIZE,AFileName);
-  if (pstr==NULL) return false;
-  return true;
-}
-
 char* ReadString(const char *ASection, const char *AKey, char *AOutput, uint32_t AMaxLength, const char *AFileName) {
     FRESULT rslt;
     FIL IFile;

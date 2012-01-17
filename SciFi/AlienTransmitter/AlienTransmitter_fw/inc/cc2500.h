@@ -13,9 +13,10 @@
 #include "stm32l1xx_spi.h"
 
 #include "cc2500defins.h"
-#include "arm_common.h"
+#include "kl_util.h"
 
 #define CC_MODE_RX
+//#define CC_DEBUG_PINS
 
 // ============================ Types & variables ==============================
 struct CC_Packet_t {
@@ -72,7 +73,7 @@ public:
         uint8_t TX_PktArray[CC_PKT_LEN+2];
         CC_Packet_t TX_Pkt;
     };
-    ftVoidVoid EvtNewPkt;
+    ftVoid_Void EvtNewPkt;
     // Methods
     void Init(void);
     void Task(void);
@@ -80,6 +81,10 @@ public:
     void SetAddress(uint8_t AAddr) { WriteRegister(CC_ADDR, AAddr); }
     // IRQ handler
     void IRQHandler(void);
+    // Debug
+#ifdef CC_DEBUG_PINS
+    void SetPin
+#endif
 };
 
 extern CC_t CC;

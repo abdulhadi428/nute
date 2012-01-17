@@ -51,16 +51,12 @@ void UART_PrintString (const char *S);
 void UART_PrintArrAsString (uint8_t *Arr, uint8_t ALength);
 void UART_PrintArrAsHex(uint8_t *Arr, uint8_t ALength);
 void UART_NewLine (void);
-uint16_t UART_GetData(void);
 
 void UART_StrUint (const char *S, uint32_t ANumber);
 void UART_StrInt  (const char *S,  int32_t ANumber);
 void UART_StrHex8 (const char *S, uint8_t  ANumber);
 void UART_StrHex16(const char *S, uint16_t ANumber);
 
-// Declare USART1 IRQ.
-void USART1_IRQHandler(void);
-void EVENT_USART1_RX(uint8_t chByte);
 
 #ifdef __cplusplus
 }

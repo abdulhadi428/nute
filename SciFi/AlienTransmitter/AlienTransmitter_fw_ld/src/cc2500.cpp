@@ -39,8 +39,8 @@ void CC_t::Task(void) {
 #ifdef CC_MODE_RX
 //            EnterRX();
 #else
-            //if (Delay.Elapsed(&Timer, 300)) {
-                klPrintf("TX\r");
+            //if (Delay.Elapsed(&Timer, 198)) {
+                //klPrintf("TX\r");
                 // Prepare packet to send
                 TX_Pkt.ToAddr = 0x04;
                 TX_Pkt.CommandID = 0xCA;

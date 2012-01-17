@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPCB (2011-07-08 BZR 3044)-stable date = 17/01/2012 20:24:14
+Cmp-Mod V01 Created by CvPCB (2010-00-09 BZR 23xx)-stable date = Thu 22 Dec 2011 03:36:50 PM MSK
 
 BeginCmp
 TimeStamp = /4EBAE64E;
@@ -36,7 +36,7 @@ IdModule  = SMD0805;
 EndCmp
 
 BeginCmp
-TimeStamp = /4F15A057;
+TimeStamp = /4EF31328;
 Reference = C6;
 ValeurCmp = 0.1u;
 IdModule  = SMD0603;
@@ -57,17 +57,17 @@ IdModule  = LED1206;
 EndCmp
 
 BeginCmp
-TimeStamp = /4EBAE61B;
-Reference = DA1;
-ValeurCmp = NCP1400;
-IdModule  = SOT23-5;
-EndCmp
-
-BeginCmp
 TimeStamp = /4EE0CFCD;
 Reference = DD1;
 ValeurCmp = ATTINY45;
 IdModule  = 8S2;
+EndCmp
+
+BeginCmp
+TimeStamp = /4EC00D19;
+Reference = F1;
+ValeurCmp = FUSE0R;
+IdModule  = SMD0603_FUSE;
 EndCmp
 
 BeginCmp
@@ -78,9 +78,9 @@ IdModule  = INDUCTOR_SR0604;
 EndCmp
 
 BeginCmp
-TimeStamp = /4F1276A5;
+TimeStamp = /4EE0D29B;
 Reference = Q1;
-ValeurCmp = IRLML6302;
+ValeurCmp = 2N7002;
 IdModule  = SOT23;
 EndCmp
 
@@ -94,20 +94,6 @@ EndCmp
 BeginCmp
 TimeStamp = /4EE0D314;
 Reference = R2;
-ValeurCmp = R;
-IdModule  = SMD0603;
-EndCmp
-
-BeginCmp
-TimeStamp = /4F127713;
-Reference = R3;
-ValeurCmp = R;
-IdModule  = SMD0603;
-EndCmp
-
-BeginCmp
-TimeStamp = /4F12787B;
-Reference = R4;
 ValeurCmp = R;
 IdModule  = SMD0603;
 EndCmp
@@ -127,17 +113,24 @@ IdModule  = SIL-2;
 EndCmp
 
 BeginCmp
+TimeStamp = /4EE11F87;
+Reference = XL3;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
 TimeStamp = /4EE12478;
 Reference = XL4;
 ValeurCmp = CON1;
-IdModule  = SIL-1;
+IdModule  = SIL1_ROUND_1MM5;
 EndCmp
 
 BeginCmp
 TimeStamp = /4EE1247E;
 Reference = XL5;
 ValeurCmp = CON1;
-IdModule  = SIL-1;
+IdModule  = SIL1_SQUARE_1MM5;
 EndCmp
 
 BeginCmp

@@ -10,8 +10,6 @@
 #include "delay_util.h"
 #include "stm32l1xx_exti.h"
 
-#include "uart.h"
-
 // ============================ Variables ======================================
 CC_t CC;
 
@@ -19,7 +17,7 @@ CC_t CC;
 void CC_t::Task(void) {
     // Handle New Packet
     if(NewPktRcvd) {
-        klPrintf("ogo\r");
+        //klPrintf("ogo\r");
         if(EvtNewPkt != 0) EvtNewPkt();
         NewPktRcvd = false;
     }
@@ -39,9 +37,9 @@ void CC_t::Task(void) {
         case CC_STB_IDLE:
             //klPrintf("IDLE\r");
 #ifdef CC_MODE_RX
-//            EnterRX();
+            EnterRX();
 #else
-            if (Delay.Elapsed(&Timer, 300)) {
+            //if (Delay.Elapsed(&Timer, 300)) {
                 klPrintf("TX\r");
                 // Prepare packet to send
                 TX_Pkt.ToAddr = 0x04;
@@ -51,7 +49,7 @@ void CC_t::Task(void) {
                 ////CC.EnterTXAndWaitToComplete();
                 IRQDisable();
                 EnterTX();
-            }
+            //}
 #endif
             break;
 
@@ -75,7 +73,7 @@ void CC_t::Task(void) {
             break;
 
         default: // Just get out in other cases
-            klPrintf("Other: %X\r", State);
+            //klPrintf("Other: %X\r", State);
             //Uart.PrintString("\rOther: ");
             //Uart.PrintUint(CC.State);
             break;
@@ -90,7 +88,7 @@ void CC_t::IRQHandler() {
         //klPrintf("Rx Fifo: %X\r", FifoSize);
         if (FifoSize == (6+2)) {
             NewPktRcvd = true;
-            klPrintf("aga\r");
+//            klPrintf("aga\r");
         }
     } // if size>0
 }
@@ -165,7 +163,7 @@ void CC_t::Init(void) {
     Reset();
     FlushRxFIFO();
     RfConfig();
-    SetChannel(100);
+    SetChannel(150);
     SetAddress(4);
 }
 

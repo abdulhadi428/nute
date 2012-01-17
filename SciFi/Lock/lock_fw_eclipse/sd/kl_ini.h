@@ -24,6 +24,5 @@ char *ReadString(const char *ASection, const char *AKey, char *AOutput, uint32_t
 int32_t ReadInt32(const char *ASection, const char *AKey, const char *AFileName);
 void PrintFileToUART (const char *AFileName);
 void WriteString(const char *ASection, const char *AKey,const char *AInput, const char *AFileName);
-bool ParamIsExists(const char *ASection, const char *AKey,const char *AFileName);
 
 #endif /* KL_INI_H_ */

@@ -26,8 +26,8 @@
 //#define CC_PATABLE0_VALUE   0x7F    // -6  dBm
 //#define CC_PATABLE0_VALUE   0xA9    // -4  dBm
 //#define CC_PATABLE0_VALUE   0xBB    // -2  dBm
-#define CC_PATABLE0_VALUE   0xFE    // 0 dBm
-//#define CC_PATABLE0_VALUE   0xFF    // +1 dBm
+//#define CC_PATABLE0_VALUE   0xFE    // 0 dBm
+#define CC_PATABLE0_VALUE   0xFF    // +1 dBm
 
 
 // ================================= Frequency =================================
@@ -38,9 +38,9 @@
 // =================================== Common ==================================
 #define CC_MDMCFG1_VALUE    0b10100010  // FEC=1, Preamble length=010 => 4bytes, +Channel spacing
 
-#define CC_MCSM1_VALUE      0b00001100  // Channel is always clear, RX->RX,   TX->IDLE
+//#define CC_MCSM1_VALUE      0b00001100  // Channel is always clear, RX->RX,   TX->IDLE
 //#define CC_MCSM1_VALUE      0b00001111  // Channel is always clear, RX->RX,   TX->RX
-//#define CC_MCSM1_VALUE      0b00000000  // Channel is always clear, RX->IDLE, TX->IDLE
+#define CC_MCSM1_VALUE      0b00000000  // Channel is always clear, RX->IDLE, TX->IDLE
 //#define CC_MCSM1_VALUE      0b00000011  // Channel is always clear, RX->IDLE, TX->RX
 #define CC_MCSM0_VALUE      0x18        // Calibrate at IDLE->RX,TX
 
