@@ -1,82 +1,82 @@
-# EESchema Netlist Version 1.1 created  17/01/2012 15:48:36
+# EESchema Netlist Version 1.1 created  21/01/2012 20:37:02
 (
- ( /4EF76BC1 SMD0805 C1 10u
-  ( 1 /Laser1Out )
-  ( 2 GND )
- )
- ( /4F144876 SMD0805 C2 10u
-  ( 1 /Laser2Out )
-  ( 2 GND )
- )
- ( /4EF69A8D SMD0603 C3 1u
-  ( 1 +3.3V )
-  ( 2 GND )
- )
- ( /4EF69A50 SMD0603 C4 0.1u
-  ( 1 +3.3V )
-  ( 2 GND )
- )
- ( /4EF699B0 SMD0603 C5 0.1u
-  ( 1 +3.3V )
-  ( 2 GND )
- )
- ( /4EF699AE SMD0603 C6 0.1u
-  ( 1 +3.3V )
-  ( 2 GND )
- )
- ( /4EF699AF SMD0603 C7 0.1u
-  ( 1 +3.3V )
-  ( 2 GND )
- )
- ( /4EF3B8EC SMD0603 C8 0.1u
+ ( /4EF3B8D7 SMD0603 C1 0.1u
   ( 1 +BATT )
   ( 2 GND )
  )
- ( /4EF6A341 SMD0603 C9 0.1u
+ ( /4EF76BC1 SMD0805 C2 10u
+  ( 1 /LaserOut )
+  ( 2 GND )
+ )
+ ( /4F1ACFDF SMD0603 C3 0.1u
+  ( 1 /LaserADC )
+  ( 2 GND )
+ )
+ ( /4EF6AB5E SMD0603 C4 0.1uF
   ( 1 +BATT )
   ( 2 GND )
  )
- ( /4EF3B8ED SMD0805 C10 10u
-  ( 1 +BATT )
-  ( 2 GND )
- )
- ( /4EF6A340 SMD0805 C11 10u
-  ( 1 +BATT )
-  ( 2 GND )
- )
- ( /4EF69A84 SMD0603 C12 0.1u
-  ( 1 N-000003 )
-  ( 2 GND )
- )
- ( /4EF69A83 SMD0603 C13 1u
-  ( 1 N-000003 )
-  ( 2 GND )
- )
- ( /4EF3B8D7 SMD0603 C14 0.1u
-  ( 1 +BATT )
-  ( 2 GND )
- )
- ( /4EF6AB5E SMD0603 C15 0.1uF
-  ( 1 +BATT )
-  ( 2 GND )
- )
- ( /4EF6AB60 SMD0805 C16 10uF
+ ( /4EF6AB60 SMD0805 C5 10uF
   ( 1 +5V )
   ( 2 GND )
  )
- ( /4EF6AB62 SMD0603 C17 1uF
+ ( /4EF69A8D SMD0603 C6 1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4EF69A50 SMD0603 C7 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4EF699B0 SMD0603 C8 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4EF699AE SMD0603 C9 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4EF699AF SMD0603 C10 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4EF6AB62 SMD0603 C11 1uF
   ( 1 +5V )
   ( 2 GND )
  )
- ( /4EF6AB64 SMD0603 C18 0.1uF
+ ( /4EF6AB64 SMD0603 C12 0.1uF
   ( 1 +5V )
+  ( 2 GND )
+ )
+ ( /4EF69A84 SMD0603 C13 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4EF3B8EC SMD0603 C14 0.1u
+  ( 1 +BATT )
+  ( 2 GND )
+ )
+ ( /4EF6A341 SMD0603 C15 0.1u
+  ( 1 +BATT )
+  ( 2 GND )
+ )
+ ( /4EF69A83 SMD0603 C16 1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4EF3B8ED SMD0805 C17 10u
+  ( 1 +BATT )
+  ( 2 GND )
+ )
+ ( /4EF6A340 SMD0805 C18 10u
+  ( 1 +BATT )
   ( 2 GND )
  )
  ( /4EF6AB67 SMD0603 C19 1uF
   ( 1 +3.3V )
   ( 2 GND )
  )
- ( /4F143E17 SMD0603 C20 0.1u
+ ( /4F1AC589 SMD0603 C20 0.1u
   ( 1 +3.3V )
   ( 2 GND )
  )
@@ -85,97 +85,121 @@
   ( 2 GND )
  )
  ( /4EF69A03 SMD0603 C22 30pF
-  ( 1 N-000093 )
+  ( 1 N-000082 )
   ( 2 GND )
  )
- ( /4EF69A04 SMD0603 C23 30pF
-  ( 1 N-000075 )
+ ( /4F1AC1DA SMD0603 C23 0.1u
+  ( 1 N-000037 )
+  ( 2 N-000045 )
+ )
+ ( /4F1AC1D9 SMD0603 C24 0.1u
+  ( 1 N-000036 )
+  ( 2 N-000044 )
+ )
+ ( /4EF69A04 SMD0603 C25 30pF
+  ( 1 N-000139 )
   ( 2 GND )
  )
- ( /4EF69A15 SMD0603 C24 1u
-  ( 1 N-000030 )
+ ( /4EF69A15 SMD0603 C26 1u
+  ( 1 N-000027 )
   ( 2 /RIGHT )
  )
- ( /4EF69A06 SMD0603 C25 1u
-  ( 1 N-000080 )
+ ( /4EF69A06 SMD0603 C27 1u
+  ( 1 N-000083 )
   ( 2 GND )
  )
- ( /4EF69A3C SMD0603 C26 1u
-  ( 1 N-000026 )
+ ( /4EF69A3C SMD0603 C28 1u
+  ( 1 N-000025 )
   ( 2 /LEFT )
  )
- ( /4EF69A0A SMD0603 C27 0.1u
+ ( /4EF69A0A SMD0603 C29 0.1u
   ( 1 +BATT )
   ( 2 GND )
  )
- ( /4EF69A40 SMD0603 C28 1u
-  ( 1 N-000029 )
+ ( /4EF69A40 SMD0603 C30 1u
+  ( 1 N-000028 )
   ( 2 GND )
  )
- ( /4EF699F0 SMD0603 C29 10n
+ ( /4F1AC1CE SMD0603 C31 0.1u
   ( 1 GND )
-  ( 2 N-000078 )
+  ( 2 +5V )
  )
- ( /4EF699DC SMD0603 C30 0.1u
-  ( 1 VAA )
+ ( /4F1AC1D3 SMD0603 C32 0.1u
+  ( 1 N-000041 )
+  ( 2 +5V )
+ )
+ ( /4F1AC1D4 SMD0603 C33 0.1u
+  ( 1 N-000042 )
   ( 2 GND )
  )
- ( /4EF699ED SMD0603 C31 10n
+ ( /4EF699F0 SMD0603 C34 10n
   ( 1 GND )
-  ( 2 N-000076 )
+  ( 2 N-000084 )
  )
- ( /4EF69A0F SMD0603 C32 10n
-  ( 1 VAA )
-  ( 2 N-000094 )
- )
- ( /4EF699E4 SMD0603 C33 0.1u
+ ( /4EF699DC SMD0603 C35 0.1u
   ( 1 VAA )
   ( 2 GND )
  )
- ( /4EF699DE SMD0603 C34 0.1u
+ ( /4EF699ED SMD0603 C36 10n
+  ( 1 GND )
+  ( 2 N-000101 )
+ )
+ ( /4EF69A0F SMD0603 C37 10n
+  ( 1 VAA )
+  ( 2 N-000138 )
+ )
+ ( /4EF699E4 SMD0603 C38 0.1u
   ( 1 VAA )
   ( 2 GND )
  )
- ( /4EF69A42 SMD0603 C35 1u
-  ( 1 +5V )
-  ( 2 GND )
- )
- ( /4EF69A0B SMD0603 C36 10u
+ ( /4EF699DE SMD0603 C39 0.1u
   ( 1 VAA )
   ( 2 GND )
  )
- ( /4EF699E1 SMD0603 C37 0.1u
+ ( /4EF69A0B SMD0805 C40 10u
   ( 1 VAA )
   ( 2 GND )
  )
- ( /4EF699E2 SMD0603 C38 0.1u
+ ( /4EF699E1 SMD0603 C41 0.1u
   ( 1 VAA )
   ( 2 GND )
  )
- ( /4EF699D6 SMD0603 C39 0.1u
+ ( /4EF699E2 SMD0603 C42 0.1u
+  ( 1 VAA )
+  ( 2 GND )
+ )
+ ( /4EF699D6 SMD0603 C43 0.1u
   ( 1 +3.3V )
   ( 2 GND )
  )
- ( /4EF699D5 SMD0603 C40 0.1u
+ ( /4EF69A42 SMD0603 C44 1u
+  ( 1 +5V )
+  ( 2 GND )
+ )
+ ( /4EF699D5 SMD0603 C45 0.1u
   ( 1 +3.3V )
   ( 2 GND )
  )
  ( /4EF76B22 Diode_SMA D1 D_SHOTTKY
   ( A GND )
-  ( C /Laser1L )
+  ( C /LaserL )
  )
- ( /4F144879 Diode_SMA D2 D_SHOTTKY
-  ( A GND )
-  ( C /Laser2L )
- )
- ( /4EF3B8F4 SOT23 DA1 PESD1CAN
-  ( 1 /TX2 )
-  ( 2 /RX2 )
-  ( 3 GND )
- )
- ( /4EF3B8F1 SO8E DA2 IPS6041
+ ( /4EF6AB61 SOT223 DA1 LD1117
   ( 1 GND )
-  ( 2 N-000066 )
+  ( 2 +5V )
+  ( 3 +BATT )
+  ( PAD +5V )
+ )
+ ( /4EF6AB69 SOT23-5 DA2 AAT3221
+  ( 1 +5V )
+  ( 2 GND )
+  ( 3 +5V )
+  ( 4 ? )
+  ( 5 +3.3V )
+ )
+ ( /4EF3B8F1 SO8E DA3 IPS6041
+  ( 1 GND )
+  ( 2 N-000076 )
   ( 3 ? )
   ( 4 /Ch1_OUT )
   ( 5 +BATT )
@@ -183,9 +207,9 @@
   ( 7 +BATT )
   ( 8 +BATT )
  )
- ( /4EF6A33C SO8E DA3 IPS6041
+ ( /4EF6A33C SO8E DA4 IPS6041
   ( 1 GND )
-  ( 2 N-000037 )
+  ( 2 N-000047 )
   ( 3 ? )
   ( 4 /Ch2_OUT )
   ( 5 +BATT )
@@ -193,18 +217,23 @@
   ( 7 +BATT )
   ( 8 +BATT )
  )
- ( /4EF6AB61 SOT223 DA4 LD1117
-  ( 1 GND )
-  ( 2 +5V )
-  ( 3 +BATT )
-  ( PAD +5V )
- )
- ( /4EF6AB69 SOT23-5 DA5 AAT3221
-  ( 1 +5V )
-  ( 2 GND )
-  ( 3 +5V )
-  ( 4 ? )
-  ( 5 +3.3V )
+ ( /4F1AC1DC SO16_150 DA5 HIN202
+  ( 1 N-000045 )
+  ( 2 N-000041 )
+  ( 3 N-000037 )
+  ( 4 N-000044 )
+  ( 5 N-000036 )
+  ( 6 N-000042 )
+  ( 7 ? )
+  ( 8 ? )
+  ( 9 ? )
+  ( 10 ? )
+  ( 11 /TX2 )
+  ( 12 /RX2 )
+  ( 13 N-000133 )
+  ( 14 N-000038 )
+  ( 15 GND )
+  ( 16 +5V )
  )
  ( /4EF69A08 LQFP48 DA6 VS1103B
   ( 1 ? )
@@ -221,15 +250,15 @@
   ( 14 +3.3V )
   ( 15 ? )
   ( 16 GND )
-  ( 17 N-000093 )
-  ( 18 N-000075 )
+  ( 17 N-000082 )
+  ( 18 N-000139 )
   ( 19 +3.3V )
   ( 20 GND )
   ( 21 GND )
   ( 22 GND )
   ( 23 /VS_XCS )
   ( 24 VAA )
-  ( 26 N-000079 )
+  ( 26 N-000091 )
   ( 27 ? )
   ( 28 /VS_SCLK )
   ( 29 /VS_SI )
@@ -245,7 +274,7 @@
   ( 41 GND )
   ( 42 ? )
   ( 43 VAA )
-  ( 44 N-000080 )
+  ( 44 N-000083 )
   ( 45 VAA )
   ( 46 /LEFT )
   ( 47 GND )
@@ -258,34 +287,39 @@
   ( 4 GND )
   ( 5 ? )
   ( 6 ? )
-  ( 7 N-000094 )
+  ( 7 N-000138 )
   ( 8 +BATT )
  )
  ( /4EF69A48 DRB DA8 TPA6211
   ( 1 /AMPLF_SHDN )
-  ( 2 N-000029 )
-  ( 3 N-000028 )
-  ( 4 N-000027 )
-  ( 5 N-000004 )
+  ( 2 N-000028 )
+  ( 3 N-000026 )
+  ( 4 N-000024 )
+  ( 5 N-000124 )
   ( 6 +5V )
   ( 7 GND )
-  ( 8 N-000016 )
+  ( 8 N-000137 )
   ( H GND )
+ )
+ ( /4F1AC1E0 SOT23 DA9 PESD1CAN
+  ( 1 N-000038 )
+  ( 2 N-000133 )
+  ( 3 GND )
  )
  ( /4EF699B3 LQFP64 DD1 STM32F103RC-64
   ( 1 +3.3V )
-  ( 2 /SD_DETECT )
-  ( 3 /SD_POWER )
+  ( 2 ? )
+  ( 3 ? )
   ( 4 ? )
   ( 5 ? )
   ( 6 ? )
   ( 7 ? )
   ( 8 /UBatADC )
   ( 9 /PhotoSns )
-  ( 10 /Laser1ADC )
-  ( 11 /Laser2ADC )
+  ( 10 /LaserADC )
+  ( 11 /MotionSns1 )
   ( 12 GND )
-  ( 13 N-000003 )
+  ( 13 +3.3V )
   ( 14 /VS_XCS )
   ( 15 /VS_DREQ )
   ( 16 /TX2 )
@@ -296,11 +330,11 @@
   ( 21 /VS_SCLK )
   ( 22 /VS_SO )
   ( 23 /VS_SI )
-  ( 24 /MotionSns1 )
-  ( 25 /MotionSns2 )
+  ( 24 /MotionSns2 )
+  ( 25 ? )
   ( 26 /XOTAR_IN )
-  ( 27 ? )
-  ( 28 /KBD_1 )
+  ( 27 /KBD_1 )
+  ( 28 /KBD_2 )
   ( 29 /KBD1_6 )
   ( 30 /KBD1_7 )
   ( 31 GND )
@@ -309,15 +343,15 @@
   ( 34 /KBD2_5 )
   ( 35 /KBD2_6 )
   ( 36 /KBD2_7 )
-  ( 37 /Coil1 )
-  ( 38 /Coil2 )
+  ( 37 /SD_DETECT )
+  ( 38 /SD_POWER )
   ( 39 /SD_DAT0 )
   ( 40 /SD_DAT1 )
   ( 41 /Ch1_IN )
   ( 42 /TX1 )
-  ( 43 /Laser1On )
-  ( 44 /Laser2On )
-  ( 45 /Ch2_IN )
+  ( 43 /Ch2_IN )
+  ( 44 /LaserOn )
+  ( 45 /LED_OE )
   ( 46 /SWDIO )
   ( 47 GND )
   ( 48 +3.3V )
@@ -327,40 +361,40 @@
   ( 52 /SD_DAT3 )
   ( 53 /SD_CLK )
   ( 54 /SD_CMD )
-  ( 55 /LED_OE )
-  ( 56 /KBD_2 )
-  ( 57 /KBD_3 )
+  ( 55 /KBD_3 )
+  ( 56 /KBD1_4 )
+  ( 57 /KBD1_5 )
   ( 58 /I2C_SCL )
   ( 59 /I2C_SDA )
   ( 60 GND )
-  ( 61 /KBD1_4 )
-  ( 62 /KBD1_5 )
+  ( 61 /Coil1 )
+  ( 62 /Coil2 )
   ( 63 GND )
   ( 64 +3.3V )
  )
- ( /4F143E0E SSOP28 DD2 PCA9635
+ ( /4F1AC580 SSOP28 DD2 PCA9635
   ( 1 +3.3V )
   ( 2 +3.3V )
   ( 3 GND )
   ( 4 +3.3V )
   ( 5 +3.3V )
-  ( 6 N-000114 )
-  ( 7 N-000115 )
+  ( 6 N-000110 )
+  ( 7 N-000109 )
   ( 8 N-000108 )
-  ( 9 N-000117 )
-  ( 10 N-000109 )
-  ( 11 N-000110 )
-  ( 12 N-000111 )
-  ( 13 N-000112 )
+  ( 9 N-000111 )
+  ( 10 N-000107 )
+  ( 11 N-000112 )
+  ( 12 N-000106 )
+  ( 13 N-000113 )
   ( 14 GND )
-  ( 15 N-000129 )
-  ( 16 N-000130 )
-  ( 17 N-000131 )
-  ( 18 N-000132 )
-  ( 19 N-000123 )
-  ( 20 N-000124 )
-  ( 21 N-000125 )
-  ( 22 N-000126 )
+  ( 15 N-000105 )
+  ( 16 N-000114 )
+  ( 17 N-000104 )
+  ( 18 N-000040 )
+  ( 19 N-000039 )
+  ( 20 N-000115 )
+  ( 21 N-000103 )
+  ( 22 N-000116 )
   ( 23 /LED_OE )
   ( 24 GND )
   ( 25 GND )
@@ -368,61 +402,53 @@
   ( 27 /I2C_SDA )
   ( 28 +3.3V )
  )
- ( /4EF7736C SMD0603_FUSE F1 FUSE0R
-  ( 1 /Laser1Out )
-  ( 2 /Laser1ADC )
- )
- ( /4F144874 SMD0603_FUSE F2 FUSE0R
-  ( 1 /Laser2Out )
-  ( 2 /Laser2ADC )
- )
- ( /4EF3B8F6 SMD0603_FUSE F3 FUSE0R
-  ( 1 /TX2 )
-  ( 2 N-000067 )
- )
- ( /4EF3B8F7 SMD0603_FUSE F4 FUSE0R
-  ( 1 /RX2 )
-  ( 2 N-000068 )
- )
- ( /4EF6A529 SMD0603_FUSE F5 FUSE0R
-  ( 1 /Coil1PWR1 )
-  ( 2 /Coil1PWR2 )
- )
- ( /4EF6A52B SMD0603_FUSE F6 FUSE0R
+ ( /4F1AC7F8 SMD0603_FUSE F1 FUSE0R
   ( 1 /Coil1 )
-  ( 2 /Coil1PWR1 )
+  ( 2 N-000046 )
  )
- ( /4EF6A595 SMD0603_FUSE F7 FUSE0R
-  ( 1 /Coil2PWR1 )
-  ( 2 /Coil2PWR2 )
- )
- ( /4EF6A593 SMD0603_FUSE F8 FUSE0R
+ ( /4F1AC807 SMD0603_FUSE F2 FUSE0R
   ( 1 /Coil2 )
-  ( 2 /Coil2PWR1 )
+  ( 2 N-000029 )
  )
- ( /4EF69FBE SMD0603_FUSE F9 FUSE0R
-  ( 1 /Laser1On )
-  ( 2 /Laser1Out )
+ ( /4EF7736C SMD0603_FUSE F3 FUSE0R
+  ( 1 /LaserOut )
+  ( 2 /LaserADC )
  )
- ( /4F14487C SMD0603_FUSE F10 FUSE0R
-  ( 1 /Laser2On )
-  ( 2 /Laser2Out )
+ ( /4EF69FBE SMD0603_FUSE F4 FUSE0R
+  ( 1 /LaserOn )
+  ( 2 /LaserOut )
  )
- ( /4EF6A789 SMD0603_FUSE F11 FUSE0R
-  ( 1 /Ch1_OUT )
-  ( 2 /Ch1_IN )
- )
- ( /4EF6A7AF SMD0603_FUSE F12 FUSE0R
-  ( 1 /Ch2_OUT )
-  ( 2 /Ch2_IN )
- )
- ( /4EF6AB59 SMD0603_FUSE F13 FUSE0R
+ ( /4EF6AB59 SMD0603_FUSE F5 FUSE0R
   ( 1 +5V )
   ( 2 +BATT )
  )
- ( /4F155F2A SMD0603_FUSE F14 FUSE0R
+ ( /4EF6A789 SMD0603_FUSE F6 FUSE0R
+  ( 1 /Ch1_OUT )
+  ( 2 /Ch1_IN )
+ )
+ ( /4EF6A7AF SMD0603_FUSE F7 FUSE0R
+  ( 1 /Ch2_OUT )
+  ( 2 /Ch2_IN )
+ )
+ ( /4F1ABB85 SMD0603_FUSE F8 FUSE0R
   ( 1 /SD_VDD )
   ( 2 +3.3V )
+ )
+ ( /4F1AC1D6 SMD0603_FUSE F9 FUSE0R
+  ( 1 N-000038 )
+  ( 2 /TX2 )
+ )
+ ( /4F1AC1D5 SMD0603_FUSE F10 FUSE0R
+  ( 1 N-000133 )
+  ( 2 /RX2 )
+ )
+ ( /4F1AC1D8 SMD0603_FUSE F11 FUSE0R
+  ( 1 N-000038 )
+  ( 2 N-000077 )
+ )
+ ( /4F1AC1D7 SMD0603_FUSE F12 FUSE0R
+  ( 1 N-000133 )
+  ( 2 N-000043 )
  )
  ( /4EF3B910 Hole3_5_out6mm HOLE1 HOLE_METALLED
   ( Hle GND )
@@ -436,189 +462,188 @@
  ( /4EF3B92F Hole3_5_out6mm HOLE4 HOLE_METALLED
   ( Hle GND )
  )
- ( /4EF76B05 INDUCTOR_SR0604 L1 22uH
-  ( 1 /Laser1L )
-  ( 2 /Laser1Out )
+ ( /4EF76B05 INDUCTOR_SR0604 L1 100uH
+  ( 1 /LaserL )
+  ( 2 /LaserOut )
  )
- ( /4F14487A INDUCTOR_SR0604 L2 22uH
-  ( 1 /Laser2L )
-  ( 2 /Laser2Out )
- )
- ( /4EF69A82 SMD0805 L3 10uH
-  ( 1 N-000003 )
-  ( 2 +3.3V )
- )
- ( /4EF6A52C SOT23 Q1 IRLML6302
-  ( 1 /Coil1 )
+ ( /4EF69981 SOT23 Q1 IRLML6302
+  ( 1 /LaserOn )
   ( 2 +5V )
-  ( 3 /Coil1PWR2 )
+  ( 3 /LaserL )
  )
- ( /4EF6A592 SOT23 Q2 IRLML6302
-  ( 1 /Coil2 )
-  ( 2 +5V )
-  ( 3 /Coil2PWR2 )
- )
- ( /4EF69981 SOT23 Q3 IRLML6302
-  ( 1 /Laser1On )
-  ( 2 +BATT )
-  ( 3 /Laser1L )
- )
- ( /4F14487D SOT23 Q4 IRLML6302
-  ( 1 /Laser2On )
-  ( 2 +BATT )
-  ( 3 /Laser2L )
- )
- ( /4EF69A37 SOT23 Q5 IRLML6302
+ ( /4EF69A37 SOT23 Q2 IRLML6302
   ( 1 /SD_POWER )
   ( 2 +3.3V )
   ( 3 /SD_VDD )
  )
  ( /4EF7737D SMD0603 R1 10k*
-  ( 1 /Laser1ADC )
+  ( 1 /LaserADC )
   ( 2 GND )
  )
- ( /4F144873 SMD0603 R2 10k*
-  ( 1 /Laser2ADC )
-  ( 2 GND )
- )
- ( /4EF3B8F2 SMD0603 R3 10k
+ ( /4EF3B8F2 SMD0603 R2 10k
   ( 1 /Ch1_IN )
-  ( 2 N-000066 )
+  ( 2 N-000076 )
  )
- ( /4EF6A33B SMD0603 R4 10k
+ ( /4EF6A33B SMD0603 R3 10k
   ( 1 /Ch2_IN )
-  ( 2 N-000037 )
+  ( 2 N-000047 )
  )
- ( /4EF699B9 SMD0603 R5 47k
-  ( 1 /SD_VDD )
-  ( 2 /SD_DAT3 )
- )
- ( /4EF699B8 SMD0603 R6 47k
-  ( 1 /SD_VDD )
-  ( 2 /SD_CMD )
- )
- ( /4EF699B6 SMD0603 R7 47k
-  ( 1 /SD_VDD )
-  ( 2 /SD_DAT0 )
- )
- ( /4EF699B7 SMD0603 R8 47k
-  ( 1 /SD_VDD )
-  ( 2 /SD_DAT1 )
- )
- ( /4EF699B5 SMD0603 R9 47k
-  ( 1 /SD_VDD )
-  ( 2 /SD_DAT2 )
- )
- ( /4EF69A1D SMD0603 R10 100k
+ ( /4EF69A1D SMD0603 R4 100k
   ( 1 +BATT )
   ( 2 /UBatADC )
  )
- ( /4EF69A1E SMD0603 R11 100k
+ ( /4EF69A1E SMD0603 R5 100k
   ( 1 /UBatADC )
   ( 2 GND )
  )
- ( /4EF69954 SMD0603 R12 100k
+ ( /4EF699B9 SMD0603 R6 47k
+  ( 1 /SD_VDD )
+  ( 2 /SD_DAT3 )
+ )
+ ( /4EF699B8 SMD0603 R7 47k
+  ( 1 /SD_VDD )
+  ( 2 /SD_CMD )
+ )
+ ( /4EF699B6 SMD0603 R8 47k
+  ( 1 /SD_VDD )
+  ( 2 /SD_DAT0 )
+ )
+ ( /4EF699B7 SMD0603 R9 47k
+  ( 1 /SD_VDD )
+  ( 2 /SD_DAT1 )
+ )
+ ( /4EF699B5 SMD0603 R10 47k
+  ( 1 /SD_VDD )
+  ( 2 /SD_DAT2 )
+ )
+ ( /4EF69954 SMD0603 R11 100k
   ( 1 GND )
   ( 2 /AMPLF_SHDN )
  )
- ( /4EF699FE SMD0603 R13 1M
-  ( 1 N-000093 )
-  ( 2 N-000075 )
+ ( /4EF699FE SMD0603 R12 1M
+  ( 1 N-000082 )
+  ( 2 N-000139 )
  )
- ( /4EF69A3D SMD0603 R14 10k
-  ( 1 N-000026 )
-  ( 2 N-000027 )
+ ( /4EF69A3D SMD0603 R13 10k
+  ( 1 N-000025 )
+  ( 2 N-000024 )
  )
- ( /4EF69A3E SMD0603 R15 10k
-  ( 1 N-000030 )
-  ( 2 N-000028 )
+ ( /4EF69A3E SMD0603 R14 10k
+  ( 1 N-000027 )
+  ( 2 N-000026 )
  )
- ( /4EF699F1 SMD0603 R16 22
-  ( 1 N-000078 )
+ ( /4EF699F1 SMD0603 R15 22
+  ( 1 N-000084 )
   ( 2 /LEFT )
  )
- ( /4EF69A10 SMD0603 R17 120k
+ ( /4EF69A10 SMD0603 R16 120k
   ( 1 VAA )
-  ( 2 N-000094 )
+  ( 2 N-000138 )
  )
- ( /4EF69A0E SMD0603 R18 100k
-  ( 1 N-000094 )
+ ( /4EF69A0E SMD0603 R17 100k
+  ( 1 N-000138 )
   ( 2 GND )
  )
- ( /4EF699EC SMD0603 R19 22
-  ( 1 N-000076 )
+ ( /4EF699EC SMD0603 R18 22
+  ( 1 N-000101 )
   ( 2 /RIGHT )
  )
- ( /4EF699FB SMD0603 R20 1M
+ ( /4EF699FB SMD0603 R19 1M
   ( 1 +3.3V )
-  ( 2 N-000079 )
+  ( 2 N-000091 )
  )
- ( /4F155D81 SMD0603 R21 10k
+ ( /4F1ADC23 SMD0603 R20 10k
   ( 1 +3.3V )
   ( 2 /XOTAR_IN )
  )
- ( /4F143E23 Rx4 Rx1 100RX4
-  ( 1 N-000117 )
+ ( /4F1AC595 Rx4 Rx1 100RX4
+  ( 1 N-000111 )
   ( 2 N-000108 )
-  ( 3 N-000115 )
-  ( 4 N-000114 )
-  ( 5 N-000120 )
+  ( 3 N-000109 )
+  ( 4 N-000110 )
+  ( 5 N-000125 )
+  ( 6 N-000102 )
+  ( 7 N-000126 )
+  ( 8 N-000122 )
+ )
+ ( /4F1AC594 Rx4 Rx2 100RX4
+  ( 1 N-000113 )
+  ( 2 N-000106 )
+  ( 3 N-000112 )
+  ( 4 N-000107 )
+  ( 5 N-000127 )
+  ( 6 N-000121 )
+  ( 7 N-000128 )
+  ( 8 N-000120 )
+ )
+ ( /4F1AC593 Rx4 Rx3 100RX4
+  ( 1 N-000040 )
+  ( 2 N-000104 )
+  ( 3 N-000114 )
+  ( 4 N-000105 )
+  ( 5 N-000129 )
   ( 6 N-000119 )
-  ( 7 N-000118 )
-  ( 8 N-000113 )
+  ( 7 N-000130 )
+  ( 8 N-000118 )
  )
- ( /4F143E22 Rx4 Rx2 100RX4
-  ( 1 N-000112 )
-  ( 2 N-000111 )
-  ( 3 N-000110 )
-  ( 4 N-000109 )
-  ( 5 N-000116 )
-  ( 6 N-000134 )
-  ( 7 N-000106 )
-  ( 8 N-000133 )
+ ( /4F1AC592 Rx4 Rx4 100RX4
+  ( 1 N-000116 )
+  ( 2 N-000103 )
+  ( 3 N-000115 )
+  ( 4 N-000039 )
+  ( 5 N-000131 )
+  ( 6 N-000117 )
+  ( 7 N-000132 )
+  ( 8 N-000123 )
  )
- ( /4F143E21 Rx4 Rx3 100RX4
-  ( 1 N-000132 )
-  ( 2 N-000131 )
-  ( 3 N-000130 )
-  ( 4 N-000129 )
-  ( 5 N-000128 )
-  ( 6 N-000127 )
-  ( 7 N-000107 )
-  ( 8 N-000121 )
+ ( /4EF6A001 SIL-2 XL1 CONN_2
+  ( 1 /LaserOut )
+  ( 2 GND )
  )
- ( /4F143E20 Rx4 Rx4 100RX4
-  ( 1 N-000126 )
-  ( 2 N-000125 )
-  ( 3 N-000124 )
-  ( 4 N-000123 )
-  ( 5 N-000105 )
-  ( 6 N-000122 )
-  ( 7 N-000104 )
-  ( 8 N-000097 )
+ ( /4F1AD1C9 SIL-2 XL2 CONN_2
+  ( 1 /LaserOut )
+  ( 2 GND )
  )
- ( /4EF49623 SIL-3 XL1 CONN_3
-  ( 1 N-000068 )
-  ( 2 N-000067 )
+ ( /4F1AD1D1 SIL-2 XL3 CONN_2
+  ( 1 /LaserOut )
+  ( 2 GND )
+ )
+ ( /4EF6A52A SIL-2 XL4 CONN_2
+  ( 1 N-000046 )
+  ( 2 GND )
+ )
+ ( /4F1AC10C SIL-2 XL5 CONN_2
+  ( 1 N-000029 )
+  ( 2 GND )
+ )
+ ( /4EF3C51F SIL-3 XL6 CONN_3
+  ( 1 +5V )
+  ( 2 /MotionSns1 )
   ( 3 GND )
  )
- ( /4EF6A52A SIL-2 XL2 CONN_2
-  ( 1 /Coil1PWR1 )
-  ( 2 GND )
+ ( /4EF3C546 SIL-3 XL7 CONN_3
+  ( 1 +5V )
+  ( 2 /MotionSns2 )
+  ( 3 GND )
  )
- ( /4EF6A594 SIL-2 XL3 CONN_2
-  ( 1 /Coil2PWR1 )
-  ( 2 GND )
+ ( /4EF3BFC2 SIL-3 XL8 CONN_3
+  ( 1 +3.3V )
+  ( 2 /PhotoSns )
+  ( 3 GND )
  )
- ( /4EF6A001 SIL-2 XL4 CONN_2
-  ( 1 /Laser1Out )
-  ( 2 GND )
+ ( /4EF3B8D2 SIL1_SQUARE_1MM5 XL9 CONN_1
+  ( 1 +BATT )
  )
- ( /4F14487B SIL-2 XL5 CONN_2
-  ( 1 /Laser2Out )
-  ( 2 GND )
+ ( /4EF3B8D5 SIL1_ROUND_1MM5 XL10 CONN_1
+  ( 1 GND )
  )
- ( /4EF69C1C SIL-7 XL6 CONN_7
+ ( /4EF699B4 SIL-4 XL11 ST_SWD
+  ( 1 +3.3V )
+  ( 2 /SWCLK )
+  ( 3 GND )
+  ( 4 /SWDIO )
+ )
+ ( /4EF69C1C SIL-7 XL12 CONN_7
   ( 1 /KBD_1 )
   ( 2 /KBD_2 )
   ( 3 /KBD_3 )
@@ -627,7 +652,7 @@
   ( 6 /KBD1_6 )
   ( 7 /KBD1_7 )
  )
- ( /4EF69C92 SIL-7 XL7 CONN_7
+ ( /4EF69C92 SIL-7 XL13 CONN_7
   ( 1 /KBD_1 )
   ( 2 /KBD_2 )
   ( 3 /KBD_3 )
@@ -636,55 +661,23 @@
   ( 6 /KBD2_6 )
   ( 7 /KBD2_7 )
  )
- ( /4EF3C51F SIL-3 XL8 CONN_3
-  ( 1 +5V )
-  ( 2 /MotionSns1 )
-  ( 3 GND )
- )
- ( /4EF3C546 SIL-3 XL9 CONN_3
-  ( 1 +5V )
-  ( 2 /MotionSns2 )
-  ( 3 GND )
- )
- ( /4EF3BFC2 SIL-3 XL10 CONN_3
-  ( 1 +3.3V )
-  ( 2 /PhotoSns )
-  ( 3 GND )
- )
- ( /4EF699B4 SIL-4 XL11 ST_SWD
-  ( 1 +3.3V )
-  ( 2 /SWCLK )
-  ( 3 GND )
-  ( 4 /SWDIO )
- )
- ( /4EF3B8F3 SIL-3 XL12 CONN_3
-  ( 1 N-000068 )
-  ( 2 N-000067 )
-  ( 3 GND )
- )
- ( /4EF3B8D2 SIL1_SQUARE_1MM5 XL13 CONN_1
-  ( 1 +BATT )
- )
- ( /4EF3B8D5 SIL1_ROUND_1MM5 XL14 CONN_1
-  ( 1 GND )
- )
- ( /4EF6A30F SIL1_SQUARE_1MM5 XL15 CONN_1
+ ( /4EF6A30F SIL1_SQUARE_1MM5 XL14 CONN_1
   ( 1 /Ch1_OUT )
  )
- ( /4EF6A312 SIL1_ROUND_1MM5 XL16 CONN_1
+ ( /4EF6A312 SIL1_ROUND_1MM5 XL15 CONN_1
   ( 1 GND )
  )
- ( /4EF6A33A SIL1_SQUARE_1MM5 XL17 CONN_1
+ ( /4EF6A33A SIL1_SQUARE_1MM5 XL16 CONN_1
   ( 1 /Ch2_OUT )
  )
- ( /4EF6A339 SIL1_ROUND_1MM5 XL18 CONN_1
+ ( /4EF6A339 SIL1_ROUND_1MM5 XL17 CONN_1
   ( 1 GND )
  )
- ( /4EF6A8C6 SIL-2 XL19 CONN_2
+ ( /4EF6A8C6 SIL-2 XL18 CONN_2
   ( 1 /TX1 )
   ( 2 GND )
  )
- ( /4EF699BA SD_PUSH002 XL20 SD_CONNECTOR
+ ( /4EF699BA SD_PUSH002 XL19 SD_CONNECTOR
   ( 1 /SD_DAT3 )
   ( 2 /SD_CMD )
   ( 3 GND )
@@ -698,52 +691,66 @@
   ( SHLD GND )
   ( WP ? )
  )
- ( /4F143E27 SIL-4 XL21 CONN_4
-  ( 1 +BATT )
-  ( 2 N-000120 )
-  ( 3 N-000119 )
-  ( 4 N-000118 )
+ ( /4F1AC599 SIL-4 XL20 CONN_4
+  ( 1 +5V )
+  ( 2 N-000125 )
+  ( 3 N-000102 )
+  ( 4 N-000126 )
  )
- ( /4F143E1E SIL-4 XL22 CONN_4
-  ( 1 +BATT )
-  ( 2 N-000113 )
-  ( 3 N-000116 )
-  ( 4 N-000134 )
- )
- ( /4F143E1A SIL-4 XL23 CONN_4
-  ( 1 +BATT )
-  ( 2 N-000106 )
-  ( 3 N-000133 )
-  ( 4 N-000128 )
- )
- ( /4F143E1D SIL-4 XL24 CONN_4
-  ( 1 +BATT )
-  ( 2 N-000127 )
-  ( 3 N-000107 )
+ ( /4F1AC590 SIL-4 XL21 CONN_4
+  ( 1 +5V )
+  ( 2 N-000122 )
+  ( 3 N-000127 )
   ( 4 N-000121 )
  )
- ( /4F143E18 SIL-4 XL25 CONN_4
-  ( 1 +BATT )
-  ( 2 N-000105 )
-  ( 3 N-000122 )
-  ( 4 N-000104 )
+ ( /4F1AC58C SIL-4 XL22 CONN_4
+  ( 1 +5V )
+  ( 2 N-000128 )
+  ( 3 N-000120 )
+  ( 4 N-000129 )
  )
- ( /4F143E44 SIL-2 XL26 CONN_2
-  ( 1 +BATT )
-  ( 2 N-000097 )
+ ( /4F1AC58F SIL-4 XL23 CONN_4
+  ( 1 +5V )
+  ( 2 N-000119 )
+  ( 3 N-000130 )
+  ( 4 N-000118 )
  )
- ( /4EF69A44 SIL-2 XL27 CONN_2
-  ( 1 N-000004 )
-  ( 2 N-000016 )
+ ( /4F1AC58A SIL-4 XL24 CONN_4
+  ( 1 +5V )
+  ( 2 N-000131 )
+  ( 3 N-000117 )
+  ( 4 N-000132 )
  )
- ( /4F155D84 SIL-3 XL28 CONN_3
+ ( /4F1AD28C SIL-2 XL25 CONN_2
+  ( 1 +5V )
+  ( 2 N-000123 )
+ )
+ ( /4EF69A44 SIL-2 XL26 CONN_2
+  ( 1 N-000124 )
+  ( 2 N-000137 )
+ )
+ ( /4F1AD386 SIL-2 XL27 CONN_2
+  ( 1 N-000124 )
+  ( 2 N-000137 )
+ )
+ ( /4EF49623 SIL-3 XL28 CONN_3
+  ( 1 N-000077 )
+  ( 2 N-000043 )
+  ( 3 GND )
+ )
+ ( /4EF3B8F3 SIL-3 XL29 CONN_3
+  ( 1 N-000077 )
+  ( 2 N-000043 )
+  ( 3 GND )
+ )
+ ( /4F1ADC26 SIL-3 XL30 CONN_3
   ( 1 +3.3V )
   ( 2 /XOTAR_IN )
   ( 3 GND )
  )
  ( /4EF69A02 CRYSTAL_HC49 XTAL1 12.288MHz
-  ( 1 N-000093 )
-  ( 2 N-000075 )
+  ( 1 N-000082 )
+  ( 2 N-000139 )
  )
 )
 *
@@ -868,29 +875,41 @@ $endlist
 $component C40
  SMD*
 $endlist
+$component C41
+ SMD*
+$endlist
+$component C42
+ SMD*
+$endlist
+$component C43
+ SMD*
+$endlist
+$component C44
+ SMD*
+$endlist
+$component C45
+ SMD*
+$endlist
 $component D1
  D*
 $endlist
-$component D2
- D*
-$endlist
 $component DA1
- SOT23
+ SOT*
 $endlist
 $component DA2
- SO8*
+ SOT23-5
 $endlist
 $component DA3
  SO8*
 $endlist
 $component DA4
- SOT*
-$endlist
-$component DA5
- SOT23-5
+ SO8*
 $endlist
 $component DA8
  DRB
+$endlist
+$component DA9
+ SOT23
 $endlist
 $component DD1
  LQFP64
@@ -934,12 +953,6 @@ $endlist
 $component F12
  SMD*
 $endlist
-$component F13
- SMD*
-$endlist
-$component F14
- SMD*
-$endlist
 $component HOLE1
  HOLE*
 $endlist
@@ -956,27 +969,10 @@ $component L1
  INDUCTOR*
  SMD*
 $endlist
-$component L2
- INDUCTOR*
- SMD*
-$endlist
-$component L3
- INDUCTOR*
- SMD*
-$endlist
 $component Q1
  SOT23
 $endlist
 $component Q2
- SOT23
-$endlist
-$component Q3
- SOT23
-$endlist
-$component Q4
- SOT23
-$endlist
-$component Q5
  SOT23
 $endlist
 $component R1
@@ -1037,9 +1033,6 @@ $component R19
  SMD*
 $endlist
 $component R20
- SMD*
-$endlist
-$component R21
  SMD*
 $endlist
 $component XL11
