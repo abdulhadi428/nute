@@ -1,4 +1,4 @@
-PCBNEW-BOARD Version 1 date 22/01/2012 20:55:03
+PCBNEW-BOARD Version 1 date 22/01/2012 21:09:41
 
 # Created by Pcbnew(2011-11-27 BZR 3249)-stable
 
@@ -9,7 +9,7 @@ Ly 1FFF8001
 EnabledLayers 1FFF8001
 Links 371
 NoConn 371
-Di 38679 21044 66300 49835
+Di 38700 21065 66279 49835
 Ndraw 4
 Ntrack 0
 Nzone 0
@@ -35,16 +35,16 @@ InternalUnit 0.000100 INCH
 Layers 2
 Layer[0] Back signal
 Layer[15] Front signal
-TrackWidth 80
-TrackClearence 100
+TrackWidth 79
+TrackClearence 79
 ZoneClearence 200
-TrackMinWidth 80
+TrackMinWidth 59
 DrawSegmWidth 150
 EdgeSegmWidth 150
-ViaSize 350
-ViaDrill 250
+ViaSize 354
+ViaDrill 157
 ViaMinSize 350
-ViaMinDrill 200
+ViaMinDrill 118
 MicroViaSize 200
 MicroViaDrill 50
 MicroViasAllowed 0
@@ -541,21 +541,16 @@ $EndEQUIPOT
 $NCLASS
 Name "Default"
 Desc "This is the default net class."
-Clearance 100
-TrackWidth 80
-ViaDia 350
-ViaDrill 250
+Clearance 79
+TrackWidth 79
+ViaDia 354
+ViaDrill 157
 uViaDia 200
 uViaDrill 50
 AddNet ""
-AddNet "+3.3V"
-AddNet "+5V"
-AddNet "+BATT"
 AddNet "/AMPLF_SHDN"
 AddNet "/Ch1_IN"
-AddNet "/Ch1_OUT"
 AddNet "/Ch2_IN"
-AddNet "/Ch2_OUT"
 AddNet "/Coil1"
 AddNet "/Coil2"
 AddNet "/I2C_SCL"
@@ -574,9 +569,7 @@ AddNet "/KBD_3"
 AddNet "/LED_OE"
 AddNet "/LEFT"
 AddNet "/LaserADC"
-AddNet "/LaserL"
 AddNet "/LaserOn"
-AddNet "/LaserOut"
 AddNet "/MotionSns1"
 AddNet "/MotionSns2"
 AddNet "/PhotoSns"
@@ -604,7 +597,6 @@ AddNet "/VS_SO"
 AddNet "/VS_XCS"
 AddNet "/VS_XDCS"
 AddNet "/XOTAR_IN"
-AddNet "GND"
 AddNet "N-000015"
 AddNet "N-000024"
 AddNet "N-000025"
@@ -665,6 +657,24 @@ AddNet "N-000136"
 AddNet "N-000137"
 AddNet "N-000139"
 AddNet "N-000141"
+$EndNCLASS
+$NCLASS
+Name "Wide"
+Desc ""
+Clearance 79
+TrackWidth 197
+ViaDia 354
+ViaDrill 157
+uViaDia 200
+uViaDrill 50
+AddNet "+3.3V"
+AddNet "+5V"
+AddNet "+BATT"
+AddNet "/Ch1_OUT"
+AddNet "/Ch2_OUT"
+AddNet "/LaserL"
+AddNet "/LaserOut"
+AddNet "GND"
 AddNet "VAA"
 $EndNCLASS
 $MODULE SSOP28
