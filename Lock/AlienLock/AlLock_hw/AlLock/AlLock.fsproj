@@ -16,6 +16,9 @@
 <File path=".\AlLock.fsx" Folder="-1" isopened="1"/>
     </Pcb>
     <ARouteSessions>
+<Session name="AlLock" date="2012-01-23 20:06:11" path=".\autoroute_AlLock_120123200611\">
+<File path=".\autoroute_AlLock_120123200611\AlLock_3925-91s.fsb" Folder="-1" isopened="0"/>
+</Session>
     </ARouteSessions>
   </Document>
 </Project>
