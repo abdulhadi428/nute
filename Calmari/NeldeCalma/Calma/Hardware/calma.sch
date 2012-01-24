@@ -1,16 +1,17 @@
-EESchema Schematic File Version 2  date 30/05/2010 19:27:13
-LIBS:Tittar_kl
-LIBS:Power_kl
-LIBS:pcb_details
-LIBS:Connectors_kl
+EESchema Schematic File Version 2  date 23/01/2012 21:13:26
 LIBS:Atmel_kl
+LIBS:Connectors_kl
+LIBS:pcb_details
 LIBS:power
+LIBS:Power_kl
 LIBS:RF ICs
 LIBS:Sensors
-LIBS:calma-cache
-EELAYER 24  0
+LIBS:Tittar_kl
+LIBS:Transistors_kl
+EELAYER 25  0
 EELAYER END
 $Descr A3 16535 11700
+encoding utf-8
 Sheet 1 1
 Title ""
 Date "30 may 2010"

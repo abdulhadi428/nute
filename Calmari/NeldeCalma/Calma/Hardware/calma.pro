@@ -1,4 +1,4 @@
-update=26/05/2011 14:21:30
+update=23/01/2012 21:13:01
 last_client=eeschema
 [general]
 version=1
@@ -37,7 +37,7 @@ LibName3=D:/SVN/Token/TokenSmartCard/Hardware/trunk/KiCadLibs/Connectors_kl
 LibName4=D:/SVN/Token/TokenSmartCard/Hardware/trunk/KiCadLibs/Common_kl
 [eeschema]
 version=1
-LibDir=
+LibDir=D:/libs/Kicad
 NetFmt=1
 HPGLSpd=20
 HPGLDm=15
@@ -67,11 +67,12 @@ RptD_Y=100
 RptLab=1
 LabSize=60
 [eeschema/libraries]
-LibName1=D:/SVN/Token/TokenSmartCard/Hardware/trunk/KiCadLibs/Tittar_kl
-LibName2=D:/SVN/Token/TokenSmartCard/Hardware/trunk/KiCadLibs/Power_kl
-LibName3=D:/SVN/Token/TokenSmartCard/Hardware/trunk/KiCadLibs/pcb_details
-LibName4=D:/SVN/Token/TokenSmartCard/Hardware/trunk/KiCadLibs/Connectors_kl
-LibName5=D:/SVN/Token/TokenSmartCard/Hardware/trunk/KiCadLibs/Atmel_kl
-LibName6=D:/SVN/Token/TokenSmartCard/Hardware/trunk/KiCadLibs/power
-LibName7=D:/SVN/Token/TokenSmartCard/Hardware/trunk/KiCadLibs/RF ICs
-LibName8=D:/SVN/Token/TokenSmartCard/Hardware/trunk/KiCadLibs/Sensors
+LibName1=Atmel_kl
+LibName2=Connectors_kl
+LibName3=pcb_details
+LibName4=power
+LibName5=Power_kl
+LibName6=RF ICs
+LibName7=Sensors
+LibName8=Tittar_kl
+LibName9=Transistors_kl
