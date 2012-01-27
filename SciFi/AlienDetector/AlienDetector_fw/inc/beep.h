@@ -10,11 +10,12 @@
 
 #include "delay_util.h"
 
-#define BEEP_MAX_CHUNKS 4
+#define BEEP_MAX_CHUNKS 6
 
 typedef struct {
-    uint16_t Length;
+    uint16_t Freq;
     uint8_t Volume;
+    uint16_t Length;
 } BeepChunk_t;
 
 struct BeepSnd_t {
@@ -26,9 +27,10 @@ class Beep_t {
 private:
     uint32_t ITimer;
     uint32_t ICounter;
+    bool IsSwitchDelay;
     void On(void);
     void Off(void);
-    BeepSnd_t *ISnd;
+    BeepSnd_t *ISnd, *NewSnd;
 public:
     void SetSound(BeepSnd_t *ASnd);
     void Init(void);

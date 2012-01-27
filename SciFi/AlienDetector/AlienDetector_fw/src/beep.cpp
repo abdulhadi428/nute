@@ -10,66 +10,26 @@
 BeepSnd_t NothingBeep = {
         2,
         {
-            {1503, 0},
-            {100, 2},
+            {400, 2, 100},
+            {0,   0, 1503},
         }
 };
 BeepSnd_t AlienBeep = {
-        4,
+        6,
         {
-            {999,  0},
-            {100, 10},
-            {35,   0},
-            {100, 10},
+            {1800,  5,  150},   // On
+            {0,     0,   35},   // Off
+            {1800, 10,  170},   // On
+            {0,     0,   35},   // Off
+            {1800,  5,  114},   // On
+            {0,     0,  500},   // Off
         }
 };
 
 Beep_t Beep;
 
-
-// Beep settings
-//BeepSnd_t NothingBeep = {
-//        .ChunkCount = 3
-//
-//};
-
-//#include <string.h>
-//
-//struct A {
-//    A(int _a, int _b, int* _c, int _c_len)
-//        {
-//            a = _a;
-//            b = _b;
-//            c = new int[_c_len];
-//            memcpy(c, _c, sizeof(int) * _c_len);
-//            c_len = _c_len;
-//        }
-//    ~A() {
-//        if(c) delete[] c;
-//    }
-//
-//    int     a;
-//    int     b;
-//    int*    c;
-//    int c_len;
-//};
-//
-//
-//A aaa(1, 2, {1, 2, 3}, 3);
-//{OnLength: 215, OffLength:  27,}
-//{OnLength: 170, OffLength:  80, Volume:  50},
-//{OnLength: 114, OffLength: 999, Volume:  10},
-
-
-//const BeepChunk_t AlienBeep[3] = {
-//        {215,  27, 10},
-//        {170,  80, 50},
-//        {114, 999, 10}
-//};
-
-
-
 void Beep_t::Init() {
+    NewSnd = 0;
     // ==== GPIO ====
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
     // ==== Timer4 as PWM ====
@@ -93,11 +53,20 @@ void Beep_t::Init() {
 }
 
 void Beep_t::Task() {
-    if (ISnd == 0) return;
+    if (ISnd == 0) {
+        if (NewSnd == 0) return;
+        else {  // for initial conditions
+            ISnd = NewSnd;
+            Delay.Reset(&ITimer);
+        }
+    }
     if (Delay.Elapsed(&ITimer, ISnd->Chunks[ICounter].Length)) {
         // Switch to next chunk
         ICounter++;
-        if(ICounter == ISnd->ChunkCount) ICounter = 0;
+        if(ICounter == ISnd->ChunkCount) {  // Current beep finished
+            ICounter = 0;
+            ISnd = NewSnd;                  // Switch to new sound
+        }
         // Set current snd params
         if (ISnd->Chunks[ICounter].Volume != 0) On();
         else Off();
@@ -107,16 +76,14 @@ void Beep_t::Task() {
 
 void Beep_t::SetSound(BeepSnd_t *ASnd) {
     if (ISnd == ASnd) return;   // Already set
-    ISnd = ASnd;
-    ICounter = 0;
-    Delay.Reset(&ITimer);
-    if (ISnd->Chunks[0].Volume != 0) On();
-    else Off();
+    NewSnd = ASnd;
 }
 
 void Beep_t::On() {
     // PWM
     TIM_SetCompare1(TIM4, ISnd->Chunks[ICounter].Volume);
+    uint16_t FPrescaler = (40000/(ISnd->Chunks[ICounter].Freq)) - 1;
+    TIM_PrescalerConfig(TIM4, FPrescaler, TIM_PSCReloadMode_Update);
     // GPIO
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
