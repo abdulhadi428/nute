@@ -35,6 +35,15 @@ void CC_t::Task(void) {
 
         case CC_STB_IDLE:
             EnterRX();
+
+            // Prepare packet to send
+//            TX_Pkt.ToAddr = 0x04;
+//            TX_Pkt.CommandID = 0xCA;
+//            TX_Pkt.SenderAddr = 18;
+//            WriteTX(TX_PktArray, CC_PKT_LEN);
+//            ////CC.EnterTXAndWaitToComplete();
+//            IRQDisable();
+//            EnterTX();
             break;
 
         default: // Just get out in other cases
