@@ -10,8 +10,10 @@
 
 #include <inttypes.h>
 
-extern const uint8_t ImageLogo[];
-extern const uint8_t ImageGauge[];
+// ===== BatteryFull =====
+const uint8_t icon_BatteryFull [] = { 14, 1,
+0x1E,0x1E,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,0x3F,
+};
 
 #endif	/* IMAGES_H */
 

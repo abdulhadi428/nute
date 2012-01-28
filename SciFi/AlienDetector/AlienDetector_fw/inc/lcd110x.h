@@ -70,7 +70,9 @@ public:
     // High-level
     void Printf(const uint8_t x, const uint8_t y, const char *S, ...);
     void Cls(void);
-    void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img, Invert_t AInvert);
+    void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img);
+    void DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode);
+    void DrawPeak(const uint8_t N, const uint8_t ALevel);
 };
 
 extern Lcd_t Lcd;

@@ -11,6 +11,7 @@
 #include "cc2500.h"
 #include "beep.h"
 #include "lcd110x.h"
+#include "images.h"
 
 #include "bcklt.h"
 
@@ -23,14 +24,30 @@ uint32_t ClearTmr;
 
 int main(void) {
     GeneralInit();
-    DisplayClear();
+    //DisplayClear();
 
+    Lcd.DrawImage(80, 0, icon_BatteryFull);
+
+    for (uint8_t i=0; i<8; i++) Lcd.DrawPeak(i, 0);
+    Lcd.DrawPeak(1, 1);
+    Lcd.DrawPeak(2, 2);
+    Lcd.DrawPeak(3, 3);
+    Lcd.DrawPeak(4, 12);
+    Lcd.DrawPeak(5, 5);
+
+    uint32_t tmr;
+    Delay.Reset(&tmr);
+    uint8_t l=0;
     while (1) {
-        Beep.Task();
+        if(Delay.Elapsed(&tmr, 300)) {
+            Lcd.DrawPeak(6, l++);
+            if (l>50) l=0;
+        }
+        //Beep.Task();
         Lcd.Task();
-        CC.Task();
+        //CC.Task();
         // Clear screen if needed
-        if(Delay.Elapsed(&ClearTmr, 999)) DisplayClear();
+        //if(Delay.Elapsed(&ClearTmr, 999)) DisplayClear();
     } // while 1
 }
 

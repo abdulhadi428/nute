@@ -10,7 +10,7 @@
 BeepSnd_t NothingBeep = {
         2,
         {
-            {400, 2, 100},
+            {800, 2, 100},
             {0,   0, 1503},
         }
 };
@@ -91,7 +91,9 @@ void Beep_t::On() {
     GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     // Timer
+#ifndef BEEP_DISABLE
     TIM_Cmd(TIM4, ENABLE);
+#endif
 }
 
 void Beep_t::Off() {
