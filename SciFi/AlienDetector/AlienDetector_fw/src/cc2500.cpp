@@ -21,7 +21,7 @@ void CC_t::Task(void) {
         if(EvtNewPkt != 0) EvtNewPkt();
         return;
     }
-    // Proceed with state handling
+    // Proceed with state processing
     GetState();
     switch (State) {
         case CC_STB_RX_OVF:
@@ -35,31 +35,25 @@ void CC_t::Task(void) {
 
         case CC_STB_IDLE:
             EnterRX();
-
-            // Prepare packet to send
-//            TX_Pkt.ToAddr = 0x04;
-//            TX_Pkt.CommandID = 0xCA;
-//            TX_Pkt.SenderAddr = 18;
-//            WriteTX(TX_PktArray, CC_PKT_LEN);
-//            ////CC.EnterTXAndWaitToComplete();
-//            IRQDisable();
-//            EnterTX();
             break;
 
         default: // Just get out in other cases
             //klPrintf("Other: %X\r", State);
-            //Uart.PrintString("\rOther: ");
-            //Uart.PrintUint(CC.State);
             break;
     }//Switch
 }
 
 void CC_t::IRQHandler() {
+    // Will be here if packet received successfully or in case of wrong address
     uint8_t FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
     FifoSize &= 0x7F;   // Remove MSB
     if (FifoSize != 0) {
-        ReadRX(RX_PktArray, FifoSize);    // Read two extra bytes of RSSI & LQI
-        NewPktRcvd = true;
+        ReadRX(RX_PktArray, CC_PKT_LEN+2);    // Read two extra bytes of RSSI & LQI
+        //klPrintf("To: %u\r", RX_Pkt.To);
+        // Check address
+        if(RX_Pkt.To == CC_ADDR_VALUE) NewPktRcvd = true;   // remove this check in case of address check absence
+        //NewPktRcvd = true;
+        FlushRxFIFO();
     } // if size>0
 }
 
@@ -163,7 +157,7 @@ void CC_t::Init(void) {
     FlushRxFIFO();
     RfConfig();
     SetChannel(150);
-    SetAddress(4);
+    SetAddress(CC_ADDR_VALUE);
 }
 
 void CC_t::SetChannel(uint8_t AChannel) {

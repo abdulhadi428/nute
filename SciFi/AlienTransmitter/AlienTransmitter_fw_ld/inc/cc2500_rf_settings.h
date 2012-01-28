@@ -38,25 +38,22 @@
 // =================================== Common ==================================
 #define CC_MDMCFG1_VALUE    0b10100010  // FEC=1, Preamble length=010 => 4bytes, +Channel spacing
 
-#define CC_MCSM1_VALUE      0b00001100  // Channel is always clear, RX->RX,   TX->IDLE
+//#define CC_MCSM1_VALUE      0b00001100  // Channel is always clear, RX->RX,   TX->IDLE
 //#define CC_MCSM1_VALUE      0b00001111  // Channel is always clear, RX->RX,   TX->RX
-//#define CC_MCSM1_VALUE      0b00000000  // Channel is always clear, RX->IDLE, TX->IDLE
+#define CC_MCSM1_VALUE      0b00000000  // Channel is always clear, RX->IDLE, TX->IDLE
 //#define CC_MCSM1_VALUE      0b00000011  // Channel is always clear, RX->IDLE, TX->RX
 #define CC_MCSM0_VALUE      0x18        // Calibrate at IDLE->RX,TX
 
 #define CC_FIFOTHR_VALUE    0b00000111  // RXFIFO and TXFIFO thresholds: TX 33, RX 32
 #define CC_IOCFG2_VALUE     0x0E        // GDO2 - Carrier sence
 //#define CC_IOCFG0_VALUE     0x0E        // GDO0 - Carrier sence
-#define CC_IOCFG0_VALUE     0x06        // GDO0 - Asserts when sync word has been sent / received, and de-asserts at the end of the packet. In RX, the pin will de-assert
-                                        // when the optional address check fails or the RX FIFO overflows.
+#define CC_IOCFG0_VALUE     0x06        // GDO0 - Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
+                                        // In RX, the pin will de-assert when the optional address check fails or the RX FIFO overflows.
 
-#define CC_PKTCTRL1_VALUE   0b00001110  // PQT=0, CRC autoflush=1, Append=1, Address check = 10 (check, 0 is broadcast)
 //#define CC_PKTCTRL1_VALUE   0b00001100  // PQT=0, CRC autoflush=1, Append=1, Address check = 00 (no check)
+#define CC_PKTCTRL1_VALUE   0b00001101  // PQT=0, CRC autoflush=1, Append=1, Address check = 01 (check, no broadcast)
+//#define CC_PKTCTRL1_VALUE   0b00001110  // PQT=0, CRC autoflush=1, Append=1, Address check = 10 (check, 0 is broadcast)
 #define CC_PKTCTRL0_VALUE   0b01000100  // WhiteData=1, PKTFormat=normal, CC2400_EN=0, CRC enabled, Fixed Length
-#define CC_ADDR_VALUE       0x01        // Device address.
-//#define CC_PKTLEN_VALUE     CC_PKT_LEN  // Packet length.
-#define CC_PKTLEN_VALUE     6 // FIXME
-
 
 // ========================= Bitrate-specific ==================================
 #ifdef CC_BITRATE_10K

@@ -27,17 +27,16 @@
 //#define CC_MODE_RX
 //#define CC_DEBUG_PINS
 
+#define CC_ADDR_VALUE   27        // Device address
+
 // ============================ Types & variables ==============================
 struct CC_Packet_t {
-    uint8_t ToAddr;
-    uint8_t CommandID;
-    uint8_t SenderAddr;
-    uint8_t SenderCycle;
-    uint16_t SenderTime;
+    uint8_t To;
+    uint8_t From;
     uint8_t RSSI;
     uint8_t LQI;
 };
-#define CC_PKT_LEN  6//(sizeof(CC_Packet_t)-2)
+#define CC_PKT_LEN  (sizeof(CC_Packet_t)-2)
 
 class CC_t {
 private:

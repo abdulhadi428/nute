@@ -17,7 +17,6 @@ CC_t CC;
 void CC_t::Task(void) {
     // Handle New Packet
     if(NewPktRcvd) {
-        klPrintf("ogo\r");
         if(EvtNewPkt != 0) EvtNewPkt();
         NewPktRcvd = false;
     }
@@ -36,21 +35,16 @@ void CC_t::Task(void) {
 
         case CC_STB_IDLE:
             //klPrintf("IDLE\r");
-#ifdef CC_MODE_RX
-//            EnterRX();
-#else
+
             //if (Delay.Elapsed(&Timer, 198)) {
                 //klPrintf("TX\r");
                 // Prepare packet to send
-                TX_Pkt.ToAddr = 0x04;
-                TX_Pkt.CommandID = 0xCA;
-                TX_Pkt.SenderAddr = 18;
+                TX_Pkt.To = CC_ADDR_VALUE;
+                TX_Pkt.From = 0xA1;
                 WriteTX(TX_PktArray, CC_PKT_LEN);
-                ////CC.EnterTXAndWaitToComplete();
                 IRQDisable();
                 EnterTX();
             //}
-#endif
             break;
 
         case CC_STB_RX:
@@ -189,7 +183,6 @@ void CC_t::Init(void) {
     Reset();
     FlushRxFIFO();
     RfConfig();
-    SetChannel(150);
     SetAddress(4);
 }
 

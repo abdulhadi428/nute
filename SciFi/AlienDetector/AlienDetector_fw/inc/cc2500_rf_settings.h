@@ -50,13 +50,10 @@
 #define CC_IOCFG0_VALUE     0x06        // GDO0 - Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
                                         // In RX, the pin will de-assert when the optional address check fails or the RX FIFO overflows.
 
-#define CC_PKTCTRL1_VALUE   0b00001110  // PQT=0, CRC autoflush=1, Append=1, Address check = 10 (check, 0 is broadcast)
 //#define CC_PKTCTRL1_VALUE   0b00001100  // PQT=0, CRC autoflush=1, Append=1, Address check = 00 (no check)
+#define CC_PKTCTRL1_VALUE   0b00001101  // PQT=0, CRC autoflush=1, Append=1, Address check = 01 (check, no broadcast)
+//#define CC_PKTCTRL1_VALUE   0b00001110  // PQT=0, CRC autoflush=1, Append=1, Address check = 10 (check, 0 is broadcast)
 #define CC_PKTCTRL0_VALUE   0b01000100  // WhiteData=1, PKTFormat=normal, CC2400_EN=0, CRC enabled, Fixed Length
-#define CC_ADDR_VALUE       0x01        // Device address.
-//#define CC_PKTLEN_VALUE     CC_PKT_LEN  // Packet length.
-#define CC_PKTLEN_VALUE     6 // FIXME
-
 
 // ========================= Bitrate-specific ==================================
 #ifdef CC_BITRATE_10K

@@ -10,7 +10,7 @@
 
 #include "delay_util.h"
 
-#define BEEP_DISABLE    // Uncomment this in case of emergency
+//#define BEEP_DISABLE    // Uncomment this in case of emergency
 
 #define BEEP_MAX_CHUNKS 6
 
@@ -41,7 +41,7 @@ public:
 
 extern Beep_t Beep;
 // Sounds
-extern BeepSnd_t NothingBeep, AlienBeep;
+extern BeepSnd_t IdleBeep, AlienBeep;
 
 
 #endif /* SOUND_H_ */

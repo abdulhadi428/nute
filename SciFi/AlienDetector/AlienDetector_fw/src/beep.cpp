@@ -7,7 +7,7 @@
 
 #include "beep.h"
 
-BeepSnd_t NothingBeep = {
+BeepSnd_t IdleBeep = {
         2,
         {
             {800, 2, 100},
