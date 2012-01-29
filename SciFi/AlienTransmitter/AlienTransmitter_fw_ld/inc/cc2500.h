@@ -24,10 +24,11 @@
 #include "cc2500defins.h"
 #include "kl_util.h"
 
-#define CC_ADDR_VALUE   27        // Device address
-
 #define CC_CHNL_START   0
+#define CC_CHNL_COUNT   7
+#define CC_RX_DELAY     180
 
+#define CC_ADDR_VALUE   27        // Device address
 
 // ============================ Types & variables ==============================
 struct CC_Packet_t {
@@ -35,8 +36,8 @@ struct CC_Packet_t {
     uint8_t From;
     uint8_t RSSI;
     uint8_t LQI;
-};
-#define CC_PKT_LEN  (sizeof(CC_Packet_t)-2)
+} __attribute__ ((packed));
+#define CC_PKT_LEN  2
 
 class CC_t {
 private:
@@ -50,13 +51,13 @@ private:
     void CS_Hi(void) { GPIO_SetBits(GPIOA, GPIO_Pin_4); }
     void CS_Lo(void) { GPIO_ResetBits(GPIOA, GPIO_Pin_4); }
     bool GDO0_IsHi(void) { return GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3); }
-    void BusyWait(void)  {} //{ while (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_6)); }
+    void BusyWait(void)  { while (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_6)); }
     void IRQEnable(void);
     void IRQDisable(void);
 
     void RfConfig(void);
-    void WriteTX (uint8_t *PData, uint8_t ALength);
-    void ReadRX  (uint8_t *PData, uint8_t ALength);
+    void WriteTX ();
+    void ReadRX();
     void EnterTXAndWaitToComplete(void);
     // Registers
     void WriteRegister (const uint8_t Addr, const uint8_t AData);
@@ -73,14 +74,7 @@ private:
     void FlushTxFIFO(void)  { WriteStrobe(CC_SFTX); }
     void GetState(void)     { WriteStrobe(CC_SNOP); }
 public:
-    union {
-        uint8_t RX_PktArray[CC_PKT_LEN+2];
-        CC_Packet_t RX_Pkt;
-    };
-    union {
-        uint8_t TX_PktArray[CC_PKT_LEN+2];
-        CC_Packet_t TX_Pkt;
-    };
+    CC_Packet_t RX_Pkt, TX_Pkt;
     ftVoid_Void EvtNewPkt;
     // Methods
     void Init(void);
@@ -89,10 +83,8 @@ public:
     void SetAddress(uint8_t AAddr) { WriteRegister(CC_ADDR, AAddr); }
     // IRQ handler
     void IRQHandler(void);
-    // Debug
-#ifdef CC_DEBUG_PINS
-    void SetPin
-#endif
+    // Project-specific
+    uint8_t ChannelN;
 };
 
 extern CC_t CC;

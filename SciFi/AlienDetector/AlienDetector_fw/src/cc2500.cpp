@@ -39,12 +39,12 @@ void CC_t::Task(void) {
             // Increase channel
             ChannelN++;
             if (ChannelN == CC_CHNL_COUNT) ChannelN = 0;
-
+            //klPrintf("Ch: %u\r", ChannelN);
             SetChannel(CC_CHNL_START + ChannelN);
             EnterRX();
             break;
 
-        case CC_STB_RX:
+        case CC_STB_RX: // Will be here until timeout occure: RX->RX
             if(Delay.Elapsed(&Timer, CC_RX_DELAY)) EnterIdle();
             break;
 
@@ -59,8 +59,7 @@ void CC_t::IRQHandler() {
     uint8_t FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
     FifoSize &= 0x7F;   // Remove MSB
     if (FifoSize != 0) {
-        ReadRX(RX_PktArray, CC_PKT_LEN+2);    // Read two extra bytes of RSSI & LQI
-        //klPrintf("To: %u\r", RX_Pkt.To);
+        ReadRX();    // Read two extra bytes of RSSI & LQI
         // Check address
         if(RX_Pkt.To == CC_ADDR_VALUE) NewPktRcvd = true;   // remove this check in case of address check absence
         //NewPktRcvd = true;
@@ -202,18 +201,20 @@ void CC_t::EnterRX(void) {
     IRQEnable();
 }
 
-void CC_t::WriteTX (uint8_t *PData, uint8_t ALength) {
+void CC_t::WriteTX() {
+    uint8_t *p = (uint8_t*)(&TX_Pkt);
     CS_Lo();                 // Start transmission
     BusyWait();              // Wait for chip to become ready
-    ReadWriteByte(CC_FIFO|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
-    for (uint8_t i=0; i<ALength; i++) ReadWriteByte(*PData++);  // Write bytes themselves
+    ReadWriteByte(CC_FIFO|CC_WRITE_FLAG|CC_BURST_FLAG);             // Address with write & burst flags
+    for (uint8_t i=0; i<CC_PKT_LEN; i++) ReadWriteByte(*p++);   // Write bytes themselves
     CS_Hi();                 // End transmission
 }
-void CC_t::ReadRX  (uint8_t *PData, uint8_t ALength){
+void CC_t::ReadRX() {
+    uint8_t *p = (uint8_t*)(&RX_Pkt);
     CS_Lo();                 // Start transmission
     BusyWait();              // Wait for chip to become ready
-    ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);              // Address with read & burst flags
-    for (uint8_t i=0; i<ALength; i++) *PData++ = ReadWriteByte(0);  // Write bytes themselves
+    ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);                  // Address with read & burst flags
+    for (uint8_t i=0; i<(CC_PKT_LEN+2); i++) *p++ = ReadWriteByte(0);   // Read bytes
     CS_Hi();                 // End transmission
 }
 
@@ -293,7 +294,6 @@ uint8_t CC_t::ReadWriteByte(uint8_t AByte) {
 void EXTI3_IRQHandler(void) {
     if(EXTI_GetITStatus(EXTI_Line3) != RESET) {
         EXTI_ClearITPendingBit(EXTI_Line3); // Clear the EXTI line pending bit
-        //klPrintf("IRQ\r");
         CC.IRQHandler();
     }
 }
