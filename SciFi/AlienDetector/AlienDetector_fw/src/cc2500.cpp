@@ -22,6 +22,7 @@ void CC_t::Task(void) {
 //        if(EvtNewPkt != 0) EvtNewPkt();
 //        return;
 //    }
+    static uint32_t rssi, counter;
 
     // Proceed with state processing
     GetState();
@@ -41,11 +42,24 @@ void CC_t::Task(void) {
             if (ChannelN == CC_CHNL_COUNT) ChannelN = 0;
             //klPrintf("Ch: %u\r", ChannelN);
             SetChannel(CC_CHNL_START + ChannelN);
+            rssi=0;
+            counter=0;
             EnterRX();
             break;
 
         case CC_STB_RX: // Will be here until timeout occure: RX->RX
-            if(Delay.Elapsed(&Timer, CC_RX_DELAY)) EnterIdle();
+            if(Delay.Elapsed(&Timer, CC_RX_DELAY)) {
+                EnterIdle();
+                //klPrintf("ch: %u; r: %u; c: %u\r", ChannelN, rssi, counter);
+                rssi /= counter;
+
+                Signal.Remember(ChannelN, rssi);
+            }
+            else {
+                uint8_t r = ReadRegister(CC_RSSI);
+                rssi += r;
+                counter++;
+            }
             break;
 
         default: // Just get out in other cases
@@ -198,7 +212,7 @@ void CC_t::IRQDisable(void) {
 void CC_t::EnterRX(void) {
     //NewPktRcvd = false;
     WriteStrobe(CC_SRX);
-    IRQEnable();
+    //IRQEnable();
 }
 
 void CC_t::WriteTX() {

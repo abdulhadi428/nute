@@ -26,7 +26,7 @@
 
 #define CC_CHNL_START   0
 #define CC_CHNL_COUNT   7
-#define CC_RX_DELAY     45
+#define CC_RX_DELAY     36
 
 #define CC_ADDR_VALUE   27        // Device address
 

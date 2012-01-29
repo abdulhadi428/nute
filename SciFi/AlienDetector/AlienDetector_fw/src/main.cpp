@@ -34,6 +34,7 @@ void GeneralInit(void) {
     Delay.Init();
     Delay.ms(63);
     UART_Init();
+
     Bcklt.Init();
     Bcklt.On(10);
 
@@ -78,45 +79,36 @@ void EVENT_NewBatteryState(void) {
 
 // ============================= Signal_t ======================================
 void Signal_t::Task() {
-    bool IdleFlag = true;
-    // Check all channels if clear needed
+    // Check all channels if displaying needed
     for (uint8_t i=0; i<7; i++) {
-        if (IExist[i]) {
-            if (Delay.Elapsed(&ITimer[i], NOSIGNAL_DELAY)) {    // Check if time to clear
-                IExist[i] = false;
-                Lcd.DrawPeak(i, 0);
-            }
-            else {
-                IdleFlag = false;
-                if (!IDisplayed[i]) {
-                    IDisplayed[i] = true;
-                    int32_t r = IRSSI[i];
-                    if (r>= 128) r -= 256;
-                    r = (r / 2) - 69;    // now it in dBm
-                    // Scale to display
-                    r += 90;
-                    if (r < 1) r = 1;
-                    if (r > 50) r = 50;
-                    Lcd.DrawPeak(i, r);
-                } // if not displayed
-            } // if delay
-        } // if exist
+        if (INew[i]) {
+            INew[i] = false;
+            Lcd.DrawPeak(i, IRSSI[i]);
+            if (IRSSI[i] > 4) Beep.SetSound(&AlienBeep);
+        } // if new
     } // for
-    // Set correct sound
-    if (IdleFlag) Beep.SetSound(&IdleBeep);
-    else Beep.SetSound(&AlienBeep);
+
+    // Set idle sound if needed
+    if (Delay.Elapsed(&ITimer, 999)) {
+        for (uint8_t i=0; i<7; i++) if (IRSSI[i] > 4) return;   // no need
+        Beep.SetSound(&IdleBeep);
+    }
 }
 
 void Signal_t::Remember(uint8_t AChannel, int32_t RawRSSI) {
-    Delay.Reset(&ITimer[AChannel]); // Reset clear timer
-    IExist[AChannel] = true;
-    IDisplayed[AChannel] = false;
+    INew[AChannel] = true;
+    if (RawRSSI >= 128) RawRSSI -= 256;
+    RawRSSI = (RawRSSI / 2) - 69;    // now it in dBm
+    // Scale to display
+    RawRSSI += 90;
+    if (RawRSSI < 0) RawRSSI = 0;
+    if (RawRSSI > 50) RawRSSI = 50;
     IRSSI[AChannel] = RawRSSI;
 }
 
 void Signal_t::Init() {
     for(uint8_t i=0; i<8; i++) {
         Lcd.DrawPeak(i, 0);
-        IExist[i] = false;
+        INew[i] = false;
     }
 }
