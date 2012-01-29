@@ -26,8 +26,8 @@
 //#define CC_PATABLE0_VALUE   0x7F    // -6  dBm
 //#define CC_PATABLE0_VALUE   0xA9    // -4  dBm
 //#define CC_PATABLE0_VALUE   0xBB    // -2  dBm
-//#define CC_PATABLE0_VALUE   0xFE    // 0 dBm
-#define CC_PATABLE0_VALUE   0xFF    // +1 dBm
+#define CC_PATABLE0_VALUE   0xFE    // 0 dBm
+//#define CC_PATABLE0_VALUE   0xFF    // +1 dBm
 
 
 // ================================= Frequency =================================
@@ -36,7 +36,8 @@
 #define CC_FREQ0_VALUE      0x8E        // Frequency control word, low byte.
 
 // =================================== Common ==================================
-#define CC_MDMCFG1_VALUE    0b10100010  // FEC=1, Preamble length=010 => 4bytes, +Channel spacing
+//#define CC_MDMCFG1_VALUE    0b10100010  // FEC=1, Preamble length=010 => 4bytes, +Channel spacing
+#define CC_MDMCFG1_VALUE    0b10100011  // FEC=1, Preamble length=010 => 4bytes, +Channel spacing=11=MAX
 
 //#define CC_MCSM1_VALUE      0b00001100  // Channel is always clear, RX->RX,   TX->IDLE
 //#define CC_MCSM1_VALUE      0b00001111  // Channel is always clear, RX->RX,   TX->RX
@@ -62,9 +63,10 @@
 
 #define CC_MDMCFG4_VALUE    0x88        // Modem configuration }
 #define CC_MDMCFG3_VALUE    0x84        // Modem configuration } frequencies
-//#define CC_MDMCFG2_VALUE    0x03        // Filter, modulation=2FSK, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
-#define CC_MDMCFG2_VALUE    0x13        // Filter, modulation=GFSK, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
-#define CC_MDMCFG0_VALUE    0xE5        // Modem configuration: frequencies
+#define CC_MDMCFG2_VALUE    0x03        // Filter, modulation=2FSK, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
+//#define CC_MDMCFG2_VALUE    0x13        // Filter, modulation=GFSK, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
+//#define CC_MDMCFG0_VALUE    0xE5        // Modem configuration: frequencies
+#define CC_MDMCFG0_VALUE    0xFF        // Modem configuration: MAX channel spacing
 
 //#define CC_DEVIATN_VALUE    0x43        // Deviation: 38kHz @ 27MHz crystal
 #define CC_DEVIATN_VALUE    0x53        // Deviation: 73kHz @ 27MHz crystal

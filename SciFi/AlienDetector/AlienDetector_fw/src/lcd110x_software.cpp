@@ -247,13 +247,7 @@ void Lcd_t::DrawPeak(const uint8_t N, const uint8_t ALevel) {
         IBuf[Pos++] = (N != 7)? 0x01 : (0x01 | Font_3x5_Data[8-Row][2]);
         IBuf[Pos++] = 0x00;
         IBuf[Pos++] = (N != 7)? 0x00 : 0x55;
-
-        if(N == 7) {
-
-        }
     }
-
-
 
     // Draw bottom line
     Pos = (N<<3) + (N<<2) + 768;
@@ -283,33 +277,4 @@ void Lcd_t::DrawPeak(const uint8_t N, const uint8_t ALevel) {
         IBuf[Pos+7] = Fill;
         IBuf[Pos+8] = Wall;
     }
-
-
-//    if (ALevel < 3) {
-//        Offset = 2 - ALevel;
-//        Cap = 0x01 << Offset;
-//        IBuf[Pos+4] = Cap;
-//        IBuf[Pos+5] = Cap;
-//        IBuf[Pos+6] = Cap;
-//        IBuf[Pos+7] = Cap;
-//        Cut = 0xFE << Offset;
-//        Trunk = 0x7F & Cut;   // Do not draw lowest pixel
-//        IBuf[Pos+3] = Trunk;
-//        IBuf[Pos+8] = Trunk;
-//    }
-//    else if (ALevel < 11) {
-//        Pos = (N<<3) + (N<<2) + (6<<6) + (6<<5);
-//        Offset = 10 - ALevel;
-//        Cap = 0x01 << Offset;
-//        IBuf[Pos+4] = Cap;
-//        IBuf[Pos+5] = Cap;
-//        IBuf[Pos+6] = Cap;
-//        IBuf[Pos+7] = Cap;
-//        Cut = 0xFE << Offset;
-//        Trunk = 0xFF & Cut;
-//        IBuf[Pos+3] = Trunk;
-//        IBuf[Pos+8] = Trunk;
-//    }
-
-
 }

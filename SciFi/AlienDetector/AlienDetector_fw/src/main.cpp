@@ -45,7 +45,7 @@ void GeneralInit(void) {
     Battery.EvtNewState = EVENT_NewBatteryState;
 
     CC.Init();
-    CC.EvtNewPkt = EVENT_NewPacket;
+    //CC.EvtNewPkt = EVENT_NewPacket;
 
     Beep.Init();
     Beep.SetSound(&IdleBeep);
@@ -56,17 +56,17 @@ void GeneralInit(void) {
 }
 
 // =============================== Events ======================================
-void EVENT_NewPacket(void) {
-    int32_t RSSI_dBm = CC.RX_Pkt.RSSI;
-    if (RSSI_dBm >= 128) RSSI_dBm -= 256;
-    RSSI_dBm  = (RSSI_dBm / 2) - 69;
-    //klPrintf("RSSI: %i\r", RSSI_dBm);
-    // Display signal
-    int32_t RSSI = RSSI_dBm + 90;
-    if (RSSI < 1) RSSI = 1;
-    if (RSSI > 50) RSSI = 50;
-    Signal.Display(1, RSSI);
-}
+//void EVENT_NewPacket(void) {
+//    int32_t RSSI_dBm = CC.RX_Pkt.RSSI;
+//    if (RSSI_dBm >= 128) RSSI_dBm -= 256;
+//    RSSI_dBm  = (RSSI_dBm / 2) - 69;
+//    //klPrintf("Ch: %u; RSSI: %i\r", CC.ChannelN, RSSI_dBm);
+//    // Display signal
+//    int32_t RSSI = RSSI_dBm + 90;
+//    if (RSSI < 1) RSSI = 1;
+//    if (RSSI > 50) RSSI = 50;
+//    Signal.Display(CC.RX_Pkt.From, RSSI);
+//}
 
 void EVENT_NewBatteryState(void) {
     switch (Battery.State) {
@@ -80,31 +80,43 @@ void EVENT_NewBatteryState(void) {
 void Signal_t::Task() {
     bool IdleFlag = true;
     // Check all channels if clear needed
-    for (uint8_t i=1; i<7; i++) {
-        if (IFlag[i]) {
-            if (Delay.Elapsed(&ITimer[i], NOSIGNAL_DELAY)) {
-                IFlag[i] = false;
+    for (uint8_t i=0; i<7; i++) {
+        if (IExist[i]) {
+            if (Delay.Elapsed(&ITimer[i], NOSIGNAL_DELAY)) {    // Check if time to clear
+                IExist[i] = false;
                 Lcd.DrawPeak(i, 0);
             }
-            else IdleFlag = false;
-        }
-    }
-    // Set idle sound if needed
+            else {
+                IdleFlag = false;
+                if (!IDisplayed[i]) {
+                    IDisplayed[i] = true;
+                    int32_t r = IRSSI[i];
+                    if (r>= 128) r -= 256;
+                    r = (r / 2) - 69;    // now it in dBm
+                    // Scale to display
+                    r += 90;
+                    if (r < 1) r = 1;
+                    if (r > 50) r = 50;
+                    Lcd.DrawPeak(i, r);
+                } // if not displayed
+            } // if delay
+        } // if exist
+    } // for
+    // Set correct sound
     if (IdleFlag) Beep.SetSound(&IdleBeep);
+    else Beep.SetSound(&AlienBeep);
 }
 
-void Signal_t::Display(uint8_t AChannel, uint8_t RSSI) {
-    Lcd.DrawPeak(AChannel, RSSI);
-    // Reset timer
-    Delay.Reset(&ITimer[AChannel]);
-    IFlag[AChannel] = true;
-    // Set correct sound
-    Beep.SetSound(&AlienBeep);
+void Signal_t::Remember(uint8_t AChannel, int32_t RawRSSI) {
+    Delay.Reset(&ITimer[AChannel]); // Reset clear timer
+    IExist[AChannel] = true;
+    IDisplayed[AChannel] = false;
+    IRSSI[AChannel] = RawRSSI;
 }
 
 void Signal_t::Init() {
     for(uint8_t i=0; i<8; i++) {
         Lcd.DrawPeak(i, 0);
-        IFlag[i] = 0;
+        IExist[i] = false;
     }
 }

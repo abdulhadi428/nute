@@ -13,11 +13,13 @@
 class Signal_t {
 private:
     uint32_t ITimer[8];
-    bool IFlag[8];
+    bool IExist[8];
+    bool IDisplayed[8];
+    int32_t IRSSI[8];
 public:
     void Init(void);
     void Task(void);
-    void Display(uint8_t AChannel, uint8_t RSSI);
+    void Remember(uint8_t AChannel, int32_t RawRSSI);
 };
 
 extern Signal_t Signal;

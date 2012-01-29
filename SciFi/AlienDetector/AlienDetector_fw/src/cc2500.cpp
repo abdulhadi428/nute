@@ -9,6 +9,7 @@
 #include "cc2500_rf_settings.h"
 #include "delay_util.h"
 
+#include "main.h"
 
 // ============================ Variables ======================================
 CC_t CC;
@@ -16,11 +17,12 @@ CC_t CC;
 // ========================== Implementation ===================================
 void CC_t::Task(void) {
     // Check if new packet received
-    if(NewPktRcvd) {
-        NewPktRcvd = false;
-        if(EvtNewPkt != 0) EvtNewPkt();
-        return;
-    }
+//    if(NewPktRcvd) {
+//        NewPktRcvd = false;
+//        if(EvtNewPkt != 0) EvtNewPkt();
+//        return;
+//    }
+
     // Proceed with state processing
     GetState();
     switch (State) {
@@ -33,8 +35,17 @@ void CC_t::Task(void) {
             FlushTxFIFO();
             break;
 
-        case CC_STB_IDLE:
+        case CC_STB_IDLE:   // Set channel and goto RX
+            // Increase channel
+            ChannelN++;
+            if (ChannelN == CC_CHNL_COUNT) ChannelN = 0;
+
+            SetChannel(CC_CHNL_START + ChannelN);
             EnterRX();
+            break;
+
+        case CC_STB_RX:
+            if(Delay.Elapsed(&Timer, CC_RX_DELAY)) EnterIdle();
             break;
 
         default: // Just get out in other cases
@@ -54,6 +65,8 @@ void CC_t::IRQHandler() {
         if(RX_Pkt.To == CC_ADDR_VALUE) NewPktRcvd = true;   // remove this check in case of address check absence
         //NewPktRcvd = true;
         FlushRxFIFO();
+        Signal.Remember(ChannelN, RX_Pkt.RSSI);
+        klPrintf("Ch: %u; RSSI: %u\r", ChannelN, RX_Pkt.RSSI);
     } // if size>0
 }
 
@@ -114,14 +127,6 @@ void CC_t::Init(void) {
 #endif
     CS_Hi();
 
-    // === DEBUG ===
-//    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
-//    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8;
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-//    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//    GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_DOWN;
-//    GPIO_Init(GPIOB, &GPIO_InitStructure);
-
     // ==== IRQ ====
 #ifndef STM32F10X_LD_VL
     // Enable SYSCFG clock
@@ -156,7 +161,7 @@ void CC_t::Init(void) {
     Reset();
     FlushRxFIFO();
     RfConfig();
-    SetChannel(150);
+    ChannelN = 0;
     SetAddress(CC_ADDR_VALUE);
 }
 

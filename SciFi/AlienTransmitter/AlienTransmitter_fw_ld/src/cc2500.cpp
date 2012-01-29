@@ -34,42 +34,18 @@ void CC_t::Task(void) {
             break;
 
         case CC_STB_IDLE:
-            //klPrintf("IDLE\r");
-
             //if (Delay.Elapsed(&Timer, 198)) {
                 //klPrintf("TX\r");
                 // Prepare packet to send
                 TX_Pkt.To = CC_ADDR_VALUE;
-                TX_Pkt.From = 0xA1;
                 WriteTX(TX_PktArray, CC_PKT_LEN);
                 IRQDisable();
                 EnterTX();
             //}
             break;
 
-        case CC_STB_RX:
-//            //klPrintf("RX\r");
-//            if (GDO0_IsHi()) GDO0_WasHi = true;
-//            // Check if GDO0 has fallen
-//            else if (GDO0_WasHi) {
-//                klPrintf(" IRQ\r");
-//                GDO0_WasHi = false;
-//                FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
-//                if (FifoSize != 0) {
-//                    ReadRX(RX_PktArray, (CC_PKT_LEN+2));    // Read two extra bytes of RSSI & LQI
-//                    if(EvtNewPkt != 0) EvtNewPkt();
-//                } // if size>0
-//            } // if falling edge
-            break;
-
-        case CC_STB_TX:
-            //klPrintf("TX1\r");
-            break;
-
         default: // Just get out in other cases
             //klPrintf("Other: %X\r", State);
-            //Uart.PrintString("\rOther: ");
-            //Uart.PrintUint(CC.State);
             break;
     }//Switch
 }
@@ -143,14 +119,6 @@ void CC_t::Init(void) {
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 #endif
     CS_Hi();
-
-    // === DEBUG ===
-//    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
-//    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8;
-//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-//    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//    GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_DOWN;
-//    GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     // ==== IRQ ====
 #ifndef STM32F10X_LD_VL

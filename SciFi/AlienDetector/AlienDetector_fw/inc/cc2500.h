@@ -24,8 +24,9 @@
 #include "cc2500defins.h"
 #include "kl_util.h"
 
-//#define CC_MODE_RX
-//#define CC_DEBUG_PINS
+#define CC_CHNL_START   0
+#define CC_CHNL_COUNT   7
+#define CC_RX_DELAY     36
 
 #define CC_ADDR_VALUE   27        // Device address
 
@@ -89,10 +90,8 @@ public:
     void SetAddress(uint8_t AAddr) { WriteRegister(CC_ADDR, AAddr); }
     // IRQ handler
     void IRQHandler(void);
-    // Debug
-#ifdef CC_DEBUG_PINS
-    void SetPin
-#endif
+    // Project-specific
+    uint8_t ChannelN;
 };
 
 extern CC_t CC;

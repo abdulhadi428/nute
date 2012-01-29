@@ -24,9 +24,10 @@
 #include "cc2500defins.h"
 #include "kl_util.h"
 
-//#define CC_DEBUG_PINS
-
 #define CC_ADDR_VALUE   27        // Device address
+
+#define CC_CHNL_START   0
+
 
 // ============================ Types & variables ==============================
 struct CC_Packet_t {
