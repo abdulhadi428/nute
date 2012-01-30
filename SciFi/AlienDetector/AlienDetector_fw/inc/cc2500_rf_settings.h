@@ -11,8 +11,8 @@
 
 // Bitrate
 //#define CC_BITRATE_2K4
-#define CC_BITRATE_10K
-//#define CC_BITRATE_250K
+//#define CC_BITRATE_10K
+#define CC_BITRATE_250K
 
 // =================================== Power ===================================
 //#define CC_PATABLE0_VALUE   0x00    // -55 dBm
@@ -135,9 +135,9 @@
 #define CC_FSCTRL0_VALUE    0x00        // Frequency synthesizer control: freq offset
 
 #define CC_MDMCFG4_VALUE    0x2D        // Modem configuration: channel bandwidth
-#define CC_MDMCFG3_VALUE    0x3B        // Modem configuration.
+#define CC_MDMCFG3_VALUE    0x2F        // Modem configuration.
 #define CC_MDMCFG2_VALUE    0x73        // Filter, modulation format, Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
-#define CC_MDMCFG0_VALUE    0xF8        // Modem configuration.
+#define CC_MDMCFG0_VALUE    0xE5        // Modem configuration.
 
 #define CC_DEVIATN_VALUE    0x00        // Modem deviation setting - RF studio
 #define CC_FREND1_VALUE     0xB6        // Front end RX configuration - RF studio

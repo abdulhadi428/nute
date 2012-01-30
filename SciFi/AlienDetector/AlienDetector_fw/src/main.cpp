@@ -65,7 +65,8 @@ void GeneralInit(void) {
 /*
  * Both TX and RX are interrupt-driven, so IRQ enabled at init and commented out in EnterRX.
  */
-#define MAX_COUNT   7
+#define MAX_COUNT       7
+#define RX_WAIT_TIME    2
 typedef enum {IsCalling, IsWaiting} SearchState_t;
 SearchState_t SearchState = IsCalling;
 uint8_t PktCounter=0;
@@ -86,17 +87,17 @@ void CC_t::Task(void) {
         case CC_STB_IDLE:
             if (SearchState == IsCalling) { // Call alien
                 WriteTX();
-                klPrintf("TX: %u\r", TX_Pkt.To);
+                //klPrintf("TX: %u\r", TX_Pkt.To);
                 EnterTX();
             }
             else {  // Is waiting
-                if (Delay.Elapsed(&Timer, 27)) SearchState = IsCalling;
+                if (Delay.Elapsed(&Timer, RX_WAIT_TIME)) SearchState = IsCalling;
                 else EnterRX();
             }
             break;
 
         case CC_STB_RX:
-            if (Delay.Elapsed(&Timer, 81)) {
+            if (Delay.Elapsed(&Timer, RX_WAIT_TIME)) {
                 SearchState = IsCalling;
                 EnterIdle();
             }
@@ -110,7 +111,7 @@ void CC_t::Task(void) {
 
 void CC_t::IRQHandler() {
     if (SearchState == IsCalling) { // Packet transmitted, enter RX
-        if(++PktCounter == 2) { // Several packets sent
+        if(++PktCounter == 1) { // Several packets sent
             PktCounter = 0;
             // Increase packet address
             TX_Pkt.To++;
