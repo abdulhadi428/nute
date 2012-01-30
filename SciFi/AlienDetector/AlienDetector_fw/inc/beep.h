@@ -10,7 +10,7 @@
 
 #include "delay_util.h"
 
-#define BEEP_DISABLE    // Uncomment this in case of emergency
+//#define BEEP_DISABLE    // Uncomment this in case of emergency
 
 #define BEEP_MAX_CHUNKS 6
 

@@ -9,61 +9,9 @@
 #include "cc2500_rf_settings.h"
 #include "delay_util.h"
 
-
-// ============================ Variables ======================================
 CC_t CC;
 
 // ========================== Implementation ===================================
-void CC_t::Task(void) {
-    // Handle New Packet
-//    if(NewPktRcvd) {
-//        if(EvtNewPkt != 0) EvtNewPkt();
-//        NewPktRcvd = false;
-//    }
-    // Do with CC what needed
-    GetState();
-    switch (State) {
-        case CC_STB_RX_OVF:
-            klPrintf("RX ovf\r");
-            FlushRxFIFO();
-            break;
-        case CC_STB_TX_UNDF:
-            klPrintf("TX undf\r");
-            FlushTxFIFO();
-            break;
-
-        case CC_STB_IDLE:
-                //klPrintf("TX\r");
-                // Prepare packet to send
-                TX_Pkt.To = 27;
-                TX_Pkt.Data[0] = 4;
-                TX_Pkt.Data[1] = 7;
-                TX_Pkt.Data[2] = 9;
-                TX_Pkt.Data[3] = 11;
-                WriteTX();
-                IRQDisable();
-                EnterTX();
-            break;
-
-        default: // Just get out in other cases
-            //klPrintf("Other: %X\r", State);
-            break;
-    } //Switch
-}
-
-void CC_t::IRQHandler() {
-    uint8_t FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
-    FifoSize &= 0x7F;   // Remove MSB
-    if (FifoSize != 0) {
-        ReadRX();
-        //klPrintf("Rx Fifo: %X\r", FifoSize);
-        if (FifoSize == (6+2)) {
-            NewPktRcvd = true;
-            klPrintf("aga\r");
-        }
-    } // if size>0
-}
-
 void CC_t::Init(void) {
     // ******** Hardware init section *******
     // ==== Clocks init ====
@@ -95,7 +43,7 @@ void CC_t::Init(void) {
     GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
     GPIO_InitStructure.GPIO_PuPd  = GPIO_PuPd_NOPULL;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
-    // Configure CC_GDO as Input Pull-up
+    // Configure CC_GDO as Input Pull-down
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
@@ -114,7 +62,7 @@ void CC_t::Init(void) {
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_6;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
-    // Configure CC_GDO as Input Pull-up
+    // Configure CC_GDO as Input Pull-down
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -127,6 +75,10 @@ void CC_t::Init(void) {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
     // Connect EXTI0 Line to PA3 pin
     SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource3);
+#else
+    GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource3);
+#endif
+
     // Configure EXTI3 line
     EXTI_InitTypeDef   EXTI_InitStructure;
     EXTI_InitStructure.EXTI_Line = EXTI_Line3;
@@ -134,7 +86,6 @@ void CC_t::Init(void) {
     EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
     EXTI_InitStructure.EXTI_LineCmd = ENABLE;
     EXTI_Init(&EXTI_InitStructure);
-#endif
     // ==== SPI init ====    MSB first, master, SCK idle low
     SPI_I2S_DeInit(SPI1);
     SPI_InitTypeDef SPI_InitStructure;
@@ -152,7 +103,7 @@ void CC_t::Init(void) {
     Reset();
     FlushRxFIFO();
     RfConfig();
-    SetAddress(4);
+    CC.IRQEnable();
 }
 
 void CC_t::SetChannel(uint8_t AChannel) {
@@ -187,26 +138,46 @@ void CC_t::IRQDisable(void) {
 }
 
 void CC_t::EnterRX(void) {
-    NewPktRcvd = false;
+    //NewPktRcvd = false;
     WriteStrobe(CC_SRX);
-    IRQEnable();
+    //IRQEnable();
 }
 
 void CC_t::WriteTX() {
     uint8_t *p = (uint8_t*)(&TX_Pkt);
     CS_Lo();                 // Start transmission
     BusyWait();              // Wait for chip to become ready
-    ReadWriteByte(CC_FIFO|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
+    ReadWriteByte(CC_FIFO|CC_WRITE_FLAG|CC_BURST_FLAG);             // Address with write & burst flags
     for (uint8_t i=0; i<CC_PKT_LEN; i++) ReadWriteByte(*p++);   // Write bytes themselves
     CS_Hi();                 // End transmission
 }
-void CC_t::ReadRX() {
+
+//#define CC_PRINT_RX
+bool CC_t::ReadRX() {
     uint8_t *p = (uint8_t*)(&RX_Pkt);
-    CS_Lo();                 // Start transmission
-    BusyWait();              // Wait for chip to become ready
-    ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);                  // Address with read & burst flags
-    for (uint8_t i=0; i<(CC_PKT_LEN+2); i++) *p++ = ReadWriteByte(0);   // Read bytes
-    CS_Hi();                 // End transmission
+    uint8_t b;
+    uint8_t FifoSize = ReadRegister(CC_RXBYTES);    // Get number of bytes in FIFO
+    FifoSize &= 0x7F;                               // Remove MSB
+    if(FifoSize == 0) return false;
+#ifdef CC_PRINT_RX
+    klPrintf("Size: %u    ", FifoSize);
+#endif
+    if (FifoSize > (CC_PKT_LEN+2)) FifoSize = CC_PKT_LEN+2;
+    CS_Lo();                                        // Start transmission
+    BusyWait();                                     // Wait for chip to become ready
+    ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);              // Address with read & burst flags
+    for (uint8_t i=0; i<FifoSize; i++) {    // Read bytes
+        b = ReadWriteByte(0);
+        *p++ = b;
+#ifdef CC_PRINT_RX
+        klPrintf("0x%u ", b);
+#endif
+    }
+    CS_Hi();    // End transmission
+#ifdef CC_PRINT_RX
+    klPrintf("\r");
+#endif
+    return true;
 }
 
 uint8_t CC_t::ReadRegister (uint8_t ARegAddr){
@@ -282,11 +253,8 @@ uint8_t CC_t::ReadWriteByte(uint8_t AByte) {
 
 // ================================= Interrupt ================================
 void EXTI3_IRQHandler(void) {
-#ifndef STM32F10X_LD_VL
     if(EXTI_GetITStatus(EXTI_Line3) != RESET) {
         EXTI_ClearITPendingBit(EXTI_Line3); // Clear the EXTI line pending bit
-        //klPrintf(" IRQ\r");
         CC.IRQHandler();
     }
-#endif
 }

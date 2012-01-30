@@ -18,6 +18,8 @@
 
 Signal_t Signal;
 
+#define CC_ADDRESS 207
+
 int main(void) {
     GeneralInit();
 
@@ -48,7 +50,8 @@ void GeneralInit(void) {
     CC.Init();
     CC.SetChannel(CC_CHNL);
     CC.SetAddress(CC_ADDRESS);
-    //CC.EvtNewPkt = EVENT_NewPacket;
+    // TX pkt
+    CC.TX_Pkt.From = CC_ADDRESS;
 
     Beep.Init();
     Beep.SetSound(&IdleBeep);
@@ -58,19 +61,72 @@ void GeneralInit(void) {
     klPrintf("\rDetector\r");
 }
 
-// =============================== Events ======================================
-//void EVENT_NewPacket(void) {
-//    int32_t RSSI_dBm = CC.RX_Pkt.RSSI;
-//    if (RSSI_dBm >= 128) RSSI_dBm -= 256;
-//    RSSI_dBm  = (RSSI_dBm / 2) - 69;
-//    //klPrintf("Ch: %u; RSSI: %i\r", CC.ChannelN, RSSI_dBm);
-//    // Display signal
-//    int32_t RSSI = RSSI_dBm + 90;
-//    if (RSSI < 1) RSSI = 1;
-//    if (RSSI > 50) RSSI = 50;
-//    Signal.Display(CC.RX_Pkt.From, RSSI);
-//}
+// ================================= CC task ===================================
+/*
+ * Both TX and RX are interrupt-driven, so IRQ enabled at init and commented out in EnterRX.
+ */
+#define MAX_COUNT   7
+typedef enum {IsCalling, IsWaiting} SearchState_t;
+SearchState_t SearchState = IsCalling;
+void CC_t::Task(void) {
+    // Proceed with state processing
+    GetState();
+    switch (State) {
+        case CC_STB_RX_OVF:
+            klPrintf("RX ovf\r");
+            FlushRxFIFO();
+            break;
+        case CC_STB_TX_UNDF:
+            klPrintf("TX undf\r");
+            FlushTxFIFO();
+            break;
 
+        case CC_STB_IDLE:
+            if (SearchState == IsCalling) { // Call alien
+                // Prepare packet to send
+                TX_Pkt.To++;
+                if (TX_Pkt.To == MAX_COUNT) TX_Pkt.To = 0;
+                WriteTX();
+                klPrintf("TX: %u\r", TX_Pkt.To);
+                EnterTX();
+            }
+            else {  // Is waiting
+                if (Delay.Elapsed(&Timer, 81)) SearchState = IsCalling;
+                else EnterRX();
+            }
+            break;
+
+        case CC_STB_RX:
+            if (Delay.Elapsed(&Timer, 81)) {
+                SearchState = IsCalling;
+                EnterIdle();
+            }
+            break;
+
+        default: // Just get out in other cases
+            //klPrintf("Other: %X\r", State);
+            break;
+    } //Switch
+}
+
+void CC_t::IRQHandler() {
+    if (SearchState == IsCalling) { // Packet transmitted, enter RX
+        SearchState = IsWaiting;
+        Delay.Reset(&Timer);
+    }
+    else { // Will be here if packet received successfully or in case of wrong address
+        if (ReadRX()) {
+            // Check address
+            if(RX_Pkt.To == CC_ADDRESS) {   // This packet is ours
+                klPrintf("From: %u; RSSI: %u\r", RX_Pkt.From, RX_Pkt.RSSI);
+                Signal.Remember(RX_Pkt.From, RX_Pkt.RSSI);
+            }
+            FlushRxFIFO();
+        } // if size>0
+    } // if is waiting
+}
+
+// =============================== Events ======================================
 void EVENT_NewBatteryState(void) {
     switch (Battery.State) {
         case bsFull:  Lcd.DrawImage(80, 0, icon_BatteryFull);  break;

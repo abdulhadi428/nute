@@ -30,11 +30,10 @@
 struct CC_Packet_t {
     uint8_t To;
     uint8_t From;
-    uint8_t Data[4];
     uint8_t RSSI;
     uint8_t LQI;
 } __attribute__ ((packed));
-#define CC_PKT_LEN  6
+#define CC_PKT_LEN  2
 
 class CC_t {
 private:
@@ -54,7 +53,7 @@ private:
 
     void RfConfig(void);
     void WriteTX ();
-    void ReadRX();
+    bool ReadRX();
     void EnterTXAndWaitToComplete(void);
     // Registers
     void WriteRegister (const uint8_t Addr, const uint8_t AData);

@@ -54,3 +54,62 @@ void GeneralInit(void) {
 
     klPrintf("\rTransmitter %u\r", ID);
 }
+
+// =============================== CC handling =================================
+/*
+ * Both TX and RX are interrupt-driven, so IRQ enabled at init and commented out in EnterRX.
+ */
+typedef enum {IsWaiting, IsReplying} WaitState_t;
+WaitState_t SearchState = IsWaiting;
+uint8_t PktCounter=0;
+
+void CC_t::Task(void) {
+    // Do with CC what needed
+    GetState();
+    switch (State) {
+        case CC_STB_RX_OVF:
+            klPrintf("RX ovf\r");
+            FlushRxFIFO();
+            break;
+        case CC_STB_TX_UNDF:
+            klPrintf("TX undf\r");
+            FlushTxFIFO();
+            break;
+
+        case CC_STB_IDLE:
+            if (SearchState == IsWaiting) {
+                EnterRX();
+            }
+            else {
+                //klPrintf("TX\r");
+                // Prepare packet to send
+                TX_Pkt.To = 207;
+                WriteTX();
+                EnterTX();
+                //klPrintf("TX\r");
+            }
+            break;
+
+        default: // Just get out in other cases
+            //klPrintf("Other: %X\r", State);
+            break;
+    } //Switch
+}
+
+void CC_t::IRQHandler() {
+    if (SearchState == IsWaiting) {
+        // Will be here if packet received successfully or in case of wrong address
+        if (ReadRX()) { // Proceed if read was successful
+            // Check address
+            if(RX_Pkt.To == ID) {   // This packet is ours
+                //klPrintf("From: %u; RSSI: %u\r", RX_Pkt.From, RX_Pkt.RSSI);
+                SearchState = IsReplying;
+                PktCounter=0;
+            }
+        } // if read
+        FlushRxFIFO();
+    }
+    else {  // Packet transmitted
+        if(++PktCounter == 4) SearchState = IsWaiting;
+    }
+}

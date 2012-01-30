@@ -9,58 +9,9 @@
 #include "cc2500_rf_settings.h"
 #include "delay_util.h"
 
-#include "main.h"
-
-// ============================ Variables ======================================
 CC_t CC;
 
 // ========================== Implementation ===================================
-void CC_t::Task(void) {
-    // Check if new packet received
-//    if(NewPktRcvd) {
-//        NewPktRcvd = false;
-//        if(EvtNewPkt != 0) EvtNewPkt();
-//        return;
-//    }
-    // Proceed with state processing
-    GetState();
-    switch (State) {
-        case CC_STB_RX_OVF:
-            klPrintf("RX ovf\r");
-            FlushRxFIFO();
-            break;
-        case CC_STB_TX_UNDF:
-            klPrintf("TX undf\r");
-            FlushTxFIFO();
-            break;
-
-        case CC_STB_IDLE:   // Set channel and goto RX
-            EnterRX();
-            break;
-
-        default: // Just get out in other cases
-            //klPrintf("Other: %X\r", State);
-            break;
-    }//Switch
-}
-
-void CC_t::IRQHandler() {
-    // Will be here if packet received successfully or in case of wrong address
-    uint8_t FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
-    FifoSize &= 0x7F;   // Remove MSB
-    //klPrintf("FIFO: %u\r", FifoSize);
-    if (FifoSize != 0) {
-        ReadRX();
-        klPrintf("Ch: %u; RSSI: %u\r", RX_Pkt.From, RX_Pkt.RSSI);
-        // Check address: remove this check in case of address check absence
-        if((RX_Pkt.To == CC_ADDRESS) && (RX_Pkt.From < 7)) {
-            Signal.Remember(RX_Pkt.From, RX_Pkt.RSSI);
-        }
-        else klPrintf("Err\r");
-        FlushRxFIFO();
-    } // if size>0
-}
-
 void CC_t::Init(void) {
     // ******** Hardware init section *******
     // ==== Clocks init ====
@@ -152,6 +103,7 @@ void CC_t::Init(void) {
     Reset();
     FlushRxFIFO();
     RfConfig();
+    CC.IRQEnable();
 }
 
 void CC_t::SetChannel(uint8_t AChannel) {
@@ -188,7 +140,7 @@ void CC_t::IRQDisable(void) {
 void CC_t::EnterRX(void) {
     //NewPktRcvd = false;
     WriteStrobe(CC_SRX);
-    IRQEnable();
+    //IRQEnable();
 }
 
 void CC_t::WriteTX() {
@@ -199,16 +151,33 @@ void CC_t::WriteTX() {
     for (uint8_t i=0; i<CC_PKT_LEN; i++) ReadWriteByte(*p++);   // Write bytes themselves
     CS_Hi();                 // End transmission
 }
-void CC_t::ReadRX() {
+
+//#define CC_PRINT_RX
+bool CC_t::ReadRX() {
     uint8_t *p = (uint8_t*)(&RX_Pkt);
+    uint8_t b;
     uint8_t FifoSize = ReadRegister(CC_RXBYTES);    // Get number of bytes in FIFO
     FifoSize &= 0x7F;                               // Remove MSB
+    if(FifoSize == 0) return false;
+#ifdef CC_PRINT_RX
+    klPrintf("Size: %u    ", FifoSize);
+#endif
     if (FifoSize > (CC_PKT_LEN+2)) FifoSize = CC_PKT_LEN+2;
     CS_Lo();                                        // Start transmission
     BusyWait();                                     // Wait for chip to become ready
     ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);              // Address with read & burst flags
-    for (uint8_t i=0; i<FifoSize; i++) *p++ = ReadWriteByte(0);     // Read bytes
-    CS_Hi();                                                        // End transmission
+    for (uint8_t i=0; i<FifoSize; i++) {    // Read bytes
+        b = ReadWriteByte(0);
+        *p++ = b;
+#ifdef CC_PRINT_RX
+        klPrintf("0x%u ", b);
+#endif
+    }
+    CS_Hi();    // End transmission
+#ifdef CC_PRINT_RX
+    klPrintf("\r");
+#endif
+    return true;
 }
 
 uint8_t CC_t::ReadRegister (uint8_t ARegAddr){
