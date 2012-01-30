@@ -68,6 +68,8 @@ void GeneralInit(void) {
 #define MAX_COUNT   7
 typedef enum {IsCalling, IsWaiting} SearchState_t;
 SearchState_t SearchState = IsCalling;
+uint8_t PktCounter=0;
+
 void CC_t::Task(void) {
     // Proceed with state processing
     GetState();
@@ -83,15 +85,12 @@ void CC_t::Task(void) {
 
         case CC_STB_IDLE:
             if (SearchState == IsCalling) { // Call alien
-                // Prepare packet to send
-                TX_Pkt.To++;
-                if (TX_Pkt.To == MAX_COUNT) TX_Pkt.To = 0;
                 WriteTX();
                 klPrintf("TX: %u\r", TX_Pkt.To);
                 EnterTX();
             }
             else {  // Is waiting
-                if (Delay.Elapsed(&Timer, 81)) SearchState = IsCalling;
+                if (Delay.Elapsed(&Timer, 27)) SearchState = IsCalling;
                 else EnterRX();
             }
             break;
@@ -111,8 +110,15 @@ void CC_t::Task(void) {
 
 void CC_t::IRQHandler() {
     if (SearchState == IsCalling) { // Packet transmitted, enter RX
-        SearchState = IsWaiting;
-        Delay.Reset(&Timer);
+        if(++PktCounter == 2) { // Several packets sent
+            PktCounter = 0;
+            // Increase packet address
+            TX_Pkt.To++;
+            if (TX_Pkt.To == MAX_COUNT) TX_Pkt.To = 0;
+            // Switch to waiting state
+            SearchState = IsWaiting;
+            Delay.Reset(&Timer);
+        }
     }
     else { // Will be here if packet received successfully or in case of wrong address
         if (ReadRX()) {

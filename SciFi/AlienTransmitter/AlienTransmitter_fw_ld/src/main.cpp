@@ -110,6 +110,6 @@ void CC_t::IRQHandler() {
         FlushRxFIFO();
     }
     else {  // Packet transmitted
-        if(++PktCounter == 4) SearchState = IsWaiting;
+        if(++PktCounter == 2) SearchState = IsWaiting;
     }
 }
