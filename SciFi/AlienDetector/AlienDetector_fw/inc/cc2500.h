@@ -24,19 +24,18 @@
 #include "cc2500defins.h"
 #include "kl_util.h"
 
-#define CC_CHNL   0
-#define CC_RX_DELAY     36
-
-#define CC_ADDR_VALUE   27        // Device address
+#define CC_CHNL     0
+#define CC_ADDRESS  27
 
 // ============================ Types & variables ==============================
 struct CC_Packet_t {
     uint8_t To;
     uint8_t From;
+    uint8_t Data[4];
     uint8_t RSSI;
     uint8_t LQI;
 } __attribute__ ((packed));
-#define CC_PKT_LEN  2
+#define CC_PKT_LEN  6
 
 class CC_t {
 private:
@@ -91,5 +90,5 @@ extern "C" {
 void EXTI3_IRQHandler(void);
 }
 
-#endif	/* _CC1101_H */
+#endif	/* _CC2500_H */
 

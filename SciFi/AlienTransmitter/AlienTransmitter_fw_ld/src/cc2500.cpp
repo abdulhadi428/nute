@@ -16,11 +16,10 @@ CC_t CC;
 // ========================== Implementation ===================================
 void CC_t::Task(void) {
     // Handle New Packet
-    if(NewPktRcvd) {
-        if(EvtNewPkt != 0) EvtNewPkt();
-        NewPktRcvd = false;
-    }
-
+//    if(NewPktRcvd) {
+//        if(EvtNewPkt != 0) EvtNewPkt();
+//        NewPktRcvd = false;
+//    }
     // Do with CC what needed
     GetState();
     switch (State) {
@@ -34,20 +33,22 @@ void CC_t::Task(void) {
             break;
 
         case CC_STB_IDLE:
-            //if (Delay.Elapsed(&Timer, 198)) {
                 //klPrintf("TX\r");
                 // Prepare packet to send
-                TX_Pkt.To = CC_ADDR_VALUE;
+                TX_Pkt.To = 27;
+                TX_Pkt.Data[0] = 4;
+                TX_Pkt.Data[1] = 7;
+                TX_Pkt.Data[2] = 9;
+                TX_Pkt.Data[3] = 11;
                 WriteTX();
                 IRQDisable();
                 EnterTX();
-            //}
             break;
 
         default: // Just get out in other cases
             //klPrintf("Other: %X\r", State);
             break;
-    }//Switch
+    } //Switch
 }
 
 void CC_t::IRQHandler() {

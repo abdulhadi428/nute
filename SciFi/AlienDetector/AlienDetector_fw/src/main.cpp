@@ -47,6 +47,7 @@ void GeneralInit(void) {
 
     CC.Init();
     CC.SetChannel(CC_CHNL);
+    CC.SetAddress(CC_ADDRESS);
     //CC.EvtNewPkt = EVENT_NewPacket;
 
     Beep.Init();

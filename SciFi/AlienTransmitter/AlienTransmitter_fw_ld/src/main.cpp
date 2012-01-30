@@ -50,6 +50,7 @@ void GeneralInit(void) {
     CC.Init();
     CC.TX_Pkt.From = ID;
     CC.SetChannel(CC_CHNL);
+    CC.SetAddress(ID);
 
-    klPrintf("\rTransmitter\r");
+    klPrintf("\rTransmitter %u\r", ID);
 }

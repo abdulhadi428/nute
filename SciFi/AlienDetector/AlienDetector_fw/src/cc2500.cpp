@@ -53,7 +53,7 @@ void CC_t::IRQHandler() {
         ReadRX();
         klPrintf("Ch: %u; RSSI: %u\r", RX_Pkt.From, RX_Pkt.RSSI);
         // Check address: remove this check in case of address check absence
-        if((RX_Pkt.To == CC_ADDR_VALUE) && (RX_Pkt.From < 7)) {
+        if((RX_Pkt.To == CC_ADDRESS) && (RX_Pkt.From < 7)) {
             Signal.Remember(RX_Pkt.From, RX_Pkt.RSSI);
         }
         else klPrintf("Err\r");
@@ -152,7 +152,6 @@ void CC_t::Init(void) {
     Reset();
     FlushRxFIFO();
     RfConfig();
-    SetAddress(CC_ADDR_VALUE);
 }
 
 void CC_t::SetChannel(uint8_t AChannel) {
@@ -201,21 +200,15 @@ void CC_t::WriteTX() {
     CS_Hi();                 // End transmission
 }
 void CC_t::ReadRX() {
-    //uint8_t *p = (uint8_t*)(&RX_Pkt);
-    uint8_t FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
-    FifoSize &= 0x7F;   // Remove MSB
-    klPrintf("FIFO: %u   ", FifoSize);
-    uint8_t b;
-    CS_Lo();                 // Start transmission
-    BusyWait();              // Wait for chip to become ready
-    ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);                  // Address with read & burst flags
-//    for (uint8_t i=0; i<(CC_PKT_LEN+2); i++) *p++ = ReadWriteByte(0);   // Read bytes
-    for (uint8_t i=0; i<FifoSize; i++) {
-        b = ReadWriteByte(0);
-        klPrintf("0x%X ", b);
-    }
-    klPrintf("\r");
-    CS_Hi();                 // End transmission
+    uint8_t *p = (uint8_t*)(&RX_Pkt);
+    uint8_t FifoSize = ReadRegister(CC_RXBYTES);    // Get number of bytes in FIFO
+    FifoSize &= 0x7F;                               // Remove MSB
+    if (FifoSize > (CC_PKT_LEN+2)) FifoSize = CC_PKT_LEN+2;
+    CS_Lo();                                        // Start transmission
+    BusyWait();                                     // Wait for chip to become ready
+    ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);              // Address with read & burst flags
+    for (uint8_t i=0; i<FifoSize; i++) *p++ = ReadWriteByte(0);     // Read bytes
+    CS_Hi();                                                        // End transmission
 }
 
 uint8_t CC_t::ReadRegister (uint8_t ARegAddr){

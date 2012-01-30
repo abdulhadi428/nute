@@ -26,16 +26,15 @@
 
 #define CC_CHNL   0
 
-#define CC_ADDR_VALUE   27        // Device address
-
 // ============================ Types & variables ==============================
 struct CC_Packet_t {
     uint8_t To;
     uint8_t From;
+    uint8_t Data[4];
     uint8_t RSSI;
     uint8_t LQI;
 } __attribute__ ((packed));
-#define CC_PKT_LEN  2
+#define CC_PKT_LEN  6
 
 class CC_t {
 private:
@@ -81,8 +80,6 @@ public:
     void SetAddress(uint8_t AAddr) { WriteRegister(CC_ADDR, AAddr); }
     // IRQ handler
     void IRQHandler(void);
-    // Project-specific
-    uint8_t ChannelN;
 };
 
 extern CC_t CC;
@@ -92,5 +89,5 @@ extern "C" {
 void EXTI3_IRQHandler(void);
 }
 
-#endif	/* _CC1101_H */
+#endif	/* _CC2500_H */
 

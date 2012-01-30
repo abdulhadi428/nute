@@ -14,10 +14,6 @@
 #define CC_BITRATE_10K
 //#define CC_BITRATE_250K
 
-// ============================ Common use values ==============================
-#define CC_TX_FIFO_SIZE     33
-#define CC_RX_FIFO_SIZE     32
-
 // =================================== Power ===================================
 //#define CC_PATABLE0_VALUE   0x00    // -55 dBm
 //#define CC_PATABLE0_VALUE   0x50    // -30 dBm
@@ -31,17 +27,18 @@
 
 
 // ================================= Frequency =================================
-#define CC_FREQ2_VALUE      0x58        // Frequency control word, high byte.
-#define CC_FREQ1_VALUE      0xE3        // Frequency control word, middle byte.
-#define CC_FREQ0_VALUE      0x8E        // Frequency control word, low byte.
+// 2430 MHz
+#define CC_FREQ2_VALUE      0x5A        // Frequency control word, high byte.
+#define CC_FREQ1_VALUE      0x00        // Frequency control word, middle byte.
+#define CC_FREQ0_VALUE      0x00        // Frequency control word, low byte.
 
 // =================================== Common ==================================
 #define CC_MDMCFG1_VALUE    0b10100010  // FEC=1, Preamble length=010 => 4bytes, +Channel spacing
 //#define CC_MDMCFG1_VALUE    0b10100011  // FEC=1, Preamble length=010 => 4bytes, +Channel spacing=11=MAX
 
-#define CC_MCSM1_VALUE      0b00001100  // Channel is always clear, RX->RX,   TX->IDLE
+//#define CC_MCSM1_VALUE      0b00001100  // Channel is always clear, RX->RX,   TX->IDLE
 //#define CC_MCSM1_VALUE      0b00001111  // Channel is always clear, RX->RX,   TX->RX
-//#define CC_MCSM1_VALUE      0b00000000  // Channel is always clear, RX->IDLE, TX->IDLE
+#define CC_MCSM1_VALUE      0b00000000  // Channel is always clear, RX->IDLE, TX->IDLE
 //#define CC_MCSM1_VALUE      0b00000011  // Channel is always clear, RX->IDLE, TX->RX
 #define CC_MCSM0_VALUE      0x18        // Calibrate at IDLE->RX,TX
 
@@ -50,6 +47,8 @@
 //#define CC_IOCFG0_VALUE     0x0E        // GDO0 - Carrier sence
 #define CC_IOCFG0_VALUE     0x06        // GDO0 - Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
                                         // In RX, the pin will de-assert when the optional address check fails or the RX FIFO overflows.
+//#define CC_IOCFG0_VALUE     0x01        // GDO0 - Associated to the RX FIFO: Asserts when RX FIFO is filled at or above the RX FIFO threshold
+                                        // or the end of packet is reached. De-asserts when RX FIFO is drained below the same threshold.
 
 //#define CC_PKTCTRL1_VALUE   0b00001100  // PQT=0, CRC autoflush=1, Append=1, Address check = 00 (no check)
 #define CC_PKTCTRL1_VALUE   0b00001101  // PQT=0, CRC autoflush=1, Append=1, Address check = 01 (check, no broadcast)
@@ -63,15 +62,13 @@
 #define CC_FSCTRL1_VALUE    0x06        // Frequency synthesizer control: IF - RF studio
 #define CC_FSCTRL0_VALUE    0x00        // Frequency synthesizer control: freq offset
 
-#define CC_MDMCFG4_VALUE    0x88        // Modem configuration }
+#define CC_MDMCFG4_VALUE    0x78        // Modem configuration }
 #define CC_MDMCFG3_VALUE    0x84        // Modem configuration } frequencies
 #define CC_MDMCFG2_VALUE    0x03        // Filter, modulation=2FSK, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
 //#define CC_MDMCFG2_VALUE    0x13        // Filter, modulation=GFSK, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
-//#define CC_MDMCFG0_VALUE    0xE5        // Modem configuration: frequencies
-#define CC_MDMCFG0_VALUE    0xF8        // Modem configuration: channel spacing
+#define CC_MDMCFG0_VALUE    0xE5        // Modem configuration: channel spacing
 
-//#define CC_DEVIATN_VALUE    0x43        // Deviation: 38kHz @ 27MHz crystal
-#define CC_DEVIATN_VALUE    0x53        // Deviation: 73kHz @ 27MHz crystal
+#define CC_DEVIATN_VALUE    0x43        // Deviation: 36kHz @ 27MHz crystal
 
 #define CC_FREND1_VALUE     0x56        // Front end RX configuration - RF studio
 #define CC_FREND0_VALUE     0x10        // Front end TX configuration.
@@ -79,7 +76,11 @@
 #define CC_MCSM2_VALUE      0b00000111
 
 #define CC_FOCCFG_VALUE     0x16        // Frequency Offset Compensation Configuration - RF studio
-#define CC_BSCFG_VALUE      0x6C        // Bit synchronization Configuration - RF studio
+// Bit synchronization Configuration
+#define CC_BSCFG_VALUE      0b01101100  // ±0% data rate offset
+//#define CC_BSCFG_VALUE      0b01101101  // ±3.125% data rate offset
+//#define CC_BSCFG_VALUE      0b01101110  // ±6.25% data rate offset
+//#define CC_BSCFG_VALUE      0b01101111  // ±12.5% data rate offset
 #define CC_AGCCTRL2_VALUE   0x43        // }
 #define CC_AGCCTRL1_VALUE   0x40        // }
 #define CC_AGCCTRL0_VALUE   0x91        // } AGC control: RF studio
