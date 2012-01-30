@@ -36,7 +36,7 @@ void GeneralInit(void) {
     UART_Init();
 
     Bcklt.Init();
-    Bcklt.On(10);
+    Bcklt.On(100);
 
     Lcd.Init();
 
@@ -46,6 +46,7 @@ void GeneralInit(void) {
     Battery.EvtNewState = EVENT_NewBatteryState;
 
     CC.Init();
+    CC.SetChannel(CC_CHNL);
     //CC.EvtNewPkt = EVENT_NewPacket;
 
     Beep.Init();
@@ -79,29 +80,35 @@ void EVENT_NewBatteryState(void) {
 
 // ============================= Signal_t ======================================
 void Signal_t::Task() {
+    bool IsIdle = true;
     // Check all channels if displaying needed
     for (uint8_t i=0; i<7; i++) {
         if (INew[i]) {
             INew[i] = false;
             Lcd.DrawPeak(i, IRSSI[i]);
-            if (IRSSI[i] > 4) Beep.SetSound(&AlienBeep);
+            Beep.SetSound(&AlienBeep);
+            Exists[i] = true;
         } // if new
+        else if (Delay.Elapsed(&ITimer[i], 999)) {  // not new and timeout passed
+            Lcd.DrawPeak(i, 0); // Clear peak
+            Exists[i] = false;
+        }
+        // Check if set Idle sound
+        if (Exists[i]) IsIdle = false;
     } // for
 
     // Set idle sound if needed
-    if (Delay.Elapsed(&ITimer, 999)) {
-        for (uint8_t i=0; i<7; i++) if (IRSSI[i] > 4) return;   // no need
-        Beep.SetSound(&IdleBeep);
-    }
+    if (IsIdle) Beep.SetSound(&IdleBeep);
 }
 
 void Signal_t::Remember(uint8_t AChannel, int32_t RawRSSI) {
     INew[AChannel] = true;
+    Delay.Reset(&ITimer[AChannel]);
     if (RawRSSI >= 128) RawRSSI -= 256;
     RawRSSI = (RawRSSI / 2) - 69;    // now it in dBm
     // Scale to display
     RawRSSI += 90;
-    if (RawRSSI < 0) RawRSSI = 0;
+    if (RawRSSI < 0) RawRSSI = 1;
     if (RawRSSI > 50) RawRSSI = 50;
     IRSSI[AChannel] = RawRSSI;
 }

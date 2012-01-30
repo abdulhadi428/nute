@@ -243,7 +243,6 @@ void CC_t::RfConfig(void){
     WriteRegister(CC_MDMCFG2,  CC_MDMCFG2_VALUE);    // Modem configuration.
     WriteRegister(CC_MDMCFG1,  CC_MDMCFG1_VALUE);    // Modem configuration.
     WriteRegister(CC_MDMCFG0,  CC_MDMCFG0_VALUE);    // Modem configuration.
-    WriteRegister(CC_CHANNR,   CC_CHANNR_VALUE);     // Channel number.
     WriteRegister(CC_DEVIATN,  CC_DEVIATN_VALUE);    // Modem deviation setting (when FSK modulation is enabled).
     WriteRegister(CC_FREND1,   CC_FREND1_VALUE);     // Front end RX configuration.
     WriteRegister(CC_FREND0,   CC_FREND0_VALUE);     // Front end RX configuration.

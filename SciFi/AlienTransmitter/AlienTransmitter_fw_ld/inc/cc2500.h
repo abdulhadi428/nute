@@ -24,9 +24,7 @@
 #include "cc2500defins.h"
 #include "kl_util.h"
 
-#define CC_CHNL_START   0
-#define CC_CHNL_COUNT   7
-#define CC_RX_DELAY     180
+#define CC_CHNL   0
 
 #define CC_ADDR_VALUE   27        // Device address
 

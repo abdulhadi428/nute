@@ -12,8 +12,8 @@
 
 class Signal_t {
 private:
-    uint32_t ITimer;
-    bool INew[8];
+    uint32_t ITimer[8];
+    bool INew[8], Exists[8];
     int32_t IRSSI[8];
 public:
     void Init(void);

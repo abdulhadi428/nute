@@ -22,8 +22,6 @@ void CC_t::Task(void) {
 //        if(EvtNewPkt != 0) EvtNewPkt();
 //        return;
 //    }
-    static uint32_t rssi, counter;
-
     // Proceed with state processing
     GetState();
     switch (State) {
@@ -37,29 +35,7 @@ void CC_t::Task(void) {
             break;
 
         case CC_STB_IDLE:   // Set channel and goto RX
-            // Increase channel
-            ChannelN++;
-            if (ChannelN == CC_CHNL_COUNT) ChannelN = 0;
-            //klPrintf("Ch: %u\r", ChannelN);
-            SetChannel(CC_CHNL_START + ChannelN);
-            rssi=0;
-            counter=0;
             EnterRX();
-            break;
-
-        case CC_STB_RX: // Will be here until timeout occure: RX->RX
-            if(Delay.Elapsed(&Timer, CC_RX_DELAY)) {
-                EnterIdle();
-                //klPrintf("ch: %u; r: %u; c: %u\r", ChannelN, rssi, counter);
-                rssi /= counter;
-
-                Signal.Remember(ChannelN, rssi);
-            }
-            else {
-                uint8_t r = ReadRegister(CC_RSSI);
-                rssi += r;
-                counter++;
-            }
             break;
 
         default: // Just get out in other cases
@@ -72,14 +48,16 @@ void CC_t::IRQHandler() {
     // Will be here if packet received successfully or in case of wrong address
     uint8_t FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
     FifoSize &= 0x7F;   // Remove MSB
+    //klPrintf("FIFO: %u\r", FifoSize);
     if (FifoSize != 0) {
-        ReadRX();    // Read two extra bytes of RSSI & LQI
-        // Check address
-        if(RX_Pkt.To == CC_ADDR_VALUE) NewPktRcvd = true;   // remove this check in case of address check absence
-        //NewPktRcvd = true;
+        ReadRX();
+        klPrintf("Ch: %u; RSSI: %u\r", RX_Pkt.From, RX_Pkt.RSSI);
+        // Check address: remove this check in case of address check absence
+        if((RX_Pkt.To == CC_ADDR_VALUE) && (RX_Pkt.From < 7)) {
+            Signal.Remember(RX_Pkt.From, RX_Pkt.RSSI);
+        }
+        else klPrintf("Err\r");
         FlushRxFIFO();
-        Signal.Remember(ChannelN, RX_Pkt.RSSI);
-        klPrintf("Ch: %u; RSSI: %u\r", ChannelN, RX_Pkt.RSSI);
     } // if size>0
 }
 
@@ -174,7 +152,6 @@ void CC_t::Init(void) {
     Reset();
     FlushRxFIFO();
     RfConfig();
-    ChannelN = 0;
     SetAddress(CC_ADDR_VALUE);
 }
 
@@ -212,7 +189,7 @@ void CC_t::IRQDisable(void) {
 void CC_t::EnterRX(void) {
     //NewPktRcvd = false;
     WriteStrobe(CC_SRX);
-    //IRQEnable();
+    IRQEnable();
 }
 
 void CC_t::WriteTX() {
@@ -224,11 +201,20 @@ void CC_t::WriteTX() {
     CS_Hi();                 // End transmission
 }
 void CC_t::ReadRX() {
-    uint8_t *p = (uint8_t*)(&RX_Pkt);
+    //uint8_t *p = (uint8_t*)(&RX_Pkt);
+    uint8_t FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
+    FifoSize &= 0x7F;   // Remove MSB
+    klPrintf("FIFO: %u   ", FifoSize);
+    uint8_t b;
     CS_Lo();                 // Start transmission
     BusyWait();              // Wait for chip to become ready
     ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);                  // Address with read & burst flags
-    for (uint8_t i=0; i<(CC_PKT_LEN+2); i++) *p++ = ReadWriteByte(0);   // Read bytes
+//    for (uint8_t i=0; i<(CC_PKT_LEN+2); i++) *p++ = ReadWriteByte(0);   // Read bytes
+    for (uint8_t i=0; i<FifoSize; i++) {
+        b = ReadWriteByte(0);
+        klPrintf("0x%X ", b);
+    }
+    klPrintf("\r");
     CS_Hi();                 // End transmission
 }
 
@@ -267,7 +253,6 @@ void CC_t::RfConfig(void){
     WriteRegister(CC_MDMCFG2,  CC_MDMCFG2_VALUE);    // Modem configuration.
     WriteRegister(CC_MDMCFG1,  CC_MDMCFG1_VALUE);    // Modem configuration.
     WriteRegister(CC_MDMCFG0,  CC_MDMCFG0_VALUE);    // Modem configuration.
-    WriteRegister(CC_CHANNR,   CC_CHANNR_VALUE);     // Channel number.
     WriteRegister(CC_DEVIATN,  CC_DEVIATN_VALUE);    // Modem deviation setting (when FSK modulation is enabled).
     WriteRegister(CC_FREND1,   CC_FREND1_VALUE);     // Front end RX configuration.
     WriteRegister(CC_FREND0,   CC_FREND0_VALUE);     // Front end RX configuration.

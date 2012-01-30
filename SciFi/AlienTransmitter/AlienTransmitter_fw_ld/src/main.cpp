@@ -11,6 +11,8 @@
 #include "led.h"
 #include "cc2500.h"
 
+uint16_t ID;
+
 void GeneralInit(void);
 
 int main(void) {
@@ -22,7 +24,7 @@ int main(void) {
 }
 
 void GeneralInit(void) {
-    // Get number of channel: set by pins
+    // Get self ID: set by pins
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -31,7 +33,7 @@ void GeneralInit(void) {
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     Delay.ms(1);
     // Read ID
-    uint16_t ID = GPIO_ReadInputData(GPIOB);
+    ID = GPIO_ReadInputData(GPIOB);
     ID &= 0x07; // clear all unneeded
     if (ID > 6) ID = 0;
     // Deinit pins
@@ -47,7 +49,7 @@ void GeneralInit(void) {
     // Setup CC
     CC.Init();
     CC.TX_Pkt.From = ID;
-    CC.SetChannel(CC_CHNL_START + ID);
+    CC.SetChannel(CC_CHNL);
 
     klPrintf("\rTransmitter\r");
 }

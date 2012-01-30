@@ -36,8 +36,8 @@
 #define CC_FREQ0_VALUE      0x8E        // Frequency control word, low byte.
 
 // =================================== Common ==================================
-//#define CC_MDMCFG1_VALUE    0b10100010  // FEC=1, Preamble length=010 => 4bytes, +Channel spacing
-#define CC_MDMCFG1_VALUE    0b10100011  // FEC=1, Preamble length=010 => 4bytes, +Channel spacing=11=MAX
+#define CC_MDMCFG1_VALUE    0b10100010  // FEC=1, Preamble length=010 => 4bytes, +Channel spacing
+//#define CC_MDMCFG1_VALUE    0b10100011  // FEC=1, Preamble length=010 => 4bytes, +Channel spacing=11=MAX
 
 #define CC_MCSM1_VALUE      0b00001100  // Channel is always clear, RX->RX,   TX->IDLE
 //#define CC_MCSM1_VALUE      0b00001111  // Channel is always clear, RX->RX,   TX->RX
@@ -52,10 +52,11 @@
                                         // In RX, the pin will de-assert when the optional address check fails or the RX FIFO overflows.
 
 //#define CC_PKTCTRL1_VALUE   0b00001100  // PQT=0, CRC autoflush=1, Append=1, Address check = 00 (no check)
-//#define CC_PKTCTRL1_VALUE   0b00001101  // PQT=0, CRC autoflush=1, Append=1, Address check = 01 (check, no broadcast)
+#define CC_PKTCTRL1_VALUE   0b00001101  // PQT=0, CRC autoflush=1, Append=1, Address check = 01 (check, no broadcast)
 //#define CC_PKTCTRL1_VALUE   0b00000101  // PQT=0, CRC autoflush=0, Append=1, Address check = 01 (check, no broadcast)
-#define CC_PKTCTRL1_VALUE   0b00001110  // PQT=0, CRC autoflush=1, Append=1, Address check = 10 (check, 0 is broadcast)
+//#define CC_PKTCTRL1_VALUE   0b00001110  // PQT=0, CRC autoflush=1, Append=1, Address check = 10 (check, 0 is broadcast)
 #define CC_PKTCTRL0_VALUE   0b01000100  // WhiteData=1, PKTFormat=normal, CC2400_EN=0, CRC enabled, Fixed Length
+//#define CC_PKTCTRL0_VALUE   0b00000000  // WhiteData=0, PKTFormat=normal, CC2400_EN=0, CRC disabled, Fixed Length
 
 // ========================= Bitrate-specific ==================================
 #ifdef CC_BITRATE_10K
@@ -67,7 +68,7 @@
 #define CC_MDMCFG2_VALUE    0x03        // Filter, modulation=2FSK, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
 //#define CC_MDMCFG2_VALUE    0x13        // Filter, modulation=GFSK, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
 //#define CC_MDMCFG0_VALUE    0xE5        // Modem configuration: frequencies
-#define CC_MDMCFG0_VALUE    0xFF        // Modem configuration: MAX channel spacing
+#define CC_MDMCFG0_VALUE    0xF8        // Modem configuration: channel spacing
 
 //#define CC_DEVIATN_VALUE    0x43        // Deviation: 38kHz @ 27MHz crystal
 #define CC_DEVIATN_VALUE    0x53        // Deviation: 73kHz @ 27MHz crystal
@@ -163,12 +164,9 @@
 #endif
 
 // ********************
-
 // Rare use settings
 #define CC_SYNC1_VALUE      0xD3    // }
 #define CC_SYNC0_VALUE      0x91    // } SYNC word to transmit
-
-#define CC_CHANNR_VALUE     0x00    // Channel number.
 
 
 #endif	/* _CC_RF_SETTINGS_H */
