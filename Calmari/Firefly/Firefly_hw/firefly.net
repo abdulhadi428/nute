@@ -1,0 +1,92 @@
+# EESchema Netlist Version 1.1 created  05/02/2012 15:49:36
+(
+ ( /4F2E5006 SMD0805 C1 4.7u
+  ( 1 /In )
+  ( 2 GND )
+ )
+ ( /4F2E4FD6 SMD0805 C2 1u
+  ( 1 /Out )
+  ( 2 GND )
+ )
+ ( /4F2E4F47 DIODE_SOD323 D1 BAT54WS
+  ( A /LOut )
+  ( C /Out )
+ )
+ ( /4F2E4F6F LED0603 D2 LED
+  ( A /Out )
+  ( C /LedLow )
+ )
+ ( /4F2E4F87 LED-3MM D3 LED
+  ( A /Out )
+  ( C /LedLow )
+ )
+ ( /4F2E4FA0 DIODE_SOD80C D4 BZV55-C24
+  ( A /LedLow )
+  ( C /Out )
+ )
+ ( /4F2E4F05 SOT23-6 DA1 LT1932
+  ( 1 /LOut )
+  ( 2 GND )
+  ( 3 /LedLow )
+  ( 4 N-000002 )
+  ( 5 /In )
+  ( 6 /In )
+ )
+ ( /4F2E50BA INDUCTOR_1812 L1 6.8uH
+  ( 1 /LOut )
+  ( 2 /In )
+ )
+ ( /4F2E4F13 INDUCTOR_HOLE_M L2 6.8uH
+  ( 1 /LOut )
+  ( 2 /In )
+ )
+ ( /4F2E5045 SMD0603 R1 1.2k
+  ( 1 N-000002 )
+  ( 2 GND )
+ )
+ ( /4F2E5201 SIL1_SQUARE_1MM5 XL1 CONN_1
+  ( 1 /In )
+ )
+ ( /4F2E5204 SIL1_ROUND_1MM5 XL2 CONN_1
+  ( 1 GND )
+ )
+ ( /4F2E5200 SIL1_ROUND_1MM5 XL3 CONN_1
+  ( 1 GND )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C1
+ SMD*
+$endlist
+$component C2
+ SMD*
+$endlist
+$component D1
+ D*
+$endlist
+$component D2
+ LED*
+$endlist
+$component D3
+ LED*
+$endlist
+$component D4
+ D*
+$endlist
+$component DA1
+ SOT23-6
+$endlist
+$component L1
+ INDUCTOR*
+ SMD*
+$endlist
+$component L2
+ INDUCTOR*
+ SMD*
+$endlist
+$component R1
+ SMD*
+$endlist
+$endfootprintlist
+}

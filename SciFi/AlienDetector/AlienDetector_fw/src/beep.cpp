@@ -10,18 +10,18 @@
 BeepSnd_t IdleBeep = {
         2,
         {
-            {1000, 2, 100},
+            {880, 9, 100},
             {0,   0, 1503},
         }
 };
 BeepSnd_t AlienBeep = {
         6,
         {
-            {1800,  5,  150},   // On
+            {1800,  7,  150},   // On
             {0,     0,   35},   // Off
-            {1800, 10,  170},   // On
+            {1800, 18,  170},   // On
             {0,     0,   35},   // Off
-            {1800,  5,  114},   // On
+            {1800,  7,  114},   // On
             {0,     0,  500},   // Off
         }
 };
@@ -60,13 +60,19 @@ void Beep_t::Task() {
             Delay.Reset(&ITimer);
         }
     }
+    // Switch to next sound if current chunk is last
+    if ((ISnd != NewSnd) && (ICounter == (ISnd->ChunkCount-1))) {
+        ICounter = 0;
+        ISnd = NewSnd;
+        if (ISnd->Chunks[ICounter].Volume != 0) On();
+        else Off();
+        Delay.Reset(&ITimer);
+    }
+
     if (Delay.Elapsed(&ITimer, ISnd->Chunks[ICounter].Length)) {
         // Switch to next chunk
         ICounter++;
-        if(ICounter == ISnd->ChunkCount) {  // Current beep finished
-            ICounter = 0;
-            ISnd = NewSnd;                  // Switch to new sound
-        }
+        if(ICounter == ISnd->ChunkCount) ICounter = 0;  // Current beep finished
         // Set current snd params
         if (ISnd->Chunks[ICounter].Volume != 0) On();
         else Off();
