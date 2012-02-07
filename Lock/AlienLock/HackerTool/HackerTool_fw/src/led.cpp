@@ -31,8 +31,7 @@ void Led_t::Init(GPIO_TypeDef* AGPIO, uint16_t APin) {
 
 void Led_t::Blink(void) {
     IsInsideBlink = true;
-    if (IsOn) Off();
-    else On();
+    On();
     Delay.Reset(&Timer);
 }
 

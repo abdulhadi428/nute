@@ -29,6 +29,7 @@ typedef void(*ftVoid_Void)(void);
 // Prototypes
 char *UintToStr(uint32_t AValue, char* S);
 void UART_Init(void);
+void UART_Print (uint8_t AByte);
 void klPrintf(const char *S, ...);
 
 

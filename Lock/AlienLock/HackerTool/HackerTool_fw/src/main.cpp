@@ -10,6 +10,9 @@
 #include "kl_util.h"
 #include "main.h"
 #include "led.h"
+#include "adc.h"
+
+UartBuf_t Buf;
 
 int main(void) {
     GeneralInit();
@@ -17,6 +20,7 @@ int main(void) {
     while (1) {
         Led1.Task();
         Led2.Task();
+        Buf.Task();
     } // while 1
 }
 
@@ -26,9 +30,11 @@ void GeneralInit(void) {
     UART_Init();
 
     KLUartInit();
+    Adc.Init();
+    Buf.Init();
+
     Led1.Init(GPIOB, GPIO_Pin_10);
     Led2.Init(GPIOB, GPIO_Pin_11);
-
     Led1.Blink();
     Led2.Blink();
 
@@ -42,20 +48,22 @@ void USART1_IRQHandler(void) {
         // Read one byte from the receive data register
         uint16_t b = USART_ReceiveData(USART1);
         if (b == 'U') {
-            klPrintf("U:%X\r", 0xDEADBEEF);
+            klPrintf("U:%u\r", Adc.Measure());
             Led1.Blink();
         }
         else {
             Led2.Blink();
-            USART_SendData(USART2, b);
-            // Loop until the end of transmission
-            while (USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET);
+            Buf.Add(b);
         }
     } // if rx
 }
 
 void USART2_IRQHandler(void) {
-
+    if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) {
+        // Read one byte from the receive data register
+        uint8_t b = USART_ReceiveData(USART2);
+        UART_Print(b);  // Send immediately
+    } // if rx
 }
 
 // =============================== USARTs ======================================
@@ -100,17 +108,31 @@ void KLUartInit(void) {
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
     // Enable the USART2 Interrupt
-//    NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-//    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-//    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//    NVIC_Init(&NVIC_InitStructure);
+    NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 
     USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-    //USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
 
     // Enable USARTs
     USART_Cmd(USART1, ENABLE);
     USART_Cmd(USART2, ENABLE);
 }
 
+// ================================= UartBuf_t =================================
+void UartBuf_t::Add(uint8_t AByte) {
+    IBuf[WCounter++] = AByte;
+    if (WCounter == BUF_SIZE) WCounter = 0;
+}
+void UartBuf_t::Task(void) {
+    // Check if may write
+    if (USART_GetFlagStatus(USART2, USART_FLAG_TC) == SET) {    // Transmission complete
+        if (RCounter != WCounter) {
+            USART_SendData(USART2, IBuf[RCounter++]);
+            if (RCounter == BUF_SIZE) RCounter = 0;
+        } // if not empty
+    } // if transmission complete
+}
 
