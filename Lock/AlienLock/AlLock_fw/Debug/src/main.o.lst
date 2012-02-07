@@ -1,0 +1,104 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"main.cpp"
+  14              		.section	.text._Z11GeneralInitv,"ax",%progbits
+  15              		.align	1
+  16              		.global	_Z11GeneralInitv
+  17              		.thumb
+  18              		.thumb_func
+  20              	_Z11GeneralInitv:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 10B5     		push	{r4, lr}
+  24 0002 0B4C     		ldr	r4, .L2
+  25 0004 FFF7FEFF 		bl	UART_Init
+  26 0008 6421     		movs	r1, #100
+  27 000a 2046     		mov	r0, r4
+  28 000c FFF7FEFF 		bl	_ZN7Delay_t2msEm
+  29 0010 0848     		ldr	r0, .L2+4
+  30 0012 FFF7FEFF 		bl	klPrintf
+  31 0016 0121     		movs	r1, #1
+  32 0018 0748     		ldr	r0, .L2+8
+  33 001a FFF7FEFF 		bl	GPIO_PinRemapConfig
+  34 001e 4FF48060 		mov	r0, #1024
+  35 0022 FFF7FEFF 		bl	NVIC_PriorityGroupConfig
+  36 0026 2046     		mov	r0, r4
+  37 0028 BDE81040 		pop	{r4, lr}
+  38 002c FFF7FEBF 		b	_ZN7Delay_t4InitEv
+  39              	.L3:
+  40              		.align	2
+  41              	.L2:
+  42 0030 00000000 		.word	Delay
+  43 0034 00000000 		.word	.LC0
+  44 0038 00023000 		.word	3146240
+  46              		.section	.text.startup.main,"ax",%progbits
+  47              		.align	1
+  48              		.global	main
+  49              		.thumb
+  50              		.thumb_func
+  52              	main:
+  53              		@ Volatile: function does not return.
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56 0000 08B5     		push	{r3, lr}
+  57 0002 FFF7FEFF 		bl	_Z11GeneralInitv
+  58              	.L5:
+  59 0006 FEE7     		b	.L5
+  61              		.section	.text._Z10ReadConfigv,"ax",%progbits
+  62              		.align	1
+  63              		.global	_Z10ReadConfigv
+  64              		.thumb
+  65              		.thumb_func
+  67              	_Z10ReadConfigv:
+  68              		@ args = 0, pretend = 0, frame = 0
+  69              		@ frame_needed = 0, uses_anonymous_args = 0
+  70              		@ link register save eliminated.
+  71 0000 0120     		movs	r0, #1
+  72 0002 7047     		bx	lr
+  74              		.section	.text._Z21EVENT_SomeoneDetectedv,"ax",%progbits
+  75              		.align	1
+  76              		.global	_Z21EVENT_SomeoneDetectedv
+  77              		.thumb
+  78              		.thumb_func
+  80              	_Z21EVENT_SomeoneDetectedv:
+  81              		@ args = 0, pretend = 0, frame = 0
+  82              		@ frame_needed = 0, uses_anonymous_args = 0
+  83              		@ link register save eliminated.
+  84 0000 7047     		bx	lr
+  86              		.section	.rodata.str1.1,"aMS",%progbits,1
+  87              	.LC0:
+  88 0000 204C6F63 		.ascii	" Lock is on\015\000"
+  88      6B206973 
+  88      206F6E0D 
+  88      00
+  89              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.cpp
+C:\Users\kreyl\AppData\Local\Temp\ccWcJj93.s:15     .text._Z11GeneralInitv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccWcJj93.s:20     .text._Z11GeneralInitv:00000000 _Z11GeneralInitv
+C:\Users\kreyl\AppData\Local\Temp\ccWcJj93.s:42     .text._Z11GeneralInitv:00000030 $d
+C:\Users\kreyl\AppData\Local\Temp\ccWcJj93.s:47     .text.startup.main:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccWcJj93.s:52     .text.startup.main:00000000 main
+C:\Users\kreyl\AppData\Local\Temp\ccWcJj93.s:62     .text._Z10ReadConfigv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccWcJj93.s:67     .text._Z10ReadConfigv:00000000 _Z10ReadConfigv
+C:\Users\kreyl\AppData\Local\Temp\ccWcJj93.s:75     .text._Z21EVENT_SomeoneDetectedv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccWcJj93.s:80     .text._Z21EVENT_SomeoneDetectedv:00000000 _Z21EVENT_SomeoneDetectedv
+
+UNDEFINED SYMBOLS
+UART_Init
+_ZN7Delay_t2msEm
+klPrintf
+GPIO_PinRemapConfig
+NVIC_PriorityGroupConfig
+_ZN7Delay_t4InitEv
+Delay

@@ -1,0 +1,485 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"vs.cpp"
+  14              		.section	.text._ZN4VS_t4InitEv,"ax",%progbits
+  15              		.align	1
+  16              		.global	_ZN4VS_t4InitEv
+  17              		.thumb
+  18              		.thumb_func
+  20              	_ZN4VS_t4InitEv:
+  21              		@ args = 0, pretend = 0, frame = 24
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 30B5     		push	{r4, r5, lr}
+  24 0002 2A4C     		ldr	r4, .L2
+  25 0004 87B0     		sub	sp, sp, #28
+  26 0006 0121     		movs	r1, #1
+  27 0008 41F20500 		movw	r0, #4101
+  28 000c FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+  29 0010 1025     		movs	r5, #16
+  30 0012 0323     		movs	r3, #3
+  31 0014 48F21102 		movw	r2, 32785	@ movhi
+  32 0018 2046     		mov	r0, r4
+  33 001a 05A9     		add	r1, sp, #20
+  34 001c ADF81420 		strh	r2, [sp, #20]	@ movhi
+  35 0020 8DF81630 		strb	r3, [sp, #22]
+  36 0024 8DF81750 		strb	r5, [sp, #23]
+  37 0028 FFF7FEFF 		bl	GPIO_Init
+  38 002c 4FF40043 		mov	r3, #32768
+  39 0030 6361     		str	r3, [r4, #20]
+  40 0032 0123     		movs	r3, #1
+  41 0034 2361     		str	r3, [r4, #16]
+  42 0036 0223     		movs	r3, #2
+  43 0038 2561     		str	r5, [r4, #16]
+  44 003a 2046     		mov	r0, r4
+  45 003c ADF81430 		strh	r3, [sp, #20]	@ movhi
+  46 0040 05A9     		add	r1, sp, #20
+  47 0042 2823     		movs	r3, #40
+  48 0044 8DF81730 		strb	r3, [sp, #23]
+  49 0048 FFF7FEFF 		bl	GPIO_Init
+  50 004c A022     		movs	r2, #160
+  51 004e 1823     		movs	r3, #24
+  52 0050 2046     		mov	r0, r4
+  53 0052 05A9     		add	r1, sp, #20
+  54 0054 ADF81420 		strh	r2, [sp, #20]	@ movhi
+  55 0058 8DF81730 		strb	r3, [sp, #23]
+  56 005c FFF7FEFF 		bl	GPIO_Init
+  57 0060 4023     		movs	r3, #64
+  58 0062 ADF81430 		strh	r3, [sp, #20]	@ movhi
+  59 0066 2046     		mov	r0, r4
+  60 0068 0423     		movs	r3, #4
+  61 006a 05A9     		add	r1, sp, #20
+  62 006c 8DF81730 		strb	r3, [sp, #23]
+  63 0070 FFF7FEFF 		bl	GPIO_Init
+  64 0074 0023     		movs	r3, #0
+  65 0076 4FF48272 		mov	r2, #260	@ movhi
+  66 007a ADF80030 		strh	r3, [sp, #0]	@ movhi
+  67 007e ADF80220 		strh	r2, [sp, #2]	@ movhi
+  68 0082 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  69 0086 ADF80630 		strh	r3, [sp, #6]	@ movhi
+  70 008a ADF80830 		strh	r3, [sp, #8]	@ movhi
+  71 008e 4FF40072 		mov	r2, #512	@ movhi
+  72 0092 ADF80E30 		strh	r3, [sp, #14]	@ movhi
+  73 0096 0648     		ldr	r0, .L2+4
+  74 0098 0823     		movs	r3, #8
+  75 009a 6946     		mov	r1, sp
+  76 009c ADF80A20 		strh	r2, [sp, #10]	@ movhi
+  77 00a0 ADF80C30 		strh	r3, [sp, #12]	@ movhi
+  78 00a4 FFF7FEFF 		bl	SPI_Init
+  79 00a8 07B0     		add	sp, sp, #28
+  80 00aa 30BD     		pop	{r4, r5, pc}
+  81              	.L3:
+  82              		.align	2
+  83              	.L2:
+  84 00ac 00080140 		.word	1073809408
+  85 00b0 00300140 		.word	1073819648
+  87              		.section	.text._ZN4VS_t6IsBusyEv,"ax",%progbits
+  88              		.align	1
+  89              		.global	_ZN4VS_t6IsBusyEv
+  90              		.thumb
+  91              		.thumb_func
+  93              	_ZN4VS_t6IsBusyEv:
+  94              		@ args = 0, pretend = 0, frame = 0
+  95              		@ frame_needed = 0, uses_anonymous_args = 0
+  96 0000 10B5     		push	{r4, lr}
+  97 0002 0221     		movs	r1, #2
+  98 0004 0446     		mov	r4, r0
+  99 0006 0448     		ldr	r0, .L7
+ 100 0008 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 101 000c 08B1     		cbz	r0, .L6
+ 102 000e 6078     		ldrb	r0, [r4, #1]	@ zero_extendqisi2
+ 103 0010 10BD     		pop	{r4, pc}
+ 104              	.L6:
+ 105 0012 0120     		movs	r0, #1
+ 106 0014 10BD     		pop	{r4, pc}
+ 107              	.L8:
+ 108 0016 00BF     		.align	2
+ 109              	.L7:
+ 110 0018 00080140 		.word	1073809408
+ 112              		.section	.text._ZN4VS_t8BusyWaitEv,"ax",%progbits
+ 113              		.align	1
+ 114              		.global	_ZN4VS_t8BusyWaitEv
+ 115              		.thumb
+ 116              		.thumb_func
+ 118              	_ZN4VS_t8BusyWaitEv:
+ 119              		@ args = 0, pretend = 0, frame = 0
+ 120              		@ frame_needed = 0, uses_anonymous_args = 0
+ 121 0000 38B5     		push	{r3, r4, r5, lr}
+ 122 0002 0546     		mov	r5, r0
+ 123 0004 074C     		ldr	r4, .L14
+ 124 0006 06E0     		b	.L10
+ 125              	.L12:
+ 126 0008 013C     		subs	r4, r4, #1
+ 127 000a 04D1     		bne	.L10
+ 128 000c 0648     		ldr	r0, .L14+4
+ 129 000e FFF7FEFF 		bl	klPrintf
+ 130 0012 0220     		movs	r0, #2
+ 131 0014 38BD     		pop	{r3, r4, r5, pc}
+ 132              	.L10:
+ 133 0016 2846     		mov	r0, r5
+ 134 0018 FFF7FEFF 		bl	_ZN4VS_t6IsBusyEv
+ 135 001c 0028     		cmp	r0, #0
+ 136 001e F3D1     		bne	.L12
+ 137 0020 38BD     		pop	{r3, r4, r5, pc}
+ 138              	.L15:
+ 139 0022 00BF     		.align	2
+ 140              	.L14:
+ 141 0024 00127A00 		.word	8000000
+ 142 0028 00000000 		.word	.LC0
+ 144              		.section	.text._ZN4VS_t9WriteDataEPht,"ax",%progbits
+ 145              		.align	1
+ 146              		.global	_ZN4VS_t9WriteDataEPht
+ 147              		.thumb
+ 148              		.thumb_func
+ 150              	_ZN4VS_t9WriteDataEPht:
+ 151              		@ args = 0, pretend = 0, frame = 0
+ 152              		@ frame_needed = 0, uses_anonymous_args = 0
+ 153 0000 38B5     		push	{r3, r4, r5, lr}
+ 154 0002 0C46     		mov	r4, r1
+ 155 0004 1546     		mov	r5, r2
+ 156 0006 B2B1     		cbz	r2, .L16
+ 157 0008 FFF7FEFF 		bl	_ZN4VS_t8BusyWaitEv
+ 158 000c 98B9     		cbnz	r0, .L16
+ 159 000e 0A4B     		ldr	r3, .L22
+ 160 0010 1022     		movs	r2, #16
+ 161 0012 5A61     		str	r2, [r3, #20]
+ 162 0014 03F52053 		add	r3, r3, #10240
+ 163 0018 1A46     		mov	r2, r3
+ 164 001a 06E0     		b	.L18
+ 165              	.L20:
+ 166 001c 215C     		ldrb	r1, [r4, r0]	@ zero_extendqisi2
+ 167 001e 9981     		strh	r1, [r3, #12]	@ movhi
+ 168              	.L19:
+ 169 0020 1989     		ldrh	r1, [r3, #8]
+ 170 0022 C907     		lsls	r1, r1, #31
+ 171 0024 FCD5     		bpl	.L19
+ 172 0026 9189     		ldrh	r1, [r2, #12]
+ 173 0028 0130     		adds	r0, r0, #1
+ 174              	.L18:
+ 175 002a 81B2     		uxth	r1, r0
+ 176 002c A942     		cmp	r1, r5
+ 177 002e F5D3     		bcc	.L20
+ 178 0030 014B     		ldr	r3, .L22
+ 179 0032 1022     		movs	r2, #16
+ 180 0034 1A61     		str	r2, [r3, #16]
+ 181              	.L16:
+ 182 0036 38BD     		pop	{r3, r4, r5, pc}
+ 183              	.L23:
+ 184              		.align	2
+ 185              	.L22:
+ 186 0038 00080140 		.word	1073809408
+ 188              		.section	.text._ZN4VS_t13ReadWriteByteEh,"ax",%progbits
+ 189              		.align	1
+ 190              		.global	_ZN4VS_t13ReadWriteByteEh
+ 191              		.thumb
+ 192              		.thumb_func
+ 194              	_ZN4VS_t13ReadWriteByteEh:
+ 195              		@ args = 0, pretend = 0, frame = 0
+ 196              		@ frame_needed = 0, uses_anonymous_args = 0
+ 197              		@ link register save eliminated.
+ 198 0000 044B     		ldr	r3, .L27
+ 199 0002 9981     		strh	r1, [r3, #12]	@ movhi
+ 200              	.L25:
+ 201 0004 1A89     		ldrh	r2, [r3, #8]
+ 202 0006 D007     		lsls	r0, r2, #31
+ 203 0008 FCD5     		bpl	.L25
+ 204 000a 024B     		ldr	r3, .L27
+ 205 000c 9889     		ldrh	r0, [r3, #12]
+ 206 000e C0B2     		uxtb	r0, r0
+ 207 0010 7047     		bx	lr
+ 208              	.L28:
+ 209 0012 00BF     		.align	2
+ 210              	.L27:
+ 211 0014 00300140 		.word	1073819648
+ 213              		.section	.text._ZN4VS_t8CmdWriteEht,"ax",%progbits
+ 214              		.align	1
+ 215              		.global	_ZN4VS_t8CmdWriteEht
+ 216              		.thumb
+ 217              		.thumb_func
+ 219              	_ZN4VS_t8CmdWriteEht:
+ 220              		@ args = 0, pretend = 0, frame = 0
+ 221              		@ frame_needed = 0, uses_anonymous_args = 0
+ 222 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 223 0004 0446     		mov	r4, r0
+ 224 0006 0D46     		mov	r5, r1
+ 225 0008 9146     		mov	r9, r2
+ 226 000a FFF7FEFF 		bl	_ZN4VS_t8BusyWaitEv
+ 227 000e 0646     		mov	r6, r0
+ 228 0010 C0B9     		cbnz	r0, .L30
+ 229 0012 0E4F     		ldr	r7, .L31
+ 230 0014 4FF00108 		mov	r8, #1
+ 231 0018 0221     		movs	r1, #2
+ 232 001a C7F81480 		str	r8, [r7, #20]
+ 233 001e 2046     		mov	r0, r4
+ 234 0020 FFF7FEFF 		bl	_ZN4VS_t13ReadWriteByteEh
+ 235 0024 2946     		mov	r1, r5
+ 236 0026 2046     		mov	r0, r4
+ 237 0028 FFF7FEFF 		bl	_ZN4VS_t13ReadWriteByteEh
+ 238 002c 4FEA1921 		lsr	r1, r9, #8
+ 239 0030 2046     		mov	r0, r4
+ 240 0032 FFF7FEFF 		bl	_ZN4VS_t13ReadWriteByteEh
+ 241 0036 5FFA89F1 		uxtb	r1, r9
+ 242 003a 2046     		mov	r0, r4
+ 243 003c FFF7FEFF 		bl	_ZN4VS_t13ReadWriteByteEh
+ 244 0040 C7F81080 		str	r8, [r7, #16]
+ 245              	.L30:
+ 246 0044 3046     		mov	r0, r6
+ 247 0046 BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 248              	.L32:
+ 249 004a 00BF     		.align	2
+ 250              	.L31:
+ 251 004c 00080140 		.word	1073809408
+ 253              		.section	.text._ZN4VS_t12AmplifierOffEv,"ax",%progbits
+ 254              		.align	1
+ 255              		.global	_ZN4VS_t12AmplifierOffEv
+ 256              		.thumb
+ 257              		.thumb_func
+ 259              	_ZN4VS_t12AmplifierOffEv:
+ 260              		@ args = 0, pretend = 0, frame = 0
+ 261              		@ frame_needed = 0, uses_anonymous_args = 0
+ 262 0000 10B5     		push	{r4, lr}
+ 263 0002 0721     		movs	r1, #7
+ 264 0004 0446     		mov	r4, r0
+ 265 0006 4CF21702 		movw	r2, #49175
+ 266 000a FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
+ 267 000e 0621     		movs	r1, #6
+ 268 0010 0122     		movs	r2, #1
+ 269 0012 2046     		mov	r0, r4
+ 270 0014 FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
+ 271 0018 0721     		movs	r1, #7
+ 272 001a 2046     		mov	r0, r4
+ 273 001c 4CF21902 		movw	r2, #49177
+ 274 0020 FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
+ 275 0024 2046     		mov	r0, r4
+ 276 0026 0621     		movs	r1, #6
+ 277 0028 0022     		movs	r2, #0
+ 278 002a BDE81040 		pop	{r4, lr}
+ 279 002e FFF7FEBF 		b	_ZN4VS_t8CmdWriteEht
+ 281              		.section	.text._ZN4VS_t7DisableEv,"ax",%progbits
+ 282              		.align	1
+ 283              		.global	_ZN4VS_t7DisableEv
+ 284              		.thumb
+ 285              		.thumb_func
+ 287              	_ZN4VS_t7DisableEv:
+ 288              		@ args = 0, pretend = 0, frame = 0
+ 289              		@ frame_needed = 0, uses_anonymous_args = 0
+ 290 0000 08B5     		push	{r3, lr}
+ 291 0002 FFF7FEFF 		bl	_ZN4VS_t12AmplifierOffEv
+ 292 0006 054B     		ldr	r3, .L35
+ 293 0008 0548     		ldr	r0, .L35+4
+ 294 000a 4FF40042 		mov	r2, #32768
+ 295 000e 0021     		movs	r1, #0
+ 296 0010 5A61     		str	r2, [r3, #20]
+ 297 0012 BDE80840 		pop	{r3, lr}
+ 298 0016 FFF7FEBF 		b	SPI_Cmd
+ 299              	.L36:
+ 300 001a 00BF     		.align	2
+ 301              	.L35:
+ 302 001c 00080140 		.word	1073809408
+ 303 0020 00300140 		.word	1073819648
+ 305              		.section	.text._ZN4VS_t11AmplifierOnEv,"ax",%progbits
+ 306              		.align	1
+ 307              		.global	_ZN4VS_t11AmplifierOnEv
+ 308              		.thumb
+ 309              		.thumb_func
+ 311              	_ZN4VS_t11AmplifierOnEv:
+ 312              		@ args = 0, pretend = 0, frame = 0
+ 313              		@ frame_needed = 0, uses_anonymous_args = 0
+ 314 0000 10B5     		push	{r4, lr}
+ 315 0002 0721     		movs	r1, #7
+ 316 0004 0446     		mov	r4, r0
+ 317 0006 4CF21702 		movw	r2, #49175
+ 318 000a FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
+ 319 000e 0621     		movs	r1, #6
+ 320 0010 0122     		movs	r2, #1
+ 321 0012 2046     		mov	r0, r4
+ 322 0014 FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
+ 323 0018 0721     		movs	r1, #7
+ 324 001a 2046     		mov	r0, r4
+ 325 001c 4CF21902 		movw	r2, #49177
+ 326 0020 FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
+ 327 0024 2046     		mov	r0, r4
+ 328 0026 0621     		movs	r1, #6
+ 329 0028 0122     		movs	r2, #1
+ 330 002a BDE81040 		pop	{r4, lr}
+ 331 002e FFF7FEBF 		b	_ZN4VS_t8CmdWriteEht
+ 333              		.section	.text._ZN4VS_t6EnableEv,"ax",%progbits
+ 334              		.align	1
+ 335              		.global	_ZN4VS_t6EnableEv
+ 336              		.thumb
+ 337              		.thumb_func
+ 339              	_ZN4VS_t6EnableEv:
+ 340              		@ args = 0, pretend = 0, frame = 0
+ 341              		@ frame_needed = 0, uses_anonymous_args = 0
+ 342 0000 124B     		ldr	r3, .L39
+ 343 0002 4FF40042 		mov	r2, #32768
+ 344 0006 10B5     		push	{r4, lr}
+ 345 0008 0121     		movs	r1, #1
+ 346 000a 1A61     		str	r2, [r3, #16]
+ 347 000c 0446     		mov	r4, r0
+ 348 000e 1048     		ldr	r0, .L39+4
+ 349 0010 FFF7FEFF 		bl	SPI_Cmd
+ 350 0014 0021     		movs	r1, #0
+ 351 0016 40F64102 		movw	r2, #2113
+ 352 001a 2046     		mov	r0, r4
+ 353 001c FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
+ 354 0020 0C21     		movs	r1, #12
+ 355 0022 48F22032 		movw	r2, #33568
+ 356 0026 2046     		mov	r0, r4
+ 357 0028 FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
+ 358 002c 0D21     		movs	r1, #13
+ 359 002e 4FF48072 		mov	r2, #256
+ 360 0032 2046     		mov	r0, r4
+ 361 0034 FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
+ 362 0038 2046     		mov	r0, r4
+ 363 003a 0B21     		movs	r1, #11
+ 364 003c 41F21442 		movw	r2, #5140
+ 365 0040 FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
+ 366 0044 0023     		movs	r3, #0
+ 367 0046 2370     		strb	r3, [r4, #0]
+ 368 0048 10BD     		pop	{r4, pc}
+ 369              	.L40:
+ 370 004a 00BF     		.align	2
+ 371              	.L39:
+ 372 004c 00080140 		.word	1073809408
+ 373 0050 00300140 		.word	1073819648
+ 375              		.section	.text._ZN4VS_t7CmdReadEhPt,"ax",%progbits
+ 376              		.align	1
+ 377              		.global	_ZN4VS_t7CmdReadEhPt
+ 378              		.thumb
+ 379              		.thumb_func
+ 381              	_ZN4VS_t7CmdReadEhPt:
+ 382              		@ args = 0, pretend = 0, frame = 0
+ 383              		@ frame_needed = 0, uses_anonymous_args = 0
+ 384 0000 2DE9F843 		push	{r3, r4, r5, r6, r7, r8, r9, lr}
+ 385 0004 0446     		mov	r4, r0
+ 386 0006 0D46     		mov	r5, r1
+ 387 0008 1746     		mov	r7, r2
+ 388 000a FFF7FEFF 		bl	_ZN4VS_t8BusyWaitEv
+ 389 000e 0646     		mov	r6, r0
+ 390 0010 E0B9     		cbnz	r0, .L42
+ 391 0012 DFF84080 		ldr	r8, .L43
+ 392 0016 4FF00109 		mov	r9, #1
+ 393 001a 0321     		movs	r1, #3
+ 394 001c C8F81490 		str	r9, [r8, #20]
+ 395 0020 2046     		mov	r0, r4
+ 396 0022 FFF7FEFF 		bl	_ZN4VS_t13ReadWriteByteEh
+ 397 0026 2946     		mov	r1, r5
+ 398 0028 2046     		mov	r0, r4
+ 399 002a FFF7FEFF 		bl	_ZN4VS_t13ReadWriteByteEh
+ 400 002e 3146     		mov	r1, r6
+ 401 0030 2046     		mov	r0, r4
+ 402 0032 FFF7FEFF 		bl	_ZN4VS_t13ReadWriteByteEh
+ 403 0036 0002     		lsls	r0, r0, #8
+ 404 0038 3880     		strh	r0, [r7, #0]	@ movhi
+ 405 003a 3146     		mov	r1, r6
+ 406 003c 2046     		mov	r0, r4
+ 407 003e FFF7FEFF 		bl	_ZN4VS_t13ReadWriteByteEh
+ 408 0042 3B88     		ldrh	r3, [r7, #0]
+ 409 0044 C018     		adds	r0, r0, r3
+ 410 0046 3880     		strh	r0, [r7, #0]	@ movhi
+ 411 0048 C8F81090 		str	r9, [r8, #16]
+ 412              	.L42:
+ 413 004c 3046     		mov	r0, r6
+ 414 004e BDE8F883 		pop	{r3, r4, r5, r6, r7, r8, r9, pc}
+ 415              	.L44:
+ 416 0052 00BF     		.align	2
+ 417              	.L43:
+ 418 0054 00080140 		.word	1073809408
+ 420              		.section	.text._ZN4VS_t19WriteTrailingZeroesEv,"ax",%progbits
+ 421              		.align	1
+ 422              		.global	_ZN4VS_t19WriteTrailingZeroesEv
+ 423              		.thumb
+ 424              		.thumb_func
+ 426              	_ZN4VS_t19WriteTrailingZeroesEv:
+ 427              		@ args = 0, pretend = 0, frame = 0
+ 428              		@ frame_needed = 0, uses_anonymous_args = 0
+ 429 0000 70B5     		push	{r4, r5, r6, lr}
+ 430 0002 0546     		mov	r5, r0
+ 431 0004 FFF7FEFF 		bl	_ZN4VS_t8BusyWaitEv
+ 432 0008 68B9     		cbnz	r0, .L45
+ 433 000a 074E     		ldr	r6, .L49
+ 434 000c 1023     		movs	r3, #16
+ 435 000e 7361     		str	r3, [r6, #20]
+ 436 0010 0B24     		movs	r4, #11
+ 437              	.L47:
+ 438 0012 013C     		subs	r4, r4, #1
+ 439 0014 2846     		mov	r0, r5
+ 440 0016 0021     		movs	r1, #0
+ 441 0018 E4B2     		uxtb	r4, r4
+ 442 001a FFF7FEFF 		bl	_ZN4VS_t13ReadWriteByteEh
+ 443 001e 002C     		cmp	r4, #0
+ 444 0020 F7D1     		bne	.L47
+ 445 0022 1023     		movs	r3, #16
+ 446 0024 3361     		str	r3, [r6, #16]
+ 447              	.L45:
+ 448 0026 70BD     		pop	{r4, r5, r6, pc}
+ 449              	.L50:
+ 450              		.align	2
+ 451              	.L49:
+ 452 0028 00080140 		.word	1073809408
+ 454              		.global	Vs
+ 455              		.section	.rodata.str1.1,"aMS",%progbits,1
+ 456              	.LC0:
+ 457 0000 56532074 		.ascii	"VS timeout\015\000"
+ 457      696D656F 
+ 457      75740D00 
+ 458              		.section	.bss.Vs,"aw",%nobits
+ 461              	Vs:
+ 462 0000 0000     		.space	2
+ 463              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 vs.cpp
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:15     .text._ZN4VS_t4InitEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:20     .text._ZN4VS_t4InitEv:00000000 _ZN4VS_t4InitEv
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:84     .text._ZN4VS_t4InitEv:000000ac $d
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:88     .text._ZN4VS_t6IsBusyEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:93     .text._ZN4VS_t6IsBusyEv:00000000 _ZN4VS_t6IsBusyEv
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:110    .text._ZN4VS_t6IsBusyEv:00000018 $d
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:113    .text._ZN4VS_t8BusyWaitEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:118    .text._ZN4VS_t8BusyWaitEv:00000000 _ZN4VS_t8BusyWaitEv
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:141    .text._ZN4VS_t8BusyWaitEv:00000024 $d
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:145    .text._ZN4VS_t9WriteDataEPht:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:150    .text._ZN4VS_t9WriteDataEPht:00000000 _ZN4VS_t9WriteDataEPht
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:186    .text._ZN4VS_t9WriteDataEPht:00000038 $d
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:189    .text._ZN4VS_t13ReadWriteByteEh:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:194    .text._ZN4VS_t13ReadWriteByteEh:00000000 _ZN4VS_t13ReadWriteByteEh
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:211    .text._ZN4VS_t13ReadWriteByteEh:00000014 $d
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:214    .text._ZN4VS_t8CmdWriteEht:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:219    .text._ZN4VS_t8CmdWriteEht:00000000 _ZN4VS_t8CmdWriteEht
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:251    .text._ZN4VS_t8CmdWriteEht:0000004c $d
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:254    .text._ZN4VS_t12AmplifierOffEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:259    .text._ZN4VS_t12AmplifierOffEv:00000000 _ZN4VS_t12AmplifierOffEv
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:282    .text._ZN4VS_t7DisableEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:287    .text._ZN4VS_t7DisableEv:00000000 _ZN4VS_t7DisableEv
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:302    .text._ZN4VS_t7DisableEv:0000001c $d
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:306    .text._ZN4VS_t11AmplifierOnEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:311    .text._ZN4VS_t11AmplifierOnEv:00000000 _ZN4VS_t11AmplifierOnEv
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:334    .text._ZN4VS_t6EnableEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:339    .text._ZN4VS_t6EnableEv:00000000 _ZN4VS_t6EnableEv
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:372    .text._ZN4VS_t6EnableEv:0000004c $d
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:376    .text._ZN4VS_t7CmdReadEhPt:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:381    .text._ZN4VS_t7CmdReadEhPt:00000000 _ZN4VS_t7CmdReadEhPt
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:418    .text._ZN4VS_t7CmdReadEhPt:00000054 $d
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:421    .text._ZN4VS_t19WriteTrailingZeroesEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:426    .text._ZN4VS_t19WriteTrailingZeroesEv:00000000 _ZN4VS_t19WriteTrailingZeroesEv
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:452    .text._ZN4VS_t19WriteTrailingZeroesEv:00000028 $d
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:461    .bss.Vs:00000000 Vs
+C:\Users\kreyl\AppData\Local\Temp\cc6DxrcH.s:462    .bss.Vs:00000000 $d
+
+UNDEFINED SYMBOLS
+RCC_APB2PeriphClockCmd
+GPIO_Init
+SPI_Init
+GPIO_ReadInputDataBit
+klPrintf
+SPI_Cmd

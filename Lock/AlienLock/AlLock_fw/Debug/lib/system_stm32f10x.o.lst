@@ -1,0 +1,150 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"system_stm32f10x.c"
+  14              		.section	.text.SystemInit,"ax",%progbits
+  15              		.align	1
+  16              		.global	SystemInit
+  17              		.thumb
+  18              		.thumb_func
+  20              	SystemInit:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23              		@ link register save eliminated.
+  24 0000 0F4B     		ldr	r3, .L2
+  25 0002 1A68     		ldr	r2, [r3, #0]
+  26 0004 42F00102 		orr	r2, r2, #1
+  27 0008 1A60     		str	r2, [r3, #0]
+  28 000a 5968     		ldr	r1, [r3, #4]
+  29 000c 0D4A     		ldr	r2, .L2+4
+  30 000e 0A40     		ands	r2, r2, r1
+  31 0010 5A60     		str	r2, [r3, #4]
+  32 0012 1A68     		ldr	r2, [r3, #0]
+  33 0014 22F08472 		bic	r2, r2, #17301504
+  34 0018 22F48032 		bic	r2, r2, #65536
+  35 001c 1A60     		str	r2, [r3, #0]
+  36 001e 1A68     		ldr	r2, [r3, #0]
+  37 0020 22F48022 		bic	r2, r2, #262144
+  38 0024 1A60     		str	r2, [r3, #0]
+  39 0026 5A68     		ldr	r2, [r3, #4]
+  40 0028 22F4FE02 		bic	r2, r2, #8323072
+  41 002c 5A60     		str	r2, [r3, #4]
+  42 002e 4FF41F02 		mov	r2, #10420224
+  43 0032 9A60     		str	r2, [r3, #8]
+  44 0034 044B     		ldr	r3, .L2+8
+  45 0036 4FF00062 		mov	r2, #134217728
+  46 003a 9A60     		str	r2, [r3, #8]
+  47 003c 7047     		bx	lr
+  48              	.L3:
+  49 003e 00BF     		.align	2
+  50              	.L2:
+  51 0040 00100240 		.word	1073876992
+  52 0044 0000FFF8 		.word	-117506048
+  53 0048 00ED00E0 		.word	-536810240
+  55              		.section	.text.SystemCoreClockUpdate,"ax",%progbits
+  56              		.align	1
+  57              		.global	SystemCoreClockUpdate
+  58              		.thumb
+  59              		.thumb_func
+  61              	SystemCoreClockUpdate:
+  62              		@ args = 0, pretend = 0, frame = 0
+  63              		@ frame_needed = 0, uses_anonymous_args = 0
+  64              		@ link register save eliminated.
+  65 0000 134A     		ldr	r2, .L14
+  66 0002 144B     		ldr	r3, .L14+4
+  67 0004 5168     		ldr	r1, [r2, #4]
+  68 0006 01F00C01 		and	r1, r1, #12
+  69 000a 0429     		cmp	r1, #4
+  70 000c 01D0     		beq	.L7
+  71 000e 0829     		cmp	r1, #8
+  72 0010 02D0     		beq	.L8
+  73              	.L7:
+  74 0012 114A     		ldr	r2, .L14+8
+  75 0014 1A60     		str	r2, [r3, #0]
+  76 0016 0EE0     		b	.L9
+  77              	.L8:
+  78 0018 5168     		ldr	r1, [r2, #4]
+  79 001a 5068     		ldr	r0, [r2, #4]
+  80 001c C1F38341 		ubfx	r1, r1, #18, #4
+  81 0020 0231     		adds	r1, r1, #2
+  82 0022 C003     		lsls	r0, r0, #15
+  83 0024 04D5     		bpl	.L13
+  84              	.L10:
+  85 0026 5268     		ldr	r2, [r2, #4]
+  86 0028 9203     		lsls	r2, r2, #14
+  87 002a 58BF     		it	pl
+  88 002c 0A4A     		ldrpl	r2, .L14+8
+  89 002e 00D5     		bpl	.L12
+  90              	.L13:
+  91 0030 0A4A     		ldr	r2, .L14+12
+  92              	.L12:
+  93 0032 5143     		muls	r1, r2, r1
+  94 0034 1960     		str	r1, [r3, #0]
+  95              	.L9:
+  96 0036 064B     		ldr	r3, .L14
+  97 0038 094A     		ldr	r2, .L14+16
+  98 003a 5B68     		ldr	r3, [r3, #4]
+  99 003c C3F30313 		ubfx	r3, r3, #4, #4
+ 100 0040 D25C     		ldrb	r2, [r2, r3]	@ zero_extendqisi2
+ 101 0042 044B     		ldr	r3, .L14+4
+ 102 0044 1968     		ldr	r1, [r3, #0]
+ 103 0046 31FA02F2 		lsrs	r2, r1, r2
+ 104 004a 1A60     		str	r2, [r3, #0]
+ 105 004c 7047     		bx	lr
+ 106              	.L15:
+ 107 004e 00BF     		.align	2
+ 108              	.L14:
+ 109 0050 00100240 		.word	1073876992
+ 110 0054 00000000 		.word	.LANCHOR0
+ 111 0058 00127A00 		.word	8000000
+ 112 005c 00093D00 		.word	4000000
+ 113 0060 00000000 		.word	.LANCHOR1
+ 115              		.global	AHBPrescTable
+ 116              		.global	SystemCoreClock
+ 117              		.section	.data.AHBPrescTable,"aw",%progbits
+ 118              		.set	.LANCHOR1,. + 0
+ 121              	AHBPrescTable:
+ 122 0000 00       		.byte	0
+ 123 0001 00       		.byte	0
+ 124 0002 00       		.byte	0
+ 125 0003 00       		.byte	0
+ 126 0004 00       		.byte	0
+ 127 0005 00       		.byte	0
+ 128 0006 00       		.byte	0
+ 129 0007 00       		.byte	0
+ 130 0008 01       		.byte	1
+ 131 0009 02       		.byte	2
+ 132 000a 03       		.byte	3
+ 133 000b 04       		.byte	4
+ 134 000c 06       		.byte	6
+ 135 000d 07       		.byte	7
+ 136 000e 08       		.byte	8
+ 137 000f 09       		.byte	9
+ 138              		.section	.data.SystemCoreClock,"aw",%progbits
+ 139              		.align	2
+ 140              		.set	.LANCHOR0,. + 0
+ 143              	SystemCoreClock:
+ 144 0000 00127A00 		.word	8000000
+ 145              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 system_stm32f10x.c
+C:\Users\kreyl\AppData\Local\Temp\ccsnNxNS.s:15     .text.SystemInit:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccsnNxNS.s:20     .text.SystemInit:00000000 SystemInit
+C:\Users\kreyl\AppData\Local\Temp\ccsnNxNS.s:51     .text.SystemInit:00000040 $d
+C:\Users\kreyl\AppData\Local\Temp\ccsnNxNS.s:56     .text.SystemCoreClockUpdate:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccsnNxNS.s:61     .text.SystemCoreClockUpdate:00000000 SystemCoreClockUpdate
+C:\Users\kreyl\AppData\Local\Temp\ccsnNxNS.s:109    .text.SystemCoreClockUpdate:00000050 $d
+C:\Users\kreyl\AppData\Local\Temp\ccsnNxNS.s:121    .data.AHBPrescTable:00000000 AHBPrescTable
+C:\Users\kreyl\AppData\Local\Temp\ccsnNxNS.s:143    .data.SystemCoreClock:00000000 SystemCoreClock
+C:\Users\kreyl\AppData\Local\Temp\ccsnNxNS.s:139    .data.SystemCoreClock:00000000 $d
+
+NO UNDEFINED SYMBOLS

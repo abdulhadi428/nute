@@ -1,0 +1,128 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"sensors.cpp"
+  14              		.section	.text._ZN5Sns_t4TaskEv,"ax",%progbits
+  15              		.align	1
+  16              		.global	_ZN5Sns_t4TaskEv
+  17              		.thumb
+  18              		.thumb_func
+  20              	_ZN5Sns_t4TaskEv:
+  21              		@ args = 0, pretend = 0, frame = 0
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 10B5     		push	{r4, lr}
+  24 0002 0446     		mov	r4, r0
+  25 0004 2146     		mov	r1, r4
+  26 0006 1248     		ldr	r0, .L5
+  27 0008 4FF49972 		mov	r2, #306
+  28 000c FFF7FEFF 		bl	_ZN7Delay_t7ElapsedEPmm
+  29 0010 0028     		cmp	r0, #0
+  30 0012 1BD0     		beq	.L1
+  31 0014 0221     		movs	r1, #2
+  32 0016 0F48     		ldr	r0, .L5+4
+  33 0018 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+  34 001c 0128     		cmp	r0, #1
+  35 001e 0FD1     		bne	.L3
+  36 0020 237A     		ldrb	r3, [r4, #8]	@ zero_extendqisi2
+  37 0022 6BB9     		cbnz	r3, .L3
+  38 0024 E368     		ldr	r3, [r4, #12]
+  39 0026 2072     		strb	r0, [r4, #8]
+  40 0028 83B1     		cbz	r3, .L1
+  41 002a 9847     		blx	r3
+  42 002c 10BD     		pop	{r4, pc}
+  43              	.L4:
+  44 002e 237A     		ldrb	r3, [r4, #8]	@ zero_extendqisi2
+  45 0030 63B1     		cbz	r3, .L1
+  46 0032 0948     		ldr	r0, .L5+8
+  47 0034 0023     		movs	r3, #0
+  48 0036 2372     		strb	r3, [r4, #8]
+  49 0038 BDE81040 		pop	{r4, lr}
+  50 003c FFF7FEBF 		b	klPrintf
+  51              	.L3:
+  52 0040 0221     		movs	r1, #2
+  53 0042 0448     		ldr	r0, .L5+4
+  54 0044 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+  55 0048 0128     		cmp	r0, #1
+  56 004a F0D1     		bne	.L4
+  57              	.L1:
+  58 004c 10BD     		pop	{r4, pc}
+  59              	.L6:
+  60 004e 00BF     		.align	2
+  61              	.L5:
+  62 0050 00000000 		.word	Delay
+  63 0054 00100140 		.word	1073811456
+  64 0058 00000000 		.word	.LC0
+  66              		.section	.text._ZN5Sns_t4InitEv,"ax",%progbits
+  67              		.align	1
+  68              		.global	_ZN5Sns_t4InitEv
+  69              		.thumb
+  70              		.thumb_func
+  72              	_ZN5Sns_t4InitEv:
+  73              		@ args = 0, pretend = 0, frame = 8
+  74              		@ frame_needed = 0, uses_anonymous_args = 0
+  75 0000 13B5     		push	{r0, r1, r4, lr}
+  76 0002 0446     		mov	r4, r0
+  77 0004 0121     		movs	r1, #1
+  78 0006 1020     		movs	r0, #16
+  79 0008 FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+  80 000c 0323     		movs	r3, #3
+  81 000e 8DF80630 		strb	r3, [sp, #6]
+  82 0012 0223     		movs	r3, #2
+  83 0014 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  84 0018 01A9     		add	r1, sp, #4
+  85 001a 2823     		movs	r3, #40
+  86 001c 0548     		ldr	r0, .L8
+  87 001e 8DF80730 		strb	r3, [sp, #7]
+  88 0022 FFF7FEFF 		bl	GPIO_Init
+  89 0026 0023     		movs	r3, #0
+  90 0028 2372     		strb	r3, [r4, #8]
+  91 002a 0348     		ldr	r0, .L8+4
+  92 002c 1221     		movs	r1, #18
+  93 002e FFF7FEFF 		bl	_ZN7Delay_t2msEm
+  94 0032 1CBD     		pop	{r2, r3, r4, pc}
+  95              	.L9:
+  96              		.align	2
+  97              	.L8:
+  98 0034 00100140 		.word	1073811456
+  99 0038 00000000 		.word	Delay
+ 101              		.global	Sensor
+ 102              		.section	.rodata.str1.1,"aMS",%progbits,1
+ 103              	.LC0:
+ 104 0000 48696465 		.ascii	"Hide\015\000"
+ 104      0D00
+ 105              		.section	.bss.Sensor,"aw",%nobits
+ 106              		.align	2
+ 109              	Sensor:
+ 110 0000 00000000 		.space	16
+ 110      00000000 
+ 110      00000000 
+ 110      00000000 
+ 111              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 sensors.cpp
+C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:15     .text._ZN5Sns_t4TaskEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:20     .text._ZN5Sns_t4TaskEv:00000000 _ZN5Sns_t4TaskEv
+C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:62     .text._ZN5Sns_t4TaskEv:00000050 $d
+C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:67     .text._ZN5Sns_t4InitEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:72     .text._ZN5Sns_t4InitEv:00000000 _ZN5Sns_t4InitEv
+C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:98     .text._ZN5Sns_t4InitEv:00000034 $d
+C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:109    .bss.Sensor:00000000 Sensor
+C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:106    .bss.Sensor:00000000 $d
+
+UNDEFINED SYMBOLS
+_ZN7Delay_t7ElapsedEPmm
+GPIO_ReadInputDataBit
+klPrintf
+Delay
+RCC_APB2PeriphClockCmd
+GPIO_Init
+_ZN7Delay_t2msEm

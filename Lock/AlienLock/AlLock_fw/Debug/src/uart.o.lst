@@ -1,0 +1,507 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"uart.c"
+  14              		.section	.text.UART_Init,"ax",%progbits
+  15              		.align	1
+  16              		.global	UART_Init
+  17              		.thumb
+  18              		.thumb_func
+  20              	UART_Init:
+  21              		@ args = 0, pretend = 0, frame = 24
+  22              		@ frame_needed = 0, uses_anonymous_args = 0
+  23 0000 10B5     		push	{r4, lr}
+  24 0002 0121     		movs	r1, #1
+  25 0004 86B0     		sub	sp, sp, #24
+  26 0006 4FF48040 		mov	r0, #16384
+  27 000a FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+  28 000e 0520     		movs	r0, #5
+  29 0010 0121     		movs	r1, #1
+  30 0012 FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+  31 0016 1823     		movs	r3, #24
+  32 0018 8DF81730 		strb	r3, [sp, #23]
+  33 001c 4FF40073 		mov	r3, #512	@ movhi
+  34 0020 ADF81430 		strh	r3, [sp, #20]	@ movhi
+  35 0024 05A9     		add	r1, sp, #20
+  36 0026 0323     		movs	r3, #3
+  37 0028 0F48     		ldr	r0, .L2
+  38 002a 8DF81630 		strb	r3, [sp, #22]
+  39 002e 0F4C     		ldr	r4, .L2+4
+  40 0030 FFF7FEFF 		bl	GPIO_Init
+  41 0034 4FF4FA33 		mov	r3, #128000
+  42 0038 0193     		str	r3, [sp, #4]
+  43 003a 0023     		movs	r3, #0
+  44 003c ADF80830 		strh	r3, [sp, #8]	@ movhi
+  45 0040 ADF80A30 		strh	r3, [sp, #10]	@ movhi
+  46 0044 ADF80C30 		strh	r3, [sp, #12]	@ movhi
+  47 0048 ADF81030 		strh	r3, [sp, #16]	@ movhi
+  48 004c 2046     		mov	r0, r4
+  49 004e 0823     		movs	r3, #8
+  50 0050 01A9     		add	r1, sp, #4
+  51 0052 ADF80E30 		strh	r3, [sp, #14]	@ movhi
+  52 0056 FFF7FEFF 		bl	USART_Init
+  53 005a 2046     		mov	r0, r4
+  54 005c 0121     		movs	r1, #1
+  55 005e FFF7FEFF 		bl	USART_Cmd
+  56 0062 06B0     		add	sp, sp, #24
+  57 0064 10BD     		pop	{r4, pc}
+  58              	.L3:
+  59 0066 00BF     		.align	2
+  60              	.L2:
+  61 0068 00080140 		.word	1073809408
+  62 006c 00380140 		.word	1073821696
+  64              		.section	.text.UART_Print,"ax",%progbits
+  65              		.align	1
+  66              		.global	UART_Print
+  67              		.thumb
+  68              		.thumb_func
+  70              	UART_Print:
+  71              		@ args = 0, pretend = 0, frame = 0
+  72              		@ frame_needed = 0, uses_anonymous_args = 0
+  73 0000 0146     		mov	r1, r0
+  74 0002 08B5     		push	{r3, lr}
+  75 0004 0448     		ldr	r0, .L7
+  76 0006 FFF7FEFF 		bl	USART_SendData
+  77              	.L5:
+  78 000a 0348     		ldr	r0, .L7
+  79 000c 4021     		movs	r1, #64
+  80 000e FFF7FEFF 		bl	USART_GetFlagStatus
+  81 0012 0028     		cmp	r0, #0
+  82 0014 F9D0     		beq	.L5
+  83 0016 08BD     		pop	{r3, pc}
+  84              	.L8:
+  85              		.align	2
+  86              	.L7:
+  87 0018 00380140 		.word	1073821696
+  89              		.section	.text.UintToHexChar,"ax",%progbits
+  90              		.align	1
+  91              		.global	UintToHexChar
+  92              		.thumb
+  93              		.thumb_func
+  95              	UintToHexChar:
+  96              		@ args = 0, pretend = 0, frame = 0
+  97              		@ frame_needed = 0, uses_anonymous_args = 0
+  98              		@ link register save eliminated.
+  99 0000 0928     		cmp	r0, #9
+ 100 0002 02D8     		bhi	.L10
+ 101 0004 3030     		adds	r0, r0, #48
+ 102 0006 C0B2     		uxtb	r0, r0
+ 103 0008 7047     		bx	lr
+ 104              	.L10:
+ 105 000a 3730     		adds	r0, r0, #55
+ 106 000c C0B2     		uxtb	r0, r0
+ 107 000e 7047     		bx	lr
+ 109              		.section	.text.UART_PrintAsHex,"ax",%progbits
+ 110              		.align	1
+ 111              		.global	UART_PrintAsHex
+ 112              		.thumb
+ 113              		.thumb_func
+ 115              	UART_PrintAsHex:
+ 116              		@ args = 0, pretend = 0, frame = 0
+ 117              		@ frame_needed = 0, uses_anonymous_args = 0
+ 118 0000 10F07F43 		ands	r3, r0, #-16777216
+ 119 0004 10B5     		push	{r4, lr}
+ 120 0006 0446     		mov	r4, r0
+ 121 0008 0BD0     		beq	.L13
+ 122 000a 000F     		lsrs	r0, r0, #28
+ 123 000c FFF7FEFF 		bl	UintToHexChar
+ 124 0010 FFF7FEFF 		bl	UART_Print
+ 125 0014 C4F30360 		ubfx	r0, r4, #24, #4
+ 126 0018 FFF7FEFF 		bl	UintToHexChar
+ 127 001c FFF7FEFF 		bl	UART_Print
+ 128 0020 0123     		movs	r3, #1
+ 129              	.L13:
+ 130 0022 14F47F0F 		tst	r4, #16711680
+ 131 0026 00D1     		bne	.L14
+ 132 0028 63B1     		cbz	r3, .L15
+ 133              	.L14:
+ 134 002a C4F30350 		ubfx	r0, r4, #20, #4
+ 135 002e FFF7FEFF 		bl	UintToHexChar
+ 136 0032 FFF7FEFF 		bl	UART_Print
+ 137 0036 C4F30340 		ubfx	r0, r4, #16, #4
+ 138 003a FFF7FEFF 		bl	UintToHexChar
+ 139 003e FFF7FEFF 		bl	UART_Print
+ 140 0042 0123     		movs	r3, #1
+ 141              	.L15:
+ 142 0044 14F47F4F 		tst	r4, #65280
+ 143 0048 00D1     		bne	.L16
+ 144 004a 5BB1     		cbz	r3, .L17
+ 145              	.L16:
+ 146 004c C4F30330 		ubfx	r0, r4, #12, #4
+ 147 0050 FFF7FEFF 		bl	UintToHexChar
+ 148 0054 FFF7FEFF 		bl	UART_Print
+ 149 0058 C4F30320 		ubfx	r0, r4, #8, #4
+ 150 005c FFF7FEFF 		bl	UintToHexChar
+ 151 0060 FFF7FEFF 		bl	UART_Print
+ 152              	.L17:
+ 153 0064 C4F30310 		ubfx	r0, r4, #4, #4
+ 154 0068 FFF7FEFF 		bl	UintToHexChar
+ 155 006c FFF7FEFF 		bl	UART_Print
+ 156 0070 04F00F00 		and	r0, r4, #15
+ 157 0074 FFF7FEFF 		bl	UintToHexChar
+ 158 0078 BDE81040 		pop	{r4, lr}
+ 159 007c FFF7FEBF 		b	UART_Print
+ 161              		.section	.text.UART_PrintUint,"ax",%progbits
+ 162              		.align	1
+ 163              		.global	UART_PrintUint
+ 164              		.thumb
+ 165              		.thumb_func
+ 167              	UART_PrintUint:
+ 168              		@ args = 0, pretend = 0, frame = 40
+ 169              		@ frame_needed = 0, uses_anonymous_args = 0
+ 170 0000 70B5     		push	{r4, r5, r6, lr}
+ 171 0002 134D     		ldr	r5, .L26
+ 172 0004 8AB0     		sub	sp, sp, #40
+ 173 0006 01AC     		add	r4, sp, #4
+ 174 0008 0646     		mov	r6, r0
+ 175 000a 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 176 000c 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 177 000e 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 178 0010 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 179 0012 2B68     		ldr	r3, [r5, #0]
+ 180 0014 2360     		str	r3, [r4, #0]
+ 181 0016 0024     		movs	r4, #0
+ 182 0018 2346     		mov	r3, r4
+ 183 001a 0DE0     		b	.L20
+ 184              	.L21:
+ 185 001c 0130     		adds	r0, r0, #1
+ 186 001e C0B2     		uxtb	r0, r0
+ 187 0020 B61A     		subs	r6, r6, r2
+ 188              	.L25:
+ 189 0022 9642     		cmp	r6, r2
+ 190 0024 FAD2     		bcs	.L21
+ 191 0026 3028     		cmp	r0, #48
+ 192 0028 00D1     		bne	.L22
+ 193 002a 13B1     		cbz	r3, .L23
+ 194              	.L22:
+ 195 002c FFF7FEFF 		bl	UART_Print
+ 196 0030 0123     		movs	r3, #1
+ 197              	.L23:
+ 198 0032 0434     		adds	r4, r4, #4
+ 199 0034 242C     		cmp	r4, #36
+ 200 0036 03D0     		beq	.L24
+ 201              	.L20:
+ 202 0038 01AA     		add	r2, sp, #4
+ 203 003a A258     		ldr	r2, [r4, r2]
+ 204 003c 3020     		movs	r0, #48
+ 205 003e F0E7     		b	.L25
+ 206              	.L24:
+ 207 0040 3036     		adds	r6, r6, #48
+ 208 0042 F0B2     		uxtb	r0, r6
+ 209 0044 0AB0     		add	sp, sp, #40
+ 210 0046 BDE87040 		pop	{r4, r5, r6, lr}
+ 211 004a FFF7FEBF 		b	UART_Print
+ 212              	.L27:
+ 213 004e 00BF     		.align	2
+ 214              	.L26:
+ 215 0050 00000000 		.word	.LANCHOR0
+ 217              		.section	.text.UART_PrintInt,"ax",%progbits
+ 218              		.align	1
+ 219              		.global	UART_PrintInt
+ 220              		.thumb
+ 221              		.thumb_func
+ 223              	UART_PrintInt:
+ 224              		@ args = 0, pretend = 0, frame = 0
+ 225              		@ frame_needed = 0, uses_anonymous_args = 0
+ 226 0000 0028     		cmp	r0, #0
+ 227 0002 10B5     		push	{r4, lr}
+ 228 0004 0446     		mov	r4, r0
+ 229 0006 04DA     		bge	.L29
+ 230 0008 2D20     		movs	r0, #45
+ 231 000a FFF7FEFF 		bl	UART_Print
+ 232 000e 6442     		negs	r4, r4
+ 233 0010 02E0     		b	.L30
+ 234              	.L29:
+ 235 0012 2020     		movs	r0, #32
+ 236 0014 FFF7FEFF 		bl	UART_Print
+ 237              	.L30:
+ 238 0018 2046     		mov	r0, r4
+ 239 001a BDE81040 		pop	{r4, lr}
+ 240 001e FFF7FEBF 		b	UART_PrintUint
+ 242              		.section	.text.UART_PrintString,"ax",%progbits
+ 243              		.align	1
+ 244              		.global	UART_PrintString
+ 245              		.thumb
+ 246              		.thumb_func
+ 248              	UART_PrintString:
+ 249              		@ args = 0, pretend = 0, frame = 0
+ 250              		@ frame_needed = 0, uses_anonymous_args = 0
+ 251 0000 10B5     		push	{r4, lr}
+ 252 0002 0446     		mov	r4, r0
+ 253 0004 01E0     		b	.L32
+ 254              	.L33:
+ 255 0006 FFF7FEFF 		bl	UART_Print
+ 256              	.L32:
+ 257 000a 14F8010B 		ldrb	r0, [r4], #1	@ zero_extendqisi2
+ 258 000e 0028     		cmp	r0, #0
+ 259 0010 F9D1     		bne	.L33
+ 260 0012 10BD     		pop	{r4, pc}
+ 262              		.section	.text.klPrintf,"ax",%progbits
+ 263              		.align	1
+ 264              		.global	klPrintf
+ 265              		.thumb
+ 266              		.thumb_func
+ 268              	klPrintf:
+ 269              		@ args = 4, pretend = 16, frame = 8
+ 270              		@ frame_needed = 0, uses_anonymous_args = 1
+ 271 0000 0FB4     		push	{r0, r1, r2, r3}
+ 272 0002 37B5     		push	{r0, r1, r2, r4, r5, lr}
+ 273 0004 06AB     		add	r3, sp, #24
+ 274 0006 53F8044B 		ldr	r4, [r3], #4
+ 275 000a 0193     		str	r3, [sp, #4]
+ 276 000c 3DE0     		b	.L35
+ 277              	.L42:
+ 278 000e 2528     		cmp	r0, #37
+ 279 0010 37D1     		bne	.L36
+ 280 0012 6378     		ldrb	r3, [r4, #1]	@ zero_extendqisi2
+ 281 0014 651C     		adds	r5, r4, #1
+ 282 0016 632B     		cmp	r3, #99
+ 283 0018 06D1     		bne	.L37
+ 284 001a 019B     		ldr	r3, [sp, #4]
+ 285 001c 1A1D     		adds	r2, r3, #4
+ 286 001e 1878     		ldrb	r0, [r3, #0]	@ zero_extendqisi2
+ 287 0020 0192     		str	r2, [sp, #4]
+ 288 0022 FFF7FEFF 		bl	UART_Print
+ 289 0026 2FE0     		b	.L38
+ 290              	.L37:
+ 291 0028 752B     		cmp	r3, #117
+ 292 002a 06D1     		bne	.L39
+ 293 002c 019B     		ldr	r3, [sp, #4]
+ 294 002e 1A1D     		adds	r2, r3, #4
+ 295 0030 1868     		ldr	r0, [r3, #0]
+ 296 0032 0192     		str	r2, [sp, #4]
+ 297 0034 FFF7FEFF 		bl	UART_PrintUint
+ 298 0038 26E0     		b	.L38
+ 299              	.L39:
+ 300 003a 692B     		cmp	r3, #105
+ 301 003c 06D1     		bne	.L40
+ 302 003e 019B     		ldr	r3, [sp, #4]
+ 303 0040 1A1D     		adds	r2, r3, #4
+ 304 0042 1868     		ldr	r0, [r3, #0]
+ 305 0044 0192     		str	r2, [sp, #4]
+ 306 0046 FFF7FEFF 		bl	UART_PrintInt
+ 307 004a 1DE0     		b	.L38
+ 308              	.L40:
+ 309 004c 582B     		cmp	r3, #88
+ 310 004e 06D1     		bne	.L41
+ 311 0050 019B     		ldr	r3, [sp, #4]
+ 312 0052 1A1D     		adds	r2, r3, #4
+ 313 0054 1868     		ldr	r0, [r3, #0]
+ 314 0056 0192     		str	r2, [sp, #4]
+ 315 0058 FFF7FEFF 		bl	UART_PrintAsHex
+ 316 005c 14E0     		b	.L38
+ 317              	.L41:
+ 318 005e A3F17301 		sub	r1, r3, #115
+ 319 0062 4A42     		rsbs	r2, r1, #0
+ 320 0064 42EB0102 		adc	r2, r2, r1
+ 321 0068 532B     		cmp	r3, #83
+ 322 006a 14BF     		ite	ne
+ 323 006c 1346     		movne	r3, r2
+ 324 006e 42F00103 		orreq	r3, r2, #1
+ 325 0072 4BB1     		cbz	r3, .L38
+ 326 0074 019B     		ldr	r3, [sp, #4]
+ 327 0076 1A1D     		adds	r2, r3, #4
+ 328 0078 0192     		str	r2, [sp, #4]
+ 329 007a 1868     		ldr	r0, [r3, #0]
+ 330 007c FFF7FEFF 		bl	UART_PrintString
+ 331 0080 02E0     		b	.L38
+ 332              	.L36:
+ 333 0082 FFF7FEFF 		bl	UART_Print
+ 334 0086 2546     		mov	r5, r4
+ 335              	.L38:
+ 336 0088 6C1C     		adds	r4, r5, #1
+ 337              	.L35:
+ 338 008a 2078     		ldrb	r0, [r4, #0]	@ zero_extendqisi2
+ 339 008c 0028     		cmp	r0, #0
+ 340 008e BED1     		bne	.L42
+ 341 0090 BDE83E40 		pop	{r1, r2, r3, r4, r5, lr}
+ 342 0094 04B0     		add	sp, sp, #16
+ 343 0096 7047     		bx	lr
+ 345              		.section	.text.UART_NewLine,"ax",%progbits
+ 346              		.align	1
+ 347              		.global	UART_NewLine
+ 348              		.thumb
+ 349              		.thumb_func
+ 351              	UART_NewLine:
+ 352              		@ args = 0, pretend = 0, frame = 0
+ 353              		@ frame_needed = 0, uses_anonymous_args = 0
+ 354              		@ link register save eliminated.
+ 355 0000 0D20     		movs	r0, #13
+ 356 0002 FFF7FEBF 		b	UART_Print
+ 358              		.section	.text.UART_PrintArrAsHex,"ax",%progbits
+ 359              		.align	1
+ 360              		.global	UART_PrintArrAsHex
+ 361              		.thumb
+ 362              		.thumb_func
+ 364              	UART_PrintArrAsHex:
+ 365              		@ args = 0, pretend = 0, frame = 0
+ 366              		@ frame_needed = 0, uses_anonymous_args = 0
+ 367 0000 38B5     		push	{r3, r4, r5, lr}
+ 368 0002 0446     		mov	r4, r0
+ 369 0004 0D46     		mov	r5, r1
+ 370 0006 08E0     		b	.L45
+ 371              	.L46:
+ 372 0008 14F8010B 		ldrb	r0, [r4], #1	@ zero_extendqisi2
+ 373 000c FFF7FEFF 		bl	UART_PrintAsHex
+ 374 0010 2020     		movs	r0, #32
+ 375 0012 FFF7FEFF 		bl	UART_Print
+ 376 0016 013D     		subs	r5, r5, #1
+ 377 0018 EDB2     		uxtb	r5, r5
+ 378              	.L45:
+ 379 001a 002D     		cmp	r5, #0
+ 380 001c F4D1     		bne	.L46
+ 381 001e BDE83840 		pop	{r3, r4, r5, lr}
+ 382 0022 FFF7FEBF 		b	UART_NewLine
+ 384              		.section	.text.UART_PrintArrAsString,"ax",%progbits
+ 385              		.align	1
+ 386              		.global	UART_PrintArrAsString
+ 387              		.thumb
+ 388              		.thumb_func
+ 390              	UART_PrintArrAsString:
+ 391              		@ args = 0, pretend = 0, frame = 0
+ 392              		@ frame_needed = 0, uses_anonymous_args = 0
+ 393 0000 38B5     		push	{r3, r4, r5, lr}
+ 394 0002 0446     		mov	r4, r0
+ 395 0004 0D46     		mov	r5, r1
+ 396 0006 08E0     		b	.L48
+ 397              	.L49:
+ 398 0008 14F8010B 		ldrb	r0, [r4], #1	@ zero_extendqisi2
+ 399 000c FFF7FEFF 		bl	UART_PrintUint
+ 400 0010 2020     		movs	r0, #32
+ 401 0012 FFF7FEFF 		bl	UART_Print
+ 402 0016 013D     		subs	r5, r5, #1
+ 403 0018 EDB2     		uxtb	r5, r5
+ 404              	.L48:
+ 405 001a 002D     		cmp	r5, #0
+ 406 001c F4D1     		bne	.L49
+ 407 001e BDE83840 		pop	{r3, r4, r5, lr}
+ 408 0022 FFF7FEBF 		b	UART_NewLine
+ 410              		.section	.text.UART_StrUint,"ax",%progbits
+ 411              		.align	1
+ 412              		.global	UART_StrUint
+ 413              		.thumb
+ 414              		.thumb_func
+ 416              	UART_StrUint:
+ 417              		@ args = 0, pretend = 0, frame = 0
+ 418              		@ frame_needed = 0, uses_anonymous_args = 0
+ 419 0000 10B5     		push	{r4, lr}
+ 420 0002 0C46     		mov	r4, r1
+ 421 0004 FFF7FEFF 		bl	UART_PrintString
+ 422 0008 2046     		mov	r0, r4
+ 423 000a FFF7FEFF 		bl	UART_PrintUint
+ 424 000e BDE81040 		pop	{r4, lr}
+ 425 0012 FFF7FEBF 		b	UART_NewLine
+ 427              		.section	.text.UART_StrInt,"ax",%progbits
+ 428              		.align	1
+ 429              		.global	UART_StrInt
+ 430              		.thumb
+ 431              		.thumb_func
+ 433              	UART_StrInt:
+ 434              		@ args = 0, pretend = 0, frame = 0
+ 435              		@ frame_needed = 0, uses_anonymous_args = 0
+ 436 0000 10B5     		push	{r4, lr}
+ 437 0002 0C46     		mov	r4, r1
+ 438 0004 FFF7FEFF 		bl	UART_PrintString
+ 439 0008 2046     		mov	r0, r4
+ 440 000a FFF7FEFF 		bl	UART_PrintInt
+ 441 000e BDE81040 		pop	{r4, lr}
+ 442 0012 FFF7FEBF 		b	UART_NewLine
+ 444              		.section	.text.UART_StrHex8,"ax",%progbits
+ 445              		.align	1
+ 446              		.global	UART_StrHex8
+ 447              		.thumb
+ 448              		.thumb_func
+ 450              	UART_StrHex8:
+ 451              		@ args = 0, pretend = 0, frame = 0
+ 452              		@ frame_needed = 0, uses_anonymous_args = 0
+ 453 0000 10B5     		push	{r4, lr}
+ 454 0002 0C46     		mov	r4, r1
+ 455 0004 FFF7FEFF 		bl	UART_PrintString
+ 456 0008 2046     		mov	r0, r4
+ 457 000a FFF7FEFF 		bl	UART_PrintAsHex
+ 458 000e BDE81040 		pop	{r4, lr}
+ 459 0012 FFF7FEBF 		b	UART_NewLine
+ 461              		.section	.text.UART_StrHex16,"ax",%progbits
+ 462              		.align	1
+ 463              		.global	UART_StrHex16
+ 464              		.thumb
+ 465              		.thumb_func
+ 467              	UART_StrHex16:
+ 468              		@ args = 0, pretend = 0, frame = 0
+ 469              		@ frame_needed = 0, uses_anonymous_args = 0
+ 470 0000 10B5     		push	{r4, lr}
+ 471 0002 0C46     		mov	r4, r1
+ 472 0004 FFF7FEFF 		bl	UART_PrintString
+ 473 0008 200A     		lsrs	r0, r4, #8
+ 474 000a FFF7FEFF 		bl	UART_PrintAsHex
+ 475 000e E0B2     		uxtb	r0, r4
+ 476 0010 FFF7FEFF 		bl	UART_PrintAsHex
+ 477 0014 BDE81040 		pop	{r4, lr}
+ 478 0018 FFF7FEBF 		b	UART_NewLine
+ 480              		.section	.rodata
+ 481              		.align	2
+ 482              		.set	.LANCHOR0,. + 0
+ 483              	.LC0:
+ 484 0000 00CA9A3B 		.word	1000000000
+ 485 0004 00E1F505 		.word	100000000
+ 486 0008 80969800 		.word	10000000
+ 487 000c 40420F00 		.word	1000000
+ 488 0010 A0860100 		.word	100000
+ 489 0014 10270000 		.word	10000
+ 490 0018 E8030000 		.word	1000
+ 491 001c 64000000 		.word	100
+ 492 0020 0A000000 		.word	10
+ 493              		.ident	"GCC: (GNU) 4.6.2"
+DEFINED SYMBOLS
+                            *ABS*:00000000 uart.c
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:15     .text.UART_Init:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:20     .text.UART_Init:00000000 UART_Init
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:61     .text.UART_Init:00000068 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:65     .text.UART_Print:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:70     .text.UART_Print:00000000 UART_Print
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:87     .text.UART_Print:00000018 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:90     .text.UintToHexChar:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:95     .text.UintToHexChar:00000000 UintToHexChar
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:110    .text.UART_PrintAsHex:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:115    .text.UART_PrintAsHex:00000000 UART_PrintAsHex
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:162    .text.UART_PrintUint:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:167    .text.UART_PrintUint:00000000 UART_PrintUint
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:215    .text.UART_PrintUint:00000050 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:218    .text.UART_PrintInt:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:223    .text.UART_PrintInt:00000000 UART_PrintInt
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:243    .text.UART_PrintString:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:248    .text.UART_PrintString:00000000 UART_PrintString
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:263    .text.klPrintf:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:268    .text.klPrintf:00000000 klPrintf
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:346    .text.UART_NewLine:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:351    .text.UART_NewLine:00000000 UART_NewLine
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:359    .text.UART_PrintArrAsHex:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:364    .text.UART_PrintArrAsHex:00000000 UART_PrintArrAsHex
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:385    .text.UART_PrintArrAsString:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:390    .text.UART_PrintArrAsString:00000000 UART_PrintArrAsString
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:411    .text.UART_StrUint:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:416    .text.UART_StrUint:00000000 UART_StrUint
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:428    .text.UART_StrInt:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:433    .text.UART_StrInt:00000000 UART_StrInt
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:445    .text.UART_StrHex8:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:450    .text.UART_StrHex8:00000000 UART_StrHex8
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:462    .text.UART_StrHex16:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:467    .text.UART_StrHex16:00000000 UART_StrHex16
+C:\Users\kreyl\AppData\Local\Temp\ccrh0myK.s:481    .rodata:00000000 $d
+
+UNDEFINED SYMBOLS
+RCC_APB2PeriphClockCmd
+GPIO_Init
+USART_Init
+USART_Cmd
+USART_SendData
+USART_GetFlagStatus
