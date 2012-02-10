@@ -18,6 +18,9 @@
 #include "keys.h"
 
 #define FNAME_LNG_MAX   13
+#define CODE_LNG_MAX    6
+
+#define WAITING_TIME    3006    // wait before drop
 
 struct Settings_t {
     char KeyBeep[FNAME_LNG_MAX];
@@ -25,14 +28,27 @@ struct Settings_t {
     char PassError[FNAME_LNG_MAX];
     char Open[FNAME_LNG_MAX];
     char Close[FNAME_LNG_MAX];
-    int32_t Code, ServiceCode;
+    char Code[CODE_LNG_MAX+1], ServiceCode[CODE_LNG_MAX+1]; // Because of trailing \0
+    uint8_t CodeLength, ServiceCodeLength;
     bool Read(void);
 } Settings;
+
+enum EntrResult_t {entNA, entError, entOpen};
+struct Codecheck_t {
+    uint32_t Timer;
+    char EnteredCode[CODE_LNG_MAX+1];   // Because of trailing \0
+    uint8_t EnteredLength;
+    EntrResult_t EnterResult;
+    void Task(void);
+    void Reset(void) { EnteredLength=0; EnterResult=entNA; }
+} Codecheck;
 
 
 // Prototypes
 void GeneralInit(void);
 void Event_Kbd(void);
+void Event_Open(void);
+void Event_Close(void);
 
 // ============================ Implementation ================================
 int main(void) {
@@ -42,6 +58,7 @@ int main(void) {
     while(1) {
         Keys.Task();
         ESnd.Task();
+        Codecheck.Task();
         //Sensor.Task();
     } // while(1)
     return 0;
@@ -76,24 +93,73 @@ void GeneralInit(void) {
     ESnd.Play("alive.wav");
 }
 
+// ============================ Codecheck ======================================
+void Codecheck_t::Task(void) {
+    if (ESnd.State == sndPlaying) return;
+    switch (Codecheck.EnterResult) {
+        case entNA: // check if input timeout
+            if((EnteredLength != 0) && Delay.Elapsed(&Timer, WAITING_TIME)) {
+                Reset();
+                ESnd.Play(Settings.KeyDrop);
+            }
+            break;
+        case entError:
+            Reset();
+            ESnd.Play(Settings.PassError);
+            break;
+        case entOpen:
+            Reset();
+            Event_Open();
+            break;
+    } // switch
+}
+
+
+
 bool Settings_t::Read(void) {
     // Read sound names
-    if(!ReadString("Sound", "KeyBeep", "lock.ini", Settings.KeyBeep)) return false;
-    if(!ReadString("Sound", "KeyDrop", "lock.ini", Settings.KeyDrop)) return false;
-    if(!ReadString("Sound", "PassError", "lock.ini", Settings.PassError)) return false;
-    if(!ReadString("Sound", "Open", "lock.ini", Settings.Open)) return false;
-    if(!ReadString("Sound", "Close", "lock.ini", Settings.Close)) return false;
+    if(!ReadString("Sound", "KeyBeep", "lock.ini", Settings.KeyBeep, FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "KeyDrop", "lock.ini", Settings.KeyDrop, FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "PassError", "lock.ini", Settings.PassError, FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "Open", "lock.ini", Settings.Open, FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "Close", "lock.ini", Settings.Close, FNAME_LNG_MAX)) return false;
 
     // Read codes
-    if(!ReadInt32("Code", "Code", "lock.ini", &Settings.Code)) return false;
-    if(!ReadInt32("Code", "ServiceCode", "lock.ini", &Settings.ServiceCode)) return false;
+    if(!ReadString("Code", "Code", "lock.ini", Settings.Code, CODE_LNG_MAX)) return false;
+    Settings.CodeLength = strlen(Settings.Code);
+    if(!ReadString("Code", "ServiceCode", "lock.ini", Settings.ServiceCode, CODE_LNG_MAX)) return false;
+    Settings.ServiceCodeLength = strlen(Settings.ServiceCode);
 
     return true;
 }
 
 // ================================== Events ===================================
 void Event_Kbd(void) {
-    //if (ESnd.State == sndPlaying) return;
-    klPrintf("Key = %u %u\r", Keys.Kbd[0], Keys.Kbd[1]);
-    ESnd.Play(Settings.KeyBeep);
+    if (Codecheck.EnterResult != entNA) return; // disable keys in case of existing result
+    uint8_t FKey = (Keys.Kbd[0] == KEY_NONE)? Keys.Kbd[1] : Keys.Kbd[0];
+    //klPrintf("Key = %u %u\r", Keys.Kbd[0], Keys.Kbd[1]);
+    // Digit entered
+    if((FKey >= 0) && (FKey <=9) && (Settings.CodeLength != 0)) {   // Do not use digits in case of empty code
+        ESnd.Play(Settings.KeyBeep);
+        Codecheck.EnteredCode[Codecheck.EnteredLength] = '0' + FKey;
+        Codecheck.EnteredLength++;
+        if(Codecheck.EnteredLength == Settings.CodeLength) {
+            //klPrintf("Entered: %s; real: %s\r", Codecheck.EnteredCode, Settings.Code);
+            if(strcmp(Settings.Code, Codecheck.EnteredCode) == 0) Codecheck.EnterResult = entOpen;  // Equal
+            else Codecheck.EnterResult = entError;
+        }
+        Delay.Reset(&Codecheck.Timer);
+    }
+    else {  // none-digit
+        if(FKey == KEY_STAR) Delay.Bypass(&Codecheck.Timer, WAITING_TIME);  // Drop code
+        if((FKey == KEY_HASH) && (Settings.CodeLength == 0)) Codecheck.EnterResult = entOpen;   // Open door in case of empty code
+    }
+}
+
+void Event_Open(void) {
+    ESnd.Play(Settings.Open);
+}
+
+void Event_Close(void) {
+    ESnd.Play(Settings.Close);
 }

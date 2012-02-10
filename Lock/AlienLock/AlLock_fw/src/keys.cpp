@@ -35,7 +35,7 @@ void Keys_t::Task() {
             if (GPIO_ReadInputDataBit(GPIOB, (GPIO_Pin_11)) == RESET)      FKbd = 1+o;
             else if (GPIO_ReadInputDataBit(GPIOB, (GPIO_Pin_12)) == RESET) FKbd = 4+o;
             else if (GPIO_ReadInputDataBit(GPIOB, (GPIO_Pin_13)) == RESET) FKbd = 7+o;
-            else if (GPIO_ReadInputDataBit(GPIOB, (GPIO_Pin_14)) == RESET) FKbd = (o == 0)? KEY_HASH : ((o == 1)? 0 : KEY_STAR);
+            else if (GPIO_ReadInputDataBit(GPIOB, (GPIO_Pin_14)) == RESET) FKbd = (o == 0)? KEY_STAR : ((o == 1)? 0 : KEY_HASH);
         } // for o
         // Trigger event if key changed
         if (FKbd != Kbd[k]) {

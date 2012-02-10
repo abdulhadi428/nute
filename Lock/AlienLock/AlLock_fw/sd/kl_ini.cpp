@@ -18,13 +18,13 @@ char *skiptrailing(char *S, const char *base);
 char *striptrailing(char *S);
 
 // ======================= Implementation =====================================
-bool ReadString(const char *ASection, const char *AKey, const char *AFileName, char *AOutput) {
+bool ReadString(const char *ASection, const char *AKey, const char *AFileName, char *AOutput, uint32_t AMaxLen) {
     FRESULT rslt;
     FIL IFile;
     // Open file
     rslt = f_open(&IFile, AFileName, FA_READ+FA_OPEN_EXISTING);
     if (rslt != FR_OK) {
-        klPrintf(AFileName);
+        //klPrintf(AFileName);
         if (rslt == FR_NO_FILE) klPrintf(": file not found\r");
         else klPrintf(": openFile error: %u", rslt);
         return false;
@@ -63,7 +63,7 @@ bool ReadString(const char *ASection, const char *AKey, const char *AFileName, c
     StartP = skipleading(EndP + 1);
     // Remove a trailing comment
     uint8_t isstring = 0;
-    for (EndP = StartP; *EndP != '\0' && ((*EndP != ';' && *EndP != '#') || isstring); EndP++) {
+    for (EndP = StartP; *EndP != '\0' && ((*EndP != ';' && *EndP != '#') || isstring) && ((EndP - StartP) < AMaxLen); EndP++) {
         if (*EndP == '"') {
             if (*(EndP + 1) == '"') EndP++;     // skip "" (both quotes)
             else isstring = !isstring; // single quote, toggle isstring
@@ -79,7 +79,7 @@ bool ReadString(const char *ASection, const char *AKey, const char *AFileName, c
 
 bool ReadInt32 (const char *ASection, const char *AKey, const char *AFileName, int32_t *AOutput) {
     char FBuf[64];
-    if (ReadString(ASection, AKey, AFileName, FBuf)) {
+    if (ReadString(ASection, AKey, AFileName, FBuf, 64)) {
         *AOutput = strtol(FBuf, NULL, 10);
         return true;
     }

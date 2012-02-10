@@ -14,10 +14,12 @@ c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thum
                               c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m/crt0.o (memset)
 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
                               ./sd/kl_ini.o (strchr)
+c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
+                              ./src/main.o (strcmp)
 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
                               ./sd/kl_ini.o (strcpy)
 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
-                              ./sd/kl_ini.o (strlen)
+                              ./src/main.o (strlen)
 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
                               ./sd/kl_ini.o (strncasecmp)
 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
@@ -62,6 +64,8 @@ Discarded input sections
  .text          0x00000000        0x0 ./src/main.o
  .data          0x00000000        0x0 ./src/main.o
  .bss           0x00000000        0x0 ./src/main.o
+ .text._Z11Event_Closev
+                0x00000000       0x10 ./src/main.o
  .text          0x00000000        0x0 ./src/media.o
  .data          0x00000000        0x0 ./src/media.o
  .bss           0x00000000        0x0 ./src/media.o
@@ -90,6 +94,8 @@ Discarded input sections
  .text          0x00000000        0x0 ./sd/kl_ini.o
  .data          0x00000000        0x0 ./sd/kl_ini.o
  .bss           0x00000000        0x0 ./sd/kl_ini.o
+ .text._Z9ReadInt32PKcS0_S0_Pl
+                0x00000000       0x24 ./sd/kl_ini.o
  .text          0x00000000        0x0 ./sd/sd.o
  .data          0x00000000        0x0 ./sd/sd.o
  .bss           0x00000000        0x0 ./sd/sd.o
@@ -721,8 +727,11 @@ Discarded input sections
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-fini.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-fini.o)
  .text          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
+ .data          0x00000000      0x430 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
  .rodata        0x00000000        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
+ .rodata.str1.4
+                0x00000000        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
  .text          0x00000000       0x48 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
@@ -731,12 +740,15 @@ Discarded input sections
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
+ .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
+ .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+ .text          0x00000000      0x178 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
  .text          0x00000000       0xb0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
@@ -747,8 +759,10 @@ Discarded input sections
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
  .text          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
+ .text          0x00000000      0x278 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
+ .text          0x00000000        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
  .text          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtend.o
@@ -815,535 +829,531 @@ LOAD c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
                 0x08000000                g_pfnVectors
                 0x080001e4                . = ALIGN (0x4)
 
-.text           0x080001e8     0x2d5c
-                0x080001e8                . = ALIGN (0x4)
+.text           0x080001e4     0x2c44
+                0x080001e4                . = ALIGN (0x4)
  *(.text)
- .text          0x080001e8       0x54 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
- .text          0x0800023c       0xf4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
-                0x0800023c                strchr
- .text          0x08000330       0xbc c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
-                0x08000330                strcpy
- .text          0x080003ec       0x60 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
-                0x080003ec                strlen
- .text          0x0800044c       0x54 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
-                0x0800044c                strncasecmp
- .text          0x080004a0      0x178 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
-                0x080004a0                _strtol_r
-                0x08000600                strtol
- .text          0x08000618      0x278 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
-                0x08000618                __aeabi_uidiv
-                0x08000618                __udivsi3
-                0x08000874                __aeabi_uidivmod
- .text          0x08000890        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
-                0x08000890                __aeabi_idiv0
-                0x08000890                __aeabi_ldiv0
+ .text          0x080001e4       0x54 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+ .text          0x08000238       0xf4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
+                0x08000238                strchr
+ .text          0x0800032c      0x1dc c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
+                0x0800032c                strcmp
+ .text          0x08000508       0xbc c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
+                0x08000508                strcpy
+ .text          0x080005c4       0x60 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
+                0x080005c4                strlen
+ .text          0x08000624       0x54 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+                0x08000624                strncasecmp
  *(.text*)
  .text._ZN7Delay_t4InitEv
-                0x08000894       0x80 ./src/delay_util.o
-                0x08000894                Delay_t::Init()
+                0x08000678       0x80 ./src/delay_util.o
+                0x08000678                Delay_t::Init()
  .text._ZN7Delay_t7ElapsedEPmm
-                0x08000914       0x14 ./src/delay_util.o
-                0x08000914                Delay_t::Elapsed(unsigned long*, unsigned long)
+                0x080006f8       0x14 ./src/delay_util.o
+                0x080006f8                Delay_t::Elapsed(unsigned long*, unsigned long)
  .text.TIM2_IRQHandler
-                0x08000928       0x1c ./src/delay_util.o
-                0x08000928                TIM2_IRQHandler
+                0x0800070c       0x1c ./src/delay_util.o
+                0x0800070c                TIM2_IRQHandler
  .text._ZN6Keys_t4TaskEv
-                0x08000944       0xe4 ./src/keys.o
-                0x08000944                Keys_t::Task()
+                0x08000728       0xe4 ./src/keys.o
+                0x08000728                Keys_t::Task()
  .text._ZN6Keys_t4InitEv
-                0x08000a28       0x40 ./src/keys.o
-                0x08000a28                Keys_t::Init()
+                0x0800080c       0x40 ./src/keys.o
+                0x0800080c                Keys_t::Init()
  .text.UART_Init
-                0x08000a68       0x70 ./src/kl_util.o
-                0x08000a68                UART_Init
+                0x0800084c       0x70 ./src/kl_util.o
+                0x0800084c                UART_Init
  .text.UART_Print
-                0x08000ad8       0x1c ./src/kl_util.o
-                0x08000ad8                UART_Print
+                0x080008bc       0x1c ./src/kl_util.o
+                0x080008bc                UART_Print
  .text.UintToHexChar
-                0x08000af4       0x10 ./src/kl_util.o
-                0x08000af4                UintToHexChar
+                0x080008d8       0x10 ./src/kl_util.o
+                0x080008d8                UintToHexChar
  .text.UART_PrintAsHex
-                0x08000b04       0x80 ./src/kl_util.o
-                0x08000b04                UART_PrintAsHex
+                0x080008e8       0x80 ./src/kl_util.o
+                0x080008e8                UART_PrintAsHex
  .text.UART_PrintUint
-                0x08000b84       0x54 ./src/kl_util.o
-                0x08000b84                UART_PrintUint
+                0x08000968       0x54 ./src/kl_util.o
+                0x08000968                UART_PrintUint
  .text.UART_PrintInt
-                0x08000bd8       0x22 ./src/kl_util.o
-                0x08000bd8                UART_PrintInt
+                0x080009bc       0x22 ./src/kl_util.o
+                0x080009bc                UART_PrintInt
  .text.UART_PrintString
-                0x08000bfa       0x14 ./src/kl_util.o
-                0x08000bfa                UART_PrintString
+                0x080009de       0x14 ./src/kl_util.o
+                0x080009de                UART_PrintString
  .text.UART_Print8HexArray
-                0x08000c0e       0x1e ./src/kl_util.o
-                0x08000c0e                UART_Print8HexArray
+                0x080009f2       0x1e ./src/kl_util.o
+                0x080009f2                UART_Print8HexArray
  .text.klPrintf
-                0x08000c2c       0xba ./src/kl_util.o
-                0x08000c2c                klPrintf
- *fill*         0x08000ce6        0x2 00
+                0x08000a10       0xba ./src/kl_util.o
+                0x08000a10                klPrintf
+ *fill*         0x08000aca        0x2 00
  .text._Z9Event_Kbdv
-                0x08000ce8       0x2c ./src/main.o
-                0x08000ce8                Event_Kbd()
+                0x08000acc       0x9c ./src/main.o
+                0x08000acc                Event_Kbd()
  .text._ZN10Settings_t4ReadEv
-                0x08000d14       0xb0 ./src/main.o
-                0x08000d14                Settings_t::Read()
+                0x08000b68       0xcc ./src/main.o
+                0x08000b68                Settings_t::Read()
  .text._Z11GeneralInitv
-                0x08000dc4       0x84 ./src/main.o
-                0x08000dc4                GeneralInit()
+                0x08000c34       0x84 ./src/main.o
+                0x08000c34                GeneralInit()
+ .text._Z10Event_Openv
+                0x08000cb8       0x10 ./src/main.o
+                0x08000cb8                Event_Open()
+ .text._ZN11Codecheck_t4TaskEv
+                0x08000cc8       0x78 ./src/main.o
+                0x08000cc8                Codecheck_t::Task()
  .text.startup.main
-                0x08000e48       0x1c ./src/main.o
-                0x08000e48                main
+                0x08000d40       0x28 ./src/main.o
+                0x08000d40                main
  .text._ZN7Sound_t4InitEv
-                0x08000e64        0x8 ./src/media.o
-                0x08000e64                Sound_t::Init()
+                0x08000d68        0x8 ./src/media.o
+                0x08000d68                Sound_t::Init()
  .text._ZN7Sound_t7StopNowEv
-                0x08000e6c       0x28 ./src/media.o
-                0x08000e6c                Sound_t::StopNow()
+                0x08000d70       0x28 ./src/media.o
+                0x08000d70                Sound_t::StopNow()
  .text._ZN7Sound_t10UploadDataEv
-                0x08000e94       0x5c ./src/media.o
-                0x08000e94                Sound_t::UploadData()
+                0x08000d98       0x5c ./src/media.o
+                0x08000d98                Sound_t::UploadData()
  .text._ZN7Sound_t4PlayEPKc
-                0x08000ef0       0xa4 ./src/media.o
-                0x08000ef0                Sound_t::Play(char const*)
+                0x08000df4       0xa4 ./src/media.o
+                0x08000df4                Sound_t::Play(char const*)
  .text._ZN7Sound_t4TaskEv
-                0x08000f94       0x3c ./src/media.o
-                0x08000f94                Sound_t::Task()
+                0x08000e98       0x3c ./src/media.o
+                0x08000e98                Sound_t::Task()
  .text._ZN4VS_t4InitEv
-                0x08000fd0       0xb4 ./src/vs.o
-                0x08000fd0                VS_t::Init()
+                0x08000ed4       0xb4 ./src/vs.o
+                0x08000ed4                VS_t::Init()
  .text._ZN4VS_t6IsBusyEv
-                0x08001084       0x1c ./src/vs.o
-                0x08001084                VS_t::IsBusy()
+                0x08000f88       0x1c ./src/vs.o
+                0x08000f88                VS_t::IsBusy()
  .text._ZN4VS_t8BusyWaitEv
-                0x080010a0       0x2c ./src/vs.o
-                0x080010a0                VS_t::BusyWait()
+                0x08000fa4       0x2c ./src/vs.o
+                0x08000fa4                VS_t::BusyWait()
  .text._ZN4VS_t9WriteDataEPht
-                0x080010cc       0x3c ./src/vs.o
-                0x080010cc                VS_t::WriteData(unsigned char*, unsigned short)
+                0x08000fd0       0x3c ./src/vs.o
+                0x08000fd0                VS_t::WriteData(unsigned char*, unsigned short)
  .text._ZN4VS_t13ReadWriteByteEh
-                0x08001108       0x18 ./src/vs.o
-                0x08001108                VS_t::ReadWriteByte(unsigned char)
+                0x0800100c       0x18 ./src/vs.o
+                0x0800100c                VS_t::ReadWriteByte(unsigned char)
  .text._ZN4VS_t8CmdWriteEht
-                0x08001120       0x50 ./src/vs.o
-                0x08001120                VS_t::CmdWrite(unsigned char, unsigned short)
+                0x08001024       0x50 ./src/vs.o
+                0x08001024                VS_t::CmdWrite(unsigned char, unsigned short)
  .text._ZN4VS_t12AmplifierOffEv
-                0x08001170       0x32 ./src/vs.o
-                0x08001170                VS_t::AmplifierOff()
+                0x08001074       0x32 ./src/vs.o
+                0x08001074                VS_t::AmplifierOff()
  .text._ZN4VS_t11AmplifierOnEv
-                0x080011a2       0x32 ./src/vs.o
-                0x080011a2                VS_t::AmplifierOn()
+                0x080010a6       0x32 ./src/vs.o
+                0x080010a6                VS_t::AmplifierOn()
  .text._ZN4VS_t6EnableEv
-                0x080011d4       0x54 ./src/vs.o
-                0x080011d4                VS_t::Enable()
+                0x080010d8       0x54 ./src/vs.o
+                0x080010d8                VS_t::Enable()
  .text.check_fs
-                0x08001228       0x88 ./sd/ff.o
+                0x0800112c       0x88 ./sd/ff.o
  .text.move_window
-                0x080012b0       0x2e ./sd/ff.o
+                0x080011b4       0x2e ./sd/ff.o
  .text.clust2sect
-                0x080012de       0x16 ./sd/ff.o
-                0x080012de                clust2sect
- .text.get_fat  0x080012f4       0xca ./sd/ff.o
-                0x080012f4                get_fat
+                0x080011e2       0x16 ./sd/ff.o
+                0x080011e2                clust2sect
+ .text.get_fat  0x080011f8       0xca ./sd/ff.o
+                0x080011f8                get_fat
  .text.dir_sdi.constprop.6
-                0x080013be       0x6c ./sd/ff.o
- *fill*         0x0800142a        0x2 00
- .text.f_mount  0x0800142c       0x20 ./sd/ff.o
-                0x0800142c                f_mount
- .text.f_open   0x0800144c      0x4c4 ./sd/ff.o
-                0x0800144c                f_open
- .text.f_read   0x08001910      0x140 ./sd/ff.o
-                0x08001910                f_read
- .text.f_close  0x08001a50       0x30 ./sd/ff.o
-                0x08001a50                f_close
- .text.f_gets   0x08001a80       0x46 ./sd/ff.o
-                0x08001a80                f_gets
+                0x080012c2       0x6c ./sd/ff.o
+ *fill*         0x0800132e        0x2 00
+ .text.f_mount  0x08001330       0x20 ./sd/ff.o
+                0x08001330                f_mount
+ .text.f_open   0x08001350      0x4c4 ./sd/ff.o
+                0x08001350                f_open
+ .text.f_read   0x08001814      0x140 ./sd/ff.o
+                0x08001814                f_read
+ .text.f_close  0x08001954       0x30 ./sd/ff.o
+                0x08001954                f_close
+ .text.f_gets   0x08001984       0x46 ./sd/ff.o
+                0x08001984                f_gets
  .text._Z11skipleadingPc
-                0x08001ac6       0x12 ./sd/kl_ini.o
-                0x08001ac6                skipleading(char*)
+                0x080019ca       0x12 ./sd/kl_ini.o
+                0x080019ca                skipleading(char*)
  .text._Z12skiptrailingPcPKc
-                0x08001ad8       0x12 ./sd/kl_ini.o
-                0x08001ad8                skiptrailing(char*, char const*)
+                0x080019dc       0x12 ./sd/kl_ini.o
+                0x080019dc                skiptrailing(char*, char const*)
  .text._Z13striptrailingPc
-                0x08001aea       0x18 ./sd/kl_ini.o
-                0x08001aea                striptrailing(char*)
- *fill*         0x08001b02        0x2 00
- .text._Z10ReadStringPKcS0_S0_Pc
-                0x08001b04      0x1b8 ./sd/kl_ini.o
-                0x08001b04                ReadString(char const*, char const*, char const*, char*)
- .text._Z9ReadInt32PKcS0_S0_Pl
-                0x08001cbc       0x20 ./sd/kl_ini.o
-                0x08001cbc                ReadInt32(char const*, char const*, char const*, long*)
+                0x080019ee       0x18 ./sd/kl_ini.o
+                0x080019ee                striptrailing(char*)
+ *fill*         0x08001a06        0x2 00
+ .text._Z10ReadStringPKcS0_S0_Pcm
+                0x08001a08      0x1c8 ./sd/kl_ini.o
+                0x08001a08                ReadString(char const*, char const*, char const*, char*, unsigned long)
  .text._ZN4sd_t12LowLevelInitEv
-                0x08001cdc       0x54 ./sd/sd.o
-                0x08001cdc                sd_t::LowLevelInit()
+                0x08001bd0       0x54 ./sd/sd.o
+                0x08001bd0                sd_t::LowLevelInit()
  .text._ZN4sd_t8InitSDIOEhm
-                0x08001d30       0x1c ./sd/sd.o
-                0x08001d30                sd_t::InitSDIO(unsigned char, unsigned long)
+                0x08001c24       0x1c ./sd/sd.o
+                0x08001c24                sd_t::InitSDIO(unsigned char, unsigned long)
  .text._ZN4sd_t11GetCardInfoEv
-                0x08001d4c      0x24c ./sd/sd.o
-                0x08001d4c                sd_t::GetCardInfo()
+                0x08001c40      0x24c ./sd/sd.o
+                0x08001c40                sd_t::GetCardInfo()
  .text._ZN4sd_t3CmdEmm13SD_RespType_tz
-                0x08001f98       0xe0 ./sd/sd.o
-                0x08001f98                sd_t::Cmd(unsigned long, unsigned long, SD_RespType_t, ...)
+                0x08001e8c       0xe0 ./sd/sd.o
+                0x08001e8c                sd_t::Cmd(unsigned long, unsigned long, SD_RespType_t, ...)
  .text._ZN4sd_t7FindSCREPm
-                0x08002078       0xfc ./sd/sd.o
-                0x08002078                sd_t::FindSCR(unsigned long*)
+                0x08001f6c       0xfc ./sd/sd.o
+                0x08001f6c                sd_t::FindSCR(unsigned long*)
  .text._ZN4sd_t11SDEnWideBusE15FunctionalState
-                0x08002174       0x72 ./sd/sd.o
-                0x08002174                sd_t::SDEnWideBus(FunctionalState)
+                0x08002068       0x72 ./sd/sd.o
+                0x08002068                sd_t::SDEnWideBus(FunctionalState)
  .text._ZN4sd_t22EnableWideBusOperationEm
-                0x080021e6       0x4e ./sd/sd.o
-                0x080021e6                sd_t::EnableWideBusOperation(unsigned long)
+                0x080020da       0x4e ./sd/sd.o
+                0x080020da                sd_t::EnableWideBusOperation(unsigned long)
  .text._ZN4sd_t9InitCardsEv
-                0x08002234       0xb6 ./sd/sd.o
-                0x08002234                sd_t::InitCards()
+                0x08002128       0xb6 ./sd/sd.o
+                0x08002128                sd_t::InitCards()
  .text._ZN4sd_t7PowerOnEv
-                0x080022ea       0x96 ./sd/sd.o
-                0x080022ea                sd_t::PowerOn()
+                0x080021de       0x96 ./sd/sd.o
+                0x080021de                sd_t::PowerOn()
  .text._ZN4sd_t4InitEv
-                0x08002380       0x76 ./sd/sd.o
-                0x08002380                sd_t::Init()
- *fill*         0x080023f6        0x2 00
+                0x08002274       0x76 ./sd/sd.o
+                0x08002274                sd_t::Init()
+ *fill*         0x080022ea        0x2 00
  .text._ZN4sd_t9ReadBlockEPhmt
-                0x080023f8       0xb8 ./sd/sd.o
-                0x080023f8                sd_t::ReadBlock(unsigned char*, unsigned long, unsigned short)
+                0x080022ec       0xb8 ./sd/sd.o
+                0x080022ec                sd_t::ReadBlock(unsigned char*, unsigned long, unsigned short)
  .text.disk_read
-                0x080024b0       0x60 ./sd/sd.o
-                0x080024b0                disk_read
+                0x080023a4       0x60 ./sd/sd.o
+                0x080023a4                disk_read
  .text.disk_status
-                0x08002510       0x14 ./sd/sd.o
-                0x08002510                disk_status
+                0x08002404       0x14 ./sd/sd.o
+                0x08002404                disk_status
  .text.disk_initialize
-                0x08002524       0x3c ./sd/sd.o
-                0x08002524                disk_initialize
+                0x08002418       0x3c ./sd/sd.o
+                0x08002418                disk_initialize
  .text.Reset_Handler
-                0x08002560       0x44 ./lib/startup/startup_stm32f10x_hd.o
-                0x08002560                Reset_Handler
+                0x08002454       0x44 ./lib/startup/startup_stm32f10x_hd.o
+                0x08002454                Reset_Handler
  .text.Default_Handler
-                0x080025a4        0x2 ./lib/startup/startup_stm32f10x_hd.o
-                0x080025a4                EXTI2_IRQHandler
-                0x080025a4                TIM8_TRG_COM_IRQHandler
-                0x080025a4                TIM8_CC_IRQHandler
-                0x080025a4                DebugMon_Handler
-                0x080025a4                TIM1_CC_IRQHandler
-                0x080025a4                HardFault_Handler
-                0x080025a4                TIM6_IRQHandler
-                0x080025a4                SysTick_Handler
-                0x080025a4                PVD_IRQHandler
-                0x080025a4                SDIO_IRQHandler
-                0x080025a4                PendSV_Handler
-                0x080025a4                NMI_Handler
-                0x080025a4                EXTI3_IRQHandler
-                0x080025a4                EXTI0_IRQHandler
-                0x080025a4                I2C2_EV_IRQHandler
-                0x080025a4                UsageFault_Handler
-                0x080025a4                ADC1_2_IRQHandler
-                0x080025a4                SPI1_IRQHandler
-                0x080025a4                TAMPER_IRQHandler
-                0x080025a4                TIM8_UP_IRQHandler
-                0x080025a4                DMA2_Channel2_IRQHandler
-                0x080025a4                DMA1_Channel4_IRQHandler
-                0x080025a4                USART3_IRQHandler
-                0x080025a4                RTC_IRQHandler
-                0x080025a4                DMA1_Channel7_IRQHandler
-                0x080025a4                CAN1_RX1_IRQHandler
-                0x080025a4                UART5_IRQHandler
-                0x080025a4                ADC3_IRQHandler
-                0x080025a4                TIM4_IRQHandler
-                0x080025a4                DMA2_Channel1_IRQHandler
-                0x080025a4                I2C1_EV_IRQHandler
-                0x080025a4                DMA1_Channel6_IRQHandler
-                0x080025a4                UART4_IRQHandler
-                0x080025a4                TIM3_IRQHandler
-                0x080025a4                RCC_IRQHandler
-                0x080025a4                TIM1_TRG_COM_IRQHandler
-                0x080025a4                DMA1_Channel1_IRQHandler
-                0x080025a4                Default_Handler
-                0x080025a4                EXTI15_10_IRQHandler
-                0x080025a4                TIM7_IRQHandler
-                0x080025a4                TIM5_IRQHandler
-                0x080025a4                EXTI9_5_IRQHandler
-                0x080025a4                SPI2_IRQHandler
-                0x080025a4                MemManage_Handler
-                0x080025a4                SVC_Handler
-                0x080025a4                DMA1_Channel5_IRQHandler
-                0x080025a4                EXTI4_IRQHandler
-                0x080025a4                USB_LP_CAN1_RX0_IRQHandler
-                0x080025a4                USB_HP_CAN1_TX_IRQHandler
-                0x080025a4                DMA1_Channel3_IRQHandler
-                0x080025a4                FSMC_IRQHandler
-                0x080025a4                TIM1_UP_IRQHandler
-                0x080025a4                WWDG_IRQHandler
-                0x080025a4                TIM1_BRK_IRQHandler
-                0x080025a4                EXTI1_IRQHandler
-                0x080025a4                RTCAlarm_IRQHandler
-                0x080025a4                DMA2_Channel4_5_IRQHandler
-                0x080025a4                USART2_IRQHandler
-                0x080025a4                I2C2_ER_IRQHandler
-                0x080025a4                DMA1_Channel2_IRQHandler
-                0x080025a4                TIM8_BRK_IRQHandler
-                0x080025a4                CAN1_SCE_IRQHandler
-                0x080025a4                FLASH_IRQHandler
-                0x080025a4                BusFault_Handler
-                0x080025a4                USART1_IRQHandler
-                0x080025a4                SPI3_IRQHandler
-                0x080025a4                I2C1_ER_IRQHandler
-                0x080025a4                USBWakeUp_IRQHandler
-                0x080025a4                DMA2_Channel3_IRQHandler
- *fill*         0x080025a6        0x2 00
+                0x08002498        0x2 ./lib/startup/startup_stm32f10x_hd.o
+                0x08002498                EXTI2_IRQHandler
+                0x08002498                TIM8_TRG_COM_IRQHandler
+                0x08002498                TIM8_CC_IRQHandler
+                0x08002498                DebugMon_Handler
+                0x08002498                TIM1_CC_IRQHandler
+                0x08002498                HardFault_Handler
+                0x08002498                TIM6_IRQHandler
+                0x08002498                SysTick_Handler
+                0x08002498                PVD_IRQHandler
+                0x08002498                SDIO_IRQHandler
+                0x08002498                PendSV_Handler
+                0x08002498                NMI_Handler
+                0x08002498                EXTI3_IRQHandler
+                0x08002498                EXTI0_IRQHandler
+                0x08002498                I2C2_EV_IRQHandler
+                0x08002498                UsageFault_Handler
+                0x08002498                ADC1_2_IRQHandler
+                0x08002498                SPI1_IRQHandler
+                0x08002498                TAMPER_IRQHandler
+                0x08002498                TIM8_UP_IRQHandler
+                0x08002498                DMA2_Channel2_IRQHandler
+                0x08002498                DMA1_Channel4_IRQHandler
+                0x08002498                USART3_IRQHandler
+                0x08002498                RTC_IRQHandler
+                0x08002498                DMA1_Channel7_IRQHandler
+                0x08002498                CAN1_RX1_IRQHandler
+                0x08002498                UART5_IRQHandler
+                0x08002498                ADC3_IRQHandler
+                0x08002498                TIM4_IRQHandler
+                0x08002498                DMA2_Channel1_IRQHandler
+                0x08002498                I2C1_EV_IRQHandler
+                0x08002498                DMA1_Channel6_IRQHandler
+                0x08002498                UART4_IRQHandler
+                0x08002498                TIM3_IRQHandler
+                0x08002498                RCC_IRQHandler
+                0x08002498                TIM1_TRG_COM_IRQHandler
+                0x08002498                DMA1_Channel1_IRQHandler
+                0x08002498                Default_Handler
+                0x08002498                EXTI15_10_IRQHandler
+                0x08002498                TIM7_IRQHandler
+                0x08002498                TIM5_IRQHandler
+                0x08002498                EXTI9_5_IRQHandler
+                0x08002498                SPI2_IRQHandler
+                0x08002498                MemManage_Handler
+                0x08002498                SVC_Handler
+                0x08002498                DMA1_Channel5_IRQHandler
+                0x08002498                EXTI4_IRQHandler
+                0x08002498                USB_LP_CAN1_RX0_IRQHandler
+                0x08002498                USB_HP_CAN1_TX_IRQHandler
+                0x08002498                DMA1_Channel3_IRQHandler
+                0x08002498                FSMC_IRQHandler
+                0x08002498                TIM1_UP_IRQHandler
+                0x08002498                WWDG_IRQHandler
+                0x08002498                TIM1_BRK_IRQHandler
+                0x08002498                EXTI1_IRQHandler
+                0x08002498                RTCAlarm_IRQHandler
+                0x08002498                DMA2_Channel4_5_IRQHandler
+                0x08002498                USART2_IRQHandler
+                0x08002498                I2C2_ER_IRQHandler
+                0x08002498                DMA1_Channel2_IRQHandler
+                0x08002498                TIM8_BRK_IRQHandler
+                0x08002498                CAN1_SCE_IRQHandler
+                0x08002498                FLASH_IRQHandler
+                0x08002498                BusFault_Handler
+                0x08002498                USART1_IRQHandler
+                0x08002498                SPI3_IRQHandler
+                0x08002498                I2C1_ER_IRQHandler
+                0x08002498                USBWakeUp_IRQHandler
+                0x08002498                DMA2_Channel3_IRQHandler
+ *fill*         0x0800249a        0x2 00
  .text.NVIC_PriorityGroupConfig
-                0x080025a8       0x14 ./lib/src/misc.o
-                0x080025a8                NVIC_PriorityGroupConfig
+                0x0800249c       0x14 ./lib/src/misc.o
+                0x0800249c                NVIC_PriorityGroupConfig
  .text.NVIC_Init
-                0x080025bc       0x60 ./lib/src/misc.o
-                0x080025bc                NVIC_Init
+                0x080024b0       0x60 ./lib/src/misc.o
+                0x080024b0                NVIC_Init
  .text.DMA_Init
-                0x0800261c       0x3c ./lib/src/stm32f10x_dma.o
-                0x0800261c                DMA_Init
- .text.DMA_Cmd  0x08002658       0x16 ./lib/src/stm32f10x_dma.o
-                0x08002658                DMA_Cmd
- *fill*         0x0800266e        0x2 00
+                0x08002510       0x3c ./lib/src/stm32f10x_dma.o
+                0x08002510                DMA_Init
+ .text.DMA_Cmd  0x0800254c       0x16 ./lib/src/stm32f10x_dma.o
+                0x0800254c                DMA_Cmd
+ *fill*         0x08002562        0x2 00
  .text.DMA_GetFlagStatus
-                0x08002670       0x1c ./lib/src/stm32f10x_dma.o
-                0x08002670                DMA_GetFlagStatus
+                0x08002564       0x1c ./lib/src/stm32f10x_dma.o
+                0x08002564                DMA_GetFlagStatus
  .text.DMA_ClearFlag
-                0x0800268c       0x14 ./lib/src/stm32f10x_dma.o
-                0x0800268c                DMA_ClearFlag
+                0x08002580       0x14 ./lib/src/stm32f10x_dma.o
+                0x08002580                DMA_ClearFlag
  .text.GPIO_Init
-                0x080026a0       0xaa ./lib/src/stm32f10x_gpio.o
-                0x080026a0                GPIO_Init
+                0x08002594       0xaa ./lib/src/stm32f10x_gpio.o
+                0x08002594                GPIO_Init
  .text.GPIO_ReadInputDataBit
-                0x0800274a        0xc ./lib/src/stm32f10x_gpio.o
-                0x0800274a                GPIO_ReadInputDataBit
+                0x0800263e        0xc ./lib/src/stm32f10x_gpio.o
+                0x0800263e                GPIO_ReadInputDataBit
  .text.GPIO_ResetBits
-                0x08002756        0x4 ./lib/src/stm32f10x_gpio.o
-                0x08002756                GPIO_ResetBits
- *fill*         0x0800275a        0x2 00
+                0x0800264a        0x4 ./lib/src/stm32f10x_gpio.o
+                0x0800264a                GPIO_ResetBits
+ *fill*         0x0800264e        0x2 00
  .text.GPIO_PinRemapConfig
-                0x0800275c       0x64 ./lib/src/stm32f10x_gpio.o
-                0x0800275c                GPIO_PinRemapConfig
+                0x08002650       0x64 ./lib/src/stm32f10x_gpio.o
+                0x08002650                GPIO_PinRemapConfig
  .text.RCC_GetClocksFreq
-                0x080027c0       0x8c ./lib/src/stm32f10x_rcc.o
-                0x080027c0                RCC_GetClocksFreq
+                0x080026b4       0x8c ./lib/src/stm32f10x_rcc.o
+                0x080026b4                RCC_GetClocksFreq
  .text.RCC_AHBPeriphClockCmd
-                0x0800284c       0x18 ./lib/src/stm32f10x_rcc.o
-                0x0800284c                RCC_AHBPeriphClockCmd
+                0x08002740       0x18 ./lib/src/stm32f10x_rcc.o
+                0x08002740                RCC_AHBPeriphClockCmd
  .text.RCC_APB2PeriphClockCmd
-                0x08002864       0x18 ./lib/src/stm32f10x_rcc.o
-                0x08002864                RCC_APB2PeriphClockCmd
+                0x08002758       0x18 ./lib/src/stm32f10x_rcc.o
+                0x08002758                RCC_APB2PeriphClockCmd
  .text.RCC_APB1PeriphClockCmd
-                0x0800287c       0x18 ./lib/src/stm32f10x_rcc.o
-                0x0800287c                RCC_APB1PeriphClockCmd
+                0x08002770       0x18 ./lib/src/stm32f10x_rcc.o
+                0x08002770                RCC_APB1PeriphClockCmd
  .text.SDIO_DeInit
-                0x08002894       0x24 ./lib/src/stm32f10x_sdio.o
-                0x08002894                SDIO_DeInit
+                0x08002788       0x24 ./lib/src/stm32f10x_sdio.o
+                0x08002788                SDIO_DeInit
  .text.SDIO_Init
-                0x080028b8       0x30 ./lib/src/stm32f10x_sdio.o
-                0x080028b8                SDIO_Init
+                0x080027ac       0x30 ./lib/src/stm32f10x_sdio.o
+                0x080027ac                SDIO_Init
  .text.SDIO_ClockCmd
-                0x080028e8        0xc ./lib/src/stm32f10x_sdio.o
-                0x080028e8                SDIO_ClockCmd
+                0x080027dc        0xc ./lib/src/stm32f10x_sdio.o
+                0x080027dc                SDIO_ClockCmd
  .text.SDIO_SetPowerState
-                0x080028f4       0x18 ./lib/src/stm32f10x_sdio.o
-                0x080028f4                SDIO_SetPowerState
+                0x080027e8       0x18 ./lib/src/stm32f10x_sdio.o
+                0x080027e8                SDIO_SetPowerState
  .text.SDIO_GetPowerState
-                0x0800290c       0x10 ./lib/src/stm32f10x_sdio.o
-                0x0800290c                SDIO_GetPowerState
+                0x08002800       0x10 ./lib/src/stm32f10x_sdio.o
+                0x08002800                SDIO_GetPowerState
  .text.SDIO_DMACmd
-                0x0800291c        0xc ./lib/src/stm32f10x_sdio.o
-                0x0800291c                SDIO_DMACmd
+                0x08002810        0xc ./lib/src/stm32f10x_sdio.o
+                0x08002810                SDIO_DMACmd
  .text.SDIO_SendCommand
-                0x08002928       0x2c ./lib/src/stm32f10x_sdio.o
-                0x08002928                SDIO_SendCommand
+                0x0800281c       0x2c ./lib/src/stm32f10x_sdio.o
+                0x0800281c                SDIO_SendCommand
  .text.SDIO_GetCommandResponse
-                0x08002954        0xc ./lib/src/stm32f10x_sdio.o
-                0x08002954                SDIO_GetCommandResponse
+                0x08002848        0xc ./lib/src/stm32f10x_sdio.o
+                0x08002848                SDIO_GetCommandResponse
  .text.SDIO_GetResponse
-                0x08002960       0x18 ./lib/src/stm32f10x_sdio.o
-                0x08002960                SDIO_GetResponse
+                0x08002854       0x18 ./lib/src/stm32f10x_sdio.o
+                0x08002854                SDIO_GetResponse
  .text.SDIO_DataConfig
-                0x08002978       0x2c ./lib/src/stm32f10x_sdio.o
-                0x08002978                SDIO_DataConfig
+                0x0800286c       0x2c ./lib/src/stm32f10x_sdio.o
+                0x0800286c                SDIO_DataConfig
  .text.SDIO_ReadData
-                0x080029a4        0xc ./lib/src/stm32f10x_sdio.o
-                0x080029a4                SDIO_ReadData
+                0x08002898        0xc ./lib/src/stm32f10x_sdio.o
+                0x08002898                SDIO_ReadData
  .text.SDIO_GetFlagStatus
-                0x080029b0       0x14 ./lib/src/stm32f10x_sdio.o
-                0x080029b0                SDIO_GetFlagStatus
+                0x080028a4       0x14 ./lib/src/stm32f10x_sdio.o
+                0x080028a4                SDIO_GetFlagStatus
  .text.SDIO_ClearFlag
-                0x080029c4        0xc ./lib/src/stm32f10x_sdio.o
-                0x080029c4                SDIO_ClearFlag
+                0x080028b8        0xc ./lib/src/stm32f10x_sdio.o
+                0x080028b8                SDIO_ClearFlag
  .text.SPI_Init
-                0x080029d0       0x3e ./lib/src/stm32f10x_spi.o
-                0x080029d0                SPI_Init
- .text.SPI_Cmd  0x08002a0e       0x18 ./lib/src/stm32f10x_spi.o
-                0x08002a0e                SPI_Cmd
- *fill*         0x08002a26        0x2 00
+                0x080028c4       0x3e ./lib/src/stm32f10x_spi.o
+                0x080028c4                SPI_Init
+ .text.SPI_Cmd  0x08002902       0x18 ./lib/src/stm32f10x_spi.o
+                0x08002902                SPI_Cmd
+ *fill*         0x0800291a        0x2 00
  .text.TIM_TimeBaseInit
-                0x08002a28       0xd4 ./lib/src/stm32f10x_tim.o
-                0x08002a28                TIM_TimeBaseInit
- .text.TIM_Cmd  0x08002afc       0x18 ./lib/src/stm32f10x_tim.o
-                0x08002afc                TIM_Cmd
+                0x0800291c       0xd4 ./lib/src/stm32f10x_tim.o
+                0x0800291c                TIM_TimeBaseInit
+ .text.TIM_Cmd  0x080029f0       0x18 ./lib/src/stm32f10x_tim.o
+                0x080029f0                TIM_Cmd
  .text.TIM_ITConfig
-                0x08002b14       0x12 ./lib/src/stm32f10x_tim.o
-                0x08002b14                TIM_ITConfig
+                0x08002a08       0x12 ./lib/src/stm32f10x_tim.o
+                0x08002a08                TIM_ITConfig
  .text.TIM_ClearFlag
-                0x08002b26        0x8 ./lib/src/stm32f10x_tim.o
-                0x08002b26                TIM_ClearFlag
+                0x08002a1a        0x8 ./lib/src/stm32f10x_tim.o
+                0x08002a1a                TIM_ClearFlag
  .text.TIM_ClearITPendingBit
-                0x08002b2e        0x8 ./lib/src/stm32f10x_tim.o
-                0x08002b2e                TIM_ClearITPendingBit
- *fill*         0x08002b36        0x2 00
+                0x08002a22        0x8 ./lib/src/stm32f10x_tim.o
+                0x08002a22                TIM_ClearITPendingBit
+ *fill*         0x08002a2a        0x2 00
  .text.USART_Init
-                0x08002b38       0xb0 ./lib/src/stm32f10x_usart.o
-                0x08002b38                USART_Init
+                0x08002a2c       0xb0 ./lib/src/stm32f10x_usart.o
+                0x08002a2c                USART_Init
  .text.USART_Cmd
-                0x08002be8       0x18 ./lib/src/stm32f10x_usart.o
-                0x08002be8                USART_Cmd
+                0x08002adc       0x18 ./lib/src/stm32f10x_usart.o
+                0x08002adc                USART_Cmd
  .text.USART_SendData
-                0x08002c00        0x8 ./lib/src/stm32f10x_usart.o
-                0x08002c00                USART_SendData
+                0x08002af4        0x8 ./lib/src/stm32f10x_usart.o
+                0x08002af4                USART_SendData
  .text.USART_GetFlagStatus
-                0x08002c08        0xc ./lib/src/stm32f10x_usart.o
-                0x08002c08                USART_GetFlagStatus
+                0x08002afc        0xc ./lib/src/stm32f10x_usart.o
+                0x08002afc                USART_GetFlagStatus
  .text.SystemInit
-                0x08002c14       0x4c ./lib/system_stm32f10x.o
-                0x08002c14                SystemInit
+                0x08002b08       0x4c ./lib/system_stm32f10x.o
+                0x08002b08                SystemInit
  *(.rodata)
- .rodata        0x08002c60       0x24 ./src/kl_util.o
- .rodata        0x08002c84      0x104 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
-                0x08002c84                _ctype_
+ .rodata        0x08002b54       0x24 ./src/kl_util.o
+ .rodata        0x08002b78      0x104 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
+                0x08002b78                _ctype_
  *(.rodata*)
  .rodata._ZL8KeybOuts
-                0x08002d88        0xc ./src/keys.o
+                0x08002c7c        0xc ./src/keys.o
  .rodata.str1.1
-                0x08002d94       0x63 ./src/main.o
-                                 0x68 (size before relaxing)
+                0x08002c88       0x56 ./src/main.o
+                                 0x5b (size before relaxing)
  .rodata.str1.1
-                0x08002df7       0x5c ./src/media.o
+                0x08002cde       0x5c ./src/media.o
  .rodata.str1.1
-                0x08002e53        0xc ./src/vs.o
+                0x08002d3a        0xc ./src/vs.o
  .rodata.excvt.1610
-                0x08002e5f       0x80 ./sd/ff.o
+                0x08002d46       0x80 ./sd/ff.o
  .rodata.str1.1
-                0x08002edf        0xf ./sd/ff.o
+                0x08002dc6        0xf ./sd/ff.o
  .rodata.str1.1
-                0x08002eee       0x15 ./sd/kl_ini.o
+                0x08002dd5       0x15 ./sd/kl_ini.o
                                  0x33 (size before relaxing)
  .rodata.str1.1
-                0x08002f03       0x25 ./sd/sd.o
- .rodata.str1.4
-                0x08002f28        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
+                0x08002dea       0x25 ./sd/sd.o
  *(.glue_7)
  .glue_7        0x00000000        0x0 linker stubs
  *(.glue_7t)
  .glue_7t       0x00000000        0x0 linker stubs
  *(.eh_frame)
- .eh_frame      0x08002f2c        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+ *fill*         0x08002e0f        0x1 00
+ .eh_frame      0x08002e10        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
  *(.init)
- .init          0x08002f2c        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
-                0x08002f2c                _init
- .init          0x08002f30        0x8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
+ .init          0x08002e10        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
+                0x08002e10                _init
+ .init          0x08002e14        0x8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
  *(.fini)
- .fini          0x08002f38        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
-                0x08002f38                _fini
- .fini          0x08002f3c        0x8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
-                0x08002f44                . = ALIGN (0x4)
-                0x08002f44                _etext = .
+ .fini          0x08002e1c        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
+                0x08002e1c                _fini
+ .fini          0x08002e20        0x8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
+                0x08002e28                . = ALIGN (0x4)
+                0x08002e28                _etext = .
 
-.vfp11_veneer   0x08002f44        0x0
+.vfp11_veneer   0x08002e28        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x08002f44        0x0
+.v4_bx          0x08002e28        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
 
-.ARM            0x08002f44        0x0
-                0x08002f44                __exidx_start = .
+.ARM            0x08002e28        0x0
+                0x08002e28                __exidx_start = .
  *(.ARM.exidx*)
-                0x08002f44                __exidx_end = .
+                0x08002e28                __exidx_end = .
 
-.preinit_array  0x08002f44        0x0
-                0x08002f44                PROVIDE (__preinit_array_start, .)
+.preinit_array  0x08002e28        0x0
+                0x08002e28                PROVIDE (__preinit_array_start, .)
  *(.preinit_array*)
-                0x08002f44                PROVIDE (__preinit_array_end, .)
+                0x08002e28                PROVIDE (__preinit_array_end, .)
 
-.init_array     0x08002f44        0x4
-                0x08002f44                PROVIDE (__init_array_start, .)
+.init_array     0x08002e28        0x4
+                0x08002e28                PROVIDE (__init_array_start, .)
  *(SORT(.init_array.*))
  *(.init_array*)
- .init_array    0x08002f44        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
-                0x08002f48                PROVIDE (__init_array_end, .)
+ .init_array    0x08002e28        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+                0x08002e2c                PROVIDE (__init_array_end, .)
 
-.fini_array     0x08002f48        0x4
-                0x08002f48                PROVIDE (__fini_array_start, .)
+.fini_array     0x08002e2c        0x4
+                0x08002e2c                PROVIDE (__fini_array_start, .)
  *(.fini_array*)
- .fini_array    0x08002f48        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+ .fini_array    0x08002e2c        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
  *(SORT(.fini_array.*))
-                0x08002f4c                PROVIDE (__fini_array_end, .)
-                0x08002f4c                _sidata = .
+                0x08002e30                PROVIDE (__fini_array_end, .)
+                0x08002e30                _sidata = .
 
-.data           0x20000000      0x44c load address 0x08002f4c
+.data           0x20000000       0x1c load address 0x08002e30
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _sdata = .
  *(.data)
- .data          0x20000000      0x430 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
-                0x20000000                _impure_ptr
- .data          0x20000430        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
-                0x20000430                __ctype_ptr__
+ .data          0x20000000        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
+                0x20000000                __ctype_ptr__
  *(.data*)
  .data.ADCPrescTable
-                0x20000434        0x4 ./lib/src/stm32f10x_rcc.o
+                0x20000004        0x4 ./lib/src/stm32f10x_rcc.o
  .data.APBAHBPrescTable
-                0x20000438       0x10 ./lib/src/stm32f10x_rcc.o
+                0x20000008       0x10 ./lib/src/stm32f10x_rcc.o
  .data.SystemCoreClock
-                0x20000448        0x4 ./lib/system_stm32f10x.o
-                0x20000448                SystemCoreClock
-                0x2000044c                . = ALIGN (0x4)
-                0x2000044c                _edata = .
+                0x20000018        0x4 ./lib/system_stm32f10x.o
+                0x20000018                SystemCoreClock
+                0x2000001c                . = ALIGN (0x4)
+                0x2000001c                _edata = .
 
-.jcr            0x2000044c        0x0 load address 0x08003398
- .jcr           0x2000044c        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
-                0x2000044c                . = ALIGN (0x4)
+.jcr            0x2000001c        0x0 load address 0x08002e4c
+ .jcr           0x2000001c        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+                0x2000001c                . = ALIGN (0x4)
 
-.bss            0x2000044c      0xb48 load address 0x08003398
-                0x2000044c                _sbss = .
-                0x2000044c                __bss_start__ = _sbss
+.bss            0x2000001c      0xb60 load address 0x08002e4c
+                0x2000001c                _sbss = .
+                0x2000001c                __bss_start__ = _sbss
  *(.bss)
- .bss           0x2000044c       0x1c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+ .bss           0x2000001c       0x1c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
  *(.bss*)
- .bss.Delay     0x20000468        0x4 ./src/delay_util.o
-                0x20000468                Delay
- .bss.Keys      0x2000046c       0x10 ./src/keys.o
-                0x2000046c                Keys
- .bss.Settings  0x2000047c       0x4c ./src/main.o
-                0x2000047c                Settings
- .bss.ESnd      0x200004c8      0x62c ./src/media.o
-                0x200004c8                ESnd
- .bss.Vs        0x20000af4        0x2 ./src/vs.o
-                0x20000af4                Vs
- .bss.Fsid      0x20000af6        0x2 ./sd/ff.o
- .bss.FatFs     0x20000af8        0x4 ./sd/ff.o
- .bss.IBuf      0x20000afc      0x200 ./sd/kl_ini.o
-                0x20000afc                IBuf
- .bss.SD        0x20000cfc      0x298 ./sd/sd.o
-                0x20000cfc                SD
+ .bss.Delay     0x20000038        0x4 ./src/delay_util.o
+                0x20000038                Delay
+ .bss.Keys      0x2000003c       0x10 ./src/keys.o
+                0x2000003c                Keys
+ .bss.Codecheck
+                0x2000004c       0x10 ./src/main.o
+                0x2000004c                Codecheck
+ .bss.Settings  0x2000005c       0x51 ./src/main.o
+                0x2000005c                Settings
+ *fill*         0x200000ad        0x3 00
+ .bss.ESnd      0x200000b0      0x62c ./src/media.o
+                0x200000b0                ESnd
+ .bss.Vs        0x200006dc        0x2 ./src/vs.o
+                0x200006dc                Vs
+ .bss.Fsid      0x200006de        0x2 ./sd/ff.o
+ .bss.FatFs     0x200006e0        0x4 ./sd/ff.o
+ .bss.IBuf      0x200006e4      0x200 ./sd/kl_ini.o
+                0x200006e4                IBuf
+ .bss.SD        0x200008e4      0x298 ./sd/sd.o
+                0x200008e4                SD
  *(COMMON)
-                0x20000f94                . = ALIGN (0x4)
-                0x20000f94                _ebss = .
-                0x20000f94                __bss_end__ = _ebss
+                0x20000b7c                . = ALIGN (0x4)
+                0x20000b7c                _ebss = .
+                0x20000b7c                __bss_end__ = _ebss
 
 ._user_heap_stack
-                0x20000f94      0x200 load address 0x08003ee0
-                0x20000f94                . = ALIGN (0x4)
-                0x20000f94                PROVIDE (end, .)
-                0x20000f94                PROVIDE (_end, .)
-                0x20000f94                . = (. + _Min_Heap_Size)
-                0x20001194                . = (. + _Min_Stack_Size)
- *fill*         0x20000f94      0x200 00
-                0x20001194                . = ALIGN (0x4)
+                0x20000b7c      0x200 load address 0x080039ac
+                0x20000b7c                . = ALIGN (0x4)
+                0x20000b7c                PROVIDE (end, .)
+                0x20000b7c                PROVIDE (_end, .)
+                0x20000b7c                . = (. + _Min_Heap_Size)
+                0x20000d7c                . = (. + _Min_Stack_Size)
+ *fill*         0x20000b7c      0x200 00
+                0x20000d7c                . = ALIGN (0x4)
 
 .memory_b1_text
  *(.mb1text)
@@ -1426,30 +1436,32 @@ LOAD c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
  .ARM.attributes
                 0x000005bc       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
  .ARM.attributes
-                0x000005e7       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
+                0x000005e7       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
  .ARM.attributes
-                0x00000612       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
+                0x00000612       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
  .ARM.attributes
-                0x0000063d       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+                0x0000063d       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
  .ARM.attributes
-                0x00000668       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
+                0x00000668       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
  .ARM.attributes
-                0x00000693       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
+                0x00000693       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
  .ARM.attributes
-                0x000006be       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
+                0x000006be       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
  .ARM.attributes
-                0x000006e9       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
+                0x000006e9       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
  .ARM.attributes
-                0x00000714       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
+                0x00000714       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
  .ARM.attributes
-                0x00000731       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
+                0x0000073f       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
  .ARM.attributes
-                0x0000074e       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtend.o
+                0x0000075c       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
  .ARM.attributes
-                0x00000779       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
+                0x00000779       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtend.o
+ .ARM.attributes
+                0x000007a4       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
 OUTPUT(AlienLock.elf elf32-littlearm)
 
-.debug_line     0x00000000     0x126d
+.debug_line     0x00000000     0x1337
  .debug_line    0x00000000       0x68 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
  .debug_line    0x00000068       0x8a c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m/crt0.o
  .debug_line    0x000000f2       0xc5 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-atexit.o)
@@ -1459,18 +1471,19 @@ OUTPUT(AlienLock.elf elf32-littlearm)
  .debug_line    0x00000511       0xf0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .debug_line    0x00000601      0x183 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
  .debug_line    0x00000784      0x113 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
- .debug_line    0x00000897       0xbe c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
- .debug_line    0x00000955      0x117 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
- .debug_line    0x00000a6c      0x131 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
- .debug_line    0x00000b9d      0x1fc c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
- .debug_line    0x00000d99      0x166 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
- .debug_line    0x00000eff      0x19c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
- .debug_line    0x0000109b       0x63 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
- .debug_line    0x000010fe       0x93 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
- .debug_line    0x00001191       0x70 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
- .debug_line    0x00001201       0x6c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
+ .debug_line    0x00000897       0xca c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
+ .debug_line    0x00000961       0xbe c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
+ .debug_line    0x00000a1f      0x117 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
+ .debug_line    0x00000b36      0x131 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+ .debug_line    0x00000c67      0x1fc c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
+ .debug_line    0x00000e63      0x166 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
+ .debug_line    0x00000fc9      0x19c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
+ .debug_line    0x00001165       0x63 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
+ .debug_line    0x000011c8       0x93 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
+ .debug_line    0x0000125b       0x70 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
+ .debug_line    0x000012cb       0x6c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
 
-.debug_info     0x00000000     0x3c93
+.debug_info     0x00000000     0x3d7a
  .debug_info    0x00000000       0x71 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
  .debug_info    0x00000071       0xa5 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m/crt0.o
  .debug_info    0x00000116       0xc1 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-atexit.o)
@@ -1480,18 +1493,19 @@ OUTPUT(AlienLock.elf elf32-littlearm)
  .debug_info    0x000015ac      0x12f c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .debug_info    0x000016db      0x116 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
  .debug_info    0x000017f1      0x113 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
- .debug_info    0x00001904       0xb9 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
- .debug_info    0x000019bd       0xb1 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
- .debug_info    0x00001a6e      0x175 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
- .debug_info    0x00001be3      0xa79 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
- .debug_info    0x0000265c      0x9ef c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
- .debug_info    0x0000304b      0x9fc c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
- .debug_info    0x00003a47       0x8b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
- .debug_info    0x00003ad2       0xa8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
- .debug_info    0x00003b7a       0xa8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
- .debug_info    0x00003c22       0x71 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
+ .debug_info    0x00001904       0xe7 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
+ .debug_info    0x000019eb       0xb9 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
+ .debug_info    0x00001aa4       0xb1 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
+ .debug_info    0x00001b55      0x175 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+ .debug_info    0x00001cca      0xa79 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
+ .debug_info    0x00002743      0x9ef c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
+ .debug_info    0x00003132      0x9fc c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
+ .debug_info    0x00003b2e       0x8b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
+ .debug_info    0x00003bb9       0xa8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
+ .debug_info    0x00003c61       0xa8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
+ .debug_info    0x00003d09       0x71 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
 
-.debug_abbrev   0x00000000      0xd37
+.debug_abbrev   0x00000000      0xdbd
  .debug_abbrev  0x00000000       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
  .debug_abbrev  0x00000012       0x14 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m/crt0.o
  .debug_abbrev  0x00000026       0x78 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-atexit.o)
@@ -1501,18 +1515,19 @@ OUTPUT(AlienLock.elf elf32-littlearm)
  .debug_abbrev  0x0000041c       0x9b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .debug_abbrev  0x000004b7       0x8d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
  .debug_abbrev  0x00000544       0x80 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
- .debug_abbrev  0x000005c4       0x6f c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
- .debug_abbrev  0x00000633       0x6d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
- .debug_abbrev  0x000006a0       0xae c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
- .debug_abbrev  0x0000074e      0x1bd c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
- .debug_abbrev  0x0000090b      0x1d3 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
- .debug_abbrev  0x00000ade      0x1bc c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
- .debug_abbrev  0x00000c9a       0x63 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
- .debug_abbrev  0x00000cfd       0x14 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
- .debug_abbrev  0x00000d11       0x14 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
- .debug_abbrev  0x00000d25       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
+ .debug_abbrev  0x000005c4       0x86 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
+ .debug_abbrev  0x0000064a       0x6f c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
+ .debug_abbrev  0x000006b9       0x6d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
+ .debug_abbrev  0x00000726       0xae c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+ .debug_abbrev  0x000007d4      0x1bd c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
+ .debug_abbrev  0x00000991      0x1d3 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
+ .debug_abbrev  0x00000b64      0x1bc c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
+ .debug_abbrev  0x00000d20       0x63 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
+ .debug_abbrev  0x00000d83       0x14 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
+ .debug_abbrev  0x00000d97       0x14 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
+ .debug_abbrev  0x00000dab       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
 
-.debug_aranges  0x00000000      0x230
+.debug_aranges  0x00000000      0x250
  .debug_aranges
                 0x00000000       0x28 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
  .debug_aranges
@@ -1530,23 +1545,25 @@ OUTPUT(AlienLock.elf elf32-littlearm)
  .debug_aranges
                 0x000000e8       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
  .debug_aranges
-                0x00000108       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
+                0x00000108       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
  .debug_aranges
-                0x00000128       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
+                0x00000128       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
  .debug_aranges
-                0x00000148       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+                0x00000148       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
  .debug_aranges
-                0x00000168       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
+                0x00000168       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
  .debug_aranges
-                0x00000188       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
+                0x00000188       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
  .debug_aranges
-                0x000001a8       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
+                0x000001a8       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
  .debug_aranges
-                0x000001c8       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
+                0x000001c8       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
  .debug_aranges
-                0x000001e8       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
+                0x000001e8       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
  .debug_aranges
-                0x00000208       0x28 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
+                0x00000208       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
+ .debug_aranges
+                0x00000228       0x28 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
 
 .debug_ranges   0x00000000       0xb8
  .debug_ranges  0x00000000       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
@@ -1586,6 +1603,7 @@ OUTPUT(AlienLock.elf elf32-littlearm)
  .comment       0x00000000       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .comment       0x00000000       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
  .comment       0x00000000       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
+ .comment       0x00000000       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
  .comment       0x00000000       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
  .comment       0x00000000       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
  .comment       0x00000000       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
@@ -1595,21 +1613,22 @@ OUTPUT(AlienLock.elf elf32-littlearm)
  .comment       0x00000000       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
  .comment       0x00000000       0x12 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtend.o
 
-.debug_loc      0x00000000      0xc61
+.debug_loc      0x00000000      0xc87
  .debug_loc     0x00000000       0x1e c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-atexit.o)
  .debug_loc     0x0000001e       0x3e c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-exit.o)
  .debug_loc     0x0000005c       0x71 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-fini.o)
  .debug_loc     0x000000cd       0x7c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .debug_loc     0x00000149      0x1fb c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
  .debug_loc     0x00000344      0x15b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
- .debug_loc     0x0000049f       0x13 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
- .debug_loc     0x000004b2       0x13 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
- .debug_loc     0x000004c5      0x19a c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
- .debug_loc     0x0000065f      0x339 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
- .debug_loc     0x00000998      0x114 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
- .debug_loc     0x00000aac      0x1b5 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
+ .debug_loc     0x0000049f       0x26 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
+ .debug_loc     0x000004c5       0x13 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
+ .debug_loc     0x000004d8       0x13 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
+ .debug_loc     0x000004eb      0x19a c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+ .debug_loc     0x00000685      0x339 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
+ .debug_loc     0x000009be      0x114 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
+ .debug_loc     0x00000ad2      0x1b5 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
 
-.debug_str      0x00000000      0xb18
+.debug_str      0x00000000      0xb77
  .debug_str     0x00000000      0x11c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-atexit.o)
                                 0x15c (size before relaxing)
  .debug_str     0x0000011c      0x3e3 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-exit.o)
@@ -1624,32 +1643,35 @@ OUTPUT(AlienLock.elf elf32-littlearm)
                                 0x147 (size before relaxing)
  .debug_str     0x000007a6       0x4b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
                                 0x13e (size before relaxing)
- .debug_str     0x000007f1       0xa4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
+ .debug_str     0x000007f1       0xb5 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
+                                0x14a (size before relaxing)
+ .debug_str     0x000008a6       0x4e c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
                                 0x139 (size before relaxing)
- .debug_str     0x00000895       0x4e c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
+ .debug_str     0x000008f4       0x4e c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
                                 0x140 (size before relaxing)
- .debug_str     0x000008e3       0x68 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+ .debug_str     0x00000942       0x68 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
                                 0x155 (size before relaxing)
- .debug_str     0x0000094b       0x6f c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
+ .debug_str     0x000009aa       0x6f c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
                                 0x523 (size before relaxing)
- .debug_str     0x000009ba       0x63 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
+ .debug_str     0x00000a19       0x63 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
                                 0x545 (size before relaxing)
- .debug_str     0x00000a1d       0x65 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
+ .debug_str     0x00000a7c       0x65 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
                                 0x517 (size before relaxing)
- .debug_str     0x00000a82       0x96 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
+ .debug_str     0x00000ae1       0x96 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
                                  0xc2 (size before relaxing)
 
-.debug_frame    0x00000000      0x240
+.debug_frame    0x00000000      0x270
  .debug_frame   0x00000000       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-atexit.o)
  .debug_frame   0x00000020       0x28 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-exit.o)
  .debug_frame   0x00000048       0x2c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-fini.o)
  .debug_frame   0x00000074       0x2c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .debug_frame   0x000000a0       0x2c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
  .debug_frame   0x000000cc       0x2c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
- .debug_frame   0x000000f8       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
- .debug_frame   0x00000118       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
- .debug_frame   0x00000138       0x2c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
- .debug_frame   0x00000164       0x50 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
- .debug_frame   0x000001b4       0x34 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
- .debug_frame   0x000001e8       0x38 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
- .debug_frame   0x00000220       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
+ .debug_frame   0x000000f8       0x30 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcmp.o)
+ .debug_frame   0x00000128       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
+ .debug_frame   0x00000148       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
+ .debug_frame   0x00000168       0x2c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+ .debug_frame   0x00000194       0x50 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
+ .debug_frame   0x000001e4       0x34 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
+ .debug_frame   0x00000218       0x38 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
+ .debug_frame   0x00000250       0x20 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)

@@ -14,7 +14,7 @@
 
 #define INI_BUF_SIZE    512
 
-bool ReadString(const char *ASection, const char *AKey, const char *AFileName, char *AOutput);
+bool ReadString(const char *ASection, const char *AKey, const char *AFileName, char *AOutput, uint32_t AMaxLen);
 bool ReadInt32 (const char *ASection, const char *AKey, const char *AFileName, int32_t *AOutput);
 
 #endif /* KL_INI_H_ */
