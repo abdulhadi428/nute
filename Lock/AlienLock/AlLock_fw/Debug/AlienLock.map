@@ -47,8 +47,13 @@ Discarded input sections
  .text          0x00000000        0x0 ./src/delay_util.o
  .data          0x00000000        0x0 ./src/delay_util.o
  .bss           0x00000000        0x0 ./src/delay_util.o
- .text._ZN7Delay_t7ElapsedEPmm
-                0x00000000       0x14 ./src/delay_util.o
+ .text._ZN7Delay_t4LoopEm
+                0x00000000       0x16 ./src/delay_util.o
+ .text._ZN7Delay_t2msEm
+                0x00000000       0x18 ./src/delay_util.o
+ .text          0x00000000        0x0 ./src/keys.o
+ .data          0x00000000        0x0 ./src/keys.o
+ .bss           0x00000000        0x0 ./src/keys.o
  .text          0x00000000        0x0 ./src/kl_util.o
  .data          0x00000000        0x0 ./src/kl_util.o
  .bss           0x00000000        0x0 ./src/kl_util.o
@@ -57,26 +62,9 @@ Discarded input sections
  .text          0x00000000        0x0 ./src/main.o
  .data          0x00000000        0x0 ./src/main.o
  .bss           0x00000000        0x0 ./src/main.o
- .text._Z10ReadConfigv
-                0x00000000        0x4 ./src/main.o
- .text._Z21EVENT_SomeoneDetectedv
-                0x00000000        0x2 ./src/main.o
  .text          0x00000000        0x0 ./src/media.o
  .data          0x00000000        0x0 ./src/media.o
  .bss           0x00000000        0x0 ./src/media.o
- .text._ZN7Sound_t4InitEv
-                0x00000000        0x8 ./src/media.o
- .text._ZN7Sound_t7StopNowEv
-                0x00000000       0x30 ./src/media.o
- .text._ZN7Sound_t10UploadDataEv
-                0x00000000       0x5c ./src/media.o
- .text._ZN7Sound_t4PlayEPKc
-                0x00000000       0xac ./src/media.o
- .text._ZN7Sound_t4TaskEv
-                0x00000000       0x3c ./src/media.o
- .rodata.str1.1
-                0x00000000       0x75 ./src/media.o
- .bss.ESnd      0x00000000      0x62c ./src/media.o
  .text          0x00000000        0x0 ./src/sensors.o
  .data          0x00000000        0x0 ./src/sensors.o
  .bss           0x00000000        0x0 ./src/sensors.o
@@ -90,106 +78,21 @@ Discarded input sections
  .text          0x00000000        0x0 ./src/vs.o
  .data          0x00000000        0x0 ./src/vs.o
  .bss           0x00000000        0x0 ./src/vs.o
- .text._ZN4VS_t4InitEv
-                0x00000000       0xb4 ./src/vs.o
- .text._ZN4VS_t6IsBusyEv
-                0x00000000       0x1c ./src/vs.o
- .text._ZN4VS_t8BusyWaitEv
-                0x00000000       0x2c ./src/vs.o
- .text._ZN4VS_t9WriteDataEPht
-                0x00000000       0x3c ./src/vs.o
- .text._ZN4VS_t13ReadWriteByteEh
-                0x00000000       0x18 ./src/vs.o
- .text._ZN4VS_t8CmdWriteEht
-                0x00000000       0x50 ./src/vs.o
- .text._ZN4VS_t12AmplifierOffEv
-                0x00000000       0x32 ./src/vs.o
  .text._ZN4VS_t7DisableEv
                 0x00000000       0x24 ./src/vs.o
- .text._ZN4VS_t11AmplifierOnEv
-                0x00000000       0x32 ./src/vs.o
- .text._ZN4VS_t6EnableEv
-                0x00000000       0x54 ./src/vs.o
  .text._ZN4VS_t7CmdReadEhPt
                 0x00000000       0x58 ./src/vs.o
  .text._ZN4VS_t19WriteTrailingZeroesEv
                 0x00000000       0x2c ./src/vs.o
- .rodata.str1.1
-                0x00000000        0xc ./src/vs.o
- .bss.Vs        0x00000000        0x2 ./src/vs.o
  .text          0x00000000        0x0 ./sd/ff.o
  .data          0x00000000        0x0 ./sd/ff.o
  .bss           0x00000000        0x0 ./sd/ff.o
- .text.check_fs
-                0x00000000       0x88 ./sd/ff.o
- .text.move_window
-                0x00000000       0x2e ./sd/ff.o
- .text.clust2sect
-                0x00000000       0x16 ./sd/ff.o
- .text.get_fat  0x00000000       0xca ./sd/ff.o
- .text.dir_sdi.constprop.6
-                0x00000000       0x6c ./sd/ff.o
- .text.f_mount  0x00000000       0x20 ./sd/ff.o
- .text.f_open   0x00000000      0x4c4 ./sd/ff.o
- .text.f_read   0x00000000      0x140 ./sd/ff.o
- .text.f_close  0x00000000       0x30 ./sd/ff.o
- .text.f_gets   0x00000000       0x46 ./sd/ff.o
- .rodata.excvt.1610
-                0x00000000       0x80 ./sd/ff.o
- .rodata.str1.1
-                0x00000000        0xf ./sd/ff.o
- .bss.Fsid      0x00000000        0x2 ./sd/ff.o
- .bss.FatFs     0x00000000        0x4 ./sd/ff.o
  .text          0x00000000        0x0 ./sd/kl_ini.o
  .data          0x00000000        0x0 ./sd/kl_ini.o
  .bss           0x00000000        0x0 ./sd/kl_ini.o
- .text._Z11skipleadingPc
-                0x00000000       0x12 ./sd/kl_ini.o
- .text._Z12skiptrailingPcPKc
-                0x00000000       0x12 ./sd/kl_ini.o
- .text._Z13striptrailingPc
-                0x00000000       0x18 ./sd/kl_ini.o
- .text._Z10ReadStringPKcS0_S0_Pc
-                0x00000000      0x1b8 ./sd/kl_ini.o
- .text._Z9ReadInt32PKcS0_S0_Pl
-                0x00000000       0x20 ./sd/kl_ini.o
- .bss.IBuf      0x00000000      0x200 ./sd/kl_ini.o
- .rodata.str1.1
-                0x00000000       0x33 ./sd/kl_ini.o
  .text          0x00000000        0x0 ./sd/sd.o
  .data          0x00000000        0x0 ./sd/sd.o
  .bss           0x00000000        0x0 ./sd/sd.o
- .text._ZN4sd_t12LowLevelInitEv
-                0x00000000       0x54 ./sd/sd.o
- .text._ZN4sd_t8InitSDIOEhm
-                0x00000000       0x1c ./sd/sd.o
- .text._ZN4sd_t11GetCardInfoEv
-                0x00000000      0x24c ./sd/sd.o
- .text._ZN4sd_t3CmdEmm13SD_RespType_tz
-                0x00000000       0xe0 ./sd/sd.o
- .text._ZN4sd_t7FindSCREPm
-                0x00000000       0xfc ./sd/sd.o
- .text._ZN4sd_t11SDEnWideBusE15FunctionalState
-                0x00000000       0x72 ./sd/sd.o
- .text._ZN4sd_t22EnableWideBusOperationEm
-                0x00000000       0x4e ./sd/sd.o
- .text._ZN4sd_t9InitCardsEv
-                0x00000000       0xb6 ./sd/sd.o
- .text._ZN4sd_t7PowerOnEv
-                0x00000000       0x96 ./sd/sd.o
- .text._ZN4sd_t4InitEv
-                0x00000000       0x76 ./sd/sd.o
- .text._ZN4sd_t9ReadBlockEPhmt
-                0x00000000       0xb8 ./sd/sd.o
- .text.disk_read
-                0x00000000       0x60 ./sd/sd.o
- .text.disk_status
-                0x00000000       0x14 ./sd/sd.o
- .text.disk_initialize
-                0x00000000       0x3c ./sd/sd.o
- .rodata.str1.1
-                0x00000000       0x25 ./sd/sd.o
- .bss.SD        0x00000000      0x298 ./sd/sd.o
  .bss.Buffer_Rx
                 0x00000000      0x400 ./sd/sd.o
  .text          0x00000000       0x14 ./lib/startup/startup_stm32f10x_hd.o
@@ -283,21 +186,14 @@ Discarded input sections
  .bss           0x00000000        0x0 ./lib/src/stm32f10x_dma.o
  .text.DMA_DeInit
                 0x00000000       0xfc ./lib/src/stm32f10x_dma.o
- .text.DMA_Init
-                0x00000000       0x3c ./lib/src/stm32f10x_dma.o
  .text.DMA_StructInit
                 0x00000000       0x1a ./lib/src/stm32f10x_dma.o
- .text.DMA_Cmd  0x00000000       0x16 ./lib/src/stm32f10x_dma.o
  .text.DMA_ITConfig
                 0x00000000       0x10 ./lib/src/stm32f10x_dma.o
  .text.DMA_SetCurrDataCounter
                 0x00000000        0x4 ./lib/src/stm32f10x_dma.o
  .text.DMA_GetCurrDataCounter
                 0x00000000        0x6 ./lib/src/stm32f10x_dma.o
- .text.DMA_GetFlagStatus
-                0x00000000       0x1c ./lib/src/stm32f10x_dma.o
- .text.DMA_ClearFlag
-                0x00000000       0x14 ./lib/src/stm32f10x_dma.o
  .text.DMA_GetITStatus
                 0x00000000       0x1c ./lib/src/stm32f10x_dma.o
  .text.DMA_ClearITPendingBit
@@ -311,8 +207,6 @@ Discarded input sections
                 0x00000000       0x16 ./lib/src/stm32f10x_gpio.o
  .text.GPIO_StructInit
                 0x00000000       0x10 ./lib/src/stm32f10x_gpio.o
- .text.GPIO_ReadInputDataBit
-                0x00000000        0xc ./lib/src/stm32f10x_gpio.o
  .text.GPIO_ReadInputData
                 0x00000000        0x6 ./lib/src/stm32f10x_gpio.o
  .text.GPIO_ReadOutputDataBit
@@ -320,8 +214,6 @@ Discarded input sections
  .text.GPIO_ReadOutputData
                 0x00000000        0x6 ./lib/src/stm32f10x_gpio.o
  .text.GPIO_SetBits
-                0x00000000        0x4 ./lib/src/stm32f10x_gpio.o
- .text.GPIO_ResetBits
                 0x00000000        0x4 ./lib/src/stm32f10x_gpio.o
  .text.GPIO_WriteBit
                 0x00000000        0xa ./lib/src/stm32f10x_gpio.o
@@ -444,8 +336,6 @@ Discarded input sections
                 0x00000000       0x10 ./lib/src/stm32f10x_rcc.o
  .text.RCC_RTCCLKCmd
                 0x00000000        0xc ./lib/src/stm32f10x_rcc.o
- .text.RCC_AHBPeriphClockCmd
-                0x00000000       0x18 ./lib/src/stm32f10x_rcc.o
  .text.RCC_APB2PeriphResetCmd
                 0x00000000       0x18 ./lib/src/stm32f10x_rcc.o
  .text.RCC_APB1PeriphResetCmd
@@ -469,37 +359,15 @@ Discarded input sections
  .text          0x00000000        0x0 ./lib/src/stm32f10x_sdio.o
  .data          0x00000000        0x0 ./lib/src/stm32f10x_sdio.o
  .bss           0x00000000        0x0 ./lib/src/stm32f10x_sdio.o
- .text.SDIO_DeInit
-                0x00000000       0x24 ./lib/src/stm32f10x_sdio.o
- .text.SDIO_Init
-                0x00000000       0x30 ./lib/src/stm32f10x_sdio.o
  .text.SDIO_StructInit
-                0x00000000       0x10 ./lib/src/stm32f10x_sdio.o
- .text.SDIO_ClockCmd
-                0x00000000        0xc ./lib/src/stm32f10x_sdio.o
- .text.SDIO_SetPowerState
-                0x00000000       0x18 ./lib/src/stm32f10x_sdio.o
- .text.SDIO_GetPowerState
                 0x00000000       0x10 ./lib/src/stm32f10x_sdio.o
  .text.SDIO_ITConfig
                 0x00000000       0x18 ./lib/src/stm32f10x_sdio.o
- .text.SDIO_DMACmd
-                0x00000000        0xc ./lib/src/stm32f10x_sdio.o
- .text.SDIO_SendCommand
-                0x00000000       0x2c ./lib/src/stm32f10x_sdio.o
  .text.SDIO_CmdStructInit
                 0x00000000        0xe ./lib/src/stm32f10x_sdio.o
- .text.SDIO_GetCommandResponse
-                0x00000000        0xc ./lib/src/stm32f10x_sdio.o
- .text.SDIO_GetResponse
-                0x00000000       0x18 ./lib/src/stm32f10x_sdio.o
- .text.SDIO_DataConfig
-                0x00000000       0x2c ./lib/src/stm32f10x_sdio.o
  .text.SDIO_DataStructInit
                 0x00000000       0x14 ./lib/src/stm32f10x_sdio.o
  .text.SDIO_GetDataCounter
-                0x00000000        0xc ./lib/src/stm32f10x_sdio.o
- .text.SDIO_ReadData
                 0x00000000        0xc ./lib/src/stm32f10x_sdio.o
  .text.SDIO_WriteData
                 0x00000000        0xc ./lib/src/stm32f10x_sdio.o
@@ -521,10 +389,6 @@ Discarded input sections
                 0x00000000       0x14 ./lib/src/stm32f10x_sdio.o
  .text.SDIO_SendCEATACmd
                 0x00000000        0xc ./lib/src/stm32f10x_sdio.o
- .text.SDIO_GetFlagStatus
-                0x00000000       0x14 ./lib/src/stm32f10x_sdio.o
- .text.SDIO_ClearFlag
-                0x00000000        0xc ./lib/src/stm32f10x_sdio.o
  .text.SDIO_GetITStatus
                 0x00000000       0x14 ./lib/src/stm32f10x_sdio.o
  .text.SDIO_ClearITPendingBit
@@ -534,15 +398,12 @@ Discarded input sections
  .bss           0x00000000        0x0 ./lib/src/stm32f10x_spi.o
  .text.SPI_I2S_DeInit
                 0x00000000       0x64 ./lib/src/stm32f10x_spi.o
- .text.SPI_Init
-                0x00000000       0x3e ./lib/src/stm32f10x_spi.o
  .text.I2S_Init
                 0x00000000       0xa2 ./lib/src/stm32f10x_spi.o
  .text.SPI_StructInit
                 0x00000000       0x18 ./lib/src/stm32f10x_spi.o
  .text.I2S_StructInit
                 0x00000000       0x12 ./lib/src/stm32f10x_spi.o
- .text.SPI_Cmd  0x00000000       0x18 ./lib/src/stm32f10x_spi.o
  .text.I2S_Cmd  0x00000000       0x18 ./lib/src/stm32f10x_spi.o
  .text.SPI_I2S_ITConfig
                 0x00000000       0x1c ./lib/src/stm32f10x_spi.o
@@ -860,30 +721,22 @@ Discarded input sections
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-fini.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-fini.o)
  .text          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
- .data          0x00000000      0x430 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
  .rodata        0x00000000        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
- .rodata.str1.4
-                0x00000000        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
  .text          0x00000000       0x48 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .text          0x00000000       0x94 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
- .text          0x00000000       0xf4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
- .text          0x00000000       0xbc c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
- .text          0x00000000       0x60 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
- .text          0x00000000       0x54 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
- .text          0x00000000      0x178 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
  .text          0x00000000       0xb0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
@@ -893,13 +746,9 @@ Discarded input sections
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
  .text          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
- .data          0x00000000        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
- .rodata        0x00000000      0x104 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
- .text          0x00000000      0x278 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
- .text          0x00000000        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
  .data          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
  .bss           0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
  .text          0x00000000        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtend.o
@@ -925,6 +774,7 @@ LOAD c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
 LOAD c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
 LOAD c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m/crt0.o
 LOAD ./src/delay_util.o
+LOAD ./src/keys.o
 LOAD ./src/kl_util.o
 LOAD ./src/main.o
 LOAD ./src/media.o
@@ -965,283 +815,535 @@ LOAD c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
                 0x08000000                g_pfnVectors
                 0x080001e4                . = ALIGN (0x4)
 
-.text           0x080001e4      0x8f0
-                0x080001e4                . = ALIGN (0x4)
+.text           0x080001e8     0x2d5c
+                0x080001e8                . = ALIGN (0x4)
  *(.text)
- .text          0x080001e4       0x54 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+ .text          0x080001e8       0x54 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+ .text          0x0800023c       0xf4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
+                0x0800023c                strchr
+ .text          0x08000330       0xbc c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
+                0x08000330                strcpy
+ .text          0x080003ec       0x60 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
+                0x080003ec                strlen
+ .text          0x0800044c       0x54 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+                0x0800044c                strncasecmp
+ .text          0x080004a0      0x178 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
+                0x080004a0                _strtol_r
+                0x08000600                strtol
+ .text          0x08000618      0x278 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
+                0x08000618                __aeabi_uidiv
+                0x08000618                __udivsi3
+                0x08000874                __aeabi_uidivmod
+ .text          0x08000890        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
+                0x08000890                __aeabi_idiv0
+                0x08000890                __aeabi_ldiv0
  *(.text*)
  .text._ZN7Delay_t4InitEv
-                0x08000238       0x80 ./src/delay_util.o
-                0x08000238                Delay_t::Init()
- .text._ZN7Delay_t4LoopEm
-                0x080002b8       0x16 ./src/delay_util.o
-                0x080002b8                Delay_t::Loop(unsigned long)
- *fill*         0x080002ce        0x2 00
- .text._ZN7Delay_t2msEm
-                0x080002d0       0x18 ./src/delay_util.o
-                0x080002d0                Delay_t::ms(unsigned long)
+                0x08000894       0x80 ./src/delay_util.o
+                0x08000894                Delay_t::Init()
+ .text._ZN7Delay_t7ElapsedEPmm
+                0x08000914       0x14 ./src/delay_util.o
+                0x08000914                Delay_t::Elapsed(unsigned long*, unsigned long)
  .text.TIM2_IRQHandler
-                0x080002e8       0x1c ./src/delay_util.o
-                0x080002e8                TIM2_IRQHandler
+                0x08000928       0x1c ./src/delay_util.o
+                0x08000928                TIM2_IRQHandler
+ .text._ZN6Keys_t4TaskEv
+                0x08000944       0xe4 ./src/keys.o
+                0x08000944                Keys_t::Task()
+ .text._ZN6Keys_t4InitEv
+                0x08000a28       0x40 ./src/keys.o
+                0x08000a28                Keys_t::Init()
  .text.UART_Init
-                0x08000304       0x70 ./src/kl_util.o
-                0x08000304                UART_Init
+                0x08000a68       0x70 ./src/kl_util.o
+                0x08000a68                UART_Init
  .text.UART_Print
-                0x08000374       0x1c ./src/kl_util.o
-                0x08000374                UART_Print
+                0x08000ad8       0x1c ./src/kl_util.o
+                0x08000ad8                UART_Print
  .text.UintToHexChar
-                0x08000390       0x10 ./src/kl_util.o
-                0x08000390                UintToHexChar
+                0x08000af4       0x10 ./src/kl_util.o
+                0x08000af4                UintToHexChar
  .text.UART_PrintAsHex
-                0x080003a0       0x80 ./src/kl_util.o
-                0x080003a0                UART_PrintAsHex
+                0x08000b04       0x80 ./src/kl_util.o
+                0x08000b04                UART_PrintAsHex
  .text.UART_PrintUint
-                0x08000420       0x54 ./src/kl_util.o
-                0x08000420                UART_PrintUint
+                0x08000b84       0x54 ./src/kl_util.o
+                0x08000b84                UART_PrintUint
  .text.UART_PrintInt
-                0x08000474       0x22 ./src/kl_util.o
-                0x08000474                UART_PrintInt
+                0x08000bd8       0x22 ./src/kl_util.o
+                0x08000bd8                UART_PrintInt
  .text.UART_PrintString
-                0x08000496       0x14 ./src/kl_util.o
-                0x08000496                UART_PrintString
+                0x08000bfa       0x14 ./src/kl_util.o
+                0x08000bfa                UART_PrintString
  .text.UART_Print8HexArray
-                0x080004aa       0x1e ./src/kl_util.o
-                0x080004aa                UART_Print8HexArray
+                0x08000c0e       0x1e ./src/kl_util.o
+                0x08000c0e                UART_Print8HexArray
  .text.klPrintf
-                0x080004c8       0xba ./src/kl_util.o
-                0x080004c8                klPrintf
- *fill*         0x08000582        0x2 00
+                0x08000c2c       0xba ./src/kl_util.o
+                0x08000c2c                klPrintf
+ *fill*         0x08000ce6        0x2 00
+ .text._Z9Event_Kbdv
+                0x08000ce8       0x2c ./src/main.o
+                0x08000ce8                Event_Kbd()
+ .text._ZN10Settings_t4ReadEv
+                0x08000d14       0xb0 ./src/main.o
+                0x08000d14                Settings_t::Read()
  .text._Z11GeneralInitv
-                0x08000584       0x3c ./src/main.o
-                0x08000584                GeneralInit()
+                0x08000dc4       0x84 ./src/main.o
+                0x08000dc4                GeneralInit()
  .text.startup.main
-                0x080005c0        0x8 ./src/main.o
-                0x080005c0                main
+                0x08000e48       0x1c ./src/main.o
+                0x08000e48                main
+ .text._ZN7Sound_t4InitEv
+                0x08000e64        0x8 ./src/media.o
+                0x08000e64                Sound_t::Init()
+ .text._ZN7Sound_t7StopNowEv
+                0x08000e6c       0x28 ./src/media.o
+                0x08000e6c                Sound_t::StopNow()
+ .text._ZN7Sound_t10UploadDataEv
+                0x08000e94       0x5c ./src/media.o
+                0x08000e94                Sound_t::UploadData()
+ .text._ZN7Sound_t4PlayEPKc
+                0x08000ef0       0xa4 ./src/media.o
+                0x08000ef0                Sound_t::Play(char const*)
+ .text._ZN7Sound_t4TaskEv
+                0x08000f94       0x3c ./src/media.o
+                0x08000f94                Sound_t::Task()
+ .text._ZN4VS_t4InitEv
+                0x08000fd0       0xb4 ./src/vs.o
+                0x08000fd0                VS_t::Init()
+ .text._ZN4VS_t6IsBusyEv
+                0x08001084       0x1c ./src/vs.o
+                0x08001084                VS_t::IsBusy()
+ .text._ZN4VS_t8BusyWaitEv
+                0x080010a0       0x2c ./src/vs.o
+                0x080010a0                VS_t::BusyWait()
+ .text._ZN4VS_t9WriteDataEPht
+                0x080010cc       0x3c ./src/vs.o
+                0x080010cc                VS_t::WriteData(unsigned char*, unsigned short)
+ .text._ZN4VS_t13ReadWriteByteEh
+                0x08001108       0x18 ./src/vs.o
+                0x08001108                VS_t::ReadWriteByte(unsigned char)
+ .text._ZN4VS_t8CmdWriteEht
+                0x08001120       0x50 ./src/vs.o
+                0x08001120                VS_t::CmdWrite(unsigned char, unsigned short)
+ .text._ZN4VS_t12AmplifierOffEv
+                0x08001170       0x32 ./src/vs.o
+                0x08001170                VS_t::AmplifierOff()
+ .text._ZN4VS_t11AmplifierOnEv
+                0x080011a2       0x32 ./src/vs.o
+                0x080011a2                VS_t::AmplifierOn()
+ .text._ZN4VS_t6EnableEv
+                0x080011d4       0x54 ./src/vs.o
+                0x080011d4                VS_t::Enable()
+ .text.check_fs
+                0x08001228       0x88 ./sd/ff.o
+ .text.move_window
+                0x080012b0       0x2e ./sd/ff.o
+ .text.clust2sect
+                0x080012de       0x16 ./sd/ff.o
+                0x080012de                clust2sect
+ .text.get_fat  0x080012f4       0xca ./sd/ff.o
+                0x080012f4                get_fat
+ .text.dir_sdi.constprop.6
+                0x080013be       0x6c ./sd/ff.o
+ *fill*         0x0800142a        0x2 00
+ .text.f_mount  0x0800142c       0x20 ./sd/ff.o
+                0x0800142c                f_mount
+ .text.f_open   0x0800144c      0x4c4 ./sd/ff.o
+                0x0800144c                f_open
+ .text.f_read   0x08001910      0x140 ./sd/ff.o
+                0x08001910                f_read
+ .text.f_close  0x08001a50       0x30 ./sd/ff.o
+                0x08001a50                f_close
+ .text.f_gets   0x08001a80       0x46 ./sd/ff.o
+                0x08001a80                f_gets
+ .text._Z11skipleadingPc
+                0x08001ac6       0x12 ./sd/kl_ini.o
+                0x08001ac6                skipleading(char*)
+ .text._Z12skiptrailingPcPKc
+                0x08001ad8       0x12 ./sd/kl_ini.o
+                0x08001ad8                skiptrailing(char*, char const*)
+ .text._Z13striptrailingPc
+                0x08001aea       0x18 ./sd/kl_ini.o
+                0x08001aea                striptrailing(char*)
+ *fill*         0x08001b02        0x2 00
+ .text._Z10ReadStringPKcS0_S0_Pc
+                0x08001b04      0x1b8 ./sd/kl_ini.o
+                0x08001b04                ReadString(char const*, char const*, char const*, char*)
+ .text._Z9ReadInt32PKcS0_S0_Pl
+                0x08001cbc       0x20 ./sd/kl_ini.o
+                0x08001cbc                ReadInt32(char const*, char const*, char const*, long*)
+ .text._ZN4sd_t12LowLevelInitEv
+                0x08001cdc       0x54 ./sd/sd.o
+                0x08001cdc                sd_t::LowLevelInit()
+ .text._ZN4sd_t8InitSDIOEhm
+                0x08001d30       0x1c ./sd/sd.o
+                0x08001d30                sd_t::InitSDIO(unsigned char, unsigned long)
+ .text._ZN4sd_t11GetCardInfoEv
+                0x08001d4c      0x24c ./sd/sd.o
+                0x08001d4c                sd_t::GetCardInfo()
+ .text._ZN4sd_t3CmdEmm13SD_RespType_tz
+                0x08001f98       0xe0 ./sd/sd.o
+                0x08001f98                sd_t::Cmd(unsigned long, unsigned long, SD_RespType_t, ...)
+ .text._ZN4sd_t7FindSCREPm
+                0x08002078       0xfc ./sd/sd.o
+                0x08002078                sd_t::FindSCR(unsigned long*)
+ .text._ZN4sd_t11SDEnWideBusE15FunctionalState
+                0x08002174       0x72 ./sd/sd.o
+                0x08002174                sd_t::SDEnWideBus(FunctionalState)
+ .text._ZN4sd_t22EnableWideBusOperationEm
+                0x080021e6       0x4e ./sd/sd.o
+                0x080021e6                sd_t::EnableWideBusOperation(unsigned long)
+ .text._ZN4sd_t9InitCardsEv
+                0x08002234       0xb6 ./sd/sd.o
+                0x08002234                sd_t::InitCards()
+ .text._ZN4sd_t7PowerOnEv
+                0x080022ea       0x96 ./sd/sd.o
+                0x080022ea                sd_t::PowerOn()
+ .text._ZN4sd_t4InitEv
+                0x08002380       0x76 ./sd/sd.o
+                0x08002380                sd_t::Init()
+ *fill*         0x080023f6        0x2 00
+ .text._ZN4sd_t9ReadBlockEPhmt
+                0x080023f8       0xb8 ./sd/sd.o
+                0x080023f8                sd_t::ReadBlock(unsigned char*, unsigned long, unsigned short)
+ .text.disk_read
+                0x080024b0       0x60 ./sd/sd.o
+                0x080024b0                disk_read
+ .text.disk_status
+                0x08002510       0x14 ./sd/sd.o
+                0x08002510                disk_status
+ .text.disk_initialize
+                0x08002524       0x3c ./sd/sd.o
+                0x08002524                disk_initialize
  .text.Reset_Handler
-                0x080005c8       0x44 ./lib/startup/startup_stm32f10x_hd.o
-                0x080005c8                Reset_Handler
+                0x08002560       0x44 ./lib/startup/startup_stm32f10x_hd.o
+                0x08002560                Reset_Handler
  .text.Default_Handler
-                0x0800060c        0x2 ./lib/startup/startup_stm32f10x_hd.o
-                0x0800060c                EXTI2_IRQHandler
-                0x0800060c                TIM8_TRG_COM_IRQHandler
-                0x0800060c                TIM8_CC_IRQHandler
-                0x0800060c                DebugMon_Handler
-                0x0800060c                TIM1_CC_IRQHandler
-                0x0800060c                HardFault_Handler
-                0x0800060c                TIM6_IRQHandler
-                0x0800060c                SysTick_Handler
-                0x0800060c                PVD_IRQHandler
-                0x0800060c                SDIO_IRQHandler
-                0x0800060c                PendSV_Handler
-                0x0800060c                NMI_Handler
-                0x0800060c                EXTI3_IRQHandler
-                0x0800060c                EXTI0_IRQHandler
-                0x0800060c                I2C2_EV_IRQHandler
-                0x0800060c                UsageFault_Handler
-                0x0800060c                ADC1_2_IRQHandler
-                0x0800060c                SPI1_IRQHandler
-                0x0800060c                TAMPER_IRQHandler
-                0x0800060c                TIM8_UP_IRQHandler
-                0x0800060c                DMA2_Channel2_IRQHandler
-                0x0800060c                DMA1_Channel4_IRQHandler
-                0x0800060c                USART3_IRQHandler
-                0x0800060c                RTC_IRQHandler
-                0x0800060c                DMA1_Channel7_IRQHandler
-                0x0800060c                CAN1_RX1_IRQHandler
-                0x0800060c                UART5_IRQHandler
-                0x0800060c                ADC3_IRQHandler
-                0x0800060c                TIM4_IRQHandler
-                0x0800060c                DMA2_Channel1_IRQHandler
-                0x0800060c                I2C1_EV_IRQHandler
-                0x0800060c                DMA1_Channel6_IRQHandler
-                0x0800060c                UART4_IRQHandler
-                0x0800060c                TIM3_IRQHandler
-                0x0800060c                RCC_IRQHandler
-                0x0800060c                TIM1_TRG_COM_IRQHandler
-                0x0800060c                DMA1_Channel1_IRQHandler
-                0x0800060c                Default_Handler
-                0x0800060c                EXTI15_10_IRQHandler
-                0x0800060c                TIM7_IRQHandler
-                0x0800060c                TIM5_IRQHandler
-                0x0800060c                EXTI9_5_IRQHandler
-                0x0800060c                SPI2_IRQHandler
-                0x0800060c                MemManage_Handler
-                0x0800060c                SVC_Handler
-                0x0800060c                DMA1_Channel5_IRQHandler
-                0x0800060c                EXTI4_IRQHandler
-                0x0800060c                USB_LP_CAN1_RX0_IRQHandler
-                0x0800060c                USB_HP_CAN1_TX_IRQHandler
-                0x0800060c                DMA1_Channel3_IRQHandler
-                0x0800060c                FSMC_IRQHandler
-                0x0800060c                TIM1_UP_IRQHandler
-                0x0800060c                WWDG_IRQHandler
-                0x0800060c                TIM1_BRK_IRQHandler
-                0x0800060c                EXTI1_IRQHandler
-                0x0800060c                RTCAlarm_IRQHandler
-                0x0800060c                DMA2_Channel4_5_IRQHandler
-                0x0800060c                USART2_IRQHandler
-                0x0800060c                I2C2_ER_IRQHandler
-                0x0800060c                DMA1_Channel2_IRQHandler
-                0x0800060c                TIM8_BRK_IRQHandler
-                0x0800060c                CAN1_SCE_IRQHandler
-                0x0800060c                FLASH_IRQHandler
-                0x0800060c                BusFault_Handler
-                0x0800060c                USART1_IRQHandler
-                0x0800060c                SPI3_IRQHandler
-                0x0800060c                I2C1_ER_IRQHandler
-                0x0800060c                USBWakeUp_IRQHandler
-                0x0800060c                DMA2_Channel3_IRQHandler
- *fill*         0x0800060e        0x2 00
+                0x080025a4        0x2 ./lib/startup/startup_stm32f10x_hd.o
+                0x080025a4                EXTI2_IRQHandler
+                0x080025a4                TIM8_TRG_COM_IRQHandler
+                0x080025a4                TIM8_CC_IRQHandler
+                0x080025a4                DebugMon_Handler
+                0x080025a4                TIM1_CC_IRQHandler
+                0x080025a4                HardFault_Handler
+                0x080025a4                TIM6_IRQHandler
+                0x080025a4                SysTick_Handler
+                0x080025a4                PVD_IRQHandler
+                0x080025a4                SDIO_IRQHandler
+                0x080025a4                PendSV_Handler
+                0x080025a4                NMI_Handler
+                0x080025a4                EXTI3_IRQHandler
+                0x080025a4                EXTI0_IRQHandler
+                0x080025a4                I2C2_EV_IRQHandler
+                0x080025a4                UsageFault_Handler
+                0x080025a4                ADC1_2_IRQHandler
+                0x080025a4                SPI1_IRQHandler
+                0x080025a4                TAMPER_IRQHandler
+                0x080025a4                TIM8_UP_IRQHandler
+                0x080025a4                DMA2_Channel2_IRQHandler
+                0x080025a4                DMA1_Channel4_IRQHandler
+                0x080025a4                USART3_IRQHandler
+                0x080025a4                RTC_IRQHandler
+                0x080025a4                DMA1_Channel7_IRQHandler
+                0x080025a4                CAN1_RX1_IRQHandler
+                0x080025a4                UART5_IRQHandler
+                0x080025a4                ADC3_IRQHandler
+                0x080025a4                TIM4_IRQHandler
+                0x080025a4                DMA2_Channel1_IRQHandler
+                0x080025a4                I2C1_EV_IRQHandler
+                0x080025a4                DMA1_Channel6_IRQHandler
+                0x080025a4                UART4_IRQHandler
+                0x080025a4                TIM3_IRQHandler
+                0x080025a4                RCC_IRQHandler
+                0x080025a4                TIM1_TRG_COM_IRQHandler
+                0x080025a4                DMA1_Channel1_IRQHandler
+                0x080025a4                Default_Handler
+                0x080025a4                EXTI15_10_IRQHandler
+                0x080025a4                TIM7_IRQHandler
+                0x080025a4                TIM5_IRQHandler
+                0x080025a4                EXTI9_5_IRQHandler
+                0x080025a4                SPI2_IRQHandler
+                0x080025a4                MemManage_Handler
+                0x080025a4                SVC_Handler
+                0x080025a4                DMA1_Channel5_IRQHandler
+                0x080025a4                EXTI4_IRQHandler
+                0x080025a4                USB_LP_CAN1_RX0_IRQHandler
+                0x080025a4                USB_HP_CAN1_TX_IRQHandler
+                0x080025a4                DMA1_Channel3_IRQHandler
+                0x080025a4                FSMC_IRQHandler
+                0x080025a4                TIM1_UP_IRQHandler
+                0x080025a4                WWDG_IRQHandler
+                0x080025a4                TIM1_BRK_IRQHandler
+                0x080025a4                EXTI1_IRQHandler
+                0x080025a4                RTCAlarm_IRQHandler
+                0x080025a4                DMA2_Channel4_5_IRQHandler
+                0x080025a4                USART2_IRQHandler
+                0x080025a4                I2C2_ER_IRQHandler
+                0x080025a4                DMA1_Channel2_IRQHandler
+                0x080025a4                TIM8_BRK_IRQHandler
+                0x080025a4                CAN1_SCE_IRQHandler
+                0x080025a4                FLASH_IRQHandler
+                0x080025a4                BusFault_Handler
+                0x080025a4                USART1_IRQHandler
+                0x080025a4                SPI3_IRQHandler
+                0x080025a4                I2C1_ER_IRQHandler
+                0x080025a4                USBWakeUp_IRQHandler
+                0x080025a4                DMA2_Channel3_IRQHandler
+ *fill*         0x080025a6        0x2 00
  .text.NVIC_PriorityGroupConfig
-                0x08000610       0x14 ./lib/src/misc.o
-                0x08000610                NVIC_PriorityGroupConfig
+                0x080025a8       0x14 ./lib/src/misc.o
+                0x080025a8                NVIC_PriorityGroupConfig
  .text.NVIC_Init
-                0x08000624       0x60 ./lib/src/misc.o
-                0x08000624                NVIC_Init
+                0x080025bc       0x60 ./lib/src/misc.o
+                0x080025bc                NVIC_Init
+ .text.DMA_Init
+                0x0800261c       0x3c ./lib/src/stm32f10x_dma.o
+                0x0800261c                DMA_Init
+ .text.DMA_Cmd  0x08002658       0x16 ./lib/src/stm32f10x_dma.o
+                0x08002658                DMA_Cmd
+ *fill*         0x0800266e        0x2 00
+ .text.DMA_GetFlagStatus
+                0x08002670       0x1c ./lib/src/stm32f10x_dma.o
+                0x08002670                DMA_GetFlagStatus
+ .text.DMA_ClearFlag
+                0x0800268c       0x14 ./lib/src/stm32f10x_dma.o
+                0x0800268c                DMA_ClearFlag
  .text.GPIO_Init
-                0x08000684       0xaa ./lib/src/stm32f10x_gpio.o
-                0x08000684                GPIO_Init
- *fill*         0x0800072e        0x2 00
+                0x080026a0       0xaa ./lib/src/stm32f10x_gpio.o
+                0x080026a0                GPIO_Init
+ .text.GPIO_ReadInputDataBit
+                0x0800274a        0xc ./lib/src/stm32f10x_gpio.o
+                0x0800274a                GPIO_ReadInputDataBit
+ .text.GPIO_ResetBits
+                0x08002756        0x4 ./lib/src/stm32f10x_gpio.o
+                0x08002756                GPIO_ResetBits
+ *fill*         0x0800275a        0x2 00
  .text.GPIO_PinRemapConfig
-                0x08000730       0x64 ./lib/src/stm32f10x_gpio.o
-                0x08000730                GPIO_PinRemapConfig
+                0x0800275c       0x64 ./lib/src/stm32f10x_gpio.o
+                0x0800275c                GPIO_PinRemapConfig
  .text.RCC_GetClocksFreq
-                0x08000794       0x8c ./lib/src/stm32f10x_rcc.o
-                0x08000794                RCC_GetClocksFreq
+                0x080027c0       0x8c ./lib/src/stm32f10x_rcc.o
+                0x080027c0                RCC_GetClocksFreq
+ .text.RCC_AHBPeriphClockCmd
+                0x0800284c       0x18 ./lib/src/stm32f10x_rcc.o
+                0x0800284c                RCC_AHBPeriphClockCmd
  .text.RCC_APB2PeriphClockCmd
-                0x08000820       0x18 ./lib/src/stm32f10x_rcc.o
-                0x08000820                RCC_APB2PeriphClockCmd
+                0x08002864       0x18 ./lib/src/stm32f10x_rcc.o
+                0x08002864                RCC_APB2PeriphClockCmd
  .text.RCC_APB1PeriphClockCmd
-                0x08000838       0x18 ./lib/src/stm32f10x_rcc.o
-                0x08000838                RCC_APB1PeriphClockCmd
+                0x0800287c       0x18 ./lib/src/stm32f10x_rcc.o
+                0x0800287c                RCC_APB1PeriphClockCmd
+ .text.SDIO_DeInit
+                0x08002894       0x24 ./lib/src/stm32f10x_sdio.o
+                0x08002894                SDIO_DeInit
+ .text.SDIO_Init
+                0x080028b8       0x30 ./lib/src/stm32f10x_sdio.o
+                0x080028b8                SDIO_Init
+ .text.SDIO_ClockCmd
+                0x080028e8        0xc ./lib/src/stm32f10x_sdio.o
+                0x080028e8                SDIO_ClockCmd
+ .text.SDIO_SetPowerState
+                0x080028f4       0x18 ./lib/src/stm32f10x_sdio.o
+                0x080028f4                SDIO_SetPowerState
+ .text.SDIO_GetPowerState
+                0x0800290c       0x10 ./lib/src/stm32f10x_sdio.o
+                0x0800290c                SDIO_GetPowerState
+ .text.SDIO_DMACmd
+                0x0800291c        0xc ./lib/src/stm32f10x_sdio.o
+                0x0800291c                SDIO_DMACmd
+ .text.SDIO_SendCommand
+                0x08002928       0x2c ./lib/src/stm32f10x_sdio.o
+                0x08002928                SDIO_SendCommand
+ .text.SDIO_GetCommandResponse
+                0x08002954        0xc ./lib/src/stm32f10x_sdio.o
+                0x08002954                SDIO_GetCommandResponse
+ .text.SDIO_GetResponse
+                0x08002960       0x18 ./lib/src/stm32f10x_sdio.o
+                0x08002960                SDIO_GetResponse
+ .text.SDIO_DataConfig
+                0x08002978       0x2c ./lib/src/stm32f10x_sdio.o
+                0x08002978                SDIO_DataConfig
+ .text.SDIO_ReadData
+                0x080029a4        0xc ./lib/src/stm32f10x_sdio.o
+                0x080029a4                SDIO_ReadData
+ .text.SDIO_GetFlagStatus
+                0x080029b0       0x14 ./lib/src/stm32f10x_sdio.o
+                0x080029b0                SDIO_GetFlagStatus
+ .text.SDIO_ClearFlag
+                0x080029c4        0xc ./lib/src/stm32f10x_sdio.o
+                0x080029c4                SDIO_ClearFlag
+ .text.SPI_Init
+                0x080029d0       0x3e ./lib/src/stm32f10x_spi.o
+                0x080029d0                SPI_Init
+ .text.SPI_Cmd  0x08002a0e       0x18 ./lib/src/stm32f10x_spi.o
+                0x08002a0e                SPI_Cmd
+ *fill*         0x08002a26        0x2 00
  .text.TIM_TimeBaseInit
-                0x08000850       0xd4 ./lib/src/stm32f10x_tim.o
-                0x08000850                TIM_TimeBaseInit
- .text.TIM_Cmd  0x08000924       0x18 ./lib/src/stm32f10x_tim.o
-                0x08000924                TIM_Cmd
+                0x08002a28       0xd4 ./lib/src/stm32f10x_tim.o
+                0x08002a28                TIM_TimeBaseInit
+ .text.TIM_Cmd  0x08002afc       0x18 ./lib/src/stm32f10x_tim.o
+                0x08002afc                TIM_Cmd
  .text.TIM_ITConfig
-                0x0800093c       0x12 ./lib/src/stm32f10x_tim.o
-                0x0800093c                TIM_ITConfig
+                0x08002b14       0x12 ./lib/src/stm32f10x_tim.o
+                0x08002b14                TIM_ITConfig
  .text.TIM_ClearFlag
-                0x0800094e        0x8 ./lib/src/stm32f10x_tim.o
-                0x0800094e                TIM_ClearFlag
+                0x08002b26        0x8 ./lib/src/stm32f10x_tim.o
+                0x08002b26                TIM_ClearFlag
  .text.TIM_ClearITPendingBit
-                0x08000956        0x8 ./lib/src/stm32f10x_tim.o
-                0x08000956                TIM_ClearITPendingBit
- *fill*         0x0800095e        0x2 00
+                0x08002b2e        0x8 ./lib/src/stm32f10x_tim.o
+                0x08002b2e                TIM_ClearITPendingBit
+ *fill*         0x08002b36        0x2 00
  .text.USART_Init
-                0x08000960       0xb0 ./lib/src/stm32f10x_usart.o
-                0x08000960                USART_Init
+                0x08002b38       0xb0 ./lib/src/stm32f10x_usart.o
+                0x08002b38                USART_Init
  .text.USART_Cmd
-                0x08000a10       0x18 ./lib/src/stm32f10x_usart.o
-                0x08000a10                USART_Cmd
+                0x08002be8       0x18 ./lib/src/stm32f10x_usart.o
+                0x08002be8                USART_Cmd
  .text.USART_SendData
-                0x08000a28        0x8 ./lib/src/stm32f10x_usart.o
-                0x08000a28                USART_SendData
+                0x08002c00        0x8 ./lib/src/stm32f10x_usart.o
+                0x08002c00                USART_SendData
  .text.USART_GetFlagStatus
-                0x08000a30        0xc ./lib/src/stm32f10x_usart.o
-                0x08000a30                USART_GetFlagStatus
+                0x08002c08        0xc ./lib/src/stm32f10x_usart.o
+                0x08002c08                USART_GetFlagStatus
  .text.SystemInit
-                0x08000a3c       0x4c ./lib/system_stm32f10x.o
-                0x08000a3c                SystemInit
+                0x08002c14       0x4c ./lib/system_stm32f10x.o
+                0x08002c14                SystemInit
  *(.rodata)
- .rodata        0x08000a88       0x24 ./src/kl_util.o
+ .rodata        0x08002c60       0x24 ./src/kl_util.o
+ .rodata        0x08002c84      0x104 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
+                0x08002c84                _ctype_
  *(.rodata*)
+ .rodata._ZL8KeybOuts
+                0x08002d88        0xc ./src/keys.o
  .rodata.str1.1
-                0x08000aac        0xd ./src/main.o
+                0x08002d94       0x63 ./src/main.o
+                                 0x68 (size before relaxing)
+ .rodata.str1.1
+                0x08002df7       0x5c ./src/media.o
+ .rodata.str1.1
+                0x08002e53        0xc ./src/vs.o
+ .rodata.excvt.1610
+                0x08002e5f       0x80 ./sd/ff.o
+ .rodata.str1.1
+                0x08002edf        0xf ./sd/ff.o
+ .rodata.str1.1
+                0x08002eee       0x15 ./sd/kl_ini.o
+                                 0x33 (size before relaxing)
+ .rodata.str1.1
+                0x08002f03       0x25 ./sd/sd.o
+ .rodata.str1.4
+                0x08002f28        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
  *(.glue_7)
  .glue_7        0x00000000        0x0 linker stubs
  *(.glue_7t)
  .glue_7t       0x00000000        0x0 linker stubs
  *(.eh_frame)
- *fill*         0x08000ab9        0x3 00
- .eh_frame      0x08000abc        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+ .eh_frame      0x08002f2c        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
  *(.init)
- .init          0x08000abc        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
-                0x08000abc                _init
- .init          0x08000ac0        0x8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
+ .init          0x08002f2c        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
+                0x08002f2c                _init
+ .init          0x08002f30        0x8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
  *(.fini)
- .fini          0x08000ac8        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
-                0x08000ac8                _fini
- .fini          0x08000acc        0x8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
-                0x08000ad4                . = ALIGN (0x4)
-                0x08000ad4                _etext = .
+ .fini          0x08002f38        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crti.o
+                0x08002f38                _fini
+ .fini          0x08002f3c        0x8 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
+                0x08002f44                . = ALIGN (0x4)
+                0x08002f44                _etext = .
 
-.vfp11_veneer   0x08000ad4        0x0
+.vfp11_veneer   0x08002f44        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x08000ad4        0x0
+.v4_bx          0x08002f44        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
 
-.ARM            0x08000ad4        0x0
-                0x08000ad4                __exidx_start = .
+.ARM            0x08002f44        0x0
+                0x08002f44                __exidx_start = .
  *(.ARM.exidx*)
-                0x08000ad4                __exidx_end = .
+                0x08002f44                __exidx_end = .
 
-.preinit_array  0x08000ad4        0x0
-                0x08000ad4                PROVIDE (__preinit_array_start, .)
+.preinit_array  0x08002f44        0x0
+                0x08002f44                PROVIDE (__preinit_array_start, .)
  *(.preinit_array*)
-                0x08000ad4                PROVIDE (__preinit_array_end, .)
+                0x08002f44                PROVIDE (__preinit_array_end, .)
 
-.init_array     0x08000ad4        0x4
-                0x08000ad4                PROVIDE (__init_array_start, .)
+.init_array     0x08002f44        0x4
+                0x08002f44                PROVIDE (__init_array_start, .)
  *(SORT(.init_array.*))
  *(.init_array*)
- .init_array    0x08000ad4        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
-                0x08000ad8                PROVIDE (__init_array_end, .)
+ .init_array    0x08002f44        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+                0x08002f48                PROVIDE (__init_array_end, .)
 
-.fini_array     0x08000ad8        0x4
-                0x08000ad8                PROVIDE (__fini_array_start, .)
+.fini_array     0x08002f48        0x4
+                0x08002f48                PROVIDE (__fini_array_start, .)
  *(.fini_array*)
- .fini_array    0x08000ad8        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+ .fini_array    0x08002f48        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
  *(SORT(.fini_array.*))
-                0x08000adc                PROVIDE (__fini_array_end, .)
-                0x08000adc                _sidata = .
+                0x08002f4c                PROVIDE (__fini_array_end, .)
+                0x08002f4c                _sidata = .
 
-.data           0x20000000       0x18 load address 0x08000adc
+.data           0x20000000      0x44c load address 0x08002f4c
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                _sdata = .
  *(.data)
+ .data          0x20000000      0x430 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
+                0x20000000                _impure_ptr
+ .data          0x20000430        0x4 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
+                0x20000430                __ctype_ptr__
  *(.data*)
  .data.ADCPrescTable
-                0x20000000        0x4 ./lib/src/stm32f10x_rcc.o
+                0x20000434        0x4 ./lib/src/stm32f10x_rcc.o
  .data.APBAHBPrescTable
-                0x20000004       0x10 ./lib/src/stm32f10x_rcc.o
+                0x20000438       0x10 ./lib/src/stm32f10x_rcc.o
  .data.SystemCoreClock
-                0x20000014        0x4 ./lib/system_stm32f10x.o
-                0x20000014                SystemCoreClock
-                0x20000018                . = ALIGN (0x4)
-                0x20000018                _edata = .
+                0x20000448        0x4 ./lib/system_stm32f10x.o
+                0x20000448                SystemCoreClock
+                0x2000044c                . = ALIGN (0x4)
+                0x2000044c                _edata = .
 
-.jcr            0x20000018        0x0 load address 0x08000af4
- .jcr           0x20000018        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
-                0x20000018                . = ALIGN (0x4)
+.jcr            0x2000044c        0x0 load address 0x08003398
+ .jcr           0x2000044c        0x0 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+                0x2000044c                . = ALIGN (0x4)
 
-.bss            0x20000018       0x20 load address 0x08000af4
-                0x20000018                _sbss = .
-                0x20000018                __bss_start__ = _sbss
+.bss            0x2000044c      0xb48 load address 0x08003398
+                0x2000044c                _sbss = .
+                0x2000044c                __bss_start__ = _sbss
  *(.bss)
- .bss           0x20000018       0x1c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
+ .bss           0x2000044c       0x1c c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
  *(.bss*)
- .bss.Delay     0x20000034        0x4 ./src/delay_util.o
-                0x20000034                Delay
+ .bss.Delay     0x20000468        0x4 ./src/delay_util.o
+                0x20000468                Delay
+ .bss.Keys      0x2000046c       0x10 ./src/keys.o
+                0x2000046c                Keys
+ .bss.Settings  0x2000047c       0x4c ./src/main.o
+                0x2000047c                Settings
+ .bss.ESnd      0x200004c8      0x62c ./src/media.o
+                0x200004c8                ESnd
+ .bss.Vs        0x20000af4        0x2 ./src/vs.o
+                0x20000af4                Vs
+ .bss.Fsid      0x20000af6        0x2 ./sd/ff.o
+ .bss.FatFs     0x20000af8        0x4 ./sd/ff.o
+ .bss.IBuf      0x20000afc      0x200 ./sd/kl_ini.o
+                0x20000afc                IBuf
+ .bss.SD        0x20000cfc      0x298 ./sd/sd.o
+                0x20000cfc                SD
  *(COMMON)
-                0x20000038                . = ALIGN (0x4)
-                0x20000038                _ebss = .
-                0x20000038                __bss_end__ = _ebss
+                0x20000f94                . = ALIGN (0x4)
+                0x20000f94                _ebss = .
+                0x20000f94                __bss_end__ = _ebss
 
 ._user_heap_stack
-                0x20000038      0x200 load address 0x08000b14
-                0x20000038                . = ALIGN (0x4)
-                0x20000038                PROVIDE (end, .)
-                0x20000038                PROVIDE (_end, .)
-                0x20000038                . = (. + _Min_Heap_Size)
-                0x20000238                . = (. + _Min_Stack_Size)
- *fill*         0x20000038      0x200 00
-                0x20000238                . = ALIGN (0x4)
+                0x20000f94      0x200 load address 0x08003ee0
+                0x20000f94                . = ALIGN (0x4)
+                0x20000f94                PROVIDE (end, .)
+                0x20000f94                PROVIDE (_end, .)
+                0x20000f94                . = (. + _Min_Heap_Size)
+                0x20001194                . = (. + _Min_Stack_Size)
+ *fill*         0x20000f94      0x200 00
+                0x20001194                . = ALIGN (0x4)
 
 .memory_b1_text
  *(.mb1text)
@@ -1266,83 +1368,85 @@ LOAD c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
  .ARM.attributes
                 0x00000063       0x31 ./src/delay_util.o
  .ARM.attributes
-                0x00000094       0x31 ./src/kl_util.o
+                0x00000094       0x31 ./src/keys.o
  .ARM.attributes
-                0x000000c5       0x31 ./src/main.o
+                0x000000c5       0x31 ./src/kl_util.o
  .ARM.attributes
-                0x000000f6       0x31 ./src/media.o
+                0x000000f6       0x31 ./src/main.o
  .ARM.attributes
-                0x00000127       0x31 ./src/sensors.o
+                0x00000127       0x31 ./src/media.o
  .ARM.attributes
-                0x00000158       0x31 ./src/vs.o
+                0x00000158       0x31 ./src/sensors.o
  .ARM.attributes
-                0x00000189       0x31 ./sd/ff.o
+                0x00000189       0x31 ./src/vs.o
  .ARM.attributes
-                0x000001ba       0x31 ./sd/kl_ini.o
+                0x000001ba       0x31 ./sd/ff.o
  .ARM.attributes
-                0x000001eb       0x31 ./sd/sd.o
+                0x000001eb       0x31 ./sd/kl_ini.o
  .ARM.attributes
-                0x0000021c       0x21 ./lib/startup/startup_stm32f10x_hd.o
+                0x0000021c       0x31 ./sd/sd.o
  .ARM.attributes
-                0x0000023d       0x31 ./lib/src/misc.o
+                0x0000024d       0x21 ./lib/startup/startup_stm32f10x_hd.o
  .ARM.attributes
-                0x0000026e       0x31 ./lib/src/stm32f10x_adc.o
+                0x0000026e       0x31 ./lib/src/misc.o
  .ARM.attributes
-                0x0000029f       0x31 ./lib/src/stm32f10x_dma.o
+                0x0000029f       0x31 ./lib/src/stm32f10x_adc.o
  .ARM.attributes
-                0x000002d0       0x31 ./lib/src/stm32f10x_gpio.o
+                0x000002d0       0x31 ./lib/src/stm32f10x_dma.o
  .ARM.attributes
-                0x00000301       0x31 ./lib/src/stm32f10x_i2c.o
+                0x00000301       0x31 ./lib/src/stm32f10x_gpio.o
  .ARM.attributes
-                0x00000332       0x31 ./lib/src/stm32f10x_rcc.o
+                0x00000332       0x31 ./lib/src/stm32f10x_i2c.o
  .ARM.attributes
-                0x00000363       0x31 ./lib/src/stm32f10x_sdio.o
+                0x00000363       0x31 ./lib/src/stm32f10x_rcc.o
  .ARM.attributes
-                0x00000394       0x31 ./lib/src/stm32f10x_spi.o
+                0x00000394       0x31 ./lib/src/stm32f10x_sdio.o
  .ARM.attributes
-                0x000003c5       0x31 ./lib/src/stm32f10x_tim.o
+                0x000003c5       0x31 ./lib/src/stm32f10x_spi.o
  .ARM.attributes
-                0x000003f6       0x31 ./lib/src/stm32f10x_usart.o
+                0x000003f6       0x31 ./lib/src/stm32f10x_tim.o
  .ARM.attributes
-                0x00000427       0x31 ./lib/CoreSupport/core_cm3.o
+                0x00000427       0x31 ./lib/src/stm32f10x_usart.o
  .ARM.attributes
-                0x00000458       0x31 ./lib/system_stm32f10x.o
+                0x00000458       0x31 ./lib/CoreSupport/core_cm3.o
  .ARM.attributes
-                0x00000489       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-atexit.o)
+                0x00000489       0x31 ./lib/system_stm32f10x.o
  .ARM.attributes
-                0x000004b4       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-exit.o)
+                0x000004ba       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-atexit.o)
  .ARM.attributes
-                0x000004df       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-fini.o)
+                0x000004e5       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-exit.o)
  .ARM.attributes
-                0x0000050a       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
+                0x00000510       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-fini.o)
  .ARM.attributes
-                0x00000535       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
+                0x0000053b       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-impure.o)
  .ARM.attributes
-                0x00000560       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
+                0x00000566       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-init.o)
  .ARM.attributes
-                0x0000058b       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
+                0x00000591       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-memset.o)
  .ARM.attributes
-                0x000005b6       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
+                0x000005bc       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strchr.o)
  .ARM.attributes
-                0x000005e1       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
+                0x000005e7       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strcpy.o)
  .ARM.attributes
-                0x0000060c       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
+                0x00000612       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strlen.o)
  .ARM.attributes
-                0x00000637       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
+                0x0000063d       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strncasecmp.o)
  .ARM.attributes
-                0x00000662       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
+                0x00000668       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-strtol.o)
  .ARM.attributes
-                0x0000068d       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
+                0x00000693       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__atexit.o)
  .ARM.attributes
-                0x000006b8       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
+                0x000006be       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-__call_atexit.o)
  .ARM.attributes
-                0x000006e3       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
+                0x000006e9       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/../../../../arm-none-eabi/lib/thumb/v7m\libc.a(lib_a-ctype_.o)
  .ARM.attributes
-                0x00000700       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
+                0x00000714       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_udivsi3.o)
  .ARM.attributes
-                0x0000071d       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtend.o
+                0x00000731       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m\libgcc.a(_dvmd_tls.o)
  .ARM.attributes
-                0x00000748       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
+                0x0000074e       0x2b c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtend.o
+ .ARM.attributes
+                0x00000779       0x1d c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtn.o
 OUTPUT(AlienLock.elf elf32-littlearm)
 
 .debug_line     0x00000000     0x126d
@@ -1454,6 +1558,7 @@ OUTPUT(AlienLock.elf elf32-littlearm)
  .comment       0x00000000       0x11 c:/yagarto/bin/../lib/gcc/arm-none-eabi/4.6.2/thumb/v7m/crtbegin.o
                                  0x12 (size before relaxing)
  .comment       0x00000000       0x12 ./src/delay_util.o
+ .comment       0x00000000       0x12 ./src/keys.o
  .comment       0x00000000       0x12 ./src/kl_util.o
  .comment       0x00000000       0x12 ./src/main.o
  .comment       0x00000000       0x12 ./src/media.o

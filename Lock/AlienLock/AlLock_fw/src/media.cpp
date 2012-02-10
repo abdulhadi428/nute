@@ -25,9 +25,10 @@ void Sound_t::Init() {
 }
 
 void Sound_t::Play(const char* AFilename) {
+    if (State == sndPlaying) StopNow();
     FRESULT rslt;
     // Open file
-    klPrintf("%S\r", AFilename);
+    //klPrintf("%S\r", AFilename);
     rslt = f_open(&IFile, AFilename, FA_READ+FA_OPEN_EXISTING);
     if (rslt != FR_OK) {
         if (rslt == FR_NO_FILE) klPrintf("%S: file not found\r", AFilename);
@@ -61,7 +62,7 @@ void Sound_t::Play(const char* AFilename) {
     Vs.Enable();
     Vs.AmplifierOn();
     // Load first bunch of data
-    klPrintf("Playing...\r");
+    //klPrintf("Playing...\r");
     State = sndPlaying;
     UploadData();
 }
@@ -83,10 +84,11 @@ void Sound_t::UploadData() {
 }
 
 void Sound_t::StopNow() {
-    f_close(&IFile);
-    Vs.WriteTrailingZeroes();
-    State = sndStopped;
     Vs.AmplifierOff();
+    Vs.Stop();
+    //Vs.WriteTrailingZeroes();
+    f_close(&IFile);
+    State = sndStopped;
     //Vs.Disable();
-    klPrintf("Stopped\r");
+    //klPrintf("Stopped\r");
 }

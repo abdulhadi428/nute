@@ -68,6 +68,7 @@ public:
     void WriteData(uint8_t *ABuf, uint16_t ACount);
     void WriteTrailingZeroes(void);
     void SetVolume(uint8_t Attenuation) { CmdWrite(VS_REG_VOL, ((Attenuation*256)+Attenuation)); }
+    void Stop(void) { CmdWrite(VS_REG_RECCTRL, VS_SARC_OUTOFADPCM); }
 };
 
 extern VS_t Vs;

@@ -46,7 +46,8 @@
 #define VS_SMV_GAIN2    (25 << 5)     // Gain2 = 0 db, others muted
 
 // VS_REG_RECCTRL
-#define VS_SARC_DREQ512 0x0100  // DREQ needs 512 byte space to turn on
+#define VS_SARC_DREQ512     0x0100  // DREQ needs 512 byte space to turn on
+#define VS_SARC_OUTOFADPCM  0x0080  // current ADPCM playback is canceled
 
 #endif	/* _VS1003DEFS_H */
 

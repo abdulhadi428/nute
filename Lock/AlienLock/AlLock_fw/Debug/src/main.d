@@ -8,7 +8,7 @@ src/main.d: ../src/main.cpp ../lib/stm32f10x.h \
  ../lib/inc/misc.h ../inc/delay_util.h ../sd/sd.h ../sd/diskio.h \
  ../sd/integer.h ../sd/ff.h ../sd/ffconf.h ../inc/vs.h ../inc/vs_defs.h \
  ../inc/media.h ../sd/ff.h ../sd/diskio.h ../sd/kl_ini.h ../inc/sensors.h \
- ../inc/delay_util.h ../inc/kl_util.h ../inc/kl_util.h
+ ../inc/delay_util.h ../inc/kl_util.h ../inc/kl_util.h ../inc/keys.h
 
 ../lib/stm32f10x.h:
 
@@ -69,3 +69,5 @@ src/main.d: ../src/main.cpp ../lib/stm32f10x.h \
 ../inc/kl_util.h:
 
 ../inc/kl_util.h:
+
+../inc/keys.h:

@@ -5,6 +5,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/delay_util.cpp \
+../src/keys.cpp \
 ../src/main.cpp \
 ../src/media.cpp \
 ../src/sensors.cpp \
@@ -15,6 +16,7 @@ C_SRCS += \
 
 OBJS += \
 ./src/delay_util.o \
+./src/keys.o \
 ./src/kl_util.o \
 ./src/main.o \
 ./src/media.o \
@@ -26,6 +28,7 @@ C_DEPS += \
 
 CPP_DEPS += \
 ./src/delay_util.d \
+./src/keys.d \
 ./src/main.d \
 ./src/media.d \
 ./src/sensors.d \
