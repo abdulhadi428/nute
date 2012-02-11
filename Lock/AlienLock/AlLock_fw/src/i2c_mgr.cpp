@@ -393,7 +393,7 @@ uint8_t i2cMgr_t::SendAddrRXPoll(uint8_t AAddr) {
 }
 
 void i2cMgr_t::WriteBufferPoll(uint8_t AAddr, uint8_t* ABuffer, uint8_t ABufferSize) {
-    klPrintf("I2C write buf addr = %X\r", AAddr);
+    //klPrintf("I2C write buf addr = %X\r", AAddr);
     uint32_t IEvt;
     uint8_t b;
     if (BusyWait()) return;
@@ -403,7 +403,7 @@ void i2cMgr_t::WriteBufferPoll(uint8_t AAddr, uint8_t* ABuffer, uint8_t ABufferS
     // Address was acknowledged, start transmission
     for (uint8_t i=0; i<ABufferSize; i++) {
         b = *ABuffer++;
-        klPrintf("%X ", b);
+        //klPrintf("%X ", b);
         I2C_SendData(I2C1, b);
         do {
             IEvt = I2C_GetLastEvent(I2C1);
@@ -415,5 +415,5 @@ void i2cMgr_t::WriteBufferPoll(uint8_t AAddr, uint8_t* ABuffer, uint8_t ABufferS
         } while(IEvt != I2C_EVENT_MASTER_BYTE_TRANSMITTED);
     } // for
     I2C_GenerateSTOP(I2C1, ENABLE);
-    klPrintf("\rI2C write completed\r");
+    //klPrintf("\rI2C write completed\r");
 }

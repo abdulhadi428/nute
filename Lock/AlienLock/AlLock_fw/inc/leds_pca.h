@@ -20,9 +20,9 @@ enum LedMode_t {lmSolid, lmBlink};
 
 class Led_t {
 private:
-    LedMode_t Mode;
     uint32_t Timer, BlinkDelay;
 public:
+    LedMode_t Mode;
     Color_t Color, *PWM;
     bool IsOn, HasChanged;
     void Task(void);

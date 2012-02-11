@@ -18,6 +18,7 @@
 #include "keys.h"
 #include "leds_pca.h"
 #include "i2c_mgr.h"
+#include "adc.h"
 
 #define FNAME_LNG_MAX   13
 #define CODE_LNG_MAX    6
@@ -75,6 +76,7 @@ int main(void) {
         Door.Task();
         i2cMgr.Task();
         Leds.Task();
+        Battery.Task();
         //Sensor.Task();
     } // while(1)
     return 0;
@@ -102,6 +104,10 @@ void GeneralInit(void) {
     // Leds
     i2cMgr.Init();
     Leds.Init();
+
+    // Battery
+    Battery.Init();
+    Battery.State = bsFull;
 
     // Register filesystem
     f_mount(0, &SD.FatFilesystem);
@@ -179,9 +185,10 @@ void Door_t::Close(void) {
 }
 
 void Door_t::Task() {
-    if (IsOpen)
+    if (IsOpen) {
         if(Delay.Elapsed(&Timer, Settings.DoorCloseDelay))
             Close();
+    }
 }
 
 void EventJustClosed(void) {
@@ -193,6 +200,35 @@ void EventJustOpened(void) {
     ESnd.EvtPlayEnd = 0;
     Leds.Led[0].Solid(Settings.ColorDoorOpen);
     klPrintf("Door is opened\r");
+}
+
+// ================================== Battery ==================================
+void Battery_t::Task() {
+    if(!Delay.Elapsed(&Timer, 999)) return;
+    Measure();
+    // Discharging slope
+    if ((State == bsFull) && (IValue < BATTERY_HALF)) {
+        State = bsHalf;
+        return;
+    }
+    if ((State == bsHalf) && (IValue < BATTERY_EMPTY)) {
+        State = bsEmpty;
+        return;
+    }
+    // Charging slope
+    if ((State == bsHalf) && (IValue > (BATTERY_HALF+60))) {
+        State = bsFull;
+        return;
+    }
+    if ((State == bsEmpty) && (IValue > (BATTERY_EMPTY+60))) {
+        State = bsHalf;
+        return;
+    }
+    // Indicate discharged bsttery
+    if ((State == bsEmpty) && (!Door.IsOpen) && (Leds.Led[0].Mode != lmBlink)) {
+        Leds.Led[0].Blink(Settings.ColorDoorClosed, Settings.BlinkDelay);
+        Leds.Led[1].Blink(Settings.ColorDoorClosed, Settings.BlinkDelay);
+    }
 }
 
 
