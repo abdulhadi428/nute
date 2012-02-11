@@ -109,14 +109,14 @@
  111              		.ident	"GCC: (GNU) 4.6.2"
 DEFINED SYMBOLS
                             *ABS*:00000000 sensors.cpp
-C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:15     .text._ZN5Sns_t4TaskEv:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:20     .text._ZN5Sns_t4TaskEv:00000000 _ZN5Sns_t4TaskEv
-C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:62     .text._ZN5Sns_t4TaskEv:00000050 $d
-C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:67     .text._ZN5Sns_t4InitEv:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:72     .text._ZN5Sns_t4InitEv:00000000 _ZN5Sns_t4InitEv
-C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:98     .text._ZN5Sns_t4InitEv:00000034 $d
-C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:109    .bss.Sensor:00000000 Sensor
-C:\Users\kreyl\AppData\Local\Temp\cczDgsFQ.s:106    .bss.Sensor:00000000 $d
+C:\Users\kreyl\AppData\Local\Temp\ccM0gQf8.s:15     .text._ZN5Sns_t4TaskEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccM0gQf8.s:20     .text._ZN5Sns_t4TaskEv:00000000 _ZN5Sns_t4TaskEv
+C:\Users\kreyl\AppData\Local\Temp\ccM0gQf8.s:62     .text._ZN5Sns_t4TaskEv:00000050 $d
+C:\Users\kreyl\AppData\Local\Temp\ccM0gQf8.s:67     .text._ZN5Sns_t4InitEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccM0gQf8.s:72     .text._ZN5Sns_t4InitEv:00000000 _ZN5Sns_t4InitEv
+C:\Users\kreyl\AppData\Local\Temp\ccM0gQf8.s:98     .text._ZN5Sns_t4InitEv:00000034 $d
+C:\Users\kreyl\AppData\Local\Temp\ccM0gQf8.s:109    .bss.Sensor:00000000 Sensor
+C:\Users\kreyl\AppData\Local\Temp\ccM0gQf8.s:106    .bss.Sensor:00000000 $d
 
 UNDEFINED SYMBOLS
 _ZN7Delay_t7ElapsedEPmm

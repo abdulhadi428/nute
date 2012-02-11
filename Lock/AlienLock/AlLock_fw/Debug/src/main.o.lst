@@ -11,455 +11,735 @@
   11              		.eabi_attribute 18, 4
   12              		.thumb
   13              		.file	"main.cpp"
-  14              		.section	.text._Z9Event_Kbdv,"ax",%progbits
+  14              		.section	.text._Z15EventJustOpenedv,"ax",%progbits
   15              		.align	1
-  16              		.global	_Z9Event_Kbdv
+  16              		.global	_Z15EventJustOpenedv
   17              		.thumb
   18              		.thumb_func
-  20              	_Z9Event_Kbdv:
+  20              	_Z15EventJustOpenedv:
   21              		@ args = 0, pretend = 0, frame = 0
   22              		@ frame_needed = 0, uses_anonymous_args = 0
-  23 0000 214B     		ldr	r3, .L9
-  24 0002 70B5     		push	{r4, r5, r6, lr}
-  25 0004 1B7B     		ldrb	r3, [r3, #12]	@ zero_extendqisi2
-  26 0006 002B     		cmp	r3, #0
-  27 0008 3CD1     		bne	.L1
-  28 000a 204B     		ldr	r3, .L9+4
-  29 000c 1C79     		ldrb	r4, [r3, #4]	@ zero_extendqisi2
-  30 000e 0C2C     		cmp	r4, #12
-  31 0010 08BF     		it	eq
-  32 0012 5C79     		ldrbeq	r4, [r3, #5]	@ zero_extendqisi2
-  33 0014 092C     		cmp	r4, #9
-  34 0016 22D8     		bhi	.L4
-  35 0018 1D4E     		ldr	r6, .L9+8
-  36 001a 96F84F30 		ldrb	r3, [r6, #79]	@ zero_extendqisi2
-  37 001e 002B     		cmp	r3, #0
-  38 0020 30D0     		beq	.L1
-  39 0022 194D     		ldr	r5, .L9
-  40 0024 1B48     		ldr	r0, .L9+12
-  41 0026 3146     		mov	r1, r6
-  42 0028 FFF7FEFF 		bl	_ZN7Sound_t4PlayEPKc
-  43 002c EB7A     		ldrb	r3, [r5, #11]	@ zero_extendqisi2
-  44 002e 3034     		adds	r4, r4, #48
-  45 0030 EA18     		adds	r2, r5, r3
-  46 0032 1471     		strb	r4, [r2, #4]
-  47 0034 0133     		adds	r3, r3, #1
-  48 0036 96F84F20 		ldrb	r2, [r6, #79]	@ zero_extendqisi2
-  49 003a DBB2     		uxtb	r3, r3
-  50 003c 9A42     		cmp	r2, r3
-  51 003e EB72     		strb	r3, [r5, #11]
-  52 0040 08D1     		bne	.L5
-  53 0042 06F14100 		add	r0, r6, #65
-  54 0046 291D     		adds	r1, r5, #4
-  55 0048 FFF7FEFF 		bl	strcmp
-  56 004c 0223     		movs	r3, #2
-  57 004e 00B1     		cbz	r0, .L8
-  58 0050 0123     		movs	r3, #1
-  59              	.L8:
-  60 0052 2B73     		strb	r3, [r5, #12]
-  61              	.L5:
-  62 0054 104B     		ldr	r3, .L9+16
-  63 0056 1A68     		ldr	r2, [r3, #0]
-  64 0058 0B4B     		ldr	r3, .L9
-  65 005a 1A60     		str	r2, [r3, #0]
-  66 005c 70BD     		pop	{r4, r5, r6, pc}
-  67              	.L4:
-  68 005e 0A2C     		cmp	r4, #10
-  69 0060 07D1     		bne	.L7
-  70 0062 0D4B     		ldr	r3, .L9+16
-  71 0064 084A     		ldr	r2, .L9
-  72 0066 1B68     		ldr	r3, [r3, #0]
-  73 0068 A3F53A63 		sub	r3, r3, #2976
-  74 006c 1E3B     		subs	r3, r3, #30
-  75 006e 1360     		str	r3, [r2, #0]
-  76 0070 70BD     		pop	{r4, r5, r6, pc}
-  77              	.L7:
-  78 0072 0B2C     		cmp	r4, #11
-  79 0074 06D1     		bne	.L1
-  80 0076 064B     		ldr	r3, .L9+8
-  81 0078 93F84F30 		ldrb	r3, [r3, #79]	@ zero_extendqisi2
-  82 007c 13B9     		cbnz	r3, .L1
-  83 007e 024B     		ldr	r3, .L9
-  84 0080 0222     		movs	r2, #2
-  85 0082 1A73     		strb	r2, [r3, #12]
-  86              	.L1:
-  87 0084 70BD     		pop	{r4, r5, r6, pc}
-  88              	.L10:
-  89 0086 00BF     		.align	2
-  90              	.L9:
-  91 0088 00000000 		.word	.LANCHOR0
-  92 008c 00000000 		.word	Keys
-  93 0090 00000000 		.word	.LANCHOR1
-  94 0094 00000000 		.word	ESnd
-  95 0098 00000000 		.word	Delay
-  97              		.section	.text._ZN10Settings_t4ReadEv,"ax",%progbits
-  98              		.align	1
-  99              		.global	_ZN10Settings_t4ReadEv
- 100              		.thumb
- 101              		.thumb_func
- 103              	_ZN10Settings_t4ReadEv:
- 104              		@ args = 0, pretend = 0, frame = 0
- 105              		@ frame_needed = 0, uses_anonymous_args = 0
- 106 0000 37B5     		push	{r0, r1, r2, r4, r5, lr}
- 107 0002 284C     		ldr	r4, .L20
- 108 0004 0D25     		movs	r5, #13
- 109 0006 2848     		ldr	r0, .L20+4
- 110 0008 2849     		ldr	r1, .L20+8
- 111 000a 294A     		ldr	r2, .L20+12
- 112 000c 2346     		mov	r3, r4
- 113 000e 0095     		str	r5, [sp, #0]
- 114 0010 FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
- 115 0014 0028     		cmp	r0, #0
- 116 0016 44D0     		beq	.L12
- 117 0018 2348     		ldr	r0, .L20+4
- 118 001a 2649     		ldr	r1, .L20+16
- 119 001c 244A     		ldr	r2, .L20+12
- 120 001e 6319     		adds	r3, r4, r5
- 121 0020 0095     		str	r5, [sp, #0]
- 122 0022 FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
- 123 0026 0028     		cmp	r0, #0
- 124 0028 3BD0     		beq	.L12
- 125 002a 1F48     		ldr	r0, .L20+4
- 126 002c 2249     		ldr	r1, .L20+20
- 127 002e 204A     		ldr	r2, .L20+12
- 128 0030 04F11A03 		add	r3, r4, #26
- 129 0034 0095     		str	r5, [sp, #0]
- 130 0036 FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
- 131 003a 0028     		cmp	r0, #0
- 132 003c 31D0     		beq	.L12
- 133 003e 1A48     		ldr	r0, .L20+4
- 134 0040 1E49     		ldr	r1, .L20+24
- 135 0042 1B4A     		ldr	r2, .L20+12
- 136 0044 04F12703 		add	r3, r4, #39
- 137 0048 0095     		str	r5, [sp, #0]
- 138 004a FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
- 139 004e 40B3     		cbz	r0, .L12
- 140 0050 1548     		ldr	r0, .L20+4
- 141 0052 1B49     		ldr	r1, .L20+28
- 142 0054 164A     		ldr	r2, .L20+12
- 143 0056 04F13403 		add	r3, r4, #52
- 144 005a 0095     		str	r5, [sp, #0]
- 145 005c FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
- 146 0060 F8B1     		cbz	r0, .L12
- 147 0062 1848     		ldr	r0, .L20+32
- 148 0064 0625     		movs	r5, #6
- 149 0066 0146     		mov	r1, r0
- 150 0068 114A     		ldr	r2, .L20+12
- 151 006a 04F14103 		add	r3, r4, #65
- 152 006e 0095     		str	r5, [sp, #0]
- 153 0070 FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
- 154 0074 A8B1     		cbz	r0, .L12
- 155 0076 04F14100 		add	r0, r4, #65
- 156 007a FFF7FEFF 		bl	strlen
- 157 007e 1249     		ldr	r1, .L20+36
- 158 0080 84F84F00 		strb	r0, [r4, #79]
- 159 0084 0A4A     		ldr	r2, .L20+12
- 160 0086 0F48     		ldr	r0, .L20+32
- 161 0088 04F14803 		add	r3, r4, #72
- 162 008c 0095     		str	r5, [sp, #0]
- 163 008e FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
- 164 0092 30B1     		cbz	r0, .L12
- 165 0094 04F14800 		add	r0, r4, #72
- 166 0098 FFF7FEFF 		bl	strlen
- 167 009c 84F85000 		strb	r0, [r4, #80]
- 168 00a0 0120     		movs	r0, #1
- 169              	.L12:
- 170 00a2 3EBD     		pop	{r1, r2, r3, r4, r5, pc}
- 171              	.L21:
- 172              		.align	2
- 173              	.L20:
- 174 00a4 00000000 		.word	.LANCHOR1
- 175 00a8 00000000 		.word	.LC0
- 176 00ac 06000000 		.word	.LC1
- 177 00b0 0E000000 		.word	.LC2
- 178 00b4 17000000 		.word	.LC3
- 179 00b8 1F000000 		.word	.LC4
- 180 00bc 29000000 		.word	.LC5
- 181 00c0 2E000000 		.word	.LC6
- 182 00c4 34000000 		.word	.LC7
- 183 00c8 39000000 		.word	.LC8
- 185              		.section	.text._Z11GeneralInitv,"ax",%progbits
- 186              		.align	1
- 187              		.global	_Z11GeneralInitv
- 188              		.thumb
- 189              		.thumb_func
- 191              	_Z11GeneralInitv:
- 192              		@ args = 0, pretend = 0, frame = 0
- 193              		@ frame_needed = 0, uses_anonymous_args = 0
- 194 0000 10B5     		push	{r4, lr}
- 195 0002 FFF7FEFF 		bl	UART_Init
- 196 0006 0121     		movs	r1, #1
- 197 0008 1448     		ldr	r0, .L26
- 198 000a FFF7FEFF 		bl	GPIO_PinRemapConfig
- 199 000e 144C     		ldr	r4, .L26+4
- 200 0010 4FF48060 		mov	r0, #1024
- 201 0014 FFF7FEFF 		bl	NVIC_PriorityGroupConfig
- 202 0018 1248     		ldr	r0, .L26+8
- 203 001a FFF7FEFF 		bl	_ZN7Delay_t4InitEv
- 204 001e 2046     		mov	r0, r4
- 205 0020 FFF7FEFF 		bl	_ZN6Keys_t4InitEv
- 206 0024 104B     		ldr	r3, .L26+12
- 207 0026 1148     		ldr	r0, .L26+16
- 208 0028 A360     		str	r3, [r4, #8]
- 209 002a E360     		str	r3, [r4, #12]
- 210 002c FFF7FEFF 		bl	_ZN4VS_t4InitEv
- 211 0030 0F48     		ldr	r0, .L26+20
- 212 0032 FFF7FEFF 		bl	_ZN7Sound_t4InitEv
- 213 0036 0F48     		ldr	r0, .L26+24
- 214 0038 FFF7FEFF 		bl	klPrintf
- 215 003c 0020     		movs	r0, #0
- 216 003e 0E49     		ldr	r1, .L26+28
- 217 0040 FFF7FEFF 		bl	f_mount
- 218 0044 0D48     		ldr	r0, .L26+32
- 219 0046 FFF7FEFF 		bl	_ZN10Settings_t4ReadEv
- 220 004a 00B9     		cbnz	r0, .L23
- 221              	.L25:
- 222 004c FEE7     		b	.L25
- 223              	.L23:
- 224 004e 0848     		ldr	r0, .L26+20
- 225 0050 0B49     		ldr	r1, .L26+36
- 226 0052 BDE81040 		pop	{r4, lr}
- 227 0056 FFF7FEBF 		b	_ZN7Sound_t4PlayEPKc
- 228              	.L27:
- 229 005a 00BF     		.align	2
- 230              	.L26:
- 231 005c 00023000 		.word	3146240
- 232 0060 00000000 		.word	Keys
- 233 0064 00000000 		.word	Delay
- 234 0068 00000000 		.word	_Z9Event_Kbdv
- 235 006c 00000000 		.word	Vs
- 236 0070 00000000 		.word	ESnd
- 237 0074 45000000 		.word	.LC9
- 238 0078 70000000 		.word	SD+112
- 239 007c 00000000 		.word	.LANCHOR1
- 240 0080 51000000 		.word	.LC10
- 242              		.section	.text._Z10Event_Openv,"ax",%progbits
- 243              		.align	1
- 244              		.global	_Z10Event_Openv
- 245              		.thumb
- 246              		.thumb_func
- 248              	_Z10Event_Openv:
- 249              		@ args = 0, pretend = 0, frame = 0
- 250              		@ frame_needed = 0, uses_anonymous_args = 0
- 251              		@ link register save eliminated.
- 252 0000 0148     		ldr	r0, .L29
- 253 0002 0249     		ldr	r1, .L29+4
- 254 0004 FFF7FEBF 		b	_ZN7Sound_t4PlayEPKc
- 255              	.L30:
- 256              		.align	2
- 257              	.L29:
- 258 0008 00000000 		.word	ESnd
- 259 000c 27000000 		.word	.LANCHOR1+39
- 261              		.section	.text._ZN11Codecheck_t4TaskEv,"ax",%progbits
- 262              		.align	1
- 263              		.global	_ZN11Codecheck_t4TaskEv
- 264              		.thumb
- 265              		.thumb_func
- 267              	_ZN11Codecheck_t4TaskEv:
- 268              		@ args = 0, pretend = 0, frame = 0
- 269              		@ frame_needed = 0, uses_anonymous_args = 0
- 270 0000 38B5     		push	{r3, r4, r5, lr}
- 271 0002 184D     		ldr	r5, .L38
- 272 0004 0446     		mov	r4, r0
- 273 0006 95F82836 		ldrb	r3, [r5, #1576]	@ zero_extendqisi2
- 274 000a 012B     		cmp	r3, #1
- 275 000c 28D0     		beq	.L31
- 276 000e 164B     		ldr	r3, .L38+4
- 277 0010 1B7B     		ldrb	r3, [r3, #12]	@ zero_extendqisi2
- 278 0012 012B     		cmp	r3, #1
- 279 0014 14D0     		beq	.L34
- 280 0016 02D3     		bcc	.L33
- 281 0018 022B     		cmp	r3, #2
- 282 001a 21D1     		bne	.L31
- 283 001c 19E0     		b	.L37
- 284              	.L33:
- 285 001e C37A     		ldrb	r3, [r0, #11]	@ zero_extendqisi2
- 286 0020 002B     		cmp	r3, #0
- 287 0022 1DD0     		beq	.L31
- 288 0024 1148     		ldr	r0, .L38+8
- 289 0026 2146     		mov	r1, r4
- 290 0028 40F6BE32 		movw	r2, #3006
- 291 002c FFF7FEFF 		bl	_ZN7Delay_t7ElapsedEPmm
- 292 0030 0028     		cmp	r0, #0
- 293 0032 15D0     		beq	.L31
- 294 0034 0023     		movs	r3, #0
- 295 0036 E372     		strb	r3, [r4, #11]
- 296 0038 2373     		strb	r3, [r4, #12]
- 297 003a 2846     		mov	r0, r5
- 298 003c 0C49     		ldr	r1, .L38+12
- 299 003e 04E0     		b	.L36
- 300              	.L34:
- 301 0040 0023     		movs	r3, #0
- 302 0042 0C49     		ldr	r1, .L38+16
- 303 0044 C372     		strb	r3, [r0, #11]
- 304 0046 0373     		strb	r3, [r0, #12]
- 305 0048 2846     		mov	r0, r5
- 306              	.L36:
- 307 004a BDE83840 		pop	{r3, r4, r5, lr}
- 308 004e FFF7FEBF 		b	_ZN7Sound_t4PlayEPKc
- 309              	.L37:
- 310 0052 0023     		movs	r3, #0
- 311 0054 C372     		strb	r3, [r0, #11]
- 312 0056 0373     		strb	r3, [r0, #12]
- 313 0058 BDE83840 		pop	{r3, r4, r5, lr}
- 314 005c FFF7FEBF 		b	_Z10Event_Openv
- 315              	.L31:
- 316 0060 38BD     		pop	{r3, r4, r5, pc}
- 317              	.L39:
- 318 0062 00BF     		.align	2
- 319              	.L38:
- 320 0064 00000000 		.word	ESnd
- 321 0068 00000000 		.word	.LANCHOR0
- 322 006c 00000000 		.word	Delay
- 323 0070 0D000000 		.word	.LANCHOR1+13
- 324 0074 1A000000 		.word	.LANCHOR1+26
- 326              		.section	.text.startup.main,"ax",%progbits
- 327              		.align	1
- 328              		.global	main
- 329              		.thumb
- 330              		.thumb_func
- 332              	main:
- 333              		@ Volatile: function does not return.
- 334              		@ args = 0, pretend = 0, frame = 0
- 335              		@ frame_needed = 0, uses_anonymous_args = 0
- 336 0000 08B5     		push	{r3, lr}
- 337 0002 FFF7FEFF 		bl	_Z11GeneralInitv
- 338              	.L41:
- 339 0006 0548     		ldr	r0, .L42
- 340 0008 FFF7FEFF 		bl	_ZN6Keys_t4TaskEv
- 341 000c 0448     		ldr	r0, .L42+4
- 342 000e FFF7FEFF 		bl	_ZN7Sound_t4TaskEv
- 343 0012 0448     		ldr	r0, .L42+8
- 344 0014 FFF7FEFF 		bl	_ZN11Codecheck_t4TaskEv
- 345 0018 F5E7     		b	.L41
- 346              	.L43:
- 347 001a 00BF     		.align	2
- 348              	.L42:
- 349 001c 00000000 		.word	Keys
- 350 0020 00000000 		.word	ESnd
- 351 0024 00000000 		.word	.LANCHOR0
- 353              		.section	.text._Z11Event_Closev,"ax",%progbits
- 354              		.align	1
- 355              		.global	_Z11Event_Closev
- 356              		.thumb
- 357              		.thumb_func
- 359              	_Z11Event_Closev:
- 360              		@ args = 0, pretend = 0, frame = 0
- 361              		@ frame_needed = 0, uses_anonymous_args = 0
- 362              		@ link register save eliminated.
- 363 0000 0148     		ldr	r0, .L45
- 364 0002 0249     		ldr	r1, .L45+4
- 365 0004 FFF7FEBF 		b	_ZN7Sound_t4PlayEPKc
- 366              	.L46:
- 367              		.align	2
- 368              	.L45:
- 369 0008 00000000 		.word	ESnd
- 370 000c 34000000 		.word	.LANCHOR1+52
- 372              		.global	Codecheck
- 373              		.global	Settings
- 374              		.section	.bss.Codecheck,"aw",%nobits
- 375              		.align	2
- 376              		.set	.LANCHOR0,. + 0
- 379              	Codecheck:
- 380 0000 00000000 		.space	16
- 380      00000000 
- 380      00000000 
- 380      00000000 
- 381              		.section	.rodata.str1.1,"aMS",%progbits,1
- 382              	.LC0:
- 383 0000 536F756E 		.ascii	"Sound\000"
- 383      6400
- 384              	.LC1:
- 385 0006 4B657942 		.ascii	"KeyBeep\000"
- 385      65657000 
- 386              	.LC2:
- 387 000e 6C6F636B 		.ascii	"lock.ini\000"
- 387      2E696E69 
- 387      00
- 388              	.LC3:
- 389 0017 4B657944 		.ascii	"KeyDrop\000"
- 389      726F7000 
- 390              	.LC4:
- 391 001f 50617373 		.ascii	"PassError\000"
- 391      4572726F 
- 391      7200
- 392              	.LC5:
- 393 0029 4F70656E 		.ascii	"Open\000"
- 393      00
- 394              	.LC6:
- 395 002e 436C6F73 		.ascii	"Close\000"
- 395      6500
- 396              	.LC7:
- 397 0034 436F6465 		.ascii	"Code\000"
- 397      00
- 398              	.LC8:
- 399 0039 53657276 		.ascii	"ServiceCode\000"
- 399      69636543 
- 399      6F646500 
- 400              	.LC9:
- 401 0045 4C6F636B 		.ascii	"Lock is on\015\000"
- 401      20697320 
- 401      6F6E0D00 
- 402              	.LC10:
- 403 0051 616C6976 		.ascii	"alive.wav\000"
- 403      652E7761 
- 403      7600
- 404              		.section	.bss.Settings,"aw",%nobits
- 405              		.set	.LANCHOR1,. + 0
- 408              	Settings:
- 409 0000 00000000 		.space	81
- 409      00000000 
- 409      00000000 
- 409      00000000 
- 409      00000000 
- 410              		.ident	"GCC: (GNU) 4.6.2"
+  23 0000 08B5     		push	{r3, lr}
+  24 0002 0C4B     		ldr	r3, .L2
+  25 0004 0021     		movs	r1, #0
+  26 0006 C3F82C16 		str	r1, [r3, #1580]
+  27 000a 0B4B     		ldr	r3, .L2+4
+  28 000c 93F85200 		ldrb	r0, [r3, #82]	@ zero_extendqisi2
+  29 0010 93F85120 		ldrb	r2, [r3, #81]	@ zero_extendqisi2
+  30 0014 93F85330 		ldrb	r3, [r3, #83]	@ zero_extendqisi2
+  31 0018 42EA0022 		orr	r2, r2, r0, lsl #8
+  32 001c 42EA0343 		orr	r3, r2, r3, lsl #16
+  33 0020 63F31701 		bfi	r1, r3, #0, #24
+  34 0024 0548     		ldr	r0, .L2+8
+  35 0026 FFF7FEFF 		bl	_ZN5Led_t5SolidE7Color_t
+  36 002a 0548     		ldr	r0, .L2+12
+  37 002c BDE80840 		pop	{r3, lr}
+  38 0030 FFF7FEBF 		b	klPrintf
+  39              	.L3:
+  40              		.align	2
+  41              	.L2:
+  42 0034 00000000 		.word	ESnd
+  43 0038 00000000 		.word	.LANCHOR0
+  44 003c 30000000 		.word	Leds+48
+  45 0040 00000000 		.word	.LC0
+  47              		.section	.text._Z15EventJustClosedv,"ax",%progbits
+  48              		.align	1
+  49              		.global	_Z15EventJustClosedv
+  50              		.thumb
+  51              		.thumb_func
+  53              	_Z15EventJustClosedv:
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56 0000 08B5     		push	{r3, lr}
+  57 0002 0C4B     		ldr	r3, .L5
+  58 0004 0021     		movs	r1, #0
+  59 0006 C3F82C16 		str	r1, [r3, #1580]
+  60 000a 0B4B     		ldr	r3, .L5+4
+  61 000c 93F85800 		ldrb	r0, [r3, #88]	@ zero_extendqisi2
+  62 0010 93F85720 		ldrb	r2, [r3, #87]	@ zero_extendqisi2
+  63 0014 93F85930 		ldrb	r3, [r3, #89]	@ zero_extendqisi2
+  64 0018 42EA0022 		orr	r2, r2, r0, lsl #8
+  65 001c 42EA0343 		orr	r3, r2, r3, lsl #16
+  66 0020 63F31701 		bfi	r1, r3, #0, #24
+  67 0024 0548     		ldr	r0, .L5+8
+  68 0026 FFF7FEFF 		bl	_ZN5Led_t5SolidE7Color_t
+  69 002a 0548     		ldr	r0, .L5+12
+  70 002c BDE80840 		pop	{r3, lr}
+  71 0030 FFF7FEBF 		b	klPrintf
+  72              	.L6:
+  73              		.align	2
+  74              	.L5:
+  75 0034 00000000 		.word	ESnd
+  76 0038 00000000 		.word	.LANCHOR0
+  77 003c 30000000 		.word	Leds+48
+  78 0040 10000000 		.word	.LC1
+  80              		.section	.text._Z9Event_Kbdv,"ax",%progbits
+  81              		.align	1
+  82              		.global	_Z9Event_Kbdv
+  83              		.thumb
+  84              		.thumb_func
+  86              	_Z9Event_Kbdv:
+  87              		@ args = 0, pretend = 0, frame = 0
+  88              		@ frame_needed = 0, uses_anonymous_args = 0
+  89 0000 204B     		ldr	r3, .L16
+  90 0002 70B5     		push	{r4, r5, r6, lr}
+  91 0004 1B7B     		ldrb	r3, [r3, #12]	@ zero_extendqisi2
+  92 0006 002B     		cmp	r3, #0
+  93 0008 3AD1     		bne	.L7
+  94 000a 1F4B     		ldr	r3, .L16+4
+  95 000c 1C79     		ldrb	r4, [r3, #4]	@ zero_extendqisi2
+  96 000e 0C2C     		cmp	r4, #12
+  97 0010 08BF     		it	eq
+  98 0012 5C79     		ldrbeq	r4, [r3, #5]	@ zero_extendqisi2
+  99 0014 092C     		cmp	r4, #9
+ 100 0016 20D8     		bhi	.L10
+ 101 0018 1C4E     		ldr	r6, .L16+8
+ 102 001a 96F84F30 		ldrb	r3, [r6, #79]	@ zero_extendqisi2
+ 103 001e 002B     		cmp	r3, #0
+ 104 0020 2ED0     		beq	.L7
+ 105 0022 184D     		ldr	r5, .L16
+ 106 0024 1A48     		ldr	r0, .L16+12
+ 107 0026 3146     		mov	r1, r6
+ 108 0028 FFF7FEFF 		bl	_ZN7Sound_t4PlayEPKc
+ 109 002c EB7A     		ldrb	r3, [r5, #11]	@ zero_extendqisi2
+ 110 002e 3034     		adds	r4, r4, #48
+ 111 0030 EA18     		adds	r2, r5, r3
+ 112 0032 1471     		strb	r4, [r2, #4]
+ 113 0034 0133     		adds	r3, r3, #1
+ 114 0036 96F84F20 		ldrb	r2, [r6, #79]	@ zero_extendqisi2
+ 115 003a DBB2     		uxtb	r3, r3
+ 116 003c 9A42     		cmp	r2, r3
+ 117 003e EB72     		strb	r3, [r5, #11]
+ 118 0040 08D1     		bne	.L11
+ 119 0042 06F14100 		add	r0, r6, #65
+ 120 0046 291D     		adds	r1, r5, #4
+ 121 0048 FFF7FEFF 		bl	strcmp
+ 122 004c 0223     		movs	r3, #2
+ 123 004e 00B1     		cbz	r0, .L14
+ 124 0050 0123     		movs	r3, #1
+ 125              	.L14:
+ 126 0052 2B73     		strb	r3, [r5, #12]
+ 127              	.L11:
+ 128 0054 0F4B     		ldr	r3, .L16+16
+ 129 0056 1A68     		ldr	r2, [r3, #0]
+ 130 0058 06E0     		b	.L15
+ 131              	.L10:
+ 132 005a 0A2C     		cmp	r4, #10
+ 133 005c 07D1     		bne	.L13
+ 134 005e 0D4B     		ldr	r3, .L16+16
+ 135 0060 1A68     		ldr	r2, [r3, #0]
+ 136 0062 0A4B     		ldr	r3, .L16+8
+ 137 0064 9B6E     		ldr	r3, [r3, #104]
+ 138 0066 D21A     		subs	r2, r2, r3
+ 139              	.L15:
+ 140 0068 064B     		ldr	r3, .L16
+ 141 006a 1A60     		str	r2, [r3, #0]
+ 142 006c 70BD     		pop	{r4, r5, r6, pc}
+ 143              	.L13:
+ 144 006e 0B2C     		cmp	r4, #11
+ 145 0070 06D1     		bne	.L7
+ 146 0072 064B     		ldr	r3, .L16+8
+ 147 0074 93F84F30 		ldrb	r3, [r3, #79]	@ zero_extendqisi2
+ 148 0078 13B9     		cbnz	r3, .L7
+ 149 007a 024B     		ldr	r3, .L16
+ 150 007c 0222     		movs	r2, #2
+ 151 007e 1A73     		strb	r2, [r3, #12]
+ 152              	.L7:
+ 153 0080 70BD     		pop	{r4, r5, r6, pc}
+ 154              	.L17:
+ 155 0082 00BF     		.align	2
+ 156              	.L16:
+ 157 0084 00000000 		.word	.LANCHOR1
+ 158 0088 00000000 		.word	Keys
+ 159 008c 00000000 		.word	.LANCHOR0
+ 160 0090 00000000 		.word	ESnd
+ 161 0094 00000000 		.word	Delay
+ 163              		.section	.text._ZN10Settings_t4ReadEv,"ax",%progbits
+ 164              		.align	1
+ 165              		.global	_ZN10Settings_t4ReadEv
+ 166              		.thumb
+ 167              		.thumb_func
+ 169              	_ZN10Settings_t4ReadEv:
+ 170              		@ args = 0, pretend = 0, frame = 0
+ 171              		@ frame_needed = 0, uses_anonymous_args = 0
+ 172 0000 37B5     		push	{r0, r1, r2, r4, r5, lr}
+ 173 0002 4A4C     		ldr	r4, .L33
+ 174 0004 0D25     		movs	r5, #13
+ 175 0006 4A48     		ldr	r0, .L33+4
+ 176 0008 4A49     		ldr	r1, .L33+8
+ 177 000a 4B4A     		ldr	r2, .L33+12
+ 178 000c 2346     		mov	r3, r4
+ 179 000e 0095     		str	r5, [sp, #0]
+ 180 0010 FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
+ 181 0014 0028     		cmp	r0, #0
+ 182 0016 00F08680 		beq	.L19
+ 183 001a 4548     		ldr	r0, .L33+4
+ 184 001c 4749     		ldr	r1, .L33+16
+ 185 001e 464A     		ldr	r2, .L33+12
+ 186 0020 6319     		adds	r3, r4, r5
+ 187 0022 0095     		str	r5, [sp, #0]
+ 188 0024 FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
+ 189 0028 0028     		cmp	r0, #0
+ 190 002a 7CD0     		beq	.L19
+ 191 002c 4048     		ldr	r0, .L33+4
+ 192 002e 4449     		ldr	r1, .L33+20
+ 193 0030 414A     		ldr	r2, .L33+12
+ 194 0032 04F11A03 		add	r3, r4, #26
+ 195 0036 0095     		str	r5, [sp, #0]
+ 196 0038 FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
+ 197 003c 0028     		cmp	r0, #0
+ 198 003e 72D0     		beq	.L19
+ 199 0040 3B48     		ldr	r0, .L33+4
+ 200 0042 4049     		ldr	r1, .L33+24
+ 201 0044 3C4A     		ldr	r2, .L33+12
+ 202 0046 04F12703 		add	r3, r4, #39
+ 203 004a 0095     		str	r5, [sp, #0]
+ 204 004c FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
+ 205 0050 0028     		cmp	r0, #0
+ 206 0052 68D0     		beq	.L19
+ 207 0054 3648     		ldr	r0, .L33+4
+ 208 0056 3C49     		ldr	r1, .L33+28
+ 209 0058 374A     		ldr	r2, .L33+12
+ 210 005a 04F13403 		add	r3, r4, #52
+ 211 005e 0095     		str	r5, [sp, #0]
+ 212 0060 FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
+ 213 0064 0028     		cmp	r0, #0
+ 214 0066 5ED0     		beq	.L19
+ 215 0068 3848     		ldr	r0, .L33+32
+ 216 006a 0625     		movs	r5, #6
+ 217 006c 0146     		mov	r1, r0
+ 218 006e 324A     		ldr	r2, .L33+12
+ 219 0070 04F14103 		add	r3, r4, #65
+ 220 0074 0095     		str	r5, [sp, #0]
+ 221 0076 FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
+ 222 007a 0028     		cmp	r0, #0
+ 223 007c 53D0     		beq	.L19
+ 224 007e 04F14100 		add	r0, r4, #65
+ 225 0082 FFF7FEFF 		bl	strlen
+ 226 0086 3249     		ldr	r1, .L33+36
+ 227 0088 84F84F00 		strb	r0, [r4, #79]
+ 228 008c 2A4A     		ldr	r2, .L33+12
+ 229 008e 2F48     		ldr	r0, .L33+32
+ 230 0090 04F14803 		add	r3, r4, #72
+ 231 0094 0095     		str	r5, [sp, #0]
+ 232 0096 FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
+ 233 009a 0028     		cmp	r0, #0
+ 234 009c 43D0     		beq	.L19
+ 235 009e 04F14800 		add	r0, r4, #72
+ 236 00a2 FFF7FEFF 		bl	strlen
+ 237 00a6 2B49     		ldr	r1, .L33+40
+ 238 00a8 84F85000 		strb	r0, [r4, #80]
+ 239 00ac 224A     		ldr	r2, .L33+12
+ 240 00ae 2A48     		ldr	r0, .L33+44
+ 241 00b0 04F15103 		add	r3, r4, #81
+ 242 00b4 FFF7FEFF 		bl	_Z9ReadColorPKcS0_S0_P7Color_t
+ 243 00b8 0028     		cmp	r0, #0
+ 244 00ba 34D0     		beq	.L19
+ 245 00bc 2648     		ldr	r0, .L33+44
+ 246 00be 2749     		ldr	r1, .L33+48
+ 247 00c0 1D4A     		ldr	r2, .L33+12
+ 248 00c2 04F15403 		add	r3, r4, #84
+ 249 00c6 FFF7FEFF 		bl	_Z9ReadColorPKcS0_S0_P7Color_t
+ 250 00ca 0028     		cmp	r0, #0
+ 251 00cc 2BD0     		beq	.L19
+ 252 00ce 2248     		ldr	r0, .L33+44
+ 253 00d0 2349     		ldr	r1, .L33+52
+ 254 00d2 194A     		ldr	r2, .L33+12
+ 255 00d4 04F15703 		add	r3, r4, #87
+ 256 00d8 FFF7FEFF 		bl	_Z9ReadColorPKcS0_S0_P7Color_t
+ 257 00dc 0028     		cmp	r0, #0
+ 258 00de 21D0     		beq	.L29
+ 259 00e0 1D48     		ldr	r0, .L33+44
+ 260 00e2 2049     		ldr	r1, .L33+56
+ 261 00e4 144A     		ldr	r2, .L33+12
+ 262 00e6 04F15A03 		add	r3, r4, #90
+ 263 00ea FFF7FEFF 		bl	_Z9ReadColorPKcS0_S0_P7Color_t
+ 264 00ee D0B1     		cbz	r0, .L19
+ 265 00f0 1948     		ldr	r0, .L33+44
+ 266 00f2 1D49     		ldr	r1, .L33+60
+ 267 00f4 104A     		ldr	r2, .L33+12
+ 268 00f6 04F16003 		add	r3, r4, #96
+ 269 00fa FFF7FEFF 		bl	_Z10ReadUint32PKcS0_S0_Pm
+ 270 00fe 90B1     		cbz	r0, .L19
+ 271 0100 1A48     		ldr	r0, .L33+64
+ 272 0102 1B49     		ldr	r1, .L33+68
+ 273 0104 0C4A     		ldr	r2, .L33+12
+ 274 0106 04F16403 		add	r3, r4, #100
+ 275 010a FFF7FEFF 		bl	_Z10ReadUint32PKcS0_S0_Pm
+ 276 010e 50B1     		cbz	r0, .L19
+ 277 0110 1648     		ldr	r0, .L33+64
+ 278 0112 1849     		ldr	r1, .L33+72
+ 279 0114 084A     		ldr	r2, .L33+12
+ 280 0116 04F16803 		add	r3, r4, #104
+ 281 011a 03B0     		add	sp, sp, #12
+ 282 011c BDE83040 		pop	{r4, r5, lr}
+ 283 0120 FFF7FEBF 		b	_Z10ReadUint32PKcS0_S0_Pm
+ 284              	.L29:
+ 285 0124 0020     		movs	r0, #0
+ 286              	.L19:
+ 287 0126 03B0     		add	sp, sp, #12
+ 288 0128 30BD     		pop	{r4, r5, pc}
+ 289              	.L34:
+ 290 012a 00BF     		.align	2
+ 291              	.L33:
+ 292 012c 00000000 		.word	.LANCHOR0
+ 293 0130 20000000 		.word	.LC2
+ 294 0134 26000000 		.word	.LC3
+ 295 0138 2E000000 		.word	.LC4
+ 296 013c 37000000 		.word	.LC5
+ 297 0140 3F000000 		.word	.LC6
+ 298 0144 49000000 		.word	.LC7
+ 299 0148 4E000000 		.word	.LC8
+ 300 014c 54000000 		.word	.LC9
+ 301 0150 59000000 		.word	.LC10
+ 302 0154 6C000000 		.word	.LC12
+ 303 0158 65000000 		.word	.LC11
+ 304 015c 75000000 		.word	.LC13
+ 305 0160 81000000 		.word	.LC14
+ 306 0164 8C000000 		.word	.LC15
+ 307 0168 98000000 		.word	.LC16
+ 308 016c A3000000 		.word	.LC17
+ 309 0170 AB000000 		.word	.LC18
+ 310 0174 BA000000 		.word	.LC19
+ 312              		.section	.text._Z11GeneralInitv,"ax",%progbits
+ 313              		.align	1
+ 314              		.global	_Z11GeneralInitv
+ 315              		.thumb
+ 316              		.thumb_func
+ 318              	_Z11GeneralInitv:
+ 319              		@ args = 0, pretend = 0, frame = 0
+ 320              		@ frame_needed = 0, uses_anonymous_args = 0
+ 321 0000 38B5     		push	{r3, r4, r5, lr}
+ 322 0002 FFF7FEFF 		bl	UART_Init
+ 323 0006 0121     		movs	r1, #1
+ 324 0008 1848     		ldr	r0, .L39
+ 325 000a FFF7FEFF 		bl	GPIO_PinRemapConfig
+ 326 000e 184C     		ldr	r4, .L39+4
+ 327 0010 4FF48060 		mov	r0, #1024
+ 328 0014 FFF7FEFF 		bl	NVIC_PriorityGroupConfig
+ 329 0018 1648     		ldr	r0, .L39+8
+ 330 001a FFF7FEFF 		bl	_ZN7Delay_t4InitEv
+ 331 001e 2046     		mov	r0, r4
+ 332 0020 FFF7FEFF 		bl	_ZN6Keys_t4InitEv
+ 333 0024 144B     		ldr	r3, .L39+12
+ 334 0026 1548     		ldr	r0, .L39+16
+ 335 0028 A360     		str	r3, [r4, #8]
+ 336 002a E360     		str	r3, [r4, #12]
+ 337 002c 144C     		ldr	r4, .L39+20
+ 338 002e 0025     		movs	r5, #0
+ 339 0030 FFF7FEFF 		bl	_ZN4VS_t4InitEv
+ 340 0034 1348     		ldr	r0, .L39+24
+ 341 0036 84F82856 		strb	r5, [r4, #1576]
+ 342 003a FFF7FEFF 		bl	_ZN8i2cMgr_t4InitEv
+ 343 003e 1248     		ldr	r0, .L39+28
+ 344 0040 FFF7FEFF 		bl	_ZN6Leds_t4InitEv
+ 345 0044 2846     		mov	r0, r5
+ 346 0046 1149     		ldr	r1, .L39+32
+ 347 0048 FFF7FEFF 		bl	f_mount
+ 348 004c 1048     		ldr	r0, .L39+36
+ 349 004e FFF7FEFF 		bl	_ZN10Settings_t4ReadEv
+ 350 0052 00B9     		cbnz	r0, .L36
+ 351              	.L38:
+ 352 0054 FEE7     		b	.L38
+ 353              	.L36:
+ 354 0056 FFF7FEFF 		bl	_Z15EventJustClosedv
+ 355 005a 0E48     		ldr	r0, .L39+40
+ 356 005c FFF7FEFF 		bl	klPrintf
+ 357 0060 0D49     		ldr	r1, .L39+44
+ 358 0062 2046     		mov	r0, r4
+ 359 0064 BDE83840 		pop	{r3, r4, r5, lr}
+ 360 0068 FFF7FEBF 		b	_ZN7Sound_t4PlayEPKc
+ 361              	.L40:
+ 362              		.align	2
+ 363              	.L39:
+ 364 006c 00023000 		.word	3146240
+ 365 0070 00000000 		.word	Keys
+ 366 0074 00000000 		.word	Delay
+ 367 0078 00000000 		.word	_Z9Event_Kbdv
+ 368 007c 00000000 		.word	Vs
+ 369 0080 00000000 		.word	ESnd
+ 370 0084 00000000 		.word	i2cMgr
+ 371 0088 00000000 		.word	Leds
+ 372 008c 70000000 		.word	SD+112
+ 373 0090 00000000 		.word	.LANCHOR0
+ 374 0094 C7000000 		.word	.LC20
+ 375 0098 D3000000 		.word	.LC21
+ 377              		.section	.text._ZN6Door_t4OpenEv,"ax",%progbits
+ 378              		.align	1
+ 379              		.global	_ZN6Door_t4OpenEv
+ 380              		.thumb
+ 381              		.thumb_func
+ 383              	_ZN6Door_t4OpenEv:
+ 384              		@ args = 0, pretend = 0, frame = 0
+ 385              		@ frame_needed = 0, uses_anonymous_args = 0
+ 386 0000 70B5     		push	{r4, r5, r6, lr}
+ 387 0002 0B4C     		ldr	r4, .L42
+ 388 0004 0B4E     		ldr	r6, .L42+4
+ 389 0006 0546     		mov	r5, r0
+ 390 0008 04F12701 		add	r1, r4, #39
+ 391 000c 3046     		mov	r0, r6
+ 392 000e FFF7FEFF 		bl	_ZN7Sound_t4PlayEPKc
+ 393 0012 094B     		ldr	r3, .L42+8
+ 394 0014 0948     		ldr	r0, .L42+12
+ 395 0016 C6F82C36 		str	r3, [r6, #1580]
+ 396 001a 0123     		movs	r3, #1
+ 397 001c 2B71     		strb	r3, [r5, #4]
+ 398 001e 084B     		ldr	r3, .L42+16
+ 399 0020 1B68     		ldr	r3, [r3, #0]
+ 400 0022 2B60     		str	r3, [r5, #0]
+ 401 0024 616D     		ldr	r1, [r4, #84]
+ 402 0026 226E     		ldr	r2, [r4, #96]
+ 403 0028 BDE87040 		pop	{r4, r5, r6, lr}
+ 404 002c FFF7FEBF 		b	_ZN5Led_t5BlinkE7Color_tm
+ 405              	.L43:
+ 406              		.align	2
+ 407              	.L42:
+ 408 0030 00000000 		.word	.LANCHOR0
+ 409 0034 00000000 		.word	ESnd
+ 410 0038 00000000 		.word	_Z15EventJustOpenedv
+ 411 003c 30000000 		.word	Leds+48
+ 412 0040 00000000 		.word	Delay
+ 414              		.section	.text._ZN11Codecheck_t4TaskEv,"ax",%progbits
+ 415              		.align	1
+ 416              		.global	_ZN11Codecheck_t4TaskEv
+ 417              		.thumb
+ 418              		.thumb_func
+ 420              	_ZN11Codecheck_t4TaskEv:
+ 421              		@ args = 0, pretend = 0, frame = 0
+ 422              		@ frame_needed = 0, uses_anonymous_args = 0
+ 423 0000 70B5     		push	{r4, r5, r6, lr}
+ 424 0002 194D     		ldr	r5, .L51
+ 425 0004 0446     		mov	r4, r0
+ 426 0006 95F82836 		ldrb	r3, [r5, #1576]	@ zero_extendqisi2
+ 427 000a 012B     		cmp	r3, #1
+ 428 000c 2AD0     		beq	.L44
+ 429 000e 174B     		ldr	r3, .L51+4
+ 430 0010 1B7B     		ldrb	r3, [r3, #12]	@ zero_extendqisi2
+ 431 0012 012B     		cmp	r3, #1
+ 432 0014 15D0     		beq	.L47
+ 433 0016 02D3     		bcc	.L46
+ 434 0018 022B     		cmp	r3, #2
+ 435 001a 23D1     		bne	.L44
+ 436 001c 1AE0     		b	.L50
+ 437              	.L46:
+ 438 001e C37A     		ldrb	r3, [r0, #11]	@ zero_extendqisi2
+ 439 0020 002B     		cmp	r3, #0
+ 440 0022 1FD0     		beq	.L44
+ 441 0024 124E     		ldr	r6, .L51+8
+ 442 0026 1348     		ldr	r0, .L51+12
+ 443 0028 2146     		mov	r1, r4
+ 444 002a B26E     		ldr	r2, [r6, #104]
+ 445 002c FFF7FEFF 		bl	_ZN7Delay_t7ElapsedEPmm
+ 446 0030 0028     		cmp	r0, #0
+ 447 0032 17D0     		beq	.L44
+ 448 0034 0023     		movs	r3, #0
+ 449 0036 E372     		strb	r3, [r4, #11]
+ 450 0038 2373     		strb	r3, [r4, #12]
+ 451 003a 2846     		mov	r0, r5
+ 452 003c 06F10D01 		add	r1, r6, #13
+ 453 0040 04E0     		b	.L49
+ 454              	.L47:
+ 455 0042 0023     		movs	r3, #0
+ 456 0044 0C49     		ldr	r1, .L51+16
+ 457 0046 C372     		strb	r3, [r0, #11]
+ 458 0048 0373     		strb	r3, [r0, #12]
+ 459 004a 2846     		mov	r0, r5
+ 460              	.L49:
+ 461 004c BDE87040 		pop	{r4, r5, r6, lr}
+ 462 0050 FFF7FEBF 		b	_ZN7Sound_t4PlayEPKc
+ 463              	.L50:
+ 464 0054 0023     		movs	r3, #0
+ 465 0056 C372     		strb	r3, [r0, #11]
+ 466 0058 0373     		strb	r3, [r0, #12]
+ 467 005a 0848     		ldr	r0, .L51+20
+ 468 005c BDE87040 		pop	{r4, r5, r6, lr}
+ 469 0060 FFF7FEBF 		b	_ZN6Door_t4OpenEv
+ 470              	.L44:
+ 471 0064 70BD     		pop	{r4, r5, r6, pc}
+ 472              	.L52:
+ 473 0066 00BF     		.align	2
+ 474              	.L51:
+ 475 0068 00000000 		.word	ESnd
+ 476 006c 00000000 		.word	.LANCHOR1
+ 477 0070 00000000 		.word	.LANCHOR0
+ 478 0074 00000000 		.word	Delay
+ 479 0078 1A000000 		.word	.LANCHOR0+26
+ 480 007c 00000000 		.word	.LANCHOR2
+ 482              		.section	.text._ZN6Door_t5CloseEv,"ax",%progbits
+ 483              		.align	1
+ 484              		.global	_ZN6Door_t5CloseEv
+ 485              		.thumb
+ 486              		.thumb_func
+ 488              	_ZN6Door_t5CloseEv:
+ 489              		@ args = 0, pretend = 0, frame = 0
+ 490              		@ frame_needed = 0, uses_anonymous_args = 0
+ 491 0000 70B5     		push	{r4, r5, r6, lr}
+ 492 0002 0D4C     		ldr	r4, .L54
+ 493 0004 0D4D     		ldr	r5, .L54+4
+ 494 0006 0646     		mov	r6, r0
+ 495 0008 04F13401 		add	r1, r4, #52
+ 496 000c 2846     		mov	r0, r5
+ 497 000e FFF7FEFF 		bl	_ZN7Sound_t4PlayEPKc
+ 498 0012 0B4B     		ldr	r3, .L54+8
+ 499 0014 0021     		movs	r1, #0
+ 500 0016 C5F82C36 		str	r3, [r5, #1580]
+ 501 001a 3171     		strb	r1, [r6, #4]
+ 502 001c 94F85C20 		ldrb	r2, [r4, #92]	@ zero_extendqisi2
+ 503 0020 B4F85A30 		ldrh	r3, [r4, #90]
+ 504 0024 0748     		ldr	r0, .L54+12
+ 505 0026 43EA0243 		orr	r3, r3, r2, lsl #16
+ 506 002a 226E     		ldr	r2, [r4, #96]
+ 507 002c 63F31701 		bfi	r1, r3, #0, #24
+ 508 0030 BDE87040 		pop	{r4, r5, r6, lr}
+ 509 0034 FFF7FEBF 		b	_ZN5Led_t5BlinkE7Color_tm
+ 510              	.L55:
+ 511              		.align	2
+ 512              	.L54:
+ 513 0038 00000000 		.word	.LANCHOR0
+ 514 003c 00000000 		.word	ESnd
+ 515 0040 00000000 		.word	_Z15EventJustClosedv
+ 516 0044 30000000 		.word	Leds+48
+ 518              		.section	.text._ZN6Door_t4TaskEv,"ax",%progbits
+ 519              		.align	1
+ 520              		.global	_ZN6Door_t4TaskEv
+ 521              		.thumb
+ 522              		.thumb_func
+ 524              	_ZN6Door_t4TaskEv:
+ 525              		@ args = 0, pretend = 0, frame = 0
+ 526              		@ frame_needed = 0, uses_anonymous_args = 0
+ 527 0000 0379     		ldrb	r3, [r0, #4]	@ zero_extendqisi2
+ 528 0002 10B5     		push	{r4, lr}
+ 529 0004 0446     		mov	r4, r0
+ 530 0006 5BB1     		cbz	r3, .L56
+ 531 0008 064B     		ldr	r3, .L58
+ 532 000a 0748     		ldr	r0, .L58+4
+ 533 000c 2146     		mov	r1, r4
+ 534 000e 5A6E     		ldr	r2, [r3, #100]
+ 535 0010 FFF7FEFF 		bl	_ZN7Delay_t7ElapsedEPmm
+ 536 0014 20B1     		cbz	r0, .L56
+ 537 0016 2046     		mov	r0, r4
+ 538 0018 BDE81040 		pop	{r4, lr}
+ 539 001c FFF7FEBF 		b	_ZN6Door_t5CloseEv
+ 540              	.L56:
+ 541 0020 10BD     		pop	{r4, pc}
+ 542              	.L59:
+ 543 0022 00BF     		.align	2
+ 544              	.L58:
+ 545 0024 00000000 		.word	.LANCHOR0
+ 546 0028 00000000 		.word	Delay
+ 548              		.section	.text.startup.main,"ax",%progbits
+ 549              		.align	1
+ 550              		.global	main
+ 551              		.thumb
+ 552              		.thumb_func
+ 554              	main:
+ 555              		@ Volatile: function does not return.
+ 556              		@ args = 0, pretend = 0, frame = 0
+ 557              		@ frame_needed = 0, uses_anonymous_args = 0
+ 558 0000 08B5     		push	{r3, lr}
+ 559 0002 FFF7FEFF 		bl	_Z11GeneralInitv
+ 560              	.L61:
+ 561 0006 0948     		ldr	r0, .L62
+ 562 0008 FFF7FEFF 		bl	_ZN6Keys_t4TaskEv
+ 563 000c 0848     		ldr	r0, .L62+4
+ 564 000e FFF7FEFF 		bl	_ZN7Sound_t4TaskEv
+ 565 0012 0848     		ldr	r0, .L62+8
+ 566 0014 FFF7FEFF 		bl	_ZN11Codecheck_t4TaskEv
+ 567 0018 0748     		ldr	r0, .L62+12
+ 568 001a FFF7FEFF 		bl	_ZN6Door_t4TaskEv
+ 569 001e 0748     		ldr	r0, .L62+16
+ 570 0020 FFF7FEFF 		bl	_ZN8i2cMgr_t4TaskEv
+ 571 0024 0648     		ldr	r0, .L62+20
+ 572 0026 FFF7FEFF 		bl	_ZN6Leds_t4TaskEv
+ 573 002a ECE7     		b	.L61
+ 574              	.L63:
+ 575              		.align	2
+ 576              	.L62:
+ 577 002c 00000000 		.word	Keys
+ 578 0030 00000000 		.word	ESnd
+ 579 0034 00000000 		.word	.LANCHOR1
+ 580 0038 00000000 		.word	.LANCHOR2
+ 581 003c 00000000 		.word	i2cMgr
+ 582 0040 00000000 		.word	Leds
+ 584              		.global	Door
+ 585              		.global	Codecheck
+ 586              		.global	Settings
+ 587              		.section	.bss.Codecheck,"aw",%nobits
+ 588              		.align	2
+ 589              		.set	.LANCHOR1,. + 0
+ 592              	Codecheck:
+ 593 0000 00000000 		.space	16
+ 593      00000000 
+ 593      00000000 
+ 593      00000000 
+ 594              		.section	.rodata.str1.1,"aMS",%progbits,1
+ 595              	.LC0:
+ 596 0000 446F6F72 		.ascii	"Door is opened\015\000"
+ 596      20697320 
+ 596      6F70656E 
+ 596      65640D00 
+ 597              	.LC1:
+ 598 0010 446F6F72 		.ascii	"Door is closed\015\000"
+ 598      20697320 
+ 598      636C6F73 
+ 598      65640D00 
+ 599              	.LC2:
+ 600 0020 536F756E 		.ascii	"Sound\000"
+ 600      6400
+ 601              	.LC3:
+ 602 0026 4B657942 		.ascii	"KeyBeep\000"
+ 602      65657000 
+ 603              	.LC4:
+ 604 002e 6C6F636B 		.ascii	"lock.ini\000"
+ 604      2E696E69 
+ 604      00
+ 605              	.LC5:
+ 606 0037 4B657944 		.ascii	"KeyDrop\000"
+ 606      726F7000 
+ 607              	.LC6:
+ 608 003f 50617373 		.ascii	"PassError\000"
+ 608      4572726F 
+ 608      7200
+ 609              	.LC7:
+ 610 0049 4F70656E 		.ascii	"Open\000"
+ 610      00
+ 611              	.LC8:
+ 612 004e 436C6F73 		.ascii	"Close\000"
+ 612      6500
+ 613              	.LC9:
+ 614 0054 436F6465 		.ascii	"Code\000"
+ 614      00
+ 615              	.LC10:
+ 616 0059 53657276 		.ascii	"ServiceCode\000"
+ 616      69636543 
+ 616      6F646500 
+ 617              	.LC11:
+ 618 0065 436F6C6F 		.ascii	"Colors\000"
+ 618      727300
+ 619              	.LC12:
+ 620 006c 446F6F72 		.ascii	"DoorOpen\000"
+ 620      4F70656E 
+ 620      00
+ 621              	.LC13:
+ 622 0075 446F6F72 		.ascii	"DoorOpening\000"
+ 622      4F70656E 
+ 622      696E6700 
+ 623              	.LC14:
+ 624 0081 446F6F72 		.ascii	"DoorClosed\000"
+ 624      436C6F73 
+ 624      656400
+ 625              	.LC15:
+ 626 008c 446F6F72 		.ascii	"DoorClosing\000"
+ 626      436C6F73 
+ 626      696E6700 
+ 627              	.LC16:
+ 628 0098 426C696E 		.ascii	"BlinkDelay\000"
+ 628      6B44656C 
+ 628      617900
+ 629              	.LC17:
+ 630 00a3 54696D69 		.ascii	"Timings\000"
+ 630      6E677300 
+ 631              	.LC18:
+ 632 00ab 446F6F72 		.ascii	"DoorCloseDelay\000"
+ 632      436C6F73 
+ 632      6544656C 
+ 632      617900
+ 633              	.LC19:
+ 634 00ba 4B657944 		.ascii	"KeyDropDelay\000"
+ 634      726F7044 
+ 634      656C6179 
+ 634      00
+ 635              	.LC20:
+ 636 00c7 4C6F636B 		.ascii	"Lock is on\015\000"
+ 636      20697320 
+ 636      6F6E0D00 
+ 637              	.LC21:
+ 638 00d3 616C6976 		.ascii	"alive.wav\000"
+ 638      652E7761 
+ 638      7600
+ 639              		.section	.bss.Door,"aw",%nobits
+ 640              		.align	2
+ 641              		.set	.LANCHOR2,. + 0
+ 644              	Door:
+ 645 0000 00000000 		.space	8
+ 645      00000000 
+ 646              		.section	.bss.Settings,"aw",%nobits
+ 647              		.align	2
+ 648              		.set	.LANCHOR0,. + 0
+ 651              	Settings:
+ 652 0000 00000000 		.space	108
+ 652      00000000 
+ 652      00000000 
+ 652      00000000 
+ 652      00000000 
+ 653              		.ident	"GCC: (GNU) 4.6.2"
 DEFINED SYMBOLS
                             *ABS*:00000000 main.cpp
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:15     .text._Z9Event_Kbdv:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:20     .text._Z9Event_Kbdv:00000000 _Z9Event_Kbdv
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:91     .text._Z9Event_Kbdv:00000088 $d
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:98     .text._ZN10Settings_t4ReadEv:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:103    .text._ZN10Settings_t4ReadEv:00000000 _ZN10Settings_t4ReadEv
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:174    .text._ZN10Settings_t4ReadEv:000000a4 $d
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:186    .text._Z11GeneralInitv:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:191    .text._Z11GeneralInitv:00000000 _Z11GeneralInitv
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:231    .text._Z11GeneralInitv:0000005c $d
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:243    .text._Z10Event_Openv:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:248    .text._Z10Event_Openv:00000000 _Z10Event_Openv
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:258    .text._Z10Event_Openv:00000008 $d
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:262    .text._ZN11Codecheck_t4TaskEv:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:267    .text._ZN11Codecheck_t4TaskEv:00000000 _ZN11Codecheck_t4TaskEv
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:320    .text._ZN11Codecheck_t4TaskEv:00000064 $d
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:327    .text.startup.main:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:332    .text.startup.main:00000000 main
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:349    .text.startup.main:0000001c $d
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:354    .text._Z11Event_Closev:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:359    .text._Z11Event_Closev:00000000 _Z11Event_Closev
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:369    .text._Z11Event_Closev:00000008 $d
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:379    .bss.Codecheck:00000000 Codecheck
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:408    .bss.Settings:00000000 Settings
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:375    .bss.Codecheck:00000000 $d
-C:\Users\kreyl\AppData\Local\Temp\ccFZ6BcD.s:409    .bss.Settings:00000000 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:15     .text._Z15EventJustOpenedv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:20     .text._Z15EventJustOpenedv:00000000 _Z15EventJustOpenedv
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:42     .text._Z15EventJustOpenedv:00000034 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:48     .text._Z15EventJustClosedv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:53     .text._Z15EventJustClosedv:00000000 _Z15EventJustClosedv
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:75     .text._Z15EventJustClosedv:00000034 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:81     .text._Z9Event_Kbdv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:86     .text._Z9Event_Kbdv:00000000 _Z9Event_Kbdv
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:157    .text._Z9Event_Kbdv:00000084 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:164    .text._ZN10Settings_t4ReadEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:169    .text._ZN10Settings_t4ReadEv:00000000 _ZN10Settings_t4ReadEv
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:292    .text._ZN10Settings_t4ReadEv:0000012c $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:313    .text._Z11GeneralInitv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:318    .text._Z11GeneralInitv:00000000 _Z11GeneralInitv
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:364    .text._Z11GeneralInitv:0000006c $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:378    .text._ZN6Door_t4OpenEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:383    .text._ZN6Door_t4OpenEv:00000000 _ZN6Door_t4OpenEv
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:408    .text._ZN6Door_t4OpenEv:00000030 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:415    .text._ZN11Codecheck_t4TaskEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:420    .text._ZN11Codecheck_t4TaskEv:00000000 _ZN11Codecheck_t4TaskEv
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:475    .text._ZN11Codecheck_t4TaskEv:00000068 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:483    .text._ZN6Door_t5CloseEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:488    .text._ZN6Door_t5CloseEv:00000000 _ZN6Door_t5CloseEv
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:513    .text._ZN6Door_t5CloseEv:00000038 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:519    .text._ZN6Door_t4TaskEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:524    .text._ZN6Door_t4TaskEv:00000000 _ZN6Door_t4TaskEv
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:545    .text._ZN6Door_t4TaskEv:00000024 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:549    .text.startup.main:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:554    .text.startup.main:00000000 main
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:577    .text.startup.main:0000002c $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:644    .bss.Door:00000000 Door
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:592    .bss.Codecheck:00000000 Codecheck
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:651    .bss.Settings:00000000 Settings
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:588    .bss.Codecheck:00000000 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:640    .bss.Door:00000000 $d
+C:\Users\kreyl\AppData\Local\Temp\ccrqcK3e.s:647    .bss.Settings:00000000 $d
 
 UNDEFINED SYMBOLS
+_ZN5Led_t5SolidE7Color_t
+klPrintf
+ESnd
+Leds
 _ZN7Sound_t4PlayEPKc
 strcmp
 Keys
-ESnd
 Delay
 _Z10ReadStringPKcS0_S0_Pcm
 strlen
+_Z9ReadColorPKcS0_S0_P7Color_t
+_Z10ReadUint32PKcS0_S0_Pm
 UART_Init
 GPIO_PinRemapConfig
 NVIC_PriorityGroupConfig
 _ZN7Delay_t4InitEv
 _ZN6Keys_t4InitEv
 _ZN4VS_t4InitEv
-_ZN7Sound_t4InitEv
-klPrintf
+_ZN8i2cMgr_t4InitEv
+_ZN6Leds_t4InitEv
 f_mount
 Vs
+i2cMgr
 SD
+_ZN5Led_t5BlinkE7Color_tm
 _ZN7Delay_t7ElapsedEPmm
 _ZN6Keys_t4TaskEv
 _ZN7Sound_t4TaskEv
+_ZN8i2cMgr_t4TaskEv
+_ZN6Leds_t4TaskEv

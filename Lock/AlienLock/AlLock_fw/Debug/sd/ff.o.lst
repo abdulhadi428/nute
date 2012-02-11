@@ -1058,9 +1058,9 @@
  1077 003e 3370     		strb	r3, [r6, #0]
  1078 0040 2046     		mov	r0, r4
  1079 0042 BDE8FC81 		pop	{r2, r3, r4, r5, r6, r7, r8, pc}
- 1081              		.section	.rodata.excvt.1610,"a",%progbits
+ 1081              		.section	.rodata.excvt.1614,"a",%progbits
  1082              		.set	.LANCHOR2,. + 0
- 1085              	excvt.1610:
+ 1085              	excvt.1614:
  1086 0000 80       		.byte	-128
  1087 0001 81       		.byte	-127
  1088 0002 82       		.byte	-126
@@ -1208,35 +1208,35 @@
  1231              		.ident	"GCC: (GNU) 4.6.2"
 DEFINED SYMBOLS
                             *ABS*:00000000 ff.c
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:15     .text.check_fs:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:19     .text.check_fs:00000000 check_fs
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:72     .text.check_fs:00000080 $d
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:76     .text.move_window:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:80     .text.move_window:00000000 move_window
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:109    .text.clust2sect:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:114    .text.clust2sect:00000000 clust2sect
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:130    .text.get_fat:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:135    .text.get_fat:00000000 get_fat
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:220    .text.dir_sdi.constprop.6:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:224    .text.dir_sdi.constprop.6:00000000 dir_sdi.constprop.6
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:289    .text.f_mount:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:294    .text.f_mount:00000000 f_mount
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:317    .text.f_mount:0000001c $d
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:320    .text.f_open:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:325    .text.f_open:00000000 f_open
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:629    .text.f_open:00000300 $d
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:634    .text.f_open:00000310 $t
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:842    .text.f_read:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:847    .text.f_read:00000000 f_read
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:1005   .text.f_close:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:1010   .text.f_close:00000000 f_close
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:1040   .text.f_gets:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:1045   .text.f_gets:00000000 f_gets
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:1085   .rodata.excvt.1610:00000000 excvt.1610
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:1218   .bss.Fsid:00000000 $d
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:1222   .bss.Fsid:00000000 Fsid
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:1225   .bss.FatFs:00000000 $d
-C:\Users\kreyl\AppData\Local\Temp\cc4ajtPX.s:1229   .bss.FatFs:00000000 FatFs
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:15     .text.check_fs:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:19     .text.check_fs:00000000 check_fs
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:72     .text.check_fs:00000080 $d
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:76     .text.move_window:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:80     .text.move_window:00000000 move_window
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:109    .text.clust2sect:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:114    .text.clust2sect:00000000 clust2sect
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:130    .text.get_fat:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:135    .text.get_fat:00000000 get_fat
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:220    .text.dir_sdi.constprop.6:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:224    .text.dir_sdi.constprop.6:00000000 dir_sdi.constprop.6
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:289    .text.f_mount:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:294    .text.f_mount:00000000 f_mount
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:317    .text.f_mount:0000001c $d
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:320    .text.f_open:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:325    .text.f_open:00000000 f_open
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:629    .text.f_open:00000300 $d
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:634    .text.f_open:00000310 $t
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:842    .text.f_read:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:847    .text.f_read:00000000 f_read
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:1005   .text.f_close:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:1010   .text.f_close:00000000 f_close
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:1040   .text.f_gets:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:1045   .text.f_gets:00000000 f_gets
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:1085   .rodata.excvt.1614:00000000 excvt.1614
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:1218   .bss.Fsid:00000000 $d
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:1222   .bss.Fsid:00000000 Fsid
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:1225   .bss.FatFs:00000000 $d
+C:\Users\kreyl\AppData\Local\Temp\ccZcsWhr.s:1229   .bss.FatFs:00000000 FatFs
 
 UNDEFINED SYMBOLS
 disk_read

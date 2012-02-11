@@ -11,6 +11,7 @@
 #include "ff.h"
 #include "diskio.h"
 #include <stdint.h>
+#include "kl_util.h"
 
 #define SND_BUF_SIZE    512
 
@@ -29,10 +30,11 @@ private:
     void StopNow(void);
 public:
     sndState_t State;
-    void Init(void);
+    void Init(void) { State = sndStopped; }
     void Task(void);
     void Play(const char* AFilename);
     void Stop(void) { State = sndMustStop; }
+    ftVoid_Void EvtPlayEnd;
 };
 
 extern Sound_t ESnd;

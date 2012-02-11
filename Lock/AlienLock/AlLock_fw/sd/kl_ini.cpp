@@ -85,6 +85,30 @@ bool ReadInt32 (const char *ASection, const char *AKey, const char *AFileName, i
     }
     else return false;
 }
+bool ReadUint32(const char *ASection, const char *AKey, const char *AFileName, uint32_t *AOutput) {
+    char FBuf[64];
+    if (ReadString(ASection, AKey, AFileName, FBuf, 64)) {
+        *AOutput = strtol(FBuf, NULL, 10);
+        return true;
+    }
+    else return false;
+}
+
+bool ReadColor (const char *ASection, const char *AKey, const char *AFileName, Color_t *AOutput) {
+    char FBuf[64];
+    if (ReadString(ASection, AKey, AFileName, FBuf, 64)) {
+        if (strlen(FBuf) != 6) return false;
+        uint32_t N=0;
+        if (!HexToUint(&FBuf[0], 2, &N)) return false;
+        AOutput->Red = N;
+        if (!HexToUint(&FBuf[2], 2, &N)) return false;
+        AOutput->Green = N;
+        if (!HexToUint(&FBuf[4], 2, &N)) return false;
+        AOutput->Blue = N;
+        return true;
+    }
+    else return false;
+}
 
 // ============================== Inner use ====================================
 char* skipleading(char *S) {

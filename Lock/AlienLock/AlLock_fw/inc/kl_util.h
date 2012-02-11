@@ -31,6 +31,7 @@ char *UintToStr(uint32_t AValue, char* S);
 void UART_Init(void);
 void klPrintf(const char *S, ...);
 
+bool HexToUint(char *S, uint8_t AMaxLength, uint32_t *AOutput);
 
 #ifdef __cplusplus
 }

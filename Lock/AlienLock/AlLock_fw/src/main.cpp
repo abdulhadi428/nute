@@ -16,11 +16,11 @@
 #include <stdlib.h>
 #include "kl_util.h"
 #include "keys.h"
+#include "leds_pca.h"
+#include "i2c_mgr.h"
 
 #define FNAME_LNG_MAX   13
 #define CODE_LNG_MAX    6
-
-#define WAITING_TIME    3006    // wait before drop
 
 struct Settings_t {
     char KeyBeep[FNAME_LNG_MAX];
@@ -30,6 +30,12 @@ struct Settings_t {
     char Close[FNAME_LNG_MAX];
     char Code[CODE_LNG_MAX+1], ServiceCode[CODE_LNG_MAX+1]; // Because of trailing \0
     uint8_t CodeLength, ServiceCodeLength;
+    // Colors
+    Color_t ColorDoorOpen, ColorDoorOpening, ColorDoorClosed, ColorDoorClosing;
+    uint32_t BlinkDelay;
+    // Timings
+    uint32_t DoorCloseDelay, KeyDropDelay;
+    // Methods
     bool Read(void);
 } Settings;
 
@@ -43,12 +49,19 @@ struct Codecheck_t {
     void Reset(void) { EnteredLength=0; EnterResult=entNA; }
 } Codecheck;
 
+struct Door_t {
+    uint32_t Timer;
+    bool IsOpen;
+    void Task(void);
+    void Open(void);
+    void Close(void);
+} Door;
 
 // Prototypes
 void GeneralInit(void);
 void Event_Kbd(void);
-void Event_Open(void);
-void Event_Close(void);
+void EventJustClosed(void);
+void EventJustOpened(void);
 
 // ============================ Implementation ================================
 int main(void) {
@@ -59,6 +72,9 @@ int main(void) {
         Keys.Task();
         ESnd.Task();
         Codecheck.Task();
+        Door.Task();
+        i2cMgr.Task();
+        Leds.Task();
         //Sensor.Task();
     } // while(1)
     return 0;
@@ -83,12 +99,16 @@ void GeneralInit(void) {
     Vs.Init();
     ESnd.Init();
 
-    klPrintf("Lock is on\r");
+    // Leds
+    i2cMgr.Init();
+    Leds.Init();
 
     // Register filesystem
     f_mount(0, &SD.FatFilesystem);
     if (!Settings.Read()) while(1);    // nothing to do if config not read
 
+    EventJustClosed();  // Close door
+    klPrintf("Lock is on\r");
     // Play initial sound
     ESnd.Play("alive.wav");
 }
@@ -98,7 +118,7 @@ void Codecheck_t::Task(void) {
     if (ESnd.State == sndPlaying) return;
     switch (Codecheck.EnterResult) {
         case entNA: // check if input timeout
-            if((EnteredLength != 0) && Delay.Elapsed(&Timer, WAITING_TIME)) {
+            if((EnteredLength != 0) && Delay.Elapsed(&Timer, Settings.KeyDropDelay)) {
                 Reset();
                 ESnd.Play(Settings.KeyDrop);
             }
@@ -109,29 +129,72 @@ void Codecheck_t::Task(void) {
             break;
         case entOpen:
             Reset();
-            Event_Open();
+            Door.Open();
             break;
     } // switch
 }
 
-
-
 bool Settings_t::Read(void) {
-    // Read sound names
-    if(!ReadString("Sound", "KeyBeep", "lock.ini", Settings.KeyBeep, FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "KeyDrop", "lock.ini", Settings.KeyDrop, FNAME_LNG_MAX)) return false;
+    // Sound names
+    if(!ReadString("Sound", "KeyBeep",   "lock.ini", Settings.KeyBeep,   FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "KeyDrop",   "lock.ini", Settings.KeyDrop,   FNAME_LNG_MAX)) return false;
     if(!ReadString("Sound", "PassError", "lock.ini", Settings.PassError, FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "Open", "lock.ini", Settings.Open, FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "Close", "lock.ini", Settings.Close, FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "Open",      "lock.ini", Settings.Open,      FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "Close",     "lock.ini", Settings.Close,     FNAME_LNG_MAX)) return false;
 
-    // Read codes
+    // Codes
     if(!ReadString("Code", "Code", "lock.ini", Settings.Code, CODE_LNG_MAX)) return false;
     Settings.CodeLength = strlen(Settings.Code);
     if(!ReadString("Code", "ServiceCode", "lock.ini", Settings.ServiceCode, CODE_LNG_MAX)) return false;
     Settings.ServiceCodeLength = strlen(Settings.ServiceCode);
 
+    // Colors
+    if(!ReadColor("Colors", "DoorOpen", "lock.ini", &Settings.ColorDoorOpen)) return false;
+    if(!ReadColor("Colors", "DoorOpening", "lock.ini", &Settings.ColorDoorOpening)) return false;
+    if(!ReadColor("Colors", "DoorClosed", "lock.ini", &Settings.ColorDoorClosed)) return false;
+    if(!ReadColor("Colors", "DoorClosing", "lock.ini", &Settings.ColorDoorClosing)) return false;
+    if(!ReadUint32("Colors", "BlinkDelay", "lock.ini", &Settings.BlinkDelay)) return false;
+
+    // Timings
+    if(!ReadUint32("Timings", "DoorCloseDelay", "lock.ini", &Settings.DoorCloseDelay)) return false;
+    if(!ReadUint32("Timings", "KeyDropDelay", "lock.ini", &Settings.KeyDropDelay)) return false;
+
     return true;
 }
+
+// ================================== Door =====================================
+void Door_t::Open(void) {
+    ESnd.Play(Settings.Open);
+    ESnd.EvtPlayEnd = EventJustOpened;
+    IsOpen = true;
+    Delay.Reset(&Timer);
+    Leds.Led[0].Blink(Settings.ColorDoorOpening, Settings.BlinkDelay);
+}
+
+void Door_t::Close(void) {
+    ESnd.Play(Settings.Close);
+    ESnd.EvtPlayEnd = EventJustClosed;
+    IsOpen = false;
+    Leds.Led[0].Blink(Settings.ColorDoorClosing, Settings.BlinkDelay);
+}
+
+void Door_t::Task() {
+    if (IsOpen)
+        if(Delay.Elapsed(&Timer, Settings.DoorCloseDelay))
+            Close();
+}
+
+void EventJustClosed(void) {
+    ESnd.EvtPlayEnd = 0;
+    Leds.Led[0].Solid(Settings.ColorDoorClosed);
+    klPrintf("Door is closed\r");
+}
+void EventJustOpened(void) {
+    ESnd.EvtPlayEnd = 0;
+    Leds.Led[0].Solid(Settings.ColorDoorOpen);
+    klPrintf("Door is opened\r");
+}
+
 
 // ================================== Events ===================================
 void Event_Kbd(void) {
@@ -151,15 +214,7 @@ void Event_Kbd(void) {
         Delay.Reset(&Codecheck.Timer);
     }
     else {  // none-digit
-        if(FKey == KEY_STAR) Delay.Bypass(&Codecheck.Timer, WAITING_TIME);  // Drop code
+        if(FKey == KEY_STAR) Delay.Bypass(&Codecheck.Timer, Settings.KeyDropDelay);  // Drop code
         if((FKey == KEY_HASH) && (Settings.CodeLength == 0)) Codecheck.EnterResult = entOpen;   // Open door in case of empty code
     }
-}
-
-void Event_Open(void) {
-    ESnd.Play(Settings.Open);
-}
-
-void Event_Close(void) {
-    ESnd.Play(Settings.Close);
 }

@@ -5,7 +5,9 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/delay_util.cpp \
+../src/i2c_mgr.cpp \
 ../src/keys.cpp \
+../src/leds_pca.cpp \
 ../src/main.cpp \
 ../src/media.cpp \
 ../src/sensors.cpp \
@@ -16,8 +18,10 @@ C_SRCS += \
 
 OBJS += \
 ./src/delay_util.o \
+./src/i2c_mgr.o \
 ./src/keys.o \
 ./src/kl_util.o \
+./src/leds_pca.o \
 ./src/main.o \
 ./src/media.o \
 ./src/sensors.o \
@@ -28,7 +32,9 @@ C_DEPS += \
 
 CPP_DEPS += \
 ./src/delay_util.d \
+./src/i2c_mgr.d \
 ./src/keys.d \
+./src/leds_pca.d \
 ./src/main.d \
 ./src/media.d \
 ./src/sensors.d \

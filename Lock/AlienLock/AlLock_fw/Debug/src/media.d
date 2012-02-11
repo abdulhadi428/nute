@@ -1,6 +1,6 @@
 src/media.d: ../src/media.cpp ../inc/media.h ../sd/ff.h ../sd/integer.h \
- ../sd/ffconf.h ../sd/diskio.h ../inc/kl_util.h ../inc/vs.h \
- ../lib/stm32f10x.h ../lib/CoreSupport/core_cm3.h \
+ ../sd/ffconf.h ../sd/diskio.h ../inc/kl_util.h ../inc/kl_util.h \
+ ../inc/vs.h ../lib/stm32f10x.h ../lib/CoreSupport/core_cm3.h \
  ../lib/system_stm32f10x.h ../lib/stm32f10x_conf.h \
  ../lib/inc/stm32f10x_adc.h ../lib/inc/stm32f10x_dma.h \
  ../lib/inc/stm32f10x_gpio.h ../lib/inc/stm32f10x_i2c.h \
@@ -17,6 +17,8 @@ src/media.d: ../src/media.cpp ../inc/media.h ../sd/ff.h ../sd/integer.h \
 ../sd/ffconf.h:
 
 ../sd/diskio.h:
+
+../inc/kl_util.h:
 
 ../inc/kl_util.h:
 

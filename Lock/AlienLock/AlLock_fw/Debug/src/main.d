@@ -7,8 +7,10 @@ src/main.d: ../src/main.cpp ../lib/stm32f10x.h \
  ../lib/inc/stm32f10x_tim.h ../lib/inc/stm32f10x_usart.h \
  ../lib/inc/misc.h ../inc/delay_util.h ../sd/sd.h ../sd/diskio.h \
  ../sd/integer.h ../sd/ff.h ../sd/ffconf.h ../inc/vs.h ../inc/vs_defs.h \
- ../inc/media.h ../sd/ff.h ../sd/diskio.h ../sd/kl_ini.h ../inc/sensors.h \
- ../inc/delay_util.h ../inc/kl_util.h ../inc/kl_util.h ../inc/keys.h
+ ../inc/media.h ../sd/ff.h ../sd/diskio.h ../inc/kl_util.h ../sd/kl_ini.h \
+ ../inc/color.h ../inc/sensors.h ../inc/delay_util.h ../inc/kl_util.h \
+ ../inc/keys.h ../inc/leds_pca.h ../inc/i2c_mgr.h ../inc/color.h \
+ ../inc/i2c_mgr.h
 
 ../lib/stm32f10x.h:
 
@@ -60,7 +62,11 @@ src/main.d: ../src/main.cpp ../lib/stm32f10x.h \
 
 ../sd/diskio.h:
 
+../inc/kl_util.h:
+
 ../sd/kl_ini.h:
+
+../inc/color.h:
 
 ../inc/sensors.h:
 
@@ -68,6 +74,12 @@ src/main.d: ../src/main.cpp ../lib/stm32f10x.h \
 
 ../inc/kl_util.h:
 
-../inc/kl_util.h:
-
 ../inc/keys.h:
+
+../inc/leds_pca.h:
+
+../inc/i2c_mgr.h:
+
+../inc/color.h:
+
+../inc/i2c_mgr.h:

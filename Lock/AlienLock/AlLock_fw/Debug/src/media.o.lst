@@ -11,255 +11,247 @@
   11              		.eabi_attribute 18, 4
   12              		.thumb
   13              		.file	"media.cpp"
-  14              		.section	.text._ZN7Sound_t4InitEv,"ax",%progbits
+  14              		.section	.text._ZN7Sound_t7StopNowEv,"ax",%progbits
   15              		.align	1
-  16              		.global	_ZN7Sound_t4InitEv
+  16              		.global	_ZN7Sound_t7StopNowEv
   17              		.thumb
   18              		.thumb_func
-  20              	_ZN7Sound_t4InitEv:
+  20              	_ZN7Sound_t7StopNowEv:
   21              		@ args = 0, pretend = 0, frame = 0
   22              		@ frame_needed = 0, uses_anonymous_args = 0
-  23              		@ link register save eliminated.
-  24 0000 0023     		movs	r3, #0
-  25 0002 80F82836 		strb	r3, [r0, #1576]
-  26 0006 7047     		bx	lr
-  28              		.section	.text._ZN7Sound_t7StopNowEv,"ax",%progbits
-  29              		.align	1
-  30              		.global	_ZN7Sound_t7StopNowEv
-  31              		.thumb
-  32              		.thumb_func
-  34              	_ZN7Sound_t7StopNowEv:
-  35              		@ args = 0, pretend = 0, frame = 0
-  36              		@ frame_needed = 0, uses_anonymous_args = 0
-  37 0000 38B5     		push	{r3, r4, r5, lr}
-  38 0002 084D     		ldr	r5, .L3
-  39 0004 0446     		mov	r4, r0
-  40 0006 2846     		mov	r0, r5
-  41 0008 FFF7FEFF 		bl	_ZN4VS_t12AmplifierOffEv
-  42 000c 0D21     		movs	r1, #13
-  43 000e 8022     		movs	r2, #128
-  44 0010 2846     		mov	r0, r5
-  45 0012 FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
-  46 0016 2046     		mov	r0, r4
-  47 0018 FFF7FEFF 		bl	f_close
-  48 001c 0023     		movs	r3, #0
-  49 001e 84F82836 		strb	r3, [r4, #1576]
-  50 0022 38BD     		pop	{r3, r4, r5, pc}
-  51              	.L4:
-  52              		.align	2
-  53              	.L3:
-  54 0024 00000000 		.word	Vs
-  56              		.section	.text._ZN7Sound_t10UploadDataEv,"ax",%progbits
-  57              		.align	1
-  58              		.global	_ZN7Sound_t10UploadDataEv
-  59              		.thumb
-  60              		.thumb_func
-  62              	_ZN7Sound_t10UploadDataEv:
-  63              		@ args = 0, pretend = 0, frame = 0
-  64              		@ frame_needed = 0, uses_anonymous_args = 0
-  65 0000 D0F82416 		ldr	r1, [r0, #1572]
-  66 0004 10B5     		push	{r4, lr}
-  67 0006 B1F80022 		ldrh	r2, [r1, #512]
-  68 000a 0446     		mov	r4, r0
-  69 000c 1148     		ldr	r0, .L9
-  70 000e FFF7FEFF 		bl	_ZN4VS_t9WriteDataEPht
-  71 0012 A268     		ldr	r2, [r4, #8]
-  72 0014 E368     		ldr	r3, [r4, #12]
-  73 0016 9A42     		cmp	r2, r3
-  74 0018 15D2     		bcs	.L6
-  75 001a D4F82436 		ldr	r3, [r4, #1572]
-  76 001e 04F50771 		add	r1, r4, #540
-  77 0022 8B42     		cmp	r3, r1
-  78 0024 08BF     		it	eq
-  79 0026 04F58461 		addeq	r1, r4, #1056
-  80 002a C4F82416 		str	r1, [r4, #1572]
-  81 002e 01F50073 		add	r3, r1, #512
-  82 0032 2046     		mov	r0, r4
-  83 0034 4FF40072 		mov	r2, #512
-  84 0038 FFF7FEFF 		bl	f_read
-  85 003c 0146     		mov	r1, r0
-  86 003e 38B1     		cbz	r0, .L5
-  87 0040 0548     		ldr	r0, .L9+4
-  88 0042 FFF7FEFF 		bl	klPrintf
-  89              	.L6:
-  90 0046 2046     		mov	r0, r4
-  91 0048 BDE81040 		pop	{r4, lr}
-  92 004c FFF7FEBF 		b	_ZN7Sound_t7StopNowEv
-  93              	.L5:
-  94 0050 10BD     		pop	{r4, pc}
-  95              	.L10:
-  96 0052 00BF     		.align	2
-  97              	.L9:
-  98 0054 00000000 		.word	Vs
-  99 0058 00000000 		.word	.LC0
- 101              		.section	.text._ZN7Sound_t4PlayEPKc,"ax",%progbits
- 102              		.align	1
- 103              		.global	_ZN7Sound_t4PlayEPKc
- 104              		.thumb
- 105              		.thumb_func
- 107              	_ZN7Sound_t4PlayEPKc:
- 108              		@ args = 0, pretend = 0, frame = 0
- 109              		@ frame_needed = 0, uses_anonymous_args = 0
- 110 0000 90F82836 		ldrb	r3, [r0, #1576]	@ zero_extendqisi2
- 111 0004 70B5     		push	{r4, r5, r6, lr}
- 112 0006 012B     		cmp	r3, #1
- 113 0008 0446     		mov	r4, r0
- 114 000a 0E46     		mov	r6, r1
- 115 000c 01D1     		bne	.L12
- 116 000e FFF7FEFF 		bl	_ZN7Sound_t7StopNowEv
- 117              	.L12:
- 118 0012 2046     		mov	r0, r4
- 119 0014 3146     		mov	r1, r6
- 120 0016 0122     		movs	r2, #1
- 121 0018 FFF7FEFF 		bl	f_open
- 122 001c 0546     		mov	r5, r0
- 123 001e 48B1     		cbz	r0, .L13
- 124 0020 0428     		cmp	r0, #4
- 125 0022 0BBF     		itete	eq
- 126 0024 1A48     		ldreq	r0, .L19
- 127 0026 1B48     		ldrne	r0, .L19+4
- 128 0028 3146     		moveq	r1, r6
- 129 002a 2946     		movne	r1, r5
- 130 002c BDE87040 		pop	{r4, r5, r6, lr}
- 131 0030 FFF7FEBF 		b	klPrintf
- 132              	.L13:
- 133 0034 E368     		ldr	r3, [r4, #12]
- 134 0036 3BB9     		cbnz	r3, .L15
- 135 0038 2046     		mov	r0, r4
- 136 003a FFF7FEFF 		bl	f_close
- 137 003e 1648     		ldr	r0, .L19+8
- 138 0040 BDE87040 		pop	{r4, r5, r6, lr}
- 139 0044 FFF7FEBF 		b	klPrintf
- 140              	.L15:
- 141 0048 04F50776 		add	r6, r4, #540
- 142 004c 04F58263 		add	r3, r4, #1040
- 143 0050 3146     		mov	r1, r6
- 144 0052 0C33     		adds	r3, r3, #12
- 145 0054 2046     		mov	r0, r4
- 146 0056 4FF40072 		mov	r2, #512
- 147 005a FFF7FEFF 		bl	f_read
- 148 005e 0146     		mov	r1, r0
- 149 0060 28B1     		cbz	r0, .L16
- 150 0062 0E48     		ldr	r0, .L19+12
- 151 0064 FFF7FEFF 		bl	klPrintf
- 152 0068 84F82856 		strb	r5, [r4, #1576]
- 153 006c 70BD     		pop	{r4, r5, r6, pc}
- 154              	.L16:
- 155 006e C4F82466 		str	r6, [r4, #1572]
- 156 0072 0B48     		ldr	r0, .L19+16
- 157 0074 FFF7FEFF 		bl	_ZN4VS_t6EnableEv
- 158 0078 0948     		ldr	r0, .L19+16
- 159 007a FFF7FEFF 		bl	_ZN4VS_t11AmplifierOnEv
- 160 007e 0123     		movs	r3, #1
- 161 0080 2046     		mov	r0, r4
- 162 0082 84F82836 		strb	r3, [r4, #1576]
- 163 0086 BDE87040 		pop	{r4, r5, r6, lr}
- 164 008a FFF7FEBF 		b	_ZN7Sound_t10UploadDataEv
- 165              	.L20:
- 166 008e 00BF     		.align	2
- 167              	.L19:
- 168 0090 14000000 		.word	.LC1
- 169 0094 28000000 		.word	.LC2
- 170 0098 3B000000 		.word	.LC3
- 171 009c 47000000 		.word	.LC4
- 172 00a0 00000000 		.word	Vs
- 174              		.section	.text._ZN7Sound_t4TaskEv,"ax",%progbits
- 175              		.align	1
- 176              		.global	_ZN7Sound_t4TaskEv
- 177              		.thumb
- 178              		.thumb_func
- 180              	_ZN7Sound_t4TaskEv:
- 181              		@ args = 0, pretend = 0, frame = 0
- 182              		@ frame_needed = 0, uses_anonymous_args = 0
- 183 0000 90F82836 		ldrb	r3, [r0, #1576]	@ zero_extendqisi2
- 184 0004 10B5     		push	{r4, lr}
- 185 0006 012B     		cmp	r3, #1
- 186 0008 0446     		mov	r4, r0
- 187 000a 02D0     		beq	.L23
- 188 000c 022B     		cmp	r3, #2
- 189 000e 12D1     		bne	.L21
- 190 0010 08E0     		b	.L25
- 191              	.L23:
- 192 0012 0948     		ldr	r0, .L26
- 193 0014 FFF7FEFF 		bl	_ZN4VS_t6IsBusyEv
- 194 0018 68B9     		cbnz	r0, .L21
- 195 001a 2046     		mov	r0, r4
- 196 001c BDE81040 		pop	{r4, lr}
- 197 0020 FFF7FEBF 		b	_ZN7Sound_t10UploadDataEv
- 198              	.L25:
- 199 0024 0448     		ldr	r0, .L26
- 200 0026 FFF7FEFF 		bl	_ZN4VS_t6IsBusyEv
- 201 002a 20B9     		cbnz	r0, .L21
- 202 002c 2046     		mov	r0, r4
- 203 002e BDE81040 		pop	{r4, lr}
- 204 0032 FFF7FEBF 		b	_ZN7Sound_t7StopNowEv
- 205              	.L21:
- 206 0036 10BD     		pop	{r4, pc}
- 207              	.L27:
- 208              		.align	2
- 209              	.L26:
- 210 0038 00000000 		.word	Vs
- 212              		.global	ESnd
- 213              		.section	.rodata.str1.1,"aMS",%progbits,1
- 214              	.LC0:
- 215 0000 52656164 		.ascii	"ReadFileU error: %u\000"
- 215      46696C65 
- 215      55206572 
- 215      726F723A 
- 215      20257500 
- 216              	.LC1:
- 217 0014 25533A20 		.ascii	"%S: file not found\015\000"
- 217      66696C65 
- 217      206E6F74 
- 217      20666F75 
- 217      6E640D00 
- 218              	.LC2:
- 219 0028 4F70656E 		.ascii	"OpenFile error: %u\000"
- 219      46696C65 
- 219      20657272 
- 219      6F723A20 
- 219      257500
- 220              	.LC3:
- 221 003b 456D7074 		.ascii	"Empty file\015\000"
- 221      79206669 
- 221      6C650D00 
- 222              	.LC4:
- 223 0047 52656164 		.ascii	"ReadFile 1 error: %u\000"
- 223      46696C65 
- 223      20312065 
- 223      72726F72 
- 223      3A202575 
- 224              		.section	.bss.ESnd,"aw",%nobits
- 225              		.align	2
- 228              	ESnd:
- 229 0000 00000000 		.space	1580
- 229      00000000 
- 229      00000000 
- 229      00000000 
- 229      00000000 
- 230              		.ident	"GCC: (GNU) 4.6.2"
+  23 0000 10B5     		push	{r4, lr}
+  24 0002 0446     		mov	r4, r0
+  25 0004 0A48     		ldr	r0, .L3
+  26 0006 FFF7FEFF 		bl	_ZN4VS_t12AmplifierOffEv
+  27 000a 0D21     		movs	r1, #13
+  28 000c 8022     		movs	r2, #128
+  29 000e 0848     		ldr	r0, .L3
+  30 0010 FFF7FEFF 		bl	_ZN4VS_t8CmdWriteEht
+  31 0014 0648     		ldr	r0, .L3
+  32 0016 FFF7FEFF 		bl	_ZN4VS_t19WriteTrailingZeroesEv
+  33 001a 2046     		mov	r0, r4
+  34 001c FFF7FEFF 		bl	f_close
+  35 0020 0023     		movs	r3, #0
+  36 0022 84F82836 		strb	r3, [r4, #1576]
+  37 0026 D4F82C36 		ldr	r3, [r4, #1580]
+  38 002a 03B1     		cbz	r3, .L1
+  39 002c 9847     		blx	r3
+  40              	.L1:
+  41 002e 10BD     		pop	{r4, pc}
+  42              	.L4:
+  43              		.align	2
+  44              	.L3:
+  45 0030 00000000 		.word	Vs
+  47              		.section	.text._ZN7Sound_t10UploadDataEv,"ax",%progbits
+  48              		.align	1
+  49              		.global	_ZN7Sound_t10UploadDataEv
+  50              		.thumb
+  51              		.thumb_func
+  53              	_ZN7Sound_t10UploadDataEv:
+  54              		@ args = 0, pretend = 0, frame = 0
+  55              		@ frame_needed = 0, uses_anonymous_args = 0
+  56 0000 D0F82416 		ldr	r1, [r0, #1572]
+  57 0004 10B5     		push	{r4, lr}
+  58 0006 B1F80022 		ldrh	r2, [r1, #512]
+  59 000a 0446     		mov	r4, r0
+  60 000c 1148     		ldr	r0, .L9
+  61 000e FFF7FEFF 		bl	_ZN4VS_t9WriteDataEPht
+  62 0012 A268     		ldr	r2, [r4, #8]
+  63 0014 E368     		ldr	r3, [r4, #12]
+  64 0016 9A42     		cmp	r2, r3
+  65 0018 15D2     		bcs	.L6
+  66 001a D4F82436 		ldr	r3, [r4, #1572]
+  67 001e 04F50771 		add	r1, r4, #540
+  68 0022 8B42     		cmp	r3, r1
+  69 0024 08BF     		it	eq
+  70 0026 04F58461 		addeq	r1, r4, #1056
+  71 002a C4F82416 		str	r1, [r4, #1572]
+  72 002e 01F50073 		add	r3, r1, #512
+  73 0032 2046     		mov	r0, r4
+  74 0034 4FF40072 		mov	r2, #512
+  75 0038 FFF7FEFF 		bl	f_read
+  76 003c 0146     		mov	r1, r0
+  77 003e 38B1     		cbz	r0, .L5
+  78 0040 0548     		ldr	r0, .L9+4
+  79 0042 FFF7FEFF 		bl	klPrintf
+  80              	.L6:
+  81 0046 2046     		mov	r0, r4
+  82 0048 BDE81040 		pop	{r4, lr}
+  83 004c FFF7FEBF 		b	_ZN7Sound_t7StopNowEv
+  84              	.L5:
+  85 0050 10BD     		pop	{r4, pc}
+  86              	.L10:
+  87 0052 00BF     		.align	2
+  88              	.L9:
+  89 0054 00000000 		.word	Vs
+  90 0058 00000000 		.word	.LC0
+  92              		.section	.text._ZN7Sound_t4PlayEPKc,"ax",%progbits
+  93              		.align	1
+  94              		.global	_ZN7Sound_t4PlayEPKc
+  95              		.thumb
+  96              		.thumb_func
+  98              	_ZN7Sound_t4PlayEPKc:
+  99              		@ args = 0, pretend = 0, frame = 0
+ 100              		@ frame_needed = 0, uses_anonymous_args = 0
+ 101 0000 90F82836 		ldrb	r3, [r0, #1576]	@ zero_extendqisi2
+ 102 0004 70B5     		push	{r4, r5, r6, lr}
+ 103 0006 012B     		cmp	r3, #1
+ 104 0008 0446     		mov	r4, r0
+ 105 000a 0E46     		mov	r6, r1
+ 106 000c 01D1     		bne	.L12
+ 107 000e FFF7FEFF 		bl	_ZN7Sound_t7StopNowEv
+ 108              	.L12:
+ 109 0012 2046     		mov	r0, r4
+ 110 0014 3146     		mov	r1, r6
+ 111 0016 0122     		movs	r2, #1
+ 112 0018 FFF7FEFF 		bl	f_open
+ 113 001c 0546     		mov	r5, r0
+ 114 001e 48B1     		cbz	r0, .L13
+ 115 0020 0428     		cmp	r0, #4
+ 116 0022 0BBF     		itete	eq
+ 117 0024 1A48     		ldreq	r0, .L19
+ 118 0026 1B48     		ldrne	r0, .L19+4
+ 119 0028 3146     		moveq	r1, r6
+ 120 002a 2946     		movne	r1, r5
+ 121 002c BDE87040 		pop	{r4, r5, r6, lr}
+ 122 0030 FFF7FEBF 		b	klPrintf
+ 123              	.L13:
+ 124 0034 E368     		ldr	r3, [r4, #12]
+ 125 0036 3BB9     		cbnz	r3, .L15
+ 126 0038 2046     		mov	r0, r4
+ 127 003a FFF7FEFF 		bl	f_close
+ 128 003e 1648     		ldr	r0, .L19+8
+ 129 0040 BDE87040 		pop	{r4, r5, r6, lr}
+ 130 0044 FFF7FEBF 		b	klPrintf
+ 131              	.L15:
+ 132 0048 04F50776 		add	r6, r4, #540
+ 133 004c 04F58263 		add	r3, r4, #1040
+ 134 0050 3146     		mov	r1, r6
+ 135 0052 0C33     		adds	r3, r3, #12
+ 136 0054 2046     		mov	r0, r4
+ 137 0056 4FF40072 		mov	r2, #512
+ 138 005a FFF7FEFF 		bl	f_read
+ 139 005e 0146     		mov	r1, r0
+ 140 0060 28B1     		cbz	r0, .L16
+ 141 0062 0E48     		ldr	r0, .L19+12
+ 142 0064 FFF7FEFF 		bl	klPrintf
+ 143 0068 84F82856 		strb	r5, [r4, #1576]
+ 144 006c 70BD     		pop	{r4, r5, r6, pc}
+ 145              	.L16:
+ 146 006e C4F82466 		str	r6, [r4, #1572]
+ 147 0072 0B48     		ldr	r0, .L19+16
+ 148 0074 FFF7FEFF 		bl	_ZN4VS_t6EnableEv
+ 149 0078 0948     		ldr	r0, .L19+16
+ 150 007a FFF7FEFF 		bl	_ZN4VS_t11AmplifierOnEv
+ 151 007e 0123     		movs	r3, #1
+ 152 0080 2046     		mov	r0, r4
+ 153 0082 84F82836 		strb	r3, [r4, #1576]
+ 154 0086 BDE87040 		pop	{r4, r5, r6, lr}
+ 155 008a FFF7FEBF 		b	_ZN7Sound_t10UploadDataEv
+ 156              	.L20:
+ 157 008e 00BF     		.align	2
+ 158              	.L19:
+ 159 0090 14000000 		.word	.LC1
+ 160 0094 28000000 		.word	.LC2
+ 161 0098 3B000000 		.word	.LC3
+ 162 009c 47000000 		.word	.LC4
+ 163 00a0 00000000 		.word	Vs
+ 165              		.section	.text._ZN7Sound_t4TaskEv,"ax",%progbits
+ 166              		.align	1
+ 167              		.global	_ZN7Sound_t4TaskEv
+ 168              		.thumb
+ 169              		.thumb_func
+ 171              	_ZN7Sound_t4TaskEv:
+ 172              		@ args = 0, pretend = 0, frame = 0
+ 173              		@ frame_needed = 0, uses_anonymous_args = 0
+ 174 0000 90F82836 		ldrb	r3, [r0, #1576]	@ zero_extendqisi2
+ 175 0004 10B5     		push	{r4, lr}
+ 176 0006 012B     		cmp	r3, #1
+ 177 0008 0446     		mov	r4, r0
+ 178 000a 02D0     		beq	.L23
+ 179 000c 022B     		cmp	r3, #2
+ 180 000e 12D1     		bne	.L21
+ 181 0010 08E0     		b	.L25
+ 182              	.L23:
+ 183 0012 0948     		ldr	r0, .L26
+ 184 0014 FFF7FEFF 		bl	_ZN4VS_t6IsBusyEv
+ 185 0018 68B9     		cbnz	r0, .L21
+ 186 001a 2046     		mov	r0, r4
+ 187 001c BDE81040 		pop	{r4, lr}
+ 188 0020 FFF7FEBF 		b	_ZN7Sound_t10UploadDataEv
+ 189              	.L25:
+ 190 0024 0448     		ldr	r0, .L26
+ 191 0026 FFF7FEFF 		bl	_ZN4VS_t6IsBusyEv
+ 192 002a 20B9     		cbnz	r0, .L21
+ 193 002c 2046     		mov	r0, r4
+ 194 002e BDE81040 		pop	{r4, lr}
+ 195 0032 FFF7FEBF 		b	_ZN7Sound_t7StopNowEv
+ 196              	.L21:
+ 197 0036 10BD     		pop	{r4, pc}
+ 198              	.L27:
+ 199              		.align	2
+ 200              	.L26:
+ 201 0038 00000000 		.word	Vs
+ 203              		.global	ESnd
+ 204              		.section	.rodata.str1.1,"aMS",%progbits,1
+ 205              	.LC0:
+ 206 0000 52656164 		.ascii	"ReadFileU error: %u\000"
+ 206      46696C65 
+ 206      55206572 
+ 206      726F723A 
+ 206      20257500 
+ 207              	.LC1:
+ 208 0014 25533A20 		.ascii	"%S: file not found\015\000"
+ 208      66696C65 
+ 208      206E6F74 
+ 208      20666F75 
+ 208      6E640D00 
+ 209              	.LC2:
+ 210 0028 4F70656E 		.ascii	"OpenFile error: %u\000"
+ 210      46696C65 
+ 210      20657272 
+ 210      6F723A20 
+ 210      257500
+ 211              	.LC3:
+ 212 003b 456D7074 		.ascii	"Empty file\015\000"
+ 212      79206669 
+ 212      6C650D00 
+ 213              	.LC4:
+ 214 0047 52656164 		.ascii	"ReadFile 1 error: %u\000"
+ 214      46696C65 
+ 214      20312065 
+ 214      72726F72 
+ 214      3A202575 
+ 215              		.section	.bss.ESnd,"aw",%nobits
+ 216              		.align	2
+ 219              	ESnd:
+ 220 0000 00000000 		.space	1584
+ 220      00000000 
+ 220      00000000 
+ 220      00000000 
+ 220      00000000 
+ 221              		.ident	"GCC: (GNU) 4.6.2"
 DEFINED SYMBOLS
                             *ABS*:00000000 media.cpp
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:15     .text._ZN7Sound_t4InitEv:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:20     .text._ZN7Sound_t4InitEv:00000000 _ZN7Sound_t4InitEv
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:29     .text._ZN7Sound_t7StopNowEv:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:34     .text._ZN7Sound_t7StopNowEv:00000000 _ZN7Sound_t7StopNowEv
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:54     .text._ZN7Sound_t7StopNowEv:00000024 $d
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:57     .text._ZN7Sound_t10UploadDataEv:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:62     .text._ZN7Sound_t10UploadDataEv:00000000 _ZN7Sound_t10UploadDataEv
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:98     .text._ZN7Sound_t10UploadDataEv:00000054 $d
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:102    .text._ZN7Sound_t4PlayEPKc:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:107    .text._ZN7Sound_t4PlayEPKc:00000000 _ZN7Sound_t4PlayEPKc
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:168    .text._ZN7Sound_t4PlayEPKc:00000090 $d
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:175    .text._ZN7Sound_t4TaskEv:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:180    .text._ZN7Sound_t4TaskEv:00000000 _ZN7Sound_t4TaskEv
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:210    .text._ZN7Sound_t4TaskEv:00000038 $d
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:228    .bss.ESnd:00000000 ESnd
-C:\Users\kreyl\AppData\Local\Temp\ccgIYozF.s:225    .bss.ESnd:00000000 $d
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:15     .text._ZN7Sound_t7StopNowEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:20     .text._ZN7Sound_t7StopNowEv:00000000 _ZN7Sound_t7StopNowEv
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:45     .text._ZN7Sound_t7StopNowEv:00000030 $d
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:48     .text._ZN7Sound_t10UploadDataEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:53     .text._ZN7Sound_t10UploadDataEv:00000000 _ZN7Sound_t10UploadDataEv
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:89     .text._ZN7Sound_t10UploadDataEv:00000054 $d
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:93     .text._ZN7Sound_t4PlayEPKc:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:98     .text._ZN7Sound_t4PlayEPKc:00000000 _ZN7Sound_t4PlayEPKc
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:159    .text._ZN7Sound_t4PlayEPKc:00000090 $d
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:166    .text._ZN7Sound_t4TaskEv:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:171    .text._ZN7Sound_t4TaskEv:00000000 _ZN7Sound_t4TaskEv
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:201    .text._ZN7Sound_t4TaskEv:00000038 $d
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:219    .bss.ESnd:00000000 ESnd
+C:\Users\kreyl\AppData\Local\Temp\ccECtAKU.s:216    .bss.ESnd:00000000 $d
 
 UNDEFINED SYMBOLS
 _ZN4VS_t12AmplifierOffEv
 _ZN4VS_t8CmdWriteEht
+_ZN4VS_t19WriteTrailingZeroesEv
 f_close
 Vs
 _ZN4VS_t9WriteDataEPht

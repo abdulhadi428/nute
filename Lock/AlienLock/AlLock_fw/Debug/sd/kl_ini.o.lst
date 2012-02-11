@@ -267,73 +267,150 @@
  274 01bc 12000000 		.word	.LC1
  275 01c0 27000000 		.word	.LC2
  276 01c4 00000000 		.word	.LANCHOR0
- 278              		.section	.text._Z9ReadInt32PKcS0_S0_Pl,"ax",%progbits
+ 278              		.section	.text._Z9ReadColorPKcS0_S0_P7Color_t,"ax",%progbits
  279              		.align	1
- 280              		.global	_Z9ReadInt32PKcS0_S0_Pl
+ 280              		.global	_Z9ReadColorPKcS0_S0_P7Color_t
  281              		.thumb
  282              		.thumb_func
- 284              	_Z9ReadInt32PKcS0_S0_Pl:
- 285              		@ args = 0, pretend = 0, frame = 64
+ 284              	_Z9ReadColorPKcS0_S0_P7Color_t:
+ 285              		@ args = 0, pretend = 0, frame = 72
  286              		@ frame_needed = 0, uses_anonymous_args = 0
- 287 0000 10B5     		push	{r4, lr}
+ 287 0000 30B5     		push	{r4, r5, lr}
  288 0002 1C46     		mov	r4, r3
- 289 0004 92B0     		sub	sp, sp, #72
+ 289 0004 95B0     		sub	sp, sp, #84
  290 0006 4023     		movs	r3, #64
  291 0008 0093     		str	r3, [sp, #0]
- 292 000a 02AB     		add	r3, sp, #8
+ 292 000a 03AB     		add	r3, sp, #12
  293 000c FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
- 294 0010 30B1     		cbz	r0, .L44
- 295 0012 02A8     		add	r0, sp, #8
- 296 0014 0021     		movs	r1, #0
- 297 0016 0A22     		movs	r2, #10
- 298 0018 FFF7FEFF 		bl	strtol
- 299 001c 2060     		str	r0, [r4, #0]
- 300 001e 0120     		movs	r0, #1
- 301              	.L44:
- 302 0020 12B0     		add	sp, sp, #72
- 303 0022 10BD     		pop	{r4, pc}
- 305              		.global	IBuf
- 306              		.section	.bss.IBuf,"aw",%nobits
- 307              		.set	.LANCHOR0,. + 0
- 310              	IBuf:
- 311 0000 00000000 		.space	512
- 311      00000000 
- 311      00000000 
- 311      00000000 
- 311      00000000 
- 312              		.section	.rodata.str1.1,"aMS",%progbits,1
- 313              	.LC0:
- 314 0000 3A206669 		.ascii	": file not found\015\000"
- 314      6C65206E 
- 314      6F742066 
- 314      6F756E64 
- 314      0D00
- 315              	.LC1:
- 316 0012 3A206F70 		.ascii	": openFile error: %u\000"
- 316      656E4669 
- 316      6C652065 
- 316      72726F72 
- 316      3A202575 
- 317              	.LC2:
- 318 0027 456D7074 		.ascii	"Empty file\015\000"
- 318      79206669 
- 318      6C650D00 
- 319              		.ident	"GCC: (GNU) 4.6.2"
+ 294 0010 18B3     		cbz	r0, .L44
+ 295 0012 03A8     		add	r0, sp, #12
+ 296 0014 FFF7FEFF 		bl	strlen
+ 297 0018 0628     		cmp	r0, #6
+ 298 001a 4FF00000 		mov	r0, #0
+ 299 001e 1CD1     		bne	.L44
+ 300 0020 14AD     		add	r5, sp, #80
+ 301 0022 45F8040D 		str	r0, [r5, #-4]!
+ 302 0026 0221     		movs	r1, #2
+ 303 0028 03A8     		add	r0, sp, #12
+ 304 002a 2A46     		mov	r2, r5
+ 305 002c FFF7FEFF 		bl	HexToUint
+ 306 0030 98B1     		cbz	r0, .L44
+ 307 0032 139B     		ldr	r3, [sp, #76]
+ 308 0034 0DF10E00 		add	r0, sp, #14
+ 309 0038 2370     		strb	r3, [r4, #0]
+ 310 003a 0221     		movs	r1, #2
+ 311 003c 2A46     		mov	r2, r5
+ 312 003e FFF7FEFF 		bl	HexToUint
+ 313 0042 50B1     		cbz	r0, .L44
+ 314 0044 139B     		ldr	r3, [sp, #76]
+ 315 0046 04A8     		add	r0, sp, #16
+ 316 0048 6370     		strb	r3, [r4, #1]
+ 317 004a 0221     		movs	r1, #2
+ 318 004c 2A46     		mov	r2, r5
+ 319 004e FFF7FEFF 		bl	HexToUint
+ 320 0052 10B1     		cbz	r0, .L44
+ 321 0054 139B     		ldr	r3, [sp, #76]
+ 322 0056 0120     		movs	r0, #1
+ 323 0058 A370     		strb	r3, [r4, #2]
+ 324              	.L44:
+ 325 005a 15B0     		add	sp, sp, #84
+ 326 005c 30BD     		pop	{r4, r5, pc}
+ 328              		.section	.text._Z10ReadUint32PKcS0_S0_Pm,"ax",%progbits
+ 329              		.align	1
+ 330              		.global	_Z10ReadUint32PKcS0_S0_Pm
+ 331              		.thumb
+ 332              		.thumb_func
+ 334              	_Z10ReadUint32PKcS0_S0_Pm:
+ 335              		@ args = 0, pretend = 0, frame = 64
+ 336              		@ frame_needed = 0, uses_anonymous_args = 0
+ 337 0000 10B5     		push	{r4, lr}
+ 338 0002 1C46     		mov	r4, r3
+ 339 0004 92B0     		sub	sp, sp, #72
+ 340 0006 4023     		movs	r3, #64
+ 341 0008 0093     		str	r3, [sp, #0]
+ 342 000a 02AB     		add	r3, sp, #8
+ 343 000c FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
+ 344 0010 30B1     		cbz	r0, .L51
+ 345 0012 02A8     		add	r0, sp, #8
+ 346 0014 0021     		movs	r1, #0
+ 347 0016 0A22     		movs	r2, #10
+ 348 0018 FFF7FEFF 		bl	strtol
+ 349 001c 2060     		str	r0, [r4, #0]
+ 350 001e 0120     		movs	r0, #1
+ 351              	.L51:
+ 352 0020 12B0     		add	sp, sp, #72
+ 353 0022 10BD     		pop	{r4, pc}
+ 355              		.section	.text._Z9ReadInt32PKcS0_S0_Pl,"ax",%progbits
+ 356              		.align	1
+ 357              		.global	_Z9ReadInt32PKcS0_S0_Pl
+ 358              		.thumb
+ 359              		.thumb_func
+ 361              	_Z9ReadInt32PKcS0_S0_Pl:
+ 362              		@ args = 0, pretend = 0, frame = 64
+ 363              		@ frame_needed = 0, uses_anonymous_args = 0
+ 364 0000 10B5     		push	{r4, lr}
+ 365 0002 1C46     		mov	r4, r3
+ 366 0004 92B0     		sub	sp, sp, #72
+ 367 0006 4023     		movs	r3, #64
+ 368 0008 0093     		str	r3, [sp, #0]
+ 369 000a 02AB     		add	r3, sp, #8
+ 370 000c FFF7FEFF 		bl	_Z10ReadStringPKcS0_S0_Pcm
+ 371 0010 30B1     		cbz	r0, .L54
+ 372 0012 02A8     		add	r0, sp, #8
+ 373 0014 0021     		movs	r1, #0
+ 374 0016 0A22     		movs	r2, #10
+ 375 0018 FFF7FEFF 		bl	strtol
+ 376 001c 2060     		str	r0, [r4, #0]
+ 377 001e 0120     		movs	r0, #1
+ 378              	.L54:
+ 379 0020 12B0     		add	sp, sp, #72
+ 380 0022 10BD     		pop	{r4, pc}
+ 382              		.global	IBuf
+ 383              		.section	.bss.IBuf,"aw",%nobits
+ 384              		.set	.LANCHOR0,. + 0
+ 387              	IBuf:
+ 388 0000 00000000 		.space	512
+ 388      00000000 
+ 388      00000000 
+ 388      00000000 
+ 388      00000000 
+ 389              		.section	.rodata.str1.1,"aMS",%progbits,1
+ 390              	.LC0:
+ 391 0000 3A206669 		.ascii	": file not found\015\000"
+ 391      6C65206E 
+ 391      6F742066 
+ 391      6F756E64 
+ 391      0D00
+ 392              	.LC1:
+ 393 0012 3A206F70 		.ascii	": openFile error: %u\000"
+ 393      656E4669 
+ 393      6C652065 
+ 393      72726F72 
+ 393      3A202575 
+ 394              	.LC2:
+ 395 0027 456D7074 		.ascii	"Empty file\015\000"
+ 395      79206669 
+ 395      6C650D00 
+ 396              		.ident	"GCC: (GNU) 4.6.2"
 DEFINED SYMBOLS
                             *ABS*:00000000 kl_ini.cpp
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:15     .text._Z11skipleadingPc:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:20     .text._Z11skipleadingPc:00000000 _Z11skipleadingPc
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:36     .text._Z12skiptrailingPcPKc:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:41     .text._Z12skiptrailingPcPKc:00000000 _Z12skiptrailingPcPKc
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:57     .text._Z13striptrailingPc:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:62     .text._Z13striptrailingPc:00000000 _Z13striptrailingPc
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:77     .text._Z10ReadStringPKcS0_S0_Pcm:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:82     .text._Z10ReadStringPKcS0_S0_Pcm:00000000 _Z10ReadStringPKcS0_S0_Pcm
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:273    .text._Z10ReadStringPKcS0_S0_Pcm:000001b8 $d
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:279    .text._Z9ReadInt32PKcS0_S0_Pl:00000000 $t
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:284    .text._Z9ReadInt32PKcS0_S0_Pl:00000000 _Z9ReadInt32PKcS0_S0_Pl
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:310    .bss.IBuf:00000000 IBuf
-C:\Users\kreyl\AppData\Local\Temp\ccyFufrK.s:311    .bss.IBuf:00000000 $d
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:15     .text._Z11skipleadingPc:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:20     .text._Z11skipleadingPc:00000000 _Z11skipleadingPc
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:36     .text._Z12skiptrailingPcPKc:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:41     .text._Z12skiptrailingPcPKc:00000000 _Z12skiptrailingPcPKc
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:57     .text._Z13striptrailingPc:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:62     .text._Z13striptrailingPc:00000000 _Z13striptrailingPc
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:77     .text._Z10ReadStringPKcS0_S0_Pcm:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:82     .text._Z10ReadStringPKcS0_S0_Pcm:00000000 _Z10ReadStringPKcS0_S0_Pcm
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:273    .text._Z10ReadStringPKcS0_S0_Pcm:000001b8 $d
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:279    .text._Z9ReadColorPKcS0_S0_P7Color_t:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:284    .text._Z9ReadColorPKcS0_S0_P7Color_t:00000000 _Z9ReadColorPKcS0_S0_P7Color_t
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:329    .text._Z10ReadUint32PKcS0_S0_Pm:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:334    .text._Z10ReadUint32PKcS0_S0_Pm:00000000 _Z10ReadUint32PKcS0_S0_Pm
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:356    .text._Z9ReadInt32PKcS0_S0_Pl:00000000 $t
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:361    .text._Z9ReadInt32PKcS0_S0_Pl:00000000 _Z9ReadInt32PKcS0_S0_Pl
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:387    .bss.IBuf:00000000 IBuf
+C:\Users\kreyl\AppData\Local\Temp\cce1jjyH.s:388    .bss.IBuf:00000000 $d
 
 UNDEFINED SYMBOLS
 strchr
@@ -344,4 +421,5 @@ strlen
 f_gets
 strncasecmp
 strcpy
+HexToUint
 strtol

@@ -19,11 +19,6 @@ void Sound_t::Task() {
     } // switch
 }
 
-void Sound_t::Init() {
-    // *IFilename = 0; // null-terminate string
-    State = sndStopped;
-}
-
 void Sound_t::Play(const char* AFilename) {
     if (State == sndPlaying) StopNow();
     FRESULT rslt;
@@ -79,16 +74,17 @@ void Sound_t::UploadData() {
             StopNow();
             return;
         }
-    }
+    } // if not EOF
     else StopNow();
 }
 
 void Sound_t::StopNow() {
     Vs.AmplifierOff();
     Vs.Stop();
-    //Vs.WriteTrailingZeroes();
+    Vs.WriteTrailingZeroes();
     f_close(&IFile);
     State = sndStopped;
+    if (EvtPlayEnd != 0) EvtPlayEnd();
     //Vs.Disable();
     //klPrintf("Stopped\r");
 }

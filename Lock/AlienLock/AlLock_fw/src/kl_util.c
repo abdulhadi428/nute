@@ -138,8 +138,27 @@ void UART_PrintAsHex (uint32_t ANumber) {
     UART_Print(UintToHexChar (0x0F & (ANumber)));
 }
 
+// ==== Simple conversions ====
 char UintToHexChar (uint8_t b) {
     return ((b<=0x09) ? (b+'0') : (b+'A'-10));
+}
+bool HexToUint(char *S, uint8_t AMaxLength, uint32_t *AOutput) {
+    *AOutput = 0;
+    char c;
+    uint8_t b=0;
+    for(uint8_t i=0; i<AMaxLength; i++) {
+        c = *S++;
+        if (c == 0) return true;    // end of string
+        // Shift result
+        *AOutput <<= 4;
+        // Get next digit
+        if     ((c >= '0') && (c <= '9')) b = c-'0';
+        else if((c >= 'A') && (c <= 'F')) b = c-'A'+10;
+        else if((c >= 'a') && (c <= 'f')) b = c-'a'+10;
+        else return false;  // not a hex digit
+        *AOutput += b;
+    }
+    return true;
 }
 
 // ============================== High-level ===================================

@@ -6,7 +6,8 @@ src/vs.d: ../src/vs.cpp ../inc/vs.h ../lib/stm32f10x.h \
  ../lib/inc/stm32f10x_sdio.h ../lib/inc/stm32f10x_spi.h \
  ../lib/inc/stm32f10x_tim.h ../lib/inc/stm32f10x_usart.h \
  ../lib/inc/misc.h ../inc/vs_defs.h ../inc/kl_util.h ../inc/media.h \
- ../sd/ff.h ../sd/integer.h ../sd/ffconf.h ../sd/diskio.h
+ ../sd/ff.h ../sd/integer.h ../sd/ffconf.h ../sd/diskio.h \
+ ../inc/kl_util.h
 
 ../inc/vs.h:
 
@@ -51,3 +52,5 @@ src/vs.d: ../src/vs.cpp ../inc/vs.h ../lib/stm32f10x.h \
 ../sd/ffconf.h:
 
 ../sd/diskio.h:
+
+../inc/kl_util.h:
