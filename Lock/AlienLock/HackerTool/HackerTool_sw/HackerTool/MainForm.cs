@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace HackerTool {
-    public enum LockState_t { Disconnected, Connected, AskingCode, WaitingCommand, AskingNewCode };
+    public enum LockState_t { Disconnected, Connected, AskingCode, WaitingCommand, AskingNewCode, AskingNewServiceCode };
 
     public partial class MainForm : Form {
         // ============================= Variables =================================
@@ -85,7 +85,7 @@ namespace HackerTool {
                     Console.AppendText("Tool is found and connected." + Environment.NewLine);
                     //pictureBoxStendState.Image = imageList1.Images[0];
                     HTool.IsConnected = true;
-                    timerU.Enabled = true;
+                    //timerU.Enabled = true;
                     Console.ReadOnly = false;
                     return; // All right, nothing to do here
                 }
@@ -172,44 +172,59 @@ namespace HackerTool {
                     case 0: // Open door
                         if (!Lock.Open()) Console.AppendText("> Command failed." + Environment.NewLine);
                         else              Console.AppendText("> Door opened." + Environment.NewLine);
+                        PrintMenu();
                         break;
                     case 1: // Close door
                         if (!Lock.Close()) Console.AppendText("> Command failed." + Environment.NewLine);
                         else               Console.AppendText("> Door closed." + Environment.NewLine);
+                        PrintMenu();
                         break;
                     case 2: // Display code
-                        Console.AppendText("> Code: " + Lock.Code + Environment.NewLine);
+                        Console.AppendText("> Code: ");
+                        if (Lock.Code.Length == 0) Console.AppendText("None");
+                        else Console.AppendText(Lock.Code);
+                        Console.AppendText(Environment.NewLine);
+                        PrintMenu();
                         break;
                     case 3: // Change code
-                        if (!Lock.ChangeCode()) Console.AppendText("> Command failed." + Environment.NewLine);
-                        else {
-                            Console.AppendText("> Enter new code:" + Environment.NewLine);
-                            Lock.State = LockState_t.AskingNewCode;
-                        }
+                        Console.AppendText("> Enter new code:" + Environment.NewLine);
+                        Lock.State = LockState_t.AskingNewCode;
                         break;
                     case 4: // Change service code
-                        if (!Lock.ChangeServiceCode()) Console.AppendText("> Command failed." + Environment.NewLine);
-                        else                           Console.AppendText("> Service code changed." + Environment.NewLine);
+                        Console.AppendText("> Enter new service code:" + Environment.NewLine);
+                        Lock.State = LockState_t.AskingNewServiceCode;
                         break;
                     default:
                         Console.AppendText("> Command not recognized." + Environment.NewLine);
+                        PrintMenu();
                         break;
                 } // switch 
-                PrintMenu();
             } // if WaitingCommand
             
             // Entering new code 
             else if (Lock.State == LockState_t.AskingNewCode) {
-                // Check if code ok
                 int dummy;
-                if ((SCmd.Length > 4) || !Int32.TryParse(SCmd, out dummy)) {
-                    Console.AppendText("> Bad code." + Environment.NewLine + "> Enter new code:" + Environment.NewLine);
+                if (((SCmd.Length <= 4) && Int32.TryParse(SCmd, out dummy)) || (SCmd.Length == 0)) {    // Check if code ok: =<4 and digits
+                    if (Lock.ChangeCode(SCmd)) Console.AppendText("> Code changed." + Environment.NewLine);
+                    else Console.AppendText("> Command failed." + Environment.NewLine);
+                    PrintMenu();
+                    Lock.State = LockState_t.WaitingCommand;
                 }
-                else {
+                else Console.AppendText("> Bad code." + Environment.NewLine + "> Enter new code:" + Environment.NewLine);
+            } // AskingNewCode
 
-            }
-
-        } // ParseCmd Console.AppendText("> Code changed." + Environment.NewLine);
+            // Entering new service code 
+            else if (Lock.State == LockState_t.AskingNewServiceCode) {
+                int dummy;
+                if ((SCmd.Length == 6) && Int32.TryParse(SCmd, out dummy)) {    // Check if code ok
+                    if (Lock.ChangeServiceCode(SCmd)) Console.AppendText("> Service code changed." + Environment.NewLine);
+                    else Console.AppendText("> Command failed." + Environment.NewLine);
+                    PrintMenu();
+                    Lock.State = LockState_t.WaitingCommand;
+                }
+                else Console.AppendText("> Bad code." + Environment.NewLine + "> Enter new service code:" + Environment.NewLine);
+            } // AskingNewServiceCode
+        } // ParseCmd 
 
         private void Console_KeyUp(object sender, KeyEventArgs e) {
             if (e.KeyValue == 13) {    // Enter was pressed
@@ -217,7 +232,6 @@ namespace HackerTool {
                 string S = Console.Lines[Console.Lines.Count()-2];
                 ParseCmd(S);                
             }
-
         }
         #endregion
     }
@@ -232,7 +246,7 @@ namespace HackerTool {
 
         #region ==== Lock commands ====
         public bool GetState() {
-            if (!Tool.SendCmd('S')) return false;
+            if (!Tool.SendCmd("S")) return false;
             if (!Tool.WaitAnswer()) return false;
             // Check what received
             if (!Tool.RXString.StartsWith("S:")) return false;
@@ -246,16 +260,37 @@ namespace HackerTool {
         }
 
         public bool Open() {
-            return true;
+            if (!Tool.SendCmd("O")) return false;
+            if (!Tool.WaitAnswer()) return false;
+            // Check what received
+            return Tool.RXString.StartsWith("O");
         }
         public bool Close() {
-            return true;
+            if (!Tool.SendCmd("C")) return false;
+            if (!Tool.WaitAnswer()) return false;
+            // Check what received
+            return Tool.RXString.StartsWith("C");
         }
-        public bool ChangeCode() {
-            return true;
+        
+        public bool ChangeCode(string ANewCode) {
+            if (!Tool.SendCmd("R:" + ANewCode)) return false;
+            if (!Tool.WaitAnswer()) return false;
+            // Check what received
+            if (Tool.RXString.StartsWith("R")) {
+                Code = ANewCode;
+                return true;
+            }
+            else return false;
         }
-        public bool ChangeServiceCode() {
-            return true;
+        public bool ChangeServiceCode(string ANewCode) {
+            if (!Tool.SendCmd("V:" + ANewCode)) return false;
+            if (!Tool.WaitAnswer()) return false;
+            // Check what received
+            if (Tool.RXString.StartsWith("V")) {
+                ServiceCode = ANewCode;
+                return true;
+            }
+            else return false;
         }
 
         #endregion
@@ -275,12 +310,12 @@ namespace HackerTool {
         }
 
         #region ======== Tool commands ========
-        public bool SendCmd(char ACmd) {
+        public bool SendCmd(string ACmd) {
             RXString = "";
-            byte[] Data = new byte[4];
-            Data[0] = (byte)ACmd;
+            ACmd += ';';
+            byte[] buf = System.Text.Encoding.ASCII.GetBytes(ACmd);
             try {
-                ComPort.Write(Data, 0, 1);
+                ComPort.Write(buf, 0, ACmd.Length);
                 return true;
             }
             catch (System.Exception ex) {
@@ -294,8 +329,7 @@ namespace HackerTool {
             for (int i = 0; i < 10; i++) {
                 System.Threading.Thread.Sleep(10);
                 if (RXString.EndsWith(";")) {
-                    char[] charsToTrim = { ';' };
-                    RXString = RXString.TrimEnd(charsToTrim);
+                    RXString = RXString.TrimEnd(';');
                     return true;
                 }
             }
@@ -303,7 +337,7 @@ namespace HackerTool {
         }
 
         public bool Ping() {
-            if (!SendCmd('P')) return false;
+            if (!SendCmd("P")) return false;
             if (!WaitAnswer()) return false;
             // Check what received
             IConsole.AppendText(RXString);
@@ -312,7 +346,7 @@ namespace HackerTool {
         }
 
         public bool GetU() {
-            if (!SendCmd('U')) return false;
+            if (!SendCmd("U")) return false;
             if (!WaitAnswer()) return false;
             // Check what received
             if (!RXString.StartsWith("U:")) return false;   // something wrong came
