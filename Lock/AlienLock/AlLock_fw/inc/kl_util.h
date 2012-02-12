@@ -10,10 +10,14 @@
 
 #include <stdbool.h>
 #include <inttypes.h>
+#include "stm32f10x_gpio.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// Gpio
+void GpioPinConfig(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIOMode_TypeDef AMode);
 
 // Types
 #define FORCE_INLINE inline __attribute__ ((__always_inline__))
@@ -30,6 +34,8 @@ typedef void(*ftVoid_Void)(void);
 char *UintToStr(uint32_t AValue, char* S);
 void UART_Init(void);
 void klPrintf(const char *S, ...);
+
+
 
 bool HexToUint(char *S, uint8_t AMaxLength, uint32_t *AOutput);
 

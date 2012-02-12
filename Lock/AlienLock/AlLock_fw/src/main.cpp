@@ -63,6 +63,9 @@ void GeneralInit(void);
 void Event_Kbd(void);
 void EventJustClosed(void);
 void EventJustOpened(void);
+// Lasers
+void LaserOn(void);
+void LaserOff(void);
 
 // ============================ Implementation ================================
 int main(void) {
@@ -104,6 +107,8 @@ void GeneralInit(void) {
     // Leds
     i2cMgr.Init();
     Leds.Init();
+    // Lasers
+    GpioPinConfig(GPIOA, GPIO_Pin_11, GPIO_Mode_Out_PP);
 
     // Battery
     Battery.Init();
@@ -194,12 +199,21 @@ void Door_t::Task() {
 void EventJustClosed(void) {
     ESnd.EvtPlayEnd = 0;
     Leds.Led[0].Solid(Settings.ColorDoorClosed);
+    LaserOn();
     klPrintf("Door is closed\r");
 }
 void EventJustOpened(void) {
     ESnd.EvtPlayEnd = 0;
     Leds.Led[0].Solid(Settings.ColorDoorOpen);
+    LaserOff();
     klPrintf("Door is opened\r");
+}
+
+void LaserOn(void) {
+    GPIO_SetBits(GPIOA, GPIO_Pin_11);
+}
+void LaserOff(void) {
+    GPIO_ResetBits(GPIOA, GPIO_Pin_11);
 }
 
 // ================================== Battery ==================================

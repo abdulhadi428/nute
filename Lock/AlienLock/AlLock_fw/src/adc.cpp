@@ -64,7 +64,7 @@ void Adc_t::Measure() {
     IValue=0;
     for(uint32_t i=0; i<ADC_AVERAGE_COUNT; i++) IValue += ADCValues[i];
     IValue /= ADC_AVERAGE_COUNT;
-    klPrintf("adc = %u\r", IValue);
+    //klPrintf("adc = %u\r", IValue);
 }
 
 

@@ -47,10 +47,39 @@ void USART1_IRQHandler(void) {
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
         // Read one byte from the receive data register
         uint16_t b = USART_ReceiveData(USART1);
-        if (b == 'U') {
-            klPrintf("U:%u\r", Adc.Measure());
+        // Tool commands
+        if (b == 'P') {
+            klPrintf("HackerTool v0.2;");
             Led1.Blink();
         }
+        else if (b == 'U') {
+            klPrintf("U:%u;", Adc.Measure());
+            Led1.Blink();
+        }
+
+        // Lock emulator
+        else if (b == 'S') {    // Get state
+            klPrintf("S:123456,1234,2000;");
+            Led2.Blink();
+        }
+        else if (b == 'O') {    // Open door
+            klPrintf("O;");
+            Led2.Blink();
+        }
+        else if (b == 'C') {    // Close door
+            klPrintf("C;");
+            Led2.Blink();
+        }
+        else if (b == 'R') {    // Replace code, not implemented
+            klPrintf("R;");
+            Led2.Blink();
+        }
+        else if (b == 'V') {    // Replace service code, not implemented
+            klPrintf("V;");
+            Led2.Blink();
+        }
+
+        // Redirect byte to lock
         else {
             Led2.Blink();
             Buf.Add(b);
