@@ -86,6 +86,8 @@
     <None Include="Resources\hackers-wallpapers.jpg" />
     <None Include="Resources\count.gif" />
     <None Include="Resources\connect16x16.bmp" />
+    <None Include="Resources\stop 16x16.gif" />
+    <None Include="Resources\start.bmp" />
     <Content Include="space.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

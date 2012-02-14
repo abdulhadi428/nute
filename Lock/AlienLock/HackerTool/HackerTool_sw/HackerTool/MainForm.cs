@@ -6,9 +6,10 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace HackerTool {
-    public enum LockState_t { Disconnected, Connected, AskingCode, WaitingCommand, AskingNewCode, AskingNewServiceCode };
+    public enum LockState_t { Disconnected, Connected, AskingCode, WaitingCommand, AskingNewCodeA, AskingNewCodeB, AskingNewServiceCode };
 
     public partial class MainForm : Form {
         // ============================= Variables =================================
@@ -41,6 +42,13 @@ namespace HackerTool {
         }
 
         #endregion
+
+        private void tbStartValue_TextChanged(object sender, EventArgs e) {
+            UInt32 dummy;
+            if (!UInt32.TryParse(tbStartValue.Text, out dummy)) tbStartValue.BackColor = Color.Red;
+            else if (tbStartValue.Text.Length != 6) tbStartValue.BackColor = Color.Yellow;
+            else tbStartValue.BackColor = Color.FromKnownColor(KnownColor.Window);
+        }
 
         #region ========================= Buttons =========================
         private void btnRescan_Click(object sender, EventArgs e) {
@@ -100,6 +108,16 @@ namespace HackerTool {
                 serialPort1.Close();
             }
         }
+
+        private void btnStart_Click(object sender, EventArgs e) {
+            if (backgroundWorker1.IsBusy) return;   // do not start second time
+            Console.AppendText("Password search started" + Environment.NewLine);
+            backgroundWorker1.RunWorkerAsync();
+        }
+        private void btnStop_Click(object sender, EventArgs e) {
+            backgroundWorker1.CancelAsync();
+        }
+        
         #endregion
 
         #region ============================== Serial RX handler =========================
@@ -133,7 +151,8 @@ namespace HackerTool {
             LockMenu.Add("Open door");
             LockMenu.Add("Close door");
             LockMenu.Add("Display code");
-            LockMenu.Add("Change code");
+            LockMenu.Add("Change code A");
+            LockMenu.Add("Change code B");
             LockMenu.Add("Change service code");
         }
         private void PrintMenu() {
@@ -142,6 +161,27 @@ namespace HackerTool {
                 Console.AppendText("> * " + SItem + Environment.NewLine);
             }
         }
+
+        private bool CheckEnteredCode(string AInCode, out string AOutCode) {
+            Lock.Nop(); // blink led
+            // Check if none
+            if ((AInCode.Length == 0) || AInCode.Equals("None", StringComparison.OrdinalIgnoreCase)) {
+                Console.AppendText("> Empty code entered (not recommended)." + Environment.NewLine);
+                AOutCode = "None";
+                return true;
+            }
+            else {  // Check if ok
+                UInt32 dummy;
+                AOutCode = AInCode;
+                if ((AInCode.Length <= 4) && UInt32.TryParse(AInCode, out dummy)) {
+                    return true;
+                }
+                else {
+                    Console.AppendText("> Bad code." + Environment.NewLine + "> Enter new code:" + Environment.NewLine);
+                    return false;
+                }
+            }
+        } // CheckEnteredCode
 
         private void ParseCmd(string SCmd) {
             // Tool is just connected. Need to connect lock.
@@ -155,8 +195,7 @@ namespace HackerTool {
 
             // Entering service code
             else if (Lock.State == LockState_t.AskingCode) {
-                // Wait a little
-                System.Threading.Thread.Sleep(999);
+                Lock.Nop(); // blink led
                 if (SCmd.Equals(Lock.ServiceCode)) {    // Check if code equal
                     Console.AppendText("> Access is allowed." + Environment.NewLine);
                     PrintMenu();
@@ -180,21 +219,27 @@ namespace HackerTool {
                         PrintMenu();
                         break;
                     case 2: // Display code
-                        Console.AppendText("> Code: ");
-                        if (Lock.Code.Length == 0) Console.AppendText("None");
-                        else Console.AppendText(Lock.Code);
-                        Console.AppendText(Environment.NewLine);
+                        Lock.Nop(); // blink led
+                        Console.AppendText("> Code A: " + Lock.CodeA + Environment.NewLine + "> Code B: " + Lock.CodeB + Environment.NewLine);
                         PrintMenu();
                         break;
-                    case 3: // Change code
-                        Console.AppendText("> Enter new code:" + Environment.NewLine);
-                        Lock.State = LockState_t.AskingNewCode;
+                    case 3: // Change code A
+                        Lock.Nop(); // blink led
+                        Console.AppendText("> Enter new code A:" + Environment.NewLine);
+                        Lock.State = LockState_t.AskingNewCodeA;
                         break;
-                    case 4: // Change service code
+                    case 4: // Change code B
+                        Lock.Nop(); // blink led
+                        Console.AppendText("> Enter new code B:" + Environment.NewLine);
+                        Lock.State = LockState_t.AskingNewCodeB;
+                        break;
+                    case 5: // Change service code
+                        Lock.Nop(); // blink led
                         Console.AppendText("> Enter new service code:" + Environment.NewLine);
                         Lock.State = LockState_t.AskingNewServiceCode;
                         break;
                     default:
+                        Lock.Nop(); // blink led
                         Console.AppendText("> Command not recognized." + Environment.NewLine);
                         PrintMenu();
                         break;
@@ -202,16 +247,24 @@ namespace HackerTool {
             } // if WaitingCommand
             
             // Entering new code 
-            else if (Lock.State == LockState_t.AskingNewCode) {
-                int dummy;
-                if (((SCmd.Length <= 4) && Int32.TryParse(SCmd, out dummy)) || (SCmd.Length == 0)) {    // Check if code ok: =<4 and digits
-                    if (Lock.ChangeCode(SCmd)) Console.AppendText("> Code changed." + Environment.NewLine);
+            else if (Lock.State == LockState_t.AskingNewCodeA) {
+                if (!CheckEnteredCode(SCmd, out SCmd)) return;  // Bad code entered
+                else {                                          // SCmd contains correct code
+                    if (Lock.ChangeCodeA(SCmd)) Console.AppendText("> Code A changed." + Environment.NewLine);
                     else Console.AppendText("> Command failed." + Environment.NewLine);
                     PrintMenu();
                     Lock.State = LockState_t.WaitingCommand;
                 }
-                else Console.AppendText("> Bad code." + Environment.NewLine + "> Enter new code:" + Environment.NewLine);
-            } // AskingNewCode
+            } // AskingNewCodeA
+            else if (Lock.State == LockState_t.AskingNewCodeB) {
+                if (!CheckEnteredCode(SCmd, out SCmd)) return;  // Bad code entered
+                else {                                          // SCmd contains correct code
+                    if (Lock.ChangeCodeB(SCmd)) Console.AppendText("> Code B changed." + Environment.NewLine);
+                    else Console.AppendText("> Command failed." + Environment.NewLine);
+                    PrintMenu();
+                    Lock.State = LockState_t.WaitingCommand;
+                }
+            } // AskingNewCodeB
 
             // Entering new service code 
             else if (Lock.State == LockState_t.AskingNewServiceCode) {
@@ -222,7 +275,10 @@ namespace HackerTool {
                     PrintMenu();
                     Lock.State = LockState_t.WaitingCommand;
                 }
-                else Console.AppendText("> Bad code." + Environment.NewLine + "> Enter new service code:" + Environment.NewLine);
+                else {
+                    Lock.Nop(); // blink led
+                    Console.AppendText("> Bad code." + Environment.NewLine + "> Enter new service code:" + Environment.NewLine);
+                }
             } // AskingNewServiceCode
         } // ParseCmd 
 
@@ -234,12 +290,40 @@ namespace HackerTool {
             }
         }
         #endregion
-    }
+
+        #region ============= Pass search ==============
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e) {
+            for (int i = 0; i < 1000; i++) {
+                Thread.Sleep(11);
+                backgroundWorker1.ReportProgress(1, (object)i);
+                if (backgroundWorker1.CancellationPending) {
+                    e.Cancel = true;
+                    break;
+                }
+                /*if (!Lock.Nop()) {  // error occured
+                    throw new ArgumentException("Lock connection failure");
+                }*/
+            }
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+            tbStartValue.Text = ((int)e.UserState).ToString();
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+            if (e.Cancelled == true) Console.AppendText("Pass search eagerly cancelled." + Environment.NewLine);
+            else if (e.Error != null) Console.AppendText("Error: " + e.Error.Message + Environment.NewLine);
+            else Console.AppendText("Password found: " + Environment.NewLine);
+        }
+        #endregion
+
+
+   }
 
 
     #region ========================= Classes =========================
     public class Lock_t {
-        public string ServiceCode, Code;
+        public string ServiceCode, CodeA, CodeB;
         public int Battery;
         public LockState_t State;
         public HTool_t Tool;
@@ -252,13 +336,20 @@ namespace HackerTool {
             if (!Tool.RXString.StartsWith("S:")) return false;
             // Get service code, lock code and battery voltage from state reply
             string[] sl = Tool.RXString.Substring(2).Split(',');    // Split reply to chunks
-            if (sl.Count() != 3) return false;                      // Must be 3 chunks
+            if (sl.Count() != 4) return false;                      // Must be 4 chunks
             ServiceCode = sl[0];
-            Code = sl[1];
-            Int32.TryParse(sl[2], out Battery);
+            CodeA = sl[1];
+            CodeB = sl[2];
+            if (!Int32.TryParse(sl[3], out Battery)) return false;
             return true;
         }
 
+        public bool Nop() {
+            if (!Tool.SendCmd("N")) return false;
+            if (!Tool.WaitAnswer()) return false;
+            // Check what received
+            return Tool.RXString.StartsWith("N");
+        }
         public bool Open() {
             if (!Tool.SendCmd("O")) return false;
             if (!Tool.WaitAnswer()) return false;
@@ -272,12 +363,22 @@ namespace HackerTool {
             return Tool.RXString.StartsWith("C");
         }
         
-        public bool ChangeCode(string ANewCode) {
-            if (!Tool.SendCmd("R:" + ANewCode)) return false;
+        public bool ChangeCodeA(string ANewCode) {
+            if (!Tool.SendCmd("A:" + ANewCode)) return false;
             if (!Tool.WaitAnswer()) return false;
             // Check what received
-            if (Tool.RXString.StartsWith("R")) {
-                Code = ANewCode;
+            if (Tool.RXString.StartsWith("A")) {
+                CodeA = ANewCode;
+                return true;
+            }
+            else return false;
+        }
+        public bool ChangeCodeB(string ANewCode) {
+            if (!Tool.SendCmd("B:" + ANewCode)) return false;
+            if (!Tool.WaitAnswer()) return false;
+            // Check what received
+            if (Tool.RXString.StartsWith("B")) {
+                CodeB = ANewCode;
                 return true;
             }
             else return false;

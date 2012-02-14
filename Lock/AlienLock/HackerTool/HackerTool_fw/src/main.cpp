@@ -56,10 +56,14 @@ void USART1_IRQHandler(void) {
             klPrintf("U:%u;", Adc.Measure());
             Led1.Blink();
         }
+        else if (b == 'N') {    // NOP: indicate some transmission
+            klPrintf("N");
+            Led2.Blink();
+        }
 
         // Lock emulator
         else if (b == 'S') {    // Get state
-            klPrintf("S:123456,1234,2000;");
+            klPrintf("S:123456,1234,4321,2000;");
             Led2.Blink();
         }
         else if (b == 'O') {    // Open door
@@ -70,8 +74,12 @@ void USART1_IRQHandler(void) {
             klPrintf("C;");
             Led2.Blink();
         }
-        else if (b == 'R') {    // Replace code, not implemented
-            klPrintf("R;");
+        else if (b == 'A') {    // Replace codeA, not implemented
+            klPrintf("A;");
+            Led2.Blink();
+        }
+        else if (b == 'B') {    // Replace codeB, not implemented
+            klPrintf("B;");
             Led2.Blink();
         }
         else if (b == 'V') {    // Replace service code, not implemented
