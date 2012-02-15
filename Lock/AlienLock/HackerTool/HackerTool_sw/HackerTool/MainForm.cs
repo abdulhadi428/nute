@@ -16,12 +16,12 @@ namespace HackerTool {
         public HTool_t HTool;
         public Lock_t Lock;
         private List<string> LockMenu;
-        UInt32 CurrentPass;
         // Iteration
         int CurrentX, CurrentY;
         Random RndValue = new Random();
         int[,] InstantTable, AccumTable;
         int IterationCount = 0;
+        Increaser_t Increaser;
 
         #region ============================= Init / deinit ============================
         public MainForm() {
@@ -40,7 +40,7 @@ namespace HackerTool {
             // Setup variables
             InstantTable = new int[10, 10];
             AccumTable = new int[10, 10];
-
+            Increaser = new Increaser_t();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -125,7 +125,11 @@ namespace HackerTool {
 
         private void btnStart_Click(object sender, EventArgs e) {
             if (timerBruteForce.Enabled) return;     // do not start second time
-            if (!UInt32.TryParse(tbStartValue.Text, out CurrentPass)) return;
+            UInt32 dummy;
+            if (!UInt32.TryParse(tbStartValue.Text, out dummy)) return;
+            // Prepare variables
+            Increaser.Reset(tbStartValue.Text);
+            // Display start info
             Console.AppendText("Password search started" + Environment.NewLine);
             timerBruteForce.Enabled = true;
         }
@@ -341,7 +345,7 @@ namespace HackerTool {
         #region ============= Brute force ==============
         private void timer1_Tick(object sender, EventArgs e) {
             // Calculate new code
-            CurrentPass++;
+            string IPass = Increaser.GetNext();
             // Blink LED
             /*if (!Lock.Nop()) {  // error occured
              * Console.AppendText("Error: Lock connection failure" + Environment.NewLine);
@@ -349,12 +353,11 @@ namespace HackerTool {
             }*/
 
             // Display code
-            string S = CurrentPass.ToString("D6");
-            tbStartValue.Text = S;
-            Console.AppendText(S + Environment.NewLine);
+            tbStartValue.Text = IPass;
+            Console.AppendText(IPass + Environment.NewLine);
             // Check if password is correct
-            if (S.Equals(Lock.ServiceCode)) {
-                Console.AppendText("Password found: " + CurrentPass.ToString() + Environment.NewLine);
+            if (IPass.Equals(Lock.ServiceCode)) {
+                Console.AppendText("Password found: " + IPass + Environment.NewLine);
                 timerBruteForce.Enabled = false;
                 Console.AppendText("> Access is allowed." + Environment.NewLine);
                 PrintMenu();
@@ -428,17 +431,55 @@ namespace HackerTool {
     #region ========================= Classes =========================
     public class Distance_t {
         public int D;
-        public void In
-    }
-    public class Iterator_t {
-        private int d1, d2, d3;
-        int n;
-        private IInc(
-        public void Increase() {
-            if (n == 0) {
-
+        private int i;
+        private UInt32 R;
+        public void SetR(UInt32 AR) {
+            D = 0;
+            i = 0;
+            R = AR;
+        }
+        public void Inc() {
+            i++;
+            D = (((i + 1) % 3) - 1) * (i / 3 + 1);
         }
     }
+
+    public class Increaser_t {
+        private Pair_t d1, d2, d3;
+        UInt32 P1, P2, P3;
+
+        public Increaser_t() {
+            d1 = new Distance_t();
+            d2 = new Distance_t();
+            d3 = new Distance_t();
+        }
+
+        public void Reset(string SInitValue) {
+            d1.Reset();
+            d2.Reset();
+            d3.Reset();
+            // Parse string
+            UInt32.TryParse(SInitValue.Substring(0, 2), out P1);
+            UInt32.TryParse(SInitValue.Substring(2, 2), out P2);
+            UInt32.TryParse(SInitValue.Substring(4, 2), out P3);
+        }
+        public string GetNext() {
+            // Produce result
+            string Result = (P1 + d1.D).ToString("D2") + (P2 + d2.D).ToString("D2") + (P3 + d3.D).ToString("D2");
+            // Increase all distances
+            d3.Inc();
+            if (d3.D == 0) {
+                d2.Inc();
+                d3.Reset();
+                if (d2.D == 0) {
+                    d1.Inc();
+                    d2.Reset();
+                }
+            }
+            return Result;
+        }
+    }
+
     public class Lock_t {
         public string ServiceCode, CodeA, CodeB;
         public int Battery;
