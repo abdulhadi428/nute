@@ -88,6 +88,7 @@
     <None Include="Resources\connect16x16.bmp" />
     <None Include="Resources\stop 16x16.gif" />
     <None Include="Resources\start.bmp" />
+    <None Include="Resources\grafic hide all.bmp" />
     <Content Include="space.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

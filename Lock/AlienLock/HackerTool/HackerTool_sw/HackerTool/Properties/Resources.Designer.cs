@@ -74,6 +74,13 @@ namespace HackerTool.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap grafic_hide_all {
+            get {
+                object obj = ResourceManager.GetObject("grafic hide all", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap hackers_wallpapers {
             get {
                 object obj = ResourceManager.GetObject("hackers-wallpapers", resourceCulture);

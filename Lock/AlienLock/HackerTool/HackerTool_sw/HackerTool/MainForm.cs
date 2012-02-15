@@ -16,6 +16,12 @@ namespace HackerTool {
         public HTool_t HTool;
         public Lock_t Lock;
         private List<string> LockMenu;
+        UInt32 CurrentPass;
+        // Iteration
+        int CurrentX, CurrentY;
+        Random RndValue = new Random();
+        int[,] InstantTable, AccumTable;
+        int IterationCount = 0;
 
         #region ============================= Init / deinit ============================
         public MainForm() {
@@ -27,6 +33,14 @@ namespace HackerTool {
             HTool.ComPort = serialPort1;
             HTool.IConsole = Console;
             FillMenu();
+            // Iteration components
+            // Setup Grid
+            dgvTable.RowCount = 10;
+            for (int i = 0; i <= 9; i++) dgvTable.Rows[i].Cells[0].Value = i.ToString();
+            // Setup variables
+            InstantTable = new int[10, 10];
+            AccumTable = new int[10, 10];
+
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -110,14 +124,47 @@ namespace HackerTool {
         }
 
         private void btnStart_Click(object sender, EventArgs e) {
-            if (backgroundWorker1.IsBusy) return;   // do not start second time
+            if (timerBruteForce.Enabled) return;     // do not start second time
+            if (!UInt32.TryParse(tbStartValue.Text, out CurrentPass)) return;
             Console.AppendText("Password search started" + Environment.NewLine);
-            backgroundWorker1.RunWorkerAsync();
+            timerBruteForce.Enabled = true;
         }
         private void btnStop_Click(object sender, EventArgs e) {
-            backgroundWorker1.CancelAsync();
+            timerBruteForce.Enabled = false;
+            Console.AppendText("Pass search eagerly cancelled." + Environment.NewLine);
         }
-        
+
+        private void btnIterate_Click(object sender, EventArgs e) {
+            if (timerIteration.Enabled) return;     // do not start second time
+            if (Lock.State == LockState_t.Disconnected) {
+                Console.AppendText("Lock is not connected" + Environment.NewLine);
+                return;
+            }
+            // Get current pair
+            string S;
+            if (rbtnP1.Checked) S = Lock.ServiceCode.Substring(0, 2);
+            else if (rbtnP2.Checked) S = Lock.ServiceCode.Substring(2, 2);
+            else S = Lock.ServiceCode.Substring(4, 2);
+            int.TryParse(S.Substring(0, 1), out CurrentY);
+            int.TryParse(S.Substring(1, 1), out CurrentX);
+            // Start iteration
+            Console.AppendText("Iteration started" + Environment.NewLine);
+            timerIteration.Enabled = true;
+        }
+        private void btnStopIteration_Click(object sender, EventArgs e) {
+            timerIteration.Enabled = false;
+            Console.AppendText("Iteration stopped." + Environment.NewLine);
+        }
+        private void btnReset_Click(object sender, EventArgs e) {
+            IterationCount = 0;
+            for (int x = 0; x <= 9; x++) {
+                for (int y = 0; y <= 9; y++) {
+                    AccumTable[x, y] = 0;
+                    dgvTable.Rows[y].Cells[x + 1].Style.BackColor = Color.White;
+                }
+            }
+        }
+
         #endregion
 
         #region ============================== Serial RX handler =========================
@@ -291,37 +338,107 @@ namespace HackerTool {
         }
         #endregion
 
-        #region ============= Pass search ==============
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e) {
-            for (int i = 0; i < 1000; i++) {
-                Thread.Sleep(11);
-                backgroundWorker1.ReportProgress(1, (object)i);
-                if (backgroundWorker1.CancellationPending) {
-                    e.Cancel = true;
-                    break;
+        #region ============= Brute force ==============
+        private void timer1_Tick(object sender, EventArgs e) {
+            // Calculate new code
+            CurrentPass++;
+            // Blink LED
+            /*if (!Lock.Nop()) {  // error occured
+             * Console.AppendText("Error: Lock connection failure" + Environment.NewLine);
+             * timer1.Enabled = false;
+            }*/
+
+            // Display code
+            string S = CurrentPass.ToString("D6");
+            tbStartValue.Text = S;
+            Console.AppendText(S + Environment.NewLine);
+            // Check if password is correct
+            if (S.Equals(Lock.ServiceCode)) {
+                Console.AppendText("Password found: " + CurrentPass.ToString() + Environment.NewLine);
+                timerBruteForce.Enabled = false;
+                Console.AppendText("> Access is allowed." + Environment.NewLine);
+                PrintMenu();
+                Lock.State = LockState_t.WaitingCommand;
+            }
+            else Console.AppendText("> Incorrect code, access denied." + Environment.NewLine + "> Enter service code:" + Environment.NewLine);
+        }        
+        #endregion
+
+        #region ==== Iteration ====
+        double dif(int a1, int a2) {
+            int NoiseMagn = trackBar1.Value;
+            if (NoiseMagn > 0) {
+                a1 += RndValue.Next(-NoiseMagn, NoiseMagn);
+                if (a1 > 9) a1 -= 10;
+                if (a1 < 0) a1 += 10;
+            }
+            return Math.Min((a1 - a2 + 10) % 10, (a2 - a1 + 10) % 10);
+        }
+
+        double p(double dist) {
+            //int NoiseMagn = trackBarNoise.Value;
+            //            return (1-dist)*.1+NoiseMagn*.01;
+            //return (1 - dist) / (1 + NoiseMagn);
+            return (1 - dist);
+        }        // Distance function: returns 0...255, 255 means equality
+        int Distance(int x1, int x2, int y1, int y2) {
+            double difx = dif(x1, x2);
+            double dify = dif(y1, y2);
+            double Distn = Math.Sqrt(difx * difx + dify * dify);
+            double c2 = RndValue.NextDouble() < p(Distn / (5 * Math.Sqrt(2))) ? 1 : 0;    // Norm to 1
+            double c3 = c2 * 255;
+            return (int)Math.Round(c2);
+        }
+
+        // Fill instant table
+        void FillInstantTable() {
+            for (int y = 0; y <= 9; y++) {
+                for (int x = 0; x <= 9; x++) {
+                    InstantTable[x, y] = Distance(x, CurrentX, y, CurrentY);
                 }
-                /*if (!Lock.Nop()) {  // error occured
-                    throw new ArgumentException("Lock connection failure");
-                }*/
             }
         }
 
-        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e) {
-            tbStartValue.Text = ((int)e.UserState).ToString();
+        private void timerIteration_Tick(object sender, EventArgs e) {
+            IterationCount++;
+            lblIterationCounter.Text = "Iteration: " + IterationCount.ToString();
+            FillInstantTable();
+            // Accumulate values
+            double MaxValue = 0;
+            for (int y = 0; y <= 9; y++) {
+                for (int x = 0; x <= 9; x++) {
+                    AccumTable[x, y] += InstantTable[x, y];
+                    if (AccumTable[x, y] > MaxValue) MaxValue = AccumTable[x, y];
+                }
+            }
+            // Fill grid with normalized colors
+            double NormValue;
+            for (int y = 0; y <= 9; y++) {
+                for (int x = 0; x <= 9; x++) {
+                    NormValue = Math.Round(255 * (AccumTable[x, y] / MaxValue));
+                    dgvTable.Rows[y].Cells[x + 1].Style.BackColor = Color.FromArgb(0, (int)NormValue, 0);
+                }
+            }
         }
 
-        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-            if (e.Cancelled == true) Console.AppendText("Pass search eagerly cancelled." + Environment.NewLine);
-            else if (e.Error != null) Console.AppendText("Error: " + e.Error.Message + Environment.NewLine);
-            else Console.AppendText("Password found: " + Environment.NewLine);
-        }
         #endregion
-
-
-   }
+    }
 
 
     #region ========================= Classes =========================
+    public class Distance_t {
+        public int D;
+        public void In
+    }
+    public class Iterator_t {
+        private int d1, d2, d3;
+        int n;
+        private IInc(
+        public void Increase() {
+            if (n == 0) {
+
+        }
+    }
     public class Lock_t {
         public string ServiceCode, CodeA, CodeB;
         public int Battery;
