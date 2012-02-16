@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Threading;
 
 namespace HackerTool {
-    public enum LockState_t { Disconnected, Connected, AskingCode, WaitingCommand, AskingNewCodeA, AskingNewCodeB, AskingNewServiceCode };
+    public enum LockState_t { Disconnected, EnteringServiceCode, WaitingCommand, AskingNewCodeA, AskingNewCodeB, AskingNewServiceCode };
 
     public partial class MainForm : Form {
         // ============================= Variables =================================
@@ -21,7 +21,6 @@ namespace HackerTool {
         Random RndValue = new Random();
         int[,] InstantTable, AccumTable;
         int IterationCount = 0;
-        Increaser_t Increaser;
 
         #region ============================= Init / deinit ============================
         public MainForm() {
@@ -40,7 +39,6 @@ namespace HackerTool {
             // Setup variables
             InstantTable = new int[10, 10];
             AccumTable = new int[10, 10];
-            Increaser = new Increaser_t();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
@@ -124,18 +122,16 @@ namespace HackerTool {
         }
 
         private void btnStart_Click(object sender, EventArgs e) {
-            if (timerBruteForce.Enabled) return;     // do not start second time
+            if (BruteForcer.IsBusy) return;      // do not start second time
+            if (Lock.State != LockState_t.EnteringServiceCode) return;
             UInt32 dummy;
             if (!UInt32.TryParse(tbStartValue.Text, out dummy)) return;
-            // Prepare variables
-            Increaser.Reset(tbStartValue.Text);
             // Display start info
             Console.AppendText("Password search started" + Environment.NewLine);
-            timerBruteForce.Enabled = true;
+            BruteForcer.RunWorkerAsync();
         }
         private void btnStop_Click(object sender, EventArgs e) {
-            timerBruteForce.Enabled = false;
-            Console.AppendText("Pass search eagerly cancelled." + Environment.NewLine);
+            BruteForcer.CancelAsync();
         }
 
         private void btnIterate_Click(object sender, EventArgs e) {
@@ -239,13 +235,13 @@ namespace HackerTool {
             if ((Lock.State == LockState_t.Disconnected) && SCmd.Equals("connect", StringComparison.OrdinalIgnoreCase)) {
                 if (Lock.GetState()) {
                     Console.AppendText("Lock connected" + Environment.NewLine + "> Enter service code:" + Environment.NewLine);
-                    Lock.State = LockState_t.AskingCode;
+                    Lock.State = LockState_t.EnteringServiceCode;
                 }
                 else Console.AppendText("No reply" + Environment.NewLine);
             } // if connect
 
             // Entering service code
-            else if (Lock.State == LockState_t.AskingCode) {
+            else if (Lock.State == LockState_t.EnteringServiceCode) {
                 Lock.Nop(); // blink led
                 if (SCmd.Equals(Lock.ServiceCode)) {    // Check if code equal
                     Console.AppendText("> Access is allowed." + Environment.NewLine);
@@ -343,28 +339,107 @@ namespace HackerTool {
         #endregion
 
         #region ============= Brute force ==============
-        private void timer1_Tick(object sender, EventArgs e) {
-            // Calculate new code
-            string IPass = Increaser.GetNext();
-            // Blink LED
-            /*if (!Lock.Nop()) {  // error occured
-             * Console.AppendText("Error: Lock connection failure" + Environment.NewLine);
-             * timer1.Enabled = false;
-            }*/
+        string ICode = "";
 
-            // Display code
-            tbStartValue.Text = IPass;
-            Console.AppendText(IPass + Environment.NewLine);
-            // Check if password is correct
-            if (IPass.Equals(Lock.ServiceCode)) {
-                Console.AppendText("Password found: " + IPass + Environment.NewLine);
-                timerBruteForce.Enabled = false;
-                Console.AppendText("> Access is allowed." + Environment.NewLine);
-                PrintMenu();
-                Lock.State = LockState_t.WaitingCommand;
+        private void BruteForcer_DoWork(object sender, DoWorkEventArgs e) {
+            string S = tbStartValue.Text;
+            byte[] Code = (from x in S select Byte.Parse(x.ToString())).ToArray();
+            // Iterate offsets
+            for (int n = 0; n < 31; n++) {
+                int p = n, m = 0;
+                for (; p >= 0; p--, m++) {
+                    int[] Offset = new int[6];
+                    if (Itera(Code, Offset, p, m)) return; // Completed
+                    else {
+                        // Check if stop needed
+                        if (BruteForcer.CancellationPending) {
+                            e.Cancel = true;
+                            return;
+                        }
+                    } // if itera
+                } // for p, m
+            } // for n
+        }
+
+        bool Itera(byte[] Code, int[] AOffset, int p0, int m0) {
+            // Check if stop needed
+            if (BruteForcer.CancellationPending) return false;
+            // Check if code already equals
+            if (ICode.Equals(Lock.ServiceCode)) return true;
+            // Otherwise, go ahead
+            if (p0 > 0) {
+                int rigthmost = 0;
+                for (int j = 5; j >= 0; j--) {
+                    if (AOffset[j] > 0) {
+                        rigthmost = j;
+                        break;
+                    }
+                }
+                for (int i = rigthmost; i < 6; i++) {
+                    if ((AOffset[i] >= 0) && (AOffset[i] <= 4)) {
+                        int[] Offset = (int[])AOffset.Clone();
+                        Offset[i] += 1;
+                        if (Itera(Code, Offset, p0 - 1, m0)) return true;
+                    }
+                }
             }
-            else Console.AppendText("> Incorrect code, access denied." + Environment.NewLine + "> Enter service code:" + Environment.NewLine);
-        }        
+            else if (m0 > 0) {
+                int rigthmost = 0;
+                for (int j = 5; j >= 0; j--) {
+                    if (AOffset[j] < 0) {
+                        rigthmost = j;
+                        break;
+                    }
+                }
+                for (int i = rigthmost; i < 6; i++) {
+                    if ((AOffset[i] <= 0) && (AOffset[i] >= -3)) {
+                        int[] Offset = (int[])AOffset.Clone();
+                        Offset[i] -= 1;
+                        if (Itera(Code, Offset, p0, m0 - 1)) return true;
+                    }
+                }
+            }
+            else { // Build new code
+                ICode = "";
+                for (int i = 0; i < 6; i++) {
+                    int digit = Code[i] + AOffset[i];
+                    digit = (digit + 10) % 10;
+                    ICode += digit.ToString();
+                }
+                // Blink LED
+                if (Lock.Nop()) {
+                    BruteForcer.ReportProgress(0);
+                    Thread.Sleep(50);
+                }
+                else {  // error occured
+                    throw new Exception("Lock connection failure");
+                }
+                return false;
+            }
+            return false;
+        }
+
+        private void BruteForcer_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+            // Display code
+            tbStartValue.Text = ICode;
+            Console.AppendText(ICode + Environment.NewLine);
+        }
+
+        private void BruteForcer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+            if (e.Error != null) Console.AppendText("Error: " + e.Error.Message + Environment.NewLine);
+            else if (e.Cancelled) Console.AppendText("Pass search eagerly cancelled." + Environment.NewLine);
+            else {
+                // Check if password is correct
+                if (ICode.Equals(Lock.ServiceCode)) {
+                    Console.AppendText("Password found: " + ICode + Environment.NewLine);
+                    Console.AppendText("> Access is allowed." + Environment.NewLine);
+                    PrintMenu();
+                    Lock.State = LockState_t.WaitingCommand;
+                }
+                else Console.AppendText("> Incorrect code, access denied." + Environment.NewLine + "> Enter service code:" + Environment.NewLine);
+            }
+        }
+
         #endregion
 
         #region ==== Iteration ====
@@ -429,59 +504,8 @@ namespace HackerTool {
 
 
     #region ========================= Classes =========================
-    public class Distance_t {
-        public int D;
-        private int i;
-        private UInt32 R;
-        public void SetR(UInt32 AR) {
-            D = 0;
-            i = 0;
-            R = AR;
-        }
-        public void Inc() {
-            i++;
-            D = (((i + 1) % 3) - 1) * (i / 3 + 1);
-        }
-    }
-
-    public class Increaser_t {
-        private Pair_t d1, d2, d3;
-        UInt32 P1, P2, P3;
-
-        public Increaser_t() {
-            d1 = new Distance_t();
-            d2 = new Distance_t();
-            d3 = new Distance_t();
-        }
-
-        public void Reset(string SInitValue) {
-            d1.Reset();
-            d2.Reset();
-            d3.Reset();
-            // Parse string
-            UInt32.TryParse(SInitValue.Substring(0, 2), out P1);
-            UInt32.TryParse(SInitValue.Substring(2, 2), out P2);
-            UInt32.TryParse(SInitValue.Substring(4, 2), out P3);
-        }
-        public string GetNext() {
-            // Produce result
-            string Result = (P1 + d1.D).ToString("D2") + (P2 + d2.D).ToString("D2") + (P3 + d3.D).ToString("D2");
-            // Increase all distances
-            d3.Inc();
-            if (d3.D == 0) {
-                d2.Inc();
-                d3.Reset();
-                if (d2.D == 0) {
-                    d1.Inc();
-                    d2.Reset();
-                }
-            }
-            return Result;
-        }
-    }
-
     public class Lock_t {
-        public string ServiceCode, CodeA, CodeB;
+        public string ServiceCode = "Empty", CodeA = "Empty", CodeB = "Empty";  // will never equal
         public int Battery;
         public LockState_t State;
         public HTool_t Tool;

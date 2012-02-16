@@ -71,8 +71,8 @@
             this.btnStart = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.timerU = new System.Windows.Forms.Timer(this.components);
-            this.timerBruteForce = new System.Windows.Forms.Timer(this.components);
             this.timerIteration = new System.Windows.Forms.Timer(this.components);
+            this.BruteForcer = new System.ComponentModel.BackgroundWorker();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -500,13 +500,17 @@
             // 
             this.timerU.Tick += new System.EventHandler(this.timerU_Tick);
             // 
-            // timerBruteForce
-            // 
-            this.timerBruteForce.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // timerIteration
             // 
             this.timerIteration.Tick += new System.EventHandler(this.timerIteration_Tick);
+            // 
+            // BruteForcer
+            // 
+            this.BruteForcer.WorkerReportsProgress = true;
+            this.BruteForcer.WorkerSupportsCancellation = true;
+            this.BruteForcer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BruteForcer_DoWork);
+            this.BruteForcer.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BruteForcer_ProgressChanged);
+            this.BruteForcer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BruteForcer_RunWorkerCompleted);
             // 
             // MainForm
             // 
@@ -556,7 +560,6 @@
         private System.Windows.Forms.TextBox tbStartValue;
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.Timer timerBruteForce;
         private System.Windows.Forms.DataGridView dgvTable;
         private System.Windows.Forms.DataGridViewTextBoxColumn cl;
         private System.Windows.Forms.DataGridViewTextBoxColumn cl0;
@@ -582,6 +585,7 @@
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.Timer timerIteration;
         private System.Windows.Forms.Label lblIterationCounter;
+        private System.ComponentModel.BackgroundWorker BruteForcer;
 
     }
 }
