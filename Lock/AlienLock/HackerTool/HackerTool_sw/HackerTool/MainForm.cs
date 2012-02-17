@@ -123,7 +123,7 @@ namespace HackerTool {
 
         private void btnStart_Click(object sender, EventArgs e) {
             if (BruteForcer.IsBusy) return;      // do not start second time
-            if (Lock.State != LockState_t.EnteringServiceCode) return;
+            //if (Lock.State != LockState_t.EnteringServiceCode) return;
             UInt32 dummy;
             if (!UInt32.TryParse(tbStartValue.Text, out dummy)) return;
             // Display start info
@@ -339,85 +339,64 @@ namespace HackerTool {
         #endregion
 
         #region ============= Brute force ==============
-        string ICode = "";
-
-        private void BruteForcer_DoWork(object sender, DoWorkEventArgs e) {
-            string S = tbStartValue.Text;
-            byte[] Code = (from x in S select Byte.Parse(x.ToString())).ToArray();
-            // Iterate offsets
-            for (int n = 0; n < 31; n++) {
-                int p = n, m = 0;
-                for (; p >= 0; p--, m++) {
-                    int[] Offset = new int[6];
-                    if (Itera(Code, Offset, p, m)) return; // Completed
-                    else {
-                        // Check if stop needed
-                        if (BruteForcer.CancellationPending) {
-                            e.Cancel = true;
-                            return;
-                        }
-                    } // if itera
-                } // for p, m
-            } // for n
+        int MaxRang = 5;
+        string ICode;
+        
+        string SumCodes(byte[] ACodeArr, byte[] AShiftArr) {
+            string S = "";
+            for (int i = 0; i < 6; i++) S += ((ACodeArr[i] + AShiftArr[i]) % 10).ToString();
+            return S;
         }
 
-        bool Itera(byte[] Code, int[] AOffset, int p0, int m0) {
-            // Check if stop needed
-            if (BruteForcer.CancellationPending) return false;
-            // Check if code already equals
-            if (ICode.Equals(Lock.ServiceCode)) return true;
-            // Otherwise, go ahead
-            if (p0 > 0) {
-                int rigthmost = 0;
-                for (int j = 5; j >= 0; j--) {
-                    if (AOffset[j] > 0) {
-                        rigthmost = j;
-                        break;
-                    }
-                }
-                for (int i = rigthmost; i < 6; i++) {
-                    if ((AOffset[i] >= 0) && (AOffset[i] <= 4)) {
-                        int[] Offset = (int[])AOffset.Clone();
-                        Offset[i] += 1;
-                        if (Itera(Code, Offset, p0 - 1, m0)) return true;
-                    }
+        int ShiftRang(byte[] AShiftArr) {
+
+
+        byte[] GetNextShift(byte[] AShiftArr) {
+            byte[] NewShiftArr;
+            int IRang = ShiftRang(AShiftArr);
+            if (IRang == 0) IRang = 1;
+            NewShiftArr = GetNextShiftSimple(AShiftArr, IRang);
+            int ReturnedRang = ShiftRang(NewShiftArr);
+            if (ReturnedRang < IRang) {
+                if (ReturnedRang == 0) {
+                    if (IRang == MaxRang) return null;
                 }
             }
-            else if (m0 > 0) {
-                int rigthmost = 0;
-                for (int j = 5; j >= 0; j--) {
-                    if (AOffset[j] < 0) {
-                        rigthmost = j;
-                        break;
-                    }
-                }
-                for (int i = rigthmost; i < 6; i++) {
-                    if ((AOffset[i] <= 0) && (AOffset[i] >= -3)) {
-                        int[] Offset = (int[])AOffset.Clone();
-                        Offset[i] -= 1;
-                        if (Itera(Code, Offset, p0, m0 - 1)) return true;
-                    }
-                }
-            }
-            else { // Build new code
-                ICode = "";
-                for (int i = 0; i < 6; i++) {
-                    int digit = Code[i] + AOffset[i];
-                    digit = (digit + 10) % 10;
-                    ICode += digit.ToString();
+
+            return NewShiftArr;
+        }
+
+
+        private void BruteForcer_DoWork(object sender, DoWorkEventArgs e) {
+            Lock.ServiceCode = "123456";    // DEBUG
+            string StartCodeStr = tbStartValue.Text;
+            byte[] StartCodeArr = (from x in StartCodeStr select Byte.Parse(x.ToString())).ToArray();
+            byte[] ShiftArr = new byte[6];
+        
+            while (true) {
+                // Get next code
+                ICode = SumCodes(StartCodeArr, ShiftArr);
+
+                // Check if code already equals
+                if (ICode.Equals(Lock.ServiceCode)) return;
+                if (BruteForcer.CancellationPending) {
+                    e.Cancel = true;
+                    return;
                 }
                 // Blink LED
-                if (Lock.Nop()) {
+//                if (Lock.Nop()) {
                     BruteForcer.ReportProgress(0);
                     Thread.Sleep(50);
-                }
+  /*              }
                 else {  // error occured
                     throw new Exception("Lock connection failure");
                 }
-                return false;
-            }
-            return false;
+                */
+                ShiftArr = GetNextShift(ShiftArr, MaxRang);
+            } // while 1
         }
+
+
 
         private void BruteForcer_ProgressChanged(object sender, ProgressChangedEventArgs e) {
             // Display code
