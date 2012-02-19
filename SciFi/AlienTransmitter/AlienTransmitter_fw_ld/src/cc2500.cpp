@@ -7,7 +7,6 @@
 #include <inttypes.h>
 #include "cc2500.h"
 #include "cc2500_rf_settings.h"
-#include "delay_util.h"
 
 CC_t CC;
 
@@ -118,6 +117,18 @@ void CC_t::EnterTXAndWaitToComplete(void) {
     // Wait for packet to transmit completely
     while (!GDO0_IsHi());   // After this, SYNC word is transmitted
     while (GDO0_IsHi());    // After this, packet is transmitted
+}
+
+void CC_t::Shutdown() {
+    IRQDisable();
+    EnterIdle();
+    PowerDown();
+    IsShutdown = true;
+}
+void CC_t::Wake() {
+    IsShutdown = false;
+    EnterIdle();
+    IRQEnable();
 }
 
 // ============================= Inner use =====================================

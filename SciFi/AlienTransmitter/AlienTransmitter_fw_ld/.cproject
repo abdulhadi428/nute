@@ -36,6 +36,7 @@
 									<listOptionValue builtIn="false" value="../inc"/>
 									<listOptionValue builtIn="false" value="../lib"/>
 									<listOptionValue builtIn="false" value="../lib/inc"/>
+									<listOptionValue builtIn="false" value="../kl_lib"/>
 								</option>
 								<inputType id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.assembler.base.input.1176252281" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.assembler.base.input"/>
 							</tool>
@@ -50,6 +51,7 @@
 									<listOptionValue builtIn="false" value="../inc"/>
 									<listOptionValue builtIn="false" value="../lib"/>
 									<listOptionValue builtIn="false" value="../lib/inc"/>
+									<listOptionValue builtIn="false" value="../kl_lib"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std.810702603" name="Language Standard" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std" value="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std.gnu99" valueType="enumerated"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.shortenums.1479849223" name="Short enumerations (-fshort-enums)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.shortenums" value="false" valueType="boolean"/>
@@ -70,6 +72,7 @@
 									<listOptionValue builtIn="false" value="../inc"/>
 									<listOptionValue builtIn="false" value="../lib"/>
 									<listOptionValue builtIn="false" value="../lib/inc"/>
+									<listOptionValue builtIn="false" value="../kl_lib"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.packstruct.656188834" name="Pack structures (-fpack-struct)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.packstruct" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.shortenums.1113447329" name="Short enumerations (-fshort-enums)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.shortenums" value="false" valueType="boolean"/>
@@ -81,7 +84,7 @@
 							</tool>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.c.linker.debug.239810353" name="ARM Yagarto Windows GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.c.linker.debug"/>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.linker.debug.1285891753" name="ARM Yagarto Windows GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.linker.debug">
-								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.scriptfile.1214536228" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.scriptfile" value="C:\projects\nute\_Master_\LinkerScripts\stm32f100c4.ld" valueType="string"/>
+								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.scriptfile.1214536228" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.scriptfile" value="D:\Nute\_Master_\LinkerScripts\stm32f100c4.ld" valueType="string"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostart.726486028" name="Do not use standard start files (-nostartfiles)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostart" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nodeflibs.145078896" name="Do not use default libraries (-nodefaultlibs)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nodeflibs" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.strip.876540653" name="Omit all symbol information (-s)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.strip" value="false" valueType="boolean"/>
@@ -135,6 +138,7 @@
 									<listOptionValue builtIn="false" value="../lib/CoreSupport"/>
 									<listOptionValue builtIn="false" value="../lib/inc"/>
 									<listOptionValue builtIn="false" value="../lib/startup"/>
+									<listOptionValue builtIn="false" value="../kl_lib"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.preprocessor.def.1374409005" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F10X_LD_VL"/>
@@ -151,6 +155,7 @@
 									<listOptionValue builtIn="false" value="../lib/CoreSupport"/>
 									<listOptionValue builtIn="false" value="../lib/inc"/>
 									<listOptionValue builtIn="false" value="../lib/startup"/>
+									<listOptionValue builtIn="false" value="../kl_lib"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.1084576824" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F10X_LD_VL"/>
@@ -167,6 +172,7 @@
 									<listOptionValue builtIn="false" value="../lib/CoreSupport"/>
 									<listOptionValue builtIn="false" value="../lib/inc"/>
 									<listOptionValue builtIn="false" value="../lib/startup"/>
+									<listOptionValue builtIn="false" value="../kl_lib"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.preprocessor.def.1305385472" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F10X_LD_VL"/>
@@ -196,7 +202,6 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="rock_fw_eclipse.org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.1552680785" name="ARM Windows GCC (Yagarto) Application" projectType="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf"/>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">

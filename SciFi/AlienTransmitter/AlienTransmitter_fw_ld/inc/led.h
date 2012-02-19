@@ -12,23 +12,21 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_tim.h"
 #include "delay_util.h"
+#include "kl_gpio.h"
 
 #define LED_BLINK_DELAY 144
 
-class Led_t {
+class Led_t : klPin_t {
 private:
     uint32_t Timer;
-    GPIO_TypeDef* IGPIO;
-    uint16_t IPin;
-    bool IsOn, IsInsideBlink;
+    bool IsInsideBlink;
 public:
-    void On(void)      { GPIO_SetBits(IGPIO, IPin); IsOn = true;}
-    void Off(void)     { GPIO_ResetBits(IGPIO, IPin); IsOn = false; }
+    Led_t(GPIO_TypeDef* AGPIO, uint16_t APinNumber) : klPin_t(AGPIO, APinNumber, GPIO_Mode_Out_PP) { }
+    void On(void)      { klPin_t::operator =(true); }
+    void Off(void)     { klPin_t::operator =(false); }
     void Disable(void) { Off(); IsInsideBlink = false; }
-    void Init(GPIO_TypeDef* AGPIO, uint16_t APin);
     void Blink(void);
     void Task(void);
-    void Toggle(void)  { IGPIO->ODR ^= IPin; IsOn = !IsOn; }
 };
 
 // Colors
@@ -53,7 +51,5 @@ public:
     void SetColorSmoothly(Color_t AColor) { NeededColor = AColor; }
 };
 
-extern RGBLed_t Crystal;
-extern Led_t LedGreen, LedRed;
 
 #endif /* LED_H_ */

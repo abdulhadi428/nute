@@ -39,7 +39,7 @@ struct CC_Packet_t {
 class CC_t {
 private:
     // Variables
-    uint32_t Timer;
+    bool IsShutdown;
     uint8_t State;
     bool NewPktRcvd;
     // Methods
@@ -78,6 +78,8 @@ public:
     void Task(void);
     void SetChannel(uint8_t AChannel);
     void SetAddress(uint8_t AAddr) { WriteRegister(CC_ADDR, AAddr); }
+    void Shutdown(void);
+    void Wake(void);
     // IRQ handler
     void IRQHandler(void);
 };

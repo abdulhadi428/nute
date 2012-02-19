@@ -6,337 +6,124 @@
  */
 
 #include "stm32f10x.h"
-#include "stm32f10x_exti.h"
 #include "delay_util.h"
 #include "kl_util.h"
-#include "main.h"
-#include "lcd110x.h"
-#include "IDStore.h"
+#include "led.h"
+#include "cc2500.h"
+#include "sensor.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include "kl_gpio.h"
 
-#define SHOWSENSORSTATUS true
+// Variables
+uint8_t ID = 1;
+Led_t Led(GPIOA, 1);
 
-typedef enum {ActiveOn, ActiveOff, Passive} LampState_t;
+// Prototypes
+void GeneralInit(void);
+void Event_Trigger(void);
+void Event_NoTrigger(void);
 
+//extern "C" {
+//ftVoid_Void EXTI12_IRQHandler;
+//}
 
+//void __attribute__ ((interrupt)) f(void) ;
 
-uint32_t maxOnTime=50;
-uint32_t maxOffTime=400;
-uint32_t maxUptime=30000;
-uint32_t sensorActivityCheckout=100;
-uint32_t keyboardLockPeriod=100;
-
-uint32_t onTime;
-uint32_t offTime;
-
-uint32_t BlinkTimer;
-uint32_t SensorTimer;
-uint32_t SensorAvtivityTimer;
-uint32_t keyboardLockTimer;
-
-LampState_t lampState=Passive;
-
-bool waitingForSensorConfirmation = false;
-
-bool HUIDConnected = false;
-bool keyMPressed = false;
-bool keyIncPressed = false;
-bool keyDecPressed = false;
-
-bool keyboardLocked = false;
-
-bool s0trigger = false;
-bool s1trigger = false;
-
-////////////////////////////
-///HUID vars
-char menuItemNumber=0;
-uint32_t maxOnTimeStep=25;
-uint32_t maxOffTimeStep=25;
-uint32_t maxUptimeStep=1000;
-////////////////////////////
-
-
-void generalInitialization(void);
-void resetLampCycle(void);
-void sensorInterrupt(void);
-void activateLamp(void);
-
-void saveData(void){
-
-    IDStore.Add(maxOnTime);
-    IDStore.Add(maxOffTime);
-    IDStore.Add(maxUptime);
-
-    IDStore.Save();
-}
-
-void loadData(void) {
-
-    maxOnTime = SaveAddr[0];
-    maxOffTime = SaveAddr[1];
-    maxUptime = SaveAddr[2];
-
-    klPrintf("%X\r\r",&SaveAddr);
-    klPrintf("read data: %i %i %i\r\r", maxOnTime, maxOffTime, maxUptime);
-
-    if ((maxOnTime==0)&&
-       (maxOffTime==0)&&
-       (maxUptime==0)){
-        maxOnTime=50;
-        maxOffTime=400;
-        maxUptime=30000;
-    }
-
-}
-
-void refreshScreen(void){
-    Lcd.Cls();
-    Lcd.Printf(1,0,"MaxOn:  %i",maxOnTime);
-    Lcd.Printf(1,1,"MaxOff: %i",maxOffTime);
-    Lcd.Printf(1,2,"Uptime: %i",maxUptime);
-    Lcd.Printf(0,menuItemNumber,">");
-
-    if (SHOWSENSORSTATUS){
-        if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0)){
-            Lcd.Printf(1,4,"Sensor 0: +");
-        }else{
-            Lcd.Printf(1,4,"Sensor 0: -");
-        }
-        if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1)){
-            Lcd.Printf(1,5,"Sensor 1: +");
-        }else{
-            Lcd.Printf(1,5,"Sensor 1: -");
-        }
-    }
-}
-
-
-
-void blink(void){
-    GPIO_SetBits(GPIOA,GPIO_Pin_1);
-    Delay.ms(200);
-    GPIO_ResetBits(GPIOA,GPIO_Pin_1);
-    Delay.ms(200);
-}
-
-void generalInitialization(void){
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB, ENABLE);
-    GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_1;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_11;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_12;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_13;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_14;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_15;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-
-    srand( 4 );
-
-    UART_Init();
-    klPrintf(" yeap, I'm here\n");
-
-    Delay.Init();
-
-    loadData();
-
-    GPIO_SetBits(GPIOB,GPIO_Pin_11);
-
-    Lcd.Init();
-
-
-    s0trigger=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0);
-    s1trigger=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1);
-
-
-
-
-
-}
-
+// ============================== Implementation ===============================
 int main(void) {
-
-    //sensorInterrupt();
-
-    generalInitialization();
+    GeneralInit();
 
     while (1) {
+        CC.Task();
+        Sensor.Task();
+    }
+}
 
-        ///HUID reconnection
+void GeneralInit(void) {
+    Delay.Init();
+    Delay.ms(63);
+    UART_Init();
 
-        if ((!HUIDConnected)&&(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_12))){
-            Lcd.Init();
-            HUIDConnected=true;
-            refreshScreen();
-        }
-        if ((HUIDConnected)&&(!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_12))){
-            HUIDConnected=false;
-            saveData();
-        }
+    // Sensor
+    Sensor.EvtTrigger = Event_Trigger;
+    Sensor.EvtNoTrigger = Event_NoTrigger;
 
-        ///key pressure
+    // Setup CC
+    CC.Init();
+    CC.TX_Pkt.From = ID;
+    CC.SetChannel(CC_CHNL);
+    CC.SetAddress(ID);
+    CC.Shutdown();
 
-        if (keyboardLocked){
-            if (Delay.Elapsed(&keyboardLockTimer, keyboardLockPeriod)) {
-                keyboardLocked=false;
-            }
-        }else{
-            if ((!keyMPressed)&&(!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_14))){
-                keyMPressed=true;
-                Delay.Reset(&keyboardLockTimer);
-                keyboardLocked=true;
-                menuItemNumber=(menuItemNumber+1)%3;
-                refreshScreen();
-            }
-            if ((keyMPressed)&&(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_14))){
-                keyMPressed=false;
-            }
+    klPrintf("\rTransmitter %u\r", ID);
+}
 
-            if ((!keyIncPressed)&&(!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_13))){
-                keyIncPressed=true;
-                Delay.Reset(&keyboardLockTimer);
-                keyboardLocked=true;
-                switch (menuItemNumber){
-                    case 0: maxOnTime+=maxOnTimeStep; break;
-                    case 1: maxOffTime+=maxOffTimeStep; break;
-                    case 2: maxUptime+=maxUptimeStep; break;
-                }
-                refreshScreen();
-            }
-            if ((keyIncPressed)&&(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_13))){
-                keyIncPressed=false;
-            }
+// ======== Sensor ========
+void Event_Trigger(void) {
+    Led.On();
+    CC.Wake();
+}
+void Event_NoTrigger(void) {
+    Led.Off();
+    CC.Shutdown();
+}
 
-            if ((!keyDecPressed)&&(!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15))){
-                keyDecPressed=true;
-                Delay.Reset(&keyboardLockTimer);
-                keyboardLocked=true;
-                switch (menuItemNumber){
-                    case 0:
-                        if (maxOnTime>=maxOnTimeStep){maxOnTime-=maxOnTimeStep;}
-                    break;
-                    case 1:
-                        if (maxOffTime>=maxOffTimeStep){maxOffTime-=maxOffTimeStep;}
-                    break;
-                    case 2:
-                        if (maxUptime>=maxUptimeStep){maxUptime-=maxUptimeStep;}
-                    break;
-                }
-                refreshScreen();
-            }
-            if ((keyDecPressed)&&(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15))){
-                keyDecPressed=false;
-            }
-        }
+// =============================== CC handling =================================
+/*
+ * Both TX and RX are interrupt-driven, so IRQ enabled at init and commented out in EnterRX.
+ */
+typedef enum {IsWaiting, IsReplying} WaitState_t;
+WaitState_t SearchState = IsWaiting;
+uint8_t PktCounter=0;
 
-        Lcd.Task();
-
-        //lamp blinking
-        switch (lampState){
-            case ActiveOn:
-                if (Delay.Elapsed(&BlinkTimer, onTime)) {
-                    GPIO_ResetBits(GPIOA,GPIO_Pin_1);
-                    lampState=ActiveOff;
-                }
+void CC_t::Task(void) {
+    if (IsShutdown) return;
+    // Do with CC what needed
+    GetState();
+    switch (State) {
+        case CC_STB_RX_OVF:
+            klPrintf("RX ovf\r");
+            FlushRxFIFO();
             break;
-            case ActiveOff:
-                if (Delay.Elapsed(&BlinkTimer, offTime)) {
-                    resetLampCycle();
-                }
+        case CC_STB_TX_UNDF:
+            klPrintf("TX undf\r");
+            FlushTxFIFO();
             break;
-            default: break;
-        }
 
-        //lamp activiy cycle termination
-        if (Delay.Elapsed(&SensorTimer, maxUptime)) {
-            GPIO_ResetBits(GPIOA,GPIO_Pin_1);
-            lampState=Passive;
-        }
-
-        if (SHOWSENSORSTATUS){
-            if (s0trigger!=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0)){
-                refreshScreen();
+        case CC_STB_IDLE:
+            if (SearchState == IsWaiting) {
+                EnterRX();
             }
-            if (s1trigger!=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1)){
-                refreshScreen();
+            else {
+                //klPrintf("TX\r");
+                // Prepare packet to send
+                TX_Pkt.To = 207;
+                WriteTX();
+                EnterTX();
+                //klPrintf("TX\r");
             }
+            break;
 
-            s0trigger=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0);
-            s1trigger=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1);
-        }
-
-        if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0)){
-            activateLamp();
-        }
-        if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1)){
-            activateLamp();
-        }
-
-
-    }
+        default: // Just get out in other cases
+            //klPrintf("Other: %X\r", State);
+            break;
+    } //Switch
 }
 
-void resetLampCycle(void){
-    if (maxOnTime>0){
-        onTime=(rand()%maxOnTime);
-    }else{
-        onTime=0;
+void CC_t::IRQHandler() {
+    if (SearchState == IsWaiting) {
+        // Will be here if packet received successfully or in case of wrong address
+        if (ReadRX()) { // Proceed if read was successful
+            // Check address
+            if(RX_Pkt.To == ID) {   // This packet is ours
+                //klPrintf("From: %u; RSSI: %u\r", RX_Pkt.From, RX_Pkt.RSSI);
+                SearchState = IsReplying;
+                PktCounter=0;
+            }
+        } // if read
+        FlushRxFIFO();
     }
-    if (maxOffTime>0){
-        offTime=(rand()%maxOffTime);
-    }else{
-        offTime=0;
-    }
-    Delay.Reset(&BlinkTimer);
-    lampState=ActiveOn;
-
-    if (onTime>0){
-        GPIO_SetBits(GPIOA,GPIO_Pin_1);
-    }
-}
-
-void sensorInterrupt(void){
-    if (!waitingForSensorConfirmation){
-        waitingForSensorConfirmation=true;
-        Delay.Reset(&SensorAvtivityTimer);
+    else {  // Packet transmitted
+        if(++PktCounter == 2) SearchState = IsWaiting;
     }
 }
-
-void activateLamp(void){
-    if (lampState==Passive) {
-        resetLampCycle();
-
-
-    }
-    Delay.Reset(&SensorTimer);
-}
-
