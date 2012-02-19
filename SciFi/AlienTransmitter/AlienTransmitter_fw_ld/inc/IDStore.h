@@ -15,18 +15,19 @@
 #include <inttypes.h>
 
 #define ID_MAX_COUNT    11 // Fit in 1024 bytes (1 pages)
+#define FLASH_PAGE_SIZE     1024
+#define SAVED_DATA_SIZE     1024    // must be multiple of FlashPageSize
+#define PAGE_COUNT          (SAVED_DATA_SIZE / FLASH_PAGE_SIZE)
+
 
 typedef struct {
-    uint32_t Count, FlashEraseCounter;
+    uint32_t Count;
     uint32_t ID[ID_MAX_COUNT];
 } ID_Array_t;
 
 class IDStore_t {
-private:
-    bool IsPresentIndx(uint32_t AID, uint32_t *AIndx);
 public:
     ID_Array_t IDArr;
-    bool IsChanged;
     // ID operations
     void Add(uint32_t AID);
     // Load/save
@@ -36,5 +37,6 @@ public:
 };
 
 extern IDStore_t IDStore;
+const uint32_t SaveAddr[6] __attribute__ ((aligned(SAVED_DATA_SIZE))) = {0, 0, 0, 0, 0, 0};
 
 #endif /* IDSTORE_H_ */

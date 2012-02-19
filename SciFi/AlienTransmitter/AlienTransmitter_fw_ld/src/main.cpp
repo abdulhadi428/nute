@@ -11,11 +11,13 @@
 #include "kl_util.h"
 #include "main.h"
 #include "lcd110x.h"
-#include "IDStore.h";
+#include "IDStore.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+#define SHOWSENSORSTATUS true
 
 typedef enum {ActiveOn, ActiveOff, Passive} LampState_t;
 
@@ -25,6 +27,7 @@ uint32_t maxOnTime=50;
 uint32_t maxOffTime=400;
 uint32_t maxUptime=30000;
 uint32_t sensorActivityCheckout=100;
+uint32_t keyboardLockPeriod=100;
 
 uint32_t onTime;
 uint32_t offTime;
@@ -32,6 +35,7 @@ uint32_t offTime;
 uint32_t BlinkTimer;
 uint32_t SensorTimer;
 uint32_t SensorAvtivityTimer;
+uint32_t keyboardLockTimer;
 
 LampState_t lampState=Passive;
 
@@ -42,11 +46,16 @@ bool keyMPressed = false;
 bool keyIncPressed = false;
 bool keyDecPressed = false;
 
+bool keyboardLocked = false;
+
+bool s0trigger = false;
+bool s1trigger = false;
+
 ////////////////////////////
 ///HUID vars
 char menuItemNumber=0;
-uint32_t maxOnTimeStep=50;
-uint32_t maxOffTimeStep=50;
+uint32_t maxOnTimeStep=25;
+uint32_t maxOffTimeStep=25;
 uint32_t maxUptimeStep=1000;
 ////////////////////////////
 
@@ -57,20 +66,22 @@ void sensorInterrupt(void);
 void activateLamp(void);
 
 void saveData(void){
-    IDStore.EraseAll();
+
     IDStore.Add(maxOnTime);
     IDStore.Add(maxOffTime);
     IDStore.Add(maxUptime);
+
     IDStore.Save();
 }
 
-void loadData(void){
+void loadData(void) {
 
-    IDStore.IDArr.Count=3;
-    IDStore.Load();
-    maxOnTime=IDStore.IDArr.ID[0];
-    maxOffTime=IDStore.IDArr.ID[1];
-    maxUptime=IDStore.IDArr.ID[2];
+    maxOnTime = SaveAddr[0];
+    maxOffTime = SaveAddr[1];
+    maxUptime = SaveAddr[2];
+
+    klPrintf("%X\r\r",&SaveAddr);
+    klPrintf("read data: %i %i %i\r\r", maxOnTime, maxOffTime, maxUptime);
 
     if ((maxOnTime==0)&&
        (maxOffTime==0)&&
@@ -88,6 +99,19 @@ void refreshScreen(void){
     Lcd.Printf(1,1,"MaxOff: %i",maxOffTime);
     Lcd.Printf(1,2,"Uptime: %i",maxUptime);
     Lcd.Printf(0,menuItemNumber,">");
+
+    if (SHOWSENSORSTATUS){
+        if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0)){
+            Lcd.Printf(1,4,"Sensor 0: +");
+        }else{
+            Lcd.Printf(1,4,"Sensor 0: -");
+        }
+        if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1)){
+            Lcd.Printf(1,5,"Sensor 1: +");
+        }else{
+            Lcd.Printf(1,5,"Sensor 1: -");
+        }
+    }
 }
 
 
@@ -138,14 +162,21 @@ void generalInitialization(void){
 
     srand( 4 );
 
+    UART_Init();
+    klPrintf(" yeap, I'm here\n");
 
     Delay.Init();
 
-//    loadData();
+    loadData();
 
     GPIO_SetBits(GPIOB,GPIO_Pin_11);
 
     Lcd.Init();
+
+
+    s0trigger=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0);
+    s1trigger=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1);
+
 
 
 
@@ -174,47 +205,58 @@ int main(void) {
 
         ///key pressure
 
-        if ((!keyMPressed)&&(!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_14))){
-            keyMPressed=true;
-            menuItemNumber=(menuItemNumber+1)%3;
-            refreshScreen();
-        }
-        if ((keyMPressed)&&(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_14))){
-            keyMPressed=false;
-        }
-
-        if ((!keyIncPressed)&&(!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_13))){
-            keyIncPressed=true;
-            switch (menuItemNumber){
-                case 0: maxOnTime+=maxOnTimeStep; break;
-                case 1: maxOffTime+=maxOffTimeStep; break;
-                case 2: maxUptime+=maxUptimeStep; break;
+        if (keyboardLocked){
+            if (Delay.Elapsed(&keyboardLockTimer, keyboardLockPeriod)) {
+                keyboardLocked=false;
             }
-            refreshScreen();
-        }
-        if ((keyIncPressed)&&(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_13))){
-            keyIncPressed=false;
-        }
-
-        if ((!keyDecPressed)&&(!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15))){
-            keyDecPressed=true;
-            switch (menuItemNumber){
-                case 0:
-                    if (maxOnTime>=maxOnTimeStep){maxOnTime-=maxOnTimeStep;}
-                break;
-                case 1:
-                    if (maxOffTime>=maxOffTimeStep){maxOffTime-=maxOffTimeStep;}
-                break;
-                case 2:
-                    if (maxUptime>=maxUptimeStep){maxUptime-=maxUptimeStep;}
-                break;
+        }else{
+            if ((!keyMPressed)&&(!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_14))){
+                keyMPressed=true;
+                Delay.Reset(&keyboardLockTimer);
+                keyboardLocked=true;
+                menuItemNumber=(menuItemNumber+1)%3;
+                refreshScreen();
             }
-            refreshScreen();
-        }
-        if ((keyDecPressed)&&(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15))){
-            keyDecPressed=false;
-        }
+            if ((keyMPressed)&&(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_14))){
+                keyMPressed=false;
+            }
 
+            if ((!keyIncPressed)&&(!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_13))){
+                keyIncPressed=true;
+                Delay.Reset(&keyboardLockTimer);
+                keyboardLocked=true;
+                switch (menuItemNumber){
+                    case 0: maxOnTime+=maxOnTimeStep; break;
+                    case 1: maxOffTime+=maxOffTimeStep; break;
+                    case 2: maxUptime+=maxUptimeStep; break;
+                }
+                refreshScreen();
+            }
+            if ((keyIncPressed)&&(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_13))){
+                keyIncPressed=false;
+            }
+
+            if ((!keyDecPressed)&&(!GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15))){
+                keyDecPressed=true;
+                Delay.Reset(&keyboardLockTimer);
+                keyboardLocked=true;
+                switch (menuItemNumber){
+                    case 0:
+                        if (maxOnTime>=maxOnTimeStep){maxOnTime-=maxOnTimeStep;}
+                    break;
+                    case 1:
+                        if (maxOffTime>=maxOffTimeStep){maxOffTime-=maxOffTimeStep;}
+                    break;
+                    case 2:
+                        if (maxUptime>=maxUptimeStep){maxUptime-=maxUptimeStep;}
+                    break;
+                }
+                refreshScreen();
+            }
+            if ((keyDecPressed)&&(GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_15))){
+                keyDecPressed=false;
+            }
+        }
 
         Lcd.Task();
 
@@ -240,6 +282,17 @@ int main(void) {
             lampState=Passive;
         }
 
+        if (SHOWSENSORSTATUS){
+            if (s0trigger!=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0)){
+                refreshScreen();
+            }
+            if (s1trigger!=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1)){
+                refreshScreen();
+            }
+
+            s0trigger=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0);
+            s1trigger=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1);
+        }
 
         if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0)){
             activateLamp();
@@ -248,9 +301,6 @@ int main(void) {
             activateLamp();
         }
 
-
-
-        //snesor activity verifiing
 
     }
 }
