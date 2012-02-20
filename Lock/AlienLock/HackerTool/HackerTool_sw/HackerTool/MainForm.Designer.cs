@@ -131,9 +131,9 @@
             // 
             this.groupBox3.Controls.Add(this.dgvTable);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(308, 0);
+            this.groupBox3.Location = new System.Drawing.Point(302, 0);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(301, 311);
+            this.groupBox3.Size = new System.Drawing.Size(307, 311);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Analyzer";
@@ -160,8 +160,9 @@
             this.dgvTable.Name = "dgvTable";
             this.dgvTable.ReadOnly = true;
             this.dgvTable.RowHeadersVisible = false;
+            this.dgvTable.RowTemplate.Height = 27;
             this.dgvTable.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.dgvTable.Size = new System.Drawing.Size(295, 292);
+            this.dgvTable.Size = new System.Drawing.Size(301, 292);
             this.dgvTable.TabIndex = 2;
             // 
             // cl
@@ -252,7 +253,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(308, 311);
+            this.panel2.Size = new System.Drawing.Size(302, 311);
             this.panel2.TabIndex = 5;
             // 
             // groupBox4

@@ -19,6 +19,7 @@
 #include "leds_pca.h"
 #include "i2c_mgr.h"
 #include "adc.h"
+#include "uart_cmd.h"
 
 #define FNAME_LNG_MAX   13
 #define CODE_LNG_MAX    6
@@ -80,6 +81,7 @@ int main(void) {
         i2cMgr.Task();
         Leds.Task();
         Battery.Task();
+        CmdUnit.Task();
         //Sensor.Task();
     } // while(1)
     return 0;
@@ -108,7 +110,7 @@ void GeneralInit(void) {
     i2cMgr.Init();
     Leds.Init();
     // Lasers
-    GpioPinConfig(GPIOA, GPIO_Pin_11, GPIO_Mode_Out_PP);
+    //GpioPinConfig(GPIOA, GPIO_Pin_11, GPIO_Mode_Out_PP);
 
     // Battery
     Battery.Init();

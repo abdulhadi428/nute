@@ -13,21 +13,6 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
-// Gpio
-void GpioPinConfig(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIOMode_TypeDef AMode) {
-    // Clocks
-    if (GPIOx == GPIOA) RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-    else if (GPIOx == GPIOB) RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-    else if (GPIOx == GPIOC) RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-    // Pin itself
-    GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin;
-    GPIO_InitStructure.GPIO_Mode = AMode;
-    GPIO_Init(GPIOx, &GPIO_InitStructure);
-}
-
-
 /*
  * Converts AValue to NULL-terminated string S.
  * Returns pointer to NULL-terminating symbol.

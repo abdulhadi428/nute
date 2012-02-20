@@ -342,17 +342,43 @@ namespace HackerTool {
         int MaxRang = 5;
         string ICode;
         
-        string SumCodes(byte[] ACodeArr, byte[] AShiftArr) {
+        string SumCodes(int[] ACodeArr, int[] AShiftArr) {
             string S = "";
             for (int i = 0; i < 6; i++) S += ((ACodeArr[i] + AShiftArr[i]) % 10).ToString();
             return S;
         }
 
-        int ShiftRang(byte[] AShiftArr) {
+        int ShiftRang(int[] AShiftArr) {
+            int IMax = 0;
+            for (int i = 0; i < 6; i++)
+                if (Math.Abs(AShiftArr[i]) > IMax)
+                    IMax = Math.Abs(AShiftArr[i]);
+            return IMax;
+        }
 
+        int GetNextShiftDigit(int AX, int ARang) {
+            if (AX == ARang) return 0;
+            else if (AX < 0) return -AX;
+            else return -AX - 1;
+        }
 
-        byte[] GetNextShift(byte[] AShiftArr) {
-            byte[] NewShiftArr;
+        int[] GetNextShiftSimple(int[] AShiftArr, int ARang) {
+            int[] ResultArr = new int[6];
+            bool Over = true;
+            int x;
+            for (int i = 5; i >= 0; i--) {
+                if (Over) {
+                    x = GetNextShiftDigit(AShiftArr[i], ARang);
+                    Over = (x == 0);
+                }
+                else x = AShiftArr[i]; 
+                ResultArr[i] = x;
+            }
+            return ResultArr;
+        }
+
+        int[] GetNextShift(int[] AShiftArr) {
+            int[] NewShiftArr;
             int IRang = ShiftRang(AShiftArr);
             if (IRang == 0) IRang = 1;
             NewShiftArr = GetNextShiftSimple(AShiftArr, IRang);
@@ -360,9 +386,13 @@ namespace HackerTool {
             if (ReturnedRang < IRang) {
                 if (ReturnedRang == 0) {
                     if (IRang == MaxRang) return null;
+                    IRang++;
                 }
+                NewShiftArr[5] = -IRang;
             }
-
+            if (IRang == 5) 
+                for (int i=0; i<6; i++) 
+                    if (NewShiftArr[i] == -5) NewShiftArr[i] = 5;
             return NewShiftArr;
         }
 
@@ -370,8 +400,8 @@ namespace HackerTool {
         private void BruteForcer_DoWork(object sender, DoWorkEventArgs e) {
             Lock.ServiceCode = "123456";    // DEBUG
             string StartCodeStr = tbStartValue.Text;
-            byte[] StartCodeArr = (from x in StartCodeStr select Byte.Parse(x.ToString())).ToArray();
-            byte[] ShiftArr = new byte[6];
+            int[] StartCodeArr = (from x in StartCodeStr select int.Parse(x.ToString())).ToArray();
+            int[] ShiftArr = new int[6];
         
             while (true) {
                 // Get next code
@@ -392,7 +422,8 @@ namespace HackerTool {
                     throw new Exception("Lock connection failure");
                 }
                 */
-                ShiftArr = GetNextShift(ShiftArr, MaxRang);
+                ShiftArr = GetNextShift(ShiftArr);
+                if (ShiftArr == null) break;
             } // while 1
         }
 

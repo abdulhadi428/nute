@@ -57,13 +57,13 @@ void USART1_IRQHandler(void) {
             Led1.Blink();
         }
         else if (b == 'N') {    // NOP: indicate some transmission
-            klPrintf("N");
+            klPrintf("N;");
             Led2.Blink();
         }
 
         // Lock emulator
         else if (b == 'S') {    // Get state
-            klPrintf("S:123456,1234,4321,2000;");
+            klPrintf("S:655105,1234,4321,2000;");
             Led2.Blink();
         }
         else if (b == 'O') {    // Open door
