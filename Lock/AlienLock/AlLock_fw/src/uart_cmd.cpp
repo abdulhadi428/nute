@@ -34,8 +34,8 @@ void CmdUnit_t::Init(void) {
 
 void CmdUnit_t::Task() {
     if (Delay.Elapsed(&ITimer, 99)) {
-        if (ReadyToWrite()) {
+        //if (ReadyToWrite()) {
             WriteByte(0xAA);
-        }
+        //}
     }
 }

@@ -7,11 +7,7 @@
 
 #include "kl_gpio.h"
 
-klPin_t::klPin_t(GPIO_TypeDef *PGpioPort, uint16_t APinNumber, GPIOMode_TypeDef AMode) {
-    IPinNumber = APinNumber;
-    IPinMask = (uint16_t)(1<<APinNumber);
-    IGPIO = PGpioPort;
-
+void klGpio::SetupByMsk(GPIO_TypeDef *PGpioPort, uint16_t APinMask, GPIOMode_TypeDef AMode) {
     int IClock = 0;
     if (PGpioPort == GPIOA) IClock = RCC_APB2Periph_GPIOA;
     else if (PGpioPort == GPIOB) IClock = RCC_APB2Periph_GPIOB;
@@ -21,9 +17,16 @@ klPin_t::klPin_t(GPIO_TypeDef *PGpioPort, uint16_t APinNumber, GPIOMode_TypeDef 
 
     GPIO_InitTypeDef GPIO_InitStructure;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Pin = IPinMask;
+    GPIO_InitStructure.GPIO_Pin = APinMask;
     GPIO_InitStructure.GPIO_Mode = AMode;
-    GPIO_Init(IGPIO, &GPIO_InitStructure);
+    GPIO_Init(PGpioPort, &GPIO_InitStructure);
+}
+
+void klPin_t::Init(GPIO_TypeDef *PGpioPort, uint16_t APinNumber, GPIOMode_TypeDef AMode) {
+    IPinNumber = APinNumber;
+    IPinMask = (uint16_t)(1<<APinNumber);
+    IGPIO = PGpioPort;
+    klGpio::SetupByN(PGpioPort, APinNumber, AMode);
 }
 
 // ======== IRQ pin =========

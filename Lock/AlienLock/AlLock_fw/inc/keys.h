@@ -12,19 +12,28 @@
 #include "kl_util.h"
 #include "delay_util.h"
 
+// Timings
 #define KEYS_RATE   45  // ms
+// Keys
 #define KEY_STAR    10
 #define KEY_HASH    11
 #define KEY_NONE    12
+// Keyboards
+#define KBD_SIDE_A  0
+#define KBD_SIDE_B  1
+
+
+// For event function: uint8_t AKbdSide, uint8_t AKey
+typedef void(*ftVoidU8U8)(uint8_t, uint8_t);
 
 class Keys_t {
 private:
     uint32_t ITimer;
 public:
-    uint8_t Kbd[2]; // Pressed key
+    uint8_t PressedKey[2];
     void Task(void);
     void Init(void);
-    ftVoid_Void EvtKbd[2];
+    ftVoidU8U8 EvtKbd;
 };
 
 extern Keys_t Keys;
