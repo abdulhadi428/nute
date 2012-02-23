@@ -26,11 +26,8 @@
 #define CODE_LNG_MAX    6
 
 struct Settings_t {
-    char KeyBeep[FNAME_LNG_MAX];
-    char KeyDrop[FNAME_LNG_MAX];
-    char PassError[FNAME_LNG_MAX];
-    char Open[FNAME_LNG_MAX];
-    char Close[FNAME_LNG_MAX];
+    char SndKeyBeep[FNAME_LNG_MAX], SndKeyDrop[FNAME_LNG_MAX], SndPassError[FNAME_LNG_MAX], SndOpen[FNAME_LNG_MAX];
+    char SndClose[FNAME_LNG_MAX], SndKeyCrash[FNAME_LNG_MAX];
     // Codes
     char CodeA[CODE_LNG_MAX+1], CodeB[CODE_LNG_MAX+1], ServiceCode[CODE_LNG_MAX+1]; // Because of trailing \0
     int8_t CodeALength, CodeBLength, ServiceCodeLength;     // Length of 0 means empty, negative length means crash
@@ -53,6 +50,7 @@ struct Codecheck_t {
     void Reset(void) { EnteredLength=0; EnterResult=entNA; }
 } Codecheck;
 
+enum DoorState_t {dsClosed, dsOpened, dsOpening, dsClosing};
 class Door_t {
 private:
     klPin_t IPin;
@@ -66,7 +64,7 @@ public:
         EvtJustClosed();
     }
     uint32_t Timer;
-    bool IsOpen;
+    DoorState_t State;
     void Task(void);
     void Open(void);
     void Close(void);
@@ -140,12 +138,12 @@ void Codecheck_t::Task(void) {
         case entNA: // check if input timeout
             if((EnteredLength != 0) && Delay.Elapsed(&Timer, Settings.KeyDropDelay)) {
                 Reset();
-                ESnd.Play(Settings.KeyDrop);
+                ESnd.Play(Settings.SndKeyDrop);
             }
             break;
         case entError:
             Reset();
-            ESnd.Play(Settings.PassError);
+            ESnd.Play(Settings.SndPassError);
             break;
         case entOpen:
             Reset();
@@ -156,11 +154,12 @@ void Codecheck_t::Task(void) {
 
 bool Settings_t::Read(void) {
     // Sound names
-    if(!ReadString("Sound", "KeyBeep",   "lock.ini", Settings.KeyBeep,   FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "KeyDrop",   "lock.ini", Settings.KeyDrop,   FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "PassError", "lock.ini", Settings.PassError, FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "Open",      "lock.ini", Settings.Open,      FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "Close",     "lock.ini", Settings.Close,     FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "KeyBeep",   "lock.ini", Settings.SndKeyBeep,   FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "KeyDrop",   "lock.ini", Settings.SndKeyDrop,   FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "KeyCrash",  "lock.ini", Settings.SndKeyCrash,  FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "PassError", "lock.ini", Settings.SndPassError, FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "Open",      "lock.ini", Settings.SndOpen,      FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "Close",     "lock.ini", Settings.SndClose,     FNAME_LNG_MAX)) return false;
 
     // ======= Codes =======
     // If length == 0 then code is empty. If code is negative (-1 for examle) then side is crashed
@@ -194,22 +193,22 @@ bool Settings_t::Read(void) {
 
 // ================================== Door =====================================
 void Door_t::Open(void) {
-    ESnd.Play(Settings.Open);
+    Door.State = dsOpening;
+    ESnd.Play(Settings.SndOpen);
     ESnd.EvtPlayEnd = EvtJustOpened;
-    IsOpen = true;
     Delay.Reset(&Timer);
     Leds.Led[0].Blink(Settings.ColorDoorOpening, Settings.BlinkDelay);
 }
 
 void Door_t::Close(void) {
-    ESnd.Play(Settings.Close);
+    Door.State = dsClosing;
+    ESnd.Play(Settings.SndClose);
     ESnd.EvtPlayEnd = EvtJustClosed;
-    IsOpen = false;
     Leds.Led[0].Blink(Settings.ColorDoorClosing, Settings.BlinkDelay);
 }
 
 void Door_t::Task() {
-    if (IsOpen) {
+    if (State == dsOpened) {
         if(Delay.Elapsed(&Timer, Settings.DoorCloseDelay))
             Close();
     }
@@ -219,10 +218,12 @@ void Door_t::EvtJustClosed(void) {
     ESnd.EvtPlayEnd = 0;
     Leds.Led[0].Solid(Settings.ColorDoorClosed);
     Door.LasersOn();
+    Door.State = dsClosed;
     klPrintf("Door is closed\r");
 }
 void Door_t::EvtJustOpened(void) {
     ESnd.EvtPlayEnd = 0;
+    Door.State = dsOpened;
     Leds.Led[0].Solid(Settings.ColorDoorOpen);
     Door.LasersOff();
     klPrintf("Door is opened\r");
@@ -250,8 +251,8 @@ void Battery_t::Task() {
         State = bsHalf;
         return;
     }
-    // Indicate discharged bsttery
-    if ((State == bsEmpty) && (!Door.IsOpen) && (Leds.Led[0].Mode != lmBlink)) {
+    // Indicate discharged battery
+    if ((State == bsEmpty) && (Door.State == dsClosed) && (Leds.Led[0].Mode != lmBlink)) {
         Leds.Led[0].Blink(Settings.ColorDoorClosed, Settings.BlinkDelay);
         Leds.Led[1].Blink(Settings.ColorDoorClosed, Settings.BlinkDelay);
     }
@@ -259,32 +260,46 @@ void Battery_t::Task() {
 
 
 // ================================== Events ===================================
+void KeyHandler(uint8_t RKey, int8_t RCodeLength, char *RCode) {
+    // Check if crash
+    if (RCodeLength < 0) {
+        if (ESnd.State == sndStopped) ESnd.Play(Settings.SndKeyCrash);
+        return;
+    }
+    // Digit entered
+    if((RKey >= 0) && (RKey <=9)) {
+        ESnd.Play(Settings.SndKeyBeep);     // Play sound always
+        if (RCodeLength > 0) {
+            if(Codecheck.EnteredLength < RCodeLength) {        // Digit entered is number 0...3
+                Codecheck.EnteredCode[Codecheck.EnteredLength++] = '0' + RKey;
+                Delay.Reset(&Codecheck.Timer);
+            }
+            else {  // Digit entered fifth time, this is error
+                Codecheck.EnterResult = entError;
+            }
+        }// if (RCodeLength > 0)
+    }
+    else {  // none-digit
+        if (RKey == KEY_STAR) {
+            Delay.Bypass(&Codecheck.Timer, Settings.KeyDropDelay);  // Drop code
+        }
+        else if(RKey == KEY_HASH) {
+            // Close door if open
+            if (Door.State == dsOpened) { Door.Close(); }
+            else if (Door.State == dsClosed) {
+                if (RCodeLength == 0) Codecheck.EnterResult = entOpen;   // Open door in case of empty code
+                else {  // Check code
+                    if((Codecheck.EnteredLength == RCodeLength) && (strcmp(RCode, Codecheck.EnteredCode) == 0)) Codecheck.EnterResult = entOpen;  // Equal
+                    else Codecheck.EnterResult = entError;
+                }
+            } // if open
+        } // if hash
+    } // if digit
+}
+
 void Event_Kbd(uint8_t AKbdSide, uint8_t AKey) {
     if (Codecheck.EnterResult != entNA) return; // disable keys in case of existing result
     //klPrintf("Key = %u %u\r", Keys.Kbd[0], Keys.Kbd[1]);
-    // Digit entered
-    if((AKey >= 0) && (AKey <=9) && (Settings.CodeLength != 0)) {   // Do not use digits in case of empty code
-        //klPrintf("Entered: %s; real: %s\r", Codecheck.EnteredCode, Settings.Code);
-        ESnd.Play(Settings.KeyBeep);
-        if(Codecheck.EnteredLength < Settings.CodeLength) {         // Digit entered is number 0...3
-            Codecheck.EnteredCode[Codecheck.EnteredLength] = '0' + AKey;
-            Codecheck.EnteredLength++;
-            Delay.Reset(&Codecheck.Timer);
-        }
-        else {  // Digit entered fifth time, this is error
-            Codecheck.EnterResult = entError;
-        }
-    }
-    else {  // none-digit
-        if (AKey == KEY_STAR) {
-            Delay.Bypass(&Codecheck.Timer, Settings.KeyDropDelay);  // Drop code
-        }
-        else if(AKey == KEY_HASH) {
-            if (Settings.CodeLength == 0) Codecheck.EnterResult = entOpen;   // Open door in case of empty code
-            else {  // Check code
-                if((Codecheck.EnteredLength == Settings.CodeLength) && (strcmp(Settings.Code, Codecheck.EnteredCode) == 0)) Codecheck.EnterResult = entOpen;  // Equal
-                else Codecheck.EnterResult = entError;
-            }
-        }
-    }
+    if (AKbdSide == KBD_SIDE_A) KeyHandler(AKey, Settings.CodeALength, Settings.CodeA);
+    else KeyHandler(AKey, Settings.CodeBLength, Settings.CodeB);
 }
