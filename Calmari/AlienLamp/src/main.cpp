@@ -74,6 +74,16 @@ void resetLampCycle(void);
 void sensorInterrupt(void);
 void activateLamp(void);
 
+void lampOn(){
+    GPIO_SetBits(GPIOA,GPIO_Pin_1);
+    GPIO_SetBits(GPIOB,GPIO_Pin_6);
+}
+
+void lampOff(){
+    GPIO_ResetBits(GPIOA,GPIO_Pin_1);
+    GPIO_ResetBits(GPIOB,GPIO_Pin_6);
+}
+
 
 void saveData(void) {
 
@@ -134,21 +144,21 @@ void loadData(void){
 
 void refreshScreen(void){
     Lcd.Cls();
-    Lcd.Printf(1,0,"MaxOn:  %i",maxOnTime);
-    Lcd.Printf(1,1,"MaxOff: %i",maxOffTime);
-    Lcd.Printf(1,2,"Uptime: %i",maxUptime);
-    Lcd.Printf(0,menuItemNumber,">");
+    Lcd.Printf(2,0,"MaxOn:  %i",maxOnTime);
+    Lcd.Printf(2,1,"MaxOff: %i",maxOffTime);
+    Lcd.Printf(2,2,"Uptime: %i",maxUptime);
+    Lcd.Printf(1,menuItemNumber,">");
 
     if (SHOWSENSORSTATUS){
         if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0)){
-            Lcd.Printf(1,4,"Sensor 0: +");
+            Lcd.Printf(2,4,"Sensor 0: +");
         }else{
-            Lcd.Printf(1,4,"Sensor 0: -");
+            Lcd.Printf(2,4,"Sensor 0: -");
         }
         if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1)){
-            Lcd.Printf(1,5,"Sensor 1: +");
+            Lcd.Printf(2,5,"Sensor 1: +");
         }else{
-            Lcd.Printf(1,5,"Sensor 1: -");
+            Lcd.Printf(2,5,"Sensor 1: -");
         }
     }
 }
@@ -156,9 +166,9 @@ void refreshScreen(void){
 
 
 void blink(void){
-    GPIO_SetBits(GPIOA,GPIO_Pin_1);
+    lampOn();
     Delay.ms(200);
-    GPIO_ResetBits(GPIOA,GPIO_Pin_1);
+    lampOff();
     Delay.ms(200);
 }
 
@@ -169,6 +179,10 @@ void generalInitialization(void){
     GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_1;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_6;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
@@ -305,7 +319,7 @@ int main(void) {
         switch (lampState){
             case ActiveOn:
                 if (Delay.Elapsed(&BlinkTimer, onTime)) {
-                    GPIO_ResetBits(GPIOA,GPIO_Pin_1);
+                    lampOff();
                     lampState=ActiveOff;
                 }
             break;
@@ -319,7 +333,7 @@ int main(void) {
 
         //lamp activiy cycle termination
         if (Delay.Elapsed(&SensorTimer, maxUptime)) {
-            GPIO_ResetBits(GPIOA,GPIO_Pin_1);
+            lampOff();
             lampState=Passive;
         }
 
@@ -361,7 +375,7 @@ void resetLampCycle(void){
     lampState=ActiveOn;
 
     if (onTime>0){
-        GPIO_SetBits(GPIOA,GPIO_Pin_1);
+        lampOn();
     }
 }
 
