@@ -9,57 +9,26 @@
 #include "stm32f10x_exti.h"
 #include "delay_util.h"
 #include "kl_util.h"
-<<<<<<< .mine
-#include "led.h"
-#include "cc2500.h"
-//#include "sensor.h"
-#include "acc_mma.h"
-#include "i2c_mgr.h"
-=======
 #include "main.h"
 #include "lcd110x.h"
 //#include "IDStore.h"
 #include "stm32f10x_flash.h"
->>>>>>> .r524
 
-<<<<<<< .mine
-=======
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
->>>>>>> .r524
 
 #define SHOWSENSORSTATUS true
 
 
-<<<<<<< .mine
-=======
 #define FLASH_PAGE_SIZE     1024
 #define SAVED_DATA_SIZE     1024    // must be multiple of FlashPageSize
 #define PAGE_COUNT          (SAVED_DATA_SIZE / FLASH_PAGE_SIZE)
->>>>>>> .r524
 
-<<<<<<< .mine
-=======
 typedef enum {ActiveOn, ActiveOff, Passive} LampState_t;
 const uint32_t SaveAddr[3] __attribute__ ((aligned(SAVED_DATA_SIZE))) = {0, 0, 0};
 
->>>>>>> .r524
 
-<<<<<<< .mine
-    uint32_t FTimer;
-    while (1) {
-        CC.Task();
-        i2cMgr.Task();
-        Acc.Task();
-        //Sensor.Task();
-        if (Delay.Elapsed(&FTimer, 504)) {
-            klPrintf("X: %i; Y: %i; Z: %i\r", Acc.Accelerations.xMSB, Acc.Accelerations.yMSB, Acc.Accelerations.zMSB);
-//            Acc.ReadAccelerations();
-            //klPrintf("Evt: %X\r", Acc.EventReg[0]);
-            //Acc.ReadEvent();
-        }
-=======
 
 uint32_t maxOnTime=50;
 uint32_t maxOffTime=400;
@@ -157,40 +126,18 @@ void loadData(void){
         maxOnTime=50;
         maxOffTime=400;
         maxUptime=30000;
->>>>>>> .r524
     }
 
 }
 
 
-<<<<<<< .mine
-    // Sensor
-    Acc.EvtTrigger = Event_Trigger;
-    Acc.EvtNoTrigger = Event_NoTrigger;
-    Acc.Init();
-=======
->>>>>>> .r524
 
-<<<<<<< .mine
-    EXTI_GenerateSWInterrupt(EXTI_Line5);
-
-//    Sensor.EvtTrigger = Event_Trigger;
-//    Sensor.EvtNoTrigger = Event_NoTrigger;
-
-    // Setup CC
-    CC.Init();
-    CC.TX_Pkt.From = ID;
-    CC.SetChannel(CC_CHNL);
-    CC.SetAddress(ID);
-    CC.Shutdown();
-=======
 void refreshScreen(void){
     Lcd.Cls();
     Lcd.Printf(1,0,"MaxOn:  %i",maxOnTime);
     Lcd.Printf(1,1,"MaxOff: %i",maxOffTime);
     Lcd.Printf(1,2,"Uptime: %i",maxUptime);
     Lcd.Printf(0,menuItemNumber,">");
->>>>>>> .r524
 
     if (SHOWSENSORSTATUS){
         if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0)){
