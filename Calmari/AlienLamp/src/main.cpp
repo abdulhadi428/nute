@@ -6,7 +6,7 @@
  */
 
 #include "stm32f10x.h"
-#include "stm32f10x_exti.h"
+//#include "stm32f10x_exti.h"
 #include "delay_util.h"
 #include "kl_util.h"
 #include "main.h"
