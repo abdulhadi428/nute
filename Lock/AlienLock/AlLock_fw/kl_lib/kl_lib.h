@@ -1,5 +1,5 @@
 /*
- * kl_gpio.h
+ * kl_lib.h
  *
  *  Created on: 18.02.2012
  *      Author: kreyl
@@ -55,6 +55,32 @@ public:
     void IrqSetup(EXTITrigger_TypeDef ATriggerType);
     void IrqEnable(void);
     void IrqDisable(void);
+};
+
+// ==== Timer ====
+#define TIM_FREQ_MAX    0xFFFFFFFF
+class klTimer_t {
+protected:
+    TIM_TypeDef* ITimer;
+public:
+    void Init(TIM_TypeDef* PTimer, uint16_t ATopValue, uint32_t AFreqHz);
+    void Enable(void)  { ITimer->CR1 |= TIM_CR1_CEN; }
+    void Disable(void) { ITimer->CR1 &= (uint16_t)(~((uint16_t)TIM_CR1_CEN)); }
+};
+
+/*
+ * TIM_OCPolarity_High, TIM_OCPolarity_Low
+ *
+ */
+class klPwmChannel_t : klTimer_t {
+private:
+    uint8_t INumber;
+public:
+    void Init(TIM_TypeDef* PTimer, uint16_t ATopValue, uint32_t AFreqHz, uint8_t ANumber, uint16_t APolarity);
+    void Enable(void);
+    void Disable(void);
+    void DisableTimer(void) { klTimer_t::Disable(); }
+    void Set(uint16_t AValue);
 };
 
 

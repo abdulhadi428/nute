@@ -20,7 +20,7 @@
 #include "i2c_mgr.h"
 #include "adc.h"
 #include "uart_cmd.h"
-#include "kl_gpio.h"
+#include "kl_lib.h"
 
 #define FNAME_LNG_MAX   13
 #define CODE_LNG_MAX    6
@@ -105,13 +105,13 @@ void GeneralInit(void) {
     Delay.Init();
     Keys.Init();
     Keys.EvtKbd = Event_Kbd;
+    CmdUnit.Init();
     // Sensor
 //    Sensor.Init();
 //    Sensor.EvtDetected = EVENT_SomeoneDetected;
     // Sound
     Vs.Init();
     ESnd.Init();
-    CmdUnit.Init();
 
     // Leds
     i2cMgr.Init();
@@ -198,6 +198,7 @@ void Door_t::Open(void) {
     ESnd.EvtPlayEnd = EvtJustOpened;
     Delay.Reset(&Timer);
     Leds.Led[0].Blink(Settings.ColorDoorOpening, Settings.BlinkDelay);
+    Leds.Led[2].Blink(Settings.ColorDoorOpening, Settings.BlinkDelay);
 }
 
 void Door_t::Close(void) {
@@ -205,6 +206,7 @@ void Door_t::Close(void) {
     ESnd.Play(Settings.SndClose);
     ESnd.EvtPlayEnd = EvtJustClosed;
     Leds.Led[0].Blink(Settings.ColorDoorClosing, Settings.BlinkDelay);
+    Leds.Led[2].Blink(Settings.ColorDoorClosing, Settings.BlinkDelay);
 }
 
 void Door_t::Task() {
@@ -217,6 +219,7 @@ void Door_t::Task() {
 void Door_t::EvtJustClosed(void) {
     ESnd.EvtPlayEnd = 0;
     Leds.Led[0].Solid(Settings.ColorDoorClosed);
+    Leds.Led[2].Solid(Settings.ColorDoorClosed);
     Door.LasersOn();
     Door.State = dsClosed;
     klPrintf("Door is closed\r");
@@ -225,6 +228,7 @@ void Door_t::EvtJustOpened(void) {
     ESnd.EvtPlayEnd = 0;
     Door.State = dsOpened;
     Leds.Led[0].Solid(Settings.ColorDoorOpen);
+    Leds.Led[2].Solid(Settings.ColorDoorOpen);
     Door.LasersOff();
     klPrintf("Door is opened\r");
 }

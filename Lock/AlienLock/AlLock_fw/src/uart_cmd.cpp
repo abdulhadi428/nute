@@ -7,7 +7,6 @@
 
 #include "uart_cmd.h"
 #include "stm32f10x_rcc.h"
-#include "kl_gpio.h"
 #include "delay_util.h"
 
 CmdUnit_t CmdUnit;
@@ -30,12 +29,20 @@ void CmdUnit_t::Init(void) {
     USART_Init(USART2, &USART_InitStructure);
     // Enable USART
     USART_Cmd(USART2, ENABLE);
+    // ==== Coils ====
+    klGpio::SetupByMsk(GPIOB, (GPIO_Pin_8 | GPIO_Pin_9), GPIO_Mode_AF_PP);
+    CoilA.Init(TIM4, 7, TIM_FREQ_MAX, 3, TIM_OCPolarity_High);
+    CoilA.Set(4);
+    CoilB.Init(TIM4, 7, TIM_FREQ_MAX, 4, TIM_OCPolarity_High);
+    CoilB.Set(4);
 }
 
 void CmdUnit_t::Task() {
     if (Delay.Elapsed(&ITimer, 99)) {
         //if (ReadyToWrite()) {
-            WriteByte(0xAA);
+            //WriteByte(0xAA);
+
         //}
     }
 }
+

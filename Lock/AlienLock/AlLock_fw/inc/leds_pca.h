@@ -43,7 +43,7 @@ struct LedsPkt_t {
 } __attribute__ ((packed));
 #define LEDS_PKT_SIZE   sizeof(LedsPkt_t)
 
-#define LED_COUNT   2
+#define LED_COUNT   5
 class Leds_t {
 private:
     LedsPkt_t IPkt;

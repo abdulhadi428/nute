@@ -6,7 +6,7 @@
  */
 
 #include "keys.h"
-#include "kl_gpio.h"
+#include "kl_lib.h"
 
 Keys_t Keys;
 const uint16_t KeybOuts[2][3] = { {GPIO_Pin_1, GPIO_Pin_2, GPIO_Pin_10}, {GPIO_Pin_3, GPIO_Pin_4, GPIO_Pin_5} };

@@ -17,6 +17,9 @@ void Leds_t::Init() {
     // Map LED colors to PWM
     Led[0].PWM = (Color_t*)(&IPkt.PWM[0]);
     Led[1].PWM = (Color_t*)(&IPkt.PWM[3]);
+    Led[2].PWM = (Color_t*)(&IPkt.PWM[6]);
+    Led[3].PWM = (Color_t*)(&IPkt.PWM[9]);
+    Led[4].PWM = (Color_t*)(&IPkt.PWM[12]);
     // Setup i2cCmd
     i2cCmd.Address = LED_I2C_ADDR;
     i2cCmd.DataToRead.Length = 0;   // Nothing to read

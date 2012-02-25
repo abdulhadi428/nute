@@ -9,14 +9,15 @@
 #define UART_CMD_H_
 
 #include "stm32f10x_usart.h"
+#include "kl_lib.h"
 
 class CmdUnit_t {
 private:
     uint32_t ITimer;
+    klPwmChannel_t CoilA, CoilB;
     void WriteByte(uint8_t AByte) { USART2->DR = AByte; }
     bool ReadyToWrite(void) { return (USART2->SR & USART_FLAG_TXE); }
 public:
-    CmdUnit_t(void) { Init(); }
     void Init(void);
     void Task(void);
 };
