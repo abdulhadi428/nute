@@ -12,17 +12,21 @@
 #include "kl_lib.h"
 
 
-#define UART_BUF_SIZE    144
+#define UART_BUF_SIZE    63
 
 #define FIELD_GENERATOR_TIMEOUT 18000
+
+enum CmdState_t {csNone, csInProgress, csReady};
 
 class CmdUnit_t {
 private:
     uint32_t ITimer;
     uint8_t TXBuf[UART_BUF_SIZE], WCounter, RCounter;
     klPwmChannel_t CoilA, CoilB;
-    void WriteByte(uint8_t AByte) { USART2->DR = AByte; }
-    bool ReadyToWrite(void) { return (USART2->SR & USART_FLAG_TXE); }
+    // Cmd
+    CmdState_t CmdState;
+    uint8_t RXBuf[UART_BUF_SIZE], RXCounter;
+    void CmdReset(void) { RXCounter = 0; CmdState = csNone; }
     // Buffer
     void BufWrite(uint8_t AByte) {
         TXBuf[WCounter++] = AByte;
@@ -34,14 +38,9 @@ private:
         return IByte;
     }
     bool BufIsEmpty(void) { return (RCounter == WCounter); }
-    // Commands
-    char ICmd;
-    bool NewCmd;
     // Printf
     void PrintUint(uint32_t ANumber);
-    void PrintString (const char *S) {
-        while (*S != '\0') BufWrite (*S++);
-    }
+    void PrintString (const char *S) { while (*S != '\0') BufWrite (*S++); }
     void Print2Buf(const char *S, ...);
 public:
     void Init(void);

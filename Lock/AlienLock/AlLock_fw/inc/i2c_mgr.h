@@ -49,12 +49,12 @@ struct Buf8_t {
     uint8_t CurrentItem;
 } __attribute__ ((packed));
 
-enum CmdState_t {CmdPending, CmdWritingAddrTX, CmdWritingAddrRX, CmdWritingOne, CmdWritingMany, CmdReadingOne, CmdReadingMany, CmdSucceded, CmdFailed};
+enum i2cCmdState_t {CmdPending, CmdWritingAddrTX, CmdWritingAddrRX, CmdWritingOne, CmdWritingMany, CmdReadingOne, CmdReadingMany, CmdSucceded, CmdFailed};
 
 struct I2C_Cmd_t {
     Buf8_t DataToWrite, DataToRead;     // Buffers of data to read or write
     uint8_t Address;                    // Device address
-    CmdState_t State;
+    i2cCmdState_t State;
     ftVoid_Void Callback;
 };
 

@@ -30,7 +30,8 @@ struct Settings_t {
     char SndClose[FNAME_LNG_MAX], SndKeyCrash[FNAME_LNG_MAX];
     // Codes
     char CodeA[CODE_LNG_MAX+1], CodeB[CODE_LNG_MAX+1], ServiceCode[CODE_LNG_MAX+1]; // Because of trailing \0
-    int8_t CodeALength, CodeBLength, ServiceCodeLength;     // Length of 0 means empty, negative length means crash
+    int8_t CodeALength, CodeBLength;     // Length of 0 means empty, negative length means crash
+    char Complexity[4];
     // Colors
     Color_t ColorDoorOpen, ColorDoorOpening, ColorDoorClosed, ColorDoorClosing;
     uint32_t BlinkDelay;
@@ -131,43 +132,128 @@ void GeneralInit(void) {
     ESnd.Play("alive.wav");
 }
 
+bool Settings_t::Read(void) {
+    // Sound names
+    if(!ReadString("Sound", "KeyBeep",   "lock.ini", Settings.SndKeyBeep,   FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "KeyDrop",   "lock.ini", Settings.SndKeyDrop,   FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "KeyCrash",  "lock.ini", Settings.SndKeyCrash,  FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "PassError", "lock.ini", Settings.SndPassError, FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "Open",      "lock.ini", Settings.SndOpen,      FNAME_LNG_MAX)) return false;
+    if(!ReadString("Sound", "Close",     "lock.ini", Settings.SndClose,     FNAME_LNG_MAX)) return false;
+
+    // ======= Codes =======
+    // If length == 0 then code is empty. If code is negative (-1 for examle) then side is crashed
+    // === Code A ===
+    if(!ReadString("Code", "CodeA", "lock.ini", Settings.CodeA, CODE_LNG_MAX)) return false;
+    Settings.CodeALength = strlen(Settings.CodeA);
+    if (Settings.CodeALength != 0) {
+        if (Settings.CodeA[0] == 'N') Settings.CodeALength = 0;     // Check if None
+        if (Settings.CodeA[0] == '-') Settings.CodeALength = -1;    // Check if crashed
+    }
+
+    // === Code B ===
+    if(!ReadString("Code", "CodeB", "lock.ini", Settings.CodeB, CODE_LNG_MAX)) return false;
+    Settings.CodeBLength = strlen(Settings.CodeB);
+    if (Settings.CodeBLength !=0) {
+        if (Settings.CodeB[0] == 'N') Settings.CodeBLength = 0;     // Check if None
+        if (Settings.CodeB[0] == '-') Settings.CodeBLength = -1;    // Check if crashed
+    }
+
+    // === Service code ===
+    if(!ReadString("Code", "ServiceCode", "lock.ini", Settings.ServiceCode, CODE_LNG_MAX)) return false;
+
+    // Complexity
+    if(!ReadString("Code", "Complexity", "lock.ini", Settings.Complexity, 3)) return false;
+
+    // Colors
+    if(!ReadColor("Colors", "DoorOpen", "lock.ini", &Settings.ColorDoorOpen)) return false;
+    if(!ReadColor("Colors", "DoorOpening", "lock.ini", &Settings.ColorDoorOpening)) return false;
+    if(!ReadColor("Colors", "DoorClosed", "lock.ini", &Settings.ColorDoorClosed)) return false;
+    if(!ReadColor("Colors", "DoorClosing", "lock.ini", &Settings.ColorDoorClosing)) return false;
+    if(!ReadUint32("Colors", "BlinkDelay", "lock.ini", &Settings.BlinkDelay)) return false;
+
+    // Timings
+    if(!ReadUint32("Timings", "DoorCloseDelay", "lock.ini", &Settings.DoorCloseDelay)) return false;
+    if(!ReadUint32("Timings", "KeyDropDelay", "lock.ini", &Settings.KeyDropDelay)) return false;
+
+    return true;
+}
+
+
 // ========================== Commands handling ================================
 void CmdUnit_t::Task() {
-    if (!NewCmd) return;
-    // Switch field generator on
-    CoilA.Enable();
-    CoilB.Enable();
-    Delay.Reset(&ITimer);
+    static bool FieldIsOn = false;
+    if (CmdState == csReady) {
+        // Switch field generator on
+        CoilA.Enable();
+        CoilB.Enable();
+        Delay.Reset(&ITimer);
+        FieldIsOn = true;
 
-    // Handle cmd
-    if (ICmd == 'S') {    // Get state
-        Print2Buf("S:655105,1234,4321,2000;");
-    }
-    else if (ICmd == 'O') {    // Open door
-        if (Door.State == dsClosed) Door.Open();
-        Print2Buf("O;");
-    }
-    else if (ICmd == 'C') {    // Close door
-        if (Door.State == dsOpened) Door.Close();
-        Print2Buf("C;");
-    }
-    else if (ICmd == 'A') {    // Replace codeA
-        //Settings.CodeA
-        Print2Buf("A;");
-    }
-    else if (ICmd == 'B') {    // Replace codeB, not implemented
-        Print2Buf("B;");
-    }
-    else if (ICmd == 'V') {    // Replace service code, not implemented
-        Print2Buf("V;");
-    }
-    NewCmd = false;
+        // ==== Handle cmd ====
+        // Get state
+        if (RXBuf[0] == 'S') {    // Get state: "service code","CodeA","CodeB", "Complexity"
+            Print2Buf("S:%S,%S,%S,%S\r", Settings.ServiceCode, Settings.CodeA, Settings.CodeB, Settings.Complexity);
+        }
+
+        // Open door
+        else if (RXBuf[0] == 'O') {
+            if (Door.State == dsClosed) Door.Open();
+            Print2Buf("O\r");
+        }
+        // Close door
+        else if (RXBuf[0] == 'C') {
+            if (Door.State == dsOpened) Door.Close();
+            Print2Buf("C\r");
+        }
+
+        // Replace codeA
+        else if (RXBuf[0] == 'A') {
+            if (RXBuf[1] == ':') {
+                if ((RXBuf[2] == 0) || (RXBuf[2] == 'N')) { // Check if empty or None
+                    Settings.CodeA[0] = 0;
+                    Settings.CodeALength = 0;
+                }
+                else {
+                    strncpy(Settings.CodeA, (char*)&RXBuf[2], 4);
+                    if (RXBuf[2] == '-') Settings.CodeALength = -1;
+                    else Settings.CodeALength = strlen(Settings.CodeA);
+                }
+                Print2Buf("A\r");
+            }
+        }
+
+        // Replace codeB
+        else if (RXBuf[0] == 'B') {
+            if (RXBuf[1] == ':') {
+                if ((RXBuf[2] == 0) || (RXBuf[2] == 'N')) { // Check if empty or None
+                    Settings.CodeB[0] = 0;
+                    Settings.CodeBLength = 0;
+                }
+                else {
+                    strncpy(Settings.CodeB, (char*)&RXBuf[2], 4);
+                    if (RXBuf[2] == '-') Settings.CodeBLength = -1;
+                    else Settings.CodeBLength = strlen(Settings.CodeB);
+                }
+                Print2Buf("B\r");
+            }
+        }
+
+        // Replace service code
+        else if (RXBuf[0] == 'V') {
+            if (RXBuf[1] == ':') {
+                strncpy(Settings.ServiceCode, (char*)&RXBuf[2], 6);
+                Print2Buf("V\r");
+            }
+        }
+        CmdReset();
+    } // if ready
 
     // Check if shutdown field generator
-    if (Delay.Elapsed(&ITimer, FIELD_GENERATOR_TIMEOUT)) {
+    if (FieldIsOn) if (Delay.Elapsed(&ITimer, FIELD_GENERATOR_TIMEOUT)) {
         CoilA.Disable();
         CoilB.Disable();
-//        BufWrite('f');
+        FieldIsOn = false;
     }
 }
 
@@ -192,44 +278,6 @@ void Codecheck_t::Task(void) {
     } // switch
 }
 
-bool Settings_t::Read(void) {
-    // Sound names
-    if(!ReadString("Sound", "KeyBeep",   "lock.ini", Settings.SndKeyBeep,   FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "KeyDrop",   "lock.ini", Settings.SndKeyDrop,   FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "KeyCrash",  "lock.ini", Settings.SndKeyCrash,  FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "PassError", "lock.ini", Settings.SndPassError, FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "Open",      "lock.ini", Settings.SndOpen,      FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "Close",     "lock.ini", Settings.SndClose,     FNAME_LNG_MAX)) return false;
-
-    // ======= Codes =======
-    // If length == 0 then code is empty. If code is negative (-1 for examle) then side is crashed
-    // === Code A ===
-    if(!ReadString("Code", "CodeA", "lock.ini", Settings.CodeA, CODE_LNG_MAX)) return false;
-    Settings.CodeALength = strlen(Settings.CodeA);
-    // Check if crashed
-    if (Settings.CodeALength !=0) if (Settings.CodeA[0] == '-') Settings.CodeALength = -1;
-    // === Code B ===
-    if(!ReadString("Code", "CodeB", "lock.ini", Settings.CodeB, CODE_LNG_MAX)) return false;
-    Settings.CodeBLength = strlen(Settings.CodeB);
-    // Check if crashed
-    if (Settings.CodeBLength !=0) if (Settings.CodeB[0] == '-') Settings.CodeBLength = -1;
-    // === Service code ===
-    if(!ReadString("Code", "ServiceCode", "lock.ini", Settings.ServiceCode, CODE_LNG_MAX)) return false;
-    Settings.ServiceCodeLength = strlen(Settings.ServiceCode);
-
-    // Colors
-    if(!ReadColor("Colors", "DoorOpen", "lock.ini", &Settings.ColorDoorOpen)) return false;
-    if(!ReadColor("Colors", "DoorOpening", "lock.ini", &Settings.ColorDoorOpening)) return false;
-    if(!ReadColor("Colors", "DoorClosed", "lock.ini", &Settings.ColorDoorClosed)) return false;
-    if(!ReadColor("Colors", "DoorClosing", "lock.ini", &Settings.ColorDoorClosing)) return false;
-    if(!ReadUint32("Colors", "BlinkDelay", "lock.ini", &Settings.BlinkDelay)) return false;
-
-    // Timings
-    if(!ReadUint32("Timings", "DoorCloseDelay", "lock.ini", &Settings.DoorCloseDelay)) return false;
-    if(!ReadUint32("Timings", "KeyDropDelay", "lock.ini", &Settings.KeyDropDelay)) return false;
-
-    return true;
-}
 
 // ================================== Door =====================================
 void Door_t::Open(void) {

@@ -93,16 +93,33 @@ void CmdUnit_t::Print2Buf(const char *S, ...) {
         S++;
     } // while
     va_end(Arg);
-
-
     USART_ITConfig(USART2, USART_IT_TXE, ENABLE);
 }
 
 // ==== IRQ ====
 void CmdUnit_t::IRQHandler() {
     if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) {
-        ICmd = USART_ReceiveData(USART2);
-        NewCmd = true;
+        uint8_t b = USART_ReceiveData(USART2);
+        switch (CmdState) {
+            case csNone:
+                RXBuf[RXCounter++] = b;
+                CmdState = csInProgress;
+                break;
+            case csInProgress:
+                // Check if end of cmd
+                if (b == '\r') {
+                    CmdState = csReady;
+                    RXBuf[RXCounter] = 0;
+                }
+                else {
+                    RXBuf[RXCounter++] = b;
+                    // Check if too long
+                    if (RXCounter == UART_BUF_SIZE) CmdReset();
+                }
+                break;
+            case csReady:   // New byte received, but command still not handled
+                break;
+        } // switch
     } // if rx
 
     if(USART_GetITStatus(USART2, USART_IT_TXE) != RESET) {
