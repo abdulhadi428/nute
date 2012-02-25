@@ -131,6 +131,46 @@ void GeneralInit(void) {
     ESnd.Play("alive.wav");
 }
 
+// ========================== Commands handling ================================
+void CmdUnit_t::Task() {
+    if (!NewCmd) return;
+    // Switch field generator on
+    CoilA.Enable();
+    CoilB.Enable();
+    Delay.Reset(&ITimer);
+
+    // Handle cmd
+    if (ICmd == 'S') {    // Get state
+        Print2Buf("S:655105,1234,4321,2000;");
+    }
+    else if (ICmd == 'O') {    // Open door
+        if (Door.State == dsClosed) Door.Open();
+        Print2Buf("O;");
+    }
+    else if (ICmd == 'C') {    // Close door
+        if (Door.State == dsOpened) Door.Close();
+        Print2Buf("C;");
+    }
+    else if (ICmd == 'A') {    // Replace codeA
+        //Settings.CodeA
+        Print2Buf("A;");
+    }
+    else if (ICmd == 'B') {    // Replace codeB, not implemented
+        Print2Buf("B;");
+    }
+    else if (ICmd == 'V') {    // Replace service code, not implemented
+        Print2Buf("V;");
+    }
+    NewCmd = false;
+
+    // Check if shutdown field generator
+    if (Delay.Elapsed(&ITimer, FIELD_GENERATOR_TIMEOUT)) {
+        CoilA.Disable();
+        CoilB.Disable();
+//        BufWrite('f');
+    }
+}
+
 // ============================ Codecheck ======================================
 void Codecheck_t::Task(void) {
     if (ESnd.State == sndPlaying) return;
@@ -263,7 +303,7 @@ void Battery_t::Task() {
 }
 
 
-// ================================== Events ===================================
+// ================================== Keyboard =================================
 void KeyHandler(uint8_t RKey, int8_t RCodeLength, char *RCode) {
     // Check if crash
     if (RCodeLength < 0) {
