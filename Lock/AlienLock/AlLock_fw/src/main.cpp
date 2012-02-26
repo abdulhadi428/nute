@@ -48,7 +48,7 @@ struct Codecheck_t {
     uint8_t EnteredLength;
     EntrResult_t EnterResult;
     void Task(void);
-    void Reset(void) { EnteredLength=0; EnterResult=entNA; }
+    void Reset(void) { EnteredLength=0; EnterResult=entNA; memset(EnteredCode, 0, CODE_LNG_MAX); }
 } Codecheck;
 
 enum DoorState_t {dsClosed, dsOpened, dsOpening, dsClosing};
@@ -127,7 +127,8 @@ void GeneralInit(void) {
     if (!Settings.Read()) while(1);    // nothing to do if config not read
 
     Door.Init();    // Door is closed during Init
-    klPrintf("Lock is on\r");
+    //klPrintf("Lock is on\r");
+    CmdUnit.Print2Buf("Lock is on\r");
     // Play initial sound
     ESnd.Play("alive.wav");
 }
@@ -365,9 +366,6 @@ void KeyHandler(uint8_t RKey, int8_t RCodeLength, char *RCode) {
             if(Codecheck.EnteredLength < RCodeLength) {        // Digit entered is number 0...3
                 Codecheck.EnteredCode[Codecheck.EnteredLength++] = '0' + RKey;
                 Delay.Reset(&Codecheck.Timer);
-            }
-            else {  // Digit entered fifth time, this is error
-                Codecheck.EnterResult = entError;
             }
         }// if (RCodeLength > 0)
     }

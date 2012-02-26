@@ -41,8 +41,8 @@ private:
     // Printf
     void PrintUint(uint32_t ANumber);
     void PrintString (const char *S) { while (*S != '\0') BufWrite (*S++); }
-    void Print2Buf(const char *S, ...);
 public:
+    void Print2Buf(const char *S, ...);
     void Init(void);
     void Task(void);
     // IRQ
