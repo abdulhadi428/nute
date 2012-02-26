@@ -64,15 +64,16 @@
             this.btnRescan = new System.Windows.Forms.Button();
             this.cbPorts = new System.Windows.Forms.ComboBox();
             this.gbPassSearch = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
             this.tbStartValue = new System.Windows.Forms.TextBox();
             this.btnStop = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.timerU = new System.Windows.Forms.Timer(this.components);
             this.timerIteration = new System.Windows.Forms.Timer(this.components);
             this.BruteForcer = new System.ComponentModel.BackgroundWorker();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -120,7 +121,6 @@
             // 
             this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.panel2);
-            this.panel1.Controls.Add(this.progressBar1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -131,9 +131,9 @@
             // 
             this.groupBox3.Controls.Add(this.dgvTable);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(302, 0);
+            this.groupBox3.Location = new System.Drawing.Point(301, 0);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(307, 311);
+            this.groupBox3.Size = new System.Drawing.Size(308, 311);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Analyzer";
@@ -162,7 +162,7 @@
             this.dgvTable.RowHeadersVisible = false;
             this.dgvTable.RowTemplate.Height = 27;
             this.dgvTable.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.dgvTable.Size = new System.Drawing.Size(301, 292);
+            this.dgvTable.Size = new System.Drawing.Size(302, 292);
             this.dgvTable.TabIndex = 2;
             // 
             // cl
@@ -253,7 +253,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(302, 311);
+            this.panel2.Size = new System.Drawing.Size(301, 311);
             this.panel2.TabIndex = 5;
             // 
             // groupBox4
@@ -424,6 +424,8 @@
             // 
             // gbPassSearch
             // 
+            this.gbPassSearch.Controls.Add(this.button1);
+            this.gbPassSearch.Controls.Add(this.progressBar1);
             this.gbPassSearch.Controls.Add(this.trackBar1);
             this.gbPassSearch.Controls.Add(this.label1);
             this.gbPassSearch.Controls.Add(this.tbStartValue);
@@ -435,6 +437,26 @@
             this.gbPassSearch.TabIndex = 4;
             this.gbPassSearch.TabStop = false;
             this.gbPassSearch.Text = "Brute force";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(181, 60);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 20;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(9, 68);
+            this.progressBar1.Maximum = 18;
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(154, 15);
+            this.progressBar1.Step = 1;
+            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar1.TabIndex = 7;
             // 
             // trackBar1
             // 
@@ -488,19 +510,6 @@
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
-            // progressBar1
-            // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 298);
-            this.progressBar1.Maximum = 4096;
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(262, 23);
-            this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBar1.TabIndex = 2;
-            // 
-            // timerU
-            // 
-            this.timerU.Tick += new System.EventHandler(this.timerU_Tick);
-            // 
             // timerIteration
             // 
             this.timerIteration.Tick += new System.EventHandler(this.timerIteration_Tick);
@@ -512,6 +521,11 @@
             this.BruteForcer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BruteForcer_DoWork);
             this.BruteForcer.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BruteForcer_ProgressChanged);
             this.BruteForcer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BruteForcer_RunWorkerCompleted);
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 200;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // MainForm
             // 
@@ -548,8 +562,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox Console;
         private System.IO.Ports.SerialPort serialPort1;
-        private System.Windows.Forms.Timer timerU;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -587,6 +599,9 @@
         private System.Windows.Forms.Timer timerIteration;
         private System.Windows.Forms.Label lblIterationCounter;
         private System.ComponentModel.BackgroundWorker BruteForcer;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button button1;
 
     }
 }

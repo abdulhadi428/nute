@@ -8,6 +8,9 @@
 #ifndef _TIME_UTILS_H
 #define	_TIME_UTILS_H
 
+//#include <inttypes.h>
+//#include <stdbool.h>
+//#include
 #include "stm32f10x.h"
 
 class Delay_t {
@@ -15,9 +18,8 @@ public:
     uint32_t TickCounter;
     void Init(void);
     // Simple loop-based delays, no init needed
-    void Loop (volatile uint32_t ACounter) { for (; ACounter != 0; ACounter--); }
+    void Loop (volatile uint32_t ACounter);
     void ms (uint32_t Ams);
-    void us (uint32_t Aus);
     // Interrupt-driven delays
     bool Elapsed(uint32_t *AVar, const uint32_t ADelay);
     void Reset  (uint32_t *AVar) { *AVar = TickCounter; }

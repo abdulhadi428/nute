@@ -197,6 +197,9 @@ void CmdUnit_t::Task() {
             Print2Buf("S:%S,%S,%S,%S\r", Settings.ServiceCode, Settings.CodeA, Settings.CodeB, Settings.Complexity);
         }
 
+        // Kick
+        if (RXBuf[0] == 'K') Print2Buf("K\r");
+
         // Open door
         else if (RXBuf[0] == 'O') {
             if (Door.State == dsClosed) Door.Open();

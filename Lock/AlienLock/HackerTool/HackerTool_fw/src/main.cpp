@@ -8,11 +8,15 @@
 #include "stm32f10x.h"
 #include "delay_util.h"
 #include "kl_util.h"
+#include "kl_lib.h"
 #include "main.h"
 #include "led.h"
 #include "adc.h"
 
 UartBuf_t Buf;
+CmdRx_t CmdRx;
+// Side detection pin
+klPin_t PinSide;
 
 int main(void) {
     GeneralInit();
@@ -21,6 +25,7 @@ int main(void) {
         Led1.Task();
         Led2.Task();
         Buf.Task();
+        CmdRx.Task();
     } // while 1
 }
 
@@ -32,13 +37,14 @@ void GeneralInit(void) {
     KLUartInit();
     Adc.Init();
     Buf.Init();
+    PinSide.Init(GPIOA, 4, GPIO_Mode_IPU);
 
     Led1.Init(GPIOB, GPIO_Pin_10);
     Led2.Init(GPIOB, GPIO_Pin_11);
     Led1.Blink();
     Led2.Blink();
 
-    klPrintf("\rHacker Tool v.0.1\r");
+    klPrintf("\rHacker Tool v.0.21\r");
 }
 
 
@@ -47,51 +53,7 @@ void USART1_IRQHandler(void) {
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
         // Read one byte from the receive data register
         uint16_t b = USART_ReceiveData(USART1);
-        // Tool commands
-        if (b == 'P') {
-            klPrintf("HackerTool v0.2;");
-            Led1.Blink();
-        }
-        else if (b == 'U') {
-            klPrintf("U:%u;", Adc.Measure());
-            Led1.Blink();
-        }
-        else if (b == 'N') {    // NOP: indicate some transmission
-            klPrintf("N;");
-            Led2.Blink();
-        }
-
-        // Lock emulator
-        else if (b == 'S') {    // Get state
-            klPrintf("S:655105,1234,4321,2000;");
-            Led2.Blink();
-        }
-        else if (b == 'O') {    // Open door
-            klPrintf("O;");
-            Led2.Blink();
-        }
-        else if (b == 'C') {    // Close door
-            klPrintf("C;");
-            Led2.Blink();
-        }
-        else if (b == 'A') {    // Replace codeA, not implemented
-            klPrintf("A;");
-            Led2.Blink();
-        }
-        else if (b == 'B') {    // Replace codeB, not implemented
-            klPrintf("B;");
-            Led2.Blink();
-        }
-        else if (b == 'V') {    // Replace service code, not implemented
-            klPrintf("V;");
-            Led2.Blink();
-        }
-
-        // Redirect byte to lock
-        else {
-            Led2.Blink();
-            Buf.Add(b);
-        }
+        CmdRx.NewByte(b);
     } // if rx
 }
 
@@ -99,7 +61,7 @@ void USART2_IRQHandler(void) {
     if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) {
         // Read one byte from the receive data register
         uint8_t b = USART_ReceiveData(USART2);
-        UART_Print(b);  // Send immediately
+        USART_SendData(USART1, b);  // Send immediately
     } // if rx
 }
 
@@ -156,6 +118,88 @@ void KLUartInit(void) {
     // Enable USARTs
     USART_Cmd(USART1, ENABLE);
     USART_Cmd(USART2, ENABLE);
+}
+
+// ================================= CmdRx_t ===================================
+void CmdRx_t::NewByte(uint8_t AByte) {
+    switch (CmdState) {
+        case csNone:
+            IBuf[ICounter++] = AByte;
+            CmdState = csInProgress;
+            break;
+        case csInProgress:
+            // Check if end of cmd
+            if (AByte == '\r') {
+                CmdState = csReady;
+                IBuf[ICounter] = 0;
+            }
+            else {
+                IBuf[ICounter++] = AByte;
+                // Check if too long
+                if (ICounter == CMD_SIZE) CmdReset();
+            }
+            break;
+        case csReady:   // New byte received, but command still not handled
+            break;
+    } // switch
+}
+
+void CmdRx_t::Task() {
+    if (CmdState == csReady) {
+        // ==== Tool commands ====
+        if (IBuf[0] == 'P') {
+            klPrintf("HackerTool v0.21\r");
+            Led1.Blink();
+        }
+        else if (IBuf[0] == 'U') {
+            klPrintf("U:%u\r", Adc.Measure());
+            Led1.Blink();
+        }
+        else if (IBuf[0] == 'N') {    // NOP: indicate some transmission
+            klPrintf("N\r");
+            Led2.Blink();
+        }
+        else if (IBuf[0] == 'G') {    // Get connected side
+            if (PinSide == 1) klPrintf("G:A\r");    // Side A connected
+            else klPrintf("G:B\r");                 // Side B connected
+        }
+
+        // ==== Lock emulator ====
+        /*
+        else if (b == 'S') {    // Get state
+            klPrintf("S:123456,1234,,3\r");
+            Led2.Blink();
+        }
+        else if (b == 'O') {    // Open door
+            klPrintf("O\r");
+            Led2.Blink();
+        }
+        else if (b == 'C') {    // Close door
+            klPrintf("C\r");
+            Led2.Blink();
+        }
+        else if (b == 'A') {    // Replace codeA, not implemented
+            klPrintf("A\r");
+            Led2.Blink();
+        }
+        else if (b == 'B') {    // Replace codeB, not implemented
+            klPrintf("B\r");
+            Led2.Blink();
+        }
+        else if (b == 'V') {    // Replace service code, not implemented
+            klPrintf("V\r");
+            Led2.Blink();
+        }
+        // */
+
+        // Redirect command to lock
+        else {
+            Led2.Blink();
+            Buf.Add(IBuf, ICounter);
+            Buf.Add('\r');
+        }
+        CmdReset();
+    } // is ready
 }
 
 // ================================= UartBuf_t =================================

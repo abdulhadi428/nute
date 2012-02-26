@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 23/01/2012 22:43:54
+EESchema Schematic File Version 2  date 25/02/2012 22:54:38
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -15,7 +15,7 @@ $Descr A2 23400 16535
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "23 jan 2012"
+Date "25 feb 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -23,6 +23,8 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Text Notes 21400 12550 0    60   ~ 0
+Connect pin #9 \nof Side B with GND
 $Comp
 L R R?
 U 1 1 4F1DAA68
