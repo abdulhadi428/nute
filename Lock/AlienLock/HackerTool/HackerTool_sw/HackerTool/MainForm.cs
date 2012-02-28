@@ -26,12 +26,12 @@ namespace HackerTool {
         #region ============================= Init / deinit ============================
         public MainForm() {
             InitializeComponent();
-            Console.Clear();
+            txtConsole.Clear();
             HTool = new HTool_t();
             Lock = new Lock_t();
             Lock.Tool = HTool;
             HTool.ComPort = serialPort1;
-            HTool.IConsole = Console;
+            HTool.IConsole = txtConsole;
             FillMenu();
             // Iteration components
             // Setup Grid
@@ -43,6 +43,9 @@ namespace HackerTool {
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+            // Stop iterations 
+            if (BruteForcer.IsBusy) BruteForcer.CancelAsync();
+            
             try {
                 HTool.ComPort.Close();
                 HTool.ComPort = null;
@@ -54,6 +57,9 @@ namespace HackerTool {
             HTool.IsConnected = false;
         }
 
+        private void MainForm_Paint(object sender, PaintEventArgs e) {
+            dgvTable.ClearSelection();
+        }
         #endregion
 
         private void tbStartValue_TextChanged(object sender, EventArgs e) {
@@ -65,57 +71,57 @@ namespace HackerTool {
 
         #region ========================= Buttons =========================
         private void btnRescan_Click(object sender, EventArgs e) {
-            Console.AppendText("Scanning system for available ports..." + Environment.NewLine);
+            txtConsole.AppendText("Scanning system for available ports..." + Environment.NewLine);
             HTool.IsConnected = false;
             Lock.State = LockState_t.Disconnected;
-            Console.ReadOnly = true;
+            txtConsole.ReadOnly = true;
             cbPorts.Items.Clear();
             serialPort1.Close();
             string[] SPorts = System.IO.Ports.SerialPort.GetPortNames();
             int NPorts = SPorts.Length;
             if (NPorts == 0) {
-                Console.AppendText("Ports not found, mate. No ports - no business.");
+                txtConsole.AppendText("Ports not found, mate. No ports - no business.");
                 return;
             }
             else {
                 cbPorts.Items.AddRange(SPorts);
                 cbPorts.SelectedIndex = 0;
-                for(int i=0; i<NPorts; i++) Console.AppendText(SPorts[i] + Environment.NewLine);
-                Console.AppendText("Ports found: " + NPorts.ToString() + Environment.NewLine);
+                for(int i=0; i<NPorts; i++) txtConsole.AppendText(SPorts[i] + Environment.NewLine);
+                txtConsole.AppendText("Ports found: " + NPorts.ToString() + Environment.NewLine);
             }
         }
 
         private void btnConnect_Click(object sender, EventArgs e) {
             Lock.State = LockState_t.Disconnected;
-            Console.ReadOnly = true;
+            txtConsole.ReadOnly = true;
 
             if ((cbPorts.Items.Count == 0) || (cbPorts.SelectedItem.ToString() == "")) {
-                Console.AppendText("Port not selected, afraid to connect to nowhere" + Environment.NewLine);
+                txtConsole.AppendText("Port not selected, afraid to connect to nowhere" + Environment.NewLine);
                 return;
             }
             // Try to connect
-            Console.AppendText("Trying to connect to " + cbPorts.SelectedItem.ToString() + Environment.NewLine);
+            txtConsole.AppendText("Trying to connect to " + cbPorts.SelectedItem.ToString() + Environment.NewLine);
             serialPort1.Close();
             serialPort1.PortName = cbPorts.SelectedItem.ToString();
             try {
                 serialPort1.Open();
                 // Try to ping device
                 if (HTool.Ping()) { // Device found
-                    Console.AppendText("Tool is found and connected." + Environment.NewLine);
+                    txtConsole.AppendText("Tool is found and connected." + Environment.NewLine);
                     HTool.IsConnected = true;
-                    Console.AppendText("Trying to connect to lock" + Environment.NewLine + "Connect" + Environment.NewLine);
+                    txtConsole.AppendText("Trying to connect to lock" + Environment.NewLine + "Connect" + Environment.NewLine);
                     TryToConnectLock();
-                    Console.ReadOnly = false;
+                    txtConsole.ReadOnly = false;
                     return; // All right, nothing to do here
                 }
                 else {
                     HTool.IsConnected = false;
                     serialPort1.Close();
-                    Console.AppendText("Silence answers our cries. Tool not found." + Environment.NewLine);
+                    txtConsole.AppendText("Silence answers our cries. Tool not found." + Environment.NewLine);
                 }
             }   //try
             catch (System.Exception ex) {
-                Console.AppendText(ex.Message + Environment.NewLine);
+                txtConsole.AppendText(ex.Message + Environment.NewLine);
                 serialPort1.Close();
             }
         }
@@ -126,17 +132,18 @@ namespace HackerTool {
             UInt32 dummy;
             if (!UInt32.TryParse(tbStartValue.Text, out dummy)) return;
             // Display start info
-            Console.AppendText("Password search started" + Environment.NewLine);
+            txtConsole.AppendText("Password search started" + Environment.NewLine);
             BruteForcer.RunWorkerAsync();
         }
         private void btnStop_Click(object sender, EventArgs e) {
             BruteForcer.CancelAsync();
+            txtConsole.AppendText("Pass search eagerly cancelled." + Environment.NewLine);
         }
 
         private void btnIterate_Click(object sender, EventArgs e) {
             if (timerIteration.Enabled) return;     // do not start second time
             if (Lock.State == LockState_t.Disconnected) {
-                Console.AppendText("Lock is not connected" + Environment.NewLine);
+                txtConsole.AppendText("Lock is not connected" + Environment.NewLine);
                 return;
             }
             // Get current pair
@@ -147,12 +154,12 @@ namespace HackerTool {
             int.TryParse(S.Substring(0, 1), out CurrentY);
             int.TryParse(S.Substring(1, 1), out CurrentX);
             // Start iteration
-            Console.AppendText("Iteration started" + Environment.NewLine);
+            txtConsole.AppendText("Iteration started" + Environment.NewLine);
             timerIteration.Enabled = true;
         }
         private void btnStopIteration_Click(object sender, EventArgs e) {
             timerIteration.Enabled = false;
-            Console.AppendText("Iteration stopped." + Environment.NewLine);
+            txtConsole.AppendText("Iteration stopped." + Environment.NewLine);
         }
         private void btnReset_Click(object sender, EventArgs e) {
             IterationCount = 0;
@@ -184,24 +191,31 @@ namespace HackerTool {
             if (Lock.GetState()) {
                 // Check if side is crashed
                 if (Lock.SideIsCrashed()) {
-                    Console.AppendText("> ");
+                    txtConsole.AppendText("> ");
                     // Produce string of chaos
                     int N = RndValue.Next(54, 180);
                     for (int i = 0; i < N; i++) {
                         char c = Convert.ToChar(RndValue.Next(35, 126));
                         string S = "" + c;
-                        Console.AppendText(S);
+                        txtConsole.AppendText(S);
                         if (!LockPing()) return;
                     }
-                    Console.AppendText(Environment.NewLine + "No reply" + Environment.NewLine);
+                    txtConsole.AppendText(Environment.NewLine + "No reply" + Environment.NewLine);
                     return;
                 } // if crashed
                 else {
-                    Console.AppendText("Lock connected" + Environment.NewLine + "> Enter service code:" + Environment.NewLine);
+                    txtConsole.AppendText("Lock connected" + Environment.NewLine + "> Enter service code:" + Environment.NewLine);
                     Lock.State = LockState_t.EnteringServiceCode;
                 }
             }
-            else Console.AppendText("No reply" + Environment.NewLine);
+            else txtConsole.AppendText("No reply" + Environment.NewLine);
+        }
+        private bool LockPing() {
+            if (Lock.Kick()) return true;
+            else {
+                txtConsole.AppendText("Disconnected" + Environment.NewLine);
+                return false;
+            }
         }
 
         #region ========================= Console =========================
@@ -215,17 +229,9 @@ namespace HackerTool {
             LockMenu.Add("Change service code");
         }
         private void PrintMenu() {
-            Console.AppendText("> Enter command:" + Environment.NewLine);
+            txtConsole.AppendText("> Enter command:" + Environment.NewLine);
             foreach (string SItem in LockMenu) {
-                Console.AppendText("> * " + SItem + Environment.NewLine);
-            }
-        }
-
-        private bool LockPing() {
-            if (Lock.Kick()) return true;
-            else {
-                Console.AppendText("Disconnected" + Environment.NewLine);
-                return false;
+                txtConsole.AppendText("> * " + SItem + Environment.NewLine);
             }
         }
 
@@ -234,7 +240,7 @@ namespace HackerTool {
             if (!LockPing()) return false; // blink led
             // Check if none
             if ((AInCode.Length == 0) || AInCode.Equals("None", StringComparison.OrdinalIgnoreCase)) {
-                Console.AppendText("> Empty code entered (not recommended)." + Environment.NewLine);
+                txtConsole.AppendText("> Empty code entered (not recommended)." + Environment.NewLine);
                 AOutCode = "None";
                 return true;
             }
@@ -245,7 +251,7 @@ namespace HackerTool {
                     return true;
                 }
                 else {
-                    Console.AppendText("> Bad code." + Environment.NewLine + "> Enter new code:" + Environment.NewLine);
+                    txtConsole.AppendText("> Bad code." + Environment.NewLine + "> Enter new code:" + Environment.NewLine);
                     return false;
                 }
             }
@@ -261,11 +267,11 @@ namespace HackerTool {
             else if (Lock.State == LockState_t.EnteringServiceCode) {
                 if (!LockPing()) return; // blink led
                 if (SCmd.Equals(Lock.ServiceCode)) {    // Check if code equal
-                    Console.AppendText("> Access is allowed." + Environment.NewLine);
+                    txtConsole.AppendText("> Access is allowed." + Environment.NewLine);
                     PrintMenu();
                     Lock.State = LockState_t.WaitingCommand;
                 }
-                else Console.AppendText("> Incorrect code, access denied." + Environment.NewLine + "> Enter service code:" + Environment.NewLine);
+                else txtConsole.AppendText("> Incorrect code, access denied." + Environment.NewLine + "> Enter service code:" + Environment.NewLine);
             } // if code
 
             // Handling menu
@@ -273,42 +279,42 @@ namespace HackerTool {
                 int indx = LockMenu.FindIndex(S => S.Equals(SCmd, StringComparison.OrdinalIgnoreCase)); // Get indx of entered command
                 switch (indx) {
                     case 0: // Open door
-                        if (!Lock.Open()) Console.AppendText("Disconnected" + Environment.NewLine);
+                        if (!Lock.Open()) txtConsole.AppendText("Disconnected" + Environment.NewLine);
                         else {
-                            Console.AppendText("> Door opened." + Environment.NewLine);
+                            txtConsole.AppendText("> Door opened." + Environment.NewLine);
                             PrintMenu();
                         }
                         break;
                     case 1: // Close door
-                        if (!Lock.Close()) Console.AppendText("Disconnected" + Environment.NewLine);
+                        if (!Lock.Close()) txtConsole.AppendText("Disconnected" + Environment.NewLine);
                         else {
-                            Console.AppendText("> Door closed." + Environment.NewLine);
+                            txtConsole.AppendText("> Door closed." + Environment.NewLine);
                             PrintMenu();
                         }
                         break;
                     case 2: // Display code
                         if (!LockPing()) return; // blink led
-                        Console.AppendText("> Code A: " + Lock.CodeA + Environment.NewLine + "> Code B: " + Lock.CodeB + Environment.NewLine);
+                        txtConsole.AppendText("> Code A: " + Lock.CodeA + Environment.NewLine + "> Code B: " + Lock.CodeB + Environment.NewLine);
                         PrintMenu();
                         break;
                     case 3: // Change code A
                         if (!LockPing()) return; // blink led
-                        Console.AppendText("> Enter new code A:" + Environment.NewLine);
+                        txtConsole.AppendText("> Enter new code A:" + Environment.NewLine);
                         Lock.State = LockState_t.AskingNewCodeA;
                         break;
                     case 4: // Change code B
                         if (!LockPing()) return; // blink led
-                        Console.AppendText("> Enter new code B:" + Environment.NewLine);
+                        txtConsole.AppendText("> Enter new code B:" + Environment.NewLine);
                         Lock.State = LockState_t.AskingNewCodeB;
                         break;
                     case 5: // Change service code
                         if (!LockPing()) return; // blink led
-                        Console.AppendText("> Enter new service code:" + Environment.NewLine);
+                        txtConsole.AppendText("> Enter new service code:" + Environment.NewLine);
                         Lock.State = LockState_t.AskingNewServiceCode;
                         break;
                     default:
                         if (!LockPing()) return; // blink led
-                        Console.AppendText("> Command not recognized." + Environment.NewLine);
+                        txtConsole.AppendText("> Command not found." + Environment.NewLine);
                         PrintMenu();
                         break;
                 } // switch 
@@ -319,22 +325,22 @@ namespace HackerTool {
                 if (!CheckEnteredCode(SCmd, out SCmd)) return;  // Bad code entered
                 else {                                          // SCmd contains correct code
                     if (Lock.ChangeCodeA(SCmd)) {
-                        Console.AppendText("> Code A changed." + Environment.NewLine);
+                        txtConsole.AppendText("> Code A changed." + Environment.NewLine);
                         PrintMenu();
                         Lock.State = LockState_t.WaitingCommand;
                     }
-                    else Console.AppendText("Disconnected" + Environment.NewLine);
+                    else txtConsole.AppendText("Disconnected" + Environment.NewLine);
                 }
             } // AskingNewCodeA
             else if (Lock.State == LockState_t.AskingNewCodeB) {
                 if (!CheckEnteredCode(SCmd, out SCmd)) return;  // Bad code entered
                 else {                                          // SCmd contains correct code
                     if (Lock.ChangeCodeB(SCmd)) {
-                        Console.AppendText("> Code B changed." + Environment.NewLine);
+                        txtConsole.AppendText("> Code B changed." + Environment.NewLine);
                         PrintMenu();
                         Lock.State = LockState_t.WaitingCommand;
                     }
-                    else Console.AppendText("Disconnected" + Environment.NewLine);
+                    else txtConsole.AppendText("Disconnected" + Environment.NewLine);
                 }
             } // AskingNewCodeB
 
@@ -343,20 +349,20 @@ namespace HackerTool {
                 UInt32 dummy;
                 if ((SCmd.Length == 6) && UInt32.TryParse(SCmd, out dummy)) {    // Check if code ok
                     if (Lock.ChangeServiceCode(SCmd)) {
-                        Console.AppendText("> Service code changed." + Environment.NewLine);
+                        txtConsole.AppendText("> Service code changed." + Environment.NewLine);
                         PrintMenu();
                         Lock.State = LockState_t.WaitingCommand;
                     }
-                    else Console.AppendText("Disconnected" + Environment.NewLine);
+                    else txtConsole.AppendText("Disconnected" + Environment.NewLine);
                 }
-                else if (LockPing()) Console.AppendText("> Bad code." + Environment.NewLine + "> Enter new service code:" + Environment.NewLine);
+                else if (LockPing()) txtConsole.AppendText("> Bad code." + Environment.NewLine + "> Enter new service code:" + Environment.NewLine);
             } // AskingNewServiceCode
         } // ParseCmd 
 
         private void Console_KeyUp(object sender, KeyEventArgs e) {
             if (e.KeyValue == 13) {    // Enter was pressed
                 // Get entered string
-                string S = Console.Lines[Console.Lines.Count()-2];
+                string S = txtConsole.Lines[txtConsole.Lines.Count()-2];
                 ParseCmd(S);                
             }
         }
@@ -437,46 +443,42 @@ namespace HackerTool {
                     e.Cancel = true;
                     return;
                 }
-                // Blink LED
-//                if (Lock.Nop()) {
-                    BruteForcer.ReportProgress(0);
-                    Thread.Sleep(50);
-  /*              }
-                else {  // error occured
-                    throw new Exception("Lock connection failure");
-                }
-                */
+
+                BruteForcer.ReportProgress(0);
+                Thread.Sleep(50);
+
                 ShiftArr = GetNextShift(ShiftArr);
                 if (ShiftArr == null) break;
             } // while 1
         }
 
-
-
         private void BruteForcer_ProgressChanged(object sender, ProgressChangedEventArgs e) {
-            // Display code
-            tbStartValue.Text = ICode;
-            Console.AppendText(ICode + Environment.NewLine);
+            if (BruteForcer.CancellationPending) return;
+            if (LockPing()) {
+                // Display code
+                tbStartValue.Text = ICode;
+                txtConsole.AppendText(ICode + Environment.NewLine);
+            }
+            else BruteForcer.CancelAsync();
         }
 
         private void BruteForcer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-            if (e.Error != null) Console.AppendText("Error: " + e.Error.Message + Environment.NewLine);
-            else if (e.Cancelled) Console.AppendText("Pass search eagerly cancelled." + Environment.NewLine);
-            else {
+            if (e.Error != null) txtConsole.AppendText("Error: " + e.Error.Message + Environment.NewLine);
+            else if (!e.Cancelled) {
                 // Check if password is correct
                 if (ICode.Equals(Lock.ServiceCode)) {
-                    Console.AppendText("Password found: " + ICode + Environment.NewLine);
-                    Console.AppendText("> Access is allowed." + Environment.NewLine);
+                    txtConsole.AppendText("Password found: " + ICode + Environment.NewLine);
+                    txtConsole.AppendText("> Access is allowed." + Environment.NewLine);
                     PrintMenu();
                     Lock.State = LockState_t.WaitingCommand;
                 }
-                else Console.AppendText("> Incorrect code, access denied." + Environment.NewLine + "> Enter service code:" + Environment.NewLine);
+                else txtConsole.AppendText("> Incorrect code, access denied." + Environment.NewLine + "> Enter service code:" + Environment.NewLine);
             }
         }
 
         #endregion
 
-        #region ==== Iteration ====
+        #region ========================== Iteration ===========================
         double dif(int a1, int a2) {
             int NoiseMagn = trackBar1.Value;
             if (NoiseMagn > 0) {
@@ -488,18 +490,18 @@ namespace HackerTool {
         }
 
         double p(double dist) {
-            //int NoiseMagn = trackBarNoise.Value;
+            int NoiseMagn = 4 - HTool.U; //trackBar1.Value;
             //            return (1-dist)*.1+NoiseMagn*.01;
             //return (1 - dist) / (1 + NoiseMagn);
-            return (1 - dist);
+            return (1 - dist)/(double)Lock.Complexity + NoiseMagn * .1 + .1;
         }        // Distance function: returns 0...255, 255 means equality
+       
         int Distance(int x1, int x2, int y1, int y2) {
             double difx = dif(x1, x2);
             double dify = dif(y1, y2);
             double Distn = Math.Sqrt(difx * difx + dify * dify);
-            double c2 = RndValue.NextDouble() < p(Distn / (5 * Math.Sqrt(2))) ? 1 : 0;    // Norm to 1
-            double c3 = c2 * 255;
-            return (int)Math.Round(c2);
+            int c2 = RndValue.NextDouble() < p(Distn / (5 * Math.Sqrt(2))) ? 1 : 0;    // Norm to 1
+            return c2;
         }
 
         // Fill instant table
@@ -512,6 +514,15 @@ namespace HackerTool {
         }
 
         private void timerIteration_Tick(object sender, EventArgs e) {
+            // Get U
+            if (!HTool.GetU()) {
+                txtConsole.AppendText("Measurement failure" + Environment.NewLine);
+                timerIteration.Enabled = false;
+                return;
+            }
+            //progressBar1.Value = HTool.U;
+            //textBox3.Text = HTool.U.ToString();
+
             IterationCount++;
             lblIterationCounter.Text = "Iteration: " + IterationCount.ToString();
             FillInstantTable();
@@ -535,17 +546,31 @@ namespace HackerTool {
 
         #endregion
 
-        private void timer1_Tick(object sender, EventArgs e) {
-            if (HTool.IsConnected) {
-                if (!HTool.GetU()) timer1.Enabled = false;
-                progressBar1.Value = HTool.U;
-                textBox3.Text = HTool.U.ToString();
-            }
+
+        // DEBUG controls
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e) {
+            Lock.Complexity = (int)numericUpDown1.Value;
         }
 
-        private void button1_Click(object sender, EventArgs e) {
-            timer1.Enabled = !timer1.Enabled;
+
+        #region ========= Autoreset =========
+        private void numericUpDownAutoReset_ValueChanged(object sender, EventArgs e) {
+            timerReset.Interval = (int)numericUpDownAutoReset.Value;
         }
+
+        private void cbAutoreset_CheckedChanged(object sender, EventArgs e) {
+            timerReset.Enabled = cbAutoreset.Checked;
+        }
+
+        private void timerReset_Tick(object sender, EventArgs e) {
+            btnReset_Click(sender, e);
+        }
+
+        #endregion
+
+
+
+
     }
 
 
@@ -696,7 +721,7 @@ namespace HackerTool {
                 return true;
             }
             catch (System.Exception ex) {
-                ComPort.Close();
+                if (ComPort != null) ComPort.Close();
                 IsConnected = false;
                 LastError = ex.Message;
                 return false;
@@ -729,14 +754,15 @@ namespace HackerTool {
             // Check what received
             if (!RXString.StartsWith("U:")) return false;   // something wrong came
             string SU = RXString.Substring(2);
-            //IConsole.AppendText(u); IConsole.AppendText(Environment.NewLine);
             if (!Int32.TryParse(SU, out U)) return false;   // failed to convert string to int
             // Normalize U
             U = (U / 100);
             U = (U < 16) ? 0 : (U - 15);
             if (U > 18) U = 18;
+            U = (int)Math.Round(U / 4.5);
             // Kick lock to signal we are here
-            if (!SendCmd("K")) return false;    // No need in answer
+            if (!SendCmd("K")) return false;
+            if (!WaitAnswer()) return false;
             return true;
         }
     

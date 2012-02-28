@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.Console = new System.Windows.Forms.TextBox();
+            this.txtConsole = new System.Windows.Forms.TextBox();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -49,6 +49,9 @@
             this.cl9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.numericUpDownAutoReset = new System.Windows.Forms.NumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cbAutoreset = new System.Windows.Forms.CheckBox();
             this.lblIterationCounter = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
@@ -64,6 +67,8 @@
             this.btnRescan = new System.Windows.Forms.Button();
             this.cbPorts = new System.Windows.Forms.ComboBox();
             this.gbPassSearch = new System.Windows.Forms.GroupBox();
+            this.progressBar2 = new System.Windows.Forms.ProgressBar();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
@@ -73,44 +78,46 @@
             this.btnStart = new System.Windows.Forms.Button();
             this.timerIteration = new System.Windows.Forms.Timer(this.components);
             this.BruteForcer = new System.ComponentModel.BackgroundWorker();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timerReset = new System.Windows.Forms.Timer(this.components);
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTable)).BeginInit();
             this.panel2.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoReset)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.gbPassSearch.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.Console);
+            this.groupBox2.Controls.Add(this.txtConsole);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Location = new System.Drawing.Point(0, 311);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(609, 218);
+            this.groupBox2.Size = new System.Drawing.Size(862, 218);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Console";
             // 
-            // Console
+            // txtConsole
             // 
-            this.Console.BackColor = System.Drawing.Color.Black;
-            this.Console.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Console.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Console.ForeColor = System.Drawing.Color.LimeGreen;
-            this.Console.Location = new System.Drawing.Point(3, 16);
-            this.Console.Multiline = true;
-            this.Console.Name = "Console";
-            this.Console.ReadOnly = true;
-            this.Console.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.Console.Size = new System.Drawing.Size(603, 199);
-            this.Console.TabIndex = 0;
-            this.Console.Text = "Console";
-            this.Console.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Console_KeyUp);
+            this.txtConsole.BackColor = System.Drawing.Color.Black;
+            this.txtConsole.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtConsole.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.txtConsole.ForeColor = System.Drawing.Color.LimeGreen;
+            this.txtConsole.Location = new System.Drawing.Point(3, 16);
+            this.txtConsole.Multiline = true;
+            this.txtConsole.Name = "txtConsole";
+            this.txtConsole.ReadOnly = true;
+            this.txtConsole.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtConsole.Size = new System.Drawing.Size(856, 199);
+            this.txtConsole.TabIndex = 0;
+            this.txtConsole.Text = "Console";
+            this.txtConsole.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Console_KeyUp);
             // 
             // serialPort1
             // 
@@ -124,16 +131,16 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(609, 311);
+            this.panel1.Size = new System.Drawing.Size(862, 311);
             this.panel1.TabIndex = 2;
             // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.dgvTable);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox3.Location = new System.Drawing.Point(301, 0);
+            this.groupBox3.Location = new System.Drawing.Point(555, 0);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(308, 311);
+            this.groupBox3.Size = new System.Drawing.Size(307, 311);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Analyzer";
@@ -142,6 +149,9 @@
             // 
             this.dgvTable.AllowUserToAddRows = false;
             this.dgvTable.AllowUserToDeleteRows = false;
+            this.dgvTable.AllowUserToResizeColumns = false;
+            this.dgvTable.AllowUserToResizeRows = false;
+            this.dgvTable.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.Disable;
             this.dgvTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.cl,
@@ -156,14 +166,20 @@
             this.cl8,
             this.cl9});
             this.dgvTable.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvTable.Enabled = false;
             this.dgvTable.Location = new System.Drawing.Point(3, 16);
             this.dgvTable.Name = "dgvTable";
             this.dgvTable.ReadOnly = true;
             this.dgvTable.RowHeadersVisible = false;
             this.dgvTable.RowTemplate.Height = 27;
             this.dgvTable.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.dgvTable.Size = new System.Drawing.Size(302, 292);
+            this.dgvTable.ShowCellErrors = false;
+            this.dgvTable.ShowCellToolTips = false;
+            this.dgvTable.ShowEditingIcon = false;
+            this.dgvTable.ShowRowErrors = false;
+            this.dgvTable.Size = new System.Drawing.Size(301, 292);
             this.dgvTable.TabIndex = 2;
+            this.dgvTable.TabStop = false;
             // 
             // cl
             // 
@@ -253,11 +269,14 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(301, 311);
+            this.panel2.Size = new System.Drawing.Size(555, 311);
             this.panel2.TabIndex = 5;
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.numericUpDownAutoReset);
+            this.groupBox4.Controls.Add(this.label2);
+            this.groupBox4.Controls.Add(this.cbAutoreset);
             this.groupBox4.Controls.Add(this.lblIterationCounter);
             this.groupBox4.Controls.Add(this.textBox3);
             this.groupBox4.Controls.Add(this.textBox2);
@@ -268,17 +287,66 @@
             this.groupBox4.Controls.Add(this.rbtnP3);
             this.groupBox4.Controls.Add(this.rbtnP2);
             this.groupBox4.Controls.Add(this.rbtnP1);
-            this.groupBox4.Location = new System.Drawing.Point(12, 97);
+            this.groupBox4.Location = new System.Drawing.Point(280, 12);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(262, 116);
+            this.groupBox4.Size = new System.Drawing.Size(262, 293);
             this.groupBox4.TabIndex = 6;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Stethoscope";
             // 
+            // numericUpDownAutoReset
+            // 
+            this.numericUpDownAutoReset.Increment = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.numericUpDownAutoReset.Location = new System.Drawing.Point(97, 118);
+            this.numericUpDownAutoReset.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numericUpDownAutoReset.Minimum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.numericUpDownAutoReset.Name = "numericUpDownAutoReset";
+            this.numericUpDownAutoReset.Size = new System.Drawing.Size(64, 20);
+            this.numericUpDownAutoReset.TabIndex = 13;
+            this.numericUpDownAutoReset.ThousandsSeparator = true;
+            this.numericUpDownAutoReset.Value = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.numericUpDownAutoReset.ValueChanged += new System.EventHandler(this.numericUpDownAutoReset_ValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(167, 120);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(20, 13);
+            this.label2.TabIndex = 12;
+            this.label2.Text = "ms";
+            // 
+            // cbAutoreset
+            // 
+            this.cbAutoreset.AutoSize = true;
+            this.cbAutoreset.Location = new System.Drawing.Point(15, 119);
+            this.cbAutoreset.Name = "cbAutoreset";
+            this.cbAutoreset.Size = new System.Drawing.Size(83, 17);
+            this.cbAutoreset.TabIndex = 10;
+            this.cbAutoreset.Text = "Reset every";
+            this.cbAutoreset.UseVisualStyleBackColor = true;
+            this.cbAutoreset.CheckedChanged += new System.EventHandler(this.cbAutoreset_CheckedChanged);
+            // 
             // lblIterationCounter
             // 
             this.lblIterationCounter.AutoSize = true;
-            this.lblIterationCounter.Location = new System.Drawing.Point(15, 94);
+            this.lblIterationCounter.Location = new System.Drawing.Point(14, 153);
             this.lblIterationCounter.Name = "lblIterationCounter";
             this.lblIterationCounter.Size = new System.Drawing.Size(48, 13);
             this.lblIterationCounter.TabIndex = 9;
@@ -286,21 +354,21 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(73, 65);
+            this.textBox3.Location = new System.Drawing.Point(73, 79);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(78, 20);
             this.textBox3.TabIndex = 8;
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(73, 41);
+            this.textBox2.Location = new System.Drawing.Point(73, 50);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(78, 20);
             this.textBox2.TabIndex = 7;
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(73, 18);
+            this.textBox1.Location = new System.Drawing.Point(73, 22);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(78, 20);
             this.textBox1.TabIndex = 6;
@@ -347,7 +415,7 @@
             // rbtnP3
             // 
             this.rbtnP3.AutoSize = true;
-            this.rbtnP3.Location = new System.Drawing.Point(17, 65);
+            this.rbtnP3.Location = new System.Drawing.Point(15, 80);
             this.rbtnP3.Name = "rbtnP3";
             this.rbtnP3.Size = new System.Drawing.Size(49, 17);
             this.rbtnP3.TabIndex = 2;
@@ -357,7 +425,7 @@
             // rbtnP2
             // 
             this.rbtnP2.AutoSize = true;
-            this.rbtnP2.Location = new System.Drawing.Point(17, 42);
+            this.rbtnP2.Location = new System.Drawing.Point(15, 51);
             this.rbtnP2.Name = "rbtnP2";
             this.rbtnP2.Size = new System.Drawing.Size(49, 17);
             this.rbtnP2.TabIndex = 1;
@@ -368,7 +436,7 @@
             // 
             this.rbtnP1.AutoSize = true;
             this.rbtnP1.Checked = true;
-            this.rbtnP1.Location = new System.Drawing.Point(17, 19);
+            this.rbtnP1.Location = new System.Drawing.Point(15, 22);
             this.rbtnP1.Name = "rbtnP1";
             this.rbtnP1.Size = new System.Drawing.Size(52, 17);
             this.rbtnP1.TabIndex = 0;
@@ -424,6 +492,8 @@
             // 
             // gbPassSearch
             // 
+            this.gbPassSearch.Controls.Add(this.progressBar2);
+            this.gbPassSearch.Controls.Add(this.numericUpDown1);
             this.gbPassSearch.Controls.Add(this.button1);
             this.gbPassSearch.Controls.Add(this.progressBar1);
             this.gbPassSearch.Controls.Add(this.trackBar1);
@@ -431,27 +501,56 @@
             this.gbPassSearch.Controls.Add(this.tbStartValue);
             this.gbPassSearch.Controls.Add(this.btnStop);
             this.gbPassSearch.Controls.Add(this.btnStart);
-            this.gbPassSearch.Location = new System.Drawing.Point(12, 219);
+            this.gbPassSearch.Location = new System.Drawing.Point(12, 97);
             this.gbPassSearch.Name = "gbPassSearch";
-            this.gbPassSearch.Size = new System.Drawing.Size(262, 86);
+            this.gbPassSearch.Size = new System.Drawing.Size(262, 211);
             this.gbPassSearch.TabIndex = 4;
             this.gbPassSearch.TabStop = false;
             this.gbPassSearch.Text = "Brute force";
             // 
+            // progressBar2
+            // 
+            this.progressBar2.Location = new System.Drawing.Point(17, 87);
+            this.progressBar2.Name = "progressBar2";
+            this.progressBar2.Size = new System.Drawing.Size(227, 23);
+            this.progressBar2.TabIndex = 22;
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(116, 139);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(34, 20);
+            this.numericUpDown1.TabIndex = 21;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(181, 60);
+            this.button1.Location = new System.Drawing.Point(169, 136);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 20;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(9, 68);
-            this.progressBar1.Maximum = 18;
+            this.progressBar1.Location = new System.Drawing.Point(6, 190);
+            this.progressBar1.Maximum = 4;
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(154, 15);
             this.progressBar1.Step = 1;
@@ -460,7 +559,7 @@
             // 
             // trackBar1
             // 
-            this.trackBar1.Location = new System.Drawing.Point(9, 38);
+            this.trackBar1.Location = new System.Drawing.Point(6, 139);
             this.trackBar1.Maximum = 5;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(104, 45);
@@ -522,24 +621,24 @@
             this.BruteForcer.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BruteForcer_ProgressChanged);
             this.BruteForcer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BruteForcer_RunWorkerCompleted);
             // 
-            // timer1
+            // timerReset
             // 
-            this.timer1.Interval = 200;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timerReset.Tick += new System.EventHandler(this.timerReset_Tick);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(609, 529);
+            this.ClientSize = new System.Drawing.Size(862, 529);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(625, 10000);
-            this.MinimumSize = new System.Drawing.Size(625, 567);
+            this.MaximumSize = new System.Drawing.Size(878, 10000);
+            this.MinimumSize = new System.Drawing.Size(878, 567);
             this.Name = "MainForm";
             this.Text = "10ck uP";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -548,9 +647,11 @@
             this.panel2.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoReset)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.gbPassSearch.ResumeLayout(false);
             this.gbPassSearch.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
 
@@ -560,7 +661,7 @@
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox Console;
+        private System.Windows.Forms.TextBox txtConsole;
         private System.IO.Ports.SerialPort serialPort1;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Panel panel2;
@@ -600,8 +701,13 @@
         private System.Windows.Forms.Label lblIterationCounter;
         private System.ComponentModel.BackgroundWorker BruteForcer;
         private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown numericUpDownAutoReset;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox cbAutoreset;
+        private System.Windows.Forms.Timer timerReset;
+        private System.Windows.Forms.ProgressBar progressBar2;
 
     }
 }
