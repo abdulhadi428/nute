@@ -30,6 +30,7 @@ class Acc_t {
 private:
     uint32_t EvtTimer, CheckTimer;
     bool IsTriggered, IsHandled;
+    bool IEnabled;
     uint8_t RegAddrToRead;
     I2C_Cmd_t i2cCmd;
 public:
@@ -37,6 +38,8 @@ public:
     void Init(void);
     void Task(void);
     void ReadAccelerations(void) { i2cMgr.AddCmd(i2cCmd); }
+    void Enable(void)  { IEnabled = true; IsTriggered = false; IsHandled = false; }
+    void Disable(void) { IEnabled = false; }
     ftVoid_Void EvtTrigger, EvtNoTrigger;
 };
 

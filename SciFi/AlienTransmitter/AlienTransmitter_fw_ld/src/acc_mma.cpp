@@ -3,7 +3,8 @@
 #include "delay_util.h"
 
 void Acc_t::Task() {
-    if (!Delay.Elapsed(&CheckTimer, 100)) return;
+    if (!IEnabled) return;
+    if (!Delay.Elapsed(&CheckTimer, 108)) return;
 
     // Calc total acc
     uint32_t a = Accelerations.xMSB * Accelerations.xMSB;
@@ -34,6 +35,7 @@ void Acc_t::Task() {
 }
 
 void Acc_t::Init() {
+    IEnabled = false;
     // Init INT pin
 //    klPinIrq_t IPin(GPIOB, 5, GPIO_Mode_IPD);
 //    IPin.IrqSetup(EXTI_Trigger_Rising);

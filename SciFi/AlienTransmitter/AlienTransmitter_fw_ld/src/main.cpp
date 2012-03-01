@@ -6,64 +6,58 @@
  */
 
 #include "stm32f10x.h"
+#include "stm32f10x_rcc.h"
+#include "stm32f10x_pwr.h"
 #include "delay_util.h"
 #include "kl_util.h"
 #include "led.h"
 #include "cc2500.h"
 #include "acc_mma.h"
 #include "kl_lib.h"
+#include "main.h"
 
-enum {txOff, txOn, txAuto} State;
+//#define LED_ENABLE
 
 // Variables
-uint8_t ID = 1;
+uint8_t ID = 2;
+#ifdef LED_ENABLE
 Led_t Led(GPIOA, 1);
+#endif
 Acc_t Acc;
 bool IsOn;
-// Pins of switchers
-klPin_t SFront, SBack;
-#define FRONT_IS_ON()  (SFront == false)
-#define BACK_IS_ON()   (SBack  == false)
+// Switchers
+Switchers_t Switchers;
 
 // Prototypes
 void GeneralInit(void);
-void Event_Trigger(void);
-void Event_NoTrigger(void);
 void TxOn(void);
 void TxOff(void);
 
-void SwitchersTask(void);
-void SetStateBySwitchers(void);
-
 // ============================== Implementation ===============================
 int main(void) {
-    //GeneralInit();
-
-    RCC_HCLKConfig(RCC_SYSCLK_Div8);
+    GeneralInit();
 
     while (1) {
-        Led.Toggle();
-        Delay.ms(405);
-
-        /*CC.Task();
+        CC.Task();
         Acc.Task();
         i2cMgr.Task();
-        SwitchersTask();
-        */
+        Switchers.Task();
     } // while 1
 }
 
 void GeneralInit(void) {
+    // Setup system clock
+    RCC_HCLKConfig(RCC_SYSCLK_Div1);
+    SystemCoreClockUpdate();
+
     Delay.Init();
     Delay.ms(63);
     UART_Init();
 
-
-
     // Accelerometer
     Acc.Init();
-    Acc.EvtTrigger = Event_Trigger;
-    Acc.EvtNoTrigger = Event_NoTrigger;
+    Acc.EvtTrigger = TxOn;
+    Acc.EvtNoTrigger = TxOff;
 
     // Setup CC
     CC.Init();
@@ -73,93 +67,106 @@ void GeneralInit(void) {
     CC.Shutdown();
     IsOn = false;
 
-    // Switchers
-    State = txOff;
-    SFront.Init(GPIOB, 1, GPIO_Mode_IPU);
-    SBack.Init(GPIOB, 8, GPIO_Mode_IPU);
+    // Enable PWR and BKP clock
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
 
-    // Setup initial state depending on switchers
-    SetStateBySwitchers();
+    // Switchers
+    Switchers.Init();
+    Switchers.UpdateState();    // Setup initial state depending on switchers
 
     klPrintf("\rTransmitter %u\r", ID);
 }
 
-void SetStateBySwitchers(void) {
-    if (FRONT_IS_ON()) {
-        if (BACK_IS_ON()) {
-            State = txOn;
+// Switchers
+void Switchers_t::Init() {
+    SFront.Init(GPIOB, 1, GPIO_Mode_IPU);
+    SBack.Init (GPIOB, 8, GPIO_Mode_IPU);
+}
+
+void Switchers_t::UpdateState(void) {
+    if (FrontIsOn()) {
+        if (BackIsOn()) {
+            Acc.Disable();
             TxOn();
         }
         else {
-            State = txAuto;
+            Acc.Enable();
             TxOff();
         }
     }
     else {
-        State = txOff;
+        Acc.Disable();
         TxOff();
+        // Prepare to sleep: configure front switch GPIO line to be event source
+        // Connect EXTI Line to front switch GPIO
+        GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource1);
+        // Configure front switch EXTI line
+        EXTI_InitTypeDef EXTI_InitStructure;
+        EXTI_InitStructure.EXTI_Line = EXTI_Line1;
+        EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Event;
+        EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+        EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+        EXTI_Init(&EXTI_InitStructure);
+        // Enter sleep mode
+        PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFE);
+        // At this stage the system has resumed from STOP mode
+        EXTI_InitStructure.EXTI_LineCmd = DISABLE;
+        EXTI_Init(&EXTI_InitStructure);
     }
 }
 
-void SwitchersTask(void) {
-    static uint32_t STimer;
+void Switchers_t::Task(void) {
     static bool FrontWasOn = false, BackWasOn = false;
     bool HasChanged = false;
-    if (Delay.Elapsed(&STimer, 99)) {
-        if (FRONT_IS_ON() && !FrontWasOn) {
+    if (Delay.Elapsed(&STimer, 198)) {
+        if (FrontIsOn() && !FrontWasOn) {
             FrontWasOn = true;
             HasChanged = true;
         }
-        else if (!FRONT_IS_ON() && FrontWasOn) {
+        else if (!FrontIsOn()) {
             FrontWasOn = false;
             HasChanged = true;
         }
 
-        if (BACK_IS_ON() && !BackWasOn) {
+        if (BackIsOn() && !BackWasOn) {
             BackWasOn = true;
             HasChanged = true;
         }
-        else if (!BACK_IS_ON() && BackWasOn) {
+        else if (!BackIsOn() && BackWasOn) {
             BackWasOn = false;
             HasChanged = true;
         }
 
-        if (HasChanged) SetStateBySwitchers();
+        if (HasChanged) UpdateState();
     } // if delay
 }
 
 
-// ======== Sensor ========
-void Event_Trigger(void) {
-    if (State == txAuto) TxOn();
-}
-void Event_NoTrigger(void) {
-    if (State == txAuto) TxOff();
-}
-
 // =============================== CC handling =================================
 void TxOn(void) {
     if (!IsOn) {
+#ifdef LED_ENABLE
         Led.On();
+#endif
         CC.Wake();
         IsOn = true;
     }
 }
 void TxOff(void) {
-    if (IsOn) {
-        Led.Off();
-        CC.Shutdown();
-        IsOn = false;
-    }
+#ifdef LED_ENABLE
+    Led.Off();
+#endif
+    CC.Shutdown();
+    IsOn = false;
 }
-
 
 /*
  * Both TX and RX are interrupt-driven, so IRQ enabled at init and commented out in EnterRX.
  */
-typedef enum {IsWaiting, IsReplying} WaitState_t;
+enum WaitState_t {IsWaiting, IsReplying};
 WaitState_t SearchState = IsWaiting;
 uint8_t PktCounter=0;
+#define PKTS_TO_REPLY   2
 
 void CC_t::Task(void) {
     if (IsShutdown) return;
@@ -209,6 +216,6 @@ void CC_t::IRQHandler() {
         FlushRxFIFO();
     }
     else {  // Packet transmitted
-        if(++PktCounter == 2) SearchState = IsWaiting;
+        if(++PktCounter == PKTS_TO_REPLY) SearchState = IsWaiting;
     }
 }

@@ -46,11 +46,10 @@ public:
     void Toggle(void) { IGPIO->ODR ^= IPinMask; }
 };
 
-class klPinIrq_t : klPin_t {
+class klPinIrq_t : public klPin_t {
 private:
     uint32_t IChannel;
 public:
-    klPinIrq_t(GPIO_TypeDef *PGpioPort, uint16_t APinNumber, GPIOMode_TypeDef AMode) : klPin_t(PGpioPort, APinNumber, AMode) { }
     // Interrupt
     void IrqSetup(EXTITrigger_TypeDef ATriggerType);
     void IrqEnable(void);

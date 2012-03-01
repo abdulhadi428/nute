@@ -8295,9 +8295,7 @@ typedef struct
   * @}
   */
 
-#ifdef USE_STDPERIPH_DRIVER
-  #include "stm32f10x_conf.h"
-#endif
+#define assert_param(expr) ((void)0)
 
 /** @addtogroup Exported_macro
   * @{

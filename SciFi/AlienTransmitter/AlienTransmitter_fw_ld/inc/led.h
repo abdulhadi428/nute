@@ -16,7 +16,7 @@
 
 #define LED_BLINK_DELAY 144
 
-class Led_t : klPin_t {
+class Led_t : public klPin_t {
 private:
     uint32_t Timer;
     bool IsInsideBlink;
@@ -24,7 +24,6 @@ public:
     Led_t(GPIO_TypeDef* AGPIO, uint16_t APinNumber) : klPin_t(AGPIO, APinNumber, GPIO_Mode_Out_PP) { }
     void On(void)      { klPin_t::operator =(true); }
     void Off(void)     { klPin_t::operator =(false); }
-    void Toggle(void)  { klPin_t::Toggle(); }
     void Disable(void) { Off(); IsInsideBlink = false; }
     void Blink(void);
     void Task(void);
