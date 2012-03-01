@@ -12,7 +12,7 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_tim.h"
 #include "delay_util.h"
-#include "kl_gpio.h"
+#include "kl_lib.h"
 
 #define LED_BLINK_DELAY 144
 
@@ -24,6 +24,7 @@ public:
     Led_t(GPIO_TypeDef* AGPIO, uint16_t APinNumber) : klPin_t(AGPIO, APinNumber, GPIO_Mode_Out_PP) { }
     void On(void)      { klPin_t::operator =(true); }
     void Off(void)     { klPin_t::operator =(false); }
+    void Toggle(void)  { klPin_t::Toggle(); }
     void Disable(void) { Off(); IsInsideBlink = false; }
     void Blink(void);
     void Task(void);
