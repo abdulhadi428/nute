@@ -9,6 +9,7 @@
 #define SOUND_H_
 
 #include "delay_util.h"
+#include "kl_lib.h"
 
 //#define BEEP_DISABLE    // Uncomment this in case of emergency
 
@@ -27,21 +28,19 @@ struct BeepSnd_t {
 
 class Beep_t {
 private:
-    uint32_t ITimer;
-    uint32_t ICounter;
+    klPwmChannel_t IPwm;
+    uint32_t ITimer, ICounter;
     bool IsSwitchDelay;
     void On(void);
-    void Off(void);
+    void Off(void) { IPwm.Disable(); }
     BeepSnd_t *ISnd, *NewSnd;
 public:
-    void SetSound(BeepSnd_t *ASnd);
+    void SetSound(BeepSnd_t *ASnd) { if (ISnd != ASnd) NewSnd = ASnd; }  // Check if already set
     void Init(void);
     void Task(void);
 };
 
 extern Beep_t Beep;
-// Sounds
-extern BeepSnd_t IdleBeep, AlienBeep;
 
 
 #endif /* SOUND_H_ */

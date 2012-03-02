@@ -10,18 +10,26 @@
 
 #define NOSIGNAL_DELAY  999
 
+#define MIN_RSSI_TO_DISPLAY     18  // Set between 0 and 50
+
+#define MIN_ADDRESS     1
+#define MAX_ADDRESS     7
+#define ALIEN_COUNT     (MAX_ADDRESS - MIN_ADDRESS + 1)
+
+struct Alien_t {
+    uint32_t Timer;
+    bool New, Exists;
+    int32_t RSSI;
+};
+
 class Signal_t {
 private:
-    uint32_t ITimer[8];
-    bool INew[8], Exists[8];
-    int32_t IRSSI[8];
+    Alien_t Alien[ALIEN_COUNT];
 public:
     void Init(void);
     void Task(void);
-    void Remember(uint8_t AChannel, int32_t RawRSSI);
+    void Remember(uint8_t AAddress, int32_t RawRSSI);
 };
-
-extern Signal_t Signal;
 
 void EVENT_NewPacket(void);
 void EVENT_NewBatteryState(void);

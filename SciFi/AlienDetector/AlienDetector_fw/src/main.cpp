@@ -18,6 +18,27 @@
 
 Signal_t Signal;
 
+// Sounds
+BeepSnd_t IdleBeep = {
+        2,
+        {
+            {880, 9, 100},
+            {0,   0, 1503},
+        }
+};
+BeepSnd_t AlienBeep = {
+        6,
+        {
+            {1800,  7,  150},   // On
+            {0,     0,   35},   // Off
+            {1800, 18,  170},   // On
+            {0,     0,   35},   // Off
+            {1800,  7,  114},   // On
+            {0,     0,  500},   // Off
+        }
+};
+
+
 #define CC_ADDRESS 207
 
 int main(void) {
@@ -41,6 +62,8 @@ void GeneralInit(void) {
     Bcklt.On(100);
 
     Lcd.Init();
+    Lcd.DrawImage(0, 0, icon_WYTiny);
+    Lcd.DrawImage(32, 0, icon_motiontrack);
 
     Battery.Init();
     Battery.State = bsFull;
@@ -65,10 +88,8 @@ void GeneralInit(void) {
 /*
  * Both TX and RX are interrupt-driven, so IRQ enabled at init and commented out in EnterRX.
  */
-#define MAX_COUNT       7
 #define RX_WAIT_TIME    2
-typedef enum {IsCalling, IsWaiting} SearchState_t;
-SearchState_t SearchState = IsCalling;
+enum SearchState_t {IsCalling, IsWaiting} SearchState;
 uint8_t PktCounter=0;
 
 void CC_t::Task(void) {
@@ -111,11 +132,11 @@ void CC_t::Task(void) {
 
 void CC_t::IRQHandler() {
     if (SearchState == IsCalling) { // Packet transmitted, enter RX
-        if(++PktCounter == 1) { // Several packets sent
+        if(++PktCounter == 1) {     // Several packets sent
             PktCounter = 0;
             // Increase packet address
             TX_Pkt.To++;
-            if (TX_Pkt.To == MAX_COUNT) TX_Pkt.To = 0;
+            if (TX_Pkt.To > MAX_ADDRESS) TX_Pkt.To = MIN_ADDRESS;
             // Switch to waiting state
             SearchState = IsWaiting;
             Delay.Reset(&Timer);
@@ -125,7 +146,7 @@ void CC_t::IRQHandler() {
         if (ReadRX()) {
             // Check address
             if(RX_Pkt.To == CC_ADDRESS) {   // This packet is ours
-                klPrintf("From: %u; RSSI: %u\r", RX_Pkt.From, RX_Pkt.RSSI);
+                //klPrintf("From: %u; RSSI: %u\r", RX_Pkt.From, RX_Pkt.RSSI);
                 Signal.Remember(RX_Pkt.From, RX_Pkt.RSSI);
             }
             FlushRxFIFO();
@@ -145,41 +166,48 @@ void EVENT_NewBatteryState(void) {
 // ============================= Signal_t ======================================
 void Signal_t::Task() {
     bool IsIdle = true;
+    Alien_t *Al;
     // Check all channels if displaying needed
-    for (uint8_t i=0; i<7; i++) {
-        if (INew[i]) {
-            INew[i] = false;
-            Lcd.DrawPeak(i, IRSSI[i]);
+    for (uint8_t i=0; i<ALIEN_COUNT; i++) {
+        Al = &Alien[i];
+        if (Al->New) {
+            Al->New = false;
+            Lcd.DrawPeak(i, Al->RSSI);
             Beep.SetSound(&AlienBeep);
-            Exists[i] = true;
+            Al->Exists = true;
         } // if new
-        else if (Delay.Elapsed(&ITimer[i], 999)) {  // not new and timeout passed
+        else if (Delay.Elapsed(&Al->Timer, 999)) {  // not new and timeout passed
             Lcd.DrawPeak(i, 0); // Clear peak
-            Exists[i] = false;
+            Al->Exists = false;
         }
         // Check if set Idle sound
-        if (Exists[i]) IsIdle = false;
+        if (Al->Exists) IsIdle = false;
     } // for
 
     // Set idle sound if needed
     if (IsIdle) Beep.SetSound(&IdleBeep);
 }
 
-void Signal_t::Remember(uint8_t AChannel, int32_t RawRSSI) {
-    INew[AChannel] = true;
-    Delay.Reset(&ITimer[AChannel]);
+void Signal_t::Remember(uint8_t AAddress, int32_t RawRSSI) {
+    // Calculate RSSI
     if (RawRSSI >= 128) RawRSSI -= 256;
-    RawRSSI = (RawRSSI / 2) - 69;    // now it in dBm
+    RawRSSI = (RawRSSI / 2) - 69;    // now it is in dBm
     // Scale to display
     RawRSSI += 90;
     if (RawRSSI < 0) RawRSSI = 1;
     if (RawRSSI > 50) RawRSSI = 50;
-    IRSSI[AChannel] = RawRSSI;
+    // Check if display
+    Alien_t *Al = &Alien[AAddress - MIN_ADDRESS];
+    if (RawRSSI > MIN_RSSI_TO_DISPLAY) {
+        Al->New = true;
+        Delay.Reset(&Al->Timer);
+        Al->RSSI = RawRSSI;
+    }
 }
 
 void Signal_t::Init() {
     for(uint8_t i=0; i<8; i++) {
         Lcd.DrawPeak(i, 0);
-        INew[i] = false;
+        Alien[i].New = false;
     }
 }
