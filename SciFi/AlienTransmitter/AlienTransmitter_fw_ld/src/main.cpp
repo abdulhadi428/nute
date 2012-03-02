@@ -15,11 +15,12 @@
 #include "acc_mma.h"
 #include "kl_lib.h"
 #include "main.h"
+#include "beep.h"
 
 //#define LED_ENABLE
 
 // Variables
-uint8_t ID = 2;
+uint8_t ID = 7;
 #ifdef LED_ENABLE
 Led_t Led(GPIOA, 1);
 #endif
@@ -42,6 +43,7 @@ int main(void) {
         Acc.Task();
         i2cMgr.Task();
         Switchers.Task();
+        Beep.Task();
     } // while 1
 }
 
@@ -53,6 +55,7 @@ void GeneralInit(void) {
     Delay.Init();
     Delay.ms(63);
     UART_Init();
+    Beep.Init();
 
     // Accelerometer
     Acc.Init();
@@ -151,6 +154,7 @@ void TxOn(void) {
         CC.Wake();
         IsOn = true;
     }
+    Beep.SetSound(&TxBeep);
 }
 void TxOff(void) {
 #ifdef LED_ENABLE
@@ -158,6 +162,7 @@ void TxOff(void) {
 #endif
     CC.Shutdown();
     IsOn = false;
+    Beep.SetSound(&Silence);
 }
 
 /*

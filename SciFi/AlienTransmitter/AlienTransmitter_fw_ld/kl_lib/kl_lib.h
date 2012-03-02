@@ -12,6 +12,7 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_exti.h"
+#include "stm32f10x_tim.h"
 
 // Static methods only
 class klGpio {
@@ -65,13 +66,14 @@ public:
     void Init(TIM_TypeDef* PTimer, uint16_t ATopValue, uint32_t AFreqHz);
     void Enable(void)  { ITimer->CR1 |= TIM_CR1_CEN; }
     void Disable(void) { ITimer->CR1 &= (uint16_t)(~((uint16_t)TIM_CR1_CEN)); }
+    void SetFreq(uint32_t AFreqHz);
 };
 
 /*
  * TIM_OCPolarity_High, TIM_OCPolarity_Low
  *
  */
-class klPwmChannel_t : klTimer_t {
+class klPwmChannel_t : public klTimer_t {
 private:
     uint8_t INumber;
 public:

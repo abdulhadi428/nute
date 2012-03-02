@@ -7,8 +7,6 @@
 
 #include "kl_lib.h"
 #include "misc.h"
-#include "stm32f10x_rcc.h"
-#include "stm32f10x_tim.h"
 
 void klGpio::SetupByMsk(GPIO_TypeDef *PGpioPort, uint16_t APinMask, GPIOMode_TypeDef AMode) {
     int IClock = 0;
@@ -88,6 +86,12 @@ void klTimer_t::Init(TIM_TypeDef* PTimer, uint16_t ATopValue, uint32_t AFreqHz) 
     TIM_TimeBaseStructure.TIM_ClockDivision = 0;
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
     TIM_TimeBaseInit(PTimer, &TIM_TimeBaseStructure);
+}
+
+void klTimer_t::SetFreq(uint32_t AFreqHz) {
+    uint32_t FPrescaler = SystemCoreClock / ((uint32_t)ITimer->ARR * AFreqHz) - 1;
+    ITimer->PSC = (uint16_t)FPrescaler;
+    ITimer->EGR = TIM_PSCReloadMode_Update;
 }
 
 void klPwmChannel_t::Init(TIM_TypeDef* PTimer, uint16_t ATopValue, uint32_t AFreqHz, uint8_t ANumber, uint16_t APolarity) {
