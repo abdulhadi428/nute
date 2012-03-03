@@ -135,7 +135,7 @@ void loadData(void){
        (maxUptime==0)){
         maxOnTime=50;
         maxOffTime=400;
-        maxUptime=30000;
+        maxUptime=60000;
     }
 
 }
