@@ -123,8 +123,12 @@ void GeneralInit(void) {
     Battery.State = bsFull;
 
     // Register filesystem
+    klPrintf("Mount fs\r");
     f_mount(0, &SD.FatFilesystem);
-    if (!Settings.Read()) while(1);    // nothing to do if config not read
+    if (!Settings.Read()) {
+        klPrintf("Settings read error\r");
+        while(1);    // nothing to do if config not read
+    }
 
     Door.Init();    // Door is closed during Init
     //klPrintf("Lock is on\r");
@@ -134,6 +138,7 @@ void GeneralInit(void) {
 }
 
 bool Settings_t::Read(void) {
+    klPrintf("Reading settings\r");
     // Sound names
     if(!ReadString("Sound", "KeyBeep",   "lock.ini", Settings.SndKeyBeep,   FNAME_LNG_MAX)) return false;
     if(!ReadString("Sound", "KeyDrop",   "lock.ini", Settings.SndKeyDrop,   FNAME_LNG_MAX)) return false;
@@ -350,13 +355,15 @@ void Battery_t::Task() {
     // Indicate discharged battery
     if ((State == bsEmpty) && (Door.State == dsClosed) && (Leds.Led[0].Mode != lmBlink)) {
         Leds.Led[0].Blink(Settings.ColorDoorClosed, Settings.BlinkDelay);
-        Leds.Led[1].Blink(Settings.ColorDoorClosed, Settings.BlinkDelay);
+        Leds.Led[2].Blink(Settings.ColorDoorClosed, Settings.BlinkDelay);
     }
 }
 
 
 // ================================== Keyboard =================================
 void KeyHandler(uint8_t RKey, int8_t RCodeLength, char *RCode) {
+    // Do not react if door is opening or closing
+    if ((Door.State == dsOpening) || (Door.State == dsClosing)) return;
     // Check if crash
     if (RCodeLength < 0) {
         if (ESnd.State == sndStopped) ESnd.Play(Settings.SndKeyCrash);
@@ -373,8 +380,9 @@ void KeyHandler(uint8_t RKey, int8_t RCodeLength, char *RCode) {
         }// if (RCodeLength > 0)
     }
     else {  // none-digit
-        if (RKey == KEY_STAR) {
-            Delay.Bypass(&Codecheck.Timer, Settings.KeyDropDelay);  // Drop code
+        if (RKey == KEY_STAR) {     // Drop code
+            Codecheck.Reset();
+            ESnd.Play(Settings.SndKeyDrop);
         }
         else if(RKey == KEY_HASH) {
             // Close door if open
@@ -391,7 +399,6 @@ void KeyHandler(uint8_t RKey, int8_t RCodeLength, char *RCode) {
 }
 
 void Event_Kbd(uint8_t AKbdSide, uint8_t AKey) {
-    if (Codecheck.EnterResult != entNA) return; // disable keys in case of existing result
     //klPrintf("Key = %u %u\r", Keys.Kbd[0], Keys.Kbd[1]);
     if (AKbdSide == KBD_SIDE_A) KeyHandler(AKey, Settings.CodeALength, Settings.CodeA);
     else KeyHandler(AKey, Settings.CodeBLength, Settings.CodeB);

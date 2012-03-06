@@ -14,7 +14,7 @@
 
 #define UART_BUF_SIZE    63
 
-#define FIELD_GENERATOR_TIMEOUT 18000
+#define FIELD_GENERATOR_TIMEOUT 4005
 
 enum CmdState_t {csNone, csInProgress, csReady};
 
