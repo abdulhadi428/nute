@@ -1,0 +1,178 @@
+Cmp-Mod V01 Created by CvPcb (2011-11-27 BZR 3249)-stable date = 04/04/2012 12:03:57
+
+BeginCmp
+TimeStamp = /4ECC140F;
+Reference = B1;
+ValeurCmp = BAT;
+IdModule  = BATTERY_AA_X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E37BAEC;
+Reference = C8;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E37BB80;
+Reference = C9;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E37BB86;
+Reference = C10;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E37BB85;
+Reference = C11;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E47AC96;
+Reference = C12;
+ValeurCmp = 1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0BF9;
+Reference = C15;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0BEE;
+Reference = C16;
+ValeurCmp = 10u;
+IdModule  = SMD0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0B2A;
+Reference = C17;
+ValeurCmp = 0.1u;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0B37;
+Reference = C18;
+ValeurCmp = 10u;
+IdModule  = SMD0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0A71;
+Reference = D6;
+ValeurCmp = D_SHOTTKY;
+IdModule  = Diode_SMA;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0A29;
+Reference = DA4;
+ValeurCmp = NCP1400;
+IdModule  = SOT23-5;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E37B847;
+Reference = DD1;
+ValeurCmp = STM32L151-48;
+IdModule  = LQFP48;
+EndCmp
+
+BeginCmp
+TimeStamp = /4ECE0BC3;
+Reference = L5;
+ValeurCmp = 22uH;
+IdModule  = INDUCTOR_HOLE_M;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F7BFDFA;
+Reference = Q1;
+ValeurCmp = LED_RGB;
+IdModule  = HH5050_RGB_LED;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F7BFE1D;
+Reference = R1;
+ValeurCmp = 51R;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F7BFE61;
+Reference = R2;
+ValeurCmp = 51R;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F7BFE6E;
+Reference = R3;
+ValeurCmp = 51R;
+IdModule  = SMD0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F7BFD44;
+Reference = XL1;
+ValeurCmp = CONN_8;
+IdModule  = SIL-8;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F7BFE4A;
+Reference = XL2;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F7BFE60;
+Reference = XL3;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F7BFE6D;
+Reference = XL4;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4E459179;
+Reference = XL5;
+ValeurCmp = ST_SWD;
+IdModule  = SIL-4;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F7BFEA9;
+Reference = XL6;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
+EndCmp
+
+BeginCmp
+TimeStamp = /4DC3BA27;
+Reference = XL7;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+EndListe
