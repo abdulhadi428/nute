@@ -22,8 +22,8 @@
 //#define CC_PATABLE0_VALUE   0x7F    // -6  dBm
 //#define CC_PATABLE0_VALUE   0xA9    // -4  dBm
 //#define CC_PATABLE0_VALUE   0xBB    // -2  dBm
-#define CC_PATABLE0_VALUE   0xFE    // 0 dBm
-//#define CC_PATABLE0_VALUE   0xFF    // +1 dBm
+//#define CC_PATABLE0_VALUE   0xFE    // 0 dBm
+#define CC_PATABLE0_VALUE   0xFF    // +1 dBm
 
 
 // ================================= Frequency =================================

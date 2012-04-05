@@ -17,7 +17,7 @@
 #include "main.h"
 #include "beep.h"
 
-//#define LED_ENABLE
+#define LED_ENABLE
 
 // Variables
 uint8_t ID = 7;
@@ -40,10 +40,10 @@ int main(void) {
 
     while (1) {
         CC.Task();
-        Acc.Task();
-        i2cMgr.Task();
-        Switchers.Task();
-        Beep.Task();
+        //Acc.Task();
+        //i2cMgr.Task();
+        //Switchers.Task();
+        //Beep.Task();
     } // while 1
 }
 
@@ -58,10 +58,10 @@ void GeneralInit(void) {
     Beep.Init();
 
     // Accelerometer
-    Acc.Init();
+    /*Acc.Init();
     Acc.EvtTrigger = TxOn;
     Acc.EvtNoTrigger = TxOff;
-
+*/
     // Setup CC
     CC.Init();
     CC.TX_Pkt.From = ID;
@@ -70,12 +70,13 @@ void GeneralInit(void) {
     CC.Shutdown();
     IsOn = false;
 
+    TxOn();
     // Enable PWR and BKP clock
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
 
     // Switchers
-    Switchers.Init();
-    Switchers.UpdateState();    // Setup initial state depending on switchers
+    //Switchers.Init();
+    //Switchers.UpdateState();    // Setup initial state depending on switchers
 
     klPrintf("\rTransmitter %u\r", ID);
 }
@@ -154,7 +155,7 @@ void TxOn(void) {
         CC.Wake();
         IsOn = true;
     }
-    Beep.SetSound(&TxBeep);
+    //Beep.SetSound(&TxBeep);
 }
 void TxOff(void) {
 #ifdef LED_ENABLE

@@ -198,11 +198,11 @@ void Signal_t::Remember(uint8_t AAddress, int32_t RawRSSI) {
     if (RawRSSI > 50) RawRSSI = 50;
     // Check if display
     Alien_t *Al = &Alien[AAddress - MIN_ADDRESS];
-    if (RawRSSI > MIN_RSSI_TO_DISPLAY) {
+    //if (RawRSSI > MIN_RSSI_TO_DISPLAY) {
         Al->New = true;
         Delay.Reset(&Al->Timer);
         Al->RSSI = RawRSSI;
-    }
+    //}
 }
 
 void Signal_t::Init() {
