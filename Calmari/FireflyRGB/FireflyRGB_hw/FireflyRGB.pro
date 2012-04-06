@@ -1,6 +1,6 @@
-update=04/04/2012 11:58:42
+update=05.04.2012 16:39:29
 version=1
-last_client=cvpcb
+last_client=eeschema
 [pcbnew]
 version=1
 PadDrlX=320
@@ -63,9 +63,14 @@ LibName4=Tittar_kl
 LibDir=D:/libs/Kicad
 [general]
 version=1
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms
 [eeschema]
 version=1
-LibDir=D:/libs/Kicad
+LibDir=Z:/svn/kl-libs/Kicad
 NetFmt=1
 HPGLSpd=20
 HPGLDm=15
@@ -100,8 +105,3 @@ LibName2=power
 LibName3=Power_kl
 LibName4=st_kl
 LibName5=Tittar_kl
-[cvpcb]
-version=1
-NetIExt=net
-[cvpcb/libraries]
-EquName1=devcms
