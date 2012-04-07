@@ -62,7 +62,7 @@ void NewPkt() {
             AverageRSSI = (AverageRSSI / 2) - 69;    // now it is in dBm
         }
 
-        klPrintf("Rcvd: %u; Lost: %u; RSSI: %i; LQI: %u\r", PktCounter, LostPktCounter, AverageRSSI, AverageLQI);
+        klPrintf("Rcvd: %u; Lost: %u; RSSI: %i; LQI: %u\r\n", PktCounter, LostPktCounter, AverageRSSI, AverageLQI);
         LostPktCounter = 0;
         PktCounter  = 0;
         AverageRSSI = 0;
@@ -70,7 +70,7 @@ void NewPkt() {
     }
 
     //klPrintf("PktID: %u; LQI: %X; RSSI: %i\r", CC.RX_Pkt.PktID, CC.RX_Pkt.LQI, RawRSSI);
-    klPrintf("Pkt: %H\r", (uint8_t*)&CC.RX_Pkt, CC_PKT_LEN+2);
+    //klPrintf("Pkt: %H\r", (uint8_t*)&CC.RX_Pkt, CC_PKT_LEN+2);
     //CC.EnterRX();
 }
 

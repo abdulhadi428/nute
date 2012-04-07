@@ -24,7 +24,7 @@
 #define CC_SCLK         GPIO_Pin_13
 
 // ============================ Types & variables ==============================
-#define PAYLOAD_SIZE    1
+#define PAYLOAD_SIZE    27
 
 struct CC_Packet_t {
     uint8_t PktID;
@@ -38,8 +38,7 @@ struct CC_Packet_t {
 class CC_t {
 private:
     // Variables
-    uint32_t Timer;
-    uint8_t State;
+    uint8_t IState;
     bool NewPktRcvd;
     // Methods
     uint8_t ReadWriteByte(uint8_t AByte);

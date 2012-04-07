@@ -19,10 +19,10 @@
 #define CC_RX_FIFO_SIZE     32
 
 // =================================== Power ===================================
-#define CC_PATABLE0_VALUE   0x50    // 0 dBm
+//#define CC_PATABLE0_VALUE   0x50    // 0 dBm
 //#define CC_PATABLE0_VALUE   0x81    // +5 dBm
 //#define CC_PATABLE0_VALUE   0xCB    // +7 dBm
-//#define CC_PATABLE0_VALUE   0xC2    // +10 dBm
+#define CC_PATABLE0_VALUE   0xC2    // +10 dBm
 
 
 // ================================= Frequency =================================
@@ -35,16 +35,16 @@
 //#define CC_MDMCFG1_VALUE    0b11000010  // FEC=1, Preamble length=100 => 8bytes, Ch spacing=10=2
 
 #define CC_MCSM0_VALUE      0x18        // Calibrate at IDLE->RX,TX
-//#define CC_MCSM1_VALUE      0b00001100  // Channel is always clear, RX->RX,   TX->IDLE
+#define CC_MCSM1_VALUE      0b00001100  // Channel is always clear, RX->RX,   TX->IDLE
 //#define CC_MCSM1_VALUE      0b00001111  // Channel is always clear, RX->RX,   TX->RX
-#define CC_MCSM1_VALUE      0b00000000  // Channel is always clear, RX->IDLE, TX->IDLE
+//#define CC_MCSM1_VALUE      0b00000000  // Channel is always clear, RX->IDLE, TX->IDLE
 //#define CC_MCSM1_VALUE      0b00000011  // Channel is always clear, RX->IDLE, TX->RX
 
 #define CC_FIFOTHR_VALUE    0b00000111  // RXFIFO and TXFIFO thresholds: TX 33, RX 32
 #define CC_IOCFG2_VALUE     0x2E        // High impedance
-#define CC_IOCFG0_VALUE     0x06        // GDO0 - Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
+//#define CC_IOCFG0_VALUE     0x06        // GDO0 - Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
                                         // In RX, the pin will also deassert when a packet is discarded due to address or maximum length filtering
-//#define CC_IOCFG0_VALUE     0x07        // GDO0 - Asserts when a packet has been received with CRC OK. De-asserts when the first byte is read from the RX FIFO.
+#define CC_IOCFG0_VALUE     0x07        // GDO0 - Asserts when a packet has been received with CRC OK. De-asserts when the first byte is read from the RX FIFO.
 
 //#define CC_PKTCTRL1_VALUE   0b00001110  // PQT=0, CRC autoflush=1, Append=1, Address check = 10 (check, 0 is broadcast)
 #define CC_PKTCTRL1_VALUE   0b00001100  // PQT=0, CRC autoflush=1, Append status=1, Address check = 00 (no check)
@@ -69,9 +69,10 @@
 
 #define CC_FOCCFG_VALUE     0x16        // Frequency Offset Compensation Configuration - RF studio
 #define CC_BSCFG_VALUE      0x6C        // Bit synchronization Configuration - RF studio
-#define CC_AGCCTRL2_VALUE   0x43        // }
-#define CC_AGCCTRL1_VALUE   0x40        // }
-#define CC_AGCCTRL0_VALUE   0x91        // } AGC control: RF studio
+#define CC_AGCCTRL2_VALUE   0x03        // AGC control: All gain settings can be used, max gain, 33 dB magn target
+//#define CC_AGCCTRL2_VALUE   0x43        // AGC control: RF studio
+#define CC_AGCCTRL1_VALUE   0x40        // AGC control: RF studio
+#define CC_AGCCTRL0_VALUE   0x91        // AGC control: RF studio
 
 #define CC_FSCAL3_VALUE     0xE9        // }
 #define CC_FSCAL2_VALUE     0x2A        // }

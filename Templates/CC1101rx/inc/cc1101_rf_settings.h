@@ -69,9 +69,10 @@
 
 #define CC_FOCCFG_VALUE     0x16        // Frequency Offset Compensation Configuration - RF studio
 #define CC_BSCFG_VALUE      0x6C        // Bit synchronization Configuration - RF studio
-#define CC_AGCCTRL2_VALUE   0x43        // }
-#define CC_AGCCTRL1_VALUE   0x40        // }
-#define CC_AGCCTRL0_VALUE   0x91        // } AGC control: RF studio
+#define CC_AGCCTRL2_VALUE   0x03        // AGC control: All gain settings can be used, max gain, 33 dB magn target
+//#define CC_AGCCTRL2_VALUE   0x43        // AGC control: RF studio
+#define CC_AGCCTRL1_VALUE   0x40        // AGC control: RF studio
+#define CC_AGCCTRL0_VALUE   0x91        // AGC control: RF studio
 
 #define CC_FSCAL3_VALUE     0xE9        // }
 #define CC_FSCAL2_VALUE     0x2A        // }

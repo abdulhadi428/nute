@@ -1,4 +1,4 @@
-update=01/08/2011 23:48:43
+update=06/04/2012 10:22:17
 version=1
 last_client=eeschema
 [general]
@@ -66,15 +66,15 @@ RptD_Y=100
 RptLab=1
 LabSize=60
 [eeschema/libraries]
-LibName1=Audio_kl
-LibName2=Connectors_kl
-LibName3=display_kl
-LibName4=pcb_details
-LibName5=power
-LibName6=Power_kl
-LibName7=RF ICs
-LibName8=Sensors
-LibName9=st_kl
-LibName10=Tittar_kl
-LibName11=Transistors_kl
-LibName12=Interface_kl
+LibName1=Connectors_kl
+LibName2=display_kl
+LibName3=pcb_details
+LibName4=power
+LibName5=Power_kl
+LibName6=RF ICs
+LibName7=Sensors
+LibName8=st_kl
+LibName9=Tittar_kl
+LibName10=Transistors_kl
+LibName11=Audio_kl
+LibName12=Antennas_kl

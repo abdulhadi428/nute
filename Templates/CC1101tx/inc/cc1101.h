@@ -24,7 +24,7 @@
 #define CC_SCLK         GPIO_Pin_13
 
 // ============================ Types & variables ==============================
-#define PAYLOAD_SIZE    1
+#define PAYLOAD_SIZE    27
 
 struct CC_Packet_t {
     uint8_t PktID;

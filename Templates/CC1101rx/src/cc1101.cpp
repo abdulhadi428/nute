@@ -101,25 +101,6 @@ void CC_t::Init(void) {
     SPI_Init(SPI2, &SPI_InitStructure);
     SPI_Cmd(SPI2, ENABLE);
 
-    // ==== DMA ====
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
-    DMA_DeInit(DMA1_Channel4);  // SPI2 RX
-    DMA_InitTypeDef  DMA_InitStructure;
-    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&SPI2->DR;
-    DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&RX_Pkt;
-    DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
-    DMA_InitStructure.DMA_BufferSize = CC_PKT_LEN+2;
-    DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-    DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-    DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
-    DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-    DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
-    DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
-    DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-    DMA_Init(DMA1_Channel4, &DMA_InitStructure);
-
-
-
     // ******* Firmware init section *******
     Reset();
     FlushRxFIFO();
@@ -130,9 +111,9 @@ void CC_t::Init(void) {
 
 void CC_t::SetChannel(uint8_t AChannel) {
     // CC must be in IDLE mode
-    while (CC.State != CC_STB_IDLE) this->EnterIdle();
+    while (IState != CC_STB_IDLE) EnterIdle();
     // Now set channel
-    this->WriteRegister(CC_CHANNR, AChannel);
+    WriteRegister(CC_CHANNR, AChannel);
 }
 
 void CC_t::EnterTXAndWaitToComplete(void) {
@@ -155,41 +136,18 @@ void CC_t::WriteTX() {
 }
 
 bool CC_t::ReadRX() {
-    //uint8_t *p = (uint8_t*)(&RX_Pkt);
-    //uint8_t b;
+    uint8_t *p = (uint8_t*)(&RX_Pkt);
     uint8_t FifoSize = ReadRegister(CC_RXBYTES);    // Get number of bytes in FIFO
     FifoSize &= 0x7F;                               // Remove MSB
     if(FifoSize == 0) return false;
     if (FifoSize > (CC_PKT_LEN+2)) FifoSize = CC_PKT_LEN+2;
     CS_Lo();                                        // Start transmission
     BusyWait();                                     // Wait for chip to become ready
-    DMA1_Channel4->CMAR = (uint32_t)&RX_Pkt;
-    DMA1_Channel4->CNDTR = FifoSize;
-    /* Reset interrupt pending bits for DMA1 Channel4 */
-    DMA1->IFCR |= DMA_ISR_TCIF4;    // Reset flag
-
-    //ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);              // Address with read & burst flags
-    SPI2->DR = CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG;
-    while (!(SPI2->SR & SPI_I2S_FLAG_RXNE));
-    //(void)SPI2->DR;
-    //(void)SPI2->DR;
-    // Enable DMA
-    SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Rx, ENABLE);
-    DMA_Cmd(DMA1_Channel4, ENABLE);
-
+    ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);              // Address with read & burst flags
     for (uint8_t i=0; i<FifoSize; i++) {    // Read bytes
-        while (!(SPI2->SR & SPI_I2S_FLAG_TXE));
-        SPI2->DR = 0;
-        //b = ReadWriteByte(0);
-        //*p++ = b;
+        *p++ = ReadWriteByte(0);
     }
-    //while (!(SPI2->SR & SPI_I2S_FLAG_RXNE));
-    /* Wait for DMA1 channel4 transfer complete */
-    while (!DMA_GetFlagStatus(DMA1_FLAG_TC4));
-
     CS_Hi();    // End transmission
-    DMA_Cmd(DMA1_Channel4, DISABLE);
-    SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Rx, DISABLE);
     //klPrintf("Size: %u;  %H\r", FifoSize, (uint8_t*)(&RX_Pkt), FifoSize);
     return true;
 }
@@ -198,7 +156,7 @@ uint8_t CC_t::ReadRegister (uint8_t ARegAddr){
     CS_Lo();      // Start transmission
     BusyWait();   // Wait for chip to become ready
     ReadWriteByte(ARegAddr | CC_READ_FLAG);     // Transmit header byte
-    uint8_t FReply = this->ReadWriteByte(0);    // Read reply
+    uint8_t FReply = ReadWriteByte(0);    // Read reply
     CS_Hi();      // End transmission
     return FReply;
 }
@@ -212,9 +170,9 @@ void CC_t::WriteRegister (uint8_t ARegAddr, uint8_t AData){
 void CC_t::WriteStrobe (uint8_t AStrobe){
     CS_Lo();      // Start transmission
     BusyWait();   // Wait for chip to become ready
-    State = ReadWriteByte(AStrobe);  // Write strobe
+    IState = ReadWriteByte(AStrobe);  // Write strobe
     CS_Hi();      // End transmission
-    State &= 0b01110000; // Mask needed bits
+    IState &= 0b01110000; // Mask needed bits
 }
 
 // **** Used to setup CC with needed values ****
