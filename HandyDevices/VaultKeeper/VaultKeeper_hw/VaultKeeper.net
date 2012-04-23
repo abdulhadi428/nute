@@ -1,4 +1,4 @@
-# EESchema Netlist Version 1.1 created  23/04/2012 11:26:50
+# EESchema Netlist Version 1.1 created  23/04/2012 15:09:00
 (
  ( /4F92F8BB SMD0603 C1 1u
   ( 1 +3.3V )
@@ -21,7 +21,7 @@
   ( 2 GND )
  )
  ( /4E8A2C30 SMD0603 C6 0.1u
-  ( 1 N-000074 )
+  ( 1 N-000078 )
   ( 2 GND )
  )
  ( /4F93C980 SMD0805 C7 10u
@@ -29,7 +29,7 @@
   ( 2 GND )
  )
  ( /4E8A2C2F SMD0603 C8 1u
-  ( 1 N-000074 )
+  ( 1 N-000078 )
   ( 2 GND )
  )
  ( /4EC612EE SMD0603 C9 1u
@@ -45,15 +45,15 @@
   ( 2 GND )
  )
  ( /4F93CA67 SMD0603 C12 220pF
-  ( 1 N-000046 )
+  ( 1 N-000150 )
   ( 2 GND )
  )
  ( /4F93CA5A SMD0603 C13 22n
-  ( 1 N-000046 )
-  ( 2 N-000045 )
+  ( 1 N-000150 )
+  ( 2 N-000038 )
  )
  ( /4F92F96E SMD0603 C14 6.8pF
-  ( 1 N-000149 )
+  ( 1 N-000004 )
   ( 2 GND )
  )
  ( /4EC612DC SMD0603 C15 1000pF
@@ -65,7 +65,7 @@
   ( 2 GND )
  )
  ( /4F92F974 SMD0603 C17 6.8pF
-  ( 1 N-000148 )
+  ( 1 N-000050 )
   ( 2 GND )
  )
  ( /4EC612EF SMD0603 C18 1u
@@ -112,17 +112,9 @@
   ( 1 /NodesPwr )
   ( 2 GND )
  )
- ( /4F94699B SMD0603 C29 0.1u
-  ( 1 GND )
-  ( 2 N-000105 )
- )
  ( /4F945DF5 SMD0805 C30 10u
   ( 1 GND )
-  ( 2 N-000106 )
- )
- ( /4F946076 SMD0603 C31 22pF
-  ( 1 /SIM_DATA )
-  ( 2 GND )
+  ( 2 N-000134 )
  )
  ( /4F93DB5C DIODE_SMB D1 STPS340U
   ( A /PwrIn )
@@ -133,12 +125,12 @@
   ( C +12V )
  )
  ( /4F93E088 LED0603 D3 LED
-  ( A N-000145 )
+  ( A N-000095 )
   ( C GND )
  )
  ( /4F93CAD0 DIODE_SMB D4 STPS340U
   ( A GND )
-  ( C N-000156 )
+  ( C N-000039 )
  )
  ( /4EC612EA SOT23 DA1 PESD1CAN
   ( 1 /PwrIn )
@@ -146,11 +138,11 @@
   ( 3 GND )
  )
  ( /4F93C93A SO8HEATSINK DA2 L5973
-  ( 1 N-000156 )
+  ( 1 N-000039 )
   ( 2 ? )
   ( 3 /GsmPwrEn )
-  ( 4 N-000046 )
-  ( 5 N-000038 )
+  ( 4 N-000150 )
+  ( 5 N-000094 )
   ( 6 ? )
   ( 7 GND )
   ( 8 +12V )
@@ -205,14 +197,9 @@
   ( 2 /SNS6A_ADC )
   ( 3 GND )
  )
- ( /4F93BED5 SOT23 DA11 PESD1CAN
-  ( 1 /SNS7B_IN )
-  ( 2 /SNS7A_IN )
-  ( 3 GND )
- )
  ( /4F9270D6 SO8E DA12 IPS6041
   ( 1 GND )
-  ( 2 N-000083 )
+  ( 2 N-000087 )
   ( 3 ? )
   ( 4 /NodesPwr )
   ( 5 +12V )
@@ -223,8 +210,8 @@
  ( /4F92E7AA LQFP64 DD1 STM32F100XX-64
   ( 1 +3.3V )
   ( 2 ? )
-  ( 3 N-000148 )
-  ( 4 N-000149 )
+  ( 3 N-000050 )
+  ( 4 N-000004 )
   ( 5 ? )
   ( 6 ? )
   ( 7 ? )
@@ -233,7 +220,7 @@
   ( 10 /SNS5A_ADC )
   ( 11 /SNS5B_ADC )
   ( 12 GND )
-  ( 13 N-000074 )
+  ( 13 N-000078 )
   ( 14 /SNS1A_ADC )
   ( 15 /SNS1B_ADC )
   ( 16 /UART_TX )
@@ -248,17 +235,17 @@
   ( 25 /SNS6B_ADC )
   ( 26 /ADC_BAT )
   ( 27 /NodesCurrent )
-  ( 28 /SNS7A_IN )
-  ( 29 ? )
-  ( 30 ? )
+  ( 28 /SNS1A_PWR )
+  ( 29 /SNS5A_PWR )
+  ( 30 /SNS5B_PWR )
   ( 31 GND )
   ( 32 +3.3V )
   ( 33 /ExtPwrOk )
   ( 34 /GsmPwrEn )
   ( 35 /NodesPwrOn )
   ( 36 /PWR_ERROR )
-  ( 37 /SNS_A_PWR )
-  ( 38 /SNS_B_PWR )
+  ( 37 /SNS6A_PWR )
+  ( 38 /SNS6B_PWR )
   ( 39 /Status )
   ( 40 /DCD )
   ( 41 /Tx_Rx )
@@ -274,15 +261,15 @@
   ( 51 /RI )
   ( 52 /DTR )
   ( 53 /DSR )
-  ( 54 ? )
-  ( 55 /SNS7B_IN )
-  ( 56 /SNS7A_PWR )
-  ( 57 /SNS7B_PWR )
-  ( 58 N-000020 )
-  ( 59 ? )
+  ( 54 N-000090 )
+  ( 55 /SNS2B_PWR )
+  ( 56 /SNS2A_PWR )
+  ( 57 /SNS2B_PWR )
+  ( 58 /SNS3A_PWR )
+  ( 59 /SNS3B_PWR )
   ( 60 GND )
-  ( 61 ? )
-  ( 62 ? )
+  ( 61 /SNS4A_PWR )
+  ( 62 /SNS4B_PWR )
   ( 63 GND )
   ( 64 +3.3V )
  )
@@ -306,13 +293,19 @@
  ( /4E8A2A54 Hole3_5_out6mm HOLE4 HOLE_METALLED
   ( Hle GND )
  )
+ ( /4F952B3A Hole3_5_out6mm HOLE5 HOLE_METALLED
+  ( Hle GND )
+ )
+ ( /4F952B3B Hole3_5_out6mm HOLE6 HOLE_METALLED
+  ( Hle GND )
+ )
  ( /4E8A2C2E SMD0805 L1 10uH
-  ( 1 N-000074 )
+  ( 1 N-000078 )
   ( 2 +3.3V )
  )
- ( /4F93CAE4 INDUCTOR_1812 L2 10uH
+ ( /4F93CAE4 INDUCTOR_SR0604 L2 10uH
   ( 1 VCC )
-  ( 2 N-000156 )
+  ( 2 N-000039 )
  )
  ( /4F8D37A9 SMD0603 R1 100k
   ( 1 GND )
@@ -335,11 +328,11 @@
   ( 2 /Battery )
  )
  ( /4F93E075 SMD0603 R6 100R
-  ( 1 N-000145 )
-  ( 2 N-000020 )
+  ( 1 N-000095 )
+  ( 2 N-000090 )
  )
  ( /4F93CA76 SMD0603 R7 4k7
-  ( 1 N-000045 )
+  ( 1 N-000038 )
   ( 2 GND )
  )
  ( /4EC612D6 SMD0603 R8 10k
@@ -356,95 +349,87 @@
  )
  ( /4F93CAF0 SMD0603 R11 4k7
   ( 1 VCC )
-  ( 2 N-000038 )
+  ( 2 N-000094 )
  )
  ( /4F93CAF6 SMD0603 R12 2k
-  ( 1 N-000038 )
+  ( 1 N-000094 )
   ( 2 GND )
  )
  ( /4F9270D5 SMD0603 R13 10k
   ( 1 /NodesPwrOn )
-  ( 2 N-000083 )
+  ( 2 N-000087 )
  )
  ( /4EC60E9F SMD0603 R14 200k
   ( 1 /SNS1B_ADC )
-  ( 2 /SNS_B_PWR )
+  ( 2 /SNS2B_PWR )
  )
  ( /4F9279BF SMD0603 R15 200k
   ( 1 /SNS2B_ADC )
-  ( 2 /SNS_B_PWR )
+  ( 2 /SNS2B_PWR )
  )
  ( /4EC60E90 SMD0603 R16 200k
   ( 1 /SNS3B_ADC )
-  ( 2 /SNS_B_PWR )
+  ( 2 /SNS3B_PWR )
  )
  ( /4F927A03 SMD0603 R17 200k
   ( 1 /SNS4B_ADC )
-  ( 2 /SNS_B_PWR )
+  ( 2 /SNS4B_PWR )
  )
  ( /4F9279FC SMD0603 R18 200k
   ( 1 /SNS5B_ADC )
-  ( 2 /SNS_B_PWR )
+  ( 2 /SNS5B_PWR )
  )
  ( /4F927A04 SMD0603 R19 200k
   ( 1 /SNS6B_ADC )
-  ( 2 /SNS_B_PWR )
- )
- ( /4F93BC0D SMD0603 R20 200k
-  ( 1 /SNS7B_IN )
-  ( 2 /SNS7B_PWR )
+  ( 2 /SNS6B_PWR )
  )
  ( /4EC60EA4 SMD0603 R21 200k
   ( 1 /SNS1A_ADC )
-  ( 2 /SNS_A_PWR )
+  ( 2 /SNS1A_PWR )
  )
  ( /4F9279C4 SMD0603 R22 200k
   ( 1 /SNS2A_ADC )
-  ( 2 /SNS_A_PWR )
+  ( 2 /SNS2A_PWR )
  )
  ( /4EC60E8B SMD0603 R23 200k
   ( 1 /SNS3A_ADC )
-  ( 2 /SNS_A_PWR )
+  ( 2 /SNS3A_PWR )
  )
  ( /4F9279FE SMD0603 R24 200k
   ( 1 /SNS4A_ADC )
-  ( 2 /SNS_A_PWR )
+  ( 2 /SNS4A_PWR )
  )
  ( /4F9279F7 SMD0603 R25 200k
   ( 1 /SNS5A_ADC )
-  ( 2 /SNS_A_PWR )
+  ( 2 /SNS5A_PWR )
  )
  ( /4F927A09 SMD0603 R26 200k
   ( 1 /SNS6A_ADC )
-  ( 2 /SNS_A_PWR )
- )
- ( /4F93BC08 SMD0603 R27 200k
-  ( 1 /SNS7A_IN )
-  ( 2 /SNS7A_PWR )
+  ( 2 /SNS6A_PWR )
  )
  ( /4EC60EA3 SMD0603 R28 100k
   ( 1 /SNS1A_ADC )
-  ( 2 N-000070 )
+  ( 2 N-000073 )
  )
  ( /4EC60EA2 SMD0603 R29 100k
   ( 1 /SNS1B_ADC )
-  ( 2 N-000069 )
+  ( 2 N-000072 )
  )
  ( /4EC60EA1 SMD0603 R30 100k
   ( 1 GND )
-  ( 2 N-000098 )
+  ( 2 N-000074 )
  )
  ( /4F9279C3 SMD0603 R31 100k
   ( 1 /SNS2A_ADC )
-  ( 2 N-000088 )
+  ( 2 N-000085 )
  )
  ( /4F9279C2 SMD0603 R32 100k
   ( 1 /SNS2B_ADC )
-  ( 2 N-000087 )
+  ( 2 N-000084 )
  )
  ( /4F9279C1 SMD0603 R33 100k
   ( 1 GND )
-  ( 2 N-000089 )
+  ( 2 N-000097 )
  )
  ( /4EC60E8C SMD0603 R34 100k
   ( 1 /SNS3A_ADC )
@@ -456,55 +441,43 @@
  )
  ( /4EC60E8E SMD0603 R36 100k
   ( 1 GND )
-  ( 2 N-000097 )
+  ( 2 N-000069 )
  )
  ( /4F9279FF SMD0603 R37 100k
   ( 1 /SNS4A_ADC )
-  ( 2 N-000014 )
+  ( 2 N-000026 )
  )
  ( /4F927A00 SMD0603 R38 100k
   ( 1 /SNS4B_ADC )
-  ( 2 N-000011 )
+  ( 2 N-000027 )
  )
  ( /4F927A01 SMD0603 R39 100k
   ( 1 GND )
-  ( 2 N-000012 )
+  ( 2 N-000098 )
  )
  ( /4F9279F8 SMD0603 R40 100k
   ( 1 /SNS5A_ADC )
-  ( 2 N-000017 )
+  ( 2 N-000016 )
  )
  ( /4F9279F9 SMD0603 R41 100k
   ( 1 /SNS5B_ADC )
-  ( 2 N-000019 )
+  ( 2 N-000015 )
  )
  ( /4F9279FA SMD0603 R42 100k
   ( 1 GND )
-  ( 2 N-000099 )
+  ( 2 N-000151 )
  )
  ( /4F927A08 SMD0603 R43 100k
   ( 1 /SNS6A_ADC )
-  ( 2 N-000029 )
+  ( 2 N-000021 )
  )
  ( /4F927A07 SMD0603 R44 100k
   ( 1 /SNS6B_ADC )
-  ( 2 N-000028 )
+  ( 2 N-000017 )
  )
  ( /4F927A06 SMD0603 R45 100k
   ( 1 GND )
-  ( 2 N-000030 )
- )
- ( /4F93BC09 SMD0603 R46 100k
-  ( 1 /SNS7A_IN )
-  ( 2 N-000041 )
- )
- ( /4F93BC0A SMD0603 R47 100k
-  ( 1 /SNS7B_IN )
-  ( 2 N-000043 )
- )
- ( /4F93BC0B SMD0603 R48 100k
-  ( 1 GND )
-  ( 2 N-000100 )
+  ( 2 N-000096 )
  )
  ( /4F92792A SMD1206 R49 1R
   ( 1 /NodesCurrent )
@@ -516,22 +489,22 @@
  )
  ( /4F9468A3 SMD0603 R51 1k
   ( 1 /PWR_KEY )
-  ( 2 N-000103 )
+  ( 2 N-000108 )
  )
  ( /4F946317 SMD0603 R52 10k
   ( 1 /SIM_DETECT )
   ( 2 /VDD_EXT )
  )
  ( /4F945FBC SMD0603 R53 22R
-  ( 1 N-000077 )
+  ( 1 N-000104 )
   ( 2 /SIM_CLK )
  )
  ( /4F945FD7 SMD0603 R54 22R
-  ( 1 N-000119 )
+  ( 1 N-000077 )
   ( 2 /SIM_DATA )
  )
  ( /4F945FDC SMD0603 R55 22R
-  ( 1 N-000078 )
+  ( 1 N-000105 )
   ( 2 /SIM_RST )
  )
  ( /4E8A2AA1 REF_POINT_1MM RP1 REFPOINT
@@ -566,8 +539,8 @@
   ( 3 /RS485_A )
   ( 4 /A )
  )
- ( /4F945A3B $noname$ U2 SIM900
-  ( 1 N-000103 )
+ ( /4F945A3B SIM900 U2 SIM900
+  ( 1 N-000108 )
   ( 2 ? )
   ( 3 /DTR )
   ( 4 /RI )
@@ -582,7 +555,7 @@
   ( 13 ? )
   ( 14 ? )
   ( 15 /VDD_EXT )
-  ( 16 N-000105 )
+  ( 16 ? )
   ( 17 GND )
   ( 18 GND )
   ( 19 ? )
@@ -592,9 +565,9 @@
   ( 23 ? )
   ( 24 ? )
   ( 25 ? )
-  ( 26 N-000106 )
-  ( 27 N-000104 )
-  ( 28 N-000142 )
+  ( 26 N-000134 )
+  ( 27 N-000110 )
+  ( 28 N-000099 )
   ( 29 GND )
   ( 30 /SIM_VDD )
   ( 31 /SIM_DATA )
@@ -663,11 +636,11 @@
  )
  ( /4E945F45 SC_Holder_C707 XL6 SIM_HOLDER
   ( C1 /SIM_VDD )
-  ( C2 N-000078 )
-  ( C3 N-000077 )
+  ( C2 N-000105 )
+  ( C3 N-000104 )
   ( C5 GND )
   ( C6 ? )
-  ( C7 N-000119 )
+  ( C7 N-000077 )
   ( CD1 /SIM_DETECT )
   ( CD2 GND )
   ( Shld GND )
@@ -678,64 +651,55 @@
  )
  ( /4EC60EA5 RJ11_TJ6_6P6C XL8 RJ11
   ( 1 ? )
-  ( 2 N-000098 )
-  ( 3 N-000070 )
-  ( 4 N-000069 )
-  ( 5 N-000098 )
+  ( 2 N-000074 )
+  ( 3 N-000073 )
+  ( 4 N-000072 )
+  ( 5 N-000074 )
   ( 6 ? )
   ( H GND )
  )
  ( /4F9279C5 RJ11_TJ6_6P6C XL9 RJ11
   ( 1 ? )
-  ( 2 N-000089 )
-  ( 3 N-000088 )
-  ( 4 N-000087 )
-  ( 5 N-000089 )
+  ( 2 N-000097 )
+  ( 3 N-000085 )
+  ( 4 N-000084 )
+  ( 5 N-000097 )
   ( 6 ? )
   ( H GND )
  )
  ( /4EC60E8A RJ11_TJ6_6P6C XL10 RJ11
   ( 1 ? )
-  ( 2 N-000097 )
+  ( 2 N-000069 )
   ( 3 N-000068 )
   ( 4 N-000067 )
-  ( 5 N-000097 )
+  ( 5 N-000069 )
   ( 6 ? )
   ( H GND )
  )
  ( /4F9279FD RJ11_TJ6_6P6C XL11 RJ11
   ( 1 ? )
-  ( 2 N-000012 )
-  ( 3 N-000014 )
-  ( 4 N-000011 )
-  ( 5 N-000012 )
+  ( 2 N-000098 )
+  ( 3 N-000026 )
+  ( 4 N-000027 )
+  ( 5 N-000098 )
   ( 6 ? )
   ( H GND )
  )
  ( /4F9279F6 RJ11_TJ6_6P6C XL12 RJ11
   ( 1 ? )
-  ( 2 N-000099 )
-  ( 3 N-000017 )
-  ( 4 N-000019 )
-  ( 5 N-000099 )
+  ( 2 N-000151 )
+  ( 3 N-000016 )
+  ( 4 N-000015 )
+  ( 5 N-000151 )
   ( 6 ? )
   ( H GND )
  )
  ( /4F927A0A RJ11_TJ6_6P6C XL13 RJ11
   ( 1 ? )
-  ( 2 N-000030 )
-  ( 3 N-000029 )
-  ( 4 N-000028 )
-  ( 5 N-000030 )
-  ( 6 ? )
-  ( H GND )
- )
- ( /4F93BC07 RJ11_TJ6_6P6C XL14 RJ11
-  ( 1 ? )
-  ( 2 N-000100 )
-  ( 3 N-000041 )
-  ( 4 N-000043 )
-  ( 5 N-000100 )
+  ( 2 N-000096 )
+  ( 3 N-000021 )
+  ( 4 N-000017 )
+  ( 5 N-000096 )
   ( 6 ? )
   ( H GND )
  )
@@ -762,13 +726,13 @@
   ( 2 GND )
  )
  ( /4F9468EA SIL-3 XL18 CONN_3
-  ( 1 N-000104 )
-  ( 2 N-000142 )
+  ( 1 N-000110 )
+  ( 2 N-000099 )
   ( 3 GND )
  )
  ( /4F92F95F CRYSTAL_KX26 XTAL1 32768
-  ( 1 N-000149 )
-  ( 2 N-000148 )
+  ( 1 N-000004 )
+  ( 2 N-000050 )
   ( H GND )
  )
 )
@@ -861,13 +825,7 @@ $endlist
 $component C28
  SMD*
 $endlist
-$component C29
- SMD*
-$endlist
 $component C30
- SMD*
-$endlist
-$component C31
  SMD*
 $endlist
 $component D1
@@ -906,9 +864,6 @@ $endlist
 $component DA10
  SOT23
 $endlist
-$component DA11
- SOT23
-$endlist
 $component DA12
  SO8*
 $endlist
@@ -931,6 +886,12 @@ $component HOLE3
  HOLE*
 $endlist
 $component HOLE4
+ HOLE*
+$endlist
+$component HOLE5
+ HOLE*
+$endlist
+$component HOLE6
  HOLE*
 $endlist
 $component L1
@@ -998,9 +959,6 @@ $endlist
 $component R19
  SMD*
 $endlist
-$component R20
- SMD*
-$endlist
 $component R21
  SMD*
 $endlist
@@ -1017,9 +975,6 @@ $component R25
  SMD*
 $endlist
 $component R26
- SMD*
-$endlist
-$component R27
  SMD*
 $endlist
 $component R28
@@ -1074,15 +1029,6 @@ $component R44
  SMD*
 $endlist
 $component R45
- SMD*
-$endlist
-$component R46
- SMD*
-$endlist
-$component R47
- SMD*
-$endlist
-$component R48
  SMD*
 $endlist
 $component R49
@@ -1162,9 +1108,6 @@ $component XL12
  RJ*
 $endlist
 $component XL13
- RJ*
-$endlist
-$component XL14
  RJ*
 $endlist
 $component XL15
