@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 23/04/2012 15:08:47
+EESchema Schematic File Version 2  date 24/04/2012 01:00:31
 LIBS:Connectors_kl
 LIBS:modules
 LIBS:pcb_details
@@ -10,6 +10,7 @@ LIBS:Tittar_kl
 LIBS:Transistors_kl
 LIBS:SmartCard_kl
 LIBS:Interface_kl
+LIBS:VaultKeeper-cache
 EELAYER 25  0
 EELAYER END
 $Descr A2 23400 16535
@@ -1836,7 +1837,7 @@ P 7600 9000
 F 0 "XTAL1" H 7600 9250 60  0000 C CNN
 F 1 "32768" H 7600 9150 60  0000 C CNN
 	1    7600 9000
-	1    0    0    -1  
+	-1   0    0    -1  
 $EndComp
 NoConn ~ 5000 7300
 NoConn ~ 5000 7400
