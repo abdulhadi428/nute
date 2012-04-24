@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project xsi:noNamespaceSchemaLocation="Project.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Version current="2" valid="1" read="1"/>
-  <Format>Project</Format>
-  <Header>
-    <Program name="TopoR" version="5.2"/>
-    <GUID>{4065CD8B-A32E-42CE-9E4A-673D0114BB55}</GUID>
-    <Copyright></Copyright>
-    <Annotation>Project file</Annotation>
-    <ParentDocument/>
-    <ChangeLog/>
-  </Header>
-  <Document>
-    <LocalLibrary />
-    <Pcb>
-<File path=".\VaultKeeper.fsx" Folder="-1" isopened="1"/>
-    </Pcb>
-    <ARouteSessions>
-    </ARouteSessions>
-  </Document>
+	<Version current="1"/>
+	<Format>Project</Format>
+	<Header>
+		<Program name="TopoR" version="5.3"/>
+		<GUID>{4065CD8B-A32E-42CE-9E4A-673D0114BB55}</GUID>
+		<Annotation>Project file</Annotation>
+	</Header>
+	<Document>
+		<LocalLibrary />
+		<Pcb>
+			<File path=".\VaultKeeper.fsx" Folder="-1" isopened="0"/>
+		</Pcb>
+		<Import>
+			<Specctra>
+			<Path name="D:\Nute\HandyDevices\VaultKeeper\VaultKeeper_hw\VaultKeeper.dsn"/>
+			</Specctra>
+		</Import>
+		<ARouteSessions>
+		</ARouteSessions>
+	</Document>
 </Project>
