@@ -1,4 +1,4 @@
-# EESchema Netlist Version 1.1 created  24/04/2012 01:00:36
+# EESchema Netlist Version 1.1 created  24/04/2012 14:43:27
 (
  ( /4F952B3B $noname  HOLE6 HOLE_METALLED {Lib=HOLE_METALLED}
   (  Hle GND )
@@ -11,36 +11,36 @@
   (    2 GND )
  )
  ( /4F9468EA $noname  XL18 CONN_3 {Lib=CONN_3}
-  (    1 N-000110 )
-  (    2 N-000099 )
+  (    1 N-000111 )
+  (    2 N-000100 )
   (    3 GND )
  )
  ( /4F9468A3 $noname  R51 1k {Lib=R}
   (    1 /PWR_KEY )
-  (    2 N-000108 )
+  (    2 N-000109 )
  )
  ( /4F946317 $noname  R52 10k {Lib=R}
   (    1 /SIM_DETECT )
   (    2 /VDD_EXT )
  )
  ( /4F945FDC $noname  R55 22R {Lib=R}
-  (    1 N-000105 )
+  (    1 N-000106 )
   (    2 /SIM_RST )
  )
  ( /4F945FD7 $noname  R54 22R {Lib=R}
-  (    1 N-000077 )
+  (    1 N-000078 )
   (    2 /SIM_DATA )
  )
  ( /4F945FBC $noname  R53 22R {Lib=R}
-  (    1 N-000104 )
+  (    1 N-000105 )
   (    2 /SIM_CLK )
  )
  ( /4F945DF5 $noname  C30 10u {Lib=C}
   (    1 GND )
-  (    2 N-000134 )
+  (    2 N-000135 )
  )
  ( /4F945A3B $noname  U2 SIM900 {Lib=SIM900}
-  (    1 N-000108 )
+  (    1 N-000109 )
   (    2 ? )
   (    3 /DTR )
   (    4 /RI )
@@ -65,9 +65,9 @@
   (   23 ? )
   (   24 ? )
   (   25 ? )
-  (   26 N-000134 )
-  (   27 N-000110 )
-  (   28 N-000099 )
+  (   26 N-000135 )
+  (   27 N-000111 )
+  (   28 N-000100 )
   (   29 GND )
   (   30 /SIM_VDD )
   (   31 /SIM_DATA )
@@ -109,12 +109,12 @@
   (   68 ? )
  )
  ( /4F93E088 $noname  D3 LED {Lib=LED}
-  (    A N-000095 )
+  (    A N-000096 )
   (    C GND )
  )
  ( /4F93E075 $noname  R6 100R {Lib=R}
-  (    1 N-000095 )
-  (    2 N-000090 )
+  (    1 N-000096 )
+  (    2 N-000091 )
  )
  ( /4F93DE35 $noname  R2 330k {Lib=R}
   (    1 /ExtPwrOk )
@@ -137,12 +137,12 @@
   (    2 GND )
  )
  ( /4F93CAF6 $noname  R12 2k {Lib=R}
-  (    1 N-000094 )
+  (    1 N-000095 )
   (    2 GND )
  )
  ( /4F93CAF0 $noname  R11 4k7 {Lib=R}
   (    1 VCC )
-  (    2 N-000094 )
+  (    2 N-000095 )
  )
  ( /4F93CAE4 1812  L2 10uH {Lib=L}
   (    1 VCC )
@@ -157,11 +157,11 @@
   (    2 GND )
  )
  ( /4F93CA67 $noname  C12 220pF {Lib=C}
-  (    1 N-000150 )
+  (    1 N-000151 )
   (    2 GND )
  )
  ( /4F93CA5A $noname  C13 22n {Lib=C}
-  (    1 N-000150 )
+  (    1 N-000151 )
   (    2 N-000038 )
  )
  ( /4F93CA14 $noname  C10 100uF {Lib=CP}
@@ -176,8 +176,8 @@
   (    1 N-000039 )
   (    2 ? )
   (    3 /GsmPwrEn )
-  (    4 N-000150 )
-  (    5 N-000094 )
+  (    4 N-000151 )
+  (    5 N-000095 )
   (    6 ? )
   (    7 GND )
   (    8 +12V )
@@ -271,7 +271,7 @@
   (   10 /SNS5A_ADC )
   (   11 /SNS5B_ADC )
   (   12 GND )
-  (   13 N-000078 )
+  (   13 N-000079 )
   (   14 /SNS1A_ADC )
   (   15 /SNS1B_ADC )
   (   16 /UART_TX )
@@ -312,8 +312,8 @@
   (   51 /RI )
   (   52 /DTR )
   (   53 /DSR )
-  (   54 N-000090 )
-  (   55 /SNS2B_PWR )
+  (   54 N-000091 )
+  (   55 /SNS1B_PWR )
   (   56 /SNS2A_PWR )
   (   57 /SNS2B_PWR )
   (   58 /SNS3A_PWR )
@@ -326,10 +326,10 @@
  )
  ( /4F927A0A $noname  XL13 RJ11 {Lib=RJ11}
   (    1 ? )
-  (    2 N-000096 )
+  (    2 N-000097 )
   (    3 N-000021 )
   (    4 N-000017 )
-  (    5 N-000096 )
+  (    5 N-000097 )
   (    6 ? )
   (    H GND )
  )
@@ -347,7 +347,7 @@
  )
  ( /4F927A06 $noname  R45 100k {Lib=R}
   (    1 GND )
-  (    2 N-000096 )
+  (    2 N-000097 )
  )
  ( /4F927A04 $noname  R19 200k {Lib=R}
   (    1 /SNS6B_ADC )
@@ -359,7 +359,7 @@
  )
  ( /4F927A01 $noname  R39 100k {Lib=R}
   (    1 GND )
-  (    2 N-000098 )
+  (    2 N-000099 )
  )
  ( /4F927A00 $noname  R38 100k {Lib=R}
   (    1 /SNS4B_ADC )
@@ -375,10 +375,10 @@
  )
  ( /4F9279FD $noname  XL11 RJ11 {Lib=RJ11}
   (    1 ? )
-  (    2 N-000098 )
+  (    2 N-000099 )
   (    3 N-000026 )
   (    4 N-000027 )
-  (    5 N-000098 )
+  (    5 N-000099 )
   (    6 ? )
   (    H GND )
  )
@@ -388,7 +388,7 @@
  )
  ( /4F9279FA $noname  R42 100k {Lib=R}
   (    1 GND )
-  (    2 N-000151 )
+  (    2 N-000152 )
  )
  ( /4F9279F9 $noname  R41 100k {Lib=R}
   (    1 /SNS5B_ADC )
@@ -404,19 +404,19 @@
  )
  ( /4F9279F6 $noname  XL12 RJ11 {Lib=RJ11}
   (    1 ? )
-  (    2 N-000151 )
+  (    2 N-000152 )
   (    3 N-000016 )
   (    4 N-000015 )
-  (    5 N-000151 )
+  (    5 N-000152 )
   (    6 ? )
   (    H GND )
  )
  ( /4F9279C5 $noname  XL9 RJ11 {Lib=RJ11}
   (    1 ? )
-  (    2 N-000097 )
-  (    3 N-000085 )
-  (    4 N-000084 )
-  (    5 N-000097 )
+  (    2 N-000098 )
+  (    3 N-000086 )
+  (    4 N-000085 )
+  (    5 N-000098 )
   (    6 ? )
   (    H GND )
  )
@@ -426,15 +426,15 @@
  )
  ( /4F9279C3 $noname  R31 100k {Lib=R}
   (    1 /SNS2A_ADC )
-  (    2 N-000085 )
+  (    2 N-000086 )
  )
  ( /4F9279C2 $noname  R32 100k {Lib=R}
   (    1 /SNS2B_ADC )
-  (    2 N-000084 )
+  (    2 N-000085 )
  )
  ( /4F9279C1 $noname  R33 100k {Lib=R}
   (    1 GND )
-  (    2 N-000097 )
+  (    2 N-000098 )
  )
  ( /4F9279BF $noname  R15 200k {Lib=R}
   (    1 /SNS2B_ADC )
@@ -462,7 +462,7 @@
  )
  ( /4F9270D6 $noname  DA12 IPS6041 {Lib=IPS6041}
   (    1 GND )
-  (    2 N-000087 )
+  (    2 N-000088 )
   (    3 ? )
   (    4 /NodesPwr )
   (    5 +12V )
@@ -472,7 +472,7 @@
  )
  ( /4F9270D5 $noname  R13 10k {Lib=R}
   (    1 /NodesPwrOn )
-  (    2 N-000087 )
+  (    2 N-000088 )
  )
  ( /4F8D37A9 $noname  R1 100k {Lib=R}
   (    1 GND )
@@ -533,20 +533,20 @@
   (    4 GND )
   (    5 /PWR_ERROR )
   (    6 ? )
-  (    7 N-000093 )
+  (    7 N-000094 )
   (    8 +12V )
  )
  ( /4EC612DF $noname  R9 300k {Lib=R}
   (    1 +3.3V )
-  (    2 N-000093 )
+  (    2 N-000094 )
  )
  ( /4EC612DE $noname  R10 220k {Lib=R}
-  (    1 N-000093 )
+  (    1 N-000094 )
   (    2 GND )
  )
  ( /4EC612DC $noname  C15 1000pF {Lib=C}
   (    1 +3.3V )
-  (    2 N-000093 )
+  (    2 N-000094 )
  )
  ( /4EC612D6 $noname  R8 10k {Lib=R}
   (    1 /Tx_Rx )
@@ -609,10 +609,10 @@
  )
  ( /4EC60EA5 $noname  XL8 RJ11 {Lib=RJ11}
   (    1 ? )
-  (    2 N-000074 )
-  (    3 N-000073 )
-  (    4 N-000072 )
-  (    5 N-000074 )
+  (    2 N-000075 )
+  (    3 N-000074 )
+  (    4 N-000073 )
+  (    5 N-000075 )
   (    6 ? )
   (    H GND )
  )
@@ -622,19 +622,19 @@
  )
  ( /4EC60EA3 $noname  R28 100k {Lib=R}
   (    1 /SNS1A_ADC )
-  (    2 N-000073 )
+  (    2 N-000074 )
  )
  ( /4EC60EA2 $noname  R29 100k {Lib=R}
   (    1 /SNS1B_ADC )
-  (    2 N-000072 )
+  (    2 N-000073 )
  )
  ( /4EC60EA1 $noname  R30 100k {Lib=R}
   (    1 GND )
-  (    2 N-000074 )
+  (    2 N-000075 )
  )
  ( /4EC60E9F $noname  R14 200k {Lib=R}
   (    1 /SNS1B_ADC )
-  (    2 /SNS2B_PWR )
+  (    2 /SNS1B_PWR )
  )
  ( /4EC60E90 $noname  R16 200k {Lib=R}
   (    1 /SNS3B_ADC )
@@ -642,15 +642,15 @@
  )
  ( /4EC60E8E $noname  R36 100k {Lib=R}
   (    1 GND )
-  (    2 N-000069 )
+  (    2 N-000070 )
  )
  ( /4EC60E8D $noname  R35 100k {Lib=R}
   (    1 /SNS3B_ADC )
-  (    2 N-000067 )
+  (    2 N-000068 )
  )
  ( /4EC60E8C $noname  R34 100k {Lib=R}
   (    1 /SNS3A_ADC )
-  (    2 N-000068 )
+  (    2 N-000069 )
  )
  ( /4EC60E8B $noname  R23 200k {Lib=R}
   (    1 /SNS3A_ADC )
@@ -658,10 +658,10 @@
  )
  ( /4EC60E8A $noname  XL10 RJ11 {Lib=RJ11}
   (    1 ? )
-  (    2 N-000069 )
-  (    3 N-000068 )
-  (    4 N-000067 )
-  (    5 N-000069 )
+  (    2 N-000070 )
+  (    3 N-000069 )
+  (    4 N-000068 )
+  (    5 N-000070 )
   (    6 ? )
   (    H GND )
  )
@@ -671,11 +671,11 @@
  )
  ( /4E945F45 $noname  XL6 SIM_HOLDER {Lib=SIM_HOLDER}
   (   C1 /SIM_VDD )
-  (   C2 N-000105 )
-  (   C3 N-000104 )
+  (   C2 N-000106 )
+  (   C3 N-000105 )
   (   C5 GND )
   (   C6 ? )
-  (   C7 N-000077 )
+  (   C7 N-000078 )
   (  CD1 /SIM_DETECT )
   (  CD2 GND )
   ( Shld GND )
@@ -689,15 +689,15 @@
   (    2 /ADC_BAT )
  )
  ( /4E8A2C30 $noname  C6 0.1u {Lib=C}
-  (    1 N-000078 )
+  (    1 N-000079 )
   (    2 GND )
  )
  ( /4E8A2C2F $noname  C8 1u {Lib=C}
-  (    1 N-000078 )
+  (    1 N-000079 )
   (    2 GND )
  )
  ( /4E8A2C2E $noname  L1 10uH {Lib=L}
-  (    1 N-000078 )
+  (    1 N-000079 )
   (    2 +3.3V )
  )
  ( /4E8A2AA1 $noname  RP1 REFPOINT {Lib=REFPOINT}
@@ -1367,256 +1367,257 @@ Net 48 "GND" "GND"
  DA10 3
  C27 2
  DA9 3
- R33 1
- R50 2
+ C22 1
  R49 2
  R1 1
- C22 1
- C20 2
  C6 2
- DA12 1
- XL4 4
+ R4 2
+ R50 2
+ R33 1
+ XL3 GND
+ C20 2
  XL2 2
  C8 2
- XL3 GND
+ XL4 4
+ DA12 1
  HOLE1 Hle
- R4 2
 Net 49 "/SNS2A_ADC" "SNS2A_ADC"
- DD1 20
  R31 1
  DA7 2
+ DD1 20
  R22 1
 Net 50 "" ""
- C17 1
  XTAL1 1
  DD1 3
+ C17 1
 Net 51 "/SNS2B_ADC" "SNS2B_ADC"
- DD1 21
- DA7 1
  R32 1
+ DD1 21
  R15 1
+ DA7 1
 Net 52 "/SNS1A_ADC" "SNS1A_ADC"
- DA5 2
- DD1 14
- R28 1
  R21 1
+ DD1 14
+ DA5 2
+ R28 1
 Net 53 "/SNS1B_ADC" "SNS1B_ADC"
  R29 1
- DD1 15
  DA5 1
  R14 1
+ DD1 15
 Net 54 "/DSR" "DSR"
- TP3 1
  U2 6
  DD1 53
+ TP3 1
 Net 55 "/RTS" "RTS"
- U2 8
  DD1 45
+ U2 8
  TP1 1
 Net 56 "/CTS" "CTS"
+ TP2 1
  U2 7
  DD1 44
- TP2 1
 Net 57 "/RXD" "RXD"
- DD1 42
- XL5 1
  U2 10
+ XL5 1
+ DD1 42
 Net 58 "/TXD" "TXD"
+ DD1 43
  XL5 2
  U2 9
- DD1 43
 Net 59 "/SNS3B_PWR" "SNS3B_PWR"
- DD1 59
  R16 2
+ DD1 59
 Net 60 "/SNS3A_PWR" "SNS3A_PWR"
  DD1 58
  R23 2
-Net 61 "/SNS1A_PWR" "SNS1A_PWR"
- R21 2
+Net 61 "/SNS1B_PWR" "SNS1B_PWR"
+ R14 2
+ DD1 55
+Net 62 "/SNS1A_PWR" "SNS1A_PWR"
  DD1 28
-Net 67 "" ""
+ R21 2
+Net 68 "" ""
  XL10 4
  R35 2
-Net 68 "" ""
+Net 69 "" ""
  XL10 3
  R34 2
-Net 69 "" ""
- XL10 2
+Net 70 "" ""
  R36 2
  XL10 5
-Net 70 "/RS485_A" "RS485_A"
+ XL10 2
+Net 71 "/RS485_A" "RS485_A"
  U1 3
  XL15 3
  F1 1
  XL16 3
-Net 71 "/RS485_B" "RS485_B"
- XL15 4
- XL16 4
+Net 72 "/RS485_B" "RS485_B"
  F2 1
+ XL15 4
  U1 2
-Net 72 "" ""
+ XL16 4
+Net 73 "" ""
  R29 2
  XL8 4
-Net 73 "" ""
- R28 2
- XL8 3
 Net 74 "" ""
- R30 2
- XL8 5
+ XL8 3
+ R28 2
+Net 75 "" ""
  XL8 2
-Net 75 "/ANT" "ANT"
- U2 60
+ XL8 5
+ R30 2
+Net 76 "/ANT" "ANT"
  XL7 RF
-Net 76 "/ADC_BAT" "ADC_BAT"
- DD1 26
+ U2 60
+Net 77 "/ADC_BAT" "ADC_BAT"
  R3 2
  R4 1
-Net 77 "" ""
- R54 1
- XL6 C7
+ DD1 26
 Net 78 "" ""
- C6 1
- C8 1
- L1 1
+ XL6 C7
+ R54 1
+Net 79 "" ""
  DD1 13
-Net 79 "/PwrIn" "PwrIn"
- DA1 2
- XL3 PWR
+ C6 1
+ L1 1
+ C8 1
+Net 80 "/PwrIn" "PwrIn"
  DA1 1
  R2 2
  D1 A
-Net 82 "/Battery" "Battery"
- R3 1
+ DA1 2
+ XL3 PWR
+Net 83 "/Battery" "Battery"
  XL2 1
  D2 A
+ R3 1
  R5 2
-Net 83 "/SNS2B_PWR" "SNS2B_PWR"
- DD1 55
+Net 84 "/SNS2B_PWR" "SNS2B_PWR"
  R15 2
- R14 2
  DD1 57
-Net 84 "" ""
- R32 2
- XL9 4
 Net 85 "" ""
- XL9 3
+ XL9 4
+ R32 2
+Net 86 "" ""
  R31 2
-Net 86 "/SNS2A_PWR" "SNS2A_PWR"
+ XL9 3
+Net 87 "/SNS2A_PWR" "SNS2A_PWR"
  DD1 56
  R22 2
-Net 87 "" ""
- DA12 2
+Net 88 "" ""
  R13 2
-Net 90 "" ""
- DD1 54
+ DA12 2
+Net 91 "" ""
  R6 2
-Net 91 "/SNS5A_ADC" "SNS5A_ADC"
- DA9 2
- DD1 10
- R25 1
+ DD1 54
+Net 92 "/SNS5A_ADC" "SNS5A_ADC"
  R40 1
-Net 92 "/SNS4A_ADC" "SNS4A_ADC"
- R24 1
+ DA9 2
+ R25 1
+ DD1 10
+Net 93 "/SNS4A_ADC" "SNS4A_ADC"
  R37 1
  DA8 2
+ R24 1
  DD1 8
-Net 93 "" ""
- R10 1
- C15 2
- R9 2
- DA3 7
 Net 94 "" ""
+ DA3 7
+ R9 2
+ C15 2
+ R10 1
+Net 95 "" ""
  DA2 5
  R12 1
  R11 2
-Net 95 "" ""
- R6 1
- D3 A
 Net 96 "" ""
+ D3 A
+ R6 1
+Net 97 "" ""
  XL13 5
  R45 2
  XL13 2
-Net 97 "" ""
- R33 2
- XL9 2
- XL9 5
 Net 98 "" ""
- R39 2
- XL11 5
- XL11 2
+ XL9 5
+ XL9 2
+ R33 2
 Net 99 "" ""
- XL18 2
+ XL11 2
+ XL11 5
+ R39 2
+Net 100 "" ""
  U2 28
-Net 100 "/SIM_VDD" "SIM_VDD"
- U2 30
+ XL18 2
+Net 101 "/SIM_VDD" "SIM_VDD"
  XL6 C1
+ U2 30
  C22 2
-Net 101 "/SIM_DATA" "SIM_DATA"
+Net 102 "/SIM_DATA" "SIM_DATA"
  U2 31
  R54 2
-Net 102 "/PWR_KEY" "PWR_KEY"
+Net 103 "/PWR_KEY" "PWR_KEY"
  R51 1
  XL17 1
  DD1 50
-Net 103 "/SIM_CLK" "SIM_CLK"
+Net 104 "/SIM_CLK" "SIM_CLK"
  U2 32
  R53 2
-Net 104 "" ""
+Net 105 "" ""
  R53 1
  XL6 C3
-Net 105 "" ""
+Net 106 "" ""
  R55 1
  XL6 C2
-Net 106 "/RI" "RI"
+Net 107 "/RI" "RI"
  TP5 1
  U2 4
  DD1 51
-Net 107 "/VDD_EXT" "VDD_EXT"
+Net 108 "/VDD_EXT" "VDD_EXT"
  R52 2
  U2 15
-Net 108 "" ""
+Net 109 "" ""
  R51 2
  U2 1
-Net 110 "" ""
+Net 111 "" ""
  XL18 1
  U2 27
-Net 127 "/DCD" "DCD"
+Net 128 "/DCD" "DCD"
  U2 5
  TP6 1
  DD1 40
-Net 129 "/Status" "Status"
+Net 130 "/Status" "Status"
  DD1 39
  U2 66
-Net 134 "" ""
+Net 135 "" ""
  U2 26
  C30 2
-Net 137 "/SIM_DETECT" "SIM_DETECT"
+Net 138 "/SIM_DETECT" "SIM_DETECT"
  R52 1
  U2 34
  XL6 CD1
-Net 144 "/SIM_RST" "SIM_RST"
+Net 145 "/SIM_RST" "SIM_RST"
  U2 33
  R55 2
-Net 145 "/B" "B"
+Net 146 "/B" "B"
  DA4 7
  U1 1
  F2 2
-Net 146 "/NodesPwr" "NodesPwr"
+Net 147 "/NodesPwr" "NodesPwr"
  XL15 5
  XL16 5
  XL16 1
  DA12 4
  C28 1
  XL15 1
-Net 147 "/A" "A"
+Net 148 "/A" "A"
  DA4 6
  U1 4
  F1 2
-Net 148 "/ExtPwrOk" "ExtPwrOk"
+Net 149 "/ExtPwrOk" "ExtPwrOk"
  DD1 33
  R2 1
  R1 2
-Net 149 "VCC" "VCC"
+Net 150 "VCC" "VCC"
  U2 57
  C24 1
  U2 55
@@ -1627,11 +1628,11 @@ Net 149 "VCC" "VCC"
  C19 1
  U2 56
  C21 1
-Net 150 "" ""
+Net 151 "" ""
  C13 1
  C12 1
  DA2 4
-Net 151 "" ""
+Net 152 "" ""
  XL12 5
  R42 2
  XL12 2
