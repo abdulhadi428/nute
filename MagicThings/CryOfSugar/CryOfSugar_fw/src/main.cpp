@@ -5,56 +5,61 @@
  * Created on May 27, 2011, 6:37 PM
  */
 
-#include <stdint.h>
 #include "stm32f10x.h"
 #include "delay_util.h"
 #include "sd.h"
 #include "vs.h"
 #include "media.h"
 #include "kl_ini.h"
-#include "kl_util.h"
-#include "keys.h"
-#include "kl_lib.h"
-#include "led.h"
+#include <string.h>
 #include <stdlib.h>
+#include "kl_util.h"
+#include "acc_mma.h"
 
-#include "stm32f10x_rcc.h"
-
+#define SND_COUNT_MAX   100
 #define FNAME_LNG_MAX   13
 
-struct Settings_t {
-    char SndKeyBeep[FNAME_LNG_MAX], Snd[3][FNAME_LNG_MAX];
-    uint32_t Duration[3];
-    // Methods
-    bool Read(void);
-} Settings;
+typedef struct {
+     char Filename[FNAME_LNG_MAX];
+     uint32_t ProbBottom, ProbTop;
+} Snd_t;
 
-uint32_t EMode;
-uint32_t ETmr, LedTmr;
-bool WasPlayed;
+typedef struct {
+    Snd_t Phrases[SND_COUNT_MAX];
+    uint32_t Count;
+    uint32_t ProbSumm;
+} SndList_t;
+
+SndList_t SndList;
+
+Acc_t Acc;
 
 // Prototypes
 void GeneralInit(void);
-void Event_Kbd(uint8_t AKey);
-void ModeTask(void);
-inline void SetLed(uint16_t ABrightness) {
-    TIM1->CCR1 = ABrightness;
-}
+bool ReadConfig(void);
+
+void EVENT_Jolt(void);
 
 // ============================ Implementation ================================
 int main(void) {
-    GeneralInit();
+    UART_Init();
+    Delay.ms(100);
+    klPrintf("Sugar is up to cry\r");
 
+    GeneralInit();
+    uint32_t tmr;
+    Delay.Reset(&tmr);
     // ==== Main cycle ====
     while(1) {
-        Keys.Task();
         ESnd.Task();
-        ModeTask();
+        Acc.Task();
+        i2cMgr.Task();
+        //if (Delay.Elapsed(&tmr, 2000)) EVENT_SomeoneDetected();
     } // while(1)
+    return 0;
 }
 
 void GeneralInit(void) {
-    UART_Init();
     // Disable JTAG
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
     // Configure two bits for preemption priority
@@ -62,148 +67,76 @@ void GeneralInit(void) {
 
     // Init peripheral
     Delay.Init();
-    Keys.Init();
-    Keys.EvtKbd = Event_Kbd;
     // Sound
     Vs.Init();
     ESnd.Init();
 
+    // Accelerometer
+    i2cMgr.Init();
+    Acc.Init();
+    Acc.EvtTrigger = EVENT_Jolt;
+    Acc.Enable();
+
     // Register filesystem
-    klPrintf("Mount fs\r");
     f_mount(0, &SD.FatFilesystem);
-    if (!Settings.Read()) {
-        klPrintf("Settings read error\r");
+    if (!ReadConfig()) {
+        klPrintf("Config read error\r");
         while(1);    // nothing to do if config not read
     }
-
-    // GPIO
-    klGpio::SetupByN(GPIOA, 8, GPIO_Mode_AF_PP);
-    // ==== Timer1 as PWM ====
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
-    TIM1->CR1 = 0x01;   // enable
-    TIM1->CR2 = 0;
-    TIM1->CCMR1 = 0x60;
-    TIM1->CCER = 0x01;
-    TIM1->PSC = 27;
-    TIM1->ARR = 252;
-    TIM1->CCR1 = 0;
-    TIM1->BDTR = 0xC000;
-
-    srand(7);
     // Play initial sound
     ESnd.Play("alive.wav");
 }
 
-bool Settings_t::Read(void) {
-    klPrintf("Reading settings\r");
-    // Sound names
-    if(!ReadString("Sound", "KeyBeep", "settings.ini", Settings.SndKeyBeep, FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "Sound1",  "settings.ini", Settings.Snd[0],     FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "Sound2",  "settings.ini", Settings.Snd[1],     FNAME_LNG_MAX)) return false;
-    if(!ReadString("Sound", "Sound3",  "settings.ini", Settings.Snd[2],     FNAME_LNG_MAX)) return false;
+bool ReadConfig(void) {
+    // ==== Sound ====
+    if(!ReadUint32("Sound", "Count", "settings.ini", &SndList.Count)) return false;
+    klPrintf("Count: %i\r", SndList.Count);
+    if (SndList.Count == 0) return false;
+    char SndKey[18]="Sound";
+    char *c;
+    SndList.ProbSumm = 0;
+    // Read sounds data
+    uint32_t Probability = 0;
+    for (uint32_t i=0; i<SndList.Count; i++) {
+        // Build SndKey
+        c = UintToStr(i+1, &SndKey[5]);   // first symbol after "Sound"
+        strcpy(c, "Name");
+        //klPrintf("%s\r", SndKey);
+        // Read filename and probability
+        if(!ReadString("Sound", SndKey, "settings.ini", SndList.Phrases[i].Filename, FNAME_LNG_MAX)) return false;
+        strcpy(c, "Prob");
+        //klPrintf("%s\r", SndKey);
+        if(!ReadUint32 ("Sound", SndKey, "settings.ini", &Probability)) return false;
+        // Calculate probability boundaries
+        SndList.Phrases[i].ProbBottom = SndList.ProbSumm;
+        SndList.ProbSumm += Probability;
+        SndList.Phrases[i].ProbTop = SndList.ProbSumm;
+    }
+    // for (uint32_t i=0; i<SndList.Count; i++) klPrintf("%u %S %u\r", i, SndList.Phrases[i].Filename, SndList.Phrases[i].Probability); // DEBUG
 
-    // Timings
-    if(!ReadUint32("Timings", "Duration1", "settings.ini", &Settings.Duration[0])) return false;
-    if(!ReadUint32("Timings", "Duration2", "settings.ini", &Settings.Duration[1])) return false;
-
-    Settings.Duration[0] = Settings.Duration[0] * 1000;
-    Settings.Duration[1] = Settings.Duration[1] * 1000;
+    // ==== Accelerometer ====
+    if(!ReadUint32("Accelerometer", "ThresholdTop",    "settings.ini", &Acc.ThresholdTop)) return false;
+    if(!ReadUint32("Accelerometer", "ThresholdBottom", "settings.ini", &Acc.ThresholdBottom)) return false;
+    if(!ReadUint32("Accelerometer", "Delay",           "settings.ini", &Acc.Delay_ms)) return false;
+    Acc.Delay_ms *= 1000;   // Convert seconds to milliseconds
 
     return true;
 }
 
-// ================================== Keyboard =================================
-void Event_Kbd(uint8_t AKey) {
-    klPrintf("Key = %u\r", AKey);
-    ESnd.Play(Settings.SndKeyBeep);     // Play sound
-    if (AKey == EMode) {
-        ESnd.Stop();
-        EMode = 0;
+// ================================== Events ===================================
+void EVENT_Jolt(void) {
+    if (ESnd.State == sndPlaying) return;   // speaking now
+    klPrintf("Jolting\r");
+    // Generate random
+    uint32_t r = rand() % SndList.ProbSumm + 1; // [1; Probsumm]
+    // Select phrase
+    uint32_t i;
+    for (i=0; i<SndList.Count-1; i++) { // do not check last phrase
+        if((r >= SndList.Phrases[i].ProbBottom) && (r <= SndList.Phrases[i].ProbTop)) break;
     }
-    else {
-        EMode = AKey;
-        WasPlayed = false;
-        Delay.Reset(&ETmr);
-        klPrintf("Set mode %u\r", EMode);
-    }
+    // Play phrase
+    ESnd.Play(SndList.Phrases[i].Filename);
+    //DebugProb.count++;
+    //DebugProb.c[i]++;
+    //klPrintf("Total: %u   c1: %u  c2: %u  c3: %u  c4: %u\r", DebugProb.count, DebugProb.c[0], DebugProb.c[1], DebugProb.c[2], DebugProb.c[3]);
 }
-
-// =================================== Mode ====================================
-void ModeTask(void) {
-    static uint16_t IBrightness=0;
-    static uint32_t IDelay = 9;
-    static bool IsOn = false;
-    switch (EMode) {
-        case 0: // switch led off when sound is over
-            if (ESnd.State == sndStopped) SetLed(0);
-            break;
-
-        case 1:
-            if (Delay.Elapsed(&ETmr, Settings.Duration[0])) EMode = 0;
-            else {
-                if (ESnd.State == sndStopped) {
-                    ESnd.Play(Settings.Snd[0]);
-                    Delay.Reset(&LedTmr);
-                    IBrightness = 1;
-                    IDelay = 36;
-                    SetLed(0);
-                }
-                else if (Delay.Elapsed(&LedTmr, IDelay)) {
-                    SetLed(IBrightness++);
-                    if (IBrightness > 108) IBrightness = 0;
-                    if (IBrightness < 11) IDelay = 54;
-                    else if (IBrightness < 27) IDelay = 24;
-                    else IDelay = 9;
-                }
-            }
-            break;
-
-        case 2:
-            if (Delay.Elapsed(&ETmr, Settings.Duration[1])) EMode = 0;
-            else {
-                if (ESnd.State == sndStopped) {
-                    ESnd.Play(Settings.Snd[1]);
-                    Delay.Reset(&LedTmr);
-                    IBrightness = 108;
-                    IDelay = 9;
-                    SetLed(0);
-                }
-                else if (Delay.Elapsed(&LedTmr, IDelay)) {
-                    SetLed(IBrightness--);
-                    if (IBrightness == 0) IBrightness = 108;
-                    if (IBrightness < 11) IDelay = 11;
-                    else if (IBrightness < 27) IDelay = 4;
-                    else IDelay = 1;
-                }
-            }
-            break;
-
-        case 3:
-            if (!WasPlayed) {
-                if (ESnd.State == sndStopped) {
-                    ESnd.Play(Settings.Snd[2]);
-                    Delay.Reset(&LedTmr);
-                    WasPlayed = true;
-                    SetLed(250);
-                    IsOn = true;
-                    IDelay = 1+rand()%54;
-                }
-            }
-            else {
-                if (ESnd.State == sndStopped) EMode = 0;
-                else {
-                    if (Delay.Elapsed(&LedTmr, IDelay)) {
-                        if(IsOn) SetLed(0);
-                        else SetLed(250);
-                        IsOn = !IsOn;
-                        IDelay = 1+rand()%54;
-                    }
-                }
-            }
-            break;
-
-        default: break;
-    }
-}
-
-

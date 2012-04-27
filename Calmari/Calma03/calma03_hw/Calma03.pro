@@ -1,4 +1,4 @@
-update=05.04.2012 16:37:08
+update=26/04/2012 00:00:59
 version=1
 last_client=eeschema
 [cvpcb]
@@ -34,7 +34,7 @@ LibName4=Batteries_kl
 LibName5=Sensors
 [eeschema]
 version=1
-LibDir=Z:/svn/kl-libs/Kicad
+LibDir=D:/libs/Kicad
 NetFmt=1
 HPGLSpd=20
 HPGLDm=15
