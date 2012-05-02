@@ -13,6 +13,11 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_exti.h"
 
+/*
+ * GPIO_Mode_AIN, GPIO_Mode_IN_FLOATING, GPIO_Mode_IPD, GPIO_Mode_IPU,
+ * GPIO_Mode_Out_OD, GPIO_Mode_Out_PP, GPIO_Mode_AF_OD, GPIO_Mode_AF_PP
+ */
+
 // ==== Single pin manipulations ====
 // Set/clear
 static inline void klGpioSetByN     (GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { PGpioPort->BSRR = (uint16_t)(1<<APinNumber); }

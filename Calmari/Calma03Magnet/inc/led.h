@@ -42,18 +42,27 @@ public:
  * Smooth on & off.
  * Class is stand-alone as ordinal On & Off methods will not work with Alternate Function pin.
  */
+enum LedState_t {lsOff, lsOn, lsUp, lsDown};
 class LedSmooth_t {
 private:
-    uint32_t DelayTmr;
+    uint32_t IDelayTmr, IDelay;
     TIM_TypeDef* IPwmTimer;
-    uint16_t *ICCR;
-    uint16_t ITopValue;
+    uint16_t *ICCR, IValue;
+    void ISetupDelay(void) {
+        if (IValue < 11) IDelay = 81;
+        else if (IValue < 27) IDelay = 36;
+        else IDelay = 9;
+    }
 public:
+    LedState_t State;
     void Init(GPIO_TypeDef *AGpio, uint16_t APinNumber, TIM_TypeDef* ATimer, uint16_t ATopValue, uint16_t APrescaler, uint8_t AChannelNumber, bool InvertedPolarity);
-    void Task(void) { }
-    void Set(uint16_t AValue) { *ICCR = AValue; }
-    void On(void)             { Set(ITopValue); }
-    void Off(void)            { Set(0); }
+    void Task(void);
+    void Set(uint16_t AValue) { *ICCR = AValue; IValue = AValue; }
+    uint16_t Top(void)        { return (IPwmTimer->ARR); }
+    void On(void)       { Set(Top()); State = lsOn; }
+    void Off(void)      { Set(0); State = lsOff; }
+    void RampUp(void);
+    void RampDown(void);
 };
 
 

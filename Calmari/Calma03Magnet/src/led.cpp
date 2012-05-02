@@ -7,6 +7,7 @@
 
 #include "led.h"
 #include "stm32f10x_rcc.h"
+#include "kl_util.h"
 
 // =============================== LedBlink_t ==================================
 void LedBlink_t::Blink(uint32_t ABlinkDelay) {
@@ -30,7 +31,6 @@ void LedSmooth_t::Init(GPIO_TypeDef *AGpio, uint16_t APinNumber, TIM_TypeDef* AT
     klGpioSetupByN(AGpio, APinNumber, GPIO_Mode_AF_PP);
     // ==== Timer ====
     IPwmTimer = ATimer;
-    ITopValue = ATopValue;
     // Clock
     if      (IPwmTimer == TIM1) RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
     else if (IPwmTimer == TIM2) RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
@@ -68,6 +68,39 @@ void LedSmooth_t::Init(GPIO_TypeDef *AGpio, uint16_t APinNumber, TIM_TypeDef* AT
     }
 }
 
+void LedSmooth_t::RampUp(void) {
+    State = lsUp;
+    Delay.Reset(&IDelayTmr);
+    ISetupDelay();
+    //klPrintf("1: %u\r", IDelay);
+}
+void LedSmooth_t::RampDown(void) {
+    State = lsDown;
+    Delay.Reset(&IDelayTmr);
+    ISetupDelay();
+}
+
+
+void LedSmooth_t::Task() {
+    if (State == lsUp) {
+        // Check if top achieved
+        if (IValue == Top()) { State = lsOn; return; }
+        // Otherwise, check if delay elapsed
+        if (Delay.Elapsed(&IDelayTmr, IDelay)) {
+            *ICCR = IValue++;
+            ISetupDelay();
+        }
+    }
+    else if (State == lsDown) {
+        // Check if bottom achieved
+        if (IValue == 0) { State = lsOff; return; }
+        // Otherwise, check if delay elapsed
+        if (Delay.Elapsed(&IDelayTmr, IDelay)) {
+            *ICCR = --IValue;
+            ISetupDelay();
+        }
+    }
+}
 
 /*
 
