@@ -12,18 +12,32 @@
 #include "kl_lib.h"
 #include "led.h"
 #include "cc1101.h"
+#include "cc1190.h"
+#include "nute.h"
 
 LedBlinkInverted_t Led;
+Nute_t Nute;
+Tixe_t Tixe;
 
 // Prototypes
 void GeneralInit(void);
+void ClbckFound(void);
 
 // ============================== Implementation ===============================
 int main(void) {
     GeneralInit();
+
+    Tixe.Address = 4;
+    Tixe.Callback = ClbckFound;
+
+    uint32_t Tmr;
     while (1) {
+        //Led.Task();
         CC.Task();
-        //if(Delay.Elapsed(&Tmr, 999)) {
+        Nute.Task();
+        if(Delay.Elapsed(&Tmr, 1800)) {
+            Nute.Search(&Tixe);
+        }
     } // while 1
 }
 
@@ -38,14 +52,20 @@ inline void GeneralInit(void) {
 
     klJtagDisable();
 
-//    Led.Init(GPIOB, 1);
-//    Led.Off();
+    Led.Init(GPIOB, 1);
+    Led.Off();
 
     // Setup CC
     CC.Init();
     CC.SetChannel(0);
-    CC.SetAddress(4);
-    //cc1190.SetHighGainMode();
+    CC.SetAddress(1);
 
-    klPrintf("\rCollar\r");
+    Nute.Init();
+
+    klPrintf("\rCollar rcvr\r");
+}
+
+void ClbckFound(void) {
+    if (Tixe.Online) klPrintf("Found\r");
+    else klPrintf("No answer\r");
 }

@@ -13,8 +13,6 @@ CC_t CC;
 
 // ========================== Implementation ===================================
 void CC_t::Task(void) {
-    static uint32_t Tmr;
-    if (!Delay.Elapsed(&Tmr, 99)) return;
     // Do with CC what needed
     GetState();
     switch (IState) {
@@ -28,8 +26,8 @@ void CC_t::Task(void) {
             break;
 
         case CC_STB_IDLE:
-            Receive();
-            //klPrintf("RX\r");
+//            cc1190.LnaEnable();
+//            EnterRX();
             //if (Delay.Elapsed(&Timer, 100)) {
               //  klPrintf("TX\r");
                 // Prepare packet to send
@@ -72,14 +70,10 @@ void CC_t::IRQHandler() {
     if (WasTransmitting) {  // Switch to RX (RX is entered automatically as TX->RX)
         Receive();
     }
-    else {
-        //uint8_t PktState = ReadRegister(CC_PKTSTATUS);
-        //klPrintf("State: %X; ", PktState);
-        if (ReadRX()) {
-            NewPktRcvd = true;
-            //klPrintf("RX: %A\r", (uint8_t*)&RX_Pkt, CC_PKT_LEN+2);
-            klPrintf("ID: %u; RSSI: %i\r", RX_Pkt.PktID, RSSI_dBm());
-        }
+    else if (ReadRX()) {
+        NewPktRcvd = true;
+        //klPrintf("RX: %A\r", (uint8_t*)&RX_Pkt, CC_PKT_LEN+2);
+        //klPrintf("RSSI: %i\r", RSSI_dBm());
         FlushRxFIFO();
     } // if size>0
 }
@@ -117,7 +111,7 @@ void CC_t::Init(void) {
     FlushRxFIFO();
     RfConfig();
     cc1190.Init();
-    cc1190.SetHighGainMode();
+    //cc1190.SetHighGainMode();
 }
 
 void CC_t::SetChannel(uint8_t AChannel) {
@@ -156,7 +150,6 @@ void CC_t::Receive(void) {
     IrqPin.IrqSetup(EXTI_Trigger_Rising);  // FIFO ready
     IrqPin.IrqEnable();
     NewPktRcvd = false;
-    FlushRxFIFO();
     EnterRX();
 }
 
@@ -195,7 +188,7 @@ bool CC_t::ReadRX() {
         b = ReadWriteByte(0);
         *p++ = b;
 #ifdef CC_PRINT_RX
-        klPrintf("%X ", b);
+        klPrintf("0x%u ", b);
 #endif
     }
     CS_Hi();    // End transmission
