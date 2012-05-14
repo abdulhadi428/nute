@@ -7,15 +7,21 @@
 #include <inttypes.h>
 #include "cc1101.h"
 #include "kl_lib.h"
+#include "tixe.h"
 
 // ============================ Variables ======================================
 CC_t CC;
 
 // ========================== Implementation ===================================
 void CC_t::Task(void) {
+    // Rise event in case of new packet
+    if (NewPktRcvd) {
+        NewPktRcvd = false;
+        Tixe.RxHandler();
+    }
+    // Handle state
     static uint32_t Tmr;
     if (!Delay.Elapsed(&Tmr, 99)) return;
-    // Do with CC what needed
     GetState();
     switch (IState) {
         case CC_STB_RX_OVF:
@@ -28,48 +34,18 @@ void CC_t::Task(void) {
             break;
 
         case CC_STB_IDLE:
-            Receive();
-            //klPrintf("RX\r");
-            //if (Delay.Elapsed(&Timer, 100)) {
-              //  klPrintf("TX\r");
-                // Prepare packet to send
-//                TX_Pkt.PktID++;
-//                WriteTX();
-                //cc1190.SetHighGainMode();
-                //cc1190.SetLowGainMode();
-//                cc1190.PaEnable();
-//                EnterTX();
-            //}
-            break;
-
-        case CC_STB_RX:
-            //Uart.PrintString("\rRX");
-//            if (GDO0_IsHi()) GDO0_WasHi = true;
-//            // Check if GDO0 has fallen
-//            else if (GDO0_WasHi) {
-//                //UART_PrintString("\rIRQ\r");
-//                GDO0_WasHi = false;
-//                FifoSize = ReadRegister(CC_RXBYTES); // Get number of bytes in FIFO
-//                if (FifoSize != 0) {
-//                    ReadRX(RX_PktArray, (CC_PKT_LEN+2));    // Read two extra bytes of RSSI & LQI
-//                    EVENT_NewPacket();
-//                } // if size>0
-//            } // if falling edge
-            break;
-
-        case CC_STB_TX:
-            //UART_PrintString("\rTX");
+            if (Tixe.State == tsWaitingRx) Receive();
             break;
 
         default: // Just get out in other cases
-            //Uart.PrintString("\rOther: ");
-            //Uart.PrintUint(CC.State);
             break;
-    }//Switch
+    } //Switch
 }
 
 void CC_t::IRQHandler() {
     if (WasTransmitting) {  // Switch to RX (RX is entered automatically as TX->RX)
+        klPrintf("2\r");
+        Tixe.State = tsWaitingRx;
         Receive();
     }
     else {
@@ -78,7 +54,7 @@ void CC_t::IRQHandler() {
         if (ReadRX()) {
             NewPktRcvd = true;
             //klPrintf("RX: %A\r", (uint8_t*)&RX_Pkt, CC_PKT_LEN+2);
-            klPrintf("ID: %u; RSSI: %i\r", RX_Pkt.PktID, RSSI_dBm());
+//            klPrintf("ID: %u; RSSI: %i\r", RX_Pkt.PktID, RSSI_dBm());
         }
         FlushRxFIFO();
     } // if size>0
@@ -136,6 +112,7 @@ void CC_t::EnterTXAndWaitToComplete(void) {
     //IRQEnable();
 }
 
+
 void CC_t::Transmit(void) {
     // Switch IRQ to 0x06 to signal end of transmission
     IrqPin.IrqDisable();
@@ -158,6 +135,7 @@ void CC_t::Receive(void) {
     NewPktRcvd = false;
     FlushRxFIFO();
     EnterRX();
+    klPrintf("3\r");
 }
 
 // Return RSSI in dBm

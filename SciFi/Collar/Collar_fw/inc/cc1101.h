@@ -49,6 +49,7 @@ private:
     uint32_t Timer;
     uint8_t IState;
     bool WasTransmitting;
+    bool NewPktRcvd;
     // Methods
     uint8_t ReadWriteByte(uint8_t AByte);
     // Pins
@@ -77,7 +78,6 @@ private:
     void GetState(void)     { WriteStrobe(CC_SNOP); }
 public:
     CC_Packet_t RX_Pkt, TX_Pkt;
-    bool NewPktRcvd;
     // Methods
     void Init(void);
     void Task(void);

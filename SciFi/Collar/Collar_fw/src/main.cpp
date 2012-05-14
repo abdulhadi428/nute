@@ -12,6 +12,7 @@
 #include "kl_lib.h"
 #include "led.h"
 #include "cc1101.h"
+#include "tixe.h"
 
 LedBlinkInverted_t Led;
 
@@ -45,7 +46,6 @@ inline void GeneralInit(void) {
     CC.Init();
     CC.SetChannel(0);
     CC.SetAddress(4);
-    //cc1190.SetHighGainMode();
 
     klPrintf("\rCollar\r");
 }
