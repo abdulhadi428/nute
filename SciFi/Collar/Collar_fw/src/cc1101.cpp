@@ -7,18 +7,13 @@
 #include <inttypes.h>
 #include "cc1101.h"
 #include "kl_lib.h"
-#include "tixe.h"
+#include "nute.h"
 
 // ============================ Variables ======================================
 CC_t CC;
 
 // ========================== Implementation ===================================
 void CC_t::Task(void) {
-    // Rise event in case of new packet
-    if (NewPktRcvd) {
-        NewPktRcvd = false;
-        Tixe.RxHandler();
-    }
     // Handle state
     static uint32_t Tmr;
     if (!Delay.Elapsed(&Tmr, 99)) return;
@@ -32,32 +27,27 @@ void CC_t::Task(void) {
             FlushTxFIFO();
             klPrintf("TX ovf\r");
             break;
-
-        case CC_STB_IDLE:
-            if (Tixe.State == tsWaitingRx) Receive();
-            break;
-
         default: // Just get out in other cases
             break;
     } //Switch
 }
 
 void CC_t::IRQHandler() {
-    if (WasTransmitting) {  // Switch to RX (RX is entered automatically as TX->RX)
-        klPrintf("2\r");
-        Tixe.State = tsWaitingRx;
+    if (IsTransmitting) {  // Switch to RX (RX is entered automatically as TX->RX)
+        IsTransmitting = false;
+        //klPrintf("2\r");
         Receive();
     }
-    else {
+    else { // Was receiving
         //uint8_t PktState = ReadRegister(CC_PKTSTATUS);
         //klPrintf("State: %X; ", PktState);
         if (ReadRX()) {
-            NewPktRcvd = true;
+            Nute.NewPktRcvd = true;
             //klPrintf("RX: %A\r", (uint8_t*)&RX_Pkt, CC_PKT_LEN+2);
 //            klPrintf("ID: %u; RSSI: %i\r", RX_Pkt.PktID, RSSI_dBm());
         }
         FlushRxFIFO();
-    } // if size>0
+    } // if ITransmitting
 }
 
 
@@ -103,16 +93,6 @@ void CC_t::SetChannel(uint8_t AChannel) {
     this->WriteRegister(CC_CHANNR, AChannel);
 }
 
-void CC_t::EnterTXAndWaitToComplete(void) {
-    //IRQDisable();
-    EnterTX();
-    // Wait for packet to transmit completely
-    while (!GDO0_IsHi());   // After this, SYNC word is transmitted
-    while (GDO0_IsHi());    // After this, packet is transmitted
-    //IRQEnable();
-}
-
-
 void CC_t::Transmit(void) {
     // Switch IRQ to 0x06 to signal end of transmission
     IrqPin.IrqDisable();
@@ -120,22 +100,21 @@ void CC_t::Transmit(void) {
     IrqPin.IrqSetup(EXTI_Trigger_Falling);  // End of pkt
     IrqPin.IrqEnable();
     WriteTX();
-    WasTransmitting = true;
     cc1190.PaEnable();
+    IsTransmitting = true;
     EnterTX();
 }
 void CC_t::Receive(void) {
     cc1190.LnaEnable();
-    WasTransmitting = false;
     // Switch IRQ to 0x07 to signal end of reception
     IrqPin.IrqDisable();
     WriteRegister(CC_IOCFG0, 0x07); // Asserts when a packet has been received with CRC OK. De-asserts when the first byte is read.
     IrqPin.IrqSetup(EXTI_Trigger_Rising);  // FIFO ready
     IrqPin.IrqEnable();
-    NewPktRcvd = false;
     FlushRxFIFO();
+    IsTransmitting = false;
     EnterRX();
-    klPrintf("3\r");
+    //klPrintf("3\r");
 }
 
 // Return RSSI in dBm
@@ -148,7 +127,7 @@ int16_t CC_t::RSSI_dBm(uint8_t ARawRSSI) {
 
 // ============================= Inner use =====================================
 void CC_t::WriteTX() {
-    uint8_t *p = (uint8_t*)(&TX_Pkt);
+    uint8_t *p = (uint8_t*)(&Nute.TX_Pkt);
     CS_Lo();                 // Start transmission
     BusyWait();              // Wait for chip to become ready
     ReadWriteByte(CC_FIFO|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
@@ -157,7 +136,7 @@ void CC_t::WriteTX() {
 }
 //#define CC_PRINT_RX
 bool CC_t::ReadRX() {
-    uint8_t *p = (uint8_t*)(&RX_Pkt);
+    uint8_t *p = (uint8_t*)(&Nute.RX_Pkt);
     uint8_t b;
     uint8_t FifoSize = ReadRegister(CC_RXBYTES);    // Get number of bytes in FIFO
     FifoSize &= 0x7F;                               // Remove MSB

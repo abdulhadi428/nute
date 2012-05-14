@@ -30,26 +30,10 @@
 #define CC_SCLK     GPIO_Pin_5
 
 // ============================ Types & variables ==============================
-struct CC_Packet_t {
-    uint8_t Address;
-    uint8_t PktID;
-    uint8_t LastRxRawRssi;
-    uint8_t Cmd;
-    uint8_t Arr[18];
-    uint8_t RSSI;
-    uint8_t LQI;
-} PACKED;
-
-#define CC_PKT_LEN  (sizeof(CC_Packet_t)-2)
-
 class CC_t {
 private:
     cc1190_t cc1190;
-    // Variables
-    uint32_t Timer;
     uint8_t IState;
-    bool WasTransmitting;
-    bool NewPktRcvd;
     // Methods
     uint8_t ReadWriteByte(uint8_t AByte);
     // Pins
@@ -62,7 +46,6 @@ private:
     void RfConfig(void);
     void WriteTX();
     bool ReadRX();
-    void EnterTXAndWaitToComplete(void);
     // Registers
     void WriteRegister (const uint8_t Addr, const uint8_t AData);
     uint8_t ReadRegister (const uint8_t Addr);
@@ -77,12 +60,11 @@ private:
     void FlushTxFIFO(void)  { WriteStrobe(CC_SFTX); }
     void GetState(void)     { WriteStrobe(CC_SNOP); }
 public:
-    CC_Packet_t RX_Pkt, TX_Pkt;
+    bool IsTransmitting;
     // Methods
     void Init(void);
     void Task(void);
     int16_t RSSI_dBm(uint8_t ARawRSSI);
-    int16_t RSSI_dBm(void) { return RSSI_dBm(RX_Pkt.RSSI); }
     bool IsIdle(void) { return (IState == CC_STB_IDLE); }
     void SetChannel(uint8_t AChannel);
     void SetAddress(uint8_t AAddr) { WriteRegister(CC_ADDR, AAddr); }

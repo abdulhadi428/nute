@@ -13,7 +13,7 @@
 #include "cc1101_rf_settings.h"
 
 // Choose mode - station or tixe
-#define NUTE_MODE_STATION
+//#define NUTE_MODE_STATION
 
 // Power levels
 #define LOWEST_PWR_LVL_ID   plN20dBm
@@ -25,7 +25,9 @@
 #define REPLY_WAITTIME  (PKT_DURATION * 2.5)    // Since TX->RX, wait for 2 PktDurations minimum
 
 // Commands and replies
-#define NUTE_CMD_PING   0x00
+#define NUTE_CMD_PING           0x00
+#define NUTE_RPL_PING           0x01
+#define NUTE_RPL_UNSUPPORTED    0xFF
 
 struct Pkt_t {
     uint8_t AddrTo;
@@ -39,7 +41,7 @@ struct Pkt_t {
 
 #define CC_PKT_LEN  (sizeof(Pkt_t)-2)
 
-enum NuteState_t {nsIdle, nsSearch, nsWaitingRx};
+enum NuteState_t {nsIdle, nsSearch, nsWaitingRx, nsTransmitting};
 
 
 #ifdef NUTE_MODE_STATION

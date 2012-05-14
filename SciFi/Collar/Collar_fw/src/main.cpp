@@ -12,7 +12,7 @@
 #include "kl_lib.h"
 #include "led.h"
 #include "cc1101.h"
-#include "tixe.h"
+#include "nute.h"
 
 LedBlinkInverted_t Led;
 
@@ -22,8 +22,10 @@ void GeneralInit(void);
 // ============================== Implementation ===============================
 int main(void) {
     GeneralInit();
+
     while (1) {
         CC.Task();
+        Nute.Task();
         //if(Delay.Elapsed(&Tmr, 999)) {
     } // while 1
 }
@@ -42,10 +44,12 @@ inline void GeneralInit(void) {
 //    Led.Init(GPIOB, 1);
 //    Led.Off();
 
+    Nute.Init(72);
+
     // Setup CC
     CC.Init();
     CC.SetChannel(0);
-    CC.SetAddress(4);
+    CC.SetAddress(Nute.TX_Pkt.AddrFrom);
 
     klPrintf("\rCollar\r");
 }

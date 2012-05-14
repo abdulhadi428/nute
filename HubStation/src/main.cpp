@@ -16,7 +16,6 @@
 #include "nute.h"
 
 LedBlinkInverted_t Led;
-Nute_t Nute;
 Tixe_t Tixe;
 
 // Prototypes
@@ -27,7 +26,7 @@ void ClbckFound(void);
 int main(void) {
     GeneralInit();
 
-    Tixe.Address = 4;
+    Tixe.Address = 72;
     Tixe.Callback = ClbckFound;
 
     uint32_t Tmr;
@@ -52,20 +51,20 @@ inline void GeneralInit(void) {
 
     klJtagDisable();
 
-    Led.Init(GPIOB, 1);
-    Led.Off();
+//    Led.Init(GPIOB, 1);
+//    Led.Off();
+
+    Nute.Init(1);
 
     // Setup CC
     CC.Init();
     CC.SetChannel(0);
-    CC.SetAddress(1);
-
-    Nute.Init();
+    CC.SetAddress(Nute.TX_Pkt.AddrFrom);
 
     klPrintf("\rCollar rcvr\r");
 }
 
 void ClbckFound(void) {
-    if (Tixe.Online) klPrintf("Found\r");
+    if (Tixe.IsOnline) klPrintf("Found\r");
     else klPrintf("No answer\r");
 }

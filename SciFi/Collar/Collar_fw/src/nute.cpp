@@ -29,14 +29,22 @@ void Nute_t::Task() {
             // Rise event in case of new packet
             if (NewPktRcvd) {
                 NewPktRcvd = false;
-                IState = nsIdle;
                 RxHandler();
+                IState = nsTransmitting;
             }
             break;
 
+        case nsTransmitting:
+            if (!CC.IsTransmitting) IState = nsWaitingRx;
+            break;
 #endif
-        default: break;
-    }
+        // ==== Common ====
+        default:
+            IState = nsIdle;
+            CC.EnterIdle();
+            klPrintf("Unknown state\r");
+            break;
+    } // switch istate
 }
 
 // ============================ Commands =======================================
@@ -92,6 +100,33 @@ void Nute_t::DoSearch() {
     } // do rx
 }
 
+#endif
+
+// ============================ Tixe ===========================================
+#ifndef NUTE_MODE_STATION
+void Nute_t::RxHandler(void) {
+    uint8_t PwrID = RX_Pkt.PwrID;   // Initially, transmit at same power as transmitter
+    AdjustPwr(&PwrID);
+    // Reply to cmd
+    // Common preparations
+    TX_Pkt.AddrTo = RX_Pkt.AddrFrom;
+    TX_Pkt.PwrID = PwrID;
+    // Cmd-dependant preparations
+    switch (RX_Pkt.Cmd) {
+        case NUTE_CMD_PING:
+            TX_Pkt.Cmd = NUTE_RPL_PING;
+            break;
+
+        default: // Say "Command not supported"
+            TX_Pkt.Cmd = NUTE_RPL_UNSUPPORTED;
+            break;
+    } // switch
+    // Setup output power
+    CC.SetPower(PwrID);
+    klPrintf("Pwr: %u\r", PwrID);
+    // Start transmission
+    CC.Transmit();
+}
 #endif
 
 // ============================ Common =========================================
