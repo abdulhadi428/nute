@@ -14,15 +14,28 @@
 
 // Choose mode - station or tixe
 //#define NUTE_MODE_STATION
+#ifndef NUTE_MODE_STATION
+#define NUTE_MODE_TIXE
+#endif
 
 // Power levels
-#define LOWEST_PWR_LVL_ID   plN20dBm
-#define HIGHEST_PWR_LVL_ID  plN6dBm
+#define LOWEST_PWR_LVL_ID   plN30dBm
+#define HIGHEST_PWR_LVL_ID  plP5dBm
+//#define HIGHEST_PWR_LVL_ID  plN6dBm
 #define DESIRED_RSSI        (-90)       // dBm
 
 // Timings
-#define PKT_DURATION    99  // ms
-#define REPLY_WAITTIME  (PKT_DURATION * 2.5)    // Since TX->RX, wait for 2 PktDurations minimum
+#define RECALIBRATE_DELAY   7002    // ms; recalibrate if no packet received within this time
+#ifdef CC_BITRATE_10K
+// Pkt duration is 45 ms
+#define REPLY_WAITTIME  108  // ms; delay between start of transmission and end of answer reception, = 2x PktDuration
+#elif defined CC_BITRATE_38K4
+// Pkt duration is 15 ms
+#define REPLY_WAITTIME  33  // ms; delay between start of transmission and end of answer reception, = 2x PktDuration
+#elif defined CC_BITRATE_250K
+// Pkt duration is 4 ms
+#define REPLY_WAITTIME  11  // ms; delay between start of transmission and end of answer reception, = 2x PktDuration
+#endif
 
 // Commands and replies
 #define NUTE_CMD_PING           0x00
@@ -59,21 +72,23 @@ struct Tixe_t {
 // Main class of protocol
 class Nute_t {
 private:
+    uint32_t ITimer;
     NuteState_t IState;
 #ifdef NUTE_MODE_STATION
     SearchState_t ISearchState;
     Tixe_t *IPTixe;
     void DoSearch(void);
 #else
-    void RxHandler(void);
+
 #endif
     uint32_t ITmr;
     void AdjustPwr(uint8_t *PPwrID);
 public:
-    bool NewPktRcvd;
     Pkt_t RX_Pkt, TX_Pkt;
     void Init(uint8_t ASelfAddr);
     void Task(void);
+    void HandleNewPkt(void);
+    void HandleTxEnd(void);
 #ifdef NUTE_MODE_STATION
     void Ping(Tixe_t *PTixe);
     void Search(Tixe_t *PTixe);

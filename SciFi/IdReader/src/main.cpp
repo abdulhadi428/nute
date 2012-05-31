@@ -19,8 +19,6 @@ void Event_CardDisappeared(void);
 
 // ============================ Implementation ================================
 int main(void) {
-    UART_Init();
-    klPrintf("\rID Reader\r");
     GeneralInit();
 
     // ==== Main cycle ====
@@ -37,6 +35,9 @@ void GeneralInit(void) {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
     // Init peripheral
     Delay.Init();
+    Delay.ms(1800);
+    UART_Init();
+    klPrintf("\rID Reader\r\n");
 
     PN.Init();
     PN.Evt_CardAppeared = Event_CardAppeared;
@@ -46,9 +47,9 @@ void GeneralInit(void) {
 // ================================== Events ===================================
 void Event_CardAppeared(void) {
     if (Card.ReadID()) {
-        klPrintf("ID: %X%X\r", (uint32_t)((Card.ID >> 32)& 0xFFFFFFFF), (uint32_t)(Card.ID & 0xFFFFFFFF));
+        klPrintf("ID: %X%X\r\n", (uint32_t)((Card.ID >> 32)& 0xFFFFFFFF), (uint32_t)(Card.ID & 0xFFFFFFFF));
     }
 }
 void Event_CardDisappeared(void) {
-    klPrintf("No card\r");
+    klPrintf("No card\r\n");
 }

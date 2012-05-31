@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 10/05/2012 11:08:47
+EESchema Schematic File Version 2  date 24/05/2012 19:13:59
 LIBS:Connectors_kl
 LIBS:display_kl
 LIBS:pcb_details
@@ -11,13 +11,14 @@ LIBS:Tittar_kl
 LIBS:Transistors_kl
 LIBS:Audio_kl
 LIBS:Antennas_kl
+LIBS:Collar-cache
 EELAYER 25  0
 EELAYER END
 $Descr A2 23400 16535
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "10 may 2012"
+Date "23 may 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -25,6 +26,8 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Text Notes 13500 3450 0    60   ~ 0
+27.1-j11.2
 Connection ~ 15450 7400
 Wire Wire Line
 	15450 7300 15450 7400

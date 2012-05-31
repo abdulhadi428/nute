@@ -34,8 +34,19 @@ public:
     LedBlink_t(void) { }
     LedBlink_t(GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { Init(PGpioPort, APinNumber); }
     void Disable(void) { Off(); IsInsideBlink = false; }
-    void Blink(uint32_t ABlinkDelay);
-    void Task(void);
+    void Blink(uint32_t ABlinkDelay) {
+        IsInsideBlink = true;
+        IBlinkDelay = ABlinkDelay;
+        On();
+        Delay.Reset(&ITimer);
+    }
+    void Task(void) {
+        if (!IsInsideBlink) return;
+        if (Delay.Elapsed(&ITimer, IBlinkDelay)) {
+            IsInsideBlink = false;
+            Off();
+        }
+    }
 };
 
 class LedBlinkInverted_t : public LedBlink_t {

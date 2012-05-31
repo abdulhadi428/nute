@@ -7,8 +7,11 @@
 
 #include "nute.h"
 #include "cc1101.h"
+#include "led.h"
 
 Nute_t Nute;
+
+//extern LedBlinkInverted_t Led;
 
 void Nute_t::Init(uint8_t ASelfAddr) {
     IState = nsIdle;
@@ -22,27 +25,27 @@ void Nute_t::Task() {
 #else   // Tixe
         case nsIdle:
             CC.Receive();
+            Delay.Reset(&ITimer);
             IState = nsWaitingRx;
             break;
 
         case nsWaitingRx:
-            // Rise event in case of new packet
-            if (NewPktRcvd) {
-                NewPktRcvd = false;
-                RxHandler();
-                IState = nsTransmitting;
+            if (Delay.Elapsed(&ITimer, RECALIBRATE_DELAY)) {   // Recalibrate
+                CC.EnterIdle();
+                IState = nsIdle;
             }
             break;
 
-        case nsTransmitting:
-            if (!CC.IsTransmitting) IState = nsWaitingRx;
-            break;
+//        case nsTransmitting:
+//            if (CC.Aim != caTx) {   // Tx completed
+//                //klPrintf("no tx\r");
+//                //Delay.Reset(&Tmr);
+//                IState = nsIdle;
+//            }
+//            break;
 #endif
         // ==== Common ====
         default:
-            IState = nsIdle;
-            CC.EnterIdle();
-            klPrintf("Unknown state\r");
             break;
     } // switch istate
 }
@@ -50,6 +53,7 @@ void Nute_t::Task() {
 // ============================ Commands =======================================
 #ifdef NUTE_MODE_STATION
 void Nute_t::Search(Tixe_t *PTixe) {
+    Led.Off();
     IPTixe = PTixe;
     // Reset tixe values
     IPTixe->PwrID = LOWEST_PWR_LVL_ID;
@@ -74,7 +78,7 @@ void Nute_t::DoSearch() {
         CC.Transmit();
         NewPktRcvd = false;
         Delay.Reset(&ITmr);
-        ISearchState = ssDoRx;
+        ISearchState = ssDoRx;  // Receive will be switched on at TxEnd IRQ handler
     }
     else {  // Do RX
         if (NewPktRcvd) {
@@ -87,7 +91,6 @@ void Nute_t::DoSearch() {
         // Check if timeout
         else if (Delay.Elapsed(&ITmr, REPLY_WAITTIME)) {
             CC.EnterIdle();
-            klPrintf("t\r");
             if (IPTixe->PwrID == HIGHEST_PWR_LVL_ID) { // No answer even at top power, get out
                 IState = nsIdle;
                 if(IPTixe->Callback != 0) IPTixe->Callback();
@@ -103,11 +106,13 @@ void Nute_t::DoSearch() {
 #endif
 
 // ============================ Tixe ===========================================
-#ifndef NUTE_MODE_STATION
-void Nute_t::RxHandler(void) {
+#ifdef NUTE_MODE_TIXE
+void Nute_t::HandleNewPkt() {
+    klPrintf("NewPkt\r");
+    Delay.Reset(&ITimer);           // Reset recalibrate timer
     uint8_t PwrID = RX_Pkt.PwrID;   // Initially, transmit at same power as transmitter
-    AdjustPwr(&PwrID);
-    // Reply to cmd
+    AdjustPwr(&PwrID);              // Adjust power to transmit at needed power
+    // ==== Reply to cmd ====
     // Common preparations
     TX_Pkt.AddrTo = RX_Pkt.AddrFrom;
     TX_Pkt.PwrID = PwrID;
@@ -126,17 +131,24 @@ void Nute_t::RxHandler(void) {
     klPrintf("Pwr: %u\r", PwrID);
     // Start transmission
     CC.Transmit();
+    IState = nsTransmitting;
 }
+
+void Nute_t::HandleTxEnd() {
+    CC.Receive();
+    Delay.Reset(&ITimer);
+    IState = nsWaitingRx;
+}
+
 #endif
 
 // ============================ Common =========================================
 void Nute_t::AdjustPwr(uint8_t *PPwrID) {
     int16_t RSSI_dBm = CC.RSSI_dBm(RX_Pkt.RSSI);
-    int16_t Diff = (DESIRED_RSSI - RSSI_dBm) % 4;   // every single ID mean 4dB difference
+    int16_t Diff = (DESIRED_RSSI - RSSI_dBm) / 4;   // every single ID mean 4dB difference
     int16_t NewPwrID = *PPwrID + Diff;
     if      (NewPwrID > HIGHEST_PWR_LVL_ID) NewPwrID = HIGHEST_PWR_LVL_ID;
     else if (NewPwrID < LOWEST_PWR_LVL_ID)  NewPwrID = LOWEST_PWR_LVL_ID;
-    klPrintf("PwrOld: %u; ", *PPwrID);
+    klPrintf("Pwr: RSSI=%i; Old=%u; New=%u\r", RSSI_dBm, *PPwrID, (uint8_t)NewPwrID);
     *PPwrID = (uint8_t)NewPwrID;
-    klPrintf("PwrNew: %u\r", *PPwrID);
 }

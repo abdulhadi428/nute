@@ -29,11 +29,12 @@
 #define CC_MISO     GPIO_Pin_6
 #define CC_SCLK     GPIO_Pin_5
 
+enum CCAim_t {caIdle, caRx, caTx};
+
 // ============================ Types & variables ==============================
 class CC_t {
 private:
     cc1190_t cc1190;
-    uint8_t IState;
     // Methods
     uint8_t ReadWriteByte(uint8_t AByte);
     // Pins
@@ -44,8 +45,8 @@ private:
     void BusyWait(void)  { while (klGpioIsSetByMsk(CC_GPIO, CC_MISO));}
 
     void RfConfig(void);
-    void WriteTX();
-    bool ReadRX();
+    void WriteTX(uint8_t* PArr, uint8_t ALen);
+    bool ReadRX(uint8_t* PArr);
     // Registers
     void WriteRegister (const uint8_t Addr, const uint8_t AData);
     uint8_t ReadRegister (const uint8_t Addr);
@@ -60,7 +61,8 @@ private:
     void FlushTxFIFO(void)  { WriteStrobe(CC_SFTX); }
     void GetState(void)     { WriteStrobe(CC_SNOP); }
 public:
-    bool IsTransmitting;
+    CCAim_t Aim;
+    uint8_t IState;
     // Methods
     void Init(void);
     void Task(void);
@@ -72,7 +74,7 @@ public:
     // RX/TX
     void Transmit(void);
     void Receive(void);
-    void EnterIdle(void)    { WriteStrobe(CC_SIDLE);}
+    void EnterIdle(void)    { WriteStrobe(CC_SIDLE); Aim = caIdle; cc1190.LnaDisable(); cc1190.PaDisable(); }
     // IRQ handler
     void IRQHandler(void);
 };

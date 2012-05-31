@@ -35,6 +35,7 @@ int main(void) {
         CC.Task();
         Nute.Task();
         if(Delay.Elapsed(&Tmr, 1800)) {
+            Led.Off();
             Nute.Search(&Tixe);
         }
     } // while 1
@@ -44,15 +45,14 @@ inline void GeneralInit(void) {
     // Setup system clock
     RCC_HCLKConfig(RCC_SYSCLK_Div1);
     SystemCoreClockUpdate();
+    klJtagDisable();
 
     Delay.Init();
     Delay.ms(63);
     UART_Init();
 
-    klJtagDisable();
-
-//    Led.Init(GPIOB, 1);
-//    Led.Off();
+    Led.Init(GPIOB, 1);
+    Led.On();
 
     Nute.Init(1);
 
@@ -61,10 +61,13 @@ inline void GeneralInit(void) {
     CC.SetChannel(0);
     CC.SetAddress(Nute.TX_Pkt.AddrFrom);
 
-    klPrintf("\rCollar rcvr\r");
+    klPrintf("\rCollar station\r");
 }
 
 void ClbckFound(void) {
-    if (Tixe.IsOnline) klPrintf("Found\r");
+    if (Tixe.IsOnline) {
+        klPrintf("Found\r");
+        Led.On();
+    }
     else klPrintf("No answer\r");
 }

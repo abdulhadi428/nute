@@ -9,22 +9,6 @@
 #include "stm32f10x_rcc.h"
 #include "kl_util.h"
 
-// =============================== LedBlink_t ==================================
-void LedBlink_t::Blink(uint32_t ABlinkDelay) {
-    IsInsideBlink = true;
-    IBlinkDelay = ABlinkDelay;
-    On();
-    Delay.Reset(&ITimer);
-}
-
-void LedBlink_t::Task() {
-    if (!IsInsideBlink) return;
-    if (Delay.Elapsed(&ITimer, IBlinkDelay)) {
-        IsInsideBlink = false;
-        Off();
-    }
-}
-
 // ============================= LedSmooth_t ===================================
 /*
  * Parameters:

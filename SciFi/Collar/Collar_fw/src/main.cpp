@@ -13,6 +13,7 @@
 #include "led.h"
 #include "cc1101.h"
 #include "nute.h"
+#include "gps.h"
 
 LedBlinkInverted_t Led;
 
@@ -26,6 +27,7 @@ int main(void) {
     while (1) {
         CC.Task();
         Nute.Task();
+        Gps.Task();
         //if(Delay.Elapsed(&Tmr, 999)) {
     } // while 1
 }
@@ -34,15 +36,17 @@ inline void GeneralInit(void) {
     // Setup system clock
     RCC_HCLKConfig(RCC_SYSCLK_Div1);
     SystemCoreClockUpdate();
+    klJtagDisable();
 
     Delay.Init();
     Delay.ms(63);
     UART_Init();
 
-    klJtagDisable();
 
-//    Led.Init(GPIOB, 1);
-//    Led.Off();
+    Gps.Init();
+
+    Led.Init(GPIOB, 1);
+    Led.On();
 
     Nute.Init(72);
 

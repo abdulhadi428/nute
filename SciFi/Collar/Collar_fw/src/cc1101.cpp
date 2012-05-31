@@ -27,27 +27,29 @@ void CC_t::Task(void) {
             FlushTxFIFO();
             klPrintf("TX ovf\r");
             break;
+        case CC_STB_IDLE:   // Reenter RX if needed
+            if (Aim == caRx) EnterRX();
+            break;
         default: // Just get out in other cases
             break;
     } //Switch
+    //if ((IState != CC_STB_IDLE) or (IState != CC_STB_RX)) klPrintf("State: %X\r", IState);
 }
 
 void CC_t::IRQHandler() {
-    if (IsTransmitting) {  // Switch to RX (RX is entered automatically as TX->RX)
-        IsTransmitting = false;
-        //klPrintf("2\r");
-        Receive();
+    if (Aim == caTx) {
+        Aim = caIdle;
+        Nute.HandleTxEnd();
     }
     else { // Was receiving
-        //uint8_t PktState = ReadRegister(CC_PKTSTATUS);
-        //klPrintf("State: %X; ", PktState);
-        if (ReadRX()) {
-            Nute.NewPktRcvd = true;
-            //klPrintf("RX: %A\r", (uint8_t*)&RX_Pkt, CC_PKT_LEN+2);
-//            klPrintf("ID: %u; RSSI: %i\r", RX_Pkt.PktID, RSSI_dBm());
+        Aim = caIdle;
+        if (ReadRX((uint8_t*)&Nute.RX_Pkt)) {
+            FlushRxFIFO();
+            Nute.HandleNewPkt();
+            //klPrintf("RX: %A\r", (uint8_t*)&Nute.RX_Pkt, CC_PKT_LEN+2);
         }
-        FlushRxFIFO();
-    } // if ITransmitting
+        else FlushRxFIFO();
+    }
 }
 
 
@@ -99,10 +101,11 @@ void CC_t::Transmit(void) {
     WriteRegister(CC_IOCFG0, 0x06); // Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
     IrqPin.IrqSetup(EXTI_Trigger_Falling);  // End of pkt
     IrqPin.IrqEnable();
-    WriteTX();
+    WriteTX((uint8_t*)(&Nute.TX_Pkt), CC_PKT_LEN);
     cc1190.PaEnable();
-    IsTransmitting = true;
+    Aim = caTx;
     EnterTX();
+    //klPrintf("TX\r");
 }
 void CC_t::Receive(void) {
     cc1190.LnaEnable();
@@ -112,9 +115,9 @@ void CC_t::Receive(void) {
     IrqPin.IrqSetup(EXTI_Trigger_Rising);  // FIFO ready
     IrqPin.IrqEnable();
     FlushRxFIFO();
-    IsTransmitting = false;
+    Aim = caRx;
     EnterRX();
-    //klPrintf("3\r");
+    //klPrintf("RX\r");
 }
 
 // Return RSSI in dBm
@@ -126,31 +129,35 @@ int16_t CC_t::RSSI_dBm(uint8_t ARawRSSI) {
 }
 
 // ============================= Inner use =====================================
-void CC_t::WriteTX() {
-    uint8_t *p = (uint8_t*)(&Nute.TX_Pkt);
+void CC_t::WriteTX(uint8_t* PArr, uint8_t ALen) {
     CS_Lo();                 // Start transmission
     BusyWait();              // Wait for chip to become ready
-    ReadWriteByte(CC_FIFO|CC_WRITE_FLAG|CC_BURST_FLAG);         // Address with write & burst flags
-    for (uint8_t i=0; i<CC_PKT_LEN; i++) ReadWriteByte(*p++);   // Write bytes themselves
-    CS_Hi();                                                    // End transmission
+    ReadWriteByte(CC_FIFO|CC_WRITE_FLAG|CC_BURST_FLAG);      // Address with write & burst flags
+    for (uint8_t i=0; i<ALen; i++) ReadWriteByte(*PArr++);   // Write bytes themselves
+    CS_Hi();                                                 // End transmission
 }
 //#define CC_PRINT_RX
-bool CC_t::ReadRX() {
-    uint8_t *p = (uint8_t*)(&Nute.RX_Pkt);
+bool CC_t::ReadRX(uint8_t* PArr) {
     uint8_t b;
     uint8_t FifoSize = ReadRegister(CC_RXBYTES);    // Get number of bytes in FIFO
     FifoSize &= 0x7F;                               // Remove MSB
 #ifdef CC_PRINT_RX
     klPrintf("Size: %u    ", FifoSize);
 #endif
-    if(FifoSize == 0) return false;
+    if(FifoSize == 0) {
+#ifdef CC_PRINT_RX
+    klPrintf("\r");
+#endif
+        ReadRegister(CC_FIFO);  // dummy, to reset IRQ
+        return false;
+    }
     if (FifoSize > (CC_PKT_LEN+2)) FifoSize = CC_PKT_LEN+2;
     CS_Lo();                                        // Start transmission
     BusyWait();                                     // Wait for chip to become ready
     ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);              // Address with read & burst flags
     for (uint8_t i=0; i<FifoSize; i++) {    // Read bytes
         b = ReadWriteByte(0);
-        *p++ = b;
+        *PArr++ = b;
 #ifdef CC_PRINT_RX
         klPrintf("%X ", b);
 #endif
@@ -211,7 +218,6 @@ void CC_t::RfConfig(void){
     WriteRegister(CC_FSCAL2,   CC_FSCAL2_VALUE);     // Frequency synthesizer calibration.
     WriteRegister(CC_FSCAL1,   CC_FSCAL1_VALUE);     // Frequency synthesizer calibration.
     WriteRegister(CC_FSCAL0,   CC_FSCAL0_VALUE);     // Frequency synthesizer calibration.
-    WriteRegister(CC_FSTEST,   CC_FSTEST_VALUE);     // Frequency synthesizer calibration.
     WriteRegister(CC_TEST2,    CC_TEST2_VALUE);      // Various test settings.
     WriteRegister(CC_TEST1,    CC_TEST1_VALUE);      // Various test settings.
     WriteRegister(CC_TEST0,    CC_TEST0_VALUE);      // Various test settings.
