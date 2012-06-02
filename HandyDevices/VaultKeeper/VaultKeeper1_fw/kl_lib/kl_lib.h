@@ -13,6 +13,18 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_exti.h"
 
+// =============================== Common ======================================
+#define FORCE_INLINE inline __attribute__ ((__always_inline__))
+#define PACKED __attribute__ ((__packed__))
+
+// Common types
+enum Error_t {erOk, erError, erTimeout, erNone, erBusy, erOther};
+
+// Functional types
+typedef void(*ftVoid_Void)(void);
+
+
+// ================================ GPIO =======================================
 /*
  * GPIO_Mode_AIN, GPIO_Mode_IN_FLOATING, GPIO_Mode_IPD, GPIO_Mode_IPU,
  * GPIO_Mode_Out_OD, GPIO_Mode_Out_PP, GPIO_Mode_AF_OD, GPIO_Mode_AF_PP
