@@ -64,20 +64,6 @@ $GPGSV,1,1,00*79
 $GPRMC,235945.037,V,,,,,0.00,0.00,050180,,,N*49
 $GPVTG,0.00,T,,M,0.00,N,0.00,K,N*32
 $GPZDA,235945.037,05,01,1980,,*5A
-$GPGGA,235946.036,,,,,0,0,,,M,,M,,*42
-$GPGLL,,,,,235946.036,V,N*70
-$GPGSA,A,1,,,,,,,,,,,,,,,*1E
-$GPGSV,1,1,00*79
-$GPRMC,235946.036,V,,,,,0.00,0.00,050180,,,N*4B
-$GPVTG,0.00,T,,M,0.00,N,0.00,K,N*32
-$GPZDA,235946.036,05,01,1980,,*58
-$GPGGA,235947.036,,,,,0,0,,,M,,M,,*43
-$GPGLL,,,,,235947.036,V,N*71
-$GPGSA,A,1,,,,,,,,,,,,,,,*1E
-$GPGSV,1,1,00*79
-$GPRMC,235947.036,V,,,,,0.00,0.00,050180,,,N*4A
-$GPVTG,0.00,T,,M,0.00,N,0.00,K,N*32
-$GPZDA,235947.036,05,01,1980,,*59
 */
 
 enum MsgState_t {msFindS, msCheckHdr, msReadData, msCompleted};
@@ -196,6 +182,7 @@ void GpsR_t::IParseGPGGAMsg() {
         LatM  = GpsStrnToInt(&S, 9);
         klPrintf("LatD: %u; LatM: %u\r", LatDg, LatM);
     }
+    S++;
     // North or south
     LatNorth = (*S == 'N');
     if (*S != ',') S++;     // *S is N, S or ','
@@ -211,12 +198,23 @@ void GpsR_t::IParseGPGGAMsg() {
         LongM  = GpsStrnToInt(&S, 9);
         klPrintf("LngD: %u; LngM: %u\r", LongDg, LongM);
     }
+    S++;
     // East or west
     LongEast = (*S == 'E');
     if (*S != ',') S++;     // *S is E, W or ','
     S++;                    // Move to next token
-
-
+    // Get position fix and sattelites count
+    State = (*S == '0')? gsNoPosition : gsFixed;
+    S+=2;                    // Move to next token
+    SatelliteCount = GpsStrnToInt(&S, 2);
+    klPrintf("SatCount: %u\r", SatelliteCount);
+    // Precision
+    if (State == gsFixed) {
+        klPrintf("N: %u; E: %u\r", LatNorth, LongEast);
+        S++;
+        Precision = GpsStrnToInt(&S, 7);
+        klPrintf("Precision: %u\r", Precision);
+    }
 
     // Erase Msg
     memset(IMsg, 0, GPS_BUF_SIZE);

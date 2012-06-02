@@ -25,6 +25,8 @@ private:
     void IParseGPGGAMsg(void);
 public:
     GpsState_t State;
+    uint8_t SatelliteCount;
+    uint32_t Precision;
     // Coordinates
     bool LatNorth, LongEast;
     Time_t Time;
