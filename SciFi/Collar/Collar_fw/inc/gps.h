@@ -10,13 +10,14 @@
 
 #include "kl_lib.h"
 #include "stdint.h"
+#include "nute.h"
 
 #define GPS_BUF_SIZE    90
 
-enum GpsState_t {gsDisconnected, gsNoPosition, gsFixed};
-
 const char MsgHdr[] = "GPGGA";
 #define MsgHdrSz    (sizeof(MsgHdr))
+
+// Lattitude, Longtitude == (Deg * 10^7) + (Min * 10^7 / 60)
 
 class GpsR_t {
 private:
@@ -24,16 +25,12 @@ private:
     char IMsg[81];
     void IParseGPGGAMsg(void);
 public:
-    GpsState_t State;
-    uint8_t SatelliteCount;
-    uint32_t Precision;
-    // Coordinates
-    bool LatNorth, LongEast;
-    Time_t Time;
     void Init(void);
     void Task(void);
 };
 
 extern GpsR_t Gps;
+extern Situation_t *Situation;
+
 
 #endif /* GPS_H_ */

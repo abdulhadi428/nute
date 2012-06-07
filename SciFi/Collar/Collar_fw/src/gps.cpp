@@ -14,6 +14,7 @@
 #include "stdlib.h"
 
 GpsR_t Gps;
+Situation_t *Situation;
 
 void GpsR_t::Init() {
     // ==== Clocks init ====
@@ -128,18 +129,22 @@ void GpsR_t::Task() {
     } // if get flag status
 }
 
-// Convert N numeric symbols, or till ','
-int GpsStrnToInt(char **InputS, uint8_t N) {
-    char Token[9], *S = *InputS;
+// Convert N numeric symbols, or till ','. Fill with zeroes until N.
+int GpsStrnToInt(char **InputS, uint8_t N, bool AppendZeroes) {
+    char Token[11], *S = *InputS;
     uint8_t i=0;
     // Copy to token
-    while (i < N) {
+    while ((i < N) and (*S != ',')) {
         Token[i++] = *S++;
-        if (*S == ',') break;
         if (*S == '.') S++;
+    }
+    if (AppendZeroes and (i < N-1)) {
+        memset(&Token[i], '0', N-i);
+        i = N-1;
     }
     Token[i] = 0;
     *InputS = S;
+    //klPrintf("%S\r", Token);
     return atoi(Token);
 }
 
@@ -161,61 +166,55 @@ GPGGA,235947.036,,,,,0,0,,,M,,M,,*43
 void GpsR_t::IParseGPGGAMsg() {
     klPrintf("Msg: %S\r", IMsg);
     char *S = &IMsg[0];
-    uint32_t LatDg, LatM, LongDg, LongM;
-    State = gsNoPosition;
+    uint32_t tmp1=0, tmp2;
     // Remove leading ','
     while(*S == ',') S++;
     // ==== Parse time ====
-    Time.H = GpsStrnToInt(&S, 2);
-    Time.M = GpsStrnToInt(&S, 2);
-    Time.S = GpsStrnToInt(&S, 2);
-    klPrintf("Time: %u:%u:%u\r", Time.H, Time.M, Time.S);
-    while(*S++ != ',');   // move to next token
+    Situation->Time.H = GpsStrnToInt(&S, 2, false);
+    Situation->Time.M = GpsStrnToInt(&S, 2, false);
+    Situation->Time.S = GpsStrnToInt(&S, 2, false);
+    klPrintf("Time: %u:%u:%u\r", Situation->Time.H, Situation->Time.M, Situation->Time.S);
+    while(*S++ != ',');                     // move to next token
     // ==== Lattitude ====
-    if (*S == ',') {      // No data
-        klPrintf("No lattitude\r");
-        LatDg = 0;
-        LatM = 0;
-    }
-    else {
-        LatDg = GpsStrnToInt(&S, 2);
-        LatM  = GpsStrnToInt(&S, 9);
-        klPrintf("LatD: %u; LatM: %u\r", LatDg, LatM);
+    if (*S != ',') {                        // Data exists
+        tmp1 = GpsStrnToInt(&S, 2, false);  // Degrees
+        tmp1 *= 10000000;
+        tmp2  = GpsStrnToInt(&S, 8, true);  // Minutes * 10^6, 8 places total
+        tmp2 /= 6;                          // = Minutes * 10^7 / 60
+        tmp1 += tmp2;
     }
     S++;
     // North or south
-    LatNorth = (*S == 'N');
-    if (*S != ',') S++;     // *S is N, S or ','
-    S++;                    // Move to next token
+    if (*S != 'N') tmp1 = -tmp1;            // Lattitude is negative at south
+    if (*S != ',') S++;                     // *S is N, S or ','
+    S++;                                    // Move to next token
+    Situation->Lattitude = tmp1;
     // ==== Longtitude ====
-    if (*S == ',') {      // No data
-        klPrintf("No longtitude\r");
-        LongDg = 0;
-        LongM = 0;
-    }
-    else {
-        LongDg = GpsStrnToInt(&S, 3);
-        LongM  = GpsStrnToInt(&S, 9);
-        klPrintf("LngD: %u; LngM: %u\r", LongDg, LongM);
+    if (*S != ',') {                        // Data exists
+        tmp1 = GpsStrnToInt(&S, 3, false);  // Degrees
+        tmp1 *= 10000000;
+        tmp2  = GpsStrnToInt(&S, 8, true);  // Minutes * 10^6, 8 places total
+        tmp2 /= 6;                          // = Minutes * 10^7 / 60
+        tmp1 += tmp2;
     }
     S++;
     // East or west
-    LongEast = (*S == 'E');
-    if (*S != ',') S++;     // *S is E, W or ','
-    S++;                    // Move to next token
+    if (*S != 'E') tmp1 = -tmp1;
+    if (*S != ',') S++;                     // *S is E, W or ','
+    S++;                                    // Move to next token
+    Situation->Longtitude = tmp1;
     // Get position fix and sattelites count
-    State = (*S == '0')? gsNoPosition : gsFixed;
-    S+=2;                    // Move to next token
-    SatelliteCount = GpsStrnToInt(&S, 2);
-    klPrintf("SatCount: %u\r", SatelliteCount);
+    Situation->IsFixed = (*S != '0');
+    S+=2;                                   // Move to next token
+    Situation->SatCount = GpsStrnToInt(&S, 2, false);
     // Precision
-    if (State == gsFixed) {
-        klPrintf("N: %u; E: %u\r", LatNorth, LongEast);
+    if (Situation->IsFixed) {
         S++;
-        Precision = GpsStrnToInt(&S, 7);
-        klPrintf("Precision: %u\r", Precision);
+        Situation->IsFixed = true;
+        Situation->Precision = GpsStrnToInt(&S, 7, false);
+        klPrintf("Lat: %i; Lng: %i; SatCount: %u; Precision: %u\r", Situation->Lattitude, Situation->Longtitude, Situation->SatCount, Situation->Precision);
     }
 
     // Erase Msg
-    memset(IMsg, 0, GPS_BUF_SIZE);
+    //memset(IMsg, 0, GPS_BUF_SIZE);
 }

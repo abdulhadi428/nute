@@ -8,24 +8,54 @@
 #include "nute.h"
 #include "cc1101.h"
 #include "led.h"
+#include "string.h"
+#ifndef NUTE_MODE_STATION
+#include "collar.h"
+#include "gps.h"
+#endif
 
 Nute_t Nute;
 
+//extern LedBlinkInverted_t Led;
+
 void Nute_t::Init(uint8_t ASelfAddr) {
-    ITask = ntIdle;
+    IState = nsIdle;
     TX_Pkt.AddrFrom = ASelfAddr;
 }
 
 void Nute_t::Task() {
-    switch (ITask) {
-        case ntSearch:  DoSearch(); break;
-        case ntWaitCmd: DoWaitCmd(); break;
+    switch (IState) {
+#ifdef NUTE_MODE_STATION
+        case nsSearch: DoSearch(); break;
+#else   // Tixe
+        case nsIdle:
+            CC.Receive();
+            Delay.Reset(&ITimer);
+            IState = nsWaitingRx;
+            break;
 
-        default: break;
-    }
+        case nsWaitingRx:
+            if (Delay.Elapsed(&ITimer, RECALIBRATE_DELAY)) {   // Recalibrate
+                CC.EnterIdle();
+                IState = nsIdle;
+            }
+            break;
+
+//        case nsTransmitting:
+//            if (CC.Aim != caTx) {   // Tx completed
+//                //klPrintf("no tx\r");
+//                //Delay.Reset(&Tmr);
+//                IState = nsIdle;
+//            }
+//            break;
+#endif
+        // ==== Common ====
+        default:
+            break;
+    } // switch istate
 }
 
-// ============================ Commands =======================================
+// ============================= HubStation ====================================
 #ifdef NUTE_MODE_STATION
 void Nute_t::Search(Tixe_t *PTixe) {
     IPTixe = PTixe;
@@ -33,90 +63,59 @@ void Nute_t::Search(Tixe_t *PTixe) {
     IPTixe->PwrID = LOWEST_PWR_LVL_ID;
     IPTixe->IsOnline = false;
     // Prepare to search
-    ITask = ntSearch;
-    ISearchState = ssTxCmd;
-}
-#endif
-
-// ============================ Proceedings ====================================
-void Nute_t::DoWaitCmd() {
-//case nsIdle:
-//    CC.Receive();
-//    Delay.Reset(&ITimer);
-//    IState = nsWaitingRx;
-//    break;
-//
-//case nsWaitingRx:
-//    if (Delay.Elapsed(&ITimer, RECALIBRATE_DELAY)) {   // Recalibrate
-//        CC.EnterIdle();
-//        IState = nsIdle;
-//    }
-//    break;
-
+    IState = nsSearch;
+    ISearchState = ssDoTx;
 }
 
-#ifdef NUTE_MODE_STATION
 void Nute_t::DoSearch() {
-    switch (ISearchState) {
-        case ssTxCmd:    // Prepare pkt and transmit it
-            TX_Pkt.AddrTo = IPTixe->Address;
-            TX_Pkt.PwrID = IPTixe->PwrID;
-            TX_Pkt.Cmd = NUTE_CMD_PING;
-            // Setup output power
-            CC.SetPower(IPTixe->PwrID);
-            klPrintf("Pwr: %u\r", IPTixe->PwrID);
-            // Start transmission
-            CC.Transmit();
-            Delay.Reset(&ITimer);
-            ISearchState = ssWaitRx;  // Receive will be switched on at TxEnd IRQ handler
-            break;
-
-        case ssWaitRx: // Check if timeout
-            if (Delay.Elapsed(&ITimer, REPLY_WAITTIME)) {
-                CC.EnterIdle();
-                if (IPTixe->PwrID == HIGHEST_PWR_LVL_ID) { // No answer even at top power, get out
-                    ITask = ntIdle;
-                    if(IPTixe->Callback != 0) IPTixe->Callback();
-                }
-                else {  // Top not achieved
-                    IPTixe->PwrID++;
-                    ISearchState = ssTxCmd;
-                }
-            } // if timeout
-            break;
-
-        case ssCompleted:
-            AdjustPwr(&(IPTixe->PwrID));
-            ITask = ntIdle;
-            IPTixe->IsOnline = true;
-            if(IPTixe->Callback != 0) IPTixe->Callback();
-            break;
-    } // switch
-}
-
-
-// ============================= Pkt events ====================================
-void Nute_t::HandleNewPkt() {
-    klPrintf("NewPkt\r");
-    switch (ITask) {
-        case ntSearch:
-            // Check if correct Pkt - FIXME
-            ISearchState = ssCompleted;
-            break;
-
-        case ntWaitCmd:
-
-            break;
-
-        default: break;
+    if (ISearchState == ssDoTx) {   // Prepare pkt and transmit it
+        TX_Pkt.AddrTo = IPTixe->Address;
+        TX_Pkt.PwrID = IPTixe->PwrID;
+        TX_Pkt.Cmd = NUTE_CMD_PING;
+        // Setup output power
+        CC.SetPower(IPTixe->PwrID);
+        klPrintf("Pwr: %u\r", IPTixe->PwrID);
+        // Start transmission
+        CC.Transmit();
+        Delay.Reset(&ITimer);
+        ISearchState = ssDoRx;  // Receive will be switched on at TxEnd IRQ handler
     }
-
+    else {  // Do RX
+        if (IPTixe->IsOnline) {     // Tixe was found (look HandleNewPkt)
+            IState = nsIdle;
+            if(IPTixe->Callback != 0) IPTixe->Callback();
+        }
+        // Check if timeout
+        else if (Delay.Elapsed(&ITimer, REPLY_WAITTIME)) {
+            CC.EnterIdle();
+            if (IPTixe->PwrID == HIGHEST_PWR_LVL_ID) { // No answer even at top power, get out
+                IState = nsIdle;
+                if(IPTixe->Callback != 0) IPTixe->Callback();
+            }
+            else {  // Top not achieved
+                IPTixe->PwrID++;
+                ISearchState = ssDoTx;
+            }
+        } // if timeout
+    } // do rx
 }
+
+void Nute_t::HandleNewPkt() {
+    klPrintf("NewPkt: %A\r", &RX_Pkt, sizeof(Pkt_t));
+    IPTixe->PwrID = RX_Pkt.PwrID;   // Initially, transmit at same power as transmitter
+    AdjustPwr(&(IPTixe->PwrID));    // Adjust power to transmit at needed one
+    // Handle pkt
+    // FIXME: replace ITixe with one from array
+    IPTixe->IsOnline = true;
+    // Copy data
+    memcpy(&IPTixe->Situation, &RX_Pkt.Situation, sizeof(Situation_t));
+}
+
 void Nute_t::HandleTxEnd() {
     CC.Receive();
-    Delay.Reset(&ITimer);
+    //Delay.Reset(&ITimer);
+    //IState = nsWaitingRx;
 }
-
 
 #endif
 
@@ -131,6 +130,14 @@ void Nute_t::HandleNewPkt() {
     // Common preparations
     TX_Pkt.AddrTo = RX_Pkt.AddrFrom;
     TX_Pkt.PwrID = PwrID;
+    // Place situation to pkt
+    TX_Pkt.Situation.State = CollarState;
+    TX_Pkt.Situation.IsFixed = (Gps.State == gsFixed);
+    TX_Pkt.Situation.Time = Gps.Time;
+    TX_Pkt.Situation.Lattitude = Gps.Lattitude;
+    TX_Pkt.Situation.Longtitude = Gps.Longtitude;
+    TX_Pkt.Situation.Precision = Gps.Precision;
+    TX_Pkt.Situation.SatCount = Gps.SatelliteCount;
     // Cmd-dependant preparations
     switch (RX_Pkt.Cmd) {
         case NUTE_CMD_PING:

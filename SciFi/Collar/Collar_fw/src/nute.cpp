@@ -8,10 +8,13 @@
 #include "nute.h"
 #include "cc1101.h"
 #include "led.h"
+#include "string.h"
+#ifndef NUTE_MODE_STATION
+#include "collar.h"
+#include "gps.h"
+#endif
 
 Nute_t Nute;
-
-//extern LedBlinkInverted_t Led;
 
 void Nute_t::Init(uint8_t ASelfAddr) {
     IState = nsIdle;
@@ -50,10 +53,9 @@ void Nute_t::Task() {
     } // switch istate
 }
 
-// ============================ Commands =======================================
+// ============================= HubStation ====================================
 #ifdef NUTE_MODE_STATION
 void Nute_t::Search(Tixe_t *PTixe) {
-    Led.Off();
     IPTixe = PTixe;
     // Reset tixe values
     IPTixe->PwrID = LOWEST_PWR_LVL_ID;
@@ -62,10 +64,7 @@ void Nute_t::Search(Tixe_t *PTixe) {
     IState = nsSearch;
     ISearchState = ssDoTx;
 }
-#endif
 
-// ============================ Proceedings ====================================
-#ifdef NUTE_MODE_STATION
 void Nute_t::DoSearch() {
     if (ISearchState == ssDoTx) {   // Prepare pkt and transmit it
         TX_Pkt.AddrTo = IPTixe->Address;
@@ -76,20 +75,16 @@ void Nute_t::DoSearch() {
         klPrintf("Pwr: %u\r", IPTixe->PwrID);
         // Start transmission
         CC.Transmit();
-        NewPktRcvd = false;
-        Delay.Reset(&ITmr);
+        Delay.Reset(&ITimer);
         ISearchState = ssDoRx;  // Receive will be switched on at TxEnd IRQ handler
     }
     else {  // Do RX
-        if (NewPktRcvd) {
-            AdjustPwr(&(IPTixe->PwrID));
-            // Check if correct Pkt - FIXME
+        if (IPTixe->IsOnline) {     // Tixe was found (look HandleNewPkt)
             IState = nsIdle;
-            IPTixe->IsOnline = true;
             if(IPTixe->Callback != 0) IPTixe->Callback();
         }
         // Check if timeout
-        else if (Delay.Elapsed(&ITmr, REPLY_WAITTIME)) {
+        else if (Delay.Elapsed(&ITimer, REPLY_WAITTIME)) {
             CC.EnterIdle();
             if (IPTixe->PwrID == HIGHEST_PWR_LVL_ID) { // No answer even at top power, get out
                 IState = nsIdle;
@@ -103,12 +98,29 @@ void Nute_t::DoSearch() {
     } // do rx
 }
 
+void Nute_t::HandleNewPkt() {
+    klPrintf("NewPkt: %A\r", &RX_Pkt, sizeof(Pkt_t));
+    IPTixe->PwrID = RX_Pkt.PwrID;   // Initially, transmit at same power as transmitter
+    AdjustPwr(&(IPTixe->PwrID));    // Adjust power to transmit at needed one
+    // Handle pkt
+    // FIXME: replace ITixe with one from array
+    IPTixe->IsOnline = true;
+    // Copy data
+    memcpy(&IPTixe->Situation, &RX_Pkt.Situation, sizeof(Situation_t));
+}
+
+void Nute_t::HandleTxEnd() {
+    CC.Receive();
+    //Delay.Reset(&ITimer);
+    //IState = nsWaitingRx;
+}
+
 #endif
 
 // ============================ Tixe ===========================================
 #ifdef NUTE_MODE_TIXE
 void Nute_t::HandleNewPkt() {
-    klPrintf("NewPkt\r");
+    //klPrintf("NewPkt\r");
     Delay.Reset(&ITimer);           // Reset recalibrate timer
     uint8_t PwrID = RX_Pkt.PwrID;   // Initially, transmit at same power as transmitter
     AdjustPwr(&PwrID);              // Adjust power to transmit at needed power
@@ -116,6 +128,8 @@ void Nute_t::HandleNewPkt() {
     // Common preparations
     TX_Pkt.AddrTo = RX_Pkt.AddrFrom;
     TX_Pkt.PwrID = PwrID;
+    // Place situation to pkt
+    Situation->State = CollarState;
     // Cmd-dependant preparations
     switch (RX_Pkt.Cmd) {
         case NUTE_CMD_PING:
@@ -128,7 +142,7 @@ void Nute_t::HandleNewPkt() {
     } // switch
     // Setup output power
     CC.SetPower(PwrID);
-    klPrintf("Pwr: %u\r", PwrID);
+    //klPrintf("Pwr: %u\r", PwrID);
     // Start transmission
     CC.Transmit();
     IState = nsTransmitting;

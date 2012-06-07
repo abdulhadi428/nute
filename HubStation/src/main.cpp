@@ -68,6 +68,10 @@ void ClbckFound(void) {
     if (Tixe.IsOnline) {
         klPrintf("Found\r");
         Led.On();
+        klPrintf("Time: %u:%u:%u\r", Tixe.Situation.Time.H, Tixe.Situation.Time.M, Tixe.Situation.Time.S);
+        if (Tixe.Situation.IsFixed)
+            klPrintf("Lat: %i; Lng: %i; SatCount: %u; Precision: %u\r", Tixe.Situation.Lattitude, Tixe.Situation.Longtitude, Tixe.Situation.SatCount, Tixe.Situation.Precision);
+        else klPrintf("No fix\r");
     }
     else klPrintf("No answer\r");
 }

@@ -14,8 +14,10 @@
 #include "cc1101.h"
 #include "nute.h"
 #include "gps.h"
+#include "collar.h"
 
 LedBlinkInverted_t Led;
+uint8_t CollarState;
 
 // Prototypes
 void GeneralInit(void);
@@ -42,6 +44,7 @@ inline void GeneralInit(void) {
     Delay.ms(63);
     UART_Init();
 
+    //klPrintf("Situation_t: %u; Area_t: %u; Pkt_t: %u\r", sizeof(Situation_t), sizeof(Area_t), sizeof(Pkt_t));
 
     Gps.Init();
 
@@ -49,6 +52,8 @@ inline void GeneralInit(void) {
     Led.On();
 
     Nute.Init(72);
+    Situation = &Nute.TX_Pkt.Situation;
+    CollarState = COL_OK;
 
     // Setup CC
     CC.Init();

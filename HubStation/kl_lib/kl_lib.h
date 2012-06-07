@@ -101,7 +101,14 @@ public:
 };
 
 
-// =================================== Delay ===================================
+// ============================ Delay and time =================================
+struct Time_t {
+    uint8_t H, M, S;
+    void IncH(void) { if(++H > 23) { H=0; } }
+    void IncM(void) { if(++M > 59) { M = 0; IncH(); }  }
+    void IncS(void) { if(++S > 59) { S = 0; IncM(); }  }
+};
+
 class Delay_t {
 public:
     uint32_t TickCounter;

@@ -10,6 +10,7 @@
 
 #include "stdint.h"
 #include "kl_util.h"
+#include "kl_lib.h"
 #include "cc1101_rf_settings.h"
 
 // Choose mode - station or tixe
@@ -25,7 +26,9 @@
 #define DESIRED_RSSI        (-90)       // dBm
 
 // Timings
+#ifndef NUTE_MODE_STATION
 #define RECALIBRATE_DELAY   7002    // ms; recalibrate if no packet received within this time
+#endif
 #ifdef CC_BITRATE_10K
 // Pkt duration is 45 ms
 #define REPLY_WAITTIME  108  // ms; delay between start of transmission and end of answer reception, = 2x PktDuration
@@ -42,12 +45,35 @@
 #define NUTE_RPL_PING           0x01
 #define NUTE_RPL_UNSUPPORTED    0xFF
 
+struct Coord_t {    // Size = 2 * 4 = 8 bytes
+    int32_t Lattitude, Longtitude;
+};
+
+struct Situation_t {
+    uint8_t State;
+    Time_t Time;
+    uint8_t IsFixed, SatCount;
+    uint16_t Precision;
+    int32_t Lattitude, Longtitude;
+} PACKED;
+
+struct Area_t {     // Size = 1 + 1 + 2 * 8 = 18 bytes
+    uint8_t TotalCount;
+    uint8_t ID;
+    Coord_t TopLeft, BottomRight;
+} PACKED;
+
+
 struct Pkt_t {
     uint8_t AddrTo;
     uint8_t AddrFrom;
     uint8_t PwrID;
     uint8_t Cmd;
-    uint8_t Arr[18];
+    union {
+        uint8_t Arr[18];
+        Situation_t Situation;
+        Area_t AreaInfo;
+    };
     uint8_t RSSI;
     uint8_t LQI;
 } PACKED;
@@ -64,8 +90,8 @@ struct Tixe_t {
     uint8_t Address;
     bool IsOnline;
     uint8_t PwrID;
-    uint8_t Cmd;
     ftVoid_Void Callback;
+    Situation_t Situation;
 };
 #endif
 
@@ -81,7 +107,6 @@ private:
 #else
 
 #endif
-    uint32_t ITmr;
     void AdjustPwr(uint8_t *PPwrID);
 public:
     Pkt_t RX_Pkt, TX_Pkt;
