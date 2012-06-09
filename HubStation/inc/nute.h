@@ -45,7 +45,7 @@
 
 struct Situation_t {
     uint8_t State;                  // State of Tixe
-    //uint16_t Battery;
+    uint16_t Battery;
     Time_t Time;                    // GPS time
     uint8_t IsFixed, SatCount;      // GPS fix and sattelite count
     uint16_t Precision;             // GPS precision
@@ -79,6 +79,7 @@ struct Pkt_t {
 enum RadioTask_t {rtDoTx, rtDoRx};
 
 struct Tixe_t {
+    uint32_t Timer;
     bool IsOnline, IsToBeFound;
     uint8_t PwrID;
     Situation_t Situation;

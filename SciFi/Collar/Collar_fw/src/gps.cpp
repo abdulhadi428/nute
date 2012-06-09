@@ -9,7 +9,6 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_usart.h"
 #include "stm32f10x_dma.h"
-#include "kl_util.h"
 #include "string.h"
 #include "stdlib.h"
 
@@ -164,7 +163,7 @@ GPGGA,235947.036,,,,,0,0,,,M,,M,,*43
 */
 
 void GpsR_t::IParseGPGGAMsg() {
-    klPrintf("Msg: %S\r", IMsg);
+    CmdUnit.Printf("Msg: %S\r", IMsg);
     char *S = &IMsg[0];
     uint32_t tmp1=0, tmp2;
     // Remove leading ','
@@ -173,7 +172,7 @@ void GpsR_t::IParseGPGGAMsg() {
     Situation->Time.H = GpsStrnToInt(&S, 2, false);
     Situation->Time.M = GpsStrnToInt(&S, 2, false);
     Situation->Time.S = GpsStrnToInt(&S, 2, false);
-    klPrintf("Time: %u:%u:%u\r", Situation->Time.H, Situation->Time.M, Situation->Time.S);
+    CmdUnit.Printf("Time: %u:%u:%u\r", Situation->Time.H, Situation->Time.M, Situation->Time.S);
     while(*S++ != ',');                     // move to next token
     // ==== Lattitude ====
     if (*S != ',') {                        // Data exists
@@ -202,7 +201,7 @@ void GpsR_t::IParseGPGGAMsg() {
     if (*S != 'E') tmp1 = -tmp1;
     if (*S != ',') S++;                     // *S is E, W or ','
     S++;                                    // Move to next token
-    Situation->Longtitude = tmp1;
+    Situation->Longitude = tmp1;
     // Get position fix and sattelites count
     Situation->IsFixed = (*S != '0');
     S+=2;                                   // Move to next token
@@ -212,9 +211,6 @@ void GpsR_t::IParseGPGGAMsg() {
         S++;
         Situation->IsFixed = true;
         Situation->Precision = GpsStrnToInt(&S, 7, false);
-        klPrintf("Lat: %i; Lng: %i; SatCount: %u; Precision: %u\r", Situation->Lattitude, Situation->Longtitude, Situation->SatCount, Situation->Precision);
+        CmdUnit.Printf("Lat: %i; Lng: %i; SatCount: %u; Precision: %u\r", Situation->Lattitude, Situation->Longitude, Situation->SatCount, Situation->Precision);
     }
-
-    // Erase Msg
-    //memset(IMsg, 0, GPS_BUF_SIZE);
 }

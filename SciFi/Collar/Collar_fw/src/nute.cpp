@@ -16,26 +16,32 @@
 
 Nute_t Nute;
 
+#ifdef NUTE_MODE_STATION
+Tixe_t Tixe[TIXE_COUNT];
+#endif
+
+
 void Nute_t::Init(uint8_t ASelfAddr) {
-    IState = nsIdle;
+    State = nsIdle;
     TX_Pkt.AddrFrom = ASelfAddr;
 }
 
 void Nute_t::Task() {
-    switch (IState) {
+    switch (State) {
 #ifdef NUTE_MODE_STATION
         case nsSearch: DoSearch(); break;
+        case nsPing:   DoPing();   break;
 #else   // Tixe
         case nsIdle:
             CC.Receive();
             Delay.Reset(&ITimer);
-            IState = nsWaitingRx;
+            State = nsWaitingRx;
             break;
 
         case nsWaitingRx:
             if (Delay.Elapsed(&ITimer, RECALIBRATE_DELAY)) {   // Recalibrate
                 CC.EnterIdle();
-                IState = nsIdle;
+                State = nsIdle;
             }
             break;
 
@@ -55,67 +61,92 @@ void Nute_t::Task() {
 
 // ============================= HubStation ====================================
 #ifdef NUTE_MODE_STATION
-void Nute_t::Search(Tixe_t *PTixe) {
-    IPTixe = PTixe;
-    // Reset tixe values
-    IPTixe->PwrID = LOWEST_PWR_LVL_ID;
-    IPTixe->IsOnline = false;
-    // Prepare to search
-    IState = nsSearch;
-    ISearchState = ssDoTx;
+void Nute_t::Ping(uint32_t ATixeNumber) {
+    CmdUnit.Printf("Ping %u\r", ATixeNumber);
+    ITixeNumber = ATixeNumber;
+    Tixe[ITixeNumber].IsOnline = false;
+    State = nsPing;
+    IRadioTask = rtDoTx;
+    TX_Pkt.AddrTo = ITixeNumber + TIXE_ADDR_OFFSET;
+    TX_Pkt.Cmd = NUTE_CMD_PING;
 }
-
-void Nute_t::DoSearch() {
-    if (ISearchState == ssDoTx) {   // Prepare pkt and transmit it
-        TX_Pkt.AddrTo = IPTixe->Address;
-        TX_Pkt.PwrID = IPTixe->PwrID;
-        TX_Pkt.Cmd = NUTE_CMD_PING;
+inline void Nute_t::DoPing() {
+    if (IRadioTask == rtDoTx) {
         // Setup output power
-        CC.SetPower(IPTixe->PwrID);
-        klPrintf("Pwr: %u\r", IPTixe->PwrID);
+        TX_Pkt.PwrID = Tixe[ITixeNumber].PwrID;
+        CC.SetPower(TX_Pkt.PwrID);
+        CmdUnit.Printf("Pwr: %u\r", TX_Pkt.PwrID);
         // Start transmission
         CC.Transmit();
         Delay.Reset(&ITimer);
-        ISearchState = ssDoRx;  // Receive will be switched on at TxEnd IRQ handler
+        IRadioTask = rtDoRx;  // Receive will be switched on at TxEnd IRQ handler
     }
     else {  // Do RX
-        if (IPTixe->IsOnline) {     // Tixe was found (look HandleNewPkt)
-            IState = nsIdle;
-            if(IPTixe->Callback != 0) IPTixe->Callback();
+        if (Tixe[ITixeNumber].IsOnline or Delay.Elapsed(&ITimer, REPLY_WAITTIME)) {
+            CC.EnterIdle();
+            State = nsIdle;
+            HandleTixeReply(ITixeNumber);
+        }
+    } // do rx
+}
+
+void Nute_t::Search(uint32_t ATixeNumber) {
+    CmdUnit.Printf("Search %u\r", ATixeNumber);
+    ITixeNumber = ATixeNumber;
+    // Reset tixe values
+    Tixe[ITixeNumber].PwrID = LOWEST_PWR_LVL_ID;
+    Tixe[ITixeNumber].IsOnline = false;
+    // Prepare to search
+    State = nsSearch;
+    IRadioTask = rtDoTx;
+    TX_Pkt.AddrTo = ITixeNumber + TIXE_ADDR_OFFSET;
+    TX_Pkt.Cmd = NUTE_CMD_PING;
+}
+inline void Nute_t::DoSearch() {
+    if (IRadioTask == rtDoTx) {
+        // Setup output power
+        TX_Pkt.PwrID = Tixe[ITixeNumber].PwrID;
+        CC.SetPower(TX_Pkt.PwrID);
+        CmdUnit.Printf("Pwr: %u\r", TX_Pkt.PwrID);
+        // Start transmission
+        CC.Transmit();
+        Delay.Reset(&ITimer);
+        IRadioTask = rtDoRx;  // Receive will be switched on at TxEnd IRQ handler
+    }
+    else {  // Do RX
+        if (Tixe[ITixeNumber].IsOnline) {     // Tixe was found (look HandleNewPkt)
+            State = nsIdle;
+            HandleTixeReply(ITixeNumber);
         }
         // Check if timeout
         else if (Delay.Elapsed(&ITimer, REPLY_WAITTIME)) {
             CC.EnterIdle();
-            if (IPTixe->PwrID == HIGHEST_PWR_LVL_ID) { // No answer even at top power, get out
-                IState = nsIdle;
-                if(IPTixe->Callback != 0) IPTixe->Callback();
+            if (Tixe[ITixeNumber].PwrID == HIGHEST_PWR_LVL_ID) { // No answer even at top power, get out
+                State = nsIdle;
+                HandleTixeReply(ITixeNumber);
             }
             else {  // Top not achieved
-                IPTixe->PwrID++;
-                ISearchState = ssDoTx;
+                Tixe[ITixeNumber].PwrID++;
+                IRadioTask = rtDoTx;
             }
         } // if timeout
     } // do rx
 }
 
 void Nute_t::HandleNewPkt() {
-    klPrintf("NewPkt: %A\r", &RX_Pkt, sizeof(Pkt_t));
-    IPTixe->PwrID = RX_Pkt.PwrID;   // Initially, transmit at same power as transmitter
-    AdjustPwr(&(IPTixe->PwrID));    // Adjust power to transmit at needed one
-    // Handle pkt
-    // FIXME: replace ITixe with one from array
-    IPTixe->IsOnline = true;
+    //CmdUnit.Printf("NewPkt: %A\r", &RX_Pkt, sizeof(Pkt_t));
+    Tixe[ITixeNumber].PwrID = RX_Pkt.PwrID;   // Initially, transmit at same power as transmitter
+    AdjustPwr(&(Tixe[ITixeNumber].PwrID));    // Adjust power to transmit at needed one
+    Tixe[ITixeNumber].IsOnline = true;
     // Copy data
-    memcpy(&IPTixe->Situation, &RX_Pkt.Situation, sizeof(Situation_t));
+    memcpy(&Tixe[ITixeNumber].Situation, &RX_Pkt.Situation, sizeof(Situation_t));
 }
 
 void Nute_t::HandleTxEnd() {
     CC.Receive();
-    //Delay.Reset(&ITimer);
-    //IState = nsWaitingRx;
 }
 
-#endif
+#endif // Station
 
 // ============================ Tixe ===========================================
 #ifdef NUTE_MODE_TIXE
@@ -145,13 +176,13 @@ void Nute_t::HandleNewPkt() {
     //klPrintf("Pwr: %u\r", PwrID);
     // Start transmission
     CC.Transmit();
-    IState = nsTransmitting;
+    State = nsTransmitting;
 }
 
 void Nute_t::HandleTxEnd() {
     CC.Receive();
     Delay.Reset(&ITimer);
-    IState = nsWaitingRx;
+    State = nsWaitingRx;
 }
 
 #endif
@@ -163,6 +194,6 @@ void Nute_t::AdjustPwr(uint8_t *PPwrID) {
     int16_t NewPwrID = *PPwrID + Diff;
     if      (NewPwrID > HIGHEST_PWR_LVL_ID) NewPwrID = HIGHEST_PWR_LVL_ID;
     else if (NewPwrID < LOWEST_PWR_LVL_ID)  NewPwrID = LOWEST_PWR_LVL_ID;
-    klPrintf("Pwr: RSSI=%i; Old=%u; New=%u\r", RSSI_dBm, *PPwrID, (uint8_t)NewPwrID);
+    //CmdUnit.Printf("Pwr: RSSI=%i; Old=%u; New=%u\r", RSSI_dBm, *PPwrID, (uint8_t)NewPwrID);
     *PPwrID = (uint8_t)NewPwrID;
 }

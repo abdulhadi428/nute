@@ -12,13 +12,16 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_exti.h"
+#include "stm32f10x_dma.h"
 
+// =============================== General =====================================
+#define PACKED __attribute__ ((__packed__))
+
+// ==== Single pin manipulations ====
 /*
  * GPIO_Mode_AIN, GPIO_Mode_IN_FLOATING, GPIO_Mode_IPD, GPIO_Mode_IPU,
  * GPIO_Mode_Out_OD, GPIO_Mode_Out_PP, GPIO_Mode_AF_OD, GPIO_Mode_AF_PP
  */
-
-// ==== Single pin manipulations ====
 // Set/clear
 static inline void klGpioSetByN     (GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { PGpioPort->BSRR = (uint16_t)(1<<APinNumber); }
 static inline void klGpioSetByMsk   (GPIO_TypeDef *PGpioPort, uint16_t APinMask)   { PGpioPort->BSRR = APinMask; }
@@ -131,7 +134,58 @@ extern "C" {
 void TIM2_IRQHandler(void);
 }
 
+// ============================== UART command =================================
+#define UART_TXBUF_SIZE     99
+#define UART_DMA_CHNL       DMA1_Channel4
 
+//#define RX_ENABLED
+
+#ifdef RX_ENABLED
+#define UART_RXBUF_SIZE     45
+enum CmdState_t {csNone, csInProgress, csReady};
+#endif
+
+class CmdUnit_t {
+private:
+    uint8_t TXBuf1[UART_TXBUF_SIZE], TXBuf2[UART_TXBUF_SIZE];
+    uint8_t *PBuf, TxIndx;
+    bool IDmaIsIdle;
+#ifdef RX_ENABLED
+    CmdState_t CmdState;
+    uint8_t RXBuf[UART_RXBUF_SIZE], RxIndx;
+    void CmdReset(void) { RxIndx = 0; CmdState = csNone; }
+#endif
+    void IStartTx(void);
+    void BufWrite(uint8_t AByte) {
+        if(TxIndx < UART_TXBUF_SIZE) PBuf[TxIndx++] = AByte;
+        else if(IDmaIsIdle) IStartTx();
+    }
+    // Printf
+    void PrintUint(uint32_t ANumber, uint8_t ACharCount);
+    void PrintInt (int32_t ANumber, uint8_t ACharCount);
+    void PrintString (const char *S) { while (*S != '\0') BufWrite (*S++); }
+    void PrintAsHex (uint32_t ANumber, uint8_t ACharCount);
+    void Print8HexArray(uint8_t *Arr, uint32_t ALength);
+public:
+    char UintToHexChar (uint8_t b) { return ((b<=0x09) ? (b+'0') : (b+'A'-10)); }
+    void Printf(const char *S, ...);
+    void Init(void);
+    void Task(void);
+#ifdef RX_ENABLED
+    void NewCmdHandler(void);   // Place it where needed
+#endif
+    // IRQ
+    void IRQHandler(void);
+};
+
+// RX IRQ
+#ifdef RX_ENABLED
+extern "C" {
+void USART1_IRQHandler(void);
+}
+#endif
+
+extern CmdUnit_t CmdUnit;
 
 
 #endif /* KL_GPIO_H_ */

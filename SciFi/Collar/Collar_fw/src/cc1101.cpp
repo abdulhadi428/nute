@@ -21,11 +21,11 @@ void CC_t::Task(void) {
     switch (IState) {
         case CC_STB_RX_OVF:
             FlushRxFIFO();
-            klPrintf("RX ovf\r");
+            CmdUnit.Printf("RX ovf\r");
             break;
         case CC_STB_TX_UNDF:
             FlushTxFIFO();
-            klPrintf("TX ovf\r");
+            CmdUnit.Printf("TX ovf\r");
             break;
         case CC_STB_IDLE:   // Reenter RX if needed
             if (Aim == caRx) EnterRX();

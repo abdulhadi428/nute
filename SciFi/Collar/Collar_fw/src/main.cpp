@@ -8,7 +8,6 @@
 #include "stm32f10x.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_pwr.h"
-#include "kl_util.h"
 #include "kl_lib.h"
 #include "led.h"
 #include "cc1101.h"
@@ -30,6 +29,7 @@ int main(void) {
         CC.Task();
         Nute.Task();
         Gps.Task();
+        CmdUnit.Task();
         //if(Delay.Elapsed(&Tmr, 999)) {
     } // while 1
 }
@@ -42,9 +42,7 @@ inline void GeneralInit(void) {
 
     Delay.Init();
     Delay.ms(63);
-    UART_Init();
-
-    //klPrintf("Situation_t: %u; Area_t: %u; Pkt_t: %u\r", sizeof(Situation_t), sizeof(Area_t), sizeof(Pkt_t));
+    CmdUnit.Init();
 
     Gps.Init();
 
@@ -60,5 +58,5 @@ inline void GeneralInit(void) {
     CC.SetChannel(0);
     CC.SetAddress(Nute.TX_Pkt.AddrFrom);
 
-    klPrintf("\rCollar\r");
+    CmdUnit.Printf("\rCollar\r");
 }

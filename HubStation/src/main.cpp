@@ -64,11 +64,14 @@ void InterrogationTask(void) {
     if (Nute.State != nsIdle) return;
     static uint8_t indx=TIXE_COUNT;
 
-    for(uint8_t i=0; i<TIXE_COUNT; i++) {   // Iterate through ids only once
+    for(uint8_t i=0; i<TIXE_COUNT; i++) {   // Iterate through all ids only once
         if(++indx > TIXE_COUNT-1) indx=0;
         if(Tixe[indx].IsToBeFound) {
-            if(Tixe[indx].IsOnline) Nute.Ping(indx);
-            else Nute.Search(indx);
+            if(Tixe[indx].IsOnline) {
+                // Check if enough time passed since last ping
+                if(Delay.Elapsed(&Tixe[indx].Timer, 900)) Nute.Ping(indx);
+            }
+            else Nute.Search(indx); // Search as fast as possible
             break;
         } // if is to be found
     } // for
@@ -81,7 +84,7 @@ void Nute_t::HandleTixeReply(uint8_t AID) {
         CmdUnit.Printf("$C,%u,%u,%u,%u,%u2%u2%u2,%i,%i,%u,%u,%u\r",
                 AID + TIXE_ADDR_OFFSET,
                 Tixe[AID].PwrID,
-                0/*PStn->Battery*/,
+                PStn->Battery,
                 PStn->State,
                 PStn->Time.H, PStn->Time.M, PStn->Time.S,
                 PStn->Lattitude, PStn->Longitude,
