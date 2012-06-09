@@ -9,12 +9,10 @@
 #define NUTE_H_
 
 #include "stdint.h"
-#include "kl_util.h"
 #include "kl_lib.h"
 #include "cc1101_rf_settings.h"
 
 // Choose mode - station or tixe
-#define NUTE_MODE_STATION
 #ifndef NUTE_MODE_STATION
 #define NUTE_MODE_TIXE
 #endif
@@ -45,22 +43,18 @@
 #define NUTE_RPL_PING           0x01
 #define NUTE_RPL_UNSUPPORTED    0xFF
 
-struct Coord_t {    // Size = 2 * 4 = 8 bytes
-    int32_t Lattitude, Longtitude;
-};
-
 struct Situation_t {
-    uint8_t State;
-    Time_t Time;
-    uint8_t IsFixed, SatCount;
-    uint16_t Precision;
-    int32_t Lattitude, Longtitude;
+    uint8_t State;                  // State of Tixe
+    //uint16_t Battery;
+    Time_t Time;                    // GPS time
+    uint8_t IsFixed, SatCount;      // GPS fix and sattelite count
+    uint16_t Precision;             // GPS precision
+    int32_t Lattitude, Longitude;   // GPS coordinates
 } PACKED;
 
-struct Area_t {     // Size = 1 + 1 + 2 * 8 = 18 bytes
-    uint8_t TotalCount;
+struct Area_t {     // Size = 1 + 4 * 4 = 17 bytes
     uint8_t ID;
-    Coord_t TopLeft, BottomRight;
+    int32_t TopLeftLattitude, TopLeftLongitude, BottomRightLattitude, BottomRightLongitude;
 } PACKED;
 
 
@@ -77,47 +71,48 @@ struct Pkt_t {
     uint8_t RSSI;
     uint8_t LQI;
 } PACKED;
-
 #define CC_PKT_LEN  (sizeof(Pkt_t)-2)
 
-enum NuteState_t {nsIdle, nsSearch, nsWaitingRx, nsTransmitting};
-
+#define TIXE_ADDR_OFFSET    72  // Tixe address is i+offset, where i is hardware address or number in array
 
 #ifdef NUTE_MODE_STATION
-enum SearchState_t {ssDoTx, ssDoRx};
+enum RadioTask_t {rtDoTx, rtDoRx};
 
 struct Tixe_t {
-    uint8_t Address;
-    bool IsOnline;
+    bool IsOnline, IsToBeFound;
     uint8_t PwrID;
-    ftVoid_Void Callback;
     Situation_t Situation;
 };
+#define TIXE_COUNT  50
+extern Tixe_t Tixe[TIXE_COUNT];
+
 #endif
 
 // Main class of protocol
+enum NuteState_t {nsIdle, nsSearch, nsPing, nsWaitingRx, nsTransmitting};
 class Nute_t {
 private:
     uint32_t ITimer;
-    NuteState_t IState;
 #ifdef NUTE_MODE_STATION
-    SearchState_t ISearchState;
-    Tixe_t *IPTixe;
+    RadioTask_t IRadioTask;
+    uint32_t ITixeNumber;
     void DoSearch(void);
+    void DoPing(void);
 #else
 
 #endif
     void AdjustPwr(uint8_t *PPwrID);
 public:
+    NuteState_t State;
     Pkt_t RX_Pkt, TX_Pkt;
     void Init(uint8_t ASelfAddr);
     void Task(void);
     void HandleNewPkt(void);
     void HandleTxEnd(void);
+    void HandleTixeReply(uint8_t AID);  // Call this when answer received
 #ifdef NUTE_MODE_STATION
-    void Ping(Tixe_t *PTixe);
-    void Search(Tixe_t *PTixe);
-    //void Cmd(Tixe_t *PTixe, uint8_t ACmd, uint8_t );
+    void Ping(uint32_t ATixeNumber);
+    void Search(uint32_t ATixeNumber);
 #endif
 };
 

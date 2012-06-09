@@ -10,7 +10,6 @@
 
 #include "stm32f10x.h"
 #include "kl_lib.h"
-#include "kl_util.h"
 #include "stm32f10x_spi.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_rcc.h"

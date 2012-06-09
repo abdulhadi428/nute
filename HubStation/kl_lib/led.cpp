@@ -7,7 +7,6 @@
 
 #include "led.h"
 #include "stm32f10x_rcc.h"
-#include "kl_util.h"
 
 // ============================= LedSmooth_t ===================================
 /*
