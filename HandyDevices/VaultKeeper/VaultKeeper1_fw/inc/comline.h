@@ -19,6 +19,7 @@ private:
     void IPrintAsHex(uint32_t ANumber);
     void IPrint8HexArray(uint8_t *Arr, uint32_t ALength);
 public:
+    void UintToStr(uint32_t ANumber, char *S);
     void Init(void);
     void Printf(const char *S, ...);
 };

@@ -19,7 +19,7 @@ void ComLine_t::Init() {
     // ==== USART ====
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
     USART_InitTypeDef USART_InitStructure;
-    USART_InitStructure.USART_BaudRate = 128000;
+    USART_InitStructure.USART_BaudRate = 115200;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -78,6 +78,25 @@ void ComLine_t::Printf(const char *S, ...) {
 }
 
 // ============================== Conversions ==================================
+void ComLine_t::UintToStr(uint32_t ANumber, char *S) {
+    uint8_t digit = '0';
+    bool ShouldPrint = false;
+    const uint32_t m[9] = {1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10};
+
+    for(uint8_t i=0; i<9; i++) {
+        while (ANumber >= m[i]) {
+            digit++;
+            ANumber -= m[i];
+        }
+        if (digit != '0' || ShouldPrint) {
+            *S++ = digit;
+            ShouldPrint = true;
+        }
+        digit = '0';
+    } // for
+    *S++ = (char)('0'+ANumber);
+    *S = 0;
+}
 void ComLine_t::IPrintUint (uint32_t ANumber) {
     uint8_t digit = '0';
     bool ShouldPrint = false;
