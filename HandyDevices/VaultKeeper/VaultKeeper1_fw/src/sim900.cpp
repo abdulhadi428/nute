@@ -10,6 +10,7 @@
 #include "misc.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "comline.h"
 #include "kl_string.h"
 
@@ -61,18 +62,14 @@ void sim900_t::Off() {
 // ============================= Call, SMS etc. ================================
 Error_t sim900_t::SendSMS(const char *ANumber, const char *AMsg) {
     Com.Printf("Send SMS: %S; %S\r", ANumber, AMsg);
-    // Build command: surround number with double quotes
-    klSPrintf(TxLine, "AT+CMGS=\"%S\"", ANumber);
+    // Surround number with double quotes
     BufReset();
-    SendString(TxLine);
+    MPrintf("AT+CMGS=\"%S\"\r\n", ANumber);
     if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {    // Invitation received
-        // Send message
-        char c;
-        while ((c = *AMsg++) != 0) WriteByte(c);
-        WriteByte(26);  // Send Ctrl-Z
+        MPrintf("%S%c", AMsg, 26);                  // Send message and finishing Ctrl-Z
         // Wait for echo
         BufReset();
-        if (WaitString("OK", 2, MDM_SMS_TIMEOUT) == erOk) {
+        if (WaitString("OK", MDM_SMS_TIMEOUT) == erOk) {
             Com.Printf("SMS sent\r");
             return erOk;
         }
@@ -84,8 +81,8 @@ Error_t sim900_t::SendSMS(const char *ANumber, const char *AMsg) {
 Error_t sim900_t::GprsOn() {
     Com.Printf("Connecting GPRS...\r");
     if (Command("AT+CGATT=1", MDM_NETREG_TIMEOUT) != erOk)            return erError;
-    if (Command("AT+CGATT?", MDM_RX_TIMEOUT, "+CGATT: 1", 9) != erOk) return erError;
-    WaitString("OK", 2, MDM_RX_TIMEOUT);
+    if (Command("AT+CGATT?", MDM_RX_TIMEOUT, "+CGATT: 1") != erOk) return erError;
+    WaitString("OK", MDM_RX_TIMEOUT);
     // GPRS is on, setup IP context
     if(Command("AT+SAPBR=3,1,\"Contype\",\"GPRS\"") != erOk)        return erError;
     if(Command("AT+SAPBR=3,1,\"APN\",\"internet.mts.ru\"") != erOk) return erError;
@@ -117,7 +114,7 @@ Error_t sim900_t::GET(const char *AUrl) {
         // Start GET session
         if(Command("AT+HTTPACTION=0") == erOk) {    // 0 => GET
             // Get server reply: +HTTPACTION:0,200,13652
-            if (WaitString("+HTTPACTION", 11, MDM_NETREG_TIMEOUT) == erOk) {
+            if (WaitString("+HTTPACTION", MDM_NETREG_TIMEOUT) == erOk) {
                 // Check error code
                 for(uint8_t i=0; i<3; i++) TxLine[i] = RxLine[14+i];
                 TxLine[3] = 0;
@@ -130,9 +127,9 @@ Error_t sim900_t::GET(const char *AUrl) {
                         LenToRx = (LenToRx < MDM_DATA_LEN)? LenToRx : MDM_DATA_LEN;
                         klSPrintf(TxLine, "AT+HTTPREAD=0,%u", LenToRx);
                         Com.Printf("LenToRx: %u\r", LenToRx);
-                        if(Command(TxLine, MDM_NETREG_TIMEOUT, "+HTTPREAD", 9) == erOk) {    // Next line(s) contain data
+                        if(Command(TxLine, MDM_NETREG_TIMEOUT, "+HTTPREAD") == erOk) {    // Next line(s) contain data
                             if (ReadRawData(DataString, LenToRx, MDM_NETREG_TIMEOUT) == erOk) {
-                                WaitString("OK", 2, MDM_RX_TIMEOUT);
+                                WaitString("OK", MDM_RX_TIMEOUT);
                                 r = erOk;
                             }
                         } // if read
@@ -148,63 +145,63 @@ Error_t sim900_t::GET(const char *AUrl) {
     return r;
 }
 
-Error_t sim900_t::POST(const char *AUrl, const char *AData) {
-    Com.Printf("POST: %S; %S\r", AUrl, AData);
+Error_t sim900_t::GET1(const char *AHost, const char *AUrl, char *AData, uint32_t ALen) {
+    Com.Printf("GET: %S\r", AUrl);
     Error_t r = erError;
-    uint32_t Len = strlen(AData);
-    if (HttpInit(AUrl) == erOk) {
-        // Set data length and latency
-        klSPrintf(TxLine, "AT+HTTPDATA=%u,9999", Len);
-        if(Command(TxLine, MDM_NETREG_TIMEOUT, "DOWNLOAD", 8) == erOk) {
-            for(uint32_t i=0; i<Len; i++) WriteByte(AData[i]);
-            if (WaitString("OK", 2, MDM_NETREG_TIMEOUT) == erOk) {
-                // Start POST session
-                if(Command("AT+HTTPACTION=1") == erOk) {    // 1 => POST
-                    // Get server reply: +HTTPACTION:0,200,13652
-                    if (WaitString("+HTTPACTION", 11, MDM_NETREG_TIMEOUT) == erOk) {
-                        // Check error code
-                        for(uint8_t i=0; i<3; i++) TxLine[i] = RxLine[14+i];
-                        TxLine[3] = 0;
-                        Com.Printf("Rpl code: %S\r", TxLine);
-                        if (strcmp(TxLine, "200") == 0) r = erOk;
-                    } // if reply rcvd
-                } // if action start
-            } //
-        }
-    } // HTTP init
-    // Terminate HTTP service
-    Command("AT+HTTPTERM");
-    if(r == erOk) Com.Printf("Ok\r");
-    else Com.Printf("Error\r");
-    return r;
-}
-
-Error_t sim900_t::POST1(const char *AUrl, const char *AData) {
-    Com.Printf("POST1: %S; %S\r", AUrl, AData);
-    Error_t r = erError;
-    //uint32_t Len = strlen(AData);
-
-    klSPrintf(TxLine, "AT+CIPSTART=\"TCP\",\"%S\",\"80\"", AUrl);
+    klSPrintf(TxLine, "AT+CIPSTART=\"TCP\",\"%S\",\"80\"", AHost);
     if (Command(TxLine) == erOk) {
-        if(WaitString("CONNECT", 7, MDM_NETREG_TIMEOUT) == erOk) {
+        if(WaitString("CONNECT", MDM_NETREG_TIMEOUT) == erOk) {
             if (strcmp(&RxLine[8], "OK") == 0) {
                 BufReset();
                 SendString("AT+CIPSEND");
                 if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
-                    SendString("POST /request.php HTTP/1.1");
-                    SendString("Host: numenor2012.ru");
-                    SendString("Content-Type: application/x-www-form-urlencoded");
-                    SendString("Content-Length: 18");
-                    SendString("");
-                    char c;
-                    while ((c = *AData++) != 0) WriteByte(c);
-                    WriteByte(26);  // Send Ctrl-Z
+                    MPrintf("GET %S HTTP/1.1\r\n", AUrl);
+                    MPrintf("Host: %S\r\n\r\n%c", AHost, 26);
                     // Wait for echo
                     BufReset();
-                    if (WaitString("SEND OK", 2, MDM_NETREG_TIMEOUT) == erOk) {
-                        r = erOk;
-                    }
-                }
+                    if (WaitString("SEND OK", MDM_NETREG_TIMEOUT) == erOk) {
+                        // Wait for reply
+                        if (WaitString("Content-Length", MDM_NETREG_TIMEOUT) == erOk) {
+                            uint32_t FLen = atoi(&RxLine[16]);
+                            if (FLen != 0) {
+                                FLen = (FLen < ALen)? FLen : ALen;
+                                if(WaitString("", MDM_NETREG_TIMEOUT) == erOk) {  // Now data begins
+                                    //for(uint32_t i=0; i<FLen; i++)
+
+                                }
+                            }
+                        } // length
+                    } // Send ok
+                } // if >
+            } // if connect ok
+        } // if connect
+    } // if start
+    Command("AT+CIPCLOSE", MDM_NETREG_TIMEOUT);
+    if(r == erOk) Com.Printf("Ok: %S\r", DataString);
+    else Com.Printf("Error\r");
+    return r;
+}
+
+// numenor2012.ru, /request.php, data=aga
+Error_t sim900_t::POST(const char *AHost, const char *AUrl, const char *AData) {
+    Com.Printf("POST1: %S%S; %S\r", AHost, AUrl, AData);
+    Error_t r = erError;
+    klSPrintf(TxLine, "AT+CIPSTART=\"TCP\",\"%S\",\"80\"", AHost);
+    if (Command(TxLine) == erOk) {
+        if(WaitString("CONNECT", MDM_NETREG_TIMEOUT) == erOk) {
+            if (strcmp(&RxLine[8], "OK") == 0) {
+                BufReset();
+                SendString("AT+CIPSEND");
+                if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
+                    MPrintf("POST %S HTTP/1.1\r\n", AUrl);
+                    MPrintf("Host: %S\r\n", AHost);
+                    MPrintf("Content-Type: application/x-www-form-urlencoded\r\n"); // Mandatory
+                    MPrintf("Content-Length: %u\r\n\r\n", strlen(AData));           // Add empty line
+                    MPrintf("%S%c", AData, 26);                                     // Send data and finishing Ctrl-Z
+                    // Wait for echo
+                    BufReset();
+                    r = WaitString("SEND OK", MDM_NETREG_TIMEOUT);
+                } // if >
             } // if connect ok
         } // if wait connect
     } // if cmd
@@ -223,20 +220,53 @@ void sim900_t::SendString(const char *S) {
     WriteByte('\n');    // Send LF (10 or 0x0A)
 }
 
-//Error_t sim900_t::WaitString(uint32_t ATimeout) {
-//    uint32_t Tmr;
-//    Delay.Reset(&Tmr);
-//    while (!Delay.Elapsed(&Tmr, ATimeout)) {
-//        if (NewLineReceived) {
-//            Com.Printf("> %S\r", RxLine);
-//            return erOk;
-//        }
-//    } // while
-//    return erTimeout;
-//}
+void sim900_t::MPrintUint(uint32_t ANumber) {
+    uint8_t digit = '0';
+    bool ShouldPrint = false;
+    const uint32_t m[9] = {1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10};
+    for(uint8_t i=0; i<9; i++) {
+        while (ANumber >= m[i]) {
+            digit++;
+            ANumber -= m[i];
+        }
+        if (digit != '0' || ShouldPrint) {
+            WriteByte(digit);
+            ShouldPrint = true;
+        }
+        digit = '0';
+    } // for
+    WriteByte((uint8_t)('0'+ANumber));
+}
+void sim900_t::MPrintf(const char *S, ...) {
+    Delay.ms(99);   // to prevent transmission corruption
+    char c;
+    bool WasPercent = false;
+    va_list Arg;
+    va_start(Arg, S);    // Set pointer to first argument
+    while ((c = *S) != 0) {
+        if (c == '%') {
+            if (WasPercent) {
+                WriteByte(c);  // %%
+                WasPercent = false;
+            }
+            else WasPercent = true;
+        }
+        else { // not %
+            if (WasPercent) {
+                if (c == 'c') WriteByte((uint8_t)va_arg(Arg, int32_t));
+                else if (c == 'u') MPrintUint(va_arg(Arg, uint32_t));
+                else if ((c == 's') || (c == 'S')) MPrintString(va_arg(Arg, char*));
+                WasPercent = false;
+            } // if was percent
+            else WriteByte(c);
+        }
+        S++;
+    } // while
+    va_end(Arg);
+}
 
 // ==== RX ====
-Error_t sim900_t::WaitString(const char *AString, uint8_t ALen, uint32_t ATimeout) {
+Error_t sim900_t::WaitString(const char *AString, uint32_t ATimeout) {
     uint32_t Tmr;
     char c;
     uint32_t Indx = 0;
@@ -250,7 +280,7 @@ Error_t sim900_t::WaitString(const char *AString, uint8_t ALen, uint32_t ATimeou
                 if(Indx != 0) {    // Something received
                     RxLine[Indx] = 0;  // end of string
                     Com.Printf("> %S\r", RxLine);
-                    if      (strncmp(RxLine, AString, ALen) == 0) return erOk;
+                    if      (strncmp(RxLine, AString, strlen(AString)) == 0) return erOk;
                     else if (strncmp(RxLine, "ERROR", 5) == 0) return erError;
                     else Indx = 0;
                 }
@@ -284,11 +314,10 @@ Error_t sim900_t::ReadRawData(char *Dst, uint32_t ALen, uint32_t ATimeout) {
 }
 
 // ==== Commands ====
-
-Error_t sim900_t::Command(const char *ACmd, uint32_t ATimeout, const char *AReply, uint8_t ARplLen) {
+Error_t sim900_t::Command(const char *ACmd, uint32_t ATimeout, const char *AReply) {
     BufReset();
     SendString(ACmd);
-    return WaitString(AReply, ARplLen, ATimeout);
+    return WaitString(AReply, ATimeout);
 }
 
 Error_t sim900_t::ProcessSim() {
@@ -297,8 +326,8 @@ Error_t sim900_t::ProcessSim() {
     Delay.Reset(&Tmr);
     while (!Delay.Elapsed(&Tmr, MDM_SIM_TIMEOUT)) {
         Com.Printf("#");
-        if (Command("AT+CPIN?", MDM_RX_TIMEOUT, "+CPIN: READY", 12) == erOk) {
-            WaitString("OK", 2, MDM_RX_TIMEOUT);
+        if (Command("AT+CPIN?", MDM_RX_TIMEOUT, "+CPIN: READY") == erOk) {
+            WaitString("OK", MDM_RX_TIMEOUT);
             Com.Printf("\rSim Ok\r");
             return erOk;
         }
@@ -330,9 +359,9 @@ Error_t sim900_t::NetRegistration() {
     Delay.Reset(&FTimer);
     while (!Delay.Elapsed(&FTimer, MDM_NETREG_TIMEOUT)) {
         Com.Printf("#");
-        if (Command("AT+CREG?", MDM_RX_TIMEOUT, "+CREG:", 6) == erOk) {
+        if (Command("AT+CREG?", MDM_RX_TIMEOUT, "+CREG:") == erOk) {
             char c = RxLine[9];
-            WaitString("OK", 2, MDM_RX_TIMEOUT);
+            WaitString("OK", MDM_RX_TIMEOUT);
             uint8_t k = c - '0';    // convert char to digit
             switch (k) {
                 case 1: // Registered

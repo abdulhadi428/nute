@@ -25,9 +25,12 @@ int main(void) {
 
     //Mdm.SendSMS("+79169895800", "Aiya Feanaro!");
     if (Mdm.GprsOn() == erOk) {
-        //Mdm.GET("numenor2012.ru/request.php?time");
+        Mdm.GET1("numenor2012.ru", "/request.php?time", Mdm.DataString, 54);
         //Mdm.GET("numenor2012.ru/request.php?data=MyDaata");
-        Mdm.POST1("numenor2012.ru", "data=aga&value=ugu");
+        //Mdm.POST("numenor2012.ru", "/request.php", "data=aga3&value=ugu3");
+//        Mdm.POST("numenor2012.ru", "/request.php",
+//                "host_id=19&water_value=1188&time=20120601202122&errors=0&host_hash=1bc29b36f623ba82aaf6724fd3b16718"
+//                );
         Mdm.GprsOff();
     }
     Mdm.Off();

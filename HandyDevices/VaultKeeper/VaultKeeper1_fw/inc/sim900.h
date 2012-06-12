@@ -14,7 +14,7 @@
 
 #define MDM_LINE_LEN        54
 #define MDM_DATA_LEN        54
-#define MDM_BUF_LEN         252
+#define MDM_BUF_LEN         504
 #define MDM_RX_TIMEOUT      450   // ms
 #define MDM_SIM_TIMEOUT     4005  // ms
 #define MDM_NETREG_TIMEOUT  20007 // ms
@@ -44,12 +44,16 @@ private:
     void WriteByte(uint8_t AByte) { USART1->DR = AByte; while (!(USART1->SR & USART_FLAG_TC)); }
     void IrqDisable(void) { USART_ITConfig(USART1, USART_IT_RXNE, DISABLE); }
     void IrqEnable (void) { USART_ITConfig(USART1, USART_IT_RXNE, ENABLE); }
+    // Tx
     void SendString(const char *S);
+    void MPrintString(const char *S) { char c; while ((c = *S++) != 0) WriteByte(c); }
+    void MPrintUint(uint32_t ANumber);
+    void MPrintf(const char *S, ...);
     // Commands
-    Error_t Command(const char *ACmd, uint32_t ATimeout, const char *AReply, uint8_t ARplLen);
-    Error_t Command(const char *ACmd, uint32_t ATimeout) { return Command(ACmd, ATimeout, "OK", 2); }
-    Error_t Command(const char *ACmd) { return Command(ACmd, MDM_RX_TIMEOUT, "OK", 2); }
-    Error_t WaitString(const char *AString, uint8_t ALen, uint32_t ATimeout);
+    Error_t Command(const char *ACmd, uint32_t ATimeout, const char *AReply);
+    Error_t Command(const char *ACmd, uint32_t ATimeout) { return Command(ACmd, ATimeout, "OK"); }
+    Error_t Command(const char *ACmd) { return Command(ACmd, MDM_RX_TIMEOUT, "OK"); }
+    Error_t WaitString(const char *AString, uint32_t ATimeout);
     Error_t WaitChar(const char AChar, uint32_t ATimeout);
     Error_t ReadRawData(char *Dst, uint32_t ALen, uint32_t ATimeout);
     // Inner use commands
@@ -67,8 +71,8 @@ public:
     Error_t GprsOn(void);
     Error_t GprsOff(void);
     Error_t GET(const char *AUrl);
-    Error_t POST(const char *AUrl, const char *AData);
-    Error_t POST1(const char *AUrl, const char *AData);
+    Error_t GET1(const char *AHost, const char *AUrl, char *AData, uint32_t ALen);
+    Error_t POST(const char *AHost, const char *AUrl, const char *AData);
     // IRQ
     void BufWrite(char c) { IBuf[WriteIndx++] = c; if(WriteIndx == MDM_BUF_LEN) WriteIndx = 0; }
 //    void IRQHandler(void);
