@@ -23,19 +23,13 @@ int main(void) {
     Mdm.On();
     // http://numenor2012.ru/request.php?time
 
-    Mdm.SendSMS("+79169895800", "Aiya Feanaro!");
-//    if (Mdm.GprsOn() == erOk) {
+    //Mdm.SendSMS("+79169895800", "Aiya Feanaro!");
+    if (Mdm.GprsOn() == erOk) {
         //Mdm.GET("numenor2012.ru/request.php?time");
-        //Mdm
-
-//        if (Srv.OpenConnection("numenor2012.ru") == erOk) {
-//            //Srv.GET("/request.php?time");
-//            Mdm.SendData("GET /request.php?time HTTP/1.1\r\nHost: numenor2012.ru\r\n\r\n");
-//            Delay.ms(4500);
-//        }
-//        Mdm.GprsOff();
-//    }
-    //Com.Printf("3\r");
+        //Mdm.GET("numenor2012.ru/request.php?data=MyDaata");
+        Mdm.POST1("numenor2012.ru", "data=aga&value=ugu");
+        Mdm.GprsOff();
+    }
     Mdm.Off();
 
     //uint32_t Tmr;

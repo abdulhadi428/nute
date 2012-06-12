@@ -10,8 +10,8 @@
 #include "misc.h"
 #include <string.h>
 #include <stdlib.h>
-#include "led.h"
 #include "comline.h"
+#include "kl_string.h"
 
 sim900_t Mdm;
 //extern LedBlink_t Led;
@@ -22,8 +22,9 @@ void sim900_t::On() {
     USARTInit();
     IrqEnable();
     State = erError;
-    InviteReceived = true;  // Do not react on '>'
-    RawDataRx = false;
+    WriteIndx = 0;
+    ReadIndx = 0;
+
     uint8_t TryCounter = 0;
     // ==== Setup modem ====
     while (State == erError) {
@@ -41,7 +42,7 @@ void sim900_t::On() {
         if(Command("AT")        != erOk) continue;  // Send AT and wait for Ok
         if(ProcessSim()         != erOk) continue;  // Wait for SIM to activate
         if(Command("AT+CMGF=1") != erOk) continue;  // SMS in text mode
-        if(Command("AT+CSCB=1") != erOk) continue;  // Disable cell broadcast
+        if(DisableCellBrc()     != erOk) continue;  // Disable cell broadcast
         if(NetRegistration()    != erOk) continue;  // Wait for modem to connect
         //Command("AT+CSQ");                          // Get signal parameters
         Command("AT+CMGD=1,4");                     // Delete all sms
@@ -61,33 +62,21 @@ void sim900_t::Off() {
 Error_t sim900_t::SendSMS(const char *ANumber, const char *AMsg) {
     Com.Printf("Send SMS: %S; %S\r", ANumber, AMsg);
     // Build command: surround number with double quotes
-    uint32_t Tmr;
-    Delay.Reset(&Tmr);
-    char S[MDM_LINE_LEN];
-    uint8_t L = strlen(ANumber);
-    memcpy(&S[0], "AT+CMGS=\"", 9);
-    memcpy(&S[9], ANumber, L);
-    S[9+L]  = '\"';
-    S[10+L] = 0;
-    ResetRxLine();
-    InviteReceived = false; // wait invitation
-    SendString(S);
-    while (!Delay.Elapsed(&Tmr, MDM_RX_TIMEOUT) and !InviteReceived);
-    if (InviteReceived) {
+    klSPrintf(TxLine, "AT+CMGS=\"%S\"", ANumber);
+    BufReset();
+    SendString(TxLine);
+    if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {    // Invitation received
         // Send message
         char c;
         while ((c = *AMsg++) != 0) WriteByte(c);
-        // Send Ctrl-Z
-        WriteByte(26);
+        WriteByte(26);  // Send Ctrl-Z
         // Wait for echo
-        ResetRxLine();
-        if (WaitString(MDM_SMS_TIMEOUT) == erOk) {
-            if (strcmp (RxLine, "OK") == 0) {
-                Com.Printf("SMS sent\r");
-                return erOk;
-            }
+        BufReset();
+        if (WaitString("OK", 2, MDM_SMS_TIMEOUT) == erOk) {
+            Com.Printf("SMS sent\r");
+            return erOk;
         }
-    }
+    } // if >
     Com.Printf("SMS failed\r");
     return erError;
 }
@@ -101,12 +90,6 @@ Error_t sim900_t::GprsOn() {
     if(Command("AT+SAPBR=3,1,\"Contype\",\"GPRS\"") != erOk)        return erError;
     if(Command("AT+SAPBR=3,1,\"APN\",\"internet.mts.ru\"") != erOk) return erError;
     if(Command("AT+SAPBR=1,1", MDM_NETREG_TIMEOUT) != erOk)         return erError;     // Open GPRS context
-    //if(Mdm.Command("AT+SAPBR=2,1", MDM_NETREG_TIMEOUT) != erOk) return erError;
-
-//    if(Command("AT+CSTT=\"internet.mts.ru\"")!= erOk)  return erError;
-//    if(Command("AT+CIICR", MDM_NETREG_TIMEOUT)!= erOk) return erError;  // Start GPRS connection
-//    Command("AT+CIFSR");    // Get local IP address. Needed for successfull proceeding
-    //if(Command("AT+CIPHEAD=1", MDM_RX_TIMEOUT)!= erOk)  return erError; // Add IP header
     Com.Printf("GPRS connected\r");
     return erOk;
 }
@@ -117,61 +100,116 @@ Error_t sim900_t::GprsOff(void) {
     return r;
 }
 
+Error_t sim900_t::HttpInit(const char *AUrl) {
+    if(Command("AT+HTTPINIT") == erOk) {                // Init HTTP service
+        if(Command("AT+HTTPPARA=\"CID\",1") == erOk) {  // CID = 1 (bearer id)
+            klSPrintf(TxLine, "AT+HTTPPARA=\"URL\",\"%S\"", AUrl);  // Set parameters: AT+HTTPPARA="URL","ya.ru"
+            return Command(TxLine);
+        }
+    }
+    return erError;
+}
+
 Error_t sim900_t::GET(const char *AUrl) {
     Com.Printf("GET: %S\r", AUrl);
     Error_t r = erError;
-    DataLen = 0;
-    PD = &DataString[0];
-    if(Command("AT+HTTPINIT") == erOk) {                // Init HTTP service
-        if(Command("AT+HTTPPARA=\"CID\",1") == erOk) {  // Set parameters: AT+HTTPPARA="URL","ya.ru"
-            char S[MDM_LINE_LEN];
-            uint8_t Len = strlen(AUrl);
-            memcpy(&S[0], "AT+HTTPPARA=\"URL\",\"", 19);
-            memcpy(&S[19], AUrl, Len);
-            strcpy(&S[19+Len], "\"");
-            if(Command(S) == erOk) {
-                // Start GET session
-                if(Command("AT+HTTPACTION=0") == erOk) {    // 0 => GET
-                    // Get server reply: +HTTPACTION:0,200,13652
-                    if (WaitString("+HTTPACTION", 11, MDM_NETREG_TIMEOUT) == erOk) {
-                        // Check error code
-                        for(uint8_t i=0; i<3; i++) S[i] = RxLine[14+i];
-                        S[3] = 0;
-                        Com.Printf("Rpl code: %S\r", S);
-                        if (strcmp(S, "200") == 0) {
-                            // Calculate reply length
-                            strncpy(S, &RxLine[18], 9);
-                            uint32_t LenToRx = atoi(S);
-                            if (LenToRx != 0) {     // Read data
-                                LenToRx = (LenToRx < MDM_DATA_LEN)? LenToRx : MDM_DATA_LEN;
-                                memcpy(S, "AT+HTTPREAD=0,", 14);
-                                Com.UintToStr(LenToRx, &S[14]);     // Add current length
-                                Com.Printf("LenToRx: %S\r", &S[14]);
-                                if(Command(S, MDM_NETREG_TIMEOUT, "+HTTPREAD", 9) == erOk) {    // Next line(s) contain data
-                                    RawDataRx = true;
-                                    uint32_t Tmr;
-                                    Delay.Reset(&Tmr);
-                                    r = erOk;
-                                    while (DataLen <= LenToRx) {
-                                        if(Delay.Elapsed(&Tmr, MDM_NETREG_TIMEOUT)) {
-                                            r = erError;
-                                            break;
-                                        }
-                                    } // while
-                                    RawDataRx = false;  // return to normal life
-                                    *PD = 0;    // Terminate received string
-                                    WaitString("OK", 2, MDM_RX_TIMEOUT);
-                                } // if read
-                            } // Len>0
-                        } // if 200
-                    } // srv reply
-                } // Start session
-            } // param 2
-        } // param 1
-    } // init
+    if (HttpInit(AUrl) == erOk) {
+        // Start GET session
+        if(Command("AT+HTTPACTION=0") == erOk) {    // 0 => GET
+            // Get server reply: +HTTPACTION:0,200,13652
+            if (WaitString("+HTTPACTION", 11, MDM_NETREG_TIMEOUT) == erOk) {
+                // Check error code
+                for(uint8_t i=0; i<3; i++) TxLine[i] = RxLine[14+i];
+                TxLine[3] = 0;
+                Com.Printf("Rpl code: %S\r", TxLine);
+                if (strcmp(TxLine, "200") == 0) {
+                    // Calculate reply length
+                    strncpy(TxLine, &RxLine[18], 9);
+                    uint32_t LenToRx = atoi(TxLine);
+                    if (LenToRx != 0) {     // Read data
+                        LenToRx = (LenToRx < MDM_DATA_LEN)? LenToRx : MDM_DATA_LEN;
+                        klSPrintf(TxLine, "AT+HTTPREAD=0,%u", LenToRx);
+                        Com.Printf("LenToRx: %u\r", LenToRx);
+                        if(Command(TxLine, MDM_NETREG_TIMEOUT, "+HTTPREAD", 9) == erOk) {    // Next line(s) contain data
+                            if (ReadRawData(DataString, LenToRx, MDM_NETREG_TIMEOUT) == erOk) {
+                                WaitString("OK", 2, MDM_RX_TIMEOUT);
+                                r = erOk;
+                            }
+                        } // if read
+                    } // Len>0
+                } // if 200
+            } // srv reply
+        } // Start session
+    } // HTTP init
     // Terminate HTTP service
     Command("AT+HTTPTERM");
     if(r == erOk) Com.Printf("Ok: %S\r", DataString);
+    else Com.Printf("Error\r");
+    return r;
+}
+
+Error_t sim900_t::POST(const char *AUrl, const char *AData) {
+    Com.Printf("POST: %S; %S\r", AUrl, AData);
+    Error_t r = erError;
+    uint32_t Len = strlen(AData);
+    if (HttpInit(AUrl) == erOk) {
+        // Set data length and latency
+        klSPrintf(TxLine, "AT+HTTPDATA=%u,9999", Len);
+        if(Command(TxLine, MDM_NETREG_TIMEOUT, "DOWNLOAD", 8) == erOk) {
+            for(uint32_t i=0; i<Len; i++) WriteByte(AData[i]);
+            if (WaitString("OK", 2, MDM_NETREG_TIMEOUT) == erOk) {
+                // Start POST session
+                if(Command("AT+HTTPACTION=1") == erOk) {    // 1 => POST
+                    // Get server reply: +HTTPACTION:0,200,13652
+                    if (WaitString("+HTTPACTION", 11, MDM_NETREG_TIMEOUT) == erOk) {
+                        // Check error code
+                        for(uint8_t i=0; i<3; i++) TxLine[i] = RxLine[14+i];
+                        TxLine[3] = 0;
+                        Com.Printf("Rpl code: %S\r", TxLine);
+                        if (strcmp(TxLine, "200") == 0) r = erOk;
+                    } // if reply rcvd
+                } // if action start
+            } //
+        }
+    } // HTTP init
+    // Terminate HTTP service
+    Command("AT+HTTPTERM");
+    if(r == erOk) Com.Printf("Ok\r");
+    else Com.Printf("Error\r");
+    return r;
+}
+
+Error_t sim900_t::POST1(const char *AUrl, const char *AData) {
+    Com.Printf("POST1: %S; %S\r", AUrl, AData);
+    Error_t r = erError;
+    //uint32_t Len = strlen(AData);
+
+    klSPrintf(TxLine, "AT+CIPSTART=\"TCP\",\"%S\",\"80\"", AUrl);
+    if (Command(TxLine) == erOk) {
+        if(WaitString("CONNECT", 7, MDM_NETREG_TIMEOUT) == erOk) {
+            if (strcmp(&RxLine[8], "OK") == 0) {
+                BufReset();
+                SendString("AT+CIPSEND");
+                if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
+                    SendString("POST /request.php HTTP/1.1");
+                    SendString("Host: numenor2012.ru");
+                    SendString("Content-Type: application/x-www-form-urlencoded");
+                    SendString("Content-Length: 18");
+                    SendString("");
+                    char c;
+                    while ((c = *AData++) != 0) WriteByte(c);
+                    WriteByte(26);  // Send Ctrl-Z
+                    // Wait for echo
+                    BufReset();
+                    if (WaitString("SEND OK", 2, MDM_NETREG_TIMEOUT) == erOk) {
+                        r = erOk;
+                    }
+                }
+            } // if connect ok
+        } // if wait connect
+    } // if cmd
+    Command("AT+CIPCLOSE", MDM_NETREG_TIMEOUT);
+    if(r == erOk) Com.Printf("Ok\r");
     else Com.Printf("Error\r");
     return r;
 }
@@ -182,86 +220,131 @@ void sim900_t::SendString(const char *S) {
     char c;
     while ((c = (*S++)) != 0) WriteByte(c);
     WriteByte('\r');    // Send CR (13 or 0x0D)
+    WriteByte('\n');    // Send LF (10 or 0x0A)
 }
 
-Error_t sim900_t::WaitString(uint32_t ATimeout) {
-    uint32_t Tmr;
-    Delay.Reset(&Tmr);
-    while (!Delay.Elapsed(&Tmr, ATimeout)) {
-        if (NewLineReceived) return erOk;
-    } // while
-    return erTimeout;
-}
+//Error_t sim900_t::WaitString(uint32_t ATimeout) {
+//    uint32_t Tmr;
+//    Delay.Reset(&Tmr);
+//    while (!Delay.Elapsed(&Tmr, ATimeout)) {
+//        if (NewLineReceived) {
+//            Com.Printf("> %S\r", RxLine);
+//            return erOk;
+//        }
+//    } // while
+//    return erTimeout;
+//}
+
+// ==== RX ====
 Error_t sim900_t::WaitString(const char *AString, uint8_t ALen, uint32_t ATimeout) {
     uint32_t Tmr;
+    char c;
+    uint32_t Indx = 0;
     Delay.Reset(&Tmr);
     while (!Delay.Elapsed(&Tmr, ATimeout)) {
-        if (NewLineReceived) {
-            if      (strncmp(RxLine, AString, ALen) == 0) return erOk;
-            else if (strcmp (RxLine, "ERROR") == 0) return erError;
-            else ResetRxLine();
-        }
+        // Read line from buffer
+        if (!BufIsEmpty()) {
+            c = BufRead();
+            if (c == '\r') continue;    // <cr>
+            else if (c == '\n') { // <lf> Line received
+                if(Indx != 0) {    // Something received
+                    RxLine[Indx] = 0;  // end of string
+                    Com.Printf("> %S\r", RxLine);
+                    if      (strncmp(RxLine, AString, ALen) == 0) return erOk;
+                    else if (strncmp(RxLine, "ERROR", 5) == 0) return erError;
+                    else Indx = 0;
+                }
+            }
+            else RxLine[Indx++] = c;
+        } // if not empty
     } // while
     return erTimeout;
 }
 
+Error_t sim900_t::WaitChar(const char AChar, uint32_t ATimeout) {
+    uint32_t Tmr;
+    Delay.Reset(&Tmr);
+    while (!Delay.Elapsed(&Tmr, ATimeout)) {
+        if (!BufIsEmpty())
+            if (BufRead() == AChar)
+                return erOk;
+    } // while
+    return erTimeout;
+}
+
+Error_t sim900_t::ReadRawData(char *Dst, uint32_t ALen, uint32_t ATimeout) {
+    uint32_t Tmr, Indx = 0;
+    Delay.Reset(&Tmr);
+    while (!Delay.Elapsed(&Tmr, ATimeout) and (Indx < ALen)) {
+        if (!BufIsEmpty()) Dst[Indx++] = BufRead();
+    } // while
+    Dst[Indx] = 0;   // Terminate string
+    //Com.Printf(">> %S\r", Dst);
+    return (Indx == ALen)? erOk : erTimeout;
+}
+
+// ==== Commands ====
+
 Error_t sim900_t::Command(const char *ACmd, uint32_t ATimeout, const char *AReply, uint8_t ARplLen) {
-    ResetRxLine();
+    BufReset();
     SendString(ACmd);
     return WaitString(AReply, ARplLen, ATimeout);
 }
-Error_t sim900_t::Command(const char *ACmd, uint32_t ATimeout) {
-    ResetRxLine();
-    SendString(ACmd);
-    return WaitString("OK", 2, ATimeout);
-}
-Error_t sim900_t::Command(const char *ACmd) {
-    ResetRxLine();
-    SendString(ACmd);
-    return WaitString("OK", 2, MDM_RX_TIMEOUT);
-}
 
 Error_t sim900_t::ProcessSim() {
-    uint32_t Tmr, TryCounter = 7;
+    Com.Printf("Sim init ");
+    uint32_t Tmr;
     Delay.Reset(&Tmr);
-    while (!Delay.Elapsed(&Tmr, MDM_SIM_TIMEOUT) and (TryCounter-- != 0)) {
+    while (!Delay.Elapsed(&Tmr, MDM_SIM_TIMEOUT)) {
+        Com.Printf("#");
         if (Command("AT+CPIN?", MDM_RX_TIMEOUT, "+CPIN: READY", 12) == erOk) {
-            Com.Printf("Sim Ok\r");
             WaitString("OK", 2, MDM_RX_TIMEOUT);
+            Com.Printf("\rSim Ok\r");
             return erOk;
         }
         Delay.ms(450);
     } // while !elapsed
-    Com.Printf("Sim error\r");
+    Com.Printf("\rSim error\r");
+    return erTimeout;
+}
+
+Error_t sim900_t::DisableCellBrc(void) {
+    Com.Printf("DisableCellBrc ");
+    uint32_t Tmr;
+    Delay.Reset(&Tmr);
+    while (!Delay.Elapsed(&Tmr, MDM_NETREG_TIMEOUT)) {
+        Com.Printf("#");
+        if (Command("AT+CSCB=1") == erOk) {
+            Com.Printf("\rOk\r");
+            return erOk;
+        }
+        Delay.ms(1800);
+    } // while !elapsed
+    Com.Printf("\rError\r");
     return erTimeout;
 }
 
 Error_t sim900_t::NetRegistration() {
-    Com.Printf("Waiting for net registration ");
+    Com.Printf("Net registration ");
     uint32_t FTimer;
     Delay.Reset(&FTimer);
     while (!Delay.Elapsed(&FTimer, MDM_NETREG_TIMEOUT)) {
-        NetState = nsUnknown;
         Com.Printf("#");
         if (Command("AT+CREG?", MDM_RX_TIMEOUT, "+CREG:", 6) == erOk) {
             char c = RxLine[9];
             WaitString("OK", 2, MDM_RX_TIMEOUT);
             uint8_t k = c - '0';    // convert char to digit
-            if ((k>=0) && (k<=5)) NetState = (NetState_t)k;
-            switch (NetState) {
-                case nsRegistered:
-                case nsRegRoaming:
+            switch (k) {
+                case 1: // Registered
+                case 5: // Roaming
                     Com.Printf("\rNet connected\r");
                     return erOk;
                     break;
-                case nsRegDenied:
+                case 3: // Denied
                     Com.Printf("\rDenied\r");
                     return erError;
                     break;
-                case nsNotRegNoSearch:
-                case nsUnknown:     // Not answered yet
-                case nsSearching:   // Searching
-                    break;
+                default: break;
             } // switch
         } // if needed reply
         Delay.ms(1800);
@@ -310,38 +393,7 @@ void sim900_t::USARTInit() {
 }
 
 // =========================== Interrupt =======================================
-void sim900_t::IRQHandler() {
-    if(USART_GetITStatus(USART1, USART_IT_RXNE) == RESET) return;
-    static char Buf[MDM_LINE_LEN];
-    // Read one byte from the receive data register
-    uint8_t b = USART_ReceiveData(USART1);
-#ifdef MDM_VERBOSE_IO
-    //USART_SendData(USART1, b);
-#endif
-    // Process the byte
-    if(RawDataRx) { // do not process, just save
-        if(DataLen < MDM_DATA_LEN) {
-            *PD++ = b;
-            DataLen++;
-            return;
-        }
-    }
-
-    if (b == '\n') return;  // ignore LF
-    if ((b == '>') and !InviteReceived) {   // Do not react on '>' if not needed
-        InviteReceived = true;
-        return;
-    }
-    if (b == '\r') {
-        if (RxCounter != 0) {
-            Buf[RxCounter] = 0;  // \0 at line end
-            strcpy(RxLine, Buf);
-            NewLineReceived = true;
-            RxCounter = 0;
-        }
-    }
-    else Buf[RxCounter++] = b;
-}
 void USART1_IRQHandler(void) {
-    Mdm.IRQHandler();
+    if(USART_GetITStatus(USART1, USART_IT_RXNE) == RESET) return;
+    Mdm.BufWrite(USART1->DR);
 }

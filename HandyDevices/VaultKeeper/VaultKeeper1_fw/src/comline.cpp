@@ -78,25 +78,6 @@ void ComLine_t::Printf(const char *S, ...) {
 }
 
 // ============================== Conversions ==================================
-void ComLine_t::UintToStr(uint32_t ANumber, char *S) {
-    uint8_t digit = '0';
-    bool ShouldPrint = false;
-    const uint32_t m[9] = {1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10};
-
-    for(uint8_t i=0; i<9; i++) {
-        while (ANumber >= m[i]) {
-            digit++;
-            ANumber -= m[i];
-        }
-        if (digit != '0' || ShouldPrint) {
-            *S++ = digit;
-            ShouldPrint = true;
-        }
-        digit = '0';
-    } // for
-    *S++ = (char)('0'+ANumber);
-    *S = 0;
-}
 void ComLine_t::IPrintUint (uint32_t ANumber) {
     uint8_t digit = '0';
     bool ShouldPrint = false;

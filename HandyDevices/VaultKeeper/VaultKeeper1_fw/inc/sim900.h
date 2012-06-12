@@ -14,22 +14,23 @@
 
 #define MDM_LINE_LEN        54
 #define MDM_DATA_LEN        54
+#define MDM_BUF_LEN         252
 #define MDM_RX_TIMEOUT      450   // ms
 #define MDM_SIM_TIMEOUT     4005  // ms
 #define MDM_NETREG_TIMEOUT  20007 // ms
 #define MDM_SMS_TIMEOUT     18000 // ms
 
-enum NetState_t {nsNotRegNoSearch=0, nsRegistered=1, nsSearching=2, nsRegDenied=3, nsUnknown=4, nsRegRoaming=5};
-
-
 class sim900_t {
 private:
-    bool NewLineReceived, InviteReceived, RawDataRx;
     Error_t RplKind;
-    NetState_t NetState;
-    char RxLine[MDM_LINE_LEN];  // Received line
-    uint8_t RxCounter;
-    void ResetRxLine(void) { RxCounter = 0; NewLineReceived = false; }
+    // Ring buffer
+    char IBuf[MDM_BUF_LEN];
+    uint32_t WriteIndx, ReadIndx;
+    char BufRead(void) { char c = IBuf[ReadIndx++]; if(ReadIndx == MDM_BUF_LEN) ReadIndx = 0; return c;}
+    bool BufIsEmpty(void) { return (ReadIndx == WriteIndx); }
+    void BufReset(void) { ReadIndx = WriteIndx; }
+    // RX
+    char RxLine[MDM_LINE_LEN], TxLine[MDM_LINE_LEN];
     // Init
     void GPIOInit(void);
     void USARTInit(void);
@@ -46,26 +47,31 @@ private:
     void SendString(const char *S);
     // Commands
     Error_t Command(const char *ACmd, uint32_t ATimeout, const char *AReply, uint8_t ARplLen);
-    Error_t Command(const char *ACmd, uint32_t ATimeout);
-    Error_t Command(const char *ACmd);
+    Error_t Command(const char *ACmd, uint32_t ATimeout) { return Command(ACmd, ATimeout, "OK", 2); }
+    Error_t Command(const char *ACmd) { return Command(ACmd, MDM_RX_TIMEOUT, "OK", 2); }
     Error_t WaitString(const char *AString, uint8_t ALen, uint32_t ATimeout);
-    Error_t WaitString(uint32_t ATimeout);
+    Error_t WaitChar(const char AChar, uint32_t ATimeout);
+    Error_t ReadRawData(char *Dst, uint32_t ALen, uint32_t ATimeout);
     // Inner use commands
-    Error_t NetRegistration(void);
     Error_t ProcessSim(void);
+    Error_t DisableCellBrc(void);
+    Error_t NetRegistration(void);
+    Error_t HttpInit(const char *AUrl);
 public:
     Error_t State;  // Modem state
     void On(void);
     void Off(void);
     // Hi-level
-    char DataString[MDM_DATA_LEN+1], *PD;
-    uint32_t DataLen;
+    char DataString[MDM_DATA_LEN+1];
     Error_t SendSMS(const char *ANumber, const char *AMsg);
     Error_t GprsOn(void);
     Error_t GprsOff(void);
     Error_t GET(const char *AUrl);
+    Error_t POST(const char *AUrl, const char *AData);
+    Error_t POST1(const char *AUrl, const char *AData);
     // IRQ
-    void IRQHandler(void);
+    void BufWrite(char c) { IBuf[WriteIndx++] = c; if(WriteIndx == MDM_BUF_LEN) WriteIndx = 0; }
+//    void IRQHandler(void);
 };
 
 extern sim900_t Mdm;
