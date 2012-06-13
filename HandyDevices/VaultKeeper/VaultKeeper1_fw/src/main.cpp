@@ -11,7 +11,7 @@
 #include "comline.h"
 #include "srvworks.h"
 #include "kl_time.h"
-#include "md5.h"
+#include "sha1.h"
 
 LedBlink_t Led;
 
@@ -33,8 +33,8 @@ int main(void) {
 
     //uint32_t Tmr;
 
-    md5("md5");
-    Com.Printf("%s\r", MD5String);
+    Sha1("md5");
+    Com.Printf("%s\r", Sha1String);
 
     while (1) {
         Led.Task();
