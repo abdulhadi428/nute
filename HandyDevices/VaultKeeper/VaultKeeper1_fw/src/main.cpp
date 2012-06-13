@@ -11,6 +11,7 @@
 #include "comline.h"
 #include "srvworks.h"
 #include "kl_time.h"
+#include "md5.h"
 
 LedBlink_t Led;
 
@@ -21,23 +22,19 @@ void GeneralInit(void);
 int main(void) {
     GeneralInit();
 
-    Mdm.On();
-    // http://numenor2012.ru/request.php?time
-
+//    Mdm.On();
     //Mdm.SendSMS("+79169895800", "Aiya Feanaro!");
-    if (Mdm.GprsOn() == erOk) {
-        Srv.GetTime();
+//    if (Mdm.GprsOn() == erOk) {
+//        Srv.GetTime();
         //Mdm.GET("numenor2012.ru", "/request.php?time", Mdm.DataString, 53);
-        //Mdm.GET("numenor2012.ru/request.php?data=MyDaata");
-        //Mdm.POST("numenor2012.ru", "/request.php", "data=aga3&value=ugu3");
 //        Mdm.POST("numenor2012.ru", "/request.php",
 //                "host_id=19&water_value=1188&time=20120601202122&errors=0&host_hash=1bc29b36f623ba82aaf6724fd3b16718"
 //                );
-        Mdm.GprsOff();
-    }
-    Mdm.Off();
 
     //uint32_t Tmr;
+
+    md5("md5");
+    Com.Printf("%s\r", MD5String);
 
     while (1) {
         Led.Task();
