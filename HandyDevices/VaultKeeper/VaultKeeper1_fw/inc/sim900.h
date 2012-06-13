@@ -55,12 +55,12 @@ private:
     Error_t Command(const char *ACmd) { return Command(ACmd, MDM_RX_TIMEOUT, "OK"); }
     Error_t WaitString(const char *AString, uint32_t ATimeout);
     Error_t WaitChar(const char AChar, uint32_t ATimeout);
+    Error_t WaitEmptyString(uint32_t ATimeout);
     Error_t ReadRawData(char *Dst, uint32_t ALen, uint32_t ATimeout);
     // Inner use commands
     Error_t ProcessSim(void);
     Error_t DisableCellBrc(void);
     Error_t NetRegistration(void);
-    Error_t HttpInit(const char *AUrl);
 public:
     Error_t State;  // Modem state
     void On(void);
@@ -70,8 +70,7 @@ public:
     Error_t SendSMS(const char *ANumber, const char *AMsg);
     Error_t GprsOn(void);
     Error_t GprsOff(void);
-    Error_t GET(const char *AUrl);
-    Error_t GET1(const char *AHost, const char *AUrl, char *AData, uint32_t ALen);
+    Error_t GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen);
     Error_t POST(const char *AHost, const char *AUrl, const char *AData);
     // IRQ
     void BufWrite(char c) { IBuf[WriteIndx++] = c; if(WriteIndx == MDM_BUF_LEN) WriteIndx = 0; }

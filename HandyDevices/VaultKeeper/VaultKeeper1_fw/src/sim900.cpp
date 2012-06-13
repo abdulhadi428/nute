@@ -97,55 +97,7 @@ Error_t sim900_t::GprsOff(void) {
     return r;
 }
 
-Error_t sim900_t::HttpInit(const char *AUrl) {
-    if(Command("AT+HTTPINIT") == erOk) {                // Init HTTP service
-        if(Command("AT+HTTPPARA=\"CID\",1") == erOk) {  // CID = 1 (bearer id)
-            klSPrintf(TxLine, "AT+HTTPPARA=\"URL\",\"%S\"", AUrl);  // Set parameters: AT+HTTPPARA="URL","ya.ru"
-            return Command(TxLine);
-        }
-    }
-    return erError;
-}
-
-Error_t sim900_t::GET(const char *AUrl) {
-    Com.Printf("GET: %S\r", AUrl);
-    Error_t r = erError;
-    if (HttpInit(AUrl) == erOk) {
-        // Start GET session
-        if(Command("AT+HTTPACTION=0") == erOk) {    // 0 => GET
-            // Get server reply: +HTTPACTION:0,200,13652
-            if (WaitString("+HTTPACTION", MDM_NETREG_TIMEOUT) == erOk) {
-                // Check error code
-                for(uint8_t i=0; i<3; i++) TxLine[i] = RxLine[14+i];
-                TxLine[3] = 0;
-                Com.Printf("Rpl code: %S\r", TxLine);
-                if (strcmp(TxLine, "200") == 0) {
-                    // Calculate reply length
-                    strncpy(TxLine, &RxLine[18], 9);
-                    uint32_t LenToRx = atoi(TxLine);
-                    if (LenToRx != 0) {     // Read data
-                        LenToRx = (LenToRx < MDM_DATA_LEN)? LenToRx : MDM_DATA_LEN;
-                        klSPrintf(TxLine, "AT+HTTPREAD=0,%u", LenToRx);
-                        Com.Printf("LenToRx: %u\r", LenToRx);
-                        if(Command(TxLine, MDM_NETREG_TIMEOUT, "+HTTPREAD") == erOk) {    // Next line(s) contain data
-                            if (ReadRawData(DataString, LenToRx, MDM_NETREG_TIMEOUT) == erOk) {
-                                WaitString("OK", MDM_RX_TIMEOUT);
-                                r = erOk;
-                            }
-                        } // if read
-                    } // Len>0
-                } // if 200
-            } // srv reply
-        } // Start session
-    } // HTTP init
-    // Terminate HTTP service
-    Command("AT+HTTPTERM");
-    if(r == erOk) Com.Printf("Ok: %S\r", DataString);
-    else Com.Printf("Error\r");
-    return r;
-}
-
-Error_t sim900_t::GET1(const char *AHost, const char *AUrl, char *AData, uint32_t ALen) {
+Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen) {
     Com.Printf("GET: %S\r", AUrl);
     Error_t r = erError;
     klSPrintf(TxLine, "AT+CIPSTART=\"TCP\",\"%S\",\"80\"", AHost);
@@ -165,19 +117,25 @@ Error_t sim900_t::GET1(const char *AHost, const char *AUrl, char *AData, uint32_
                             uint32_t FLen = atoi(&RxLine[16]);
                             if (FLen != 0) {
                                 FLen = (FLen < ALen)? FLen : ALen;
-                                if(WaitString("", MDM_NETREG_TIMEOUT) == erOk) {  // Now data begins
-                                    //for(uint32_t i=0; i<FLen; i++)
-
-                                }
-                            }
+                                if(WaitEmptyString(MDM_NETREG_TIMEOUT) == erOk) {  // Now data begins
+                                    uint32_t Tmr, Indx=0;
+                                    Delay.Reset(&Tmr);
+                                    while(!Delay.Elapsed(&Tmr, MDM_NETREG_TIMEOUT) and (Indx < FLen)) {
+                                        if (!BufIsEmpty()) AData[Indx++] = BufRead();
+                                    } // while
+                                    AData[Indx] = 0; // Terminate string
+                                    if (Indx > 0) r = erOk;
+                                } // if empty string
+                            } // FLen>0
                         } // length
                     } // Send ok
                 } // if >
             } // if connect ok
         } // if connect
     } // if start
+    Delay.ms(450);
     Command("AT+CIPCLOSE", MDM_NETREG_TIMEOUT);
-    if(r == erOk) Com.Printf("Ok: %S\r", DataString);
+    if(r == erOk) Com.Printf("Ok: %S\r", AData);
     else Com.Printf("Error\r");
     return r;
 }
@@ -272,20 +230,37 @@ Error_t sim900_t::WaitString(const char *AString, uint32_t ATimeout) {
     uint32_t Indx = 0;
     Delay.Reset(&Tmr);
     while (!Delay.Elapsed(&Tmr, ATimeout)) {
-        // Read line from buffer
         if (!BufIsEmpty()) {
             c = BufRead();
             if (c == '\r') continue;    // <cr>
             else if (c == '\n') { // <lf> Line received
                 if(Indx != 0) {    // Something received
                     RxLine[Indx] = 0;  // end of string
-                    Com.Printf("> %S\r", RxLine);
+                    //Com.Printf("> %S\r", RxLine);
                     if      (strncmp(RxLine, AString, strlen(AString)) == 0) return erOk;
                     else if (strncmp(RxLine, "ERROR", 5) == 0) return erError;
                     else Indx = 0;
                 }
             }
             else RxLine[Indx++] = c;
+        } // if not empty
+    } // while
+    return erTimeout;
+}
+Error_t sim900_t::WaitEmptyString(uint32_t ATimeout) {
+    uint32_t Tmr;
+    char c;
+    bool WasEmpty = false;
+    Delay.Reset(&Tmr);
+    while (!Delay.Elapsed(&Tmr, ATimeout)) {
+        if (!BufIsEmpty()) {
+            c = BufRead();
+            if (c == '\r') continue;    // <cr>
+            else if (c == '\n') { // <lf> Line received
+                if (WasEmpty) return erOk;
+                else WasEmpty = true;   // end of line, new one begins
+            }
+            else WasEmpty = false;  // some symbol
         } // if not empty
     } // while
     return erTimeout;
