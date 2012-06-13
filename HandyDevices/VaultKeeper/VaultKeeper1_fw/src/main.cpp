@@ -10,6 +10,7 @@
 #include "sim900.h"
 #include "comline.h"
 #include "srvworks.h"
+#include "kl_time.h"
 
 LedBlink_t Led;
 
@@ -25,7 +26,8 @@ int main(void) {
 
     //Mdm.SendSMS("+79169895800", "Aiya Feanaro!");
     if (Mdm.GprsOn() == erOk) {
-        Mdm.GET("numenor2012.ru", "/request.php?time", Mdm.DataString, 53);
+        Srv.GetTime();
+        //Mdm.GET("numenor2012.ru", "/request.php?time", Mdm.DataString, 53);
         //Mdm.GET("numenor2012.ru/request.php?data=MyDaata");
         //Mdm.POST("numenor2012.ru", "/request.php", "data=aga3&value=ugu3");
 //        Mdm.POST("numenor2012.ru", "/request.php",
@@ -54,6 +56,7 @@ inline void GeneralInit(void) {
     Delay.Init();
     Delay.ms(63);
 
+    Time.Init();
     Led.Init(GPIOD, 2);
     //Led.On();
 

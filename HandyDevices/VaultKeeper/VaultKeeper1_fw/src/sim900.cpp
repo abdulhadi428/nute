@@ -98,12 +98,14 @@ Error_t sim900_t::GprsOff(void) {
 }
 
 Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen) {
-    Com.Printf("GET: %S\r", AUrl);
+    Com.Printf("GET: %S%S\r", AHost, AUrl);
     Error_t r = erError;
     klSPrintf(TxLine, "AT+CIPSTART=\"TCP\",\"%S\",\"80\"", AHost);
     if (Command(TxLine) == erOk) {
+        Com.Printf("#");
         if(WaitString("CONNECT", MDM_NETREG_TIMEOUT) == erOk) {
             if (strcmp(&RxLine[8], "OK") == 0) {
+                Com.Printf("#");
                 BufReset();
                 SendString("AT+CIPSEND");
                 if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
@@ -112,6 +114,7 @@ Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t
                     // Wait for echo
                     BufReset();
                     if (WaitString("SEND OK", MDM_NETREG_TIMEOUT) == erOk) {
+                        Com.Printf("#");
                         // Wait for reply
                         if (WaitString("Content-Length", MDM_NETREG_TIMEOUT) == erOk) {
                             uint32_t FLen = atoi(&RxLine[16]);
@@ -135,8 +138,8 @@ Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t
     } // if start
     Delay.ms(450);
     Command("AT+CIPCLOSE", MDM_NETREG_TIMEOUT);
-    if(r == erOk) Com.Printf("Ok: %S\r", AData);
-    else Com.Printf("Error\r");
+    if(r == erOk) Com.Printf("\rOk: %S\r", AData);
+    else Com.Printf("\rError\r");
     return r;
 }
 

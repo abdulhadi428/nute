@@ -10,16 +10,13 @@
 
 #include "kl_lib.h"
 
-#define SRV_HEADER_SZ   207
-#define SRV_REPLY_SZ    45
-#define SRV_HOSTNAME_SZ 18
+#define URL_HOST    "numenor2012.ru"
+#define URL_TIME    "/request.php?time"
 
 class SrvWorks_t {
 private:
-    char IHostName[SRV_HOSTNAME_SZ];
 public:
-    char Header[SRV_HEADER_SZ], Reply[SRV_REPLY_SZ];
-//    Error_t OpenConnection(const char *AHostName);
+    Error_t GetTime(void);
 //    Error_t CloseConnection(void);
 //    Error_t GET(const char *AUrl);
 };
