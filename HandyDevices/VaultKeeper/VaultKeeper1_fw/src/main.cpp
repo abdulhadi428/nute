@@ -11,12 +11,19 @@
 #include "comline.h"
 #include "srvworks.h"
 #include "kl_time.h"
+#include "kl_string.h"
+#include <string.h>
 #include "sha1.h"
 
+#define VERSION_ID  "Minya"     // "First" on Quenya. Used for HostKey generation. No more than 20 char
+
+
 LedBlink_t Led;
+uint32_t HostKey[5];
 
 // Prototypes
 void GeneralInit(void);
+void GenerateHostKey(void);
 
 // ============================== Implementation ===============================
 int main(void) {
@@ -32,9 +39,6 @@ int main(void) {
 //                );
 
     //uint32_t Tmr;
-
-    Sha1("md5");
-    Com.Printf("%s\r", Sha1String);
 
     while (1) {
         Led.Task();
@@ -59,4 +63,21 @@ inline void GeneralInit(void) {
 
     Com.Init();
     Com.Printf("\rVault Keeper1\r");
+    GenerateHostKey();
 }
+
+
+#define IDBASE      0x1FFFF7E8
+void GenerateHostKey(void) {
+    char FBuf[45];
+    // Get uinique CPU id
+    uint32_t ID0 = *((uint16_t*)(IDBASE));
+    uint32_t ID1 = *((uint16_t*)(IDBASE+2));
+    uint32_t ID2 = *((uint32_t*)(IDBASE+4));
+    uint32_t ID3 = *((uint32_t*)(IDBASE+8));
+    klSPrintf(FBuf, "%S%X4%X4%X8%X8", VERSION_ID, ID0, ID1, ID2, ID3);
+    //Com.Printf("ID: %S\r", FBuf);
+    Sha1(FBuf);
+    Com.Printf("HostKey: %S\r", Sha1String);
+}
+

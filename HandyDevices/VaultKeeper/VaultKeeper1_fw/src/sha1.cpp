@@ -7,18 +7,17 @@
 
 #include "sha1.h"
 #include <stdint.h>
+#include "kl_string.h"
 
 char Sha1String[41];
+uint32_t Sha1Array[5];
 
 void Sha1Reset(void);
 void Sha1Result(void);
 void SHA1PadMsg(void);
 void SHA1ProcessMsgBlock(void);
 
-/*
- *  This structure will hold context information for the hashing
- *  operation
- */
+// This structure holds context information for the hashing operation
 struct SHA1Context_t {
     uint32_t MsgDigest[5];  // Message Digest (output)
     uint32_t LenLow;        // Message length in bits
@@ -42,11 +41,22 @@ void Sha1Reset(void) {
 // Output result to string
 void Sha1Result(void) {
     SHA1PadMsg();
+#ifdef SHA_OUTPUT_CHAR
     // Convert to string
-
+    klSPrintf(Sha1String, "%X8%X8%X8%X8%X8",
+            Context.MsgDigest[0],
+            Context.MsgDigest[1],
+            Context.MsgDigest[2],
+            Context.MsgDigest[3],
+            Context.MsgDigest[4]
+            );
+#endif
+#ifdef SHA_OUTPUT_ARR
+    for (uint8_t i=0; i<5; i++) Sha1Array[i] = Context.MsgDigest[i];
+#endif
 }
 
-void Sha1(char *S) {
+void Sha1(const char *S) {
     Sha1Reset();
     char c;
     while((c = *S++) != 0) {
@@ -76,106 +86,70 @@ void SHA1PadMsg(void) {
      *  block, process it, and then continue padding into a second
      *  block.
      */
-    if (context->Message_Block_Index > 55)
-    {
-        context->Message_Block[context->Message_Block_Index++] = 0x80;
-        while(context->Message_Block_Index < 64)
-        {
-            context->Message_Block[context->Message_Block_Index++] = 0;
-        }
-
-        SHA1ProcessMessageBlock(context);
-
-        while(context->Message_Block_Index < 56)
-        {
-            context->Message_Block[context->Message_Block_Index++] = 0;
-        }
+    Context.MsgBlock[Context.MsgBlockIndx++] = 0x80;
+    if (Context.MsgBlockIndx > 56) {
+        while(Context.MsgBlockIndx < 64) Context.MsgBlock[Context.MsgBlockIndx++] = 0;
+        SHA1ProcessMsgBlock();
     }
-    else
-    {
-        context->Message_Block[context->Message_Block_Index++] = 0x80;
-        while(context->Message_Block_Index < 56)
-        {
-            context->Message_Block[context->Message_Block_Index++] = 0;
-        }
-    }
+    while(Context.MsgBlockIndx < 56) Context.MsgBlock[Context.MsgBlockIndx++] = 0;
 
-    /*
-     *  Store the message length as the last 8 octets
-     */
-    context->Message_Block[56] = (context->Length_High >> 24) & 0xFF;
-    context->Message_Block[57] = (context->Length_High >> 16) & 0xFF;
-    context->Message_Block[58] = (context->Length_High >> 8) & 0xFF;
-    context->Message_Block[59] = (context->Length_High) & 0xFF;
-    context->Message_Block[60] = (context->Length_Low >> 24) & 0xFF;
-    context->Message_Block[61] = (context->Length_Low >> 16) & 0xFF;
-    context->Message_Block[62] = (context->Length_Low >> 8) & 0xFF;
-    context->Message_Block[63] = (context->Length_Low) & 0xFF;
+    // Store the message length at the last 8 octets
+    Context.MsgBlock[56] = (Context.LenHigh >> 24) & 0xFF;
+    Context.MsgBlock[57] = (Context.LenHigh >> 16) & 0xFF;
+    Context.MsgBlock[58] = (Context.LenHigh >> 8)  & 0xFF;
+    Context.MsgBlock[59] = (Context.LenHigh)       & 0xFF;
+    Context.MsgBlock[60] = (Context.LenLow >> 24)  & 0xFF;
+    Context.MsgBlock[61] = (Context.LenLow >> 16)  & 0xFF;
+    Context.MsgBlock[62] = (Context.LenLow >> 8)   & 0xFF;
+    Context.MsgBlock[63] = (Context.LenLow)        & 0xFF;
 
-    SHA1ProcessMessageBlock(context);
+    SHA1ProcessMsgBlock();
 }
 
+#define SHA1CircularShift(bits, word)   ((((word) << (bits)) & 0xFFFFFFFF) | ((word) >> (32-(bits))))
 
 /*
  *  SHA1ProcessMessageBlock
- *
- *  Description:
  *      This function will process the next 512 bits of the message
  *      stored in the Message_Block array.
- *
- *  Parameters:
- *      None.
- *
- *  Returns:
- *      Nothing.
- *
  *  Comments:
  *      Many of the variable names in the SHAContext, especially the
  *      single character names, were used because those were the names
  *      used in the publication.
- *
- *
- */
-void SHA1ProcessMessageBlock(SHA1Context *context)
-{
-    const unsigned K[] =            /* Constants defined in SHA-1   */
-    {
+  */
+void SHA1ProcessMsgBlock(void) {
+    const uint32_t K[] = {  // Constants defined in SHA-1
         0x5A827999,
         0x6ED9EBA1,
         0x8F1BBCDC,
         0xCA62C1D6
     };
-    int         t;                  /* Loop counter                 */
-    unsigned    temp;               /* Temporary word value         */
-    unsigned    W[80];              /* Word sequence                */
-    unsigned    A, B, C, D, E;      /* Word buffers                 */
+    uint32_t t;             // Loop counter
+    uint32_t temp;          // Temporary word value
+    uint32_t W[80];         // Word sequence
+    uint32_t A, B, C, D, E; // Word buffers
 
-    /*
-     *  Initialize the first 16 words in the array W
-     */
-    for(t = 0; t < 16; t++)
-    {
-        W[t] = ((unsigned) context->Message_Block[t * 4]) << 24;
-        W[t] |= ((unsigned) context->Message_Block[t * 4 + 1]) << 16;
-        W[t] |= ((unsigned) context->Message_Block[t * 4 + 2]) << 8;
-        W[t] |= ((unsigned) context->Message_Block[t * 4 + 3]);
+    // Initialize the first 16 words in the array W
+    for(t=0; t < 16; t++) {
+        W[t] =  ((uint32_t) Context.MsgBlock[t * 4    ]) << 24;
+        W[t] |= ((uint32_t) Context.MsgBlock[t * 4 + 1]) << 16;
+        W[t] |= ((uint32_t) Context.MsgBlock[t * 4 + 2]) << 8;
+        W[t] |= ((uint32_t) Context.MsgBlock[t * 4 + 3]);
     }
 
-    for(t = 16; t < 80; t++)
-    {
-       W[t] = SHA1CircularShift(1,W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16]);
+    // Initialize other words in the array W
+    for(t=16; t < 80; t++) {
+        W[t] = SHA1CircularShift(1, W[t-3] ^ W[t-8] ^ W[t-14] ^ W[t-16]);
     }
 
-    A = context->Message_Digest[0];
-    B = context->Message_Digest[1];
-    C = context->Message_Digest[2];
-    D = context->Message_Digest[3];
-    E = context->Message_Digest[4];
+    A = Context.MsgDigest[0];
+    B = Context.MsgDigest[1];
+    C = Context.MsgDigest[2];
+    D = Context.MsgDigest[3];
+    E = Context.MsgDigest[4];
 
-    for(t = 0; t < 20; t++)
-    {
+    for(t=0; t < 20; t++) {
         temp =  SHA1CircularShift(5,A) + ((B & C) | ((~B) & D)) + E + W[t] + K[0];
-        temp &= 0xFFFFFFFF;
         E = D;
         D = C;
         C = SHA1CircularShift(30,B);
@@ -183,10 +157,8 @@ void SHA1ProcessMessageBlock(SHA1Context *context)
         A = temp;
     }
 
-    for(t = 20; t < 40; t++)
-    {
+    for(t=20; t < 40; t++) {
         temp = SHA1CircularShift(5,A) + (B ^ C ^ D) + E + W[t] + K[1];
-        temp &= 0xFFFFFFFF;
         E = D;
         D = C;
         C = SHA1CircularShift(30,B);
@@ -194,11 +166,8 @@ void SHA1ProcessMessageBlock(SHA1Context *context)
         A = temp;
     }
 
-    for(t = 40; t < 60; t++)
-    {
-        temp = SHA1CircularShift(5,A) +
-               ((B & C) | (B & D) | (C & D)) + E + W[t] + K[2];
-        temp &= 0xFFFFFFFF;
+    for(t=40; t < 60; t++) {
+        temp = SHA1CircularShift(5,A) + ((B & C) | (B & D) | (C & D)) + E + W[t] + K[2];
         E = D;
         D = C;
         C = SHA1CircularShift(30,B);
@@ -206,10 +175,8 @@ void SHA1ProcessMessageBlock(SHA1Context *context)
         A = temp;
     }
 
-    for(t = 60; t < 80; t++)
-    {
+    for(t=60; t < 80; t++) {
         temp = SHA1CircularShift(5,A) + (B ^ C ^ D) + E + W[t] + K[3];
-        temp &= 0xFFFFFFFF;
         E = D;
         D = C;
         C = SHA1CircularShift(30,B);
@@ -217,17 +184,12 @@ void SHA1ProcessMessageBlock(SHA1Context *context)
         A = temp;
     }
 
-    context->Message_Digest[0] =
-                        (context->Message_Digest[0] + A) & 0xFFFFFFFF;
-    context->Message_Digest[1] =
-                        (context->Message_Digest[1] + B) & 0xFFFFFFFF;
-    context->Message_Digest[2] =
-                        (context->Message_Digest[2] + C) & 0xFFFFFFFF;
-    context->Message_Digest[3] =
-                        (context->Message_Digest[3] + D) & 0xFFFFFFFF;
-    context->Message_Digest[4] =
-                        (context->Message_Digest[4] + E) & 0xFFFFFFFF;
+    Context.MsgDigest[0] += A;
+    Context.MsgDigest[1] += B;
+    Context.MsgDigest[2] += C;
+    Context.MsgDigest[3] += D;
+    Context.MsgDigest[4] += E;
 
-    context->Message_Block_Index = 0;
+    Context.MsgBlockIndx = 0;
 }
 

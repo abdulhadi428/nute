@@ -8,9 +8,12 @@
 #ifndef KL_STRING_H_
 #define KL_STRING_H_
 
-void klSPrintf(char *Dst, const char *Src, ...);
+char* klSPrintf(char *Dst, const char *Src, ...);
 
 // Copies Src to Dst, null-terminating Dst. Returns pointer to NULL at Dst
+char* klStrCpy(char *Dst, const char *Src);
+
+// Copies ACount bytes of Src to Dst, null-terminating Dst. Returns pointer to NULL at Dst
 char* klStrNCpy(char *Dst, const char *Src, uint32_t ACount);
 
 #endif /* KL_STRING_H_ */
