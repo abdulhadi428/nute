@@ -150,13 +150,13 @@ int GpsStrnToInt(char **InputS, uint8_t N, bool AppendZeroes) {
 /*
 GPGAA,hhmmss.ss,ddmm.mmmm,n,dddmm.mmmm,e,q,ss,y.y,a.a,z,g.g,z,t.t,iii*CC
 
-hhmmss.ss  : Coordinated Universal Time (UTC), also known as GMT
-ddmm.mmmm,n    : Latitude in degrees, minutes and cardinal sign
-dddmm.mmmm,e   : Longitude in degrees, minutes and cardinal sign
-q      : Quality of fix.  1 = there is a fix
-ss     : Number of satellites being used
-y.y        : Horizontal dilution of precision
-a.a,M      : GPS antenna altitude in meters
+hhmmss.ss    : Coordinated Universal Time (UTC), also known as GMT
+ddmm.mmmm,n  : Latitude in degrees, minutes and cardinal sign
+dddmm.mmmm,e : Longitude in degrees, minutes and cardinal sign
+q            : Quality of fix.  1 = there is a fix
+ss           : Number of satellites being used
+y.y          : Horizontal dilution of precision
+a.a,M        : GPS antenna altitude in meters
 
 GPGGA,181058.000,5542.2389,N,03741.60637,E,1,8,1.34,115.0,M,14.6,M,,*5
 GPGGA,235947.036,,,,,0,0,,,M,,M,,*43

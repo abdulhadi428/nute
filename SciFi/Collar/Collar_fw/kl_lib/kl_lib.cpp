@@ -325,11 +325,11 @@ void CmdUnit_t::Init(void) {
     // ==== GPIO init ====
     klGpioSetupByN(GPIOA, 9, GPIO_Mode_AF_PP);          // TX1
 #ifdef RX_ENABLED
-    klGpioSetupByN(GPIOA, 10, GPIO_Mode_IN_FLOATING);   // RX1
+    klGpioSetupByN(GPIOA, 10, GPIO_Mode_IPU);   // RX1
 #endif
     // ==== USART configuration ====
     USART_InitTypeDef USART_InitStructure;
-    USART_InitStructure.USART_BaudRate = 128000;
+    USART_InitStructure.USART_BaudRate = 115200;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;
