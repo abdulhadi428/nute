@@ -19,6 +19,10 @@ void AreaList_t::Init() {
 
 #ifdef NUTE_MODE_TIXE
 bool AreaList_t::CoordToAreaIndx(int32_t Lattitude, int32_t Longitude, uint8_t *PIndx) {
-
+    return false;
 }
-#ifdef NUTE_MODE_TIXE
+bool AreaList_t::IsAreaRestricted(uint32_t AIndx) {
+    return false;
+}
+
+#endif

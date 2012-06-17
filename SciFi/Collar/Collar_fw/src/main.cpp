@@ -15,12 +15,15 @@
 #include "gps.h"
 #include "collar.h"
 #include "areas.h"
+#include "beep.h"
 
 LedBlinkInverted_t Led;
 
 // Prototypes
 void GeneralInit(void);
 void CollarStateHandler(void);
+// State changes
+void EnterState(uint8_t ANewState);
 
 // ============================== Implementation ===============================
 int main(void) {
@@ -53,8 +56,11 @@ inline void GeneralInit(void) {
 
     Nute.Init(72);
     Situation = &Nute.TX_Pkt.Situation;
-    CollarState = COLSTATE_OK;
     Areas.Init();
+    Beep.Init();
+    Beep.Freq = 1600;
+    //EnterState(COLSTATE_OK);
+    EnterState(COLSTATE_CMD_DELAY);
 
     // Setup CC
     CC.Init();
@@ -67,8 +73,6 @@ inline void GeneralInit(void) {
 // =================================== States ==================================
 uint8_t CollarState;
 uint8_t CollarStateCmd;
-// State changes
-void EnterState(uint8_t ANewState);
 
 void CollarStateHandler(void) {
     // Check areas
@@ -100,9 +104,33 @@ void CollarStateHandler(void) {
     }
 
     // Maintain state
-    if ((CollarState == COLSTATE_DELAY_BY_AREA) or (CollarState == COLSTATE_DELAY_BY_CMD)) {
-        // FIXME
+    if (CollarState == COLSTATE_BOOM) {
+        if (Beep.IsOn) {
+            if(Delay.Elapsed(&Beep.Timer, BEEP_BOOM_LEN)) {
+                Led.Off();
+                Beep.Off();
+            }
+        }
     }
+    else if ((CollarState == COLSTATE_DELAY_BY_AREA) or (CollarState == COLSTATE_DELAY_BY_CMD)) {
+        if (Beep.IsOn) {
+            if(Delay.Elapsed(&Beep.Timer, BEEP_SND_LEN)) {
+                Led.Off();
+                Beep.Off();
+                Beep.SilenceLen = BeepLenArr[Beep.N];
+                Beep.N++;
+            }
+        }
+        else {
+            if(Beep.N == BEEP_ARR_SZ) { // Delay before boom
+                if(Delay.Elapsed(&Beep.Timer, 450)) EnterState(COLSTATE_BOOM);
+            }
+            else if(Delay.Elapsed(&Beep.Timer, Beep.SilenceLen)) {
+                Led.On();
+                Beep.On();
+            }
+        } // if on
+    } // if state
 }
 
 // Called only by state change. Switches state, does not maintain it.
@@ -110,13 +138,26 @@ void EnterState(uint8_t ANewState) {
     CollarState = ANewState;
     switch (CollarState) {
         case COLSTATE_OK:
+            Led.Disable();
+            Beep.Off();
+            Led.Off();
             break;
 
         case COLSTATE_BOOM:
+            Delay.Reset(&Beep.Timer);
+            Beep.Volume = 100;
+            Beep.N = 0;
+            Beep.On();
+            Led.On();
             break;
 
         case COLSTATE_DELAY_BY_AREA:
         case COLSTATE_DELAY_BY_CMD:
+            Delay.Reset(&Beep.Timer);
+            Beep.Volume = 4;
+            Beep.N = 0;
+            Beep.On();
+            Led.On();
             break;
 
         default: break;

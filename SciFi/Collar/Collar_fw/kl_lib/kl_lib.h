@@ -16,8 +16,11 @@
 
 // =============================== General =====================================
 #define PACKED __attribute__ ((__packed__))
+#ifndef countof
+#define countof(A)  (sizeof(A)/sizeof(A[0]))
+#endif
 
-// ==== Single pin manipulations ====
+// ===================== Single pin manipulations ==============================
 /*
  * GPIO_Mode_AIN, GPIO_Mode_IN_FLOATING, GPIO_Mode_IPD, GPIO_Mode_IPU,
  * GPIO_Mode_Out_OD, GPIO_Mode_Out_PP, GPIO_Mode_AF_OD, GPIO_Mode_AF_PP
@@ -87,6 +90,7 @@ public:
     void Init(TIM_TypeDef* PTimer, uint16_t ATopValue, uint32_t AFreqHz);
     void Enable(void)  { ITimer->CR1 |= TIM_CR1_CEN; }
     void Disable(void) { ITimer->CR1 &= (uint16_t)(~((uint16_t)TIM_CR1_CEN)); }
+    void SetFreqHz(uint32_t AFreqHz);
 };
 
 /*
@@ -101,6 +105,7 @@ public:
     void Disable(void);
     void DisableTimer(void) { klTimer_t::Disable(); }
     void Set(uint16_t AValue);
+    void SetFreqHz(uint32_t AFreqHz) { klTimer_t::SetFreqHz(AFreqHz); }
 };
 
 
