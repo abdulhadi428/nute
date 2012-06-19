@@ -56,11 +56,12 @@ inline void GeneralInit(void) {
 
     Nute.Init(72);
     Situation = &Nute.TX_Pkt.Situation;
-    Areas.Init();
+    AreaList.Init();
     Beep.Init();
     Beep.Freq = 1600;
-    //EnterState(COLSTATE_OK);
-    EnterState(COLSTATE_CMD_DELAY);
+
+    EnterState(COLSTATE_OK);
+    //EnterState(COLSTATE_CMD_DELAY);
 
     // Setup CC
     CC.Init();
@@ -73,14 +74,14 @@ inline void GeneralInit(void) {
 // =================================== States ==================================
 uint8_t CollarState;
 uint8_t CollarStateCmd;
-
 void CollarStateHandler(void) {
     // Check areas
-    if (Situation->IsFixed) {   // if GPS ok
+    if (Gps.NewMeasurement) {
+        Gps.NewMeasurement  = false;
         uint8_t CurrentAreaIndx;
         bool IsInRestrictedArea = true;
-        if (Areas.CoordToAreaIndx(Situation->Lattitude, Situation->Longitude, &CurrentAreaIndx)) {  // if we somewhere in areas
-            IsInRestrictedArea = Areas.IsAreaRestricted(CurrentAreaIndx);
+        if (AreaList.CoordToAreaIndx(Situation->Latitude, Situation->Longitude, &CurrentAreaIndx)) {  // if we somewhere in areas
+            IsInRestrictedArea = AreaList.IsAreaRestricted(CurrentAreaIndx);
         }
         // Enter Delay if in restricted area
         if (IsInRestrictedArea and (CollarState == COLSTATE_OK)) EnterState(COLSTATE_DELAY_BY_AREA);
@@ -94,13 +95,13 @@ void CollarStateHandler(void) {
 
     // Check radio cmd
     if(CollarStateCmd == COLSTATE_CMD_BOOM) {
-        if((CollarState == COLSTATE_OK) or (CollarState == COLSTATE_DELAY_BY_AREA) or (CollarState == COLSTATE_DELAY_BY_CMD)) EnterState(COLSTATE_BOOM);
+        if(CollarState != COLSTATE_BOOM) EnterState(COLSTATE_BOOM);
     }
     else if(CollarStateCmd == COLSTATE_CMD_DELAY) {
-        if(CollarState == COLSTATE_OK) EnterState(COLSTATE_DELAY_BY_CMD);
+        if((CollarState == COLSTATE_OK) or (CollarState == COLSTATE_DELAY_BY_AREA)) EnterState(COLSTATE_DELAY_BY_CMD);
     }
     else if(CollarStateCmd == COLSTATE_CMD_BE_OK) {
-        EnterState(COLSTATE_OK);
+        if(CollarState != COLSTATE_OK) EnterState(COLSTATE_OK);
     }
 
     // Maintain state
@@ -135,6 +136,7 @@ void CollarStateHandler(void) {
 
 // Called only by state change. Switches state, does not maintain it.
 void EnterState(uint8_t ANewState) {
+    CmdUnit.Printf("New state: %u\r", ANewState);
     CollarState = ANewState;
     switch (CollarState) {
         case COLSTATE_OK:

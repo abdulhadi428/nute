@@ -19,7 +19,11 @@ Nute_t Nute;
 
 #ifdef NUTE_MODE_STATION
 Tixe_t Tixe[TIXE_COUNT];
+#else
+Situation_t *Situation;
 #endif
+
+
 
 void Nute_t::Init(uint8_t ASelfAddr) {
     State = nsIdle;
@@ -68,6 +72,7 @@ void Nute_t::Ping(uint32_t ATixeNumber) {
     IRadioTask = rtDoTx;
     TX_Pkt.AddrTo = ITixeNumber + TIXE_ADDR_OFFSET;
     TX_Pkt.StateCmd = Tixe[ITixeNumber].StateCmd;
+    memcpy(TX_Pkt.Arr, AreaList.Restriction, 18);   // Copy areas information
 }
 inline void Nute_t::DoPing() {
     if (IRadioTask == rtDoTx) {
@@ -100,6 +105,7 @@ void Nute_t::Search(uint32_t ATixeNumber) {
     IRadioTask = rtDoTx;
     TX_Pkt.AddrTo = ITixeNumber + TIXE_ADDR_OFFSET;
     TX_Pkt.StateCmd = Tixe[ITixeNumber].StateCmd;
+    memcpy(TX_Pkt.Arr, AreaList.Restriction, 18);   // Copy areas information
 }
 inline void Nute_t::DoSearch() {
     if (IRadioTask == rtDoTx) {
@@ -151,25 +157,20 @@ void Nute_t::HandleTxEnd() {
 #ifdef NUTE_MODE_TIXE
 extern LedBlinkInverted_t Led;
 void Nute_t::HandleNewPkt() {
-    //klPrintf("NewPkt\r");
-    Led.Blink(99);
-    // Copy incoming data
+    Led.Blink(45);
+    CmdUnit.Printf("NewPkt\r");
+    // Handle incoming data
     CollarStateCmd = RX_Pkt.StateCmd;
-    memcpy(Areas.Restriction, RX_Pkt.Arr, 18);
+    memcpy(AreaList.Restriction, RX_Pkt.Arr, 18);
+    // Reply preparations
     Delay.Reset(&ITimer);           // Reset recalibrate timer
     uint8_t PwrID = RX_Pkt.PwrID;   // Initially, transmit at same power as transmitter
     AdjustPwr(&PwrID);              // Adjust power to transmit at needed power
-    // ==== Reply to cmd ====
-    // Common preparations
     TX_Pkt.AddrTo = RX_Pkt.AddrFrom;
     TX_Pkt.PwrID = PwrID;
-    // Place situation to pkt
-    Situation->State = CollarState;
-    // Setup output power
-    CC.SetPower(PwrID);
-    //klPrintf("Pwr: %u\r", PwrID);
-    // Start transmission
-    CC.Transmit();
+    Situation->State = CollarState; // Place situation to pkt
+    CC.SetPower(PwrID);             // Setup output power
+    CC.Transmit();                  // Start transmission
     State = nsTransmitting;
 }
 

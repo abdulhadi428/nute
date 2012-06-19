@@ -25,6 +25,7 @@ private:
     char IMsg[81];
     void IParseGPGGAMsg(void);
 public:
+    bool NewMeasurement;
     void Init(void);
     void Task(void);
 };

@@ -413,7 +413,7 @@ void CmdUnit_t::IStartTx(void) {
 #ifdef RX_ENABLED
 void CmdUnit_t::IRQHandler() {
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
-        uint8_t b = USART1->DR;
+        char b = USART1->DR;
         if (b != '\n') switch (CmdState) {  // Ignore \n
             case csNone:
                 RXBuf[RxIndx++] = b;

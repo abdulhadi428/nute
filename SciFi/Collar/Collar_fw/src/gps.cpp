@@ -13,7 +13,7 @@
 #include "stdlib.h"
 
 GpsR_t Gps;
-Situation_t *Situation;
+extern Situation_t *Situation;
 
 void GpsR_t::Init() {
     // ==== Clocks init ====
@@ -52,6 +52,7 @@ void GpsR_t::Init() {
     DMA_Cmd(DMA1_Channel6, ENABLE);   // Enable DMA channel
     // Enable USART
     USART_Cmd(USART2, ENABLE);
+    NewMeasurement = false;
 }
 
 /*
@@ -172,7 +173,7 @@ void GpsR_t::IParseGPGGAMsg() {
     Situation->Time.H = GpsStrnToInt(&S, 2, false);
     Situation->Time.M = GpsStrnToInt(&S, 2, false);
     Situation->Time.S = GpsStrnToInt(&S, 2, false);
-    CmdUnit.Printf("Time: %u:%u:%u\r", Situation->Time.H, Situation->Time.M, Situation->Time.S);
+    //CmdUnit.Printf("Time: %u2:%u2:%u2\r", Situation->Time.H, Situation->Time.M, Situation->Time.S);
     while(*S++ != ',');                     // move to next token
     // ==== Lattitude ====
     if (*S != ',') {                        // Data exists
@@ -187,7 +188,7 @@ void GpsR_t::IParseGPGGAMsg() {
     if (*S != 'N') tmp1 = -tmp1;            // Lattitude is negative at south
     if (*S != ',') S++;                     // *S is N, S or ','
     S++;                                    // Move to next token
-    Situation->Lattitude = tmp1;
+    Situation->Latitude = tmp1;
     // ==== Longtitude ====
     if (*S != ',') {                        // Data exists
         tmp1 = GpsStrnToInt(&S, 3, false);  // Degrees
@@ -211,6 +212,7 @@ void GpsR_t::IParseGPGGAMsg() {
         S++;
         Situation->IsFixed = true;
         Situation->Precision = GpsStrnToInt(&S, 7, false);
-        CmdUnit.Printf("Lat: %i; Lng: %i; SatCount: %u; Precision: %u\r", Situation->Lattitude, Situation->Longitude, Situation->SatCount, Situation->Precision);
+        NewMeasurement = true;
+        //CmdUnit.Printf("Lat: %i; Lng: %i; SatCount: %u; Precision: %u\r", Situation->Latitude, Situation->Longitude, Situation->SatCount, Situation->Precision);
     }
 }

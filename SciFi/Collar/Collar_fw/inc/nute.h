@@ -47,7 +47,7 @@ struct Situation_t {
     Time_t Time;                    // GPS time
     uint8_t IsFixed, SatCount;      // GPS fix and sattelite count
     uint16_t Precision;             // GPS precision
-    int32_t Lattitude, Longitude;   // GPS coordinates
+    int32_t Latitude, Longitude;    // GPS coordinates
 } PACKED;
 
 #ifdef NUTE_MODE_STATION
@@ -99,7 +99,7 @@ public:
     void Task(void);
     void HandleNewPkt(void);
     void HandleTxEnd(void);
-    void HandleTixeReply(uint8_t AID);  // Call this when answer received
+    void HandleTixeReply(uint8_t AIndx);  // Call this when answer received
 #ifdef NUTE_MODE_STATION
     void Ping(uint32_t ATixeNumber);
     void Search(uint32_t ATixeNumber);

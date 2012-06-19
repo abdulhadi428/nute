@@ -140,7 +140,7 @@ void TIM2_IRQHandler(void);
 }
 
 // ============================== UART command =================================
-#define UART_TXBUF_SIZE     99
+#define UART_TXBUF_SIZE     144
 #define UART_DMA_CHNL       DMA1_Channel4
 
 //#define RX_ENABLED
@@ -157,7 +157,8 @@ private:
     bool IDmaIsIdle;
 #ifdef RX_ENABLED
     CmdState_t CmdState;
-    uint8_t RXBuf[UART_RXBUF_SIZE], RxIndx;
+    char RXBuf[UART_RXBUF_SIZE];
+    uint8_t RxIndx;
     void CmdReset(void) { RxIndx = 0; CmdState = csNone; }
 #endif
     void IStartTx(void);
