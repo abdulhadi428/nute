@@ -13,6 +13,7 @@
 #include "cc1101.h"
 #include "cc1190.h"
 #include "nute.h"
+#include "areas.h"
 
 LedBlinkInverted_t Led;
 
@@ -24,14 +25,12 @@ void InterrogationTask(void);
 int main(void) {
     GeneralInit();
 
-//    uint32_t Tmr;
     while (1) {
         //Led.Task();
         CC.Task();
         Nute.Task();
         CmdUnit.Task(); // UART cmds
         InterrogationTask();
-//        if(Delay.Elapsed(&Tmr, 200)) CmdUnit.Printf("1234567890123456789012345678901234567890\r");
     } // while 1
 }
 
@@ -49,6 +48,7 @@ inline void GeneralInit(void) {
     Led.On();
 
     Nute.Init(1);
+    AreaList.Init();
 
     Tixe[0].IsToBeFound = true;
 
@@ -64,6 +64,7 @@ void InterrogationTask(void) {
     if (Nute.State != nsIdle) return;
     static uint8_t indx=TIXE_COUNT;
 
+    // Find next Indx which is to be found. Every time iterate throug lis untel such Indx is not found
     for(uint8_t i=0; i<TIXE_COUNT; i++) {   // Iterate through all ids only once
         if(++indx > TIXE_COUNT-1) indx=0;
         if(Tixe[indx].IsToBeFound) {
@@ -77,17 +78,17 @@ void InterrogationTask(void) {
     } // for
 }
 
-void Nute_t::HandleTixeReply(uint8_t AID) {
-    if (Tixe[AID].IsOnline) {
-        Situation_t *PStn = &Tixe[AID].Situation;
+void Nute_t::HandleTixeReply(uint8_t AIndx) {
+    if (Tixe[AIndx].IsOnline) {
+        Situation_t *PStn = &Tixe[AIndx].Situation;
         // $C,ID,PwrID,Battery,State,HHMMSS,Latitude,Longitude,IsFixed,SatelliteCount,Precision
         CmdUnit.Printf("$C,%u,%u,%u,%u,%u2%u2%u2,%i,%i,%u,%u,%u\r",
-                AID + TIXE_ADDR_OFFSET,
-                Tixe[AID].PwrID,
+                AIndx,
+                Tixe[AIndx].PwrID,
                 PStn->Battery,
                 PStn->State,
                 PStn->Time.H, PStn->Time.M, PStn->Time.S,
-                PStn->Lattitude, PStn->Longitude,
+                PStn->Latitude, PStn->Longitude,
                 PStn->IsFixed, PStn->SatCount, PStn->Precision
                 );
     }
@@ -95,24 +96,79 @@ void Nute_t::HandleTixeReply(uint8_t AID) {
 }
 
 // ========================== Commands handling ================================
+inline bool CharIsDecNumber(char c) {
+    return ((c >= '0') and (c <= '9'));
+}
+inline bool CharIsHexNumber(char c) {
+    return (((c >= '0') and (c <= '9')) or ((c >= 'A') and (c <= 'F')));
+}
+
+bool TryCommaStrToUint(char **Src, uint32_t *AResult) {
+    uint32_t Fres = 0;
+    char *S = *Src, c;
+    for (uint8_t i=0; i<10; i++) {
+        c = *S++;
+        if ((c == 0) or (c == ',')) break;  // End of string
+        if(!CharIsDecNumber(c)) return false;
+        Fres = Fres*10 + (c - '0');
+    }
+    *AResult = Fres;
+    *Src = S;
+    return true;
+}
+bool TryHexToByte(char **Src, uint8_t *AByte) {
+    char *S = *Src, c;
+    uint8_t b;
+    c = *S++;
+    if(!CharIsHexNumber(c)) return false;
+    b = ((c >= '0') and (c <= '9'))? (c - '0') : ((c - 'A') + 10);
+    b <<= 4;
+    c = *S++;
+    if(!CharIsHexNumber(c)) return false;
+    b += ((c >= '0') and (c <= '9'))? (c - '0') : ((c - 'A') + 10);
+    *AByte = b;
+    *Src = S;
+    return true;
+}
+
+
 void CmdUnit_t::NewCmdHandler() {
+    if (RXBuf[0] != '$') { Printf("$ERROR0\r"); return; }
     // Kick
-    if (RXBuf[0] == 'K') Printf("$Ok\r");
+    if (RXBuf[1] == 'K') Printf("$Ok\r");
 
     // Signal
-    else if (RXBuf[0] == 'S') {
-        //if (RXBuf[1] == '0')  // Send Ok
-        //else if (RXBuf[1] == '1')  // Boom now
-        //else if (RXBuf[1] == '2')  // Boom with delay
+    else if (RXBuf[1] == 'S') {
+        if (RXBuf[2] != ',') { Printf("$ERROR1\r"); return; }
+        char *S = &RXBuf[3];
+        uint32_t FIndx=0, FSignal=0;
+        if (!CharIsDecNumber(*S))             { Printf("$ERROR2\r"); return; }
+        if (!TryCommaStrToUint(&S, &FIndx))   { Printf("$ERROR3\r"); return; }
+        if (!CharIsDecNumber(*S))             { Printf("$ERROR4\r"); return; }
+        if (!TryCommaStrToUint(&S, &FSignal)) { Printf("$ERROR5\r"); return; }
+        Printf("\rID: %u; S: %u\r", FIndx, FSignal);
+        if (FIndx > 49)  { Printf("$ERROR6\r"); return; }
+        if (FSignal > 3) { Printf("$ERROR6\r"); return; }
+        // Parsing ok, change tixe
+        Tixe[FIndx].StateCmd = FSignal;
+        Tixe[FIndx].IsToBeFound = true;
         Printf("$Ok\r");
     }
 
-    // Remove areas
-    else if (RXBuf[0] == 'R') {
-        Printf("$Ok\r");
-    }
-    // Add area
-    else if (RXBuf[0] == 'A') {
+    // Areas
+    else if (RXBuf[1] == 'A') {
+        Printf("A ");
+        if (RXBuf[2] != ',') { Printf("$ERROR1\r"); return; }
+        uint8_t b=0;
+        char *S = &RXBuf[2];
+        for (uint8_t i=0; i<18; i++) {
+            S++;    // next chunk
+            if(!CharIsHexNumber(*S))  { Printf("$ERROR2 %u\r", i); return; }
+            if(!TryHexToByte(&S, &b)) { Printf("$ERROR3 %u\r", i); return; }
+            Printf("%X ", b);
+            AreaList.Restriction[i] = b;
+        }
+        Printf("\r");
         Printf("$Ok\r");
     }
 

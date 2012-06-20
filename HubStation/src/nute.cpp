@@ -9,7 +9,8 @@
 #include "cc1101.h"
 #include "led.h"
 #include "string.h"
-#ifndef NUTE_MODE_STATION
+#include "areas.h"
+#ifdef NUTE_MODE_TIXE
 #include "collar.h"
 #include "gps.h"
 #endif
@@ -18,12 +19,22 @@ Nute_t Nute;
 
 #ifdef NUTE_MODE_STATION
 Tixe_t Tixe[TIXE_COUNT];
+#else
+Situation_t *Situation;
 #endif
+
 
 
 void Nute_t::Init(uint8_t ASelfAddr) {
     State = nsIdle;
     TX_Pkt.AddrFrom = ASelfAddr;
+#ifdef NUTE_MODE_STATION
+    for(uint8_t i=0; i<TIXE_COUNT; i++) {
+        Tixe[i].IsOnline = false;
+        Tixe[i].IsToBeFound = false;
+        Tixe[i].StateCmd = STATE_CMD_NOCHANGE;
+    }
+#endif
 }
 
 void Nute_t::Task() {
@@ -35,23 +46,15 @@ void Nute_t::Task() {
         case nsIdle:
             CC.Receive();
             Delay.Reset(&ITimer);
-            IState = nsWaitingRx;
+            State = nsWaitingRx;
             break;
 
         case nsWaitingRx:
             if (Delay.Elapsed(&ITimer, RECALIBRATE_DELAY)) {   // Recalibrate
                 CC.EnterIdle();
-                IState = nsIdle;
+                State = nsIdle;
             }
             break;
-
-//        case nsTransmitting:
-//            if (CC.Aim != caTx) {   // Tx completed
-//                //klPrintf("no tx\r");
-//                //Delay.Reset(&Tmr);
-//                IState = nsIdle;
-//            }
-//            break;
 #endif
         // ==== Common ====
         default:
@@ -68,7 +71,8 @@ void Nute_t::Ping(uint32_t ATixeNumber) {
     State = nsPing;
     IRadioTask = rtDoTx;
     TX_Pkt.AddrTo = ITixeNumber + TIXE_ADDR_OFFSET;
-    TX_Pkt.Cmd = NUTE_CMD_PING;
+    TX_Pkt.StateCmd = Tixe[ITixeNumber].StateCmd;
+    memcpy(TX_Pkt.Arr, AreaList.Restriction, 18);   // Copy areas information
 }
 inline void Nute_t::DoPing() {
     if (IRadioTask == rtDoTx) {
@@ -100,7 +104,8 @@ void Nute_t::Search(uint32_t ATixeNumber) {
     State = nsSearch;
     IRadioTask = rtDoTx;
     TX_Pkt.AddrTo = ITixeNumber + TIXE_ADDR_OFFSET;
-    TX_Pkt.Cmd = NUTE_CMD_PING;
+    TX_Pkt.StateCmd = Tixe[ITixeNumber].StateCmd;
+    memcpy(TX_Pkt.Arr, AreaList.Restriction, 18);   // Copy areas information
 }
 inline void Nute_t::DoSearch() {
     if (IRadioTask == rtDoTx) {
@@ -150,39 +155,29 @@ void Nute_t::HandleTxEnd() {
 
 // ============================ Tixe ===========================================
 #ifdef NUTE_MODE_TIXE
+extern LedBlinkInverted_t Led;
 void Nute_t::HandleNewPkt() {
-    //klPrintf("NewPkt\r");
+    Led.Blink(45);
+    CmdUnit.Printf("NewPkt\r");
+    // Handle incoming data
+    CollarStateCmd = RX_Pkt.StateCmd;
+    memcpy(AreaList.Restriction, RX_Pkt.Arr, 18);
+    // Reply preparations
     Delay.Reset(&ITimer);           // Reset recalibrate timer
     uint8_t PwrID = RX_Pkt.PwrID;   // Initially, transmit at same power as transmitter
     AdjustPwr(&PwrID);              // Adjust power to transmit at needed power
-    // ==== Reply to cmd ====
-    // Common preparations
     TX_Pkt.AddrTo = RX_Pkt.AddrFrom;
     TX_Pkt.PwrID = PwrID;
-    // Place situation to pkt
-    Situation->State = CollarState;
-    // Cmd-dependant preparations
-    switch (RX_Pkt.Cmd) {
-        case NUTE_CMD_PING:
-            TX_Pkt.Cmd = NUTE_RPL_PING;
-            break;
-
-        default: // Say "Command not supported"
-            TX_Pkt.Cmd = NUTE_RPL_UNSUPPORTED;
-            break;
-    } // switch
-    // Setup output power
-    CC.SetPower(PwrID);
-    //klPrintf("Pwr: %u\r", PwrID);
-    // Start transmission
-    CC.Transmit();
-    IState = nsTransmitting;
+    Situation->State = CollarState; // Place situation to pkt
+    CC.SetPower(PwrID);             // Setup output power
+    CC.Transmit();                  // Start transmission
+    State = nsTransmitting;
 }
 
 void Nute_t::HandleTxEnd() {
     CC.Receive();
     Delay.Reset(&ITimer);
-    IState = nsWaitingRx;
+    State = nsWaitingRx;
 }
 
 #endif

@@ -85,16 +85,21 @@ void klTimer_t::Init(TIM_TypeDef* PTimer, uint16_t ATopValue, uint32_t AFreqHz) 
     else if (ITimer == TIM4) RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
     // Timebase
     uint16_t IPrescaler = 0;
-    if (AFreqHz != TIM_FREQ_MAX) {
+    if (AFreqHz < TIM_FREQ_MAX) {
         IPrescaler = SystemCoreClock / (ATopValue * AFreqHz);
         if (IPrescaler != 0) IPrescaler--;   // do not decrease in case of high freq
     }
-    TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-    TIM_TimeBaseStructure.TIM_Period = ATopValue;
-    TIM_TimeBaseStructure.TIM_Prescaler = IPrescaler;
-    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    TIM_TimeBaseInit(PTimer, &TIM_TimeBaseStructure);
+    ITimer->ARR = ATopValue;
+    ITimer->PSC = IPrescaler;
+    ITimer->CR1 = 0;
+}
+void klTimer_t::SetFreqHz(uint32_t AFreqHz) {
+    uint16_t IPrescaler = 0, FTopValue = ITimer->ARR;
+    if (AFreqHz < TIM_FREQ_MAX) {
+        IPrescaler = SystemCoreClock / (FTopValue * AFreqHz);
+        if (IPrescaler != 0) IPrescaler--;   // do not decrease in case of high freq
+    }
+    ITimer->ARR = FTopValue;
 }
 
 void klPwmChannel_t::Init(TIM_TypeDef* PTimer, uint16_t ATopValue, uint32_t AFreqHz, uint8_t ANumber, uint16_t APolarity) {
@@ -325,11 +330,11 @@ void CmdUnit_t::Init(void) {
     // ==== GPIO init ====
     klGpioSetupByN(GPIOA, 9, GPIO_Mode_AF_PP);          // TX1
 #ifdef RX_ENABLED
-    klGpioSetupByN(GPIOA, 10, GPIO_Mode_IN_FLOATING);   // RX1
+    klGpioSetupByN(GPIOA, 10, GPIO_Mode_IPU);   // RX1
 #endif
     // ==== USART configuration ====
     USART_InitTypeDef USART_InitStructure;
-    USART_InitStructure.USART_BaudRate = 128000;
+    USART_InitStructure.USART_BaudRate = 115200;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;
@@ -408,7 +413,7 @@ void CmdUnit_t::IStartTx(void) {
 #ifdef RX_ENABLED
 void CmdUnit_t::IRQHandler() {
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
-        uint8_t b = USART1->DR;
+        char b = USART1->DR;
         if (b != '\n') switch (CmdState) {  // Ignore \n
             case csNone:
                 RXBuf[RxIndx++] = b;

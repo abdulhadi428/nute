@@ -19,8 +19,6 @@ protected:
     uint16_t IPinNumber;
     GPIO_TypeDef* IGPIO;
 public:
-    Led_t(GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { Init(PGpioPort, APinNumber); }
-    Led_t(void) { }
     void Init(GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { IGPIO = PGpioPort; IPinNumber = APinNumber; klGpioSetupByN(PGpioPort, APinNumber, GPIO_Mode_Out_PP); }
     void On(void)  { klGpioSetByN  (IGPIO, IPinNumber); }
     void Off(void) { klGpioClearByN(IGPIO, IPinNumber); }
@@ -31,8 +29,21 @@ private:
     uint32_t ITimer, IBlinkDelay;
     bool IsInsideBlink;
 public:
-    LedBlink_t(void) { }
-    LedBlink_t(GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { Init(PGpioPort, APinNumber); }
+    void Disable(void) { Off(); IsInsideBlink = false; }
+    void Blink(uint32_t ABlinkDelay);
+    void Task(void);
+};
+
+class LedBlinkInverted_t {
+private:
+    uint32_t ITimer, IBlinkDelay;
+    bool IsInsideBlink;
+    uint16_t IPinNumber;
+    GPIO_TypeDef* IGPIO;
+public:
+    void Init(GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { IGPIO = PGpioPort; IPinNumber = APinNumber; klGpioSetupByN(PGpioPort, APinNumber, GPIO_Mode_Out_OD); }
+    void On(void)  { klGpioClearByN(IGPIO, IPinNumber); }
+    void Off(void) { klGpioSetByN  (IGPIO, IPinNumber); }
     void Disable(void) { Off(); IsInsideBlink = false; }
     void Blink(uint32_t ABlinkDelay) {
         IsInsideBlink = true;
@@ -47,13 +58,6 @@ public:
             Off();
         }
     }
-};
-
-class LedBlinkInverted_t : public LedBlink_t {
-public:
-    void Init(GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { IGPIO = PGpioPort; IPinNumber = APinNumber; klGpioSetupByN(PGpioPort, APinNumber, GPIO_Mode_Out_OD); }
-    void On(void)  { klGpioClearByN(IGPIO, IPinNumber); }
-    void Off(void) { klGpioSetByN  (IGPIO, IPinNumber); }
 };
 
 /*
