@@ -30,6 +30,7 @@ void EnterState(uint8_t ANewState);
 int main(void) {
     GeneralInit();
 
+    uint32_t Tmr;
     while (1) {
         CC.Task();
         Nute.Task();
@@ -37,7 +38,8 @@ int main(void) {
         CmdUnit.Task();     // Uart
         CollarStateHandler();
         Led.Task();
-        Battery.Task();
+        // Store battery value
+        if(Delay.Elapsed(&Tmr, 999)) Situation->Battery = Adc.GetValue();
     } // while 1
 }
 
@@ -65,7 +67,7 @@ inline void GeneralInit(void) {
     EnterState(COLSTATE_OK);
     //EnterState(COLSTATE_CMD_DELAY);
 
-    Battery.Init();
+    Adc.Init();
 
     // Setup CC
     CC.Init();

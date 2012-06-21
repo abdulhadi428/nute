@@ -16,22 +16,18 @@
 
 class Adc_t {
 private:
-    uint32_t Timer;
     uint16_t ADCValues[ADC_AVERAGE_COUNT];
-    void Measure(void);
-protected:
-    uint16_t IValue;
 public:
+    uint16_t GetValue(void);
     void Init(void);
-    void Task(void);
 };
+//
+//class Battery_t : public Adc_t {
+//public:
+//    bool IsDischarged(void) { return (GetValue() < BATTERY_DISCHARGED_U); }
+//};
 
-class Battery_t : public Adc_t {
-public:
-    bool IsDischarged(void) { return (IValue < BATTERY_DISCHARGED_U); }
-};
 
-
-extern Battery_t Battery;
+extern Adc_t Adc;
 
 #endif /* ADC_H_ */

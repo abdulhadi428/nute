@@ -163,7 +163,7 @@ void Nute_t::HandleNewPkt() {
     CollarStateCmd = RX_Pkt.StateCmd;
     memcpy(AreaList.Restriction, RX_Pkt.Arr, 18);
     // Reply preparations
-    Delay.Reset(&ITimer);           // Reset recalibrate timer
+    Delay.Reset(&ITimer);           // Reset recalibration timer
     uint8_t PwrID = RX_Pkt.PwrID;   // Initially, transmit at same power as transmitter
     AdjustPwr(&PwrID);              // Adjust power to transmit at needed power
     TX_Pkt.AddrTo = RX_Pkt.AddrFrom;

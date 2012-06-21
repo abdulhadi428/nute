@@ -242,6 +242,8 @@ int main(void) {
 
     generalInitialization();
 
+    activateLamp();
+
     while (1) {
 
         ///HUID reconnection
@@ -332,10 +334,10 @@ int main(void) {
         }
 
         //lamp activiy cycle termination
-        if (Delay.Elapsed(&SensorTimer, maxUptime)) {
-            lampOff();
-            lampState=Passive;
-        }
+//        if (Delay.Elapsed(&SensorTimer, maxUptime)) {
+//            lampOff();
+//            lampState=Passive;
+//        }
 
         if (SHOWSENSORSTATUS){
             if (s0trigger!=GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0)){
@@ -350,10 +352,10 @@ int main(void) {
         }
 
         if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0)){
-            activateLamp();
+            //activateLamp();
         }
         if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_1)){
-            activateLamp();
+        //    activateLamp();
         }
 
 
