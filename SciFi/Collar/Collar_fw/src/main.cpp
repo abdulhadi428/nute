@@ -16,6 +16,7 @@
 #include "collar.h"
 #include "areas.h"
 #include "beep.h"
+#include "adc.h"
 
 LedBlinkInverted_t Led;
 
@@ -36,6 +37,7 @@ int main(void) {
         CmdUnit.Task();     // Uart
         CollarStateHandler();
         Led.Task();
+        Battery.Task();
     } // while 1
 }
 
@@ -62,6 +64,8 @@ inline void GeneralInit(void) {
 
     EnterState(COLSTATE_OK);
     //EnterState(COLSTATE_CMD_DELAY);
+
+    Battery.Init();
 
     // Setup CC
     CC.Init();
