@@ -32,6 +32,7 @@ public:
     bool IsLeap(uint16_t AYear);
     void SetDate(uint16_t AYear, uint8_t AMonth, uint8_t ADay);
     void SetTime(uint8_t AHour, uint8_t AMinute, uint8_t ASecond);
+    void GetTime(Time_t *PTime);
     void Print(void);
     // Delay utils
     bool SecElapsed(uint32_t *PTimer, uint32_t ASeconds) {

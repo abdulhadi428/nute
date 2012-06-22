@@ -26,6 +26,31 @@ char* klStrNCpy(char *Dst, const char *Src, uint32_t ACount) {
     return Dst;
 }
 
+bool klStrStartWith(const char *Str, const char *Chunk) {
+    char c1, c2;
+    do {
+        c1 = *Str++;
+        c2 = *Chunk++;
+        if (c2 == 0) return true;   // end of chunk
+    } while (c1 == c2);
+    return false;
+}
+
+bool klHexToUint(const char *Str, uint32_t *PResult) {
+    uint32_t R = 0;
+    uint8_t b;
+    char c;
+    while ((c = *Str++) != 0) {
+        R <<= 4;
+        if      ((c >= '0') and (c <= '9')) b = c - '0';
+        else if ((c >= 'A') and (c <= 'F')) b = (c - 'A') + 10;
+        else if ((c >= 'a') and (c <= 'f')) b = (c - 'a') + 10;
+        else return false;
+        R += b;
+    }
+    *PResult = R;
+    return true;
+}
 
 
 // ============================== Sprint works =================================

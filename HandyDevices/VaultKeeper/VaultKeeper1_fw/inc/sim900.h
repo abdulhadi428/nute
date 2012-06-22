@@ -13,7 +13,7 @@
 #include "stm32f10x_usart.h"
 
 #define MDM_LINE_LEN        54
-#define MDM_DATA_LEN        54
+#define MDM_DATA_LEN        540
 #define MDM_BUF_LEN         504
 #define MDM_RX_TIMEOUT      450   // ms
 #define MDM_SIM_TIMEOUT     4005  // ms
@@ -56,6 +56,7 @@ private:
     Error_t WaitString(const char *AString, uint32_t ATimeout);
     Error_t WaitChar(const char AChar, uint32_t ATimeout);
     Error_t WaitEmptyString(uint32_t ATimeout);
+    Error_t WaitAnyString(uint32_t ATimeout);
     Error_t ReadRawData(char *Dst, uint32_t ALen, uint32_t ATimeout);
     // Inner use commands
     Error_t ProcessSim(void);
@@ -70,6 +71,8 @@ public:
     Error_t SendSMS(const char *ANumber, const char *AMsg);
     Error_t GprsOn(void);
     Error_t GprsOff(void);
+    Error_t OpenConnection(const char *AHost);
+    Error_t CloseConnection(void);
     Error_t GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen);
     Error_t POST(const char *AHost, const char *AUrl, const char *AData);
     // IRQ

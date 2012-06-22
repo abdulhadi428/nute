@@ -23,12 +23,12 @@ void TimeCounter_t::Init() {
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);    // Enable PWR and BKP clocks
+    PWR_BackupAccessCmd(ENABLE);    // Allow access to BKP Domain
     // Check if time is set
     if (!IsSet()) {
         Com.Printf("Time is not set\r");
         // ==== Rtc config ====
-        RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);    // Enable PWR and BKP clocks
-        PWR_BackupAccessCmd(ENABLE);    // Allow access to BKP Domain
         BKP_DeInit();                   // Reset Backup Domain
         RCC_LSEConfig(RCC_LSE_ON);      // Enable LSE
         while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET);    // Wait till LSE is ready
@@ -56,6 +56,13 @@ void TimeCounter_t::Init() {
     BKP_TamperPinCmd(DISABLE);      // To output RTCCLK/64 on Tamper pin, the tamper functionality must be disabled
     BKP_RTCOutputConfig(BKP_RTCOutputSource_CalibClock);    // Enable RTC Clock Output on Tamper Pin
 #endif
+}
+
+void TimeCounter_t::GetTime(Time_t *PTime) {
+    uint32_t t = RTC_GetCounter();
+    PTime->H = t / 3600;
+    PTime->M = (t % 3600) / 60;
+    PTime->S = (t % 3600) % 60;
 }
 
 void TimeCounter_t::Print(void) {

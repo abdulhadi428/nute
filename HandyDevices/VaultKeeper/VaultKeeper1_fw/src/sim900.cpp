@@ -80,8 +80,8 @@ Error_t sim900_t::SendSMS(const char *ANumber, const char *AMsg) {
 
 Error_t sim900_t::GprsOn() {
     Com.Printf("Connecting GPRS...\r");
-    if (Command("AT+CGATT=1", MDM_NETREG_TIMEOUT) != erOk)            return erError;
-    if (Command("AT+CGATT?", MDM_RX_TIMEOUT, "+CGATT: 1") != erOk) return erError;
+    if (Command("AT+CGATT=1", MDM_NETREG_TIMEOUT) != erOk)          return erError;
+    if (Command("AT+CGATT?", MDM_RX_TIMEOUT, "+CGATT: 1") != erOk)  return erError;
     WaitString("OK", MDM_RX_TIMEOUT);
     // GPRS is on, setup IP context
     if(Command("AT+SAPBR=3,1,\"Contype\",\"GPRS\"") != erOk)        return erError;
@@ -97,47 +97,108 @@ Error_t sim900_t::GprsOff(void) {
     return r;
 }
 
-Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen) {
-    Com.Printf("GET: %S%S\r", AHost, AUrl);
-    Error_t r = erError;
+
+Error_t sim900_t::OpenConnection(const char *AHost) {
+    Com.Printf("Connecting %S ", AHost);
     klSPrintf(TxLine, "AT+CIPSTART=\"TCP\",\"%S\",\"80\"", AHost);
     if (Command(TxLine) == erOk) {
         Com.Printf("#");
         if(WaitString("CONNECT", MDM_NETREG_TIMEOUT) == erOk) {
             if (strcmp(&RxLine[8], "OK") == 0) {
-                Com.Printf("#");
-                BufReset();
-                SendString("AT+CIPSEND");
-                if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
-                    MPrintf("GET %S HTTP/1.1\r\n", AUrl);
-                    MPrintf("Host: %S\r\n\r\n%c", AHost, 26);
-                    // Wait for echo
-                    BufReset();
-                    if (WaitString("SEND OK", MDM_NETREG_TIMEOUT) == erOk) {
-                        Com.Printf("#");
-                        // Wait for reply
-                        if (WaitString("Content-Length", MDM_NETREG_TIMEOUT) == erOk) {
-                            uint32_t FLen = atoi(&RxLine[16]);
-                            if (FLen != 0) {
-                                FLen = (FLen < ALen)? FLen : ALen;
-                                if(WaitEmptyString(MDM_NETREG_TIMEOUT) == erOk) {  // Now data begins
-                                    uint32_t Tmr, Indx=0;
-                                    Delay.Reset(&Tmr);
-                                    while(!Delay.Elapsed(&Tmr, MDM_NETREG_TIMEOUT) and (Indx < FLen)) {
-                                        if (!BufIsEmpty()) AData[Indx++] = BufRead();
-                                    } // while
-                                    AData[Indx] = 0; // Terminate string
-                                    if (Indx > 0) r = erOk;
-                                } // if empty string
-                            } // FLen>0
-                        } // length
-                    } // Send ok
-                } // if >
-            } // if connect ok
-        } // if connect
-    } // if start
-    Delay.ms(450);
-    Command("AT+CIPCLOSE", MDM_NETREG_TIMEOUT);
+                Com.Printf("#\rOk\r");
+                return erOk;
+            }
+        }
+    }
+    Com.Printf("\r");
+    return erError;
+}
+
+Error_t sim900_t::CloseConnection(void) {
+    Com.Printf("Disconnecting\r");
+    return Command("AT+CIPCLOSE", MDM_NETREG_TIMEOUT);
+}
+
+
+enum LengthEncoding_t {leLength, leChunks, leNone};
+Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen) {
+    Com.Printf("GET: %S%S\r", AHost, AUrl);
+    Error_t r = erError;
+    BufReset();
+    SendString("AT+CIPSEND");
+    if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
+        MPrintf("GET %S HTTP/1.1\r\n", AUrl);
+        MPrintf("Proxy-Connection: Keep-Alive\r\n");
+        MPrintf("Host: %S\r\n\r\n%c", AHost, 26);
+        // Wait for echo
+        BufReset();
+        if (WaitString("SEND OK", MDM_NETREG_TIMEOUT) == erOk) {
+            Com.Printf("#");
+            uint32_t FLen = 0;
+
+            // ==== Receive header ====
+            LengthEncoding_t LengthEncoding = leNone;
+            while((r = WaitAnyString(MDM_NETREG_TIMEOUT)) == erOk) {
+                if (klStrStartWith(RxLine, "Content-Length")) {     // Get length
+                    LengthEncoding = leLength;
+                    FLen = atoi(&RxLine[16]);
+                    if (FLen != 0) FLen = (FLen < ALen)? FLen : ALen;
+                }
+                else if (klStrStartWith(RxLine, "Transfer-Encoding: chunked")) {
+                    LengthEncoding = leChunks;
+                }
+                else if (RxLine[0] == 0) break;
+            } // while wait any
+
+            // ==== Receive data ====
+            if (r == erOk) {    // will be ok in case of successful empty line receive
+                uint32_t Tmr, Indx=0;
+                if (LengthEncoding == leLength) {
+                    Delay.Reset(&Tmr);
+                    while((Indx < FLen) and (r == erOk)) {
+                        if (!BufIsEmpty()) AData[Indx++] = BufRead();
+                        if (Delay.Elapsed(&Tmr, MDM_NETREG_TIMEOUT)) r = erTimeout;
+                    } // while
+                }
+
+                else if (LengthEncoding == leChunks) {
+                    while ((Indx < ALen-1) and (r == erOk)) {
+                        if((r = WaitAnyString(MDM_NETREG_TIMEOUT)) == erOk) { // Receive chunk length
+//                                        Com.Printf("Rx: %S\r", RxLine);
+                            if (klHexToUint(RxLine, &FLen)) {           // Try to convert length
+//                                            Com.Printf("FLen: %u\r", FLen);
+                                if (FLen == 0) break;                   // End of data
+                                Delay.Reset(&Tmr);                      // Receive chunk
+                                while((Indx < FLen) and (r == erOk)) {
+                                    if (!BufIsEmpty()) AData[Indx++] = BufRead();
+                                    if (Delay.Elapsed(&Tmr, MDM_NETREG_TIMEOUT)) r = erTimeout;
+                                } // while
+                            } // if hex2uint
+                            else r = erError;
+                        } // if waitstring
+//                                    Com.Printf("Indx2: %u\r", Indx);
+                    } // while indx < alen
+                }
+
+                else if (LengthEncoding == leNone) {
+                    while(Indx < ALen-1) {
+                        if(WaitAnyString(MDM_NETREG_TIMEOUT) == erOk) {
+                            if (klStrStartWith(RxLine, "CLOSED")) break;
+                            else {
+                                AData = klStrCpy(AData, RxLine);
+                                Indx += strlen(RxLine);
+                            }
+                        }
+                    }
+                }
+
+                if (r == erOk) {
+                    AData[Indx] = 0; // Terminate string
+                    if (Indx > 0) r = erOk;
+                }
+            } // if ok
+        } // Send ok
+    } // if >
     if(r == erOk) Com.Printf("\rOk: %S\r", AData);
     else Com.Printf("\rError\r");
     return r;
@@ -147,26 +208,19 @@ Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t
 Error_t sim900_t::POST(const char *AHost, const char *AUrl, const char *AData) {
     Com.Printf("POST1: %S%S; %S\r", AHost, AUrl, AData);
     Error_t r = erError;
-    klSPrintf(TxLine, "AT+CIPSTART=\"TCP\",\"%S\",\"80\"", AHost);
-    if (Command(TxLine) == erOk) {
-        if(WaitString("CONNECT", MDM_NETREG_TIMEOUT) == erOk) {
-            if (strcmp(&RxLine[8], "OK") == 0) {
-                BufReset();
-                SendString("AT+CIPSEND");
-                if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
-                    MPrintf("POST %S HTTP/1.1\r\n", AUrl);
-                    MPrintf("Host: %S\r\n", AHost);
-                    MPrintf("Content-Type: application/x-www-form-urlencoded\r\n"); // Mandatory
-                    MPrintf("Content-Length: %u\r\n\r\n", strlen(AData));           // Add empty line
-                    MPrintf("%S%c", AData, 26);                                     // Send data and finishing Ctrl-Z
-                    // Wait for echo
-                    BufReset();
-                    r = WaitString("SEND OK", MDM_NETREG_TIMEOUT);
-                } // if >
-            } // if connect ok
-        } // if wait connect
-    } // if cmd
-    Command("AT+CIPCLOSE", MDM_NETREG_TIMEOUT);
+    BufReset();
+    SendString("AT+CIPSEND");
+    if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
+        MPrintf("POST %S HTTP/1.1\r\n", AUrl);
+        MPrintf("Host: %S\r\n", AHost);
+        MPrintf("Proxy-Connection: Keep-Alive\r\n");
+        MPrintf("Content-Type: application/x-www-form-urlencoded\r\n"); // Mandatory
+        MPrintf("Content-Length: %u\r\n\r\n", strlen(AData));           // Add empty line
+        MPrintf("%S%c", AData, 26);                                     // Send data and finishing Ctrl-Z
+        // Wait for echo
+        BufReset();
+        r = WaitString("SEND OK", MDM_NETREG_TIMEOUT);
+    } // if >
     if(r == erOk) Com.Printf("Ok\r");
     else Com.Printf("Error\r");
     return r;
@@ -264,6 +318,28 @@ Error_t sim900_t::WaitEmptyString(uint32_t ATimeout) {
                 else WasEmpty = true;   // end of line, new one begins
             }
             else WasEmpty = false;  // some symbol
+        } // if not empty
+    } // while
+    return erTimeout;
+}
+
+// Receive string of any length including zero
+Error_t sim900_t::WaitAnyString(uint32_t ATimeout) {
+    uint32_t Tmr;
+    char c;
+    uint32_t Indx = 0;
+    Delay.Reset(&Tmr);
+    while (!Delay.Elapsed(&Tmr, ATimeout)) {
+        if (!BufIsEmpty()) {
+            c = BufRead();
+            if (c == '\r') continue;    // <cr>
+            else if (c == '\n') {       // <lf> Line received
+                RxLine[Indx] = 0;   // end of string
+                //Com.Printf("> %S\r", RxLine);
+                return erOk;
+            }
+            else RxLine[Indx++] = c;
+            if(Indx >= MDM_LINE_LEN) return erError;
         } // if not empty
     } // while
     return erTimeout;

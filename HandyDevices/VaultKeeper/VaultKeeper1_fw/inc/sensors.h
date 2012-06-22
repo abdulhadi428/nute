@@ -37,6 +37,7 @@ private:
     uint8_t IReadIndx, IWriteIndx;
 public:
     bool IsEmpty(void) {return (IReadIndx == IWriteIndx); }
+
     void Init(void) {IWriteIndx = 0; IReadIndx = 0; }
     RowData_t* Read(void) {
         RowData_t *PRow = &IRow[IReadIndx];
