@@ -20,18 +20,20 @@ Error_t SrvWorks_t::GetTime(void) {
     if (Mdm.GET(URL_HOST, URL_TIME, Mdm.DataString, 19) == erOk) {
         char S[7];
         klStrNCpy(S, &Mdm.DataString[0], 4);
-        Time.Year = atoi(S);
+        uint16_t Year = atoi(S);
         klStrNCpy(S, &Mdm.DataString[5], 2);
-        Time.Month = atoi(S);
+        uint8_t Month = atoi(S);
         klStrNCpy(S, &Mdm.DataString[8], 2);
-        Time.Day = atoi(S);
+        uint8_t Day = atoi(S);
         klStrNCpy(S, &Mdm.DataString[11], 2);
-        Time.H = atoi(S);
+        uint8_t H = atoi(S);
         klStrNCpy(S, &Mdm.DataString[14], 2);
-        Time.M = atoi(S);
+        uint8_t M = atoi(S);
         klStrNCpy(S, &Mdm.DataString[17], 2);
-        Time.S = atoi(S);
-        Com.Printf("%u-%u-%u %u:%u:%u\r", Time.Year, Time.Month, Time.Day, Time.H, Time.M, Time.S);
+        uint8_t Sec = atoi(S);
+        Time.SetDate(Year, Month, Day);
+        Time.SetTime(H, M, Sec);
+        Time.Print();
         return erOk;
     }
     else return erError;

@@ -121,6 +121,12 @@ struct Time_t {
     void IncS(void) { if(++S > 59) { S = 0; IncM(); }  }
 };
 
+struct DateTime_t : Time_t {
+    uint16_t Year;
+    uint8_t Month;
+    uint8_t Day;
+} PACKED;
+
 class Delay_t {
 public:
     uint32_t TickCounter;

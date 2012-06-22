@@ -14,9 +14,11 @@
 #include "kl_string.h"
 #include <string.h>
 #include "sha1.h"
+#include "adc.h"
 
 #define VERSION_ID  "Minya"     // "First" on Quenya. Used for HostKey generation. No more than 20 char
 
+#define RETRY_TIMEOUT   60  // s
 
 LedBlink_t Led;
 uint32_t HostKey[5];
@@ -29,6 +31,7 @@ void GenerateHostKey(void);
 int main(void) {
     GeneralInit();
 
+
 //    Mdm.On();
     //Mdm.SendSMS("+79169895800", "Aiya Feanaro!");
 //    if (Mdm.GprsOn() == erOk) {
@@ -38,12 +41,29 @@ int main(void) {
 //                "host_id=19&water_value=1188&time=20120601202122&errors=0&host_hash=1bc29b36f623ba82aaf6724fd3b16718"
 //                );
 
-    //uint32_t Tmr;
+    uint32_t Tmr=0;
+    Time.Bypass(&Tmr, RETRY_TIMEOUT);
 
     while (1) {
         Led.Task();
 
-        //if(Delay.Elapsed(&Tmr, 207)) Led.Blink(45);
+        // Get correct time if needed
+        if (!Time.IsSet()) {
+            if(Time.SecElapsed(&Tmr, RETRY_TIMEOUT)) { // every 5 minutes
+                Mdm.On();
+                if (Mdm.GprsOn() == erOk) {
+                    Srv.GetTime();
+                    Mdm.GprsOff();
+                } // if GPRS
+                Mdm.Off();
+            } // if delay
+        } // if is set
+        else {
+            if(Time.SecElapsed(&Tmr, 1)) {
+                Led.Blink(45);
+                Time.Print();
+            }
+        }
 
     } // while 1
 }
@@ -56,18 +76,19 @@ inline void GeneralInit(void) {
 
     Delay.Init();
     Delay.ms(63);
-
-    Time.Init();
-    Led.Init(GPIOD, 2);
-    //Led.On();
-
     Com.Init();
     Com.Printf("\rVault Keeper1\r");
+
+    Led.Init(GPIOD, 2);
+    //Led.On();
+    Time.Init();
+    Adc.Init();
+
     GenerateHostKey();
 }
 
 
-#define IDBASE      0x1FFFF7E8
+#define IDBASE      0x1FFFF7E8  // Address of ID
 void GenerateHostKey(void) {
     char FBuf[45];
     // Get uinique CPU id
