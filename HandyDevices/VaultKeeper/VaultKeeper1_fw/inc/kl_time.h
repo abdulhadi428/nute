@@ -33,6 +33,9 @@ public:
     void SetDate(uint16_t AYear, uint8_t AMonth, uint8_t ADay);
     void SetTime(uint8_t AHour, uint8_t AMinute, uint8_t ASecond);
     void GetTime(Time_t *PTime);
+    void GetDateTime(DateTime_t *PDateTime);
+    uint8_t GetHour(void)   { uint32_t t = RTC_GetCounter(); return (uint8_t)(t / 3600); }
+    uint8_t GetMinute(void) { uint32_t t = RTC_GetCounter(); return (uint8_t)((t % 3600) / 60); }
     void Print(void);
     // Delay utils
     bool SecElapsed(uint32_t *PTimer, uint32_t ASeconds) {

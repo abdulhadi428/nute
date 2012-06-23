@@ -11,7 +11,10 @@
 #include "kl_lib.h"
 #include "string.h"
 
-#define SNS_COUNT   4
+#define SNS_COUNT           4       // Count of sensors
+#define SNS_CHECK_TIMEOUT   1008    // ms; check sensors every second.
+#define BKPREG_WATER_HI     BKP_DR5
+#define BKPREG_WATER_LO     BKP_DR6
 
 // Sensor states
 #define LOWER_OK     0
@@ -25,8 +28,8 @@ enum SnsState_t {ssOk=0x00,
 struct RowData_t {
     DateTime_t DateTime;
     uint32_t WaterValue;
-    SnsState_t SnsArr[SNS_COUNT];
-    uint16_t Battery;   // == 0xFFFF in case of external power
+    uint8_t SnsArr[SNS_COUNT];
+    uint16_t Battery;   // == 0 in case of external power
 } PACKED;
 #define ROWDATA_SZ  sizeof(RowData_t)
 
@@ -36,15 +39,10 @@ private:
     RowData_t IRow[SNS_BUF_SZ];
     uint8_t IReadIndx, IWriteIndx;
 public:
-    bool IsEmpty(void) {return (IReadIndx == IWriteIndx); }
-
-    void Init(void) {IWriteIndx = 0; IReadIndx = 0; }
-    RowData_t* Read(void) {
-        RowData_t *PRow = &IRow[IReadIndx];
-        IReadIndx++;
-        if (IReadIndx >= SNS_BUF_SZ) IReadIndx = 0;
-        return PRow;
-    }
+    void Init(void) { IWriteIndx = 0; IReadIndx = 0; }
+    bool IsEmpty(void) { return (IReadIndx == IWriteIndx); }
+    RowData_t* Read(void) { return &IRow[IReadIndx]; }
+    void PrepareToReadNext(void) { if (++IReadIndx >= SNS_BUF_SZ) IReadIndx = 0; }
     void Write(RowData_t *PRow) {
         memcpy(&IRow[IWriteIndx], PRow, ROWDATA_SZ);
         IWriteIndx++;
@@ -52,6 +50,22 @@ public:
     }
 };
 
+class Sensors_t {
+private:
+    RowData_t CurrentData;
+    void WriteMeasurements(void);
+    bool ILeakagesChanged;
+    // Water
+    uint32_t ReadWaterValue(void);
+    void WriteWaterValue(uint32_t AValue);
+    void UpdateWaterValue(void);
+public:
+    bool NewLeakageOccured;
+    void Init(void);
+    void Task(void);
+};
+
 extern SnsDataBuf_t SnsBuf;
+extern Sensors_t Sensors;
 
 #endif /* SENSORS_H_ */

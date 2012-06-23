@@ -65,6 +65,16 @@ void TimeCounter_t::GetTime(Time_t *PTime) {
     PTime->S = (t % 3600) % 60;
 }
 
+void TimeCounter_t::GetDateTime(DateTime_t *PDateTime) {
+    PDateTime->Year  = BKP_ReadBackupRegister(BKPREG_YEAR);
+    PDateTime->Month = BKP_ReadBackupRegister(BKPREG_MONTH);
+    PDateTime->Day   = BKP_ReadBackupRegister(BKPREG_DAY);
+    uint32_t t = RTC_GetCounter();
+    PDateTime->H = t / 3600;
+    PDateTime->M = (t % 3600) / 60;
+    PDateTime->S = (t % 3600) % 60;
+}
+
 void TimeCounter_t::Print(void) {
     uint16_t Year = BKP_ReadBackupRegister(BKPREG_YEAR);
     uint8_t Month = BKP_ReadBackupRegister(BKPREG_MONTH);

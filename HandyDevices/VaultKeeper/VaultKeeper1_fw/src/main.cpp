@@ -20,6 +20,7 @@
 #define VERSION_ID  "Minya"     // "First" on Quenya. Used for HostKey generation. No more than 20 char
 #define HOST_ID     1001
 
+#define RETRY_TIMEOUT   60      // s
 class Report_t {
 private:
     uint32_t RetryTmr;
@@ -28,6 +29,7 @@ private:
 public:
     void Init(void);
     void Task(void);
+    void SendNow(void) { ReportIsSent = false; Time.Bypass(&RetryTmr, RETRY_TIMEOUT); }
 } Report;
 
 LedBlink_t Led;
@@ -46,6 +48,7 @@ int main(void) {
     while (1) {
         Led.Task();
         Report.Task();
+        Sensors.Task();
     } // while 1
 }
 
@@ -63,7 +66,7 @@ inline void GeneralInit(void) {
     Led.Init(GPIOD, 2);
     //Led.On();
     Time.Init();
-    Adc.Init();
+    Sensors.Init();
 
     GenerateHostKey();
     Report.Init();
@@ -89,50 +92,80 @@ void GenerateHostKey(void) {
 #define URL_HOST        "vaultkeeper.ru"
 #define URL_TIME        "/request.php?time"
 #define URL_REQUEST     "/request.php"
-#define RETRY_TIMEOUT   60      // s
 #define REPORT_MINUTE   23
 
 void Report_t::Init() {
-    Time.Bypass(&RetryTmr, RETRY_TIMEOUT);
+    SendNow();
 }
 
 void Report_t::Task(void) {
     // Send report every hour
-    Time_t FTime;
-    Time.GetTime(&FTime);
-    if (FTime.M == REPORT_MINUTE) {
+    static uint8_t FLastHour = 27;  // dummy for first time
+    if ((Time.GetMinute() == REPORT_MINUTE) and (Time.GetHour() != FLastHour)) {    // Do not send report twice a minute
         Com.Printf("Time to send report\r");
-        ReportIsSent = false;
-        Time.Bypass(&RetryTmr, RETRY_TIMEOUT);
+        SendNow();
+    }
+
+    // Send report if new leakage occured
+    else if (Sensors.NewLeakageOccured) {
+        Sensors.NewLeakageOccured = false;  // Served
+        Com.Printf("Report new leakage\r");
+        SendNow();
     }
 
     // Check if report was sent; if not, recend it after timeout
     if(!ReportIsSent) if(Time.SecElapsed(&RetryTmr, RETRY_TIMEOUT)) {
         Com.Printf("==== Sending report ==== ");
         Time.Print();
-
         Mdm.On();
         if (Mdm.GprsOn() == erOk) {
             if (Mdm.OpenConnection(URL_HOST) == erOk) {
                 // Renew time
                 if (GetTime() == erOk) {
-                    // Send data
-                    // Construct data string
-                    char *S = Mdm.DataString;
-                    klSPrintf(S, "host_id=%u&water_value=%u&time=%u%u%u%u%u%u&errors=32.12,38.209,b.1200&host_key=%S", HOST_ID, 1177, 2012,06,01, 12,0,0, HostKey);
-                    Com.Printf("Data: %S\r", S);
-                    Sha1(S);
-                    Com.Printf("Hash: %S\r", Sha1String);
-                    klSPrintf(S, "host_id=%u&water_value=%u&time=%u%u%u%u%u%u&errors=32.12,38.209,b.1200&host_hash=%S", HOST_ID, 1177, 2012,06,01, 12,0,0, Sha1String);
-                    Com.Printf("String: %S\r", S);
-                    Mdm.POST(URL_HOST, URL_REQUEST, S);
+                    // ==== Send data ====
+                    RowData_t *PRow;
+                    char *S = Mdm.DataString, ErrStr[(SNS_COUNT+1)*6+1], *E;    // every sns needs 6 chars; +battery; +0
+                    Error_t r = erOk;
+                    while (!SnsBuf.IsEmpty() and (r == erOk)) {
+                        PRow = SnsBuf.Read();
 
-    //                while(!SnsBuf.IsEmpty()) {
-    //
-    //                }
-                    // Mission completed
-                    Com.Printf("==== Report sent ====\r");
-                    ReportIsSent = true;
+                        // Construct error string
+                        E = ErrStr;
+                        for (uint32_t i=0; i<SNS_COUNT; i++) {
+                            if (PRow->SnsArr[i] != 0) E = klSPrintf(E, "%u.%u,", i, PRow->SnsArr[i]);
+                        }
+                        if (PRow->Battery != 0) klSPrintf(E, "b.%u", PRow->Battery);
+                        // Remove ',' at end of string.
+                        else // No need if battery printed
+                            if (E != ErrStr) // if not empty
+                                if (*(E-1) == ',') *(E-1) = 0;
+                        Com.Printf("Errors: %S\r", ErrStr);
+
+                        // Construct data string
+                        klSPrintf(S, "host_id=%u&water_value=%u&time=%u%u%u%u%u%u&errors=%S&host_key=%S",
+                                HOST_ID, PRow->WaterValue,
+                                PRow->DateTime.Year, PRow->DateTime.Month, PRow->DateTime.Day,
+                                PRow->DateTime.H,    PRow->DateTime.M,     PRow->DateTime.S,
+                                ErrStr, HostKey);
+                        Com.Printf("Data: %S\r", S);
+                        Sha1(S);
+                        Com.Printf("Hash: %S\r", Sha1String);
+
+                        // Construct string to send
+                        klSPrintf(S, "host_id=%u&water_value=%u&time=%u%u%u%u%u%u&errors=%S&host_hash=%S",
+                                HOST_ID, PRow->WaterValue,
+                                PRow->DateTime.Year, PRow->DateTime.Month, PRow->DateTime.Day,
+                                PRow->DateTime.H,    PRow->DateTime.M,     PRow->DateTime.S,
+                                ErrStr, Sha1String);
+                        Com.Printf("To send: %S\r", S);
+                        if ((r = Mdm.POST(URL_HOST, URL_REQUEST, S)) == erOk) SnsBuf.PrepareToReadNext(); // Sent ok, goto next
+                    } // while
+                    if (r == erOk) {
+                        // Mission completed
+                        Com.Printf("==== Report sent ====\r");
+                        ReportIsSent = true;
+                        FLastHour = Time.GetHour();
+                    }
                 } // if time
                 Mdm.CloseConnection();
             } // if open connection
