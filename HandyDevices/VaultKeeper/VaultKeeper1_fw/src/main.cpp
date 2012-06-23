@@ -14,11 +14,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "sha1.h"
-#include "adc.h"
 #include "sensors.h"
 
-#define VERSION_ID  "Minya"     // "First" on Quenya. Used for HostKey generation. No more than 20 char
-#define HOST_ID     1001
+#define VERSION_ID      "Minya" // "First" on Quenya. Used for HostKey generation. No more than 20 char
+#define HOST_ID         1001
 
 #define RETRY_TIMEOUT   60      // s
 class Report_t {
@@ -47,7 +46,7 @@ int main(void) {
     // ==== Main cycle ====
     while (1) {
         Led.Task();
-        Report.Task();
+        //Report.Task();
         Sensors.Task();
     } // while 1
 }
@@ -107,9 +106,9 @@ void Report_t::Task(void) {
     }
 
     // Send report if new leakage occured
-    else if (Sensors.NewLeakageOccured) {
-        Sensors.NewLeakageOccured = false;  // Served
-        Com.Printf("Report new leakage\r");
+    else if (Sensors.NewProblemOccured) {
+        Sensors.NewProblemOccured = false;  // Served
+        Com.Printf("Report new problem\r");
         SendNow();
     }
 
@@ -124,7 +123,7 @@ void Report_t::Task(void) {
                 if (GetTime() == erOk) {
                     // ==== Send data ====
                     RowData_t *PRow;
-                    char *S = Mdm.DataString, ErrStr[(SNS_COUNT+1)*6+1], *E;    // every sns needs 6 chars; +battery; +0
+                    char *S = Mdm.DataString, ErrStr[SNS_COUNT*7+5+1], *E;    // every sns needs 7 chars; battery needs 5.
                     Error_t r = erOk;
                     while (!SnsBuf.IsEmpty() and (r == erOk)) {
                         PRow = SnsBuf.Read();

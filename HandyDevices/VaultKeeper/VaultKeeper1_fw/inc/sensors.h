@@ -10,8 +10,11 @@
 
 #include "kl_lib.h"
 #include "string.h"
+#include "stm32f10x_dma.h"
 
 #define SNS_COUNT           4       // Count of sensors
+#define ADC_CH_COUNT        (SNS_COUNT*2 + 1)   // two channels per sensor, + batery
+#define ADC_AVERAGE_COUNT   64      // Number of times to measure
 #define SNS_CHECK_TIMEOUT   1008    // ms; check sensors every second.
 #define BKPREG_WATER_HI     BKP_DR5
 #define BKPREG_WATER_LO     BKP_DR6
@@ -21,8 +24,8 @@
 #define LOWER_
 
 enum SnsState_t {ssOk=0x00,
-    ssLwrBreak=0x01, ssLwrShort=0x02, ssLwrWater=0x03, ssLwrFail=0x04,
-    ssTopBreak=0x10, ssTopShort=0x20, ssTopWater=0x30, ssTopFail=0x40
+    ssABreak=0x01, ssAShort=0x02, ssAWater=0x03, ssAFail=0x04,
+    ssBBreak=0x10, ssBShort=0x20, ssBWater=0x30, ssBFail=0x40
 };
 
 struct RowData_t {
@@ -50,17 +53,34 @@ public:
     }
 };
 
+enum SnsCh_t {
+    Sns1A, Sns1B, Sns2A, Sns2B, Sns3A, Sns3B,
+    Sns4A, Sns4B, Sns5A, Sns5B, Sns6A, Sns6B,
+    SnsBattery
+};
+
+const SnsCh_t ChToMeasure[ADC_CH_COUNT] = {
+        Sns3A, Sns3B, Sns4A, Sns4B, Sns5A, Sns5B, Sns6A, Sns6B, SnsBattery
+};
+
 class Sensors_t {
 private:
     RowData_t CurrentData;
     void WriteMeasurements(void);
-    bool ILeakagesChanged;
+    bool IProblemsChanged;
+    bool IsExtPwrOk(void) { return klGpioIsSetByN(GPIOB, 12); }
+    // Adc
+    uint8_t ChIndx;
+    uint16_t ADCValues[ADC_AVERAGE_COUNT];
+    void AdcInit(void);
+    void StartNextMeasure(void);
+    bool MeasureIsCompleted(void) { return DMA_GetFlagStatus(DMA1_FLAG_TC1); }
     // Water
     uint32_t ReadWaterValue(void);
     void WriteWaterValue(uint32_t AValue);
     void UpdateWaterValue(void);
 public:
-    bool NewLeakageOccured;
+    bool NewProblemOccured;
     void Init(void);
     void Task(void);
 };
