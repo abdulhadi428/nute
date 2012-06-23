@@ -27,6 +27,7 @@ void Sensors_t::Init() {
 void Sensors_t::Task() {
     // ==== Measurement unit ====
     if (MeasureIsCompleted()) {
+        Delay.ms(99); // DEBUG
         // Calculate average value
         uint32_t FValue=0;
         for(uint32_t i=0; i<ADC_AVERAGE_COUNT; i++) FValue += ADCValues[i];
@@ -45,8 +46,19 @@ void Sensors_t::Task() {
                 if (!IProblemsChanged) CurrentData.Battery = 0; // Reset only after event handled
         } // if battery
         else {
-         //   Com.Printf("adc %u = %u; Pwr=%u\r", ChIndx, FValue, IsExtPwrOk());
-        }
+            SnsState_t ss;
+            if      (FValue < 504)  ss = ssShort;
+            else if (FValue < 1602) ss = ssWater;
+            else if (FValue > 3906) ss = ssOpen;
+            else ss = ssOk;
+            switch (ss) {
+                case ssOk:    Com.Printf("%u Ok\r",  ChIndx); break;
+                case ssOpen:  Com.Printf("%u Open\r",  ChIndx); break;
+                case ssShort: Com.Printf("%u Short\r", ChIndx); break;
+                case ssWater: Com.Printf("%u Water\r", ChIndx); break;
+                default: break;
+            }
+        } // if not battery
         StartNextMeasure();
     }
 
@@ -88,7 +100,7 @@ void Sensors_t::AdcInit() {
     // ==== ADC ====
     ADC_InitTypeDef ADC_InitStructure;
     ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;  // Independent, not dual
-    ADC_InitStructure.ADC_ScanConvMode = ENABLE;
+    ADC_InitStructure.ADC_ScanConvMode = DISABLE;
     ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
     ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
     ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
@@ -120,27 +132,27 @@ void Sensors_t::StartNextMeasure() {
 
     // ==== Channel ====
     switch (ChToMeasure[ChIndx]) {
-        case Sns1A: ADC_RegularChannelConfig(ADC1, ADC_Channel_0,  1, ADC_SampleTime_55Cycles5); break;
-        case Sns1B: ADC_RegularChannelConfig(ADC1, ADC_Channel_1,  1, ADC_SampleTime_55Cycles5); break;
-        case Sns2A: ADC_RegularChannelConfig(ADC1, ADC_Channel_4,  1, ADC_SampleTime_55Cycles5); break;
-        case Sns2B: ADC_RegularChannelConfig(ADC1, ADC_Channel_5,  1, ADC_SampleTime_55Cycles5); break;
-        case Sns3A: ADC_RegularChannelConfig(ADC1, ADC_Channel_6,  1, ADC_SampleTime_55Cycles5); break;
-        case Sns3B: ADC_RegularChannelConfig(ADC1, ADC_Channel_7,  1, ADC_SampleTime_55Cycles5); break;
-        case Sns4A: ADC_RegularChannelConfig(ADC1, ADC_Channel_10, 1, ADC_SampleTime_55Cycles5); break;
-        case Sns4B: ADC_RegularChannelConfig(ADC1, ADC_Channel_11, 1, ADC_SampleTime_55Cycles5); break;
-        case Sns5A: ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 1, ADC_SampleTime_55Cycles5); break;
-        case Sns5B: ADC_RegularChannelConfig(ADC1, ADC_Channel_13, 1, ADC_SampleTime_55Cycles5); break;
-        case Sns6A: ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 1, ADC_SampleTime_55Cycles5); break;
-        case Sns6B: ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 1, ADC_SampleTime_55Cycles5); break;
-        case SnsBattery: ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5); break;
+        case Sns1A: klGpioSetByN(GPIOB, 2);  ADC_RegularChannelConfig(ADC1, ADC_Channel_0,  1, ADC_SampleTime_71Cycles5); break;
+        case Sns1B: klGpioSetByN(GPIOB, 3);  ADC_RegularChannelConfig(ADC1, ADC_Channel_1,  1, ADC_SampleTime_71Cycles5); break;
+        case Sns2A: klGpioSetByN(GPIOB, 4);  ADC_RegularChannelConfig(ADC1, ADC_Channel_4,  1, ADC_SampleTime_71Cycles5); break;
+        case Sns2B: klGpioSetByN(GPIOB, 5);  ADC_RegularChannelConfig(ADC1, ADC_Channel_5,  1, ADC_SampleTime_71Cycles5); break;
+        case Sns3A: klGpioSetByN(GPIOB, 6);  ADC_RegularChannelConfig(ADC1, ADC_Channel_6,  1, ADC_SampleTime_71Cycles5); break;
+        case Sns3B: klGpioSetByN(GPIOB, 7);  ADC_RegularChannelConfig(ADC1, ADC_Channel_7,  1, ADC_SampleTime_71Cycles5); break;
+        case Sns4A: klGpioSetByN(GPIOB, 8);  ADC_RegularChannelConfig(ADC1, ADC_Channel_10, 1, ADC_SampleTime_71Cycles5); break;
+        case Sns4B: klGpioSetByN(GPIOB, 9);  ADC_RegularChannelConfig(ADC1, ADC_Channel_11, 1, ADC_SampleTime_71Cycles5); break;
+        case Sns5A: klGpioSetByN(GPIOB, 10); ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 1, ADC_SampleTime_71Cycles5); break;
+        case Sns5B: klGpioSetByN(GPIOB, 11); ADC_RegularChannelConfig(ADC1, ADC_Channel_13, 1, ADC_SampleTime_71Cycles5); break;
+        case Sns6A: klGpioSetByN(GPIOC, 6);  ADC_RegularChannelConfig(ADC1, ADC_Channel_14, 1, ADC_SampleTime_71Cycles5); break;
+        case Sns6B: klGpioSetByN(GPIOC, 7);  ADC_RegularChannelConfig(ADC1, ADC_Channel_15, 1, ADC_SampleTime_71Cycles5); break;
+        case SnsBattery:                     ADC_RegularChannelConfig(ADC1, ADC_Channel_8,  1, ADC_SampleTime_71Cycles5); break;
     }
-    ADC_DMACmd(ADC1, ENABLE);                   // Enable ADC1 DMA
-    // Calibrate ADC
     ADC_Cmd(ADC1, ENABLE);                      // Enable ADC1
+    // Calibrate ADC
     ADC_ResetCalibration(ADC1);                 // Enable ADC1 reset calibration register
     while(ADC_GetResetCalibrationStatus(ADC1)); // Check the end of ADC1 reset calibration register
     ADC_StartCalibration(ADC1);                 // Start ADC1 calibration
     while(ADC_GetCalibrationStatus(ADC1));      // Check the end of ADC1 calibration
+    ADC_DMACmd(ADC1, ENABLE); // Enable ADC1 DMA
     // Start ADC1 Software Conversion
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }

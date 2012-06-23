@@ -16,6 +16,7 @@
 // =============================== Common ======================================
 #define FORCE_INLINE inline __attribute__ ((__always_inline__))
 #define PACKED __attribute__ ((__packed__))
+#define CountOf(Arr)    (sizeof(Arr) / sizeof(Arr[0]))
 
 // Common types
 enum Error_t {erOk, erError, erTimeout, erNone, erBusy, erOther};

@@ -12,21 +12,28 @@
 #include "string.h"
 #include "stm32f10x_dma.h"
 
-#define SNS_COUNT           4       // Count of sensors
-#define ADC_CH_COUNT        (SNS_COUNT*2 + 1)   // two channels per sensor, + batery
 #define ADC_AVERAGE_COUNT   64      // Number of times to measure
 #define SNS_CHECK_TIMEOUT   1008    // ms; check sensors every second.
 #define BKPREG_WATER_HI     BKP_DR5
 #define BKPREG_WATER_LO     BKP_DR6
 
 // Sensor states
-#define LOWER_OK     0
-#define LOWER_
-
 enum SnsState_t {ssOk=0x00,
-    ssABreak=0x01, ssAShort=0x02, ssAWater=0x03, ssAFail=0x04,
-    ssBBreak=0x10, ssBShort=0x20, ssBWater=0x30, ssBFail=0x40
+    ssOpen=0x01, ssShort=0x02, ssWater=0x03, ssFail=0x04,
 };
+enum SnsCh_t {
+    Sns1A, Sns1B, Sns2A, Sns2B, Sns3A, Sns3B,
+    Sns4A, Sns4B, Sns5A, Sns5B, Sns6A, Sns6B,
+    SnsBattery
+};
+
+// =================== Set here channels to measure ============================
+const SnsCh_t ChToMeasure[] = {
+        Sns3A, Sns3B, Sns4A, Sns4B, Sns5A, Sns5B, Sns6A, Sns6B, SnsBattery
+};
+#define ADC_CH_COUNT    CountOf(ChToMeasure)
+#define SNS_COUNT       4
+// =============================================================================
 
 struct RowData_t {
     DateTime_t DateTime;
@@ -53,15 +60,6 @@ public:
     }
 };
 
-enum SnsCh_t {
-    Sns1A, Sns1B, Sns2A, Sns2B, Sns3A, Sns3B,
-    Sns4A, Sns4B, Sns5A, Sns5B, Sns6A, Sns6B,
-    SnsBattery
-};
-
-const SnsCh_t ChToMeasure[ADC_CH_COUNT] = {
-        Sns3A, Sns3B, Sns4A, Sns4B, Sns5A, Sns5B, Sns6A, Sns6B, SnsBattery
-};
 
 class Sensors_t {
 private:
