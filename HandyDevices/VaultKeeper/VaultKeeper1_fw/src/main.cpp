@@ -44,8 +44,10 @@ int main(void) {
     //Mdm.SendSMS("+79169895800", "Aiya Feanaro!");
 
     // ==== Main cycle ====
+    //uint32_t Tmr;
     while (1) {
         Led.Task();
+        //if(Delay.Elapsed(&Tmr, 999)) Led.Blink(199);
         //Report.Task();
         Sensors.Task();
     } // while 1
