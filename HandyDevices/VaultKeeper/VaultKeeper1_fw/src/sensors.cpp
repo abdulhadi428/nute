@@ -15,24 +15,24 @@ Sensors_t Sensors;
 void Sensors_t::Init() {
     // External power sensor: no ADC, only 1-0
     klGpioSetupByN(GPIOB, 12, GPIO_Mode_IN_FLOATING);
-
+    // Variables etc.
     NewProblemOccured = false;
     IProblemsChanged = false;
     AdcGpioInit();
     AdcInit();
     WaterInit();
-    ChIndx = 0;
-    StartNextMeasure();
+    //Com.Printf("ADC_CH_COUNT = %u\r", ADC_CH_COUNT);
+    ChIndx = ADC_CH_COUNT-1;    // To start from 0
+    IPrepareToNextMeasure();
 }
 
 #define WRITE_MIN_DELAY     54000   // ms
 #define EVENT_MIN_DELAY     4005    // ms
 void Sensors_t::Task() {
     static uint8_t FLastHour = 27;  // dummy for first time
-    static uint32_t FTmr;
+    static uint32_t FProblemTmr;
     // ==== Measurement unit ====
     if (MeasureIsCompleted()) {
-        //Delay.ms(99); // DEBUG
         // Calculate average value
         uint32_t FValue=0;
         for(uint32_t i=0; i<ADC_AVERAGE_COUNT; i++) FValue += ADCValues[i];
@@ -41,24 +41,24 @@ void Sensors_t::Task() {
         // Process channels
         if (SnsChnl[ChIndx].Name == SnsBattery) {
             if(!IsExtPwrOk()) { // Pwr problem
+                FValue *= 3.0263158;
                 if (CurrentData.Battery == 0) {
                     IProblemsChanged = true; // Report now
-                    Delay.Bypass(&FTmr, (WRITE_MIN_DELAY-EVENT_MIN_DELAY)); // Report after 4000 mS
-                    Com.Printf("No ext pwr\r");
+                    Delay.Bypass(&FProblemTmr, (WRITE_MIN_DELAY-EVENT_MIN_DELAY)); // Report after 4000 mS
+                    Com.Printf("No pwr; Battery = %u\r", FValue);
                 }
-                FValue *= 3.0263158;
                 CurrentData.Battery = FValue;
             }
             else // Pwr is ok
                 if (!IProblemsChanged) CurrentData.Battery = 0; // Reset only after event handled
         } // if battery
         else {
-            //if(SnsChnl[ChIndx].Name == Sns3A) Com.Printf("Sns3A %u\r", FValue);
-            //if(ChToMeasure[ChIndx] == Sns4B) Com.Printf("Sns4B %u\r", FValue);
+            //Com.Printf("Sns%u %u\r", ChIndx, FValue);
+            //if(SnsChnl[ChIndx].Name == Sns3B) Com.Printf("Sns3B %u\r", FValue);
             SnsState_t ssNow, ssOld = ssOk;
             if      (FValue < 477)  ssNow = ssShort;
-            else if (FValue < 1305) ssNow = ssWater;
-            else if (FValue > 3501) ssNow = ssOpen;
+            else if (FValue < 2205) ssNow = ssWater;
+            else if (FValue > 3600) ssNow = ssOpen;
             else ssNow = ssOk;
 
             // ==== Check if change occured ====
@@ -94,28 +94,22 @@ void Sensors_t::Task() {
             }
             if((ssOld == ssOk) and (ssNow != ssOk)) {       // Problem occured
                 IProblemsChanged = true;
-                Delay.Bypass(&FTmr, (WRITE_MIN_DELAY-EVENT_MIN_DELAY)); // Report after 4000 mS
-                Com.Printf("Sns%u New: %X\r", SnsIndx, CurrentState);
+                Delay.Bypass(&FProblemTmr, (WRITE_MIN_DELAY-EVENT_MIN_DELAY)); // Report after 4000 mS
+                Com.Printf("Sns%u: %X\r", SnsIndx, CurrentState);
                 CurrentData.SnsArr[SnsIndx] = CurrentState; // Write new problem
             }
             else if((ssOld != ssOk) and (ssNow == ssOk)) {  // Problem vanished
                 // Write ok only if was processed
                 if (!IProblemsChanged) CurrentData.SnsArr[SnsIndx] = CurrentState;
             }
-            // Display
-//            switch (ss) {
-//                case ssOk:    Com.Printf("%u Ok\r",  ChIndx); break;
-//                case ssOpen:  Com.Printf("%u Open\r",  ChIndx); break;
-//                case ssShort: Com.Printf("%u Short\r", ChIndx); break;
-//                case ssWater: Com.Printf("%u Water\r", ChIndx); break;
-//                default: break;
-//            }
         } // if not battery
-        StartNextMeasure();
+        IPrepareToNextMeasure();
     }
 
+    if(!MeasureStarted and Delay.Elapsed(&IMeasureTmr, PULLUP_DEADTIME)) StartNextMeasure();
+
     // ==== Reporting unit ====
-    if (IProblemsChanged and Delay.Elapsed(&FTmr, WRITE_MIN_DELAY)) { // Restrict write rate
+    if (IProblemsChanged and Delay.Elapsed(&FProblemTmr, WRITE_MIN_DELAY)) { // Restrict write rate
         Com.Printf("New problem\r");
         IProblemsChanged = false;
         WriteMeasurements();
@@ -158,16 +152,28 @@ void Sensors_t::AdcInit() {
     ADC_Init(ADC1, &ADC_InitStructure);
 }
 
-void Sensors_t::StartNextMeasure() {
+void Sensors_t::IPrepareToNextMeasure() {
+    // Switch off DMA
     ADC_DMACmd(ADC1, DISABLE);
-    ADC_Cmd(ADC1, DISABLE);
+    DMA_DeInit(DMA1_Channel1);
     // Switch off pull-up
     if(SnsChnl[ChIndx].POutPort != 0)
         klGpioClearByMsk(SnsChnl[ChIndx].POutPort, SnsChnl[ChIndx].OutMask);
     // Calculate channel to measure
     if (++ChIndx >= ADC_CH_COUNT) ChIndx = 0;
+    //Com.Printf("ch = %u\r", ChIndx);
+    // Switch on pull-up
+    if(SnsChnl[ChIndx].POutPort != 0)
+        klGpioSetByMsk(SnsChnl[ChIndx].POutPort, SnsChnl[ChIndx].OutMask);
+    // Reset deadtime delay
+    Delay.Reset(&IMeasureTmr);
+    MeasureStarted = false;
+}
+
+void Sensors_t::StartNextMeasure() {
+    MeasureStarted = true;
+    ADC_Cmd(ADC1, DISABLE);
     // ==== ADC's DMA ====
-    DMA_DeInit(DMA1_Channel1);
     DMA_InitTypeDef DMA_InitStructure;
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
     DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&ADCValues[0];
@@ -182,10 +188,7 @@ void Sensors_t::StartNextMeasure() {
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(DMA1_Channel1, &DMA_InitStructure);
     DMA_Cmd(DMA1_Channel1, ENABLE);
-
     // ==== Channel ====
-    if(SnsChnl[ChIndx].POutPort != 0)
-        klGpioSetByMsk(SnsChnl[ChIndx].POutPort, SnsChnl[ChIndx].OutMask);  // Switch on pull-up
     ADC_RegularChannelConfig(ADC1, SnsChnl[ChIndx].AdcChannel, 1, ADC_SampleTime_71Cycles5);
     // Enable ADC1
     ADC_Cmd(ADC1, ENABLE);
@@ -204,8 +207,11 @@ void Sensors_t::WaterInit() {
     // GPIO
     klGpioSetupByN(GPIOC, 6,  GPIO_Mode_Out_PP);
     klGpioSetByN(GPIOC, 6);                             // switch on our pull-up
-    klGpioSetupByN(GPIOC, 4, GPIO_Mode_IN_FLOATING);    // input
-
+    klGpioSetupByMsk(GPIOC, GPIO_Pin_5 | GPIO_Pin_7, GPIO_Mode_Out_PP);
+    klGpioClearByMsk(GPIOC, GPIO_Pin_5 | GPIO_Pin_7);
+    WaterPin.Init(GPIOC, 4, GPIO_Mode_IN_FLOATING);
+    WaterPin.IrqSetup(EXTI_Trigger_Falling);
+    WaterPin.IrqEnable();
 }
 
 void Sensors_t::UpdateWaterValue(void) {
@@ -213,6 +219,7 @@ void Sensors_t::UpdateWaterValue(void) {
     V++;
     WriteWaterValue(V);
     CurrentData.WaterValue = V;
+    Com.Printf("W: %u\r", V);
 }
 
 uint32_t Sensors_t::ReadWaterValue(void) {
@@ -226,4 +233,14 @@ void Sensors_t::WriteWaterValue(uint32_t AValue) {
     uint32_t Lo = AValue & 0x0000FFFF;
     BKP_WriteBackupRegister(BKPREG_WATER_LO, (uint16_t)Lo);
     BKP_WriteBackupRegister(BKPREG_WATER_HI, (uint16_t)Hi);
+}
+
+void EXTI4_IRQHandler(void) {
+    static uint32_t FTmr;
+    if(EXTI_GetITStatus(EXTI_Line4) != RESET) {
+        if(Delay.Elapsed(&FTmr, MIN_PULSE_LENGTH)) {
+            Sensors.UpdateWaterValue();
+        }
+        EXTI_ClearITPendingBit(EXTI_Line4);
+    }
 }

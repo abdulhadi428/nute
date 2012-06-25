@@ -48,7 +48,7 @@ int main(void) {
     while (1) {
         Led.Task();
         //if(Delay.Elapsed(&Tmr, 999)) Led.Blink(199);
-        //Report.Task();
+        Report.Task();
         Sensors.Task();
     } // while 1
 }

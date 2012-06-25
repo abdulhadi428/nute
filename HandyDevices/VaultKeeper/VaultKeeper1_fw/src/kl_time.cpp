@@ -27,7 +27,7 @@ void TimeCounter_t::Init() {
     PWR_BackupAccessCmd(ENABLE);    // Allow access to BKP Domain
     // Check if time is set
     if (!IsSet()) {
-        Com.Printf("Time is not set\r");
+        Com.Printf("Nothing is set\r");
         // ==== Rtc config ====
         BKP_DeInit();                   // Reset Backup Domain
         RCC_LSEConfig(RCC_LSE_ON);      // Enable LSE
@@ -41,9 +41,10 @@ void TimeCounter_t::Init() {
         RTC_WaitForLastTask();  // Wait until last write operation on RTC registers has finished
         // Set default date values and do not set time
         SetDate(DEFAULT_YEAR, DEFAULT_MONTH, DEFAULT_DAY);
+        BKP_WriteBackupRegister(BKPREG_CHECK, 0xA5A5);  // Signal is set
     }
     else {
-        Com.Printf("Time is here\r");
+        Com.Printf("Something is stored\r");
         RTC_WaitForSynchro();
         RTC_WaitForLastTask();
     }
@@ -116,8 +117,6 @@ void TimeCounter_t::SetTime(uint8_t AHour, uint8_t AMinute, uint8_t ASecond) {
     RTC_WaitForLastTask();
     RTC_SetCounter(t);
     RTC_WaitForLastTask();
-    // Signal that time is set
-    BKP_WriteBackupRegister(BKPREG_CHECK, 0xA5A5);
 }
 
 

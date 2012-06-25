@@ -14,9 +14,10 @@
 #include "stm32f10x_adc.h"
 
 #define ADC_AVERAGE_COUNT   64      // Number of times to measure
-#define SNS_CHECK_TIMEOUT   1008    // ms; check sensors every second.
+#define PULLUP_DEADTIME     18      // ms; time between pullup on and measurement start
 #define BKPREG_WATER_HI     BKP_DR5
 #define BKPREG_WATER_LO     BKP_DR6
+#define MIN_PULSE_LENGTH    252     // Min length of water pulse
 
 // Sensor states
 enum SnsState_t {ssOk=0x00,
@@ -93,22 +94,31 @@ private:
     // Adc
     uint8_t ChIndx;
     uint16_t ADCValues[ADC_AVERAGE_COUNT];
+    uint32_t IMeasureTmr;
+    bool MeasureStarted;
     void AdcInit(void);
     void AdcGpioInit(void);
+    void IPrepareToNextMeasure(void);
     void StartNextMeasure(void);
     bool MeasureIsCompleted(void) { return DMA_GetFlagStatus(DMA1_FLAG_TC1); }
     // Water
+    klPinIrq_t WaterPin;
     void WaterInit(void);
     uint32_t ReadWaterValue(void);
     void WriteWaterValue(uint32_t AValue);
-    void UpdateWaterValue(void);
 public:
     bool NewProblemOccured;
     void Init(void);
     void Task(void);
+    void UpdateWaterValue(void);
 };
 
 extern SnsDataBuf_t SnsBuf;
 extern Sensors_t Sensors;
+
+// Water sensor IRQ
+extern "C" {
+void EXTI4_IRQHandler(void);
+}
 
 #endif /* SENSORS_H_ */

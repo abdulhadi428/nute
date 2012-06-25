@@ -40,11 +40,17 @@ void sim900_t::On() {
         PwrKeyPulse();      // Switch on
         // Wait and send AT
         Delay.ms(999);
+        Com.Printf("#...\r");
         if(Command("AT")        != erOk) continue;  // Send AT and wait for Ok
+        Com.Printf("#...\r");
         if(ProcessSim()         != erOk) continue;  // Wait for SIM to activate
+        Com.Printf("#...\r");
         if(Command("AT+CMGF=1") != erOk) continue;  // SMS in text mode
+        Com.Printf("#...\r");
         if(DisableCellBrc()     != erOk) continue;  // Disable cell broadcast
+        Com.Printf("#...\r");
         if(NetRegistration()    != erOk) continue;  // Wait for modem to connect
+        Com.Printf("#...\r");
         //Command("AT+CSQ");                          // Get signal parameters
         Command("AT+CMGD=1,4");                     // Delete all sms
         State = erOk;
