@@ -11,6 +11,8 @@
 
 SnsDataBuf_t SnsBuf;
 Sensors_t Sensors;
+RowData_t CurrentData;
+uint8_t ChIndx;
 
 void Sensors_t::Init() {
     // External power sensor: no ADC, only 1-0
@@ -21,6 +23,7 @@ void Sensors_t::Init() {
     AdcGpioInit();
     AdcInit();
     WaterInit();
+    for (uint8_t i=0; i<ADC_CH_COUNT; i++) Chnl[i].Init(i);
     //Com.Printf("ADC_CH_COUNT = %u\r", ADC_CH_COUNT);
     ChIndx = ADC_CH_COUNT-1;    // To start from 0
     IPrepareToNextMeasure();
@@ -38,8 +41,8 @@ void Sensors_t::Task() {
         for(uint32_t i=0; i<ADC_AVERAGE_COUNT; i++) FValue += ADCValues[i];
         FValue /= ADC_AVERAGE_COUNT;
         //Com.Printf("Ch %u = %u\r", ChIndx, FValue);
-        // Process channels
-        if (SnsChnl[ChIndx].Name == SnsBattery) {
+        // === Process channels ===
+        if (SnsChnlParams[ChIndx].Name == SnsBattery) {
             if(!IsExtPwrOk()) { // Pwr problem
                 FValue *= 3.0263158;
                 if (CurrentData.Battery == 0) {
@@ -53,60 +56,22 @@ void Sensors_t::Task() {
                 if (!IProblemsChanged) CurrentData.Battery = 0; // Reset only after event handled
         } // if battery
         else {
-            //Com.Printf("Sns%u %u\r", ChIndx, FValue);
-            //if(SnsChnl[ChIndx].Name == Sns3B) Com.Printf("Sns3B %u\r", FValue);
-            SnsState_t ssNow, ssOld = ssOk;
-            if      (FValue < 477)  ssNow = ssShort;
-            else if (FValue < 2205) ssNow = ssWater;
-            else if (FValue > 3600) ssNow = ssOpen;
-            else ssNow = ssOk;
+            Chnl[ChIndx].ProcessNewValue(FValue);
 
-            // ==== Check if change occured ====
-            uint8_t CurrentState;
-            uint8_t SnsIndx = ChIndx >> 1;
-            CurrentState = CurrentData.SnsArr[SnsIndx];
-            //Com.Printf("Sns%u Old: %X\r", SnsIndx, CurrentState);
-            switch (SnsChnl[ChIndx].Name) {
-                case Sns1A:
-                case Sns2A:
-                case Sns3A:
-                case Sns4A:
-                case Sns5A:
-                case Sns6A:
-                    ssOld = (SnsState_t)(CurrentState >> 4);    // A at hi 4 bits
-                    // Write new value
-                    CurrentState &= 0x0F;   // Erase top bits
-                    CurrentState += ((uint8_t)ssNow) << 4;
-                    break;
-
-                case Sns1B:
-                case Sns2B:
-                case Sns3B:
-                case Sns4B:
-                case Sns5B:
-                case Sns6B:
-                    ssOld = (SnsState_t)(CurrentState & 0x0F);    // B at lo 4 bits
-                    // Write new value
-                    CurrentState &= 0xF0;   // Erase Lo bits
-                    CurrentState += ((uint8_t)ssNow);
-                    break;
-                default: break;
-            }
-            if((ssOld == ssOk) and (ssNow != ssOk)) {       // Problem occured
-                IProblemsChanged = true;
-                Delay.Bypass(&FProblemTmr, (WRITE_MIN_DELAY-EVENT_MIN_DELAY)); // Report after 4000 mS
-                Com.Printf("Sns%u: %X\r", SnsIndx, CurrentState);
-                CurrentData.SnsArr[SnsIndx] = CurrentState; // Write new problem
-            }
-            else if((ssOld != ssOk) and (ssNow == ssOk)) {  // Problem vanished
-                // Write ok only if was processed
-                if (!IProblemsChanged) CurrentData.SnsArr[SnsIndx] = CurrentState;
-            }
-        } // if not battery
+        }
         IPrepareToNextMeasure();
     }
 
     if(!MeasureStarted and Delay.Elapsed(&IMeasureTmr, PULLUP_DEADTIME)) StartNextMeasure();
+
+    // ==== Check if problem ====
+    for (uint8_t i=0; i<ADC_CH_COUNT; i++) if(SnsChnlParams[i].Name != SnsBattery){
+        if(Chnl[i].NewProblemOccured()) {
+            IProblemsChanged = true;
+            Chnl[i].UpdateCurrentState();
+            Com.Printf("Sns%u row: %X\r", i>>1, CurrentData.SnsArr[i>>1]);
+        }
+    }
 
     // ==== Reporting unit ====
     if (IProblemsChanged and Delay.Elapsed(&FProblemTmr, WRITE_MIN_DELAY)) { // Restrict write rate
@@ -127,12 +92,71 @@ void Sensors_t::WriteMeasurements() {
     SnsBuf.Write(&CurrentData);
 }
 
+// =============================== Channel =====================================
+void SnsChnl_t::Init(uint32_t AIndx) {
+    IState = ssOk;
+    IIndx = AIndx;
+    IsA = (SnsChnlParams[IIndx].Name == Sns1A) or
+            (SnsChnlParams[IIndx].Name == Sns2A) or
+            (SnsChnlParams[IIndx].Name == Sns3A) or
+            (SnsChnlParams[IIndx].Name == Sns4A) or
+            (SnsChnlParams[IIndx].Name == Sns5A) or
+            (SnsChnlParams[IIndx].Name == Sns6A);
+}
+
+void SnsChnl_t::ProcessNewValue(uint32_t AValue) {
+    //Com.Printf("Sns%u %u\r", IIndx, AValue);
+    //if(SnsChnl[ChIndx].Name == Sns3B) Com.Printf("Sns3B %u\r", FValue);
+    SnsState_t ssNow;
+    if      (AValue < SHORT_ADC_VALUE) ssNow = ssShort;
+    else if (AValue < WATER_ADC_VALUE) ssNow = ssWater;
+    else if (AValue > OPEN_ADC_VALUE)  ssNow = ssOpen;
+    else ssNow = ssOk;
+
+    if ((ssNow != ssOk) and (IState == ssOk)) {     // Problem appeared
+        ProblemIsNew = true;
+        Com.Printf("Sns%u: NewProb %u\r", IIndx, ssNow);
+        Delay.Reset(&ITimer);                       // Change state only if time passed
+    }
+    else if((ssNow == ssOk) and (IState != ssOk)) { // Problem disappeared
+        ProblemIsNew = false;
+        Com.Printf("Sns%u: No Prob\r", IIndx);
+        UpdateCurrentState();                       // Remove problem state immediately
+    }
+    IState = ssNow;
+}
+
+bool SnsChnl_t::NewProblemOccured() {
+    if ((IState != ssOk) and ProblemIsNew and Delay.Elapsed(&ITimer, NEW_PROBLEM_TIMEOUT)) {
+        ProblemIsNew = false;
+        return true;
+    }
+    else return false;
+}
+
+void SnsChnl_t::UpdateCurrentState() {
+    uint8_t State;
+    uint8_t SnsIndx = IIndx >> 1;
+    State = CurrentData.SnsArr[SnsIndx];
+    //Com.Printf("Sns%u Old: %X\r", SnsIndx, CurrentState);
+    if (IsA) {
+        State &= 0x0F;   // Erase top bits
+        State += ((uint8_t)IState) << 4;
+    }
+    else {
+        State &= 0xF0;   // Erase Lo bits
+        State += ((uint8_t)IState);
+    }
+    CurrentData.SnsArr[SnsIndx] = State;
+}
+
+
 // ================================== ADC ======================================
 void Sensors_t::AdcGpioInit() {
     for (uint8_t i=0; i<ADC_CH_COUNT; i++) {
-        klGpioSetupByMsk(SnsChnl[i].PInPort,  SnsChnl[i].InMask,  GPIO_Mode_AIN);     // Input
-        if(SnsChnl[i].POutPort != 0)
-            klGpioSetupByMsk(SnsChnl[i].POutPort, SnsChnl[i].OutMask, GPIO_Mode_Out_PP);  // Output
+        klGpioSetupByMsk(SnsChnlParams[i].PInPort,  SnsChnlParams[i].InMask,  GPIO_Mode_AIN);     // Input
+        if(SnsChnlParams[i].POutPort != 0)
+            klGpioSetupByMsk(SnsChnlParams[i].POutPort, SnsChnlParams[i].OutMask, GPIO_Mode_Out_PP);  // Output
     }
 }
 
@@ -157,14 +181,14 @@ void Sensors_t::IPrepareToNextMeasure() {
     ADC_DMACmd(ADC1, DISABLE);
     DMA_DeInit(DMA1_Channel1);
     // Switch off pull-up
-    if(SnsChnl[ChIndx].POutPort != 0)
-        klGpioClearByMsk(SnsChnl[ChIndx].POutPort, SnsChnl[ChIndx].OutMask);
+    if(SnsChnlParams[ChIndx].POutPort != 0)
+        klGpioClearByMsk(SnsChnlParams[ChIndx].POutPort, SnsChnlParams[ChIndx].OutMask);
     // Calculate channel to measure
     if (++ChIndx >= ADC_CH_COUNT) ChIndx = 0;
     //Com.Printf("ch = %u\r", ChIndx);
     // Switch on pull-up
-    if(SnsChnl[ChIndx].POutPort != 0)
-        klGpioSetByMsk(SnsChnl[ChIndx].POutPort, SnsChnl[ChIndx].OutMask);
+    if(SnsChnlParams[ChIndx].POutPort != 0)
+        klGpioSetByMsk(SnsChnlParams[ChIndx].POutPort, SnsChnlParams[ChIndx].OutMask);
     // Reset deadtime delay
     Delay.Reset(&IMeasureTmr);
     MeasureStarted = false;
@@ -189,7 +213,7 @@ void Sensors_t::StartNextMeasure() {
     DMA_Init(DMA1_Channel1, &DMA_InitStructure);
     DMA_Cmd(DMA1_Channel1, ENABLE);
     // ==== Channel ====
-    ADC_RegularChannelConfig(ADC1, SnsChnl[ChIndx].AdcChannel, 1, ADC_SampleTime_71Cycles5);
+    ADC_RegularChannelConfig(ADC1, SnsChnlParams[ChIndx].AdcChannel, 1, ADC_SampleTime_71Cycles5);
     // Enable ADC1
     ADC_Cmd(ADC1, ENABLE);
     // Calibrate ADC

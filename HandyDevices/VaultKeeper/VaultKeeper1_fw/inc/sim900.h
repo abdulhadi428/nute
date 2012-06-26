@@ -64,6 +64,7 @@ private:
     Error_t NetRegistration(void);
 public:
     Error_t State;  // Modem state
+    void Init(void);
     void On(void);
     void Off(void);
     // Hi-level

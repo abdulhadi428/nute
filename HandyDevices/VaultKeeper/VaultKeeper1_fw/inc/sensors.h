@@ -30,7 +30,7 @@ enum SnsChName_t {
 };
 
 // =================== Set here channels to measure ============================
-struct SnsChnl_t {
+struct SnsChnlParams_t {
     SnsChName_t Name;
     GPIO_TypeDef *PInPort;
     uint16_t InMask;
@@ -39,7 +39,7 @@ struct SnsChnl_t {
     uint8_t AdcChannel;
 };
 
-const SnsChnl_t SnsChnl[] = {
+const SnsChnlParams_t SnsChnlParams[] = {
 //        {Sns1A, GPIOA, GPIO_Pin_0, GPIOB, GPIO_Pin_2,  ADC_Channel_0},
 //        {Sns1B, GPIOA, GPIO_Pin_1, GPIOB, GPIO_Pin_3,  ADC_Channel_1},
 //        {Sns2A, GPIOA, GPIO_Pin_4, GPIOB, GPIO_Pin_4,  ADC_Channel_4},
@@ -54,7 +54,7 @@ const SnsChnl_t SnsChnl[] = {
 //        {Sns6B, GPIOC, GPIO_Pin_5, GPIOC, GPIO_Pin_7,  ADC_Channel_15},
         {SnsBattery, GPIOB, GPIO_Pin_0, 0, 0,          ADC_Channel_8},
 };
-#define ADC_CH_COUNT    CountOf(SnsChnl)
+#define ADC_CH_COUNT    CountOf(SnsChnlParams)
 #define SNS_COUNT       (ADC_CH_COUNT>>1)
 
 // =============================================================================
@@ -84,18 +84,34 @@ public:
     }
 };
 
+#define SHORT_ADC_VALUE     477
+#define WATER_ADC_VALUE     2205
+#define OPEN_ADC_VALUE      3600
+#define NEW_PROBLEM_TIMEOUT 4005
+class SnsChnl_t {
+private:
+    uint32_t ITimer;
+    SnsState_t IState;
+    bool ProblemIsNew;
+    uint32_t IIndx;
+    bool IsA;
+public:
+    void Init(uint32_t AIndx);
+    void ProcessNewValue(uint32_t AValue);
+    bool NewProblemOccured(void);
+    void UpdateCurrentState(void);
+};
 
 class Sensors_t {
 private:
-    RowData_t CurrentData;
     void WriteMeasurements(void);
     bool IProblemsChanged;
     bool IsExtPwrOk(void) { return klGpioIsSetByN(GPIOB, 12); }
     // Adc
-    uint8_t ChIndx;
     uint16_t ADCValues[ADC_AVERAGE_COUNT];
     uint32_t IMeasureTmr;
     bool MeasureStarted;
+    SnsChnl_t Chnl[ADC_CH_COUNT];
     void AdcInit(void);
     void AdcGpioInit(void);
     void IPrepareToNextMeasure(void);

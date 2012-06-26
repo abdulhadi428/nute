@@ -17,11 +17,16 @@
 sim900_t Mdm;
 //extern LedBlink_t Led;
 
-void sim900_t::On() {
-    Com.Printf("Starting Mdm...\r");
+void sim900_t::Init() {
     GPIOInit();
     USARTInit();
     IrqEnable();
+    PowerOff();
+    PwrKeyHi();
+}
+
+void sim900_t::On() {
+    Com.Printf("Starting Mdm...\r");
     State = erError;
     WriteIndx = 0;
     ReadIndx = 0;
@@ -40,22 +45,23 @@ void sim900_t::On() {
         PwrKeyPulse();      // Switch on
         // Wait and send AT
         Delay.ms(999);
-        Com.Printf("#...\r");
+        Com.Printf("1.");
         if(Command("AT")        != erOk) continue;  // Send AT and wait for Ok
-        Com.Printf("#...\r");
+        Com.Printf("2.");
         if(ProcessSim()         != erOk) continue;  // Wait for SIM to activate
-        Com.Printf("#...\r");
+        Com.Printf("3.");
         if(Command("AT+CMGF=1") != erOk) continue;  // SMS in text mode
-        Com.Printf("#...\r");
+        Com.Printf("4.");
         if(DisableCellBrc()     != erOk) continue;  // Disable cell broadcast
-        Com.Printf("#...\r");
+        Com.Printf("5.");
         if(NetRegistration()    != erOk) continue;  // Wait for modem to connect
-        Com.Printf("#...\r");
+        Com.Printf("6.");
         //Command("AT+CSQ");                          // Get signal parameters
         Command("AT+CMGD=1,4");                     // Delete all sms
+
         State = erOk;
     } // while
-    Com.Printf("Mdm ready\r");
+    Com.Printf("\rMdm ready\r");
 }
 
 void sim900_t::Off() {

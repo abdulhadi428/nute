@@ -41,6 +41,7 @@ void GenerateHostKey(void);
 // ============================== Implementation ===============================
 int main(void) {
     GeneralInit();
+    //Mdm.On();
     //Mdm.SendSMS("+79169895800", "Aiya Feanaro!");
 
     // ==== Main cycle ====
@@ -69,6 +70,7 @@ inline void GeneralInit(void) {
     Time.Init();
     Sensors.Init();
 
+    Mdm.Init();
     GenerateHostKey();
     Report.Init();
 }
