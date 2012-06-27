@@ -133,14 +133,15 @@ Error_t sim900_t::CloseConnection(void) {
 
 
 enum LengthEncoding_t {leLength, leChunks, leNone};
-Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen) {
+Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen, bool AKeepAlive) {
     Com.Printf("GET: %S%S\r", AHost, AUrl);
     Error_t r = erError;
     BufReset();
     SendString("AT+CIPSEND");
     if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
         MPrintf("GET %S HTTP/1.1\r\n", AUrl);
-        MPrintf("Proxy-Connection: Keep-Alive\r\n");
+        if (AKeepAlive) MPrintf("Connection: Keep-Alive\r\n");
+        else MPrintf("Connection: close\r\n");
         MPrintf("Host: %S\r\n\r\n%c", AHost, 26);
         // Wait for echo
         BufReset();
@@ -217,15 +218,16 @@ Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t
 }
 
 // numenor2012.ru, /request.php, data=aga
-Error_t sim900_t::POST(const char *AHost, const char *AUrl, const char *AData) {
-    Com.Printf("POST1: %S%S; %S\r", AHost, AUrl, AData);
+Error_t sim900_t::POST(const char *AHost, const char *AUrl, const char *AData, bool AKeepAlive) {
+    Com.Printf("POST: %S%S; %S\r", AHost, AUrl, AData);
     Error_t r = erError;
     BufReset();
     SendString("AT+CIPSEND");
     if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
         MPrintf("POST %S HTTP/1.1\r\n", AUrl);
         MPrintf("Host: %S\r\n", AHost);
-        MPrintf("Proxy-Connection: Keep-Alive\r\n");
+        if (AKeepAlive) MPrintf("Connection: Keep-Alive\r\n");
+        else MPrintf("Connection: close\r\n");
         MPrintf("Content-Type: application/x-www-form-urlencoded\r\n"); // Mandatory
         MPrintf("Content-Length: %u\r\n\r\n", strlen(AData));           // Add empty line
         MPrintf("%S%c", AData, 26);                                     // Send data and finishing Ctrl-Z

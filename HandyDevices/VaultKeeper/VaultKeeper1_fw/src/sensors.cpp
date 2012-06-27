@@ -11,7 +11,6 @@
 
 SnsDataBuf_t SnsBuf;
 Sensors_t Sensors;
-RowData_t CurrentData;
 uint8_t ChIndx;
 
 void Sensors_t::Init() {
@@ -23,14 +22,12 @@ void Sensors_t::Init() {
     AdcGpioInit();
     AdcInit();
     WaterInit();
-    for (uint8_t i=0; i<ADC_CH_COUNT; i++) Chnl[i].Init(i);
+    for (uint8_t i=0; i<ADC_CH_COUNT; i++) Chnl[i].Init();
     //Com.Printf("ADC_CH_COUNT = %u\r", ADC_CH_COUNT);
     ChIndx = ADC_CH_COUNT-1;    // To start from 0
     IPrepareToNextMeasure();
 }
 
-#define WRITE_MIN_DELAY     54000   // ms
-#define EVENT_MIN_DELAY     4005    // ms
 void Sensors_t::Task() {
     static uint8_t FLastHour = 27;  // dummy for first time
     static uint32_t FProblemTmr;
@@ -43,34 +40,28 @@ void Sensors_t::Task() {
         //Com.Printf("Ch %u = %u\r", ChIndx, FValue);
         // === Process channels ===
         if (SnsChnlParams[ChIndx].Name == SnsBattery) {
-            if(!IsExtPwrOk()) { // Pwr problem
+            if(!IsExtPwrOk() and (Chnl[ChIndx].Value == 0)) { // Pwr problem
                 FValue *= 3.0263158;
-                if (CurrentData.Battery == 0) {
-                    IProblemsChanged = true; // Report now
-                    Delay.Bypass(&FProblemTmr, (WRITE_MIN_DELAY-EVENT_MIN_DELAY)); // Report after 4000 mS
-                    Com.Printf("No pwr; Battery = %u\r", FValue);
-                }
-                CurrentData.Battery = FValue;
+                Chnl[ChIndx].Value = FValue;
+                Com.Printf("No pwr; Battery = %u\r", FValue);
+                IProblemsChanged = true; // Report now
             }
-            else // Pwr is ok
-                if (!IProblemsChanged) CurrentData.Battery = 0; // Reset only after event handled
+            else if (IsExtPwrOk() and (Chnl[ChIndx].Value != 0)) {
+                if (!IProblemsChanged) Chnl[ChIndx].Value = 0; // Reset only after event handled
+            }
         } // if battery
-        else {
-            Chnl[ChIndx].ProcessNewValue(FValue);
-
-        }
+        else Chnl[ChIndx].ProcessNewValue(FValue);
         IPrepareToNextMeasure();
     }
 
     if(!MeasureStarted and Delay.Elapsed(&IMeasureTmr, PULLUP_DEADTIME)) StartNextMeasure();
 
     // ==== Check if problem ====
-    for (uint8_t i=0; i<ADC_CH_COUNT; i++) if(SnsChnlParams[i].Name != SnsBattery){
-        if(Chnl[i].NewProblemOccured()) {
-            IProblemsChanged = true;
-            Chnl[i].UpdateCurrentState();
-            Com.Printf("Sns%u row: %X\r", i>>1, CurrentData.SnsArr[i>>1]);
-        }
+    for (uint8_t i=0; i<ADC_CH_COUNT; i++) {
+        if(SnsChnlParams[i].Name != SnsBattery)
+            if(Chnl[i].NewProblemOccured()) {
+                IProblemsChanged = true;
+            }
     }
 
     // ==== Reporting unit ====
@@ -87,23 +78,37 @@ void Sensors_t::Task() {
 }
 
 void Sensors_t::WriteMeasurements() {
-    // Update time, other values are updated online
-    Time.GetDateTime(&CurrentData.DateTime);
-    SnsBuf.Write(&CurrentData);
+    RowData_t RData;
+    // Update time
+    Time.GetDateTime(&RData.DateTime);
+    // Update sensors
+    uint8_t SnsIndx, CurrentState;
+    SnsChName_t FName;
+    for (uint8_t i=0; i<ADC_CH_COUNT; i++) {
+        if(SnsChnlParams[i].Name == SnsBattery) RData.Battery = Chnl[i].Value;
+        else {
+            SnsIndx = i >> 1;
+            CurrentState = RData.SnsArr[SnsIndx];
+            FName = SnsChnlParams[i].Name;
+            if ((FName==Sns1A) or (FName==Sns2A) or (FName==Sns3A) or (FName==Sns4A) or (FName==Sns5A) or (FName==Sns6A)) {
+                CurrentState &= 0x0F;   // Erase top bits
+                CurrentState += ((uint8_t)Chnl[i].State) << 4;
+            }
+            else {
+                CurrentState &= 0xF0;   // Erase Lo bits
+                CurrentState += ((uint8_t)Chnl[i].State);
+            }
+            RData.SnsArr[SnsIndx] = CurrentState;
+            Chnl[i].ProblemIsNew = false;   // do not report again if channel timeout is currently ticking
+        } // if not battery
+    } // for
+    // Water
+    RData.WaterValue = ReadWaterValue();
+    // Write data to log
+    SnsBuf.Write(&RData);
 }
 
 // =============================== Channel =====================================
-void SnsChnl_t::Init(uint32_t AIndx) {
-    IState = ssOk;
-    IIndx = AIndx;
-    IsA = (SnsChnlParams[IIndx].Name == Sns1A) or
-            (SnsChnlParams[IIndx].Name == Sns2A) or
-            (SnsChnlParams[IIndx].Name == Sns3A) or
-            (SnsChnlParams[IIndx].Name == Sns4A) or
-            (SnsChnlParams[IIndx].Name == Sns5A) or
-            (SnsChnlParams[IIndx].Name == Sns6A);
-}
-
 void SnsChnl_t::ProcessNewValue(uint32_t AValue) {
     //Com.Printf("Sns%u %u\r", IIndx, AValue);
     //if(SnsChnl[ChIndx].Name == Sns3B) Com.Printf("Sns3B %u\r", FValue);
@@ -113,43 +118,25 @@ void SnsChnl_t::ProcessNewValue(uint32_t AValue) {
     else if (AValue > OPEN_ADC_VALUE)  ssNow = ssOpen;
     else ssNow = ssOk;
 
-    if ((ssNow != ssOk) and (IState == ssOk)) {     // Problem appeared
+    if ((ssNow != ssOk) and (State == ssOk)) {     // Problem appeared
         ProblemIsNew = true;
-        Com.Printf("Sns%u: NewProb %u\r", IIndx, ssNow);
+        Com.Printf("Sns%u: NewProb %u\r", ChIndx, ssNow);
         Delay.Reset(&ITimer);                       // Change state only if time passed
     }
-    else if((ssNow == ssOk) and (IState != ssOk)) { // Problem disappeared
+    else if((ssNow == ssOk) and (State != ssOk)) { // Problem disappeared
         ProblemIsNew = false;
-        Com.Printf("Sns%u: No Prob\r", IIndx);
-        UpdateCurrentState();                       // Remove problem state immediately
+        Com.Printf("Sns%u: No Prob\r", ChIndx);
     }
-    IState = ssNow;
+    State = ssNow;
 }
 
 bool SnsChnl_t::NewProblemOccured() {
-    if ((IState != ssOk) and ProblemIsNew and Delay.Elapsed(&ITimer, NEW_PROBLEM_TIMEOUT)) {
+    if ((State != ssOk) and ProblemIsNew and Delay.Elapsed(&ITimer, NEW_PROBLEM_TIMEOUT)) {
         ProblemIsNew = false;
         return true;
     }
     else return false;
 }
-
-void SnsChnl_t::UpdateCurrentState() {
-    uint8_t State;
-    uint8_t SnsIndx = IIndx >> 1;
-    State = CurrentData.SnsArr[SnsIndx];
-    //Com.Printf("Sns%u Old: %X\r", SnsIndx, CurrentState);
-    if (IsA) {
-        State &= 0x0F;   // Erase top bits
-        State += ((uint8_t)IState) << 4;
-    }
-    else {
-        State &= 0xF0;   // Erase Lo bits
-        State += ((uint8_t)IState);
-    }
-    CurrentData.SnsArr[SnsIndx] = State;
-}
-
 
 // ================================== ADC ======================================
 void Sensors_t::AdcGpioInit() {
@@ -242,7 +229,6 @@ void Sensors_t::UpdateWaterValue(void) {
     uint32_t V = ReadWaterValue();
     V++;
     WriteWaterValue(V);
-    CurrentData.WaterValue = V;
     Com.Printf("W: %u\r", V);
 }
 

@@ -31,14 +31,24 @@ void TimeCounter_t::Init() {
         // ==== Rtc config ====
         BKP_DeInit();                   // Reset Backup Domain
         RCC_LSEConfig(RCC_LSE_ON);      // Enable LSE
-        while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET);    // Wait till LSE is ready
-        RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);     // Select LSE as RTC Clock Source
-        RCC_RTCCLKCmd(ENABLE);                      // Enable RTC Clock
-        RTC_WaitForSynchro();                       // Wait for RTC registers synchronization
-        RTC_WaitForLastTask();  // Wait until last write operation on RTC registers has finished
-        // Set RTC prescaler: set RTC period to 1sec
-        RTC_SetPrescaler(32767);// RTC period = RTCCLK/RTC_PR = (32.768 KHz)/(32767+1)
-        RTC_WaitForLastTask();  // Wait until last write operation on RTC registers has finished
+        uint32_t FTmr;
+        Delay.Reset(&FTmr);
+        while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET) {    // Wait till LSE is ready
+            if (Delay.Elapsed(&FTmr, 1800)) {
+                Com.Printf("32768 clk failure\r");
+                break;
+            }
+        }
+        if (RCC_GetFlagStatus(RCC_FLAG_LSERDY)) {
+            Com.Printf("32768 clk started\r");
+            RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);     // Select LSE as RTC Clock Source
+            RCC_RTCCLKCmd(ENABLE);                      // Enable RTC Clock
+            RTC_WaitForSynchro();                       // Wait for RTC registers synchronization
+            RTC_WaitForLastTask();  // Wait until last write operation on RTC registers has finished
+            // Set RTC prescaler: set RTC period to 1sec
+            RTC_SetPrescaler(32767);// RTC period = RTCCLK/RTC_PR = (32.768 KHz)/(32767+1)
+            RTC_WaitForLastTask();  // Wait until last write operation on RTC registers has finished
+        }
         // Set default date values and do not set time
         SetDate(DEFAULT_YEAR, DEFAULT_MONTH, DEFAULT_DAY);
         BKP_WriteBackupRegister(BKPREG_CHECK, 0xA5A5);  // Signal is set
@@ -48,7 +58,6 @@ void TimeCounter_t::Init() {
         RTC_WaitForSynchro();
         RTC_WaitForLastTask();
     }
-
     // Enable IRQ
     RTC_ITConfig(RTC_IT_SEC, ENABLE);
     RTC_WaitForLastTask();

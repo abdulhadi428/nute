@@ -18,6 +18,8 @@
 #define BKPREG_WATER_HI     BKP_DR5
 #define BKPREG_WATER_LO     BKP_DR6
 #define MIN_PULSE_LENGTH    252     // Min length of water pulse
+#define NEW_PROBLEM_TIMEOUT 4005    // for channels
+#define WRITE_MIN_DELAY     18000   // ms
 
 // Sensor states
 enum SnsState_t {ssOk=0x00,
@@ -82,24 +84,22 @@ public:
         IWriteIndx++;
         if (IWriteIndx >= SNS_BUF_SZ) IWriteIndx = 0;
     }
+    uint32_t ReadCount(void) { return (IWriteIndx >=  IReadIndx)? (IWriteIndx - IReadIndx) : ((IWriteIndx + SNS_BUF_SZ) - IReadIndx); }
 };
 
 #define SHORT_ADC_VALUE     477
 #define WATER_ADC_VALUE     2205
 #define OPEN_ADC_VALUE      3600
-#define NEW_PROBLEM_TIMEOUT 4005
 class SnsChnl_t {
 private:
     uint32_t ITimer;
-    SnsState_t IState;
-    bool ProblemIsNew;
-    uint32_t IIndx;
-    bool IsA;
 public:
-    void Init(uint32_t AIndx);
+    bool ProblemIsNew;
+    uint32_t Value;
+    SnsState_t State;
+    void Init(void) { State = ssOk; }
     void ProcessNewValue(uint32_t AValue);
     bool NewProblemOccured(void);
-    void UpdateCurrentState(void);
 };
 
 class Sensors_t {

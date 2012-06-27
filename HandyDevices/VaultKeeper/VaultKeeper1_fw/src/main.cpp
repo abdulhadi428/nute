@@ -26,12 +26,10 @@ private:
     bool ReportIsSent;
     Error_t GetTime(void);
 public:
-    void Init(void);
     void Task(void);
     void SendNow(void) { ReportIsSent = false; Time.Bypass(&RetryTmr, RETRY_TIMEOUT); }
 } Report;
 
-LedBlink_t Led;
 char HostKey[41];   // CEF251C525315E1D471FD0C63CB5443BB7DAF7F5
 
 // Prototypes
@@ -45,10 +43,7 @@ int main(void) {
     //Mdm.SendSMS("+79169895800", "Aiya Feanaro!");
 
     // ==== Main cycle ====
-    //uint32_t Tmr;
     while (1) {
-        Led.Task();
-        //if(Delay.Elapsed(&Tmr, 999)) Led.Blink(199);
         Report.Task();
         Sensors.Task();
     } // while 1
@@ -64,15 +59,12 @@ inline void GeneralInit(void) {
     Delay.ms(63);
     Com.Init();
     Com.Printf("\rVault Keeper1\rHostID: %u\r", HOST_ID);
+    GenerateHostKey();
 
-    Led.Init(GPIOD, 2);
-    //Led.On();
     Time.Init();
     Sensors.Init();
-
     Mdm.Init();
-    GenerateHostKey();
-    Report.Init();
+    Report.SendNow();   // Get time
 }
 
 
@@ -97,10 +89,7 @@ void GenerateHostKey(void) {
 #define URL_REQUEST     "/request.php"
 #define REPORT_MINUTE   23
 
-void Report_t::Init() {
-    SendNow();
-}
-
+#define MDM_ENABLE     // DEBUG
 void Report_t::Task(void) {
     // Send report every hour
     static uint8_t FLastHour = 27;  // dummy for first time
@@ -120,11 +109,13 @@ void Report_t::Task(void) {
     if(!ReportIsSent) if(Time.SecElapsed(&RetryTmr, RETRY_TIMEOUT)) {
         Com.Printf("==== Sending report ==== ");
         Time.Print();
+#ifdef MDM_ENABLE
         Mdm.On();
         if (Mdm.GprsOn() == erOk) {
             if (Mdm.OpenConnection(URL_HOST) == erOk) {
                 // Renew time
                 if (GetTime() == erOk) {
+#endif
                     // ==== Send data ====
                     RowData_t *PRow;
                     char *S = Mdm.DataString, ErrStr[SNS_COUNT*7+5+1], *E;    // every sns needs 7 chars; battery needs 5.
@@ -134,6 +125,7 @@ void Report_t::Task(void) {
 
                         // Construct error string
                         E = ErrStr;
+                        *E = 0; // Empty string
                         for (uint32_t i=0; i<SNS_COUNT; i++) {
                             if (PRow->SnsArr[i] != 0) E = klSPrintf(E, "%u.%u,", i, PRow->SnsArr[i]);
                         }
@@ -145,7 +137,7 @@ void Report_t::Task(void) {
                         Com.Printf("Errors: %S\r", ErrStr);
 
                         // Construct data string
-                        klSPrintf(S, "host_id=%u&water_value=%u&time=%u%u%u%u%u%u&errors=%S&host_key=%S",
+                        klSPrintf(S, "host_id=%u&water_value=%u&time=%u4%u2%u2%u2%u2%u2&errors=%S&host_key=%S",
                                 HOST_ID, PRow->WaterValue,
                                 PRow->DateTime.Year, PRow->DateTime.Month, PRow->DateTime.Day,
                                 PRow->DateTime.H,    PRow->DateTime.M,     PRow->DateTime.S,
@@ -155,13 +147,16 @@ void Report_t::Task(void) {
                         Com.Printf("Hash: %S\r", Sha1String);
 
                         // Construct string to send
-                        klSPrintf(S, "host_id=%u&water_value=%u&time=%u%u%u%u%u%u&errors=%S&host_hash=%S",
+                        klSPrintf(S, "host_id=%u&water_value=%u&time=%u4%u2%u2%u2%u2%u2&errors=%S&host_hash=%S",
                                 HOST_ID, PRow->WaterValue,
                                 PRow->DateTime.Year, PRow->DateTime.Month, PRow->DateTime.Day,
                                 PRow->DateTime.H,    PRow->DateTime.M,     PRow->DateTime.S,
                                 ErrStr, Sha1String);
                         Com.Printf("To send: %S\r", S);
-                        if ((r = Mdm.POST(URL_HOST, URL_REQUEST, S)) == erOk) SnsBuf.PrepareToReadNext(); // Sent ok, goto next
+#ifdef MDM_ENABLE
+                        if ((r = Mdm.POST(URL_HOST, URL_REQUEST, S, (SnsBuf.ReadCount() > 1))) == erOk)
+#endif
+                            SnsBuf.PrepareToReadNext(); // Sent ok, goto next
                     } // while
                     if (r == erOk) {
                         // Mission completed
@@ -169,12 +164,14 @@ void Report_t::Task(void) {
                         ReportIsSent = true;
                         FLastHour = Time.GetHour();
                     }
+#ifdef MDM_ENABLE
                 } // if time
                 Mdm.CloseConnection();
             } // if open connection
             Mdm.GprsOff();
         } // if GPRS
         Mdm.Off();
+#endif
     } // if not sent
 }
 
@@ -182,7 +179,7 @@ void Report_t::Task(void) {
 // keepertime 2012-06-22 18-14-05
 Error_t Report_t::GetTime(void) {
     Com.Printf("Receiving Time...\r");
-    if (Mdm.GET(URL_HOST, URL_TIME, Mdm.DataString, 30) == erOk) {
+    if (Mdm.GET(URL_HOST, URL_TIME, Mdm.DataString, 30, (SnsBuf.ReadCount() > 1)) == erOk) {
         char S[7];
         klStrNCpy(S, &Mdm.DataString[11], 4);
         uint16_t Year = atoi(S);
