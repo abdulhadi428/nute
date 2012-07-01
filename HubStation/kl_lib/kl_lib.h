@@ -146,8 +146,8 @@ void TIM2_IRQHandler(void);
 #define RX_ENABLED
 
 #ifdef RX_ENABLED
-#define UART_RXBUF_SIZE     45
-enum CmdState_t {csNone, csInProgress, csReady};
+#define UART_RXBUF_SZ   81
+#define UART_CMD_SZ     63
 #endif
 
 class CmdUnit_t {
@@ -156,10 +156,11 @@ private:
     uint8_t *PBuf, TxIndx;
     bool IDmaIsIdle;
 #ifdef RX_ENABLED
-    CmdState_t CmdState;
-    char RXBuf[UART_RXBUF_SIZE];
-    uint8_t RxIndx;
-    void CmdReset(void) { RxIndx = 0; CmdState = csNone; }
+    char RXBuf[UART_RXBUF_SZ];
+    uint16_t RxWIndx, RxRIndx;
+    bool BufIsEmpty(void) { return (RxRIndx == RxWIndx); }
+    void BufReset(void) { RxRIndx = RxWIndx; }
+    char RxBufRead(void) {char c = RXBuf[RxRIndx++]; if(RxRIndx == UART_RXBUF_SZ) RxRIndx=0; return c;}
 #endif
     void IStartTx(void);
     void BufWrite(uint8_t AByte) {
@@ -178,10 +179,10 @@ public:
     void Init(void);
     void Task(void);
 #ifdef RX_ENABLED
+    char CmdRcvd[UART_CMD_SZ];
     void NewCmdHandler(void);   // Place it where needed
+    void RxBufWrite(char C) { RXBuf[RxWIndx++] = C; if(RxWIndx >= UART_RXBUF_SZ) RxWIndx=0; }
 #endif
-    // IRQ
-    void IRQHandler(void);
 };
 
 // RX IRQ

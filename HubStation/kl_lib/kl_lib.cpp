@@ -382,10 +382,19 @@ void CmdUnit_t::Init(void) {
 
 void CmdUnit_t::Task() {
 #ifdef RX_ENABLED
-    if (CmdState == csReady) {
-        NewCmdHandler();
-        CmdReset();
-    }
+    char c;
+    static uint32_t Indx = 0;
+    // Try to get cmd
+    if (!BufIsEmpty()) {
+        c = RxBufRead();
+        if (((c == '\r') or (c == '\n')) and (Indx != 0)) {   // <cr> or <lf> Line received
+            CmdRcvd[Indx] = 0;   // end of string
+            NewCmdHandler();
+            Indx = 0;   // Receive next line
+        }
+        else CmdRcvd[Indx++] = c;
+        if(Indx >= UART_CMD_SZ-1) Indx = 0; // Error
+    } // if not empty
 #endif
     if (DMA_GetFlagStatus(DMA1_FLAG_TC4)) {
         DMA_ClearFlag(DMA1_FLAG_TC4);
@@ -411,34 +420,9 @@ void CmdUnit_t::IStartTx(void) {
 
 // ==== IRQs ====
 #ifdef RX_ENABLED
-void CmdUnit_t::IRQHandler() {
-    if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
-        char b = USART1->DR;
-        if (b != '\n') switch (CmdState) {  // Ignore \n
-            case csNone:
-                RXBuf[RxIndx++] = b;
-                CmdState = csInProgress;
-                break;
-            case csInProgress:
-                // Check if end of cmd
-                if (b == '\r') {
-                    CmdState = csReady;
-                    RXBuf[RxIndx] = 0;
-                }
-                else {
-                    RXBuf[RxIndx++] = b;
-                    // Check if too long
-                    if (RxIndx == UART_RXBUF_SIZE) CmdReset();
-                }
-                break;
-            case csReady:   // New byte received, but command still not handled
-                break;
-        } // switch
-    } // if rx
-}
-
 void USART1_IRQHandler(void) {
-    CmdUnit.IRQHandler();
+    if(USART_GetITStatus(USART1, USART_IT_RXNE) == RESET) return;
+    CmdUnit.RxBufWrite(USART1->DR);
 }
 #endif
 

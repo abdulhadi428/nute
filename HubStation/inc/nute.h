@@ -58,7 +58,7 @@ struct Tixe_t {
     uint8_t StateCmd;
     Situation_t Situation;
 };
-#define TIXE_COUNT  50
+#define TIXE_COUNT  54
 extern Tixe_t Tixe[TIXE_COUNT];
 #endif
 

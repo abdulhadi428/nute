@@ -47,17 +47,17 @@ inline void GeneralInit(void) {
     Led.Init(GPIOB, 1);
     Led.On();
 
-    Nute.Init(1);
+    Nute.Init(252);
     AreaList.Init();
 
-    Tixe[0].IsToBeFound = true;
+    //Tixe[0].IsToBeFound = true;
 
     // Setup CC
     CC.Init();
     CC.SetChannel(0);
     CC.SetAddress(Nute.TX_Pkt.AddrFrom);
 
-    CmdUnit.Printf("\rCollar station\r");
+    CmdUnit.Printf("\r\nCollar station\r\n");
 }
 
 void InterrogationTask(void) {
@@ -82,17 +82,19 @@ void Nute_t::HandleTixeReply(uint8_t AIndx) {
     if (Tixe[AIndx].IsOnline) {
         Situation_t *PStn = &Tixe[AIndx].Situation;
         // $C,ID,PwrID,Battery,State,HHMMSS,Latitude,Longitude,IsFixed,SatelliteCount,Precision
-        CmdUnit.Printf("$C,%u,%u,%u,%u,%u2%u2%u2,%i,%i,%u,%u,%u\r",
+        CmdUnit.Printf("$C,%u,%u,%u,%u,%u,%u,%u2%u2%u2,%i,%i,%u,%u,%u\r\n",
                 AIndx,
                 Tixe[AIndx].PwrID,
                 PStn->Battery,
-                PStn->State,
+                PStn->State & 0x0F,
+                ((PStn->State & 0x20)? 1 : 0),
+                ((PStn->State & 0x10)? 1 : 0),
                 PStn->Time.H, PStn->Time.M, PStn->Time.S,
                 PStn->Latitude, PStn->Longitude,
                 PStn->IsFixed, PStn->SatCount, PStn->Precision
                 );
     }
-    else CmdUnit.Printf("No answer\r");
+    else CmdUnit.Printf("No answer\r\n");
 }
 
 // ========================== Commands handling ================================
@@ -133,45 +135,63 @@ bool TryHexToByte(char **Src, uint8_t *AByte) {
 
 
 void CmdUnit_t::NewCmdHandler() {
-    if (RXBuf[0] != '$') { Printf("$ERROR0\r"); return; }
+//    Printf("%S\r\n", CmdRcvd);    // Echo
+    if (CmdRcvd[0] != '$') { Printf("$ERROR0\r\n"); return; }
     // Kick
-    if (RXBuf[1] == 'K') Printf("$Ok\r");
+    if (CmdRcvd[1] == 'K') Printf("$Ok\r\n");
 
     // Signal
-    else if (RXBuf[1] == 'S') {
-        if (RXBuf[2] != ',') { Printf("$ERROR1\r"); return; }
-        char *S = &RXBuf[3];
+    else if (CmdRcvd[1] == 'S') {
+        if (CmdRcvd[2] != ',') { Printf("$ERROR1\r\n"); return; }
+        char *S = &CmdRcvd[3];
         uint32_t FIndx=0, FSignal=0;
-        if (!CharIsDecNumber(*S))             { Printf("$ERROR2\r"); return; }
-        if (!TryCommaStrToUint(&S, &FIndx))   { Printf("$ERROR3\r"); return; }
-        if (!CharIsDecNumber(*S))             { Printf("$ERROR4\r"); return; }
-        if (!TryCommaStrToUint(&S, &FSignal)) { Printf("$ERROR5\r"); return; }
-        Printf("\rID: %u; S: %u\r", FIndx, FSignal);
-        if (FIndx > 49)  { Printf("$ERROR6\r"); return; }
-        if (FSignal > 3) { Printf("$ERROR6\r"); return; }
+        if (!CharIsDecNumber(*S))             { Printf("$ERROR2\r\n"); return; }
+        if (!TryCommaStrToUint(&S, &FIndx))   { Printf("$ERROR3\r\n"); return; }
+        if (!CharIsDecNumber(*S))             { Printf("$ERROR4\r\n"); return; }
+        if (!TryCommaStrToUint(&S, &FSignal)) { Printf("$ERROR5\r\n"); return; }
+        Printf("\r\nID: %u; S: %u\r\n", FIndx, FSignal);
+        if (FIndx > 99)  { Printf("$ERROR6\r\n"); return; }
+        if (FSignal > 3) { Printf("$ERROR6\r\n"); return; }
         // Parsing ok, change tixe
         Tixe[FIndx].StateCmd = FSignal;
         Tixe[FIndx].IsToBeFound = true;
-        Printf("$Ok\r");
+        Printf("$Ok\r\n");
     }
 
     // Areas
-    else if (RXBuf[1] == 'A') {
+    else if (CmdRcvd[1] == 'A') {
         Printf("A ");
-        if (RXBuf[2] != ',') { Printf("$ERROR1\r"); return; }
+        if (CmdRcvd[2] != ',') { Printf("$ERROR1\r\n"); return; }
         uint8_t b=0;
-        char *S = &RXBuf[2];
+        char *S = &CmdRcvd[2];
         for (uint8_t i=0; i<18; i++) {
             S++;    // next chunk
-            if(!CharIsHexNumber(*S))  { Printf("$ERROR2 %u\r", i); return; }
-            if(!TryHexToByte(&S, &b)) { Printf("$ERROR3 %u\r", i); return; }
+            if(!CharIsHexNumber(*S))  { Printf("$ERROR2 %u\r\n", i); return; }
+            if(!TryHexToByte(&S, &b)) { Printf("$ERROR3 %u\r\n", i); return; }
             Printf("%X ", b);
             AreaList.Restriction[i] = b;
         }
-        Printf("\r");
-        Printf("$Ok\r");
+        Printf("\r\n");
+        Printf("$Ok\r\n");
+    }
+
+    // Interrogation
+    else if (CmdRcvd[1] == 'I') {
+        if (CmdRcvd[2] != ',') { Printf("$ERROR1\r\n"); return; }
+        char *S = &CmdRcvd[3];
+        uint32_t FIndx=0, FCmd=0;
+        if (!CharIsDecNumber(*S))           { Printf("$ERROR2\r\n"); return; }
+        if (!TryCommaStrToUint(&S, &FIndx)) { Printf("$ERROR3\r\n"); return; }
+        if (!CharIsDecNumber(*S))           { Printf("$ERROR4\r\n"); return; }
+        if (!TryCommaStrToUint(&S, &FCmd))  { Printf("$ERROR5\r\n"); return; }
+        if (FIndx > 99)  { Printf("$ERROR6\r\n"); return; }
+        if (FCmd == 0) Printf("\r\nID %u: exclude\r\n", FIndx);
+        else Printf("\r\nID %u: include\r\n", FIndx);
+        // Parsing ok, change tixe
+        Tixe[FIndx].IsToBeFound = (FCmd != 0);
+        Printf("$Ok\r\n");
     }
 
     // Unknown cmd
-    else Printf("$ERROR: Unknown\r");
+    else Printf("$ERROR: Unknown\r\n");
 }

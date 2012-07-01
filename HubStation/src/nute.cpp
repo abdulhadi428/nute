@@ -65,7 +65,7 @@ void Nute_t::Task() {
 // ============================= HubStation ====================================
 #ifdef NUTE_MODE_STATION
 void Nute_t::Ping(uint32_t ATixeNumber) {
-    CmdUnit.Printf("Ping %u\r", ATixeNumber);
+    //CmdUnit.Printf("Ping %u\r", ATixeNumber);
     ITixeNumber = ATixeNumber;
     Tixe[ITixeNumber].IsOnline = false;
     State = nsPing;
@@ -79,7 +79,7 @@ inline void Nute_t::DoPing() {
         // Setup output power
         TX_Pkt.PwrID = Tixe[ITixeNumber].PwrID;
         CC.SetPower(TX_Pkt.PwrID);
-        CmdUnit.Printf("Pwr: %u\r", TX_Pkt.PwrID);
+        //CmdUnit.Printf("Pwr: %u\r", TX_Pkt.PwrID);
         // Start transmission
         CC.Transmit();
         Delay.Reset(&ITimer);
