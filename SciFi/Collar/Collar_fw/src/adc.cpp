@@ -16,6 +16,7 @@ void Adc_t::Init() {
     RCC_ADCCLKConfig(RCC_PCLK2_Div4);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+    ADC_Cmd(ADC1, DISABLE);
     // ==== GPIO ====
     klGpioSetupByN(GPIOB, 0, GPIO_Mode_AIN);
     // ==== ADC's DMA ====
@@ -33,33 +34,25 @@ void Adc_t::Init() {
     DMA_InitStructure.DMA_Priority = DMA_Priority_Low;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(DMA1_Channel1, &DMA_InitStructure);
-    //DMA_Cmd(DMA1_Channel1, ENABLE);
+    DMA_Cmd(DMA1_Channel1, ENABLE);
     // ==== ADC ====
     ADC_InitTypeDef ADC_InitStructure;
     ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;  // Independent, not dual
-    ADC_InitStructure.ADC_ScanConvMode = ENABLE;
+    ADC_InitStructure.ADC_ScanConvMode = DISABLE;
     ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
-//    ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
     ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
     ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
     ADC_InitStructure.ADC_NbrOfChannel = 1;
     ADC_Init(ADC1, &ADC_InitStructure);
     // ADC1 regular channels configuration
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5);
-    //ADC_DMACmd(ADC1, ENABLE);                   // Enable ADC1 DMA
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_71Cycles5);
     ADC_Cmd(ADC1, ENABLE);                      // Enable ADC1
     // Calibrate ADC
-    Delay.ms(207);
-    ADC1->CR2 |= (uint32_t)0x08;
-    //while(ADC1->CR2 & 0x08);
-    //Delay.ms(45);
-    //ADC1->CR2 |= 0x04;
-    //Delay.ms(45);
-    //while(ADC1->CR2 & 0x04);
-    //ADC_ResetCalibration(ADC1);                 // Enable ADC1 reset calibration register
-    //while(ADC_GetResetCalibrationStatus(ADC1)); // Check the end of ADC1 reset calibration register
-    //ADC_StartCalibration(ADC1);                 // Start ADC1 calibration
-//    while(ADC_GetCalibrationStatus(ADC1));      // Check the end of ADC1 calibration
+    ADC_ResetCalibration(ADC1);                 // Enable ADC1 reset calibration register
+    while(ADC_GetResetCalibrationStatus(ADC1)); // Check the end of ADC1 reset calibration register
+    ADC_StartCalibration(ADC1);                 // Start ADC1 calibration
+    while(ADC_GetCalibrationStatus(ADC1));      // Check the end of ADC1 calibration
+    ADC_DMACmd(ADC1, ENABLE); // Enable ADC1 DMA
     // Start ADC1 Software Conversion
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }
@@ -68,6 +61,6 @@ uint16_t Adc_t::GetValue() {
     uint32_t FValue=0;
     for(uint32_t i=0; i<ADC_AVERAGE_COUNT; i++) FValue += ADCValues[i];
     FValue /= ADC_AVERAGE_COUNT;
-    CmdUnit.Printf("adc = %u\r", FValue);
+    //CmdUnit.Printf("adc = %u\r", FValue);
     return FValue;
 }

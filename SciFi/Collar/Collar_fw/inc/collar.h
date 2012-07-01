@@ -19,7 +19,7 @@
 #define COLSTATE_CMD_NOTHING    0
 #define COLSTATE_CMD_BOOM       1
 #define COLSTATE_CMD_DELAY      2
-#define COLSTATE_CMD_BE_OK      3
+#define COLSTATE_CMD_RESET      3
 
 extern uint8_t CollarState;
 extern uint8_t CollarStateCmd;

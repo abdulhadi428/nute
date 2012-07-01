@@ -158,7 +158,7 @@ void Nute_t::HandleTxEnd() {
 extern LedBlinkInverted_t Led;
 void Nute_t::HandleNewPkt() {
     Led.Blink(45);
-    CmdUnit.Printf("NewPkt\r");
+    //CmdUnit.Printf("NewPkt\r");
     // Handle incoming data
     CollarStateCmd = RX_Pkt.StateCmd;
     memcpy(AreaList.Restriction, RX_Pkt.Arr, 18);
@@ -168,7 +168,6 @@ void Nute_t::HandleNewPkt() {
     AdjustPwr(&PwrID);              // Adjust power to transmit at needed power
     TX_Pkt.AddrTo = RX_Pkt.AddrFrom;
     TX_Pkt.PwrID = PwrID;
-    Situation->State = CollarState; // Place situation to pkt
     CC.SetPower(PwrID);             // Setup output power
     CC.Transmit();                  // Start transmission
     State = nsTransmitting;
