@@ -1,9 +1,5 @@
-# EESchema Netlist Version 1.1 created  06/07/2012 01:28:34
+# EESchema Netlist Version 1.1 created  06/07/2012 14:14:24
 (
- ( /4F2EA747 BATTERY_AA_X1 B1 BAT
-  ( A +BATT )
-  ( C GND )
- )
  ( /4EBAE64E SMD0603 C1 0.1u
   ( 1 +BATT )
   ( 2 GND )
@@ -17,7 +13,7 @@
   ( 2 GND )
  )
  ( /4FF60577 SMD0603 C4 18pF
-  ( 1 N-000044 )
+  ( 1 N-000027 )
   ( 2 GND )
  )
  ( /4EBAE71B SMD0603 C5 0.1u
@@ -45,7 +41,7 @@
   ( 2 GND )
  )
  ( /4FF60578 SMD0603 C11 18pF
-  ( 1 N-000053 )
+  ( 1 N-000043 )
   ( 2 GND )
  )
  ( /4E47AC96 SMD0603 C12 1u
@@ -53,7 +49,7 @@
   ( 2 GND )
  )
  ( /4FF60579 SMD0603 C13 0.1u
-  ( 1 N-000049 )
+  ( 1 N-000052 )
   ( 2 GND )
  )
  ( /4FF6056B SMD0603 C14 220pF
@@ -81,23 +77,23 @@
   ( 2 GND )
  )
  ( /4FF60582 SMD0603 C20 1pF
-  ( 1 N-000026 )
-  ( 2 N-000054 )
+  ( 1 N-000058 )
+  ( 2 N-000059 )
  )
  ( /4FF60581 SMD0603 C21 100pF
   ( 1 GND )
-  ( 2 N-000027 )
+  ( 2 N-000054 )
  )
  ( /4FF6057F SMD0603 C22 1.5pF
-  ( 1 N-000054 )
+  ( 1 N-000059 )
   ( 2 GND )
  )
  ( /4FF60580 SMD0603 C23 1.5pF
   ( 1 N-000038 )
-  ( 2 N-000026 )
+  ( 2 N-000058 )
  )
  ( /4FF6057E SMD0603 C24 3.3pF
-  ( 1 N-000052 )
+  ( 1 N-000053 )
   ( 2 GND )
  )
  ( /4EBAE6D4 Diode_SMA D1 D_SHOTTKY
@@ -166,19 +162,19 @@
   ( 2 /CC_MISO )
   ( 3 ? )
   ( 4 +3.3V )
-  ( 5 N-000049 )
+  ( 5 N-000052 )
   ( 6 /CC_GDO0 )
   ( 7 /CC_CS )
-  ( 8 N-000044 )
+  ( 8 N-000027 )
   ( 9 +3.3V )
-  ( 10 N-000053 )
+  ( 10 N-000043 )
   ( 11 +3.3V )
   ( 12 /RF1 )
   ( 13 /RF2 )
   ( 14 +3.3V )
   ( 15 +3.3V )
   ( 16 GND )
-  ( 17 N-000030 )
+  ( 17 N-000025 )
   ( 18 +3.3V )
   ( 19 GND )
   ( 20 /CC_MOSI )
@@ -195,28 +191,28 @@
   ( 2 +BATT )
  )
  ( /4FF6055D SMD0402 L2 12nH
-  ( 1 N-000026 )
+  ( 1 N-000058 )
   ( 2 /RF1 )
  )
  ( /4FF6055C SMD0402 L3 12nH
-  ( 1 N-000054 )
+  ( 1 N-000059 )
   ( 2 /RF2 )
  )
  ( /4FF6055A SMD0402 L4 18nH
-  ( 1 N-000027 )
-  ( 2 N-000026 )
+  ( 1 N-000054 )
+  ( 2 N-000058 )
  )
  ( /4FF6055B SMD0402 L5 18nH
   ( 1 N-000038 )
-  ( 2 N-000054 )
+  ( 2 N-000059 )
  )
  ( /4FF60558 SMD0402 L6 12nH
-  ( 1 N-000052 )
+  ( 1 N-000053 )
   ( 2 N-000038 )
  )
  ( /4FF60559 SMD0402 L7 12nH
   ( 1 GND )
-  ( 2 N-000052 )
+  ( 2 N-000053 )
  )
  ( /4FF20A53 SOT23 Q1 IRLML6302
   ( 1 N-000051 )
@@ -225,18 +221,18 @@
  )
  ( /4FF20B31 HH5050_RGB_LED Q2 LED_RGB
   ( BA +3.3V )
-  ( BC N-000035 )
+  ( BC N-000034 )
   ( GA +3.3V )
   ( GC N-000036 )
   ( RA +3.3V )
-  ( RC N-000034 )
+  ( RC N-000033 )
  )
  ( /4FF20A78 SMD0603 R1 10k
   ( 1 +3.3V )
   ( 2 N-000051 )
  )
  ( /4FF20B9B SMD0603 R2 51R*
-  ( 1 N-000034 )
+  ( 1 N-000033 )
   ( 2 /Red )
  )
  ( /4FF20BB7 SMD0603 R3 51R*
@@ -244,11 +240,11 @@
   ( 2 /Green )
  )
  ( /4FF20BB1 SMD0603 R4 51R*
-  ( 1 N-000035 )
+  ( 1 N-000034 )
   ( 2 /Blue )
  )
  ( /4FF6057A SMD0603 R5 56k
-  ( 1 N-000030 )
+  ( 1 N-000025 )
   ( 2 GND )
  )
  ( /4DC3C36E SMD0603 R8 1k
@@ -284,19 +280,20 @@
   ( 1 /TX1 )
   ( 2 GND )
  )
+ ( /4FF6B9FB SIL1_SQUARE_1MM5 XL4 CONN_1
+  ( 1 +BATT )
+ )
+ ( /4FF6BA01 SIL1_ROUND_1MM5 XL5 CONN_1
+  ( 1 GND )
+ )
  ( /4EBE2A37 CRYSTAL_0503x4-4 XTAL2 26MHz
-  ( 1 N-000044 )
-  ( 2 N-000053 )
+  ( 1 N-000027 )
+  ( 2 N-000043 )
   ( H GND )
  )
 )
 *
 { Allowed footprints by component:
-$component B1
- BH*
- CH*
- BATTERY*
-$endlist
 $component C1
  SMD*
 $endlist
