@@ -1,0 +1,461 @@
+# EESchema Netlist Version 1.1 created  06/07/2012 01:28:34
+(
+ ( /4F2EA747 BATTERY_AA_X1 B1 BAT
+  ( A +BATT )
+  ( C GND )
+ )
+ ( /4EBAE64E SMD0603 C1 0.1u
+  ( 1 +BATT )
+  ( 2 GND )
+ )
+ ( /4EBAE654 SMD0805 C2 10u
+  ( 1 +BATT )
+  ( 2 GND )
+ )
+ ( /4FF20A9D SMD0805 C3 10u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4FF60577 SMD0603 C4 18pF
+  ( 1 N-000044 )
+  ( 2 GND )
+ )
+ ( /4EBAE71B SMD0603 C5 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4EBAE71A SMD0805 C6 10u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4E37BAEC SMD0603 C7 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4E37BB80 SMD0603 C8 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4E37BB86 SMD0603 C9 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4E37BB85 SMD0603 C10 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4FF60578 SMD0603 C11 18pF
+  ( 1 N-000053 )
+  ( 2 GND )
+ )
+ ( /4E47AC96 SMD0603 C12 1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4FF60579 SMD0603 C13 0.1u
+  ( 1 N-000049 )
+  ( 2 GND )
+ )
+ ( /4FF6056B SMD0603 C14 220pF
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4FF60568 SMD0603 C15 0.01u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4FF60567 SMD0603 C16 3.3pF
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4FF60563 SMD0603 C17 0.01u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4FF60564 SMD0603 C18 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4FF60561 SMD0603 C19 220pF
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /4FF60582 SMD0603 C20 1pF
+  ( 1 N-000026 )
+  ( 2 N-000054 )
+ )
+ ( /4FF60581 SMD0603 C21 100pF
+  ( 1 GND )
+  ( 2 N-000027 )
+ )
+ ( /4FF6057F SMD0603 C22 1.5pF
+  ( 1 N-000054 )
+  ( 2 GND )
+ )
+ ( /4FF60580 SMD0603 C23 1.5pF
+  ( 1 N-000038 )
+  ( 2 N-000026 )
+ )
+ ( /4FF6057E SMD0603 C24 3.3pF
+  ( 1 N-000052 )
+  ( 2 GND )
+ )
+ ( /4EBAE6D4 Diode_SMA D1 D_SHOTTKY
+  ( A /Lout )
+  ( C +3.3V )
+ )
+ ( /4EBAE61B SOT23-5 DA3 NCP1400
+  ( 1 +3.3V )
+  ( 2 +3.3V )
+  ( 3 ? )
+  ( 4 GND )
+  ( 5 /Lout )
+ )
+ ( /4F2D8DA0 LQFP48 DD1 STM32F10X-48
+  ( 1 +3.3V )
+  ( 2 ? )
+  ( 3 ? )
+  ( 4 ? )
+  ( 5 ? )
+  ( 6 ? )
+  ( 7 ? )
+  ( 8 GND )
+  ( 9 +3.3V )
+  ( 10 /ADC_BAT )
+  ( 11 ? )
+  ( 12 ? )
+  ( 13 /CC_GDO0 )
+  ( 14 /CC_CS )
+  ( 15 /CC_SCK )
+  ( 16 /CC_MISO )
+  ( 17 /CC_MOSI )
+  ( 18 N-000051 )
+  ( 19 ? )
+  ( 20 ? )
+  ( 21 ? )
+  ( 22 ? )
+  ( 23 GND )
+  ( 24 +3.3V )
+  ( 25 ? )
+  ( 26 ? )
+  ( 27 ? )
+  ( 28 ? )
+  ( 29 /Red )
+  ( 30 /TX1 )
+  ( 31 /Green )
+  ( 32 /Blue )
+  ( 33 ? )
+  ( 34 /SWDIO )
+  ( 35 GND )
+  ( 36 +3.3V )
+  ( 37 /SWCLK )
+  ( 38 ? )
+  ( 39 ? )
+  ( 40 ? )
+  ( 41 ? )
+  ( 42 ? )
+  ( 43 ? )
+  ( 44 GND )
+  ( 45 ? )
+  ( 46 ? )
+  ( 47 GND )
+  ( 48 +3.3V )
+ )
+ ( /4FF6055F QFN20 DD2 CC1101
+  ( 1 /CC_SCK )
+  ( 2 /CC_MISO )
+  ( 3 ? )
+  ( 4 +3.3V )
+  ( 5 N-000049 )
+  ( 6 /CC_GDO0 )
+  ( 7 /CC_CS )
+  ( 8 N-000044 )
+  ( 9 +3.3V )
+  ( 10 N-000053 )
+  ( 11 +3.3V )
+  ( 12 /RF1 )
+  ( 13 /RF2 )
+  ( 14 +3.3V )
+  ( 15 +3.3V )
+  ( 16 GND )
+  ( 17 N-000030 )
+  ( 18 +3.3V )
+  ( 19 GND )
+  ( 20 /CC_MOSI )
+  ( PAD GND )
+ )
+ ( /4E57A3F7 Hole3_5_out6mm HOLE1 HOLE_METALLED
+  ( Hle GND )
+ )
+ ( /4E57A3FB Hole3_5_out6mm HOLE2 HOLE_METALLED
+  ( Hle GND )
+ )
+ ( /4EBAE696 INDUCTOR_1812 L1 22uH
+  ( 1 /Lout )
+  ( 2 +BATT )
+ )
+ ( /4FF6055D SMD0402 L2 12nH
+  ( 1 N-000026 )
+  ( 2 /RF1 )
+ )
+ ( /4FF6055C SMD0402 L3 12nH
+  ( 1 N-000054 )
+  ( 2 /RF2 )
+ )
+ ( /4FF6055A SMD0402 L4 18nH
+  ( 1 N-000027 )
+  ( 2 N-000026 )
+ )
+ ( /4FF6055B SMD0402 L5 18nH
+  ( 1 N-000038 )
+  ( 2 N-000054 )
+ )
+ ( /4FF60558 SMD0402 L6 12nH
+  ( 1 N-000052 )
+  ( 2 N-000038 )
+ )
+ ( /4FF60559 SMD0402 L7 12nH
+  ( 1 GND )
+  ( 2 N-000052 )
+ )
+ ( /4FF20A53 SOT23 Q1 IRLML6302
+  ( 1 N-000051 )
+  ( 2 +3.3V )
+  ( 3 N-000008 )
+ )
+ ( /4FF20B31 HH5050_RGB_LED Q2 LED_RGB
+  ( BA +3.3V )
+  ( BC N-000035 )
+  ( GA +3.3V )
+  ( GC N-000036 )
+  ( RA +3.3V )
+  ( RC N-000034 )
+ )
+ ( /4FF20A78 SMD0603 R1 10k
+  ( 1 +3.3V )
+  ( 2 N-000051 )
+ )
+ ( /4FF20B9B SMD0603 R2 51R*
+  ( 1 N-000034 )
+  ( 2 /Red )
+ )
+ ( /4FF20BB7 SMD0603 R3 51R*
+  ( 1 N-000036 )
+  ( 2 /Green )
+ )
+ ( /4FF20BB1 SMD0603 R4 51R*
+  ( 1 N-000035 )
+  ( 2 /Blue )
+ )
+ ( /4FF6057A SMD0603 R5 56k
+  ( 1 N-000030 )
+  ( 2 GND )
+ )
+ ( /4DC3C36E SMD0603 R8 1k
+  ( 1 +BATT )
+  ( 2 /ADC_BAT )
+ )
+ ( /4FF60571 TESTPOINT_1MM TP1 TESTPOINT
+  ( 1 /CC_SCK )
+ )
+ ( /4FF60570 TESTPOINT_1MM TP2 TESTPOINT
+  ( 1 /CC_MOSI )
+ )
+ ( /4FF6056E TESTPOINT_1MM TP3 TESTPOINT
+  ( 1 /CC_MISO )
+ )
+ ( /4FF6056F TESTPOINT_1MM TP4 TESTPOINT
+  ( 1 /CC_CS )
+ )
+ ( /4FF6056D TESTPOINT_1MM TP5 TESTPOINT
+  ( 1 /CC_GDO0 )
+ )
+ ( /4FF20AFA SIL-2 XL1 CONN_2
+  ( 1 N-000008 )
+  ( 2 GND )
+ )
+ ( /4E459179 SIL-4 XL2 ST_SWD
+  ( 1 +3.3V )
+  ( 2 /SWCLK )
+  ( 3 GND )
+  ( 4 /SWDIO )
+ )
+ ( /4F2D8D64 SIL-2 XL3 CONN_2
+  ( 1 /TX1 )
+  ( 2 GND )
+ )
+ ( /4EBE2A37 CRYSTAL_0503x4-4 XTAL2 26MHz
+  ( 1 N-000044 )
+  ( 2 N-000053 )
+  ( H GND )
+ )
+)
+*
+{ Allowed footprints by component:
+$component B1
+ BH*
+ CH*
+ BATTERY*
+$endlist
+$component C1
+ SMD*
+$endlist
+$component C2
+ SMD*
+$endlist
+$component C3
+ SMD*
+$endlist
+$component C4
+ SMD*
+$endlist
+$component C5
+ SMD*
+$endlist
+$component C6
+ SMD*
+$endlist
+$component C7
+ SMD*
+$endlist
+$component C8
+ SMD*
+$endlist
+$component C9
+ SMD*
+$endlist
+$component C10
+ SMD*
+$endlist
+$component C11
+ SMD*
+$endlist
+$component C12
+ SMD*
+$endlist
+$component C13
+ SMD*
+$endlist
+$component C14
+ SMD*
+$endlist
+$component C15
+ SMD*
+$endlist
+$component C16
+ SMD*
+$endlist
+$component C17
+ SMD*
+$endlist
+$component C18
+ SMD*
+$endlist
+$component C19
+ SMD*
+$endlist
+$component C20
+ SMD*
+$endlist
+$component C21
+ SMD*
+$endlist
+$component C22
+ SMD*
+$endlist
+$component C23
+ SMD*
+$endlist
+$component C24
+ SMD*
+$endlist
+$component D1
+ D*
+$endlist
+$component DA3
+ SOT23-5
+$endlist
+$component DD1
+ LQFP48
+$endlist
+$component DD2
+ QFN20
+$endlist
+$component HOLE1
+ HOLE*
+$endlist
+$component HOLE2
+ HOLE*
+$endlist
+$component L1
+ INDUCTOR*
+ SMD*
+$endlist
+$component L2
+ INDUCTOR*
+ SMD*
+$endlist
+$component L3
+ INDUCTOR*
+ SMD*
+$endlist
+$component L4
+ INDUCTOR*
+ SMD*
+$endlist
+$component L5
+ INDUCTOR*
+ SMD*
+$endlist
+$component L6
+ INDUCTOR*
+ SMD*
+$endlist
+$component L7
+ INDUCTOR*
+ SMD*
+$endlist
+$component Q1
+ SOT23
+$endlist
+$component R1
+ SMD*
+$endlist
+$component R2
+ SMD*
+$endlist
+$component R3
+ SMD*
+$endlist
+$component R4
+ SMD*
+$endlist
+$component R5
+ SMD*
+$endlist
+$component R8
+ SMD*
+$endlist
+$component TP1
+ TESTPOINT*
+$endlist
+$component TP2
+ TESTPOINT*
+$endlist
+$component TP3
+ TESTPOINT*
+$endlist
+$component TP4
+ TESTPOINT*
+$endlist
+$component TP5
+ TESTPOINT*
+$endlist
+$component XL2
+ SIL-4
+$endlist
+$component XTAL2
+ CRYSTAL*
+$endlist
+$endfootprintlist
+}
