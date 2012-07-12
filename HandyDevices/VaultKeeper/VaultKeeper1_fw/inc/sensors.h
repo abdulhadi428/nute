@@ -23,7 +23,8 @@
 
 // Sensor states
 enum SnsState_t {ssOk=0x00,
-    ssOpen=0x01, ssShort=0x02, ssWater=0x03, ssFail=0x04,
+    ssOpen=0x01, ssShort=0x02, ssWater=0x03,
+    ssFail=0x04,
 };
 enum SnsChName_t {
     Sns1A, Sns1B, Sns2A, Sns2B, Sns3A, Sns3B,
@@ -88,12 +89,10 @@ public:
 };
 
 #define SHORT_ADC_VALUE     477
-#define WATER_ADC_VALUE     2205
+#define WATER_ADC_VALUE     2304
 #define OPEN_ADC_VALUE      3600
-class SnsChnl_t {
-private:
-    uint32_t ITimer;
-public:
+struct SnsChnl_t {
+    uint32_t Timer;
     bool ProblemIsNew;
     uint32_t Value;
     SnsState_t State;

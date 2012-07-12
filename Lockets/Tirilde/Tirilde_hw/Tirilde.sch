@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 07/07/2012 19:01:52
+EESchema Schematic File Version 2  date 10/07/2012 01:24:11
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -16,7 +16,7 @@ $Descr A3 16535 11700
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "7 jul 2012"
+Date "9 jul 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -24,6 +24,16 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L R R1
+U 1 1 4FFB3FE9
+P 1850 2500
+F 0 "R1" V 1930 2500 50  0000 C CNN
+F 1 "10k" V 1850 2500 50  0000 C CNN
+F 2 "r0603" V 1780 2500 28  0000 C CNN
+	1    1850 2500
+	1    0    0    -1  
+$EndComp
 $Comp
 L CONN_1 XL6
 U 1 1 4FF84E2E
@@ -935,15 +945,6 @@ F 0 "#PWR027" H 1350 2110 30  0001 C CNN
 F 1 "+3.3V" H 1430 2180 30  0000 C CNN
 	1    1350 2150
 	-1   0    0    -1  
-$EndComp
-$Comp
-L R R1
-U 1 1 4FF20A78
-P 1850 2500
-F 0 "R1" V 1930 2500 50  0000 C CNN
-F 1 "10k" V 1850 2500 50  0000 C CNN
-	1    1850 2500
-	1    0    0    -1  
 $EndComp
 $Comp
 L IRLML6302 Q1

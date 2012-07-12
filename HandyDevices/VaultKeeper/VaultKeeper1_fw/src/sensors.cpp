@@ -39,18 +39,24 @@ void Sensors_t::Task() {
         FValue /= ADC_AVERAGE_COUNT;
         //Com.Printf("Ch %u = %u\r", ChIndx, FValue);
         // === Process channels ===
+        SnsChnl_t *PCh = &Chnl[ChIndx];
         if (SnsChnlParams[ChIndx].Name == SnsBattery) {
-            if(!IsExtPwrOk() and (Chnl[ChIndx].Value == 0)) { // Pwr problem
+            if(!IsExtPwrOk()) {             // Check if power failure
                 FValue *= 3.0263158;
-                Chnl[ChIndx].Value = FValue;
-                Com.Printf("No pwr; Battery = %u\r", FValue);
-                IProblemsChanged = true; // Report now
+                PCh->Value = FValue;
+                if(PCh->State == ssOk) {    // Just occured
+                    PCh->State = ssFail;
+                    PCh->ProblemIsNew = true;
+                    Delay.Bypass(&PCh->Timer, NEW_PROBLEM_TIMEOUT); // Report now
+                }
             }
-            else if (IsExtPwrOk() and (Chnl[ChIndx].Value != 0)) {
-                if (!IProblemsChanged) Chnl[ChIndx].Value = 0; // Reset only after event handled
+            else {
+                PCh->Value = 0;
+                PCh->State = ssOk;
+                PCh->ProblemIsNew = false;
             }
         } // if battery
-        else Chnl[ChIndx].ProcessNewValue(FValue);
+        else PCh->ProcessNewValue(FValue);
         IPrepareToNextMeasure();
     }
 
@@ -58,10 +64,7 @@ void Sensors_t::Task() {
 
     // ==== Check if problem ====
     for (uint8_t i=0; i<ADC_CH_COUNT; i++) {
-        if(SnsChnlParams[i].Name != SnsBattery)
-            if(Chnl[i].NewProblemOccured()) {
-                IProblemsChanged = true;
-            }
+        if(Chnl[i].NewProblemOccured()) IProblemsChanged = true;
     }
 
     // ==== Reporting unit ====
@@ -69,7 +72,7 @@ void Sensors_t::Task() {
         Com.Printf("New problem\r");
         IProblemsChanged = false;
         WriteMeasurements();
-        NewProblemOccured = true;
+        NewProblemOccured = true;   // Signal for reporting unit
     }
     else if (Time.GetHour() != FLastHour) {
         FLastHour = Time.GetHour();
@@ -111,7 +114,7 @@ void Sensors_t::WriteMeasurements() {
 // =============================== Channel =====================================
 void SnsChnl_t::ProcessNewValue(uint32_t AValue) {
     //Com.Printf("Sns%u %u\r", IIndx, AValue);
-    //if(SnsChnl[ChIndx].Name == Sns3B) Com.Printf("Sns3B %u\r", FValue);
+    //if(SnsChnlParams[ChIndx].Name == Sns3A) Com.Printf("Sns3A %u\r", AValue);
     SnsState_t ssNow;
     if      (AValue < SHORT_ADC_VALUE) ssNow = ssShort;
     else if (AValue < WATER_ADC_VALUE) ssNow = ssWater;
@@ -121,7 +124,7 @@ void SnsChnl_t::ProcessNewValue(uint32_t AValue) {
     if ((ssNow != ssOk) and (State == ssOk)) {     // Problem appeared
         ProblemIsNew = true;
         Com.Printf("Sns%u: NewProb %u\r", ChIndx, ssNow);
-        Delay.Reset(&ITimer);                       // Change state only if time passed
+        Delay.Reset(&Timer);                       // Change state only if time passed
     }
     else if((ssNow == ssOk) and (State != ssOk)) { // Problem disappeared
         ProblemIsNew = false;
@@ -131,7 +134,7 @@ void SnsChnl_t::ProcessNewValue(uint32_t AValue) {
 }
 
 bool SnsChnl_t::NewProblemOccured() {
-    if ((State != ssOk) and ProblemIsNew and Delay.Elapsed(&ITimer, NEW_PROBLEM_TIMEOUT)) {
+    if ((State != ssOk) and ProblemIsNew and Delay.Elapsed(&Timer, NEW_PROBLEM_TIMEOUT)) {
         ProblemIsNew = false;
         return true;
     }

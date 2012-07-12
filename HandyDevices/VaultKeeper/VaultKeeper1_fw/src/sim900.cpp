@@ -58,7 +58,8 @@ void sim900_t::On() {
         Com.Printf("6.");
         //Command("AT+CSQ");                          // Get signal parameters
         Command("AT+CMGD=1,4");                     // Delete all sms
-
+        //if (Command("AT+CUSD=1,\"#100#\"", MDM_RX_TIMEOUT) == erOk) Delay.ms(4005);
+        if (Command("ATD#100#", MDM_RX_TIMEOUT) == erOk) Delay.ms(9000);
         State = erOk;
     } // while
     Com.Printf("\rMdm ready\r");
@@ -133,15 +134,16 @@ Error_t sim900_t::CloseConnection(void) {
 
 
 enum LengthEncoding_t {leLength, leChunks, leNone};
-Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen, bool AKeepAlive) {
+Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen) {
     Com.Printf("GET: %S%S\r", AHost, AUrl);
     Error_t r = erError;
     BufReset();
     SendString("AT+CIPSEND");
     if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
         MPrintf("GET %S HTTP/1.1\r\n", AUrl);
-        if (AKeepAlive) MPrintf("Connection: Keep-Alive\r\n");
-        else MPrintf("Connection: close\r\n");
+        //if (AKeepAlive)
+        MPrintf("Connection: Keep-Alive\r\n");
+        //else MPrintf("Connection: close\r\n");
         MPrintf("Host: %S\r\n\r\n%c", AHost, 26);
         // Wait for echo
         BufReset();
@@ -218,7 +220,7 @@ Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t
 }
 
 // numenor2012.ru, /request.php, data=aga
-Error_t sim900_t::POST(const char *AHost, const char *AUrl, const char *AData, bool AKeepAlive) {
+Error_t sim900_t::POST(const char *AHost, const char *AUrl, const char *AData) {
     Com.Printf("POST: %S%S; %S\r", AHost, AUrl, AData);
     Error_t r = erError;
     BufReset();
@@ -226,8 +228,9 @@ Error_t sim900_t::POST(const char *AHost, const char *AUrl, const char *AData, b
     if (WaitChar('>', MDM_RX_TIMEOUT) == erOk) {
         MPrintf("POST %S HTTP/1.1\r\n", AUrl);
         MPrintf("Host: %S\r\n", AHost);
-        if (AKeepAlive) MPrintf("Connection: Keep-Alive\r\n");
-        else MPrintf("Connection: close\r\n");
+        //if (AKeepAlive)
+        MPrintf("Connection: Keep-Alive\r\n");
+        //else MPrintf("Connection: close\r\n");
         MPrintf("Content-Type: application/x-www-form-urlencoded\r\n"); // Mandatory
         MPrintf("Content-Length: %u\r\n\r\n", strlen(AData));           // Add empty line
         MPrintf("%S%c", AData, 26);                                     // Send data and finishing Ctrl-Z

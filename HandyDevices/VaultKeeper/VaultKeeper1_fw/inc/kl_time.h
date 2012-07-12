@@ -23,9 +23,8 @@
 #define BKPREG_DAY      BKP_DR4
 
 class TimeCounter_t {
-private:
-
 public:
+    bool TimeIsSet;
     void DateUpdate(void);
     void Init(void);
     bool IsSet(void) {return (BKP_ReadBackupRegister(BKPREG_CHECK) == 0xA5A5); }

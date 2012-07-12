@@ -13,6 +13,7 @@
 #include "kl_string.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "sha1.h"
 #include "sensors.h"
 
@@ -30,7 +31,7 @@ public:
     void SendNow(void) { ReportIsSent = false; Time.Bypass(&RetryTmr, RETRY_TIMEOUT); }
 } Report;
 
-char HostKey[41];   // CEF251C525315E1D471FD0C63CB5443BB7DAF7F5
+char HostKey[41];
 
 // Prototypes
 void GeneralInit(void);
@@ -86,13 +87,18 @@ void GenerateHostKey(void) {
 // =============================== Report ======================================
 #define URL_HOST        "vaultkeeper.ru"
 #define URL_TIME        "/request.php?time"
-#define URL_REQUEST     "/request.php"
+#define URL_REPORT      "/report.php"
 #define REPORT_MINUTE   23
 
 #define MDM_ENABLE     // DEBUG
 void Report_t::Task(void) {
+    if(!Time.TimeIsSet) {
+        Com.Printf("Need to get time\r");
+        SendNow();
+    }
+
     // Send report every hour
-    static uint8_t FLastHour = 27;  // dummy for first time
+    static uint8_t FLastHour = 0;
     if ((Time.GetMinute() == REPORT_MINUTE) and (Time.GetHour() != FLastHour)) {    // Do not send report twice a minute
         Com.Printf("Time to send report\r");
         SendNow();
@@ -118,13 +124,13 @@ void Report_t::Task(void) {
 #endif
                     // ==== Send data ====
                     RowData_t *PRow;
-                    char *S = Mdm.DataString, ErrStr[SNS_COUNT*7+5+1], *E;    // every sns needs 7 chars; battery needs 5.
+                    char *S = Mdm.DataString, SnsStr[SNS_COUNT*7+5+1], *E;    // every sns needs 7 chars; battery needs 5.
                     Error_t r = erOk;
                     while (!SnsBuf.IsEmpty() and (r == erOk)) {
                         PRow = SnsBuf.Read();
 
-                        // Construct error string
-                        E = ErrStr;
+                        // Construct sensor string
+                        E = SnsStr;
                         *E = 0; // Empty string
                         for (uint32_t i=0; i<SNS_COUNT; i++) {
                             if (PRow->SnsArr[i] != 0) E = klSPrintf(E, "%u.%u,", i, PRow->SnsArr[i]);
@@ -132,29 +138,29 @@ void Report_t::Task(void) {
                         if (PRow->Battery != 0) klSPrintf(E, "b.%u", PRow->Battery);
                         // Remove ',' at end of string.
                         else // No need if battery printed
-                            if (E != ErrStr) // if not empty
+                            if (E != SnsStr) // if not empty
                                 if (*(E-1) == ',') *(E-1) = 0;
-                        Com.Printf("Errors: %S\r", ErrStr);
+                        Com.Printf("Errors: %S\r", SnsStr);
 
                         // Construct data string
-                        klSPrintf(S, "host_id=%u&water_value=%u&time=%u4%u2%u2%u2%u2%u2&errors=%S&host_key=%S",
+                        klSPrintf(S, "host_id=%u&water_value=%u&time=%u4%u2%u2%u2%u2%u2&sensors=%S&host_key=%S",
                                 HOST_ID, PRow->WaterValue,
                                 PRow->DateTime.Year, PRow->DateTime.Month, PRow->DateTime.Day,
                                 PRow->DateTime.H,    PRow->DateTime.M,     PRow->DateTime.S,
-                                ErrStr, HostKey);
+                                SnsStr, HostKey);
                         Com.Printf("Data: %S\r", S);
                         Sha1(S);
                         Com.Printf("Hash: %S\r", Sha1String);
 
                         // Construct string to send
-                        klSPrintf(S, "host_id=%u&water_value=%u&time=%u4%u2%u2%u2%u2%u2&errors=%S&host_hash=%S",
+                        klSPrintf(S, "host_id=%u&water_value=%u&time=%u4%u2%u2%u2%u2%u2&sensors=%S&host_hash=%S",
                                 HOST_ID, PRow->WaterValue,
                                 PRow->DateTime.Year, PRow->DateTime.Month, PRow->DateTime.Day,
                                 PRow->DateTime.H,    PRow->DateTime.M,     PRow->DateTime.S,
-                                ErrStr, Sha1String);
+                                SnsStr, Sha1String);
                         Com.Printf("To send: %S\r", S);
 #ifdef MDM_ENABLE
-                        if ((r = Mdm.POST(URL_HOST, URL_REQUEST, S, (SnsBuf.ReadCount() > 1))) == erOk)
+                        if ((r = Mdm.POST(URL_HOST, URL_REPORT, S)) == erOk)
 #endif
                             SnsBuf.PrepareToReadNext(); // Sent ok, goto next
                     } // while
@@ -179,7 +185,7 @@ void Report_t::Task(void) {
 // keepertime 2012-06-22 18-14-05
 Error_t Report_t::GetTime(void) {
     Com.Printf("Receiving Time...\r");
-    if (Mdm.GET(URL_HOST, URL_TIME, Mdm.DataString, 30, (SnsBuf.ReadCount() > 1)) == erOk) {
+    if (Mdm.GET(URL_HOST, URL_TIME, Mdm.DataString, 30) == erOk) {
         char S[7];
         klStrNCpy(S, &Mdm.DataString[11], 4);
         uint16_t Year = atoi(S);
@@ -197,6 +203,7 @@ Error_t Report_t::GetTime(void) {
         Time.SetTime(H, M, Sec);
         Com.Printf("New time: ");
         Time.Print();
+        Time.TimeIsSet = true;
         return erOk;
     }
     else return erError;

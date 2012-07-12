@@ -74,8 +74,8 @@ public:
     Error_t GprsOff(void);
     Error_t OpenConnection(const char *AHost);
     Error_t CloseConnection(void);
-    Error_t GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen, bool AKeepAlive);
-    Error_t POST(const char *AHost, const char *AUrl, const char *AData, bool AKeepAlive);
+    Error_t GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen);
+    Error_t POST(const char *AHost, const char *AUrl, const char *AData);
     // IRQ
     void BufWrite(char c) { IBuf[WriteIndx++] = c; if(WriteIndx == MDM_BUF_LEN) WriteIndx = 0; }
 //    void IRQHandler(void);

@@ -1,4 +1,4 @@
-EESchema-LIBRARY Version 2.3  Date: 10/07/2012 22:43:16
+EESchema-LIBRARY Version 2.3  Date: 12/07/2012 13:36:56
 #encoding utf-8
 #
 # +12V
@@ -162,6 +162,26 @@ X ~Error 5 -550 0 200 R 50 50 1 1 P V
 X VoTap 6 550 0 200 L 50 50 1 1 P
 X Feedback 7 550 -350 200 L 50 50 1 1 P
 X In 8 -550 250 200 R 50 50 1 1 W
+ENDDRAW
+ENDDEF
+#
+# NPN
+#
+DEF NPN Q 0 0 Y Y 1 F N
+F0 "Q" 200 50 60 H V C CNN
+F1 "NPN" 250 -50 60 H V C CNN
+DRAW
+C 0 0 110 0 1 0 N
+P 2 0 1 5  -70 0  -70 -65 N
+P 3 0 1 0  -70 0  -110 0  -110 0 N
+P 3 0 1 5  -70 0  -70 65  -70 65 N
+P 3 0 1 0  50 -95  -65 -30  -65 -30 N
+P 3 0 1 0  50 -95  15 -90  15 -90 N
+P 3 0 1 0  50 -95  30 -65  30 -65 N
+P 3 0 1 0  50 95  -65 30  -65 30 N
+X B 1 -200 0 100 R 50 50 1 1 P
+X E 2 50 -200 100 U 50 50 1 1 P
+X C 3 50 200 100 D 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #

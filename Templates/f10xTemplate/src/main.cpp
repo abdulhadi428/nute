@@ -11,20 +11,13 @@
 
 int main(void) {
     Delay.Init();
-    Led_t LedG, LedB;
-    LedG.Init(GPIOC, 9);
-    LedB.Init(GPIOC, 8);
-
-    klPin_t Key;
-    Key.Init(GPIOA, 0, GPIO_Mode_IN_FLOATING);
+    Led_t Led;
+    Led.Init(GPIOB, 10);
 
     while (1) {
-        LedG.On();
-        Delay.ms(45);
-        LedG.Off();
-        Delay.ms(45);
-
-        if (Key == 1) LedB.On();
-        else LedB.Off();
+        Led.On();
+        Delay.ms(450);
+        Led.Off();
+        Delay.ms(450);
     } // while 1
 }

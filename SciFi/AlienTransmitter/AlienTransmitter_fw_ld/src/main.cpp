@@ -20,7 +20,7 @@
 #define LED_ENABLE
 
 // Variables
-uint8_t ID = 7;
+uint8_t ID = 1;
 #ifdef LED_ENABLE
 Led_t Led(GPIOA, 1);
 #endif
@@ -78,7 +78,10 @@ void GeneralInit(void) {
     //Switchers.Init();
     //Switchers.UpdateState();    // Setup initial state depending on switchers
 
+    Led.On();
     klPrintf("\rTransmitter %u\r", ID);
+    Delay.ms(999);
+    Led.Off();
 }
 
 // Switchers
