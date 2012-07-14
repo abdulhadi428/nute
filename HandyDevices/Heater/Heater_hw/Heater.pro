@@ -1,4 +1,4 @@
-update=09/05/2012 22:32:12
+update=15/07/2012 01:12:38
 version=1
 last_client=eeschema
 [cvpcb]
@@ -70,13 +70,10 @@ RptLab=1
 LabSize=60
 [eeschema/libraries]
 LibName1=Connectors_kl
-LibName2=modules
-LibName3=pcb_details
-LibName4=power
-LibName5=Power_kl
-LibName6=RF ICs
-LibName7=st_kl
-LibName8=Tittar_kl
-LibName9=Transistors_kl
-LibName10=SmartCard_kl
-LibName11=Interface_kl
+LibName2=pcb_details
+LibName3=power
+LibName4=Power_kl
+LibName5=st_kl
+LibName6=Tittar_kl
+LibName7=Transistors_kl
+LibName8=memory
