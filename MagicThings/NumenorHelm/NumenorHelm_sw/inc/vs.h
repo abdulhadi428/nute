@@ -49,6 +49,9 @@ private:
     void XCS_Lo(void)  { GPIOA->BRR  = VS_XCS;  }
     void XCS_Hi(void)  { GPIOA->BSRR = VS_XCS;  }
 
+    uint8_t IAttenuation;
+    void ISetAttenuation(void) { CmdWrite(VS_REG_VOL, ((IAttenuation*256)+IAttenuation)); }
+
     uint8_t BusyWait(void);
     uint8_t CmdRead(uint8_t AAddr, uint16_t *AData);
     uint8_t CmdWrite(uint8_t AAddr, uint16_t AData);
@@ -67,7 +70,7 @@ public:
     // Playback
     void WriteData(uint8_t *ABuf, uint16_t ACount);
     void WriteTrailingZeroes(void);
-    void SetVolume(uint8_t Attenuation) { CmdWrite(VS_REG_VOL, ((Attenuation*256)+Attenuation)); }
+    void SetVolume(uint8_t AVolume) { IAttenuation = (uint8_t)((254 * (100 - (uint32_t)AVolume)) / 100); }
     void Stop(void) { CmdWrite(VS_REG_RECCTRL, VS_SARC_OUTOFADPCM); }
 };
 

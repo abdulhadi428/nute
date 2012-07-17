@@ -19,8 +19,7 @@ void VS_t::WriteData(uint8_t* ABuf, uint16_t ACount) {
 void VS_t::WriteTrailingZeroes() {
     if(BusyWait() != VS_OK) return;     // Get out in case of timeout
     XDCS_Lo();                          // Start transmission
-    for (uint8_t i=0; i<VS_TRAILING_0_COUNT; i++)
-        ReadWriteByte(0);               // Send data
+    for (uint8_t i=0; i<VS_TRAILING_0_COUNT; i++) ReadWriteByte(0); // Send data
     XDCS_Hi();                          // End transmission
 }
 
@@ -74,7 +73,7 @@ void VS_t::Enable() {
     CmdWrite(VS_REG_MODE, (VS_SM_DIFF | VS_ICONF_ADSDI | VS_SM_SDINEW));  // Normal mode
     CmdWrite(VS_REG_MIXERVOL, (VS_SMV_ACTIVE | VS_SMV_GAIN2));
     CmdWrite(VS_REG_RECCTRL, VS_SARC_DREQ512);
-    SetVolume(20);
+    ISetAttenuation();
     // Setup variables
     IZero = 0;
 }

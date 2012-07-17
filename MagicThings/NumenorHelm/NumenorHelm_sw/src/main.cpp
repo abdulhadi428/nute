@@ -118,11 +118,10 @@ void GeneralInit(void) {
 
     // Init peripheral
     Delay.Init();
+    Detector.Init();
     // Sound
     Vs.Init();
     ESnd.Init();
-
-    Detector.Init();
 
     // Register filesystem
     f_mount(0, &SD.FatFilesystem);
@@ -136,6 +135,12 @@ void GeneralInit(void) {
 
 bool ReadConfig(void) {
     // ==== Sound ====
+    uint32_t FVolume=0;
+    if(!ReadUint32("Sound", "Volume", "settings.ini", &FVolume)) return false;
+    klPrintf("Volume: %i\r", FVolume);
+    if(FVolume > 100) return false;
+    Vs.SetVolume(FVolume);
+    // Sounds
     if(!ReadUint32("Sound", "Count", "settings.ini", &SndList.Count)) return false;
     klPrintf("Count: %i\r", SndList.Count);
     if (SndList.Count == 0) return false;
