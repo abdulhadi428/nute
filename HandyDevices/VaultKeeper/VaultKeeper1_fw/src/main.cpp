@@ -133,7 +133,7 @@ void Report_t::Task(void) {
                         E = SnsStr;
                         *E = 0; // Empty string
                         for (uint32_t i=0; i<SNS_COUNT; i++) {
-                            if (PRow->SnsArr[i] != 0) E = klSPrintf(E, "%u.%u,", i, PRow->SnsArr[i]);
+                            if (PRow->SnsArr[i] != 0) E = klSPrintf(E, "%u.%u,", i+1, PRow->SnsArr[i]);
                         }
                         if (PRow->Battery != 0) klSPrintf(E, "b.%u", PRow->Battery);
                         // Remove ',' at end of string.

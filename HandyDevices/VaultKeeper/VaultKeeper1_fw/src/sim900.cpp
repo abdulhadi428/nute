@@ -59,7 +59,7 @@ void sim900_t::On() {
         //Command("AT+CSQ");                          // Get signal parameters
         Command("AT+CMGD=1,4");                     // Delete all sms
         //if (Command("AT+CUSD=1,\"#100#\"", MDM_RX_TIMEOUT) == erOk) Delay.ms(4005);
-        if (Command("ATD#100#", MDM_RX_TIMEOUT) == erOk) Delay.ms(9000);
+        //if (Command("ATD#100#", MDM_RX_TIMEOUT) == erOk) Delay.ms(9000);
         State = erOk;
     } // while
     Com.Printf("\rMdm ready\r");
@@ -93,7 +93,7 @@ Error_t sim900_t::SendSMS(const char *ANumber, const char *AMsg) {
 
 Error_t sim900_t::GprsOn() {
     Com.Printf("Connecting GPRS...\r");
-    if (Command("AT+CGATT=1", MDM_NETREG_TIMEOUT) != erOk)          return erError;
+    if (Command("AT+CGATT=1", GPRS_TIMEOUT) != erOk)                return erError;
     if (Command("AT+CGATT?", MDM_RX_TIMEOUT, "+CGATT: 1") != erOk)  return erError;
     WaitString("OK", MDM_RX_TIMEOUT);
     // GPRS is on, setup IP context
