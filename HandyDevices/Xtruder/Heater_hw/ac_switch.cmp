@@ -1,0 +1,143 @@
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 02/08/2012 00:03:13
+
+BeginCmp
+TimeStamp = /501922C1;
+Reference = C1;
+ValeurCmp = 0.01u;
+IdModule  = CAP_1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /501922BA;
+Reference = D1;
+ValeurCmp = LED;
+IdModule  = LED-3MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /50192691;
+Reference = D2;
+ValeurCmp = SM4007;
+IdModule  = DIODE_MELF_DO213AB;
+EndCmp
+
+BeginCmp
+TimeStamp = /5019269D;
+Reference = D3;
+ValeurCmp = LED;
+IdModule  = LED-3MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /5019691C;
+Reference = HOLE1;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /50196921;
+Reference = HOLE2;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /50196925;
+Reference = HOLE3;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /50196928;
+Reference = HOLE4;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /501922B9;
+Reference = R1;
+ValeurCmp = 510R;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /501922BC;
+Reference = R2;
+ValeurCmp = 150R;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /501922BF;
+Reference = R3;
+ValeurCmp = 200k;
+IdModule  = RES_1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /501922BE;
+Reference = R4;
+ValeurCmp = 200R;
+IdModule  = RES_1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /501922C2;
+Reference = R5;
+ValeurCmp = 39R;
+IdModule  = RES_1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /5019264E;
+Reference = R6;
+ValeurCmp = 51k;
+IdModule  = RES_1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /50192824;
+Reference = R7;
+ValeurCmp = 51k;
+IdModule  = RES_1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /501922BD;
+Reference = U1;
+ValeurCmp = MOC3061M;
+IdModule  = DIL6;
+EndCmp
+
+BeginCmp
+TimeStamp = /501922C0;
+Reference = U2;
+ValeurCmp = BTB600;
+IdModule  = TO220;
+EndCmp
+
+BeginCmp
+TimeStamp = /50192318;
+Reference = XL1;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /5019234C;
+Reference = XL2;
+ValeurCmp = CONN_2;
+IdModule  = CONN_MF2_MRB;
+EndCmp
+
+BeginCmp
+TimeStamp = /501922C4;
+Reference = XL3;
+ValeurCmp = CONN_2;
+IdModule  = CONN_KF128D_2;
+EndCmp
+
+EndListe

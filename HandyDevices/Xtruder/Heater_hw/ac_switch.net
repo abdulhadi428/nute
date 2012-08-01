@@ -1,0 +1,139 @@
+# EESchema Netlist Version 1.1 created  02/08/2012 00:03:13
+(
+ ( /501922C1 CAP_1206 C1 0.01u
+  ( 1 N-000010 )
+  ( 2 /Out_220 )
+ )
+ ( /501922BA LED-3MM D1 LED
+  ( A N-000004 )
+  ( C N-000015 )
+ )
+ ( /50192691 DIODE_MELF_DO213AB D2 SM4007
+  ( A GND )
+  ( C N-000002 )
+ )
+ ( /5019269D LED-3MM D3 LED
+  ( A N-000002 )
+  ( C GND )
+ )
+ ( /5019691C Hole3_5_out6mm HOLE1 HOLE_METALLED
+  ( Hle ? )
+ )
+ ( /50196921 Hole3_5_out6mm HOLE2 HOLE_METALLED
+  ( Hle ? )
+ )
+ ( /50196925 Hole3_5_out6mm HOLE3 HOLE_METALLED
+  ( Hle ? )
+ )
+ ( /50196928 Hole3_5_out6mm HOLE4 HOLE_METALLED
+  ( Hle ? )
+ )
+ ( /501922B9 RES_0603 R1 510R
+  ( 1 N-000016 )
+  ( 2 N-000004 )
+ )
+ ( /501922BC RES_0603 R2 150R
+  ( 1 N-000016 )
+  ( 2 N-000005 )
+ )
+ ( /501922BF RES_1206 R3 200k
+  ( 1 N-000009 )
+  ( 2 /Out_220 )
+ )
+ ( /501922BE RES_1206 R4 200R
+  ( 1 N-000008 )
+  ( 2 /In_220 )
+ )
+ ( /501922C2 RES_1206 R5 39R
+  ( 1 /In_220 )
+  ( 2 N-000010 )
+ )
+ ( /5019264E RES_1206 R6 51k
+  ( 1 /Out_220 )
+  ( 2 N-000003 )
+ )
+ ( /50192824 RES_1206 R7 51k
+  ( 1 N-000003 )
+  ( 2 N-000002 )
+ )
+ ( /501922BD DIL6 U1 MOC3061M
+  ( 1 N-000005 )
+  ( 2 N-000015 )
+  ( 3 ? )
+  ( 4 N-000009 )
+  ( 5 ? )
+  ( 6 N-000008 )
+ )
+ ( /501922C0 TO220 U2 BTB600
+  ( 1 /Out_220 )
+  ( 2 /In_220 )
+  ( 3 N-000009 )
+ )
+ ( /50192318 SIL-2 XL1 CONN_2
+  ( 1 N-000016 )
+  ( 2 N-000015 )
+ )
+ ( /5019234C CONN_MF2_MRB XL2 CONN_2
+  ( 1 /In_220 )
+  ( 2 GND )
+ )
+ ( /501922C4 CONN_KF128D_2 XL3 CONN_2
+  ( 1 /Out_220 )
+  ( 2 GND )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C1
+ c*
+$endlist
+$component D1
+ LED*
+$endlist
+$component D2
+ DIODE*
+$endlist
+$component D3
+ LED*
+$endlist
+$component HOLE1
+ HOLE*
+$endlist
+$component HOLE2
+ HOLE*
+$endlist
+$component HOLE3
+ HOLE*
+$endlist
+$component HOLE4
+ HOLE*
+$endlist
+$component R1
+ r*
+$endlist
+$component R2
+ r*
+$endlist
+$component R3
+ r*
+$endlist
+$component R4
+ r*
+$endlist
+$component R5
+ r*
+$endlist
+$component R6
+ r*
+$endlist
+$component R7
+ r*
+$endlist
+$component U1
+ DIL6
+$endlist
+$component U2
+ TO220
+$endlist
+$endfootprintlist
+}
