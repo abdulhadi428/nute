@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 02/08/2012 12:59:39
+EESchema Schematic File Version 2  date 02/08/2012 18:03:59
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
