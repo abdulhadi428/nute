@@ -85,7 +85,6 @@ void LedSmooth_t::RampDown(void) {
     ISetupDelay();
 }
 
-
 void LedSmooth_t::Task() {
     if (State == lsUp) {
         // Check if top achieved
@@ -107,91 +106,47 @@ void LedSmooth_t::Task() {
     }
 }
 
-/*
-
 // ============================= RGBLed_t ======================================
-void RGBLed_t::Init() {
+void LedRGB_t::Init() {
     // ==== GPIO ====
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
-    // ==== Timer4 as PWM ====
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-    TIM_TimeBaseStructure.TIM_Period = 255;
-    TIM_TimeBaseStructure.TIM_Prescaler = 0;
-    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
-    // ==== PWM ====
-    TIM_OCInitTypeDef  TIM_OCInitStructure;
-    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-    TIM_OCInitStructure.TIM_Pulse = 0;
-    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;    // Inverted PWM
-    // Init channels
-    TIM_OC2Init(TIM4, &TIM_OCInitStructure);
-    TIM_OC3Init(TIM4, &TIM_OCInitStructure);
-    TIM_OC4Init(TIM4, &TIM_OCInitStructure);
-    TIM_OC2PreloadConfig(TIM4, TIM_OCPreload_Enable);
-    TIM_OC3PreloadConfig(TIM4, TIM_OCPreload_Enable);
-    TIM_OC4PreloadConfig(TIM4, TIM_OCPreload_Enable);
-    TIM_ARRPreloadConfig(TIM4, ENABLE);         // Enable autoreload of preload
-}
-
-void RGBLed_t::On() {
+	klGpioSetupByN(GPIOA, 10, GPIO_Mode_AF_PP);
+	klGpioSetupByN(GPIOA, 8,  GPIO_Mode_AF_PP);
+	klGpioSetupByN(GPIOA, 11, GPIO_Mode_AF_PP);
+    // ==== Timer ====
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);	// Clock
+    // ==== Timebase and general ====
+    TIM1->CR1 = 0x01;       // Enable timer, set clk division to 0, AutoReload not buffered
+    TIM1->CR2 = 0;          // Output Idle State
+    TIM1->PSC = 0;          // No clock division
+    TIM1->ARR = 255;        // Autoreload register: top value of PWM
+    // ==== Outputs ====
+    TIM1->BDTR = 0x8000;    // Enable output
+    TIM1->CCMR1 = 0x0060;   // Ch1 is output, PWM mode 1
+    TIM1->CCMR2 = 0x6060;   // Ch4 & Ch3 are outputs, PWM mode 1
+    TIM1->CCER = 0x3303;    // Ch4P, Ch3P, Ch1P outputs enabled, active low
+    // Initial values
     SetColor(clBlack);
-    NeededColor = clBlack;
-    // GPIO
-    GPIO_InitTypeDef  GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;
-    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_PP;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-    // Timer
-    TIM_Cmd(TIM4, ENABLE);
+    INeededColor = clBlack;
 }
 
-void RGBLed_t::Off() {
-    SetColor(clBlack);
-    NeededColor = clBlack;
-    TIM_Cmd(TIM4, DISABLE);
-    // Make PWM output InputFloating
-    GPIO_InitTypeDef  GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;
-    GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
-}
-
-void RGBLed_t::SetColor(Color_t AColor) {
-    TIM_SetCompare2(TIM4, AColor.Red);
-    TIM_SetCompare3(TIM4, AColor.Green);
-    TIM_SetCompare4(TIM4, AColor.Blue);
-    CurrentColor = AColor;
-}
-
-void RGBLed_t::Task(void) {
-    if (!Delay.Elapsed(&Timer, 10)) return;
-    if (CurrentColor == NeededColor) return;
+void LedRGB_t::Task(void) {
+	static uint32_t FTimer=0;
+    if (!Delay.Elapsed(&FTimer, 10)) return;
+    if (ICurrentColor == INeededColor) return;
     // Red channel
-    if (CurrentColor.Red != NeededColor.Red) {
-        if (NeededColor.Red < CurrentColor.Red)
-            CurrentColor.Red--;
-        else
-            CurrentColor.Red++;
+    if (ICurrentColor.Red != INeededColor.Red) {
+        if (INeededColor.Red < ICurrentColor.Red) ICurrentColor.Red--;
+        else ICurrentColor.Red++;
     }
     // Green channel
-    if (CurrentColor.Green != NeededColor.Green) {
-        if (NeededColor.Green < CurrentColor.Green)
-            CurrentColor.Green--;
-        else
-            CurrentColor.Green++;
+    if (ICurrentColor.Green != INeededColor.Green) {
+        if (INeededColor.Green < ICurrentColor.Green) ICurrentColor.Green--;
+        else ICurrentColor.Green++;
     }
     // Blue channel
-    if (CurrentColor.Blue != NeededColor.Blue) {
-        if (NeededColor.Blue < CurrentColor.Blue)
-            CurrentColor.Blue--;
-        else
-            CurrentColor.Blue++;
+    if (ICurrentColor.Blue != INeededColor.Blue) {
+        if (INeededColor.Blue < ICurrentColor.Blue) ICurrentColor.Blue--;
+        else ICurrentColor.Blue++;
     }
-    SetColor(CurrentColor);
+    SetColor(ICurrentColor);
 }
-*/

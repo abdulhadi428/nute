@@ -108,6 +108,13 @@ public:
     void SetFreqHz(uint32_t AFreqHz) { klTimer_t::SetFreqHz(AFreqHz); }
 };
 
+// ============================ System clock ==================================
+enum Clk_t {clk1MHzInternal, clk2MHzInternal, clk4MHzInternal, clk8MHzInternal, clk8MHzExternal,
+#if defined STM32F10X_HD
+	clk36MHzExternal, clk72MHzExternal,
+#endif
+};
+void InitClock(Clk_t AClk);
 
 // ============================ Delay and time =================================
 struct Time_t {

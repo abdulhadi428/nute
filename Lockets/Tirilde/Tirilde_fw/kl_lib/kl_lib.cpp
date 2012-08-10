@@ -9,6 +9,7 @@
 #include "misc.h"
 #include "stm32f10x_tim.h"
 #include "stm32f10x_usart.h"
+#include "stm32f10x_flash.h"
 #include <stdarg.h>
 
 // ======== GPIO =========
@@ -161,6 +162,85 @@ void klPwmChannel_t::Set(uint16_t AValue) {
         case 3: ITimer->CCR3 = AValue; break;
         case 4: ITimer->CCR4 = AValue; break;
         default: break;
+    }
+}
+
+// ============================== System clock =================================
+void InitClock(Clk_t AClk) {
+    RCC_DeInit();                                           // RCC system reset(for debug purpose)
+    FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable);   // Enable Prefetch Buffer
+    RCC_PCLK2Config(RCC_HCLK_Div1);                         // PCLK2 = HCLK   (to APB2, 72MHz max)
+    // External clock
+    if ((AClk == clk8MHzExternal)
+#if defined STM32F10X_HD
+    		or (AClk == clk36MHzExternal) or (AClk == clk72MHzExternal)
+#endif
+    ) {
+        RCC_HCLKConfig(RCC_SYSCLK_Div1);                            // HCLK = SYSCLK
+        RCC_HSEConfig(RCC_HSE_ON);                                  // Enable HSE
+        ErrorStatus HSEStartUpStatus = RCC_WaitForHSEStartUp();     // Wait till HSE is ready
+        if (HSEStartUpStatus == SUCCESS) {
+            if (AClk == clk8MHzExternal) {
+                FLASH_SetLatency(FLASH_Latency_0);                      // Flash 1 wait state
+                RCC_PCLK1Config(RCC_HCLK_Div1);                         // PCLK1 = HCLK (to APB1, 36MHz max)
+                RCC_SYSCLKConfig(RCC_SYSCLKSource_HSE);
+                while (RCC_GetSYSCLKSource() != 0x04);
+                SystemCoreClock = 8000000;
+            }
+            else {
+                switch (AClk) {
+#if defined STM32F10X_HD
+                    case clk36MHzExternal:
+                        FLASH_SetLatency(FLASH_Latency_1);                      // Flash 1 wait state
+                        RCC_PCLK1Config(RCC_HCLK_Div1);                         // PCLK1 = HCLK (to APB1, 36MHz max)
+                        RCC_PLLConfig(RCC_PLLSource_HSE_Div2, RCC_PLLMul_9);    // PLLCLK = 8MHz / 2 * 9 = 36 MHz
+                        SystemCoreClock = 36000000;
+                        break;
+
+                    case clk72MHzExternal:
+                        FLASH_SetLatency(FLASH_Latency_2);                      // Flash 2 wait state
+                        RCC_PCLK1Config(RCC_HCLK_Div2);                         // PCLK1 = HCLK/2 (to APB1, 36MHz max)
+                        RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);    // PLLCLK = 8MHz * 9 = 72 MHz
+                        SystemCoreClock = 72000000;
+                        break;
+#endif
+                    default: break;
+                } // switch
+                RCC_PLLCmd(ENABLE);                                     // Enable PLL
+                while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET);    // Wait till PLL is ready
+                RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);              // Select PLL as system clock source
+                while(RCC_GetSYSCLKSource() != 0x08);                   // Wait till PLL is used as system clock source
+            }
+        }
+        else {    // If HSE fails to start-up, the application will have wrong clock configuration.
+            while (1);
+        }
+    } // if external
+    else {  // Internal clock: 8 and lower
+        switch (AClk) {
+            case clk8MHzInternal:
+                RCC_HCLKConfig(RCC_SYSCLK_Div1);        // HCLK = SYSCLK
+                SystemCoreClock = 8000000;
+                break;
+            case clk4MHzInternal:
+                RCC_HCLKConfig(RCC_SYSCLK_Div2);        // HCLK = SYSCLK / 2
+                SystemCoreClock = 4000000;
+                break;
+            case clk2MHzInternal:
+                RCC_HCLKConfig(RCC_SYSCLK_Div4);        // HCLK = SYSCLK / 4
+                SystemCoreClock = 2000000;
+                break;
+            case clk1MHzInternal:
+                RCC_HCLKConfig(RCC_SYSCLK_Div8);        // HCLK = SYSCLK / 8
+                SystemCoreClock = 1000000;
+                break;
+
+            default: break;
+        }
+        FLASH_SetLatency(FLASH_Latency_0);      // Flash 0 wait state
+        RCC_PCLK1Config(RCC_HCLK_Div1);         // PCLK1 = HCLK (to APB1, 36MHz max)
+        RCC_SYSCLKConfig(RCC_SYSCLKSource_HSI);
+        while (RCC_GetSYSCLKSource() != 0x00);
     }
 }
 

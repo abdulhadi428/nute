@@ -87,5 +87,39 @@ public:
     void RampDown(void);
 };
 
+// Colors
+struct Color_t {
+    uint8_t Red, Green, Blue;
+    bool operator == (const Color_t AColor) { return ((Red == AColor.Red) and (Green == AColor.Green) and (Blue == AColor.Blue)); }
+    //bool operator != (const Color_t AColor) { return ((this->Red != AColor.Red) || (this->Green != AColor.Green) || (this->Blue != AColor.Blue)); }
+};
+#define clBlack     ((Color_t){0,   0,   0})
+#define clRed       ((Color_t){255, 0,   0})
+#define clGreen     ((Color_t){0,   255, 0})
+#define clBlue      ((Color_t){0,   0,   255})
+
+/*
+ * RGB LED
+ * Provides smooth color change.
+ */
+
+class LedRGB_t {
+private:
+	Color_t ICurrentColor, INeededColor;
+	void ISetRed  (uint8_t AValue) {TIM1->CCR3 = AValue;}
+	void ISetGreen(uint8_t AValue) {TIM1->CCR1 = AValue;}
+	void ISetBlue (uint8_t AValue) {TIM1->CCR4 = AValue;}
+public:
+	void Init(void);
+	void Task(void);
+	void SetColor(Color_t AColor) {
+		ISetRed(AColor.Red);
+		ISetGreen(AColor.Green);
+		ISetBlue(AColor.Blue);
+		ICurrentColor = AColor;
+	}
+	void SetColorSmoothly(Color_t AColor) { INeededColor = AColor; }
+};
+
 
 #endif /* LED_H_ */
