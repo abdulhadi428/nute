@@ -12,41 +12,55 @@
 #include "stm32f10x_gpio.h"
 #include "kl_lib.h"
 #include "led.h"
+#include "cc1101.h"
 
 LedRGB_t Led;
+void GeneralInit(void);
 
 int main(void) {
-    // ==== Init ====
-    //InitClock(clk2MHzInternal);
-    Delay.Init();
-    Led.Init();
-    //Uart.Init(115200);
-    //Uart.Printf("\rTirilde\r");
+    GeneralInit();
 
     uint32_t Tmr;
-    Color_t Cl = clBlack;
+//    Color_t Cl = clBlack;
 
+    CC.Receive();
     // ==== Main cycle ====
     while (1) {
-    	//Uart.Task();
+    	Uart.Task();
         Led.Task();
+        CC.Task();
 
-        if(Delay.Elapsed(&Tmr, 4005)) {
-        	if(Cl == clBlack) Cl = clBlue;
-        	else Cl = clBlack;
-        	Led.SetColorSmoothly(Cl);
+        if(Delay.Elapsed(&Tmr, 450)) {
+//        	if(Cl == clBlack) Cl = clBlue;
+//        	else Cl = clBlack;
+//        	Led.SetColorSmoothly(Cl);
+        	//CC.Transmit();
         }
-
-        // Sensor task
-//        if(Delay.Elapsed(&SnsTmr, 360)) {
-//            if ((Sns == 1) and (!SnsIsOn)) {
-//                SnsIsOn = true;
-//                if ((Led.State == lsOff) or (Led.State == lsDown)) Led.RampUp();
-//                else Led.RampDown();
-//            }
-//            else if ((Sns == 0) and SnsIsOn) SnsIsOn = false;
-//        }
-
-     }
+    } // while(1)
 }
 
+inline void GeneralInit(void) {
+    InitClock(clk2MHzInternal);
+    klJtagDisable();
+
+    Delay.Init();
+    Led.Init();
+
+    Uart.Init(115200);
+    Uart.Printf("\rTirilde\r");
+
+    // Setup CC
+    CC.Init();
+    CC.SetChannel(0);
+    CC.SetAddress(0);   // dummy
+    CC.SetPower(plN6dBm);
+}
+
+void CC_t::TxEndHandler() {
+    Uart.Printf("Tx\r");
+}
+
+void CC_t::NewPktHandler() {
+    Uart.Printf("Rx\r");
+    CC.Receive();
+}

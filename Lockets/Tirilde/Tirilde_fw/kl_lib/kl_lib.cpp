@@ -42,9 +42,9 @@ void klPin_t::Init(GPIO_TypeDef *PGpioPort, uint16_t APinNumber, GPIOMode_TypeDe
 void klPinIrq_t::IrqSetup(EXTITrigger_TypeDef ATriggerType) {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
     // Get IRQ channel
-    if      ((IPinNumber >= 0)  && (IPinNumber <= 4))  IChannel = EXTI0_IRQn + IPinNumber;
-    else if ((IPinNumber >= 5)  && (IPinNumber <= 9))  IChannel = EXTI9_5_IRQn;
-    else if ((IPinNumber >= 10) && (IPinNumber <= 15)) IChannel = EXTI15_10_IRQn;
+    if      ((IPinNumber >= 0)  and (IPinNumber <= 4))  IChannel = EXTI0_IRQn + IPinNumber;
+    else if ((IPinNumber >= 5)  and (IPinNumber <= 9))  IChannel = EXTI9_5_IRQn;
+    else if ((IPinNumber >= 10) and (IPinNumber <= 15)) IChannel = EXTI15_10_IRQn;
     // EXTI line config
     if      (IGPIO == GPIOA) GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, IPinNumber);
     else if (IGPIO == GPIOB) GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, IPinNumber);
