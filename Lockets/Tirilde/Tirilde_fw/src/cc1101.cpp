@@ -26,9 +26,9 @@ void CC_t::Task(void) {
             FlushTxFIFO();
             Uart.Printf("TX ovf\r");
             break;
-        case CC_STB_IDLE:   // Reenter RX if needed
-            if (Aim == caRx) EnterRX();
-            break;
+//        case CC_STB_IDLE:   // Reenter RX if packet was jammed
+//            if (Aim == caRx) EnterRX();
+//            break;
         default: // Just get out in other cases
             break;
     } //Switch
@@ -38,10 +38,10 @@ void CC_t::Task(void) {
 void CC_t::IRQHandler() {
     if (Aim == caTx) {
         Aim = caIdle;
-        TxEndHandler();
+        //TxEndHandler();
     }
     else { // Was receiving
-        Aim = caIdle;
+        Aim = caRx;
         if (ReadRX((uint8_t*)&PktRx)) {
             FlushRxFIFO();
             NewPktHandler();
@@ -102,16 +102,32 @@ void CC_t::Transmit(void) {
     EnterTX();
     //klPrintf("TX\r");
 }
-void CC_t::Receive(void) {
-    // Switch IRQ to 0x07 to signal end of reception
+void CC_t::TransmitAndWaitIdle(void) {
     IrqPin.IrqDisable();
-    WriteRegister(CC_IOCFG0, 0x07); // Asserts when a packet has been received with CRC OK. De-asserts when the first byte is read.
-    IrqPin.IrqSetup(EXTI_Trigger_Rising);  // FIFO ready
-    IrqPin.IrqEnable();
-    FlushRxFIFO();
-    Aim = caRx;
-    EnterRX();
-    //klPrintf("RX\r");
+    WriteRegister(CC_IOCFG0, 0x06); // Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
+    WriteTX((uint8_t*)(&PktTx), CC_PKT_LEN);
+    Aim = caTx;
+    EnterTX();
+    while(IrqPin == 0); // Wait until sync word is sent
+    while(IrqPin == 1); // Wait until transmission completed
+    Aim = caIdle;
+}
+
+void CC_t::Receive(void) {
+    if (Aim == caRx) {
+        EnterIdle();
+        EnterRX();
+    }
+    else {
+        // Switch IRQ to 0x07 to signal end of reception
+        IrqPin.IrqDisable();
+        WriteRegister(CC_IOCFG0, 0x07); // Asserts when a packet has been received with CRC OK. De-asserts when the first byte is read.
+        IrqPin.IrqSetup(EXTI_Trigger_Rising);  // FIFO ready
+        IrqPin.IrqEnable();
+        FlushRxFIFO();
+        Aim = caRx;
+        EnterRX();
+    }
 }
 
 // Return RSSI in dBm

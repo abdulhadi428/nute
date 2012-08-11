@@ -32,8 +32,10 @@ enum CCAim_t {caIdle, caRx, caTx};
 // ==== Packet ====
 struct Pkt_t {
     uint8_t Addr;
-    uint8_t FreeAddr[18];
+    uint8_t FreeAddr;
     uint8_t NetID;
+    uint8_t CycleCounter;
+    uint16_t TimerValue;
     uint8_t RSSI;
     uint8_t LQI;
 } PACKED;
@@ -64,7 +66,6 @@ private:
     void EnterRX(void)      { WriteStrobe(CC_SRX);  }
     void EnterTX(void)      { WriteStrobe(CC_STX);  }
     void PowerDown(void)    { WriteStrobe(CC_SPWD); }
-    void Calibrate(void)    { WriteStrobe(CC_SCAL); }
     void FlushTxFIFO(void)  { WriteStrobe(CC_SFTX); }
     void GetState(void)     { WriteStrobe(CC_SNOP); }
 public:
@@ -80,11 +81,16 @@ public:
     void SetPower(uint8_t APwrID) { if (APwrID <= 8) WriteRegister(CC_PATABLE, CC_PwrLevels[APwrID]); }
     // RX/TX
     void Transmit(void);
+    void TransmitAndWaitIdle(void);
     void Receive(void);
     void EnterIdle(void) { WriteStrobe(CC_SIDLE); Aim = caIdle; }
+    void Recalibrate(void) {
+        while (IState != CC_STB_IDLE) EnterIdle();
+        WriteStrobe(CC_SCAL);
+    }
     // IRQ handler
     void IRQHandler(void);
-    void TxEndHandler(void);
+    //void TxEndHandler(void);
     void NewPktHandler(void);
 };
 

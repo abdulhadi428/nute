@@ -126,27 +126,19 @@ struct Time_t {
     void IncS(void) { if(++S > 59) { S = 0; IncM(); }  }
 };
 
+// TIMER2 is used here
 class Delay_t {
 public:
-    uint32_t TickCounter;
     void Init(void);
     // Simple loop-based delays, no init needed
     void Loop (volatile uint32_t ACounter) { while(ACounter--); }
     void ms (uint32_t Ams);
     // Interrupt-driven delays
     bool Elapsed(uint32_t *AVar, const uint32_t ADelay);
-    void Reset  (uint32_t *AVar) { *AVar = TickCounter; }
-    void Bypass (uint32_t *AVar, const uint32_t ADelay) { *AVar = TickCounter - ADelay; }
-
-    void IncreaseTickCounter(void) { TickCounter++; }
+    void Reset  (uint32_t *AVar) { *AVar = TIM2->CNT; }
+    void Bypass (uint32_t *AVar, const uint32_t ADelay) { *AVar = TIM2->CNT - ADelay; }
 };
-
 extern Delay_t Delay;
-
-// Declare Timer IRQ. Use externC to make it visible from asm file.
-extern "C" {
-void TIM2_IRQHandler(void);
-}
 
 // ============================== UART command =================================
 #define UART_TXBUF_SIZE     144

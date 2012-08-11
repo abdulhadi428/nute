@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?>
-
-<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335" moduleId="org.eclipse.cdt.core.settings" name="Debug">
@@ -104,9 +102,6 @@
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.printsize.debug.1991510706" name="ARM Yagarto Windows GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.printsize.debug"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335.444642398" name="main.cpp" rcbsApplicability="disable" resourcePath="src/main.cpp" toolsToInvoke="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.compiler.debug.644845196.1252232080">
-						<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.compiler.debug.644845196.1252232080" name="ARM Yagarto Windows GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.compiler.debug.644845196"/>
-					</fileInfo>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
