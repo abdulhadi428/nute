@@ -91,7 +91,7 @@ public:
     }
     // IRQ handler
     void IRQHandler(void);
-    //void TxEndHandler(void);
+    void TxEndHandler(void);
     void NewPktHandler(void);
 };
 

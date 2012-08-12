@@ -60,6 +60,7 @@ void klPinIrq_t::IrqSetup(EXTITrigger_TypeDef ATriggerType) {
 }
 
 void klPinIrq_t::IrqEnable() {
+    EXTI_ClearITPendingBit(IPinMask);
     // Enable and set EXTI Interrupt
     NVIC_InitTypeDef NVIC_InitStructure;
     NVIC_InitStructure.NVIC_IRQChannel = IChannel;

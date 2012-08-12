@@ -38,12 +38,11 @@ void CC_t::Task(void) {
 void CC_t::IRQHandler() {
     if (Aim == caTx) {
         Aim = caIdle;
-        //TxEndHandler();
+        TxEndHandler();
     }
     else { // Was receiving
-        if (ReadRX((uint8_t*)&PktRx)) {
-            NewPktHandler();
-        }
+        if (ReadRX((uint8_t*)&PktRx)) NewPktHandler();
+        EnterIdle();
         FlushRxFIFO();
         EnterRX();  // Reenter RX after packet processed
     }
@@ -89,6 +88,7 @@ void CC_t::SetChannel(uint8_t AChannel) {
     WriteRegister(CC_CHANNR, AChannel);
 }
 
+
 void CC_t::Transmit(void) {
     // Switch IRQ to 0x06 to signal end of transmission
     IrqPin.IrqDisable();
@@ -116,6 +116,11 @@ void CC_t::Receive(void) {
          // Switch IRQ to 0x07 to signal end of reception
         IrqPin.IrqDisable();
         WriteRegister(CC_IOCFG0, 0x07); // Asserts when a packet has been received with CRC OK. De-asserts when the first byte is read.
+        // Check if pin is already high
+        if(IrqPin == 1) {
+            //Uart.Printf("H\r");
+            ReadRX((uint8_t*)&PktRx);
+        }
         IrqPin.IrqSetup(EXTI_Trigger_Rising);  // FIFO ready
         IrqPin.IrqEnable();
     }
