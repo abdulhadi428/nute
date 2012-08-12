@@ -74,6 +74,7 @@ void klPinIrq_t::IrqDisable() {
     NVIC_InitStructure.NVIC_IRQChannel = IChannel;
     NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
     NVIC_Init(&NVIC_InitStructure);
+    EXTI_ClearITPendingBit(IPinMask);
 }
 
 // ================================= Timer =====================================

@@ -18,11 +18,11 @@
 //#define ALWAYS_RX
 
 LedRGB_t Led;
-klPin_t dp;
+klPin_t dp, gp;
 
 // Sync module
 #define PKT_DURATION    45      // ms
-#define CYCLE_DURATION  270     // ms
+#define CYCLE_DURATION  243     // ms
 #define CYCLE_COUNT     4
 class Sync_t {
 private:
@@ -57,7 +57,7 @@ int main(void) {
         //Led.Task();
         CC.Task();
 
-        dp = (CC.Aim != caRx);
+        //dp = (CC.Aim != caRx);
 
 //        if(Delay.Elapsed(&Tmr, 450)) {
 //            dp = !dp;
@@ -78,6 +78,8 @@ inline void GeneralInit(void) {
     //Led.Init();
     dp.Init(GPIOA, 11, GPIO_Mode_Out_PP);
     dp=1;
+    gp.Init(GPIOA, 8, GPIO_Mode_Out_PP);
+    gp=1;
 
     Uart.Init(57600);
     Uart.Printf("\rTirilde\r");
@@ -116,7 +118,8 @@ void Sync_t::Init() {
 }
 
 void Sync_t::NewCycleHandler() {
-    //dp = !dp;
+    dp = 0;
+    /*
     if (++ICycleCounter >= CYCLE_COUNT) {  // Zero cycle begins
         ICycleCounter = 0;
 #if defined ENABLE_RX || defined ALWAYS_RX
@@ -131,12 +134,13 @@ void Sync_t::NewCycleHandler() {
 #endif
     }
     //*/
+    CC.Receive();
+    dp=1;
 }
 
 void Sync_t::TimeSlotHandler() {
 #ifdef ENABLE_TX
     //dp = 0;
-    CC.EnterIdle();
 //    TimerStop();
     // Setup pkt to TX
 //    PktTx.Addr = Addr;
@@ -145,15 +149,17 @@ void Sync_t::TimeSlotHandler() {
 //    PktTx.CycleCounter = ICycleCounter;
 //    PktTx.TimerValue = GetTimerValue();
     // Start transmission
+//    dp = 0;
     CC.TransmitAndWaitIdle();
-    //dp = 1;
+//    dp = 1;
 //    Sync.TimerStart();
 #endif
 #ifdef ALWAYS_RX
     CC.Receive();  // Enter RX after TX
 #elif defined ENABLE_RX
-    if (ICycleCounter == 0) CC.Receive();  // Enter RX after TX
+    //if (ICycleCounter == 0) CC.Receive();  // Enter RX after TX
 #endif
+    CC.Receive();
 }
 
 // Timer Interrupt
@@ -170,7 +176,7 @@ void TIM1_BRK_TIM15_IRQHandler(void) {
 }
 
 void CC_t::NewPktHandler() {
-    Uart.Printf("Rx\r");
+    Uart.Printf("R %u\r", PktRx.CycleCounter);
 }
 
 

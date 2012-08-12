@@ -10,12 +10,12 @@
 
 CC_t CC;
 Pkt_t PktRx, PktTx;
+//extern klPin_t gp;
 
 // ========================== Implementation ===================================
 void CC_t::Task(void) {
-    // Handle state
     static uint32_t Tmr;
-    if (!Delay.Elapsed(&Tmr, 99)) return;
+    if(!Delay.Elapsed(&Tmr, 99)) return;
     GetState();
     switch (IState) {
         case CC_STB_RX_OVF:
@@ -41,13 +41,11 @@ void CC_t::IRQHandler() {
         //TxEndHandler();
     }
     else { // Was receiving
-        Aim = caRx;
         if (ReadRX((uint8_t*)&PktRx)) {
-            FlushRxFIFO();
             NewPktHandler();
-            //klPrintf("RX: %A\r", (uint8_t*)&Nute.RX_Pkt, CC_PKT_LEN+2);
         }
-        else FlushRxFIFO();
+        FlushRxFIFO();
+        EnterRX();  // Reenter RX after packet processed
     }
 }
 
@@ -103,31 +101,25 @@ void CC_t::Transmit(void) {
     //klPrintf("TX\r");
 }
 void CC_t::TransmitAndWaitIdle(void) {
+    Aim = caIdle;
     IrqPin.IrqDisable();
     WriteRegister(CC_IOCFG0, 0x06); // Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
     WriteTX((uint8_t*)(&PktTx), CC_PKT_LEN);
-    Aim = caTx;
     EnterTX();
     while(IrqPin == 0); // Wait until sync word is sent
     while(IrqPin == 1); // Wait until transmission completed
-    Aim = caIdle;
 }
 
 void CC_t::Receive(void) {
-    if (Aim == caRx) {
-        EnterIdle();
-        EnterRX();
-    }
-    else {
-        // Switch IRQ to 0x07 to signal end of reception
+    if (Aim != caRx) {
+        Aim = caRx;
+         // Switch IRQ to 0x07 to signal end of reception
         IrqPin.IrqDisable();
         WriteRegister(CC_IOCFG0, 0x07); // Asserts when a packet has been received with CRC OK. De-asserts when the first byte is read.
         IrqPin.IrqSetup(EXTI_Trigger_Rising);  // FIFO ready
         IrqPin.IrqEnable();
-        FlushRxFIFO();
-        Aim = caRx;
-        EnterRX();
     }
+    EnterRX();  // After that, some time will be wasted to recalibrate
 }
 
 // Return RSSI in dBm
@@ -149,34 +141,21 @@ void CC_t::WriteTX(uint8_t* PArr, uint8_t ALen) {
 //#define CC_PRINT_RX
 bool CC_t::ReadRX(uint8_t* PArr) {
     uint8_t b;
-    uint8_t FifoSize = ReadRegister(CC_RXBYTES);    // Get number of bytes in FIFO
-    FifoSize &= 0x7F;                               // Remove MSB
-#ifdef CC_PRINT_RX
-    klPrintf("Size: %u    ", FifoSize);
-#endif
-    if(FifoSize == 0) {
-#ifdef CC_PRINT_RX
-    klPrintf("\r");
-#endif
-        ReadRegister(CC_FIFO);  // dummy, to reset IRQ
-        return false;
+    // Get pkt status
+    b = ReadRegister(CC_PKTSTATUS);
+    //Uart.Printf("St: %X  ", b);
+    if(b & 0x80) {  // CRC OK
+        CS_Lo();                                            // Start transmission
+        BusyWait();                                         // Wait for chip to become ready
+        ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);  // Address with read & burst flags
+        for (uint8_t i=0; i<CC_PKT_LEN+2; i++) {            // Read bytes
+            b = ReadWriteByte(0);
+            *PArr++ = b;
+        }
+        CS_Hi();    // End transmission
+        return true;
     }
-    if (FifoSize > (CC_PKT_LEN+2)) FifoSize = CC_PKT_LEN+2;
-    CS_Lo();                                            // Start transmission
-    BusyWait();                                         // Wait for chip to become ready
-    ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);  // Address with read & burst flags
-    for (uint8_t i=0; i<FifoSize; i++) {                // Read bytes
-        b = ReadWriteByte(0);
-        *PArr++ = b;
-#ifdef CC_PRINT_RX
-        klPrintf("%X ", b);
-#endif
-    }
-    CS_Hi();    // End transmission
-#ifdef CC_PRINT_RX
-    klPrintf("\r");
-#endif
-    return true;
+    else return false;
 }
 
 uint8_t CC_t::ReadRegister (uint8_t ARegAddr){

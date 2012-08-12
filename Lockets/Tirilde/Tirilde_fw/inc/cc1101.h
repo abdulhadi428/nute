@@ -42,6 +42,7 @@ struct Pkt_t {
 #define CC_PKT_LEN  (sizeof(Pkt_t)-2)
 
 extern Pkt_t PktRx, PktTx;
+extern klPin_t gp;
 
 class CC_t {
 private:
