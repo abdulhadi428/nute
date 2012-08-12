@@ -98,7 +98,6 @@ void CC_t::Transmit(void) {
     WriteTX((uint8_t*)(&PktTx), CC_PKT_LEN);
     Aim = caTx;
     EnterTX();
-    //klPrintf("TX\r");
 }
 void CC_t::TransmitAndWaitIdle(void) {
     Aim = caIdle;

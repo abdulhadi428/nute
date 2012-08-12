@@ -84,6 +84,9 @@ inline void GeneralInit(void) {
 // ==================================== Sync ===================================
 void Sync_t::Init() {
     CycleCounter = 0;
+    // Get unique ID
+    GetUniqueID(&PktTx.IdArr[0]);
+    Uart.Printf("ID: %X8 %X8 %X8\r", PktTx.IdArr[0], PktTx.IdArr[1], PktTx.IdArr[2]);
 }
 
 void Sync_t::Task() {
@@ -92,7 +95,6 @@ void Sync_t::Task() {
         dp=0;
         if (++CycleCounter >= CYCLE_COUNT) CycleCounter = 0;
         // Transmit at every cycle start
-        PktTx.Addr = 4;
         CC.Transmit();
         //CC.TransmitAndWaitIdle();
         //CC.Receive();
@@ -108,7 +110,7 @@ void CC_t::TxEndHandler() {
 }
 
 void CC_t::NewPktHandler() {
-    Uart.Printf("R %u\r", PktRx.TimerValue);
+    Uart.Printf("NbID: %X8 %X8 %X8\r", PktRx.IdArr[0], PktRx.IdArr[1], PktRx.IdArr[2]);
 }
 
 

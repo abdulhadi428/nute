@@ -31,11 +31,7 @@ enum CCAim_t {caIdle, caRx, caTx};
 // ============================ Types & variables ==============================
 // ==== Packet ====
 struct Pkt_t {
-    uint8_t Addr;
-    uint8_t FreeAddr;
-    uint8_t NetID;
-    uint8_t CycleCounter;
-    uint16_t TimerValue;
+    uint32_t IdArr[3];
     uint8_t RSSI;
     uint8_t LQI;
 } PACKED;

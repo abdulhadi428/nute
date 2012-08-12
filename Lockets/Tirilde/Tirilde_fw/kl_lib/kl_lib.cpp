@@ -246,6 +246,18 @@ void InitClock(Clk_t AClk) {
     }
 }
 
+// ============================ Unique ID ======================================
+#define IDBASE      0x1FFFF7E8  // Memory address of ID
+void GetUniqueID(uint32_t *IDArr) {
+    uint32_t tmp1, tmp2;
+    tmp1 = *((uint16_t*)(IDBASE));      // Lower 16 bits
+    tmp2 = *((uint16_t*)(IDBASE+2));    // Next 16 bits
+    tmp2 <<= 16;
+    IDArr[0] = tmp2 + tmp1;
+    IDArr[1] = *((uint32_t*)(IDBASE+4));    // Next 32 bits
+    IDArr[2] = *((uint32_t*)(IDBASE+8));    // Last 32 bits
+}
+
 // ============================== Delay ========================================
 Delay_t Delay;
 void Delay_t::Init(void) {
