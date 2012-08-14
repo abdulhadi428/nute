@@ -256,6 +256,10 @@ void GetUniqueID(uint32_t *IDArr) {
     IDArr[0] = tmp2 + tmp1;
     IDArr[1] = *((uint32_t*)(IDBASE+4));    // Next 32 bits
     IDArr[2] = *((uint32_t*)(IDBASE+8));    // Last 32 bits
+    // DEBUG
+//    IDArr[0] = 0x01020304;
+//    IDArr[1] = 0x05060708;
+//    IDArr[2] = 0x0A0B0C0D;
 }
 
 // ============================== Delay ========================================

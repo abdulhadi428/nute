@@ -54,17 +54,21 @@ const uint8_t CC_PwrLevels[9] = {
 //#define CC_MDMCFG1_VALUE    0b11000010  // FEC=1, Preamble length=100 => 8bytes, Ch spacing=10=2
 
 #define CC_MCSM0_VALUE      0x18        // Calibrate at IDLE->RX,TX
-//#define CC_MCSM1_VALUE      0b00001100  // Channel is always clear, RX->RX,   TX->IDLE
-//#define CC_MCSM1_VALUE      0b00001111  // Channel is always clear, RX->RX,   TX->RX
-#define CC_MCSM1_VALUE      0b00000000  // Channel is always clear, RX->IDLE, TX->IDLE
-//#define CC_MCSM1_VALUE      0b00000011  // Channel is always clear, RX->IDLE, TX->RX
+// Clear channel signal
+//#define CC_CCA_MODE         0b00000000  // Always clear
+#define CC_CCA_MODE         0b00100000  // Unless currently receiving a packet
+#define CC_RXOFF_MODE       0b00000000  // RX->IDLE
+//#define CC_RXOFF_MODE       0b00001100  // RX->RX
+#define CC_TXOFF_MODE       0b00000000  // TX->IDLE
+#define CC_MCSM1_VALUE      (CC_CCA_MODE + CC_RXOFF_MODE + CC_TXOFF_MODE)
+
 #define CC_MCSM2_VALUE      0b00000111  // WOR settings, nothing interesting here
 
 #define CC_FIFOTHR_VALUE    0b00000111  // RX attenuation = 0; RXFIFO and TXFIFO thresholds: TX 33, RX 32
 #define CC_IOCFG2_VALUE     0x2E        // High impedance
-//#define CC_IOCFG0_VALUE     0x06        // GDO0 - Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
+#define CC_IOCFG0_VALUE     0x06        // GDO0 - Asserts when sync word has been sent / received, and de-asserts at the end of the packet.
                                         // In RX, the pin will also deassert when a packet is discarded due to address or maximum length filtering
-#define CC_IOCFG0_VALUE     0x07        // GDO0 - Asserts when a packet has been received with CRC OK. De-asserts when the first byte is read from the RX FIFO.
+//#define CC_IOCFG0_VALUE     0x07        // GDO0 - Asserts when a packet has been received with CRC OK. De-asserts when the first byte is read from the RX FIFO.
 
 //#define CC_PKTCTRL1_VALUE   0b00001110  // PQT=0, CRC autoflush=1, Append=1, Address check = 10 (check, 0 is broadcast)
 #define CC_PKTCTRL1_VALUE   0b00001100  // PQT=0, CRC autoflush=1, Append status=1, Address check = 00 (no check)

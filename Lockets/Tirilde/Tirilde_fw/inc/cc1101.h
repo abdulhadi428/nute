@@ -50,6 +50,7 @@ private:
     bool GDO0_IsHi(void) { return klGpioIsSetByMsk(CC_GPIO, CC_GDO0); }
     void BusyWait(void)  { while (klGpioIsSetByMsk(CC_GPIO, CC_MISO));}
 
+    void WaitUntilChannelIsBusy(void);
     void RfConfig(void);
     void WriteTX(uint8_t* PArr, uint8_t ALen);
     bool ReadRX(uint8_t* PArr);

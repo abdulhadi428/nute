@@ -9,20 +9,20 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_tim.h"
 #include "stm32f10x_gpio.h"
+#include <stdlib.h>
 #include "kl_lib.h"
 #include "led.h"
 #include "cc1101.h"
 
-#define ENABLE_TX
-#define ENABLE_RX
-//#define ALWAYS_RX
+#define ALWAYS_RX
 
 LedRGB_t Led;
 klPin_t dp, gp;
 
 // Sync module
-#define CYCLE_DURATION  243     // ms
-#define CYCLE_COUNT     4
+#define CYCLE_MIN_DURATION  198 // ms
+#define CYCLE_MAX_ADDITION  36  // ms
+#define CYCLE_COUNT         4   // Rx every 0 cycle
 class Sync_t {
 private:
 public:
@@ -79,34 +79,60 @@ inline void GeneralInit(void) {
     CC.SetPower(plN6dBm);
 
     Sync.Init();
-}
-
-// ==================================== Sync ===================================
-void Sync_t::Init() {
-    CycleCounter = 0;
     // Get unique ID
     GetUniqueID(&PktTx.IdArr[0]);
     Uart.Printf("ID: %X8 %X8 %X8\r", PktTx.IdArr[0], PktTx.IdArr[1], PktTx.IdArr[2]);
 }
 
+// ==================================== Sync ===================================
+void Sync_t::Init() {
+    CycleCounter = 0;
+}
+
+/*
+ * RX at 0 cycle for full cycle length FDuration = CYCLE_MIN_DURATION + [0; CYCLE_MAX_ADDITION];
+ * RX at 1 cycle for FRxDuration = (CYCLE_MIN_DURATION + CYCLE_MAX_ADDITION) - FDuration.
+ */
 void Sync_t::Task() {
-    static uint32_t FTmr;
-    if(Delay.Elapsed(&FTmr, CYCLE_DURATION)) {
+    static uint32_t FTmr, FDuration=CYCLE_MIN_DURATION;
+    static uint32_t FRxTmr, FRxDuration;
+    if(Delay.Elapsed(&FTmr, FDuration)) {
         dp=0;
         if (++CycleCounter >= CYCLE_COUNT) CycleCounter = 0;
         // Transmit at every cycle start
         CC.Transmit();
-        //CC.TransmitAndWaitIdle();
-        //CC.Receive();
         dp=1;
+        // Generate random duration: CYCLE_MIN_DURATION + [0; CYCLE_MAX_ADDITION]
+        FDuration = CYCLE_MIN_DURATION + rand() % CYCLE_MAX_ADDITION;
+        // Calculate Rx duration of first cycle
+        if(Sync.CycleCounter == 0) {
+            FRxDuration = (CYCLE_MIN_DURATION + CYCLE_MAX_ADDITION) - FDuration;
+        }
+        else if(Sync.CycleCounter == 1) {
+            Delay.Reset(&FRxTmr);   // Prepare to end RX
+        }
     }
+
+    // Stop RX if needed
+#ifndef ALWAYS_RX
+    if((Sync.CycleCounter == 1) and (CC.Aim == caRx)) {
+        if(Delay.Elapsed(&FRxTmr, FRxDuration)) {
+            dp=0;
+            CC.EnterIdle();
+            dp=1;
+        }
+    }
+#endif
 }
 
 void CC_t::TxEndHandler() {
+#ifdef ALWAYS_RX
     Receive();
-    // Enter RX at zero cycle, otherwise sleep
-//    if(Sync.CycleCounter == 0) Receive();
-//    else EnterIdle();
+#else
+    // Enter RX at zero cycle and at start of first, otherwise sleep
+    if((Sync.CycleCounter == 0) or (Sync.CycleCounter == 1)) Receive();
+    else EnterIdle();
+#endif
 }
 
 void CC_t::NewPktHandler() {
