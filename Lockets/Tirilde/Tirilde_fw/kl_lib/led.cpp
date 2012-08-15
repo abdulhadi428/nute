@@ -130,23 +130,32 @@ void LedRGB_t::Init() {
 }
 
 void LedRGB_t::Task(void) {
-	static uint32_t FTimer=0;
-    if (!Delay.Elapsed(&FTimer, 10)) return;
-    if (ICurrentColor == INeededColor) return;
-    // Red channel
-    if (ICurrentColor.Red != INeededColor.Red) {
-        if (INeededColor.Red < ICurrentColor.Red) ICurrentColor.Red--;
-        else ICurrentColor.Red++;
+    if (IsInsideBlink) {
+        if (Delay.Elapsed(&ITimer, IBlinkDelay)) {
+            IsInsideBlink = false;
+            SetColor(clBlack);
+            INeededColor = clBlack;
+        }
     }
-    // Green channel
-    if (ICurrentColor.Green != INeededColor.Green) {
-        if (INeededColor.Green < ICurrentColor.Green) ICurrentColor.Green--;
-        else ICurrentColor.Green++;
+    else {
+        if (Delay.Elapsed(&ITimer, 10)) {
+            if (ICurrentColor == INeededColor) return;
+            // Red channel
+            if (ICurrentColor.Red != INeededColor.Red) {
+                if (INeededColor.Red < ICurrentColor.Red) ICurrentColor.Red--;
+                else ICurrentColor.Red++;
+            }
+            // Green channel
+            if (ICurrentColor.Green != INeededColor.Green) {
+                if (INeededColor.Green < ICurrentColor.Green) ICurrentColor.Green--;
+                else ICurrentColor.Green++;
+            }
+            // Blue channel
+            if (ICurrentColor.Blue != INeededColor.Blue) {
+                if (INeededColor.Blue < ICurrentColor.Blue) ICurrentColor.Blue--;
+                else ICurrentColor.Blue++;
+            }
+            SetColor(ICurrentColor);
+        }
     }
-    // Blue channel
-    if (ICurrentColor.Blue != INeededColor.Blue) {
-        if (INeededColor.Blue < ICurrentColor.Blue) ICurrentColor.Blue--;
-        else ICurrentColor.Blue++;
-    }
-    SetColor(ICurrentColor);
 }

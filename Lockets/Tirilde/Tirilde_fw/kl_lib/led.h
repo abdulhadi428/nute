@@ -105,6 +105,8 @@ struct Color_t {
 
 class LedRGB_t {
 private:
+    uint32_t ITimer, IBlinkDelay;
+    bool IsInsideBlink;
 	Color_t ICurrentColor, INeededColor;
 	void ISetRed  (uint8_t AValue) {TIM1->CCR3 = AValue;}
 	void ISetGreen(uint8_t AValue) {TIM1->CCR1 = AValue;}
@@ -119,6 +121,13 @@ public:
 		ICurrentColor = AColor;
 	}
 	void SetColorSmoothly(Color_t AColor) { INeededColor = AColor; }
+	void Blink(uint32_t ABlinkDelay, Color_t AColor) {
+	        IsInsideBlink = true;
+	        IBlinkDelay = ABlinkDelay;
+	        INeededColor = AColor;
+	        SetColor(AColor);
+	        Delay.Reset(&ITimer);
+	    }
 };
 
 

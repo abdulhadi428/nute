@@ -14,12 +14,25 @@
 #include "led.h"
 #include "cc1101.h"
 
-#define ALWAYS_RX
-
 LedRGB_t Led;
-klPin_t dp, gp;
+//klPin_t dp, gp;
+
+// Neighbours counter
+#define MAX_NB_COUNT    11
+#define DEMONSTRATE_PERIOD  2007    // Demonstrate count every period, ms
+class NCounter_t {
+private:
+    uint32_t Count;
+    uint32_t IdTable[MAX_NB_COUNT][3];
+public:
+    void Demonstrate(void);
+    void Reset(void) { Count = 0; }
+    void Add(uint32_t *ID);
+    void Task(void);
+} NCounter;
 
 // Sync module
+#define ALWAYS_RX               // DEBUG
 #define CYCLE_MIN_DURATION  198 // ms
 #define CYCLE_MAX_ADDITION  36  // ms
 #define CYCLE_COUNT         4   // Rx every 0 cycle
@@ -27,7 +40,7 @@ class Sync_t {
 private:
 public:
     uint16_t CycleCounter;
-    void Init(void);
+    void Init(void) { CycleCounter = 0; }
     void Task(void);
 } Sync;
 
@@ -41,11 +54,10 @@ int main(void) {
     // ==== Main cycle ====
     while (1) {
     	Uart.Task();
-        //Led.Task();
+        Led.Task();
         CC.Task();
         Sync.Task();
-
-        //dp = (CC.Aim != caRx);
+        NCounter.Task();
 
 //        if(Delay.Elapsed(&Tmr, 450)) {
 //            dp = !dp;
@@ -63,11 +75,11 @@ inline void GeneralInit(void) {
 
     Delay.Init();
     // DEBUG
-    //Led.Init();
-    dp.Init(GPIOA, 11, GPIO_Mode_Out_PP);
-    dp=1;
-    gp.Init(GPIOA, 8, GPIO_Mode_Out_PP);
-    gp=1;
+    Led.Init();
+//    dp.Init(GPIOA, 11, GPIO_Mode_Out_PP);
+//    dp=1;
+//    gp.Init(GPIOA, 8, GPIO_Mode_Out_PP);
+//    gp=1;
 
     Uart.Init(57600);
     Uart.Printf("\rTirilde\r");
@@ -82,35 +94,64 @@ inline void GeneralInit(void) {
     // Get unique ID
     GetUniqueID(&PktTx.IdArr[0]);
     Uart.Printf("ID: %X8 %X8 %X8\r", PktTx.IdArr[0], PktTx.IdArr[1], PktTx.IdArr[2]);
+    NCounter.Reset();
+}
+
+// ================================== NCounter =================================
+void NCounter_t::Add(uint32_t *ID) {
+    // Check if already in table
+    for(uint32_t i=0; i<Count; i++) {
+        if((ID[0] == IdTable[i][0]) and (ID[1] == IdTable[i][1]) and (ID[2] == IdTable[i][2]))
+            return; // Already in, nothing to do
+    }
+    // Add if table is not full
+    if(Count < MAX_NB_COUNT) {
+        IdTable[Count][0] = ID[0];
+        IdTable[Count][1] = ID[1];
+        IdTable[Count][2] = ID[2];
+        Count++;
+    }
+}
+
+void NCounter_t::Demonstrate() {
+    Uart.Printf("Nb count: %u\r", Count);
+}
+
+void NCounter_t::Task() {
+    static uint32_t FTmr;
+    if(Delay.Elapsed(&FTmr, DEMONSTRATE_PERIOD)) {
+        NCounter.Demonstrate();
+        NCounter.Reset();
+    }
 }
 
 // ==================================== Sync ===================================
-void Sync_t::Init() {
-    CycleCounter = 0;
-}
-
 /*
  * RX at 0 cycle for full cycle length FDuration = CYCLE_MIN_DURATION + [0; CYCLE_MAX_ADDITION];
  * RX at 1 cycle for FRxDuration = (CYCLE_MIN_DURATION + CYCLE_MAX_ADDITION) - FDuration.
  */
 void Sync_t::Task() {
     static uint32_t FTmr, FDuration=CYCLE_MIN_DURATION;
+#ifndef ALWAYS_RX
     static uint32_t FRxTmr, FRxDuration;
+#endif
     if(Delay.Elapsed(&FTmr, FDuration)) {
-        dp=0;
+        //dp=0;
         if (++CycleCounter >= CYCLE_COUNT) CycleCounter = 0;
         // Transmit at every cycle start
         CC.Transmit();
-        dp=1;
+        //dp=1;
         // Generate random duration: CYCLE_MIN_DURATION + [0; CYCLE_MAX_ADDITION]
         FDuration = CYCLE_MIN_DURATION + rand() % CYCLE_MAX_ADDITION;
         // Calculate Rx duration of first cycle
+#ifndef ALWAYS_RX
         if(Sync.CycleCounter == 0) {
             FRxDuration = (CYCLE_MIN_DURATION + CYCLE_MAX_ADDITION) - FDuration;
         }
         else if(Sync.CycleCounter == 1) {
             Delay.Reset(&FRxTmr);   // Prepare to end RX
         }
+#endif
     }
 
     // Stop RX if needed
@@ -136,7 +177,9 @@ void CC_t::TxEndHandler() {
 }
 
 void CC_t::NewPktHandler() {
-    Uart.Printf("NbID: %X8 %X8 %X8\r", PktRx.IdArr[0], PktRx.IdArr[1], PktRx.IdArr[2]);
+    //Uart.Printf("NbID: %X8 %X8 %X8\r", PktRx.IdArr[0], PktRx.IdArr[1], PktRx.IdArr[2]);
+    NCounter.Add(PktRx.IdArr);
+    Led.Blink(36, clBlue);
 }
 
 
