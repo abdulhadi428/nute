@@ -74,8 +74,8 @@ inline void GeneralInit(void) {
     klJtagDisable();
 
     Delay.Init();
-    // DEBUG
     Led.Init();
+    // DEBUG
 //    dp.Init(GPIOA, 11, GPIO_Mode_Out_PP);
 //    dp=1;
 //    gp.Init(GPIOA, 8, GPIO_Mode_Out_PP);
@@ -87,7 +87,6 @@ inline void GeneralInit(void) {
     // Setup CC
     CC.Init();
     CC.SetChannel(0);
-    CC.SetAddress(0);   // dummy
     CC.SetPower(plN6dBm);
 
     Sync.Init();
@@ -115,6 +114,8 @@ void NCounter_t::Add(uint32_t *ID) {
 
 void NCounter_t::Demonstrate() {
     Uart.Printf("Nb count: %u\r", Count);
+//    if(Count != 0) Led.SetColorSmoothly(clBlue);
+//    else Led.SetColorSmoothly(clBlue);
 }
 
 void NCounter_t::Task() {
@@ -179,7 +180,7 @@ void CC_t::TxEndHandler() {
 void CC_t::NewPktHandler() {
     //Uart.Printf("NbID: %X8 %X8 %X8\r", PktRx.IdArr[0], PktRx.IdArr[1], PktRx.IdArr[2]);
     NCounter.Add(PktRx.IdArr);
-    Led.Blink(36, clBlue);
+    Led.Blink(36, clBlue);  // DEBUG
 }
 
 
