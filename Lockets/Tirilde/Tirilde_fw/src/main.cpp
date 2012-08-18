@@ -19,7 +19,7 @@ LedRGB_t Led;
 
 // Neighbours counter
 #define MAX_NB_COUNT    11
-#define DEMONSTRATE_PERIOD  2007    // Demonstrate count every period, ms
+#define DEMONSTRATE_PERIOD  4005    // Demonstrate count every period, ms
 class NCounter_t {
 private:
     uint32_t Count;
@@ -32,9 +32,9 @@ public:
 } NCounter;
 
 // Sync module
-#define ALWAYS_RX               // DEBUG
-#define CYCLE_MIN_DURATION  198 // ms
-#define CYCLE_MAX_ADDITION  36  // ms
+//#define ALWAYS_RX               // DEBUG
+#define CYCLE_MIN_DURATION  99 // ms
+#define CYCLE_MAX_ADDITION  27  // ms
 #define CYCLE_COUNT         4   // Rx every 0 cycle
 class Sync_t {
 private:
@@ -76,6 +76,7 @@ inline void GeneralInit(void) {
     Delay.Init();
     Led.Init();
     // DEBUG
+//    Led.Blink(99, {1,1,0});
 //    dp.Init(GPIOA, 11, GPIO_Mode_Out_PP);
 //    dp=1;
 //    gp.Init(GPIOA, 8, GPIO_Mode_Out_PP);
@@ -87,7 +88,7 @@ inline void GeneralInit(void) {
     // Setup CC
     CC.Init();
     CC.SetChannel(0);
-    CC.SetPower(plN6dBm);
+    CC.SetPower(plP10dBm);
 
     Sync.Init();
     // Get unique ID
@@ -113,9 +114,9 @@ void NCounter_t::Add(uint32_t *ID) {
 }
 
 void NCounter_t::Demonstrate() {
-    Uart.Printf("Nb count: %u\r", Count);
-//    if(Count != 0) Led.SetColorSmoothly(clBlue);
-//    else Led.SetColorSmoothly(clBlue);
+    //Uart.Printf("Nb count: %u\r", Count);
+    if(Count != 0) Led.SetColorSmoothly(clRed);
+    else Led.SetColorSmoothly(clBlack);
 }
 
 void NCounter_t::Task() {
@@ -159,9 +160,7 @@ void Sync_t::Task() {
 #ifndef ALWAYS_RX
     if((Sync.CycleCounter == 1) and (CC.Aim == caRx)) {
         if(Delay.Elapsed(&FRxTmr, FRxDuration)) {
-            dp=0;
             CC.EnterIdle();
-            dp=1;
         }
     }
 #endif
@@ -179,8 +178,9 @@ void CC_t::TxEndHandler() {
 
 void CC_t::NewPktHandler() {
     //Uart.Printf("NbID: %X8 %X8 %X8\r", PktRx.IdArr[0], PktRx.IdArr[1], PktRx.IdArr[2]);
+    //Uart.Printf("dBm: %i\r", CC.RSSI_dBm(PktRx.RSSI));
     NCounter.Add(PktRx.IdArr);
-    Led.Blink(36, clBlue);  // DEBUG
+    //Led.Blink(36, clYellow);  // DEBUG
 }
 
 

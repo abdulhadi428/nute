@@ -135,6 +135,8 @@ void LedRGB_t::Task(void) {
             IsInsideBlink = false;
             SetColor(clBlack);
             INeededColor = clBlack;
+//            SetColor({1,1,0});
+//            INeededColor = {1,1,0};
         }
     }
     else {

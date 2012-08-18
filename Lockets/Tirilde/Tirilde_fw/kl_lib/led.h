@@ -97,6 +97,7 @@ struct Color_t {
 #define clRed       ((Color_t){255, 0,   0})
 #define clGreen     ((Color_t){0,   255, 0})
 #define clBlue      ((Color_t){0,   0,   255})
+#define clYellow    ((Color_t){255, 255, 0})
 
 /*
  * RGB LED
