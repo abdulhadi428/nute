@@ -10,7 +10,6 @@
 
 CC_t CC;
 Pkt_t PktRx, PktTx;
-//extern klPin_t gp;
 
 // ========================== Implementation ===================================
 void CC_t::Task(void) {
@@ -98,7 +97,6 @@ void CC_t::WaitUntilChannelIsBusy() {
 }
 
 void CC_t::Transmit(void) {
-    //WaitUntilChannelIsBusy();   // If this is not done, time after time FIFO is destroyed
     do {
         EnterIdle();
     } while(IState != CC_STB_IDLE);

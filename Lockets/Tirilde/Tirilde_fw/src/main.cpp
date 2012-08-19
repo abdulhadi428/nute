@@ -15,7 +15,6 @@
 #include "cc1101.h"
 
 LedRGB_t Led;
-//klPin_t dp, gp;
 
 // Neighbours counter
 #define MAX_NB_COUNT    11
@@ -50,7 +49,6 @@ void GeneralInit(void);
 // ============================ Implementation =================================
 int main(void) {
     GeneralInit();
-    //uint32_t Tmr;
     // ==== Main cycle ====
     while (1) {
     	Uart.Task();
@@ -58,14 +56,6 @@ int main(void) {
         CC.Task();
         Sync.Task();
         NCounter.Task();
-
-//        if(Delay.Elapsed(&Tmr, 450)) {
-//            dp = !dp;
-////        	if(Cl == clBlack) Cl = clBlue;
-////        	else Cl = clBlack;
-////        	Led.SetColorSmoothly(Cl);
-//        	//CC.Transmit();
-//        }
     } // while(1)
 }
 
@@ -75,12 +65,7 @@ inline void GeneralInit(void) {
 
     Delay.Init();
     Led.Init();
-    // DEBUG
 //    Led.Blink(99, {1,1,0});
-//    dp.Init(GPIOA, 11, GPIO_Mode_Out_PP);
-//    dp=1;
-//    gp.Init(GPIOA, 8, GPIO_Mode_Out_PP);
-//    gp=1;
 
     Uart.Init(57600);
     Uart.Printf("\rTirilde\r");
@@ -138,11 +123,9 @@ void Sync_t::Task() {
     static uint32_t FRxTmr, FRxDuration;
 #endif
     if(Delay.Elapsed(&FTmr, FDuration)) {
-        //dp=0;
         if (++CycleCounter >= CYCLE_COUNT) CycleCounter = 0;
         // Transmit at every cycle start
         CC.Transmit();
-        //dp=1;
         // Generate random duration: CYCLE_MIN_DURATION + [0; CYCLE_MAX_ADDITION]
         FDuration = CYCLE_MIN_DURATION + rand() % CYCLE_MAX_ADDITION;
         // Calculate Rx duration of first cycle
