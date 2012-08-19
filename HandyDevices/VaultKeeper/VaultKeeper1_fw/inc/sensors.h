@@ -42,11 +42,12 @@ struct SnsChnlParams_t {
     uint8_t AdcChannel;
 };
 
+// Comment or uncomment needed lines
 const SnsChnlParams_t SnsChnlParams[] = {
 //        {Sns1A, GPIOA, GPIO_Pin_0, GPIOB, GPIO_Pin_2,  ADC_Channel_0},
 //        {Sns1B, GPIOA, GPIO_Pin_1, GPIOB, GPIO_Pin_3,  ADC_Channel_1},
-//        {Sns2A, GPIOA, GPIO_Pin_4, GPIOB, GPIO_Pin_4,  ADC_Channel_4},
-//        {Sns2B, GPIOA, GPIO_Pin_5, GPIOB, GPIO_Pin_5,  ADC_Channel_5},
+        {Sns2A, GPIOA, GPIO_Pin_4, GPIOB, GPIO_Pin_4,  ADC_Channel_4},
+        {Sns2B, GPIOA, GPIO_Pin_5, GPIOB, GPIO_Pin_5,  ADC_Channel_5},
         {Sns3A, GPIOA, GPIO_Pin_6, GPIOB, GPIO_Pin_6,  ADC_Channel_6},
         {Sns3B, GPIOA, GPIO_Pin_7, GPIOB, GPIO_Pin_7,  ADC_Channel_7},
         {Sns4A, GPIOC, GPIO_Pin_0, GPIOB, GPIO_Pin_8,  ADC_Channel_10},
@@ -92,19 +93,21 @@ public:
 #define WATER_ADC_VALUE     2304
 #define OPEN_ADC_VALUE      3600
 struct SnsChnl_t {
+private:
+    SnsState_t StateLast;
+public:
     uint32_t Timer;
-    bool ProblemIsNew;
+    bool HasChanged;
     uint32_t Value;
-    SnsState_t State;
-    void Init(void) { State = ssOk; }
+    SnsState_t StateLongPerspective;
+    void Init(void) { StateLongPerspective = ssOk; StateLast = ssOk; }
     void ProcessNewValue(uint32_t AValue);
-    bool NewProblemOccured(void);
 };
 
 class Sensors_t {
 private:
     void WriteMeasurements(void);
-    bool IProblemsChanged;
+    bool ISituationChanged;
     bool IsExtPwrOk(void) { return klGpioIsSetByN(GPIOB, 12); }
     // Adc
     uint16_t ADCValues[ADC_AVERAGE_COUNT];
@@ -121,11 +124,12 @@ private:
     void WaterInit(void);
     uint32_t ReadWaterValue(void);
     void WriteWaterValue(uint32_t AValue);
+    void UpdateWaterValue(void);
 public:
-    bool NewProblemOccured;
+    bool NeedToReport;
     void Init(void);
     void Task(void);
-    void UpdateWaterValue(void);
+    void WaterIrqHandler(void);
 };
 
 extern SnsDataBuf_t SnsBuf;

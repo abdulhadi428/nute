@@ -18,9 +18,9 @@
 #include "sensors.h"
 
 #define VERSION_ID      "Minya" // "First" on Quenya. Used for HostKey generation. No more than 20 char
-#define HOST_ID         1001
+#define HOST_ID         1002
 
-#define RETRY_TIMEOUT   60      // s
+#define RETRY_TIMEOUT   99      // s
 class Report_t {
 private:
     uint32_t RetryTmr;
@@ -88,14 +88,16 @@ void GenerateHostKey(void) {
 #define URL_HOST        "vaultkeeper.ru"
 #define URL_TIME        "/request.php?time"
 #define URL_REPORT      "/report.php"
-#define REPORT_MINUTE   23
+#define REPORT_MINUTE   18
 
-#define MDM_ENABLE     // DEBUG
+#define MDM_ENABLE     // DEBUG: comment this to disable modem
 void Report_t::Task(void) {
+#ifdef MDM_ENABLE
     if(!Time.TimeIsSet) {
         Com.Printf("Need to get time\r");
         SendNow();
     }
+#endif
 
     // Send report every hour
     static uint8_t FLastHour = 0;
@@ -104,10 +106,10 @@ void Report_t::Task(void) {
         SendNow();
     }
 
-    // Send report if new leakage occured
-    else if (Sensors.NewProblemOccured) {
-        Sensors.NewProblemOccured = false;  // Served
-        Com.Printf("Report new problem\r");
+    // Send report immediately if leakage occured or vanished
+    else if (Sensors.NeedToReport) {
+        Sensors.NeedToReport = false;  // Served
+        Com.Printf("Report new situation\r");
         SendNow();
     }
 
@@ -142,17 +144,17 @@ void Report_t::Task(void) {
                                 if (*(E-1) == ',') *(E-1) = 0;
                         Com.Printf("Errors: %S\r", SnsStr);
 
-                        // Construct data string
+                        // Construct data string for hash calculation
                         klSPrintf(S, "host_id=%u&water_value=%u&time=%u4%u2%u2%u2%u2%u2&sensors=%S&host_key=%S",
                                 HOST_ID, PRow->WaterValue,
                                 PRow->DateTime.Year, PRow->DateTime.Month, PRow->DateTime.Day,
                                 PRow->DateTime.H,    PRow->DateTime.M,     PRow->DateTime.S,
                                 SnsStr, HostKey);
-                        Com.Printf("Data: %S\r", S);
+                        //Com.Printf("Data: %S\r", S);
                         Sha1(S);
-                        Com.Printf("Hash: %S\r", Sha1String);
+                        //Com.Printf("Hash: %S\r", Sha1String);
 
-                        // Construct string to send
+                        // Construct string to send, using S and hash
                         klSPrintf(S, "host_id=%u&water_value=%u&time=%u4%u2%u2%u2%u2%u2&sensors=%S&host_hash=%S",
                                 HOST_ID, PRow->WaterValue,
                                 PRow->DateTime.Year, PRow->DateTime.Month, PRow->DateTime.Day,

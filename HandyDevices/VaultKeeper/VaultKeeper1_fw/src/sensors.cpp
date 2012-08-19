@@ -14,11 +14,11 @@ Sensors_t Sensors;
 uint8_t ChIndx;
 
 void Sensors_t::Init() {
-    // External power sensor: no ADC, only 1-0
+    // External power sensor: no ADC, only 1 or 0
     klGpioSetupByN(GPIOB, 12, GPIO_Mode_IN_FLOATING);
     // Variables etc.
-    NewProblemOccured = false;
-    IProblemsChanged = false;
+    NeedToReport = false;
+    ISituationChanged = false;
     AdcGpioInit();
     AdcInit();
     WaterInit();
@@ -40,44 +40,53 @@ void Sensors_t::Task() {
         //Com.Printf("Ch %u = %u\r", ChIndx, FValue);
         // === Process channels ===
         SnsChnl_t *PCh = &Chnl[ChIndx];
-        if (SnsChnlParams[ChIndx].Name == SnsBattery) {
-            if(!IsExtPwrOk()) {             // Check if power failure
-                FValue *= 3.0263158;
-                PCh->Value = FValue;
-                if(PCh->State == ssOk) {    // Just occured
-                    PCh->State = ssFail;
-                    PCh->ProblemIsNew = true;
-                    Delay.Bypass(&PCh->Timer, NEW_PROBLEM_TIMEOUT); // Report now
+        if (SnsChnlParams[ChIndx].Name == SnsBattery) { // If battery
+            if(!IsExtPwrOk()) {             // Power failure
+                PCh->Value = FValue * 3.0263158;
+                if(PCh->StateLongPerspective == ssOk) {    // Power failure just occured
+                    PCh->StateLongPerspective = ssFail;
+                    PCh->HasChanged = true; // Fix immediately
                 }
             }
-            else {
-                PCh->Value = 0;
-                PCh->State = ssOk;
-                PCh->ProblemIsNew = false;
+            else {                          // Power is ok
+                PCh->Value = 0;             // indicate that power is ok
+                if(PCh->StateLongPerspective != ssOk) {    // Restoration just occured
+                    PCh->StateLongPerspective = ssOk;
+                    PCh->HasChanged = true; // Fix immediately
+                }
             }
         } // if battery
+        // Not battery
         else PCh->ProcessNewValue(FValue);
         IPrepareToNextMeasure();
     }
 
+    // Start measure if not started and if enogh time elapsed to pull pull-up
     if(!MeasureStarted and Delay.Elapsed(&IMeasureTmr, PULLUP_DEADTIME)) StartNextMeasure();
 
     // ==== Check if problem ====
-    for (uint8_t i=0; i<ADC_CH_COUNT; i++) {
-        if(Chnl[i].NewProblemOccured()) IProblemsChanged = true;
-    }
-
-    // ==== Reporting unit ====
-    if (IProblemsChanged and Delay.Elapsed(&FProblemTmr, WRITE_MIN_DELAY)) { // Restrict write rate
-        Com.Printf("New problem\r");
-        IProblemsChanged = false;
-        WriteMeasurements();
-        NewProblemOccured = true;   // Signal for reporting unit
-    }
-    else if (Time.GetHour() != FLastHour) {
-        FLastHour = Time.GetHour();
-        WriteMeasurements();
-    } // if hour passed
+    if(Delay.Elapsed(&FProblemTmr, WRITE_MIN_DELAY)) {  // do not write too often
+        // Iterate all, check if change occured
+        for (uint8_t i=0; i<ADC_CH_COUNT; i++) {
+            if(Chnl[i].HasChanged) {
+                Chnl[i].HasChanged = false;
+                ISituationChanged = true;
+            }
+        }
+        // Reporting unit
+        if (ISituationChanged) {
+            Com.Printf("Need to report\r");
+            WriteMeasurements();
+            ISituationChanged = false;  // Changes written
+            NeedToReport = true;        // Signal for reporting unit
+        }
+        // Write measurements hourly
+        else if (Time.GetHour() != FLastHour) {
+            FLastHour = Time.GetHour();
+            WriteMeasurements();
+            ISituationChanged = false;  // Changes written
+        } // if hour passed
+    }   // if WRITE_MIN_DELAY
 }
 
 void Sensors_t::WriteMeasurements() {
@@ -88,21 +97,20 @@ void Sensors_t::WriteMeasurements() {
     uint8_t SnsIndx, CurrentState;
     SnsChName_t FName;
     for (uint8_t i=0; i<ADC_CH_COUNT; i++) {
-        if(SnsChnlParams[i].Name == SnsBattery) RData.Battery = Chnl[i].Value;
+        FName = SnsChnlParams[i].Name;
+        if(FName == SnsBattery) RData.Battery = Chnl[i].Value;
         else {
-            SnsIndx = i >> 1;
-            CurrentState = RData.SnsArr[SnsIndx];
-            FName = SnsChnlParams[i].Name;
+            SnsIndx = i / 2;                        // Two ADC channels per sensor
+            CurrentState = RData.SnsArr[SnsIndx];   // For half of byte saving
             if ((FName==Sns1A) or (FName==Sns2A) or (FName==Sns3A) or (FName==Sns4A) or (FName==Sns5A) or (FName==Sns6A)) {
-                CurrentState &= 0x0F;   // Erase top bits
-                CurrentState += ((uint8_t)Chnl[i].State) << 4;
+                CurrentState &= 0x0F;               // Erase top bits
+                CurrentState += ((uint8_t)Chnl[i].StateLongPerspective) << 4;
             }
             else {
-                CurrentState &= 0xF0;   // Erase Lo bits
-                CurrentState += ((uint8_t)Chnl[i].State);
+                CurrentState &= 0xF0;               // Erase Lo bits
+                CurrentState += ((uint8_t)Chnl[i].StateLongPerspective);
             }
             RData.SnsArr[SnsIndx] = CurrentState;
-            Chnl[i].ProblemIsNew = false;   // do not report again if channel timeout is currently ticking
         } // if not battery
     } // for
     // Water
@@ -121,25 +129,22 @@ void SnsChnl_t::ProcessNewValue(uint32_t AValue) {
     else if (AValue > OPEN_ADC_VALUE)  ssNow = ssOpen;
     else ssNow = ssOk;
 
-    if ((ssNow != ssOk) and (State == ssOk)) {     // Problem appeared
-        ProblemIsNew = true;
-        Com.Printf("Sns%u: NewProb %u\r", ChIndx, ssNow);
-        Delay.Reset(&Timer);                       // Change state only if time passed
+    if (ssNow != StateLast) {   // State has changed since last time
+        StateLast = ssNow;
+        Com.Printf("Sns%u: %u\r", ChIndx, ssNow);
+        Delay.Reset(&Timer);    // Do not take fast changes into account
     }
-    else if((ssNow == ssOk) and (State != ssOk)) { // Problem disappeared
-        ProblemIsNew = false;
-        Com.Printf("Sns%u: No Prob\r", ChIndx);
+    else {  // State has not changed
+        if(Delay.Elapsed(&Timer, NEW_PROBLEM_TIMEOUT)) {    // After timeout, check if changed in long perspective
+            if(StateLongPerspective != StateLast) {
+                StateLongPerspective = StateLast;
+                HasChanged = true;
+                Com.Printf("Sns%u: change detected\r", ChIndx);
+            }
+        }
     }
-    State = ssNow;
 }
 
-bool SnsChnl_t::NewProblemOccured() {
-    if ((State != ssOk) and ProblemIsNew and Delay.Elapsed(&Timer, NEW_PROBLEM_TIMEOUT)) {
-        ProblemIsNew = false;
-        return true;
-    }
-    else return false;
-}
 
 // ================================== ADC ======================================
 void Sensors_t::AdcGpioInit() {
@@ -171,13 +176,13 @@ void Sensors_t::IPrepareToNextMeasure() {
     ADC_DMACmd(ADC1, DISABLE);
     DMA_DeInit(DMA1_Channel1);
     // Switch off pull-up
-    if(SnsChnlParams[ChIndx].POutPort != 0)
+    if(SnsChnlParams[ChIndx].POutPort != 0) // zero pointer protection
         klGpioClearByMsk(SnsChnlParams[ChIndx].POutPort, SnsChnlParams[ChIndx].OutMask);
     // Calculate channel to measure
     if (++ChIndx >= ADC_CH_COUNT) ChIndx = 0;
     //Com.Printf("ch = %u\r", ChIndx);
     // Switch on pull-up
-    if(SnsChnlParams[ChIndx].POutPort != 0)
+    if(SnsChnlParams[ChIndx].POutPort != 0) // zero pointer protection
         klGpioSetByMsk(SnsChnlParams[ChIndx].POutPort, SnsChnlParams[ChIndx].OutMask);
     // Reset deadtime delay
     Delay.Reset(&IMeasureTmr);
@@ -218,11 +223,13 @@ void Sensors_t::StartNextMeasure() {
 
 // ================================= Water =====================================
 void Sensors_t::WaterInit() {
-    // GPIO
+    // Switch on water sns pull-up (SNS6A PWR)
     klGpioSetupByN(GPIOC, 6,  GPIO_Mode_Out_PP);
-    klGpioSetByN(GPIOC, 6);                             // switch on our pull-up
+    klGpioSetByN(GPIOC, 6);
+    // Switch off second pull-up and second input
     klGpioSetupByMsk(GPIOC, GPIO_Pin_5 | GPIO_Pin_7, GPIO_Mode_Out_PP);
     klGpioClearByMsk(GPIOC, GPIO_Pin_5 | GPIO_Pin_7);
+    // Switch on water sns' pin
     WaterPin.Init(GPIOC, 4, GPIO_Mode_IN_FLOATING);
     WaterPin.IrqSetup(EXTI_Trigger_Falling);
     WaterPin.IrqEnable();
@@ -248,12 +255,33 @@ void Sensors_t::WriteWaterValue(uint32_t AValue) {
     BKP_WriteBackupRegister(BKPREG_WATER_HI, (uint16_t)Hi);
 }
 
-void EXTI4_IRQHandler(void) {
+void Sensors_t::WaterIrqHandler() {
     static uint32_t FTmr;
+    static bool FCounted = false;
+    bool FTimeoutOk = Delay.Elapsed(&FTmr, MIN_PULSE_LENGTH);
+    if(!FCounted and FTimeoutOk) {      // Not counted, enough time passed => first fall after long open circuit, count
+        UpdateWaterValue();
+        FCounted = true;
+        WaterPin.DisableFalling();
+        WaterPin.EnableRising();
+    }
+    else if(FCounted and !FTimeoutOk) { // Counted, but not enough time passed => rise right after fall, ignore
+        Delay.Reset(&FTmr);
+    }
+    else if(FCounted and FTimeoutOk) { // Counted, and enough time passed => first rise after long short circuit, reset FCounted
+        FCounted = false;
+        WaterPin.DisableRising();
+        WaterPin.EnableFalling();
+    }
+    else if(!FCounted and !FTimeoutOk) { // Not counted, and not enough time passed => second fall after short
+        Delay.Reset(&FTmr);
+    }
+
+}
+
+void EXTI4_IRQHandler(void) {
     if(EXTI_GetITStatus(EXTI_Line4) != RESET) {
-        if(Delay.Elapsed(&FTmr, MIN_PULSE_LENGTH)) {
-            Sensors.UpdateWaterValue();
-        }
+        Sensors.WaterIrqHandler();
         EXTI_ClearITPendingBit(EXTI_Line4);
     }
 }

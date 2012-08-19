@@ -64,8 +64,6 @@ protected:
     GPIO_TypeDef* IGPIO;
     uint16_t IPinMask, IPinNumber;
 public:
-    klPin_t(GPIO_TypeDef *PGpioPort, uint16_t APinNumber, GPIOMode_TypeDef AMode) { Init(PGpioPort, APinNumber, AMode); }
-    klPin_t(void) { }
     bool operator =(const bool AValue) {
         if (AValue) Set();
         else Clear();
@@ -86,6 +84,10 @@ public:
     void IrqSetup(EXTITrigger_TypeDef ATriggerType);
     void IrqEnable(void);
     void IrqDisable(void);
+    void EnableRising(void)   { EXTI->RTSR |=  IPinMask; }
+    void DisableRising(void)  { EXTI->RTSR &= ~IPinMask; }
+    void EnableFalling(void)  { EXTI->FTSR |=  IPinMask; }
+    void DisableFalling(void) { EXTI->FTSR &= ~IPinMask; }
 };
 
 // ==== Timer ====
