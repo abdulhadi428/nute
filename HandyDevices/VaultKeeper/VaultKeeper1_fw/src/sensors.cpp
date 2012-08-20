@@ -46,6 +46,7 @@ void Sensors_t::Task() {
                 if(PCh->StateLongPerspective == ssOk) {    // Power failure just occured
                     PCh->StateLongPerspective = ssFail;
                     PCh->HasChanged = true; // Fix immediately
+                    Com.Printf("Pwr failure; battery = %u\r", PCh->Value);
                 }
             }
             else {                          // Power is ok
@@ -53,6 +54,7 @@ void Sensors_t::Task() {
                 if(PCh->StateLongPerspective != ssOk) {    // Restoration just occured
                     PCh->StateLongPerspective = ssOk;
                     PCh->HasChanged = true; // Fix immediately
+                    Com.Printf("Pwr restored\r");
                 }
             }
         } // if battery

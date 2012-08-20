@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 23/06/2012 22:42:21
+EESchema Schematic File Version 2  date 21/08/2012 00:00:18
 LIBS:Connectors_kl
 LIBS:modules
 LIBS:pcb_details
@@ -17,7 +17,7 @@ $Descr A2 23400 16535
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "23 jun 2012"
+Date "20 aug 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -1263,7 +1263,7 @@ L R R2
 U 1 1 4F93DE35
 P 2200 12300
 F 0 "R2" V 2280 12300 50  0000 C CNN
-F 1 "330k" V 2200 12300 50  0000 C CNN
+F 1 "30k" V 2200 12300 50  0000 C CNN
 	1    2200 12300
 	1    0    0    -1  
 $EndComp
@@ -2463,7 +2463,7 @@ L R R1
 U 1 1 4F8D37A9
 P 2200 11700
 F 0 "R1" V 2280 11700 50  0000 C CNN
-F 1 "100k" V 2200 11700 50  0000 C CNN
+F 1 "10k" V 2200 11700 50  0000 C CNN
 	1    2200 11700
 	1    0    0    -1  
 $EndComp
