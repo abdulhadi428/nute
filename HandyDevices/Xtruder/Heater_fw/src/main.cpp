@@ -17,24 +17,26 @@ int main(void) {
     // TODO: change linker script to C8
     GeneralInit();
 
-    uint32_t Tmr;
+    //uint32_t Tmr;
     //uint8_t FData[16];
     // ==== Main cycle ====
     while (1) {
         Uart.Task();
         Lcd.Task();
-        if(Delay.Elapsed(&Tmr, 207)) {
+        //if(Delay.Elapsed(&Tmr, 207)) {
             if(Ads.NewData) {
                 Ads.NewData = false;
                 Uart.Printf("%u\r", Ads.Value);
-                uint32_t t = Ads.Value / 129189;
-                Lcd.Printf(0, 4, "t: %u", t);
+                int32_t t = Ads.Value / AdsChannels[0].a + AdsChannels[0].b;
+                Lcd.Printf(0, 4, "t: %i  ", t);
+                Lcd.Printf(0, 5, "u: %u  ", Ads.Value);
+                Lcd.Printf(0, 6, "/: %u  ", Ads.Value/10000);
             }
             //Ads.Read(ADS_REG_SETUP, 15, FData);
             //Uart.Printf("> %A\r", FData, 15);
             //Ads.ReadResult(FData);
             //Uart.Printf("> %A\r", FData, 3);
-        }
+        //}
     } // while 1
 }
 

@@ -24,12 +24,14 @@ void Lcd_t::Init(void) {
     XCS_Hi();
     // Reset display
     XRES_Lo();
-    Delay.ms(54);
+    Delay.ms(99);
     XRES_Hi();
+    Delay.ms(99);
     // Initial commands
     Cls();             // clear LCD buffer
     WriteCmd(0xA4);    // Set normal display mode
     WriteCmd(0x2F);    // Charge pump on
+    Delay.ms(99);
     WriteCmd(0x40);    // Set start row address = 0
     // Set x=0, y=0
     WriteCmd(0xB0);    // Y axis initialization
@@ -39,12 +41,11 @@ void Lcd_t::Init(void) {
     WriteCmd(0xA1);    // Mirror X axis
     WriteCmd(0xAF);    // display ON
 
-
     // Clear display RAM
-    WriteCmd(0x40); // Y = 0
-    WriteCmd(0xB0);
-    WriteCmd(0x10); // X = 0
-    WriteCmd(0x00);
+//    WriteCmd(0x40); // Y = 0
+//    WriteCmd(0xB0);
+//    WriteCmd(0x10); // X = 0
+//    WriteCmd(0x00);
     for(uint16_t i=0;i<864;i++) WriteData(0x00);
 }
 
