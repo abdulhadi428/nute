@@ -10,12 +10,17 @@
 #include "ads124x.h"
 #include "stm32f10x_spi.h"
 
+// Commands
+#define RDATA       0b00000001
+#define RREG        0b00010000
+#define WREG        0b01010000
+#define SELFCAL     0b11110000
+
 Ads124x_t Ads;
 
 void Ads124x_t::Init() {
     // ==== GPIO ====
     klGpioSetupByMsk(GPIOA, GPIO_Pin_2 | GPIO_Pin_4, GPIO_Mode_Out_PP); // PWDN and CS are outputs
-    klGpioSetupByMsk(GPIOA, GPIO_Pin_3, GPIO_Mode_IPU);                 // DRDY is input
     klGpioSetupByMsk(GPIOA, GPIO_Pin_5 | GPIO_Pin_7, GPIO_Mode_AF_PP);  // MOSI & SCK as Alternate Function Push Pull
     klGpioSetupByMsk(GPIOA, GPIO_Pin_6, GPIO_Mode_IN_FLOATING);         // MISO as Input Floating
     CsHi();
@@ -35,18 +40,95 @@ void Ads124x_t::Init() {
     SPI_Cmd(SPI1, ENABLE);
 
     PwdnHi();   // Enable operation
+    // Setup ADC
+    Reset();
+    SetGain(ADS_GAIN_1);
+    SetChannel(ADS_CH_1);
+    /* Analog settings: unipolar, speed=1 (Fosc==4.9152MHz), buffer disabled,
+     * Data output is MSB, Range is +-Vref, Data Rate=7.5Hz  */
+    //WriteReg(ADS_REG_ACR, 0b01100001);
+    WriteReg(ADS_REG_ACR, 0b01100010);  // Data rate = 3Hz
+    // Variables
+    Value = 0;
+    ChannelToSet = ADS_CH_1;
+    NewData = false;
+    // ==== IRQ ====
+    Drdy.Init(GPIOA, 3, GPIO_Mode_IPD);
+    Drdy.IrqSetup(EXTI_Trigger_Falling);
+    Drdy.IrqEnable();
+    // Calibrate
+    SelfCalibrate();
 }
 
-uint8_t Ads124x_t::ReadWriteByte(uint8_t AByte) {
+void Ads124x_t::IrqHandler() {
+    if(!NewData) {  // was handled
+        // Read conversion result
+        uint8_t Result[3];
+        ReadResult(Result);
+        // Convert array to number
+        Value = Result[0];
+        Value <<= 8;
+        Value += Result[1];
+        Value <<= 8;
+        Value += Result[2];
+    }
+    NewData = true;
+    // Set new channel
+    SetChannel(ChannelToSet);
+    //Uart.Printf(">");
+}
+
+void Ads124x_t::ReadResult(uint8_t *PData) {
+    CsLo();
+    WriteReadByte(RDATA);
+    IReplyDelay();
+    PData[0] = WriteReadByte(0);
+    PData[1] = WriteReadByte(0);
+    PData[2] = WriteReadByte(0);
+    CsHi();
+}
+
+void Ads124x_t::SelfCalibrate(void) {
+    NewData = false;
+    WriteStrobe(SELFCAL);
+}
+
+//void Ads124x_t::ReadReg(uint8_t AAddress, uint8_t ACount, uint8_t *PData) {
+//    CsLo();
+//    WriteReadByte(RREG | AAddress);
+//    WriteReadByte(ACount-1);        // Will be replied ACount bytes
+//    IReplyDelay();
+//    for(uint8_t i=0; i<ACount; i++) *PData = WriteReadByte(0);
+//    CsHi();
+//}
+void Ads124x_t::WriteReg(uint8_t AAddress, uint8_t AData) {
+    //__disable_irq();
+    CsLo();
+    WriteReadByte(WREG | AAddress);
+    WriteReadByte(0);   // Write single byte
+    WriteReadByte(AData);
+    CsHi();
+    //__enable_irq();
+}
+
+void Ads124x_t::WriteStrobe(uint8_t AStrobe) {
+    //__disable_irq();
+    CsLo();
+    WriteReadByte(AStrobe);
+    CsHi();
+    //__enable_irq();
+}
+
+uint8_t Ads124x_t::WriteReadByte(uint8_t AByte) {
     SPI1->DR = AByte;
     while (!(SPI1->SR & SPI_I2S_FLAG_RXNE));  // Wait for SPI transmission to complete
     return SPI1->DR;
 }
 
 // ============================= Interrupts ====================================
-//void EXTI3_IRQHandler(void) {
-//    if(EXTI_GetITStatus(EXTI_Line3) != RESET) {
-//        EXTI_ClearITPendingBit(EXTI_Line3);
-//        CC.IRQHandler();
-//    }
-//}
+void EXTI3_IRQHandler(void) {
+    if(EXTI_GetITStatus(EXTI_Line3) != RESET) {
+        EXTI_ClearITPendingBit(EXTI_Line3);
+        Ads.IrqHandler();
+    }
+}

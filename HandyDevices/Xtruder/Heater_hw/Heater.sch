@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 02/08/2012 18:03:59
+EESchema Schematic File Version 2  date 22/08/2012 12:41:01
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -15,7 +15,7 @@ $Descr A2 23400 16535
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "2 aug 2012"
+Date "22 aug 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -1816,7 +1816,7 @@ L R R7
 U 1 1 5002FED7
 P 12850 5050
 F 0 "R7" V 12930 5050 50  0000 C CNN
-F 1 "NM" V 12850 5050 50  0000 C CNN
+F 1 "0" V 12850 5050 50  0000 C CNN
 F 2 "RES_0603" V 12780 5050 28  0000 C CNN
 	1    12850 5050
 	1    0    0    -1  
@@ -1826,7 +1826,7 @@ L R R6
 U 1 1 5002FED4
 P 12850 4450
 F 0 "R6" V 12930 4450 50  0000 C CNN
-F 1 "0R" V 12850 4450 50  0000 C CNN
+F 1 "NM" V 12850 4450 50  0000 C CNN
 F 2 "RES_0603" V 12780 4450 28  0000 C CNN
 	1    12850 4450
 	1    0    0    -1  

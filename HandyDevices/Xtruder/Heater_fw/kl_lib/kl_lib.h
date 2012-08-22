@@ -135,7 +135,7 @@ public:
     // Simple loop-based delays, no init needed
     void Loop (volatile uint32_t ACounter) { while(ACounter--); }
     void ms (uint32_t Ams);
-    // Interrupt-driven delays
+    // Timer-driven delays
     bool Elapsed(uint32_t *AVar, const uint32_t ADelay);
     void Reset  (uint32_t *AVar) { *AVar = TIM2->CNT; }
     void Bypass (uint32_t *AVar, const uint32_t ADelay) { *AVar = TIM2->CNT - ADelay; }
