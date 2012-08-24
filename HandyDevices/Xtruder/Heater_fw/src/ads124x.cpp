@@ -49,8 +49,6 @@ void Ads124x_t::Init() {
     //WriteReg(ADS_REG_ACR, 0b01100001);
     WriteReg(ADS_REG_ACR, 0b01100010);  // Data rate = 3Hz
     // Variables
-    Value = 0;
-    ChannelToSet = ADS_CH_1;
     NewData = false;
     // ==== IRQ ====
     Drdy.Init(GPIOA, 3, GPIO_Mode_IPD);
@@ -61,31 +59,26 @@ void Ads124x_t::Init() {
 }
 
 void Ads124x_t::IrqHandler() {
-    if(!NewData) {  // was handled
-        // Read conversion result
-        uint8_t Result[3];
-        ReadResult(Result);
-        // Convert array to number
-        Value = Result[0];
-        Value <<= 8;
-        Value += Result[1];
-        Value <<= 8;
-        Value += Result[2];
-    }
-    NewData = true;
-    // Set new channel
-    SetChannel(ChannelToSet);
-    //Uart.Printf(">");
-}
-
-void Ads124x_t::ReadResult(uint8_t *PData) {
+    // Read conversion result
+    uint32_t Value;
     CsLo();
     WriteReadByte(RDATA);
     IReplyDelay();
-    PData[0] = WriteReadByte(0);
-    PData[1] = WriteReadByte(0);
-    PData[2] = WriteReadByte(0);
+    Value  = WriteReadByte(0);
+    Value <<= 8;
+    Value += WriteReadByte(0);
+    Value <<= 8;
+    Value += WriteReadByte(0);
     CsHi();
+    // Convert to temperature
+    Temperature[IChIndx] = (int32_t)(Value / AdsChs[IChIndx].a + AdsChs[IChIndx].b);
+    // Set new channel
+    if(++IChIndx == ADS_CH_COUNT) {
+        IChIndx = 0;
+        NewData = true; // all channels was measured
+    }
+    SetChannel(AdsChs[IChIndx].Mux);
+    //Uart.Printf(">");
 }
 
 void Ads124x_t::SelfCalibrate(void) {

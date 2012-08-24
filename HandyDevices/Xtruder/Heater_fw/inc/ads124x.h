@@ -34,12 +34,12 @@
 struct AdsChData_t {
     uint8_t Mux;
     int32_t a, b;
-} PACKED;
+};
 
-const AdsChData_t AdsChannels[] = {
+const AdsChData_t AdsChs[] = {
         { ADS_CH_1, ADS_CH1_A, ADS_CH1_B},
 };
-#define ADS_CH_COUNT    (CountOf(AdsChannels))
+#define ADS_CH_COUNT    (countof(AdsChs))
 
 /*
  * ADS124x reply delay = Tosc * 50 = 0.2us * 50 = 10us (for about 5MHz clock).
@@ -65,30 +65,29 @@ const AdsChData_t AdsChannels[] = {
 
 class Ads124x_t {
 private:
+    uint8_t IChIndx;
     // GPIOs
     void PwdnHi(void) { klGpioSetByMsk  (GPIOA, GPIO_Pin_2); }
     void PwdnLo(void) { klGpioClearByMsk(GPIOA, GPIO_Pin_2); }
     void CsHi(void)   { klGpioSetByMsk  (GPIOA, GPIO_Pin_4); }
     void CsLo(void)   { klGpioClearByMsk(GPIOA, GPIO_Pin_4); }
-    //bool DataIsReady(void) { return klGpioIsClearByMsk(GPIOA, GPIO_Pin_3); }
     klPinIrq_t Drdy;
     // SPI
     void IReplyDelay(void) { Delay.Loop(ADS_REPLY_DELAY_TICKS);  }
     uint8_t WriteReadByte(uint8_t AByte);
     // Data flow
     void WriteStrobe(uint8_t AStrobe);
-    void ReadResult(uint8_t *PData);
-public:
-    uint32_t Value;
-    uint8_t ChannelToSet;
-    bool NewData;
-    void Init(void);
-    //void ReadReg(uint8_t AAddress, uint8_t ACount, uint8_t *PData);
     void WriteReg(uint8_t AAddress, uint8_t AData);
+    //void ReadReg(uint8_t AAddress, uint8_t ACount, uint8_t *PData);
+    // High-level
     void Reset(void) { WriteStrobe(0b11111110); }
     void SelfCalibrate(void);
     void SetGain(uint8_t AGain) { WriteReg(ADS_REG_SETUP, AGain); } // Do not use burnout currents
     void SetChannel(uint8_t AChannel) { WriteReg(ADS_REG_MUX, AChannel); }
+public:
+    bool NewData;
+    int32_t Temperature[ADS_CH_COUNT];
+    void Init(void);
 
     void IrqHandler(void);
 };

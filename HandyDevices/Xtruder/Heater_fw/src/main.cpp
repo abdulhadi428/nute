@@ -14,7 +14,6 @@ void GeneralInit(void);
 
 // ============================== Implementation ===============================
 int main(void) {
-    // TODO: change linker script to C8
     GeneralInit();
 
     //uint32_t Tmr;
@@ -26,11 +25,13 @@ int main(void) {
         //if(Delay.Elapsed(&Tmr, 207)) {
             if(Ads.NewData) {
                 Ads.NewData = false;
-                Uart.Printf("%u\r", Ads.Value);
-                int32_t t = Ads.Value / AdsChannels[0].a + AdsChannels[0].b;
-                Lcd.Printf(0, 4, "t: %i  ", t);
-                Lcd.Printf(0, 5, "u: %u  ", Ads.Value);
-                Lcd.Printf(0, 6, "/: %u  ", Ads.Value/10000);
+                for(uint8_t i=0; i<ADS_CH_COUNT; i++) {
+                    Lcd.Printf(0, i, "t%u: %i  ", i+1, Ads.Temperature[i]);
+                    //Lcd.Printf(0, 5, "u: %u  ", Ads.Value);
+                    //Lcd.Printf(0, 6, "/: %u  ", Ads.Value/10000);
+
+                }
+
             }
             //Ads.Read(ADS_REG_SETUP, 15, FData);
             //Uart.Printf("> %A\r", FData, 15);
