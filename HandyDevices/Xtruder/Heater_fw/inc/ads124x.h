@@ -31,6 +31,14 @@
 #define ADS_CH1_A   (int32_t)((ADS_CH1_U2 - ADS_CH1_U1) / (ADS_CH1_T2 - ADS_CH1_T1))
 #define ADS_CH1_B   (int32_t)(ADS_CH1_T1 - (ADS_CH1_U1 / ADS_CH1_A))
 
+#define ADS_CH2_T1  39.6
+#define ADS_CH2_T2  100
+#define ADS_CH2_U1  4819000
+#define ADS_CH2_U2  5768000
+#define ADS_CH2_A   (int32_t)((ADS_CH2_U2 - ADS_CH2_U1) / (ADS_CH2_T2 - ADS_CH2_T1))
+#define ADS_CH2_B   (int32_t)(ADS_CH2_T1 - (ADS_CH2_U1 / ADS_CH2_A))
+
+
 struct AdsChData_t {
     uint8_t Mux;
     int32_t a, b;
@@ -38,6 +46,7 @@ struct AdsChData_t {
 
 const AdsChData_t AdsChs[] = {
         { ADS_CH_1, ADS_CH1_A, ADS_CH1_B},
+        { ADS_CH_2, ADS_CH2_A, ADS_CH2_B},
 };
 #define ADS_CH_COUNT    (countof(AdsChs))
 

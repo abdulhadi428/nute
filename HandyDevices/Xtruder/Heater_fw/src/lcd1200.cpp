@@ -90,6 +90,10 @@ void Lcd_t::WriteData(uint8_t AByte) {
     XCS_Hi();
 }
 
+void Lcd_t::PrintStringUtf8(const uint8_t x, const uint8_t y, const char *S) {
+
+}
+
 // ================================= Printf ====================================
 void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
     GotoCharXY(x, y);

@@ -8,6 +8,19 @@
 #include "kl_lib.h"
 #include "lcd1200.h"
 #include "ads124x.h"
+#include "keys.h"
+#include "beep.h"
+#include "interface.h"
+
+#define OUTPUT_SWITCH_MIN_DELAY     999 // ms
+class Output_t : public klPin_t {
+private:
+    uint16_t ITimer;
+public:
+    void On(void)  { if(Delay.Elapsed(&ITimer, OUTPUT_SWITCH_MIN_DELAY)) Set();   }
+    void Off(void) { if(Delay.Elapsed(&ITimer, OUTPUT_SWITCH_MIN_DELAY)) Clear(); }
+};
+Output_t Out[4];
 
 // Prototypes
 void GeneralInit(void);
@@ -16,28 +29,20 @@ void GeneralInit(void);
 int main(void) {
     GeneralInit();
 
-    //uint32_t Tmr;
-    //uint8_t FData[16];
     // ==== Main cycle ====
     while (1) {
         Uart.Task();
         Lcd.Task();
-        //if(Delay.Elapsed(&Tmr, 207)) {
-            if(Ads.NewData) {
-                Ads.NewData = false;
-                for(uint8_t i=0; i<ADS_CH_COUNT; i++) {
-                    Lcd.Printf(0, i, "t%u: %i  ", i+1, Ads.Temperature[i]);
-                    //Lcd.Printf(0, 5, "u: %u  ", Ads.Value);
-                    //Lcd.Printf(0, 6, "/: %u  ", Ads.Value/10000);
-
-                }
-
+        Beep.Task();
+        Keys.Task();
+        if(Ads.NewData) {
+            Ads.NewData = false;
+            for(uint8_t i=0; i<ADS_CH_COUNT; i++) {
+                Lcd.Printf(0, i+4, "t%u: %i  ", i+1, Ads.Temperature[i]);
             }
-            //Ads.Read(ADS_REG_SETUP, 15, FData);
-            //Uart.Printf("> %A\r", FData, 15);
-            //Ads.ReadResult(FData);
-            //Uart.Printf("> %A\r", FData, 3);
-        //}
+            if(Ads.Temperature[0] < 30) Out[0].On();
+            else Out[0].Off();
+        }
     } // while 1
 }
 
@@ -52,13 +57,33 @@ inline void GeneralInit(void) {
 
     Uart.Init(115200);
     Ads.Init();
+    Keys.Init();
+    Beep.Init();
+    Beep.SetFreqHz(2007);
+    Beep.Squeak(2, 4);
     Lcd.Init();
-    //Lcd.BacklightOn();
+    Lcd.BacklightOn();
     // Draw logo
 //    Lcd.DrawImage(0, 0, ImgLogo);
 //    for(uint16_t i=0; i<999; i++) Lcd.Task();
 //    Delay.ms(3006);
 //    Lcd.Cls();
+    Interface.Init();
+
+    Out[0].Init(GPIOB, 1, GPIO_Mode_Out_PP);
 
     Uart.Printf("\rHeater\r");
+}
+
+// ============================ Key events =====================================
+void Evt_KeyUpPressed(void) {
+    Beep.Squeak(1, 7);
+}
+
+void Evt_KeyDownPressed(void) {
+    Beep.Squeak(1, 7);
+}
+
+void Evt_KeyEnterPressed(void) {
+    Beep.Squeak(1, 7);
 }

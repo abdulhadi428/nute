@@ -273,8 +273,8 @@ void Delay_t::Init(void) {
     TIM2->ARR = 0xFFFF;        // Autoreload register: top value of counter
 }
 
-bool Delay_t::Elapsed(uint32_t *AVar, const uint32_t ADelay) {
-    if ((uint16_t)(TIM2->CNT - (uint16_t)(*AVar)) / 2 >= ADelay) {
+bool Delay_t::Elapsed(uint16_t *AVar, const uint16_t ADelay) {
+    if ((uint16_t)(TIM2->CNT - (*AVar)) / 2 >= ADelay) {
         *AVar = TIM2->CNT; // Reset delay
         return true;
     }

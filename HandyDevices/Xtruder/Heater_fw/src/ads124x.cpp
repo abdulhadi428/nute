@@ -72,6 +72,7 @@ void Ads124x_t::IrqHandler() {
     CsHi();
     // Convert to temperature
     Temperature[IChIndx] = (int32_t)(Value / AdsChs[IChIndx].a + AdsChs[IChIndx].b);
+    //Temperature[IChIndx] = (int32_t)Value; // DEBUG
     // Set new channel
     if(++IChIndx == ADS_CH_COUNT) {
         IChIndx = 0;

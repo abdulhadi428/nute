@@ -66,6 +66,7 @@ public:
     // High-level
     void Printf(const uint8_t x, const uint8_t y, const char *S, ...);
     void Cls(void);
+    void PrintStringUtf8(const uint8_t x, const uint8_t y, const char *S);
     void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img);
     void DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode);
 };

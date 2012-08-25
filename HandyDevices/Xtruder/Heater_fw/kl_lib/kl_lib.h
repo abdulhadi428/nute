@@ -20,6 +20,9 @@
 #define countof(A)  (sizeof(A)/sizeof(A[0]))
 #endif
 
+// Functional types
+typedef void(*ftVoid_Void)(void);
+
 // ===================== Single pin manipulations ==============================
 /*
  * GPIO_Mode_AIN, GPIO_Mode_IN_FLOATING, GPIO_Mode_IPD, GPIO_Mode_IPU,
@@ -136,9 +139,9 @@ public:
     void Loop (volatile uint32_t ACounter) { while(ACounter--); }
     void ms (uint32_t Ams);
     // Timer-driven delays
-    bool Elapsed(uint32_t *AVar, const uint32_t ADelay);
-    void Reset  (uint32_t *AVar) { *AVar = TIM2->CNT; }
-    void Bypass (uint32_t *AVar, const uint32_t ADelay) { *AVar = TIM2->CNT - ADelay; }
+    bool Elapsed(uint16_t *AVar, const uint16_t ADelay);
+    void Reset  (uint16_t *AVar) { *AVar = TIM2->CNT; }
+    void Bypass (uint16_t *AVar, const uint16_t ADelay) { *AVar = (uint16_t)(TIM2->CNT - ADelay); }
 };
 extern Delay_t Delay;
 
