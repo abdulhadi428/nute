@@ -10,32 +10,36 @@
 
 #include "kl_lib.h"
 #include <inttypes.h>
-#include "stm32f10x_gpio.h"
+#include "interface.h"
 
-#define KEY_DELAY   99 // ms
+#define KEY_DELAY                   99      // ms
+#define KEY_BEFORE_REPEAT_DELAY     999     // ms
+#define KEY_REPEAT_DELAY            162     // ms
+#define KEY_LONGPRESS_DELAY         4005    // ms
+
+typedef void(*ftVoidBool)(bool);
 
 struct KeyData_t {
     GPIO_TypeDef *PGpioPort;
     uint16_t PinMask;
-    ftVoid_Void EventPressed;
+    ftVoidBool EventPressed;
 };
 
-// Key events
-void Evt_KeyUpPressed(void);
-void Evt_KeyDownPressed(void);
-void Evt_KeyEnterPressed(void);
-
 const KeyData_t KeyData[] = {
-        {GPIOB, GPIO_Pin_5, Evt_KeyUpPressed},      // Up
-        {GPIOB, GPIO_Pin_8, Evt_KeyDownPressed},    // Down
-        {GPIOB, GPIO_Pin_9, Evt_KeyEnterPressed},   // Enter
+        {GPIOB, GPIO_Pin_5, KeyUp},      // Up
+        {GPIOB, GPIO_Pin_8, KeyDown},    // Down
+        {GPIOB, GPIO_Pin_9, KeyEnter},   // Enter
 };
 #define KEY_COUNT   countof(KeyData)
 
+struct Key_t {
+    bool IsDown, IsRepeating, IsLongPress;
+};
+
 class Keys_t {
 private:
-    uint16_t Timer;
-    bool IsDown[KEY_COUNT];
+    uint16_t Timer, RepeatTimer, LongPressTimer;
+    Key_t Key[KEY_COUNT];
     bool HwPressed(uint8_t AIndx) { return klGpioIsClearByMsk(KeyData[AIndx].PGpioPort, KeyData[AIndx].PinMask); }
 public:
     void Init(void);

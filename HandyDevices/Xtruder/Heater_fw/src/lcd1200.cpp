@@ -90,9 +90,25 @@ void Lcd_t::WriteData(uint8_t AByte) {
     XCS_Hi();
 }
 
-void Lcd_t::PrintStringUtf8(const uint8_t x, const uint8_t y, const char *S) {
-
+/* ==== Pseudographics ====
+ *  Every command consists of PseudoGraph_t AChar, uint8_t RepeatCount.
+ *  Example: LineHorizDouble, 11 => print LineHorizDouble 11 times.
+ *  Cmds end up with 0.
+ */
+void Lcd_t::Symbols(const uint8_t x, const uint8_t y, ...) {
+    GotoCharXY(x, y);
+    uint8_t FCharCode=1, RepeatCount;
+    va_list Arg;
+    va_start(Arg, y);    // Set pointer to last argument
+    while(1) {
+        FCharCode = (uint8_t)va_arg(Arg, int32_t);
+        if(FCharCode == 0) break;
+        RepeatCount = (uint8_t)va_arg(Arg, int32_t);
+        for(uint8_t j=0; j<RepeatCount; j++) DrawChar(FCharCode, NotInverted);
+    }
+    va_end(Arg);
 }
+
 
 // ================================= Printf ====================================
 void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {

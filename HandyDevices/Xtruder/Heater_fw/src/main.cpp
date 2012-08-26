@@ -24,6 +24,7 @@ Output_t Out[4];
 
 // Prototypes
 void GeneralInit(void);
+void RegulationTask(void);
 
 // ============================== Implementation ===============================
 int main(void) {
@@ -35,14 +36,8 @@ int main(void) {
         Lcd.Task();
         Beep.Task();
         Keys.Task();
-        if(Ads.NewData) {
-            Ads.NewData = false;
-            for(uint8_t i=0; i<ADS_CH_COUNT; i++) {
-                Lcd.Printf(0, i+4, "t%u: %i  ", i+1, Ads.Temperature[i]);
-            }
-            if(Ads.Temperature[0] < 30) Out[0].On();
-            else Out[0].Off();
-        }
+        Interface.Task();
+        RegulationTask();
     } // while 1
 }
 
@@ -75,15 +70,13 @@ inline void GeneralInit(void) {
     Uart.Printf("\rHeater\r");
 }
 
-// ============================ Key events =====================================
-void Evt_KeyUpPressed(void) {
-    Beep.Squeak(1, 7);
-}
-
-void Evt_KeyDownPressed(void) {
-    Beep.Squeak(1, 7);
-}
-
-void Evt_KeyEnterPressed(void) {
-    Beep.Squeak(1, 7);
+inline void RegulationTask() {
+    if(Ads.NewData) {
+        Ads.NewData = false;
+        // Display current temperatures
+        for(uint8_t i=0; i<ADS_CH_COUNT; i++) Interface.DisplayT(i+1, Ads.Temperature[i]);
+        // Regulate them
+        if(Ads.Temperature[0] < Interface.tToSet[0]) Out[0].On();
+        else Out[0].Off();
+    }
 }

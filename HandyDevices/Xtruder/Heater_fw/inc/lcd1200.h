@@ -28,6 +28,20 @@
 // Data sizes
 #define LCD_VIDEOBUF_SIZE       864     // = 96 * 9
 
+enum PseudoGraph_t {
+    CornerTopLeftDouble = 0x99,
+    CornerTopRightDouble = 0x8B,
+    CornerBottomLeftDouble = 0x98,
+    CornerBottomRightDouble = 0x8C,
+    LineHorizDouble = 0x9D,
+    LineHorizDoubleUp = 0x9A,
+    LineHorizDoubleDown = 0x9B,
+    LineVertDouble = 0x8A,
+    LineVertDoubleLeft = 0x89,
+    LineVertDoubleRight = 0x9C,
+    LineCrossDouble = 0x9E,
+};
+
 enum Invert_t {NotInverted, Inverted};
 
 class Lcd_t {
@@ -50,8 +64,6 @@ private:
     void WriteData(uint8_t AData);
     // High-level
     void GotoXY(uint8_t x, uint8_t y);
-    void GotoCharXY(uint8_t x, uint8_t y);
-    void DrawChar(uint8_t AChar, Invert_t AInvert);
     void PrintUint (uint32_t ANumber);
     void PrintInt (int32_t ANumber);
     void PrintString (const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert);
@@ -64,11 +76,14 @@ public:
     void BacklightOn(void)  { LCD_GPIO->BSRR = LCD_BCKLT; }
     void BacklightOff(void) { LCD_GPIO->BRR  = LCD_BCKLT; }
     // High-level
+    void GotoCharXY(uint8_t x, uint8_t y);
+    void DrawChar(uint8_t AChar, Invert_t AInvert);
     void Printf(const uint8_t x, const uint8_t y, const char *S, ...);
     void Cls(void);
-    void PrintStringUtf8(const uint8_t x, const uint8_t y, const char *S);
     void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img);
     void DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode);
+    // Symbols printing
+    void Symbols(const uint8_t x, const uint8_t y, ...);
 };
 
 extern Lcd_t Lcd;
