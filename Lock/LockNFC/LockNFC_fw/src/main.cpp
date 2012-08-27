@@ -14,7 +14,7 @@
 #include "keys.h"
 #include "adc.h"
 
-#define STATE_TIMEOUT       7000    // ms
+#define STATE_TIMEOUT       27000   // ms; switch to waiting state
 #define DOOR_CLOSE_TIMEOUT  9999    // ms
 // Colors in RGB
 #define DOOR_CLOSED_COLOR   {4, 0, 0}
