@@ -11,6 +11,8 @@
 #include "keys.h"
 #include "beep.h"
 #include "interface.h"
+#include "i2c_mgr.h"
+#include "i2c_ee.h"
 
 #define OUTPUT_SWITCH_MIN_DELAY     999 // ms
 class Output_t : public klPin_t {
@@ -64,6 +66,8 @@ inline void GeneralInit(void) {
 //    Delay.ms(3006);
 //    Lcd.Cls();
     Interface.Init();
+    i2cMgr.Init();
+    ee.Init();
 
     Out[0].Init(GPIOB, 1, GPIO_Mode_Out_PP);
 

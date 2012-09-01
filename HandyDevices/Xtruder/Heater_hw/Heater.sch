@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 22/08/2012 12:41:01
+EESchema Schematic File Version 2  date 01/09/2012 11:28:08
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -15,7 +15,7 @@ $Descr A2 23400 16535
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "22 aug 2012"
+Date "1 sep 2012"
 Rev ""
 Comp ""
 Comment1 ""
