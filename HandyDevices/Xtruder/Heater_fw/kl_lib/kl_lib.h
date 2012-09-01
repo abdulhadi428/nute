@@ -146,7 +146,7 @@ public:
 extern Delay_t Delay;
 
 // ============================== UART command =================================
-#define UART_TXBUF_SIZE     144
+#define UART_TXBUF_SIZE     45
 #define UART_DMA_CHNL       DMA1_Channel4
 
 //#define RX_ENABLED
@@ -169,8 +169,11 @@ private:
 #endif
     void IStartTx(void);
     void BufWrite(uint8_t AByte) {
-        if(TxIndx < UART_TXBUF_SIZE) PBuf[TxIndx++] = AByte;
-        else if(IDmaIsIdle) IStartTx();
+        if(TxIndx < UART_TXBUF_SIZE) PBuf[TxIndx++] = AByte;	// Write byte to current buffer if possible
+        else if(IDmaIsIdle) {	// otherwise, start transmission of current buffer and write byte to next one
+        	IStartTx();
+        	PBuf[TxIndx++] = AByte;
+        }
     }
     // Printf
     void PrintUint(uint32_t ANumber, uint8_t ACharCount);
@@ -181,6 +184,7 @@ private:
 public:
     char UintToHexChar (uint8_t b) { return ((b<=0x09) ? (b+'0') : (b+'A'-10)); }
     void Printf(const char *S, ...);
+    void FlushTx(void);
     void Init(uint32_t ABaudrate);
     void Task(void);
 #ifdef RX_ENABLED

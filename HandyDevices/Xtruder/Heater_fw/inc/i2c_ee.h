@@ -10,13 +10,21 @@
 
 #include "i2c_mgr.h"
 
+#define EE_BUFSIZE	99
+
 class ee_t {
 private:
+	I2C_Cmd_t ICmd;
+	uint8_t IBuf[EE_BUFSIZE+1];
 public:
-    void Init(void) {}
-    //void Task(void);
-    uint8_t Read(uint16_t AAddr, uint8_t *PBuffer, uint32_t ABufSize);
-    //uint8_t Write(uint32_t AAddr, uint32_t ACount, uint8_t *PArr);
+	uint8_t *Buf;
+	void Init(void) {
+		Buf = &IBuf[1];
+		ICmd.DataToRead.Buf = Buf;
+		ICmd.DataToWrite.Buf = IBuf;
+	}
+    uint8_t Read(uint16_t AAddr, uint32_t ACount);
+    uint8_t Write(uint16_t AAddr, uint32_t ACount);
 };
 
 extern ee_t ee;

@@ -392,6 +392,15 @@ void CmdUnit_t::Printf(const char *S, ...) {
     if (IDmaIsIdle) IStartTx();
 }
 
+/*
+ * Empty buffers now
+ */
+void CmdUnit_t::FlushTx() {
+	if(IDmaIsIdle and (TxIndx != 0)) {
+
+	}
+}
+
 // ==== Init & DMA ====
 void CmdUnit_t::Init(uint32_t ABaudrate) {
     PBuf = TXBuf1;
@@ -461,7 +470,7 @@ void CmdUnit_t::Task() {
         CmdReset();
     }
 #endif
-    if (DMA_GetFlagStatus(DMA1_FLAG_TC4)) {
+    if (DMA_GetFlagStatus(DMA1_FLAG_TC4)) {	// if transmission completed
         DMA_ClearFlag(DMA1_FLAG_TC4);
         // Switch to next buffer if needed
         if(TxIndx != 0) IStartTx();

@@ -57,23 +57,26 @@ struct Buf8_t {
 
 enum CmdState_t {CmdPending, CmdWritingAddrTX, CmdWritingAddrRX, CmdWritingOne, CmdWritingMany, CmdReadingOne, CmdReadingMany, CmdSucceded, CmdFailed};
 
+/* Any i2c transaction consists of one or two stages:
+ * 1) Start - Addr+Write - [n bytes to write] - Stop
+ * 2) Start - Addr+Write - [n bytes to write] - RepStart - Addr+Read - [m bytes to read] - Stop
+ */
+
 struct I2C_Cmd_t {
-    Buf8_t DataToWrite, DataToRead;     // Buffers of data to read or write
-    uint8_t Address;                    // Device address
+    Buf8_t DataToWrite, DataToRead;	// Buffers of data to read or write
+    uint8_t Address;        		// Device address
     CmdState_t State;
-    ftVoid_Void Callback;
+    ftVoid_Void Callback;			// Function to execute when cmd is completed
 };
 
 class i2cMgr_t {
 private:
+#ifndef I2C_POLL_ONLY
     uint16_t Timer;
     bool IsError;
-#ifndef I2C_POLL_ONLY
     I2C_Cmd_t *CmdToWrite, *CmdToRead;
     I2C_Cmd_t Commands[I2C_CMD_QUEUE_LENGTH];
-#endif
     // Task-based functions
-#ifndef I2C_POLL_ONLY
     void SendAddrTX(void);
     uint8_t CheckAddrTXSending(void);
     void SendAddrRX(void);
@@ -101,8 +104,7 @@ public:
     void Task(void);
     void AddCmd(I2C_Cmd_t ACmd);
 #endif
-    uint8_t WriteBufferPoll(uint8_t AAddr, uint8_t *ABuffer, uint8_t ABufferSize);
-    uint8_t ReadBufferPoll (uint8_t AAddr, uint8_t *ABuffer, uint8_t ABufferSize);
+    uint8_t CmdPoll(I2C_Cmd_t ACmd);	// Perform Cmd in polling way
 };
 
 extern i2cMgr_t i2cMgr;
