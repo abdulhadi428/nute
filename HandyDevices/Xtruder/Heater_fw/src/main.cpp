@@ -32,32 +32,34 @@ void RegulationTask(void);
 int main(void) {
     GeneralInit();
 
-#define CNT	4
-    ee.Buf[0] = 1;
-    ee.Buf[1] = 2;
-    ee.Buf[2] = 3;
-    ee.Buf[3] = 4;
-    ee.Write(0, 4);
-    //ee.Read(0, CNT);
-    //Uart.Printf("%A\r", ee.Buf, CNT);
-    Delay.ms(504);
+#define CNT	9
+    ee.Buf[0] = 9;
+    ee.Buf[1] = 8;
+    ee.Buf[2] = 7;
+    ee.Buf[3] = 6;
+    ee.Buf[4] = 5;
+    ee.Buf[5] = 4;
+    ee.Buf[6] = 3;
+    ee.Write(0, 7);
+
+    Delay.ms(5);
     ee.Buf[0] = 0;
     ee.Buf[1] = 0;
     ee.Buf[2] = 0;
     ee.Buf[3] = 0;
     ee.Read(0, CNT);
-    //ee.Write(0, 4);
 
     Uart.Printf("%A\r", ee.Buf, CNT);
+    Uart.Printf("Aga");
 
     // ==== Main cycle ====
     while (1) {
         Uart.Task();
-        Lcd.Task();
+        //Lcd.Task();
         Beep.Task();
-        Keys.Task();
+        //Keys.Task();
         Interface.Task();
-        RegulationTask();
+        //RegulationTask();
     } // while 1
 }
 

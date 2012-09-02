@@ -18,7 +18,7 @@
 #include "kl_lib.h"
 
 #define I2C_POLL_ONLY
-#define I2C_CLOCK_FREQ          100000  // 100 or 400 kHz
+#define I2C_CLOCK_FREQ          400000  // 100 or 400 kHz
 
 // DMA
 #ifndef I2C_POLL_ONLY

@@ -12,6 +12,11 @@
 
 #define EE_BUFSIZE	99
 
+/*
+ * Beware! Byte write time is about 5ms.
+ * Therefore, device is unavailable right after Write Cmd.
+ */
+
 class ee_t {
 private:
 	I2C_Cmd_t ICmd;

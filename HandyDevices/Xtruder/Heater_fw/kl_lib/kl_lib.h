@@ -168,13 +168,7 @@ private:
     void CmdReset(void) { RxIndx = 0; CmdState = csNone; }
 #endif
     void IStartTx(void);
-    void BufWrite(uint8_t AByte) {
-        if(TxIndx < UART_TXBUF_SIZE) PBuf[TxIndx++] = AByte;	// Write byte to current buffer if possible
-        else if(IDmaIsIdle) {	// otherwise, start transmission of current buffer and write byte to next one
-        	IStartTx();
-        	PBuf[TxIndx++] = AByte;
-        }
-    }
+    void BufWrite(uint8_t AByte);
     // Printf
     void PrintUint(uint32_t ANumber, uint8_t ACharCount);
     void PrintInt (int32_t ANumber, uint8_t ACharCount);

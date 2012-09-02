@@ -315,7 +315,6 @@ void CmdUnit_t::PrintInt (int32_t ANumber, uint8_t ACharCount) {
     PrintUint(ANumber, ACharCount);
 }
 
-
 void CmdUnit_t::PrintAsHex (uint32_t ANumber, uint8_t ACharCount) {
     bool MustPrint = false;
     if ((ANumber & 0xFF000000) or (ACharCount > 6)) {
@@ -392,13 +391,26 @@ void CmdUnit_t::Printf(const char *S, ...) {
     if (IDmaIsIdle) IStartTx();
 }
 
-/*
- * Empty buffers now
- */
-void CmdUnit_t::FlushTx() {
-	if(IDmaIsIdle and (TxIndx != 0)) {
 
-	}
+void CmdUnit_t::BufWrite(uint8_t AByte) {
+    if(TxIndx < UART_TXBUF_SIZE) PBuf[TxIndx++] = AByte;    // Write byte to current buffer if possible
+    else {
+        if(IDmaIsIdle) IStartTx();  // otherwise, start transmission of current buffer and write byte to next one
+        else FlushTx();
+        PBuf[TxIndx++] = AByte;
+    }
+}
+
+// Empty buffers now
+void CmdUnit_t::FlushTx() {
+    while(!IDmaIsIdle or (TxIndx != 0)) {
+        if(!IDmaIsIdle) {   // wait DMA
+            while(DMA_GetFlagStatus(DMA1_FLAG_TC4) == RESET);
+            DMA_ClearFlag(DMA1_FLAG_TC4);
+            IDmaIsIdle = true;
+        }
+        if(TxIndx != 0) IStartTx();
+    }
 }
 
 // ==== Init & DMA ====
