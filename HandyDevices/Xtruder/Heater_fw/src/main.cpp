@@ -14,52 +14,35 @@
 #include "i2c_mgr.h"
 #include "i2c_ee.h"
 
-#define OUTPUT_SWITCH_MIN_DELAY     999 // ms
-class Output_t : public klPin_t {
+#define PWM_TICK    99  // ms
+#define PWM_TOP     10
+class Outputs_t {
 private:
-    uint16_t ITimer;
+    klPin_t IPin[4];
 public:
-    void On(void)  { if(Delay.Elapsed(&ITimer, OUTPUT_SWITCH_MIN_DELAY)) Set();   }
-    void Off(void) { if(Delay.Elapsed(&ITimer, OUTPUT_SWITCH_MIN_DELAY)) Clear(); }
-};
-Output_t Out[4];
+    uint8_t Pwm[4];    // 0...10
+    void Task(void);
+    void Init(void);
+} Outputs;
 
 // Prototypes
 void GeneralInit(void);
 void RegulationTask(void);
+uint8_t Regulator(int32_t Err);
 
 // ============================== Implementation ===============================
 int main(void) {
     GeneralInit();
 
-#define CNT	9
-    ee.Buf[0] = 9;
-    ee.Buf[1] = 8;
-    ee.Buf[2] = 7;
-    ee.Buf[3] = 6;
-    ee.Buf[4] = 5;
-    ee.Buf[5] = 4;
-    ee.Buf[6] = 3;
-    ee.Write(0, 7);
-
-    Delay.ms(5);
-    ee.Buf[0] = 0;
-    ee.Buf[1] = 0;
-    ee.Buf[2] = 0;
-    ee.Buf[3] = 0;
-    ee.Read(0, CNT);
-
-    Uart.Printf("%A\r", ee.Buf, CNT);
-    Uart.Printf("Aga");
-
     // ==== Main cycle ====
     while (1) {
         Uart.Task();
-        //Lcd.Task();
+        Lcd.Task();
         Beep.Task();
-        //Keys.Task();
+        Keys.Task();
         Interface.Task();
-        //RegulationTask();
+        RegulationTask();
+        Outputs.Task();
     } // while 1
 }
 
@@ -89,18 +72,67 @@ inline void GeneralInit(void) {
     i2cMgr.Init();
     ee.Init();
 
-    Out[0].Init(GPIOB, 1, GPIO_Mode_Out_PP);
+    Outputs.Init();
 
     Uart.Printf("\rHeater\r");
 }
 
 inline void RegulationTask() {
+    static uint32_t t=0;
+    static uint16_t Tmr;
+    if(Delay.Elapsed(&Tmr, 100)) t++;
+
     if(Ads.NewData) {
         Ads.NewData = false;
         // Display current temperatures
         for(uint8_t i=0; i<ADS_CH_COUNT; i++) Interface.DisplayT(i+1, Ads.Temperature[i]);
+        //Uart.Printf("%u;%i\r", t, Ads.Temperature[0]);
+
         // Regulate them
-        if(Ads.Temperature[0] < Interface.tToSet[0]) Out[0].On();
-        else Out[0].Off();
+        Outputs.Pwm[0] = Regulator(Interface.tToSet[0] - Ads.Temperature[0]);
+    }
+}
+
+#define kp  ((int32_t)(0x10000 * 4.0e-1))
+#define ki  ((int32_t)(0x10000 * 4.0e-4))
+
+uint8_t Regulator(int32_t Err) {
+    // Gain
+    int32_t Gain = Err * kp;
+    // Integrator
+    static int32_t IntAcc = 0;
+    IntAcc += ki * Err;
+
+    int32_t r = ((Gain + IntAcc) / 0x10000);
+
+    Uart.Printf("x: %i; Gain: %i; IntAcc: %i; Pwm: %i\r", Err, Gain, IntAcc, r);
+
+    if(r<0) r=0;
+    else if(r > PWM_TOP) r = PWM_TOP;
+    Lcd.Printf(0, 7, "Err=%i; r=%u  ", Err, r);
+    return r;
+}
+
+// ================================== Outputs ==================================
+void Outputs_t::Init() {
+    IPin[0].Init(GPIOB, 1, GPIO_Mode_Out_PP);
+    IPin[1].Init(GPIOB, 2, GPIO_Mode_Out_PP);
+    IPin[2].Init(GPIOB, 3, GPIO_Mode_Out_PP);
+    IPin[3].Init(GPIOB, 4, GPIO_Mode_Out_PP);
+
+    for(uint8_t i=0; i<4; i++) Pwm[i] = 0;
+}
+
+void Outputs_t::Task() {
+    static uint16_t ITimer;
+    static uint8_t ICounter=0;
+    if(Delay.Elapsed(&ITimer, PWM_TICK)) {
+        if(ICounter == PWM_TOP) ICounter = 0;
+        // Compare PWM
+        for(uint8_t i=0; i<4; i++) {
+            if(ICounter < Pwm[i]) IPin[i] = 1;
+            else IPin[i] = 0;
+        }
+        ICounter++;
     }
 }
