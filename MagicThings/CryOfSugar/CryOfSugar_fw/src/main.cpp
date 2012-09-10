@@ -127,13 +127,16 @@ bool ReadConfig(void) {
 void EVENT_Jolt(void) {
     if (ESnd.State == sndPlaying) return;   // speaking now
     klPrintf("Jolting\r");
-    // Generate random
-    uint32_t r = rand() % SndList.ProbSumm + 1; // [1; Probsumm]
-    // Select phrase
-    uint32_t i;
-    for (i=0; i<SndList.Count-1; i++) { // do not check last phrase
-        if((r >= SndList.Phrases[i].ProbBottom) && (r <= SndList.Phrases[i].ProbTop)) break;
-    }
+    static uint32_t LastTimeNumber = 0xFFFF, i=0;
+    do {
+        // Generate random
+        uint32_t r = rand() % SndList.ProbSumm + 1; // [1; Probsumm]
+        // Select phrase
+        for (i=0; i<SndList.Count-1; i++) { // do not check last phrase
+            if((r >= SndList.Phrases[i].ProbBottom) && (r <= SndList.Phrases[i].ProbTop)) break;
+        }
+    } while(i == LastTimeNumber);
+    LastTimeNumber = i;
     // Play phrase
     ESnd.Play(SndList.Phrases[i].Filename);
     //DebugProb.count++;
