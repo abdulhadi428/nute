@@ -1,4 +1,4 @@
-update=10/04/2012 14:32:27
+update=05/09/2012 22:46:44
 version=1
 last_client=pcbnew
 [general]
@@ -47,6 +47,7 @@ LibName9=Tittar_kl
 LibName10=Transistors_kl
 LibName11=Audio_kl
 LibName12=Antennas_kl
+LibName13=memory
 [cvpcb]
 version=1
 NetIExt=net
@@ -55,8 +56,8 @@ EquName1=devcms
 [pcbnew]
 version=1
 PadDrlX=0
-PadDimH=472
-PadDimV=236
+PadDimH=787
+PadDimV=906
 BoardThickness=630
 TxtPcbV=800
 TxtPcbH=600
@@ -67,16 +68,13 @@ VEgarde=100
 DrawLar=150
 EdgeLar=150
 TxtLar=120
-MSegLar=79
-LastNetListRead=Rock.net
+MSegLar=59
+LastNetListRead=Armlet.net
 [pcbnew/libraries]
 LibDir=D:/libs/Kicad
-LibName1=Antennas_kl
-LibName2=Common_kl
-LibName3=Connectors_kl
-LibName4=display_kl
-LibName5=pcb_details
-LibName6=Sensors
-LibName7=Tittar_kl
-LibName8=Batteries_kl
-LibName9=Special
+LibName1=Common_kl
+LibName2=Connectors_kl
+LibName3=pcb_details
+LibName4=Tittar_kl
+LibName5=Batteries_kl
+LibName6=display_kl
