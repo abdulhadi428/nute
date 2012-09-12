@@ -10,22 +10,14 @@
 
 #define NOSIGNAL_DELAY  999
 
-// ==== Values of RSSI to convert to brightness ====
-// All values in dBm.
-// Set between -108 and 0. -108 means "Use all". 0 is impossible.
-#define MIN_RSSI_TO_USE         (-60)
 // Brightness value matching MIN RSSI
 #define MIN_BRT                 1
-// At this value of RSSI brightness will be full
-#define FULL_BRIGHTNESS_RSSI    (-40)
 // Brightness value matching MAX RSSI
 #define MAX_BRT                 250
-// Coeffs of brightness conversion
-#define BRT_A   ((int32_t)((MAX_BRT - MIN_BRT) / (FULL_BRIGHTNESS_RSSI - MIN_RSSI_TO_USE)))
-#define BRT_B   ((int32_t)(MIN_BRT - BRT_A * MIN_RSSI_TO_USE))
 
 #define MIN_ADDRESS     1
 #define MAX_ADDRESS     20
+#define TRY_COUNT       1
 #define ALIEN_COUNT     (MAX_ADDRESS - MIN_ADDRESS + 1)
 
 struct Alien_t {
@@ -34,10 +26,16 @@ struct Alien_t {
     int32_t RSSI;
 };
 
+#define AVG_SZ      99  // Size of average
 class Signal_t {
 private:
     Alien_t Alien[ALIEN_COUNT];
+    int32_t AvgBuf[AVG_SZ], AvgIndx;
 public:
+    // Brightness coefs
+    int32_t BrtA, BrtB;
+    // General
+    bool AllThemCalled;
     void Init(void);
     void Task(void);
     void Remember(uint8_t AAddress, int32_t RawRSSI);

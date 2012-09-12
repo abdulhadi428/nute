@@ -10,6 +10,9 @@
 #include "cc2500.h"
 #include "main.h"
 #include "led.h"
+#include "lcd1200.h"
+#include "keys.h"
+#include "interface.h"
 
 Signal_t Signal;
 LedBlink_t Led;
@@ -23,12 +26,27 @@ void GeneralInit();
 int main(void) {
     GeneralInit();
 
+    /*
+     * 1 gnd
+     * 2 vcc    PB15
+     * 3 xcs    PB14
+     * 4 xres   PB13
+     * 5 sda    PB12
+     * 6 sclk   PB11
+     * 7 k3     PB10
+     * 8 k2     PB9
+     * 9 k1     PB8
+     */
+
     while (1) {
         Uart.Task();
         CC.Task();
         Led.Task();
         Signal.Task();
         Light.Task();
+        Lcd.Task();
+        Keys.Task();
+        Interface.Task();
     } // while 1
 }
 
@@ -48,6 +66,20 @@ void GeneralInit(void) {
     CC.TX_Pkt.From = CC_ADDRESS;
 
     Signal.Init();
+
+    // Outer interface
+    klGpioSetupByN(GPIOB, 15, GPIO_Mode_Out_PP);    // VCC
+    klGpioSetByN(GPIOB, 15);
+    Delay.ms(99);
+    Lcd.Init();
+    Keys.Init();
+
+    Interface.Init();
+    Interface.MinLvl = -60;
+    Interface.MaxLvl = -40;
+    Interface.DisplayMaxLvl();
+    Interface.DisplayMinLvl();
+    Interface.SettingChanged();
 
     Uart.Printf("\rEntrance\r");
 }
@@ -89,6 +121,8 @@ void CC_t::Task(void) {
             if (Delay.Elapsed(&Timer, RX_WAIT_TIME)) {
                 SearchState = IsCalling;
                 EnterIdle();
+                // Note that all was interrogated
+                if((TX_Pkt.To == MAX_ADDRESS) and (PktCounter == TRY_COUNT-1)) Signal.AllThemCalled = true;
             }
             break;
 
@@ -100,7 +134,7 @@ void CC_t::Task(void) {
 
 void CC_t::IRQHandler() {
     if (SearchState == IsCalling) { // Packet transmitted, enter RX
-        if(++PktCounter == 1) {     // Several packets sent
+        if(++PktCounter == TRY_COUNT) {     // Several packets sent
             PktCounter = 0;
             // Increase packet address
             TX_Pkt.To++;
@@ -123,10 +157,18 @@ void CC_t::IRQHandler() {
 }
 
 // ============================= Signal_t ======================================
+// Recalculate coefficients
+void Interface_t::SettingChanged() {
+    // Coeffs of brightness conversion
+    Signal.BrtA = ((int32_t)((MAX_BRT - MIN_BRT) / (MaxLvl - MinLvl)));
+    Signal.BrtB =   ((int32_t)(MIN_BRT - Signal.BrtA * MinLvl));
+}
+
 void Signal_t::Task() {
-    // Check if someone is near. Fear of the dark, he-he
-    int32_t TopRssi = -999; // dummy
-    static int32_t OldTopRssi = -999;
+    if(!AllThemCalled) return;  // Nothing to do if we did not call everybody
+    AllThemCalled = false;
+    // Iterate all to check if someone is near. Fear of the dark, he-he.
+    int32_t TopRssi = Interface.MinLvl - 1; // Even less than nothing ;)
     Alien_t *Al;
     for (uint8_t i=0; i<ALIEN_COUNT; i++) {
         Al = &Alien[i];
@@ -138,25 +180,35 @@ void Signal_t::Task() {
             Al->Exists = false;
         }
         // Calculate top RSSI
-        if(Al->Exists)
+        if(Al->Exists) {
             if(Al->RSSI > TopRssi) TopRssi = Al->RSSI;
+            Uart.Printf("ID: %u; Rssi: %i\r", i+MIN_ADDRESS, Al->RSSI);
+            Interface.DisplayRxLvl(i+MIN_ADDRESS, Al->RSSI);
+        }
     } // for
+    if(TopRssi < Interface.MinLvl) Interface.DisplayRxLvl(0, 0);    // Clear screen
 
-    // Setup brightness depending on RSSI
-    if(TopRssi != OldTopRssi) {
-        OldTopRssi = TopRssi;
-        if(TopRssi >= MIN_RSSI_TO_USE) {
-            int32_t FBrt = BRT_A * TopRssi + BRT_B;
-            if(FBrt < 1) FBrt = 1;
-            if(FBrt > MAX_BRT) FBrt = MAX_BRT;
-            Light.SetSmoothly((uint16_t)FBrt);
-            Uart.Printf("RSSI: %i; Brt: %u\r", TopRssi, FBrt);
-        }
-        else {
-            Uart.Printf("Nobody here\r");
-            Light.SetSmoothly(0);
-        }
+    // Now we have top RSSI value of all the aliens.
+    // ==== Setup brightness depending on RSSI ====
+    int32_t FBrt;
+    if(TopRssi >= Interface.MinLvl) {
+        FBrt = BrtA * TopRssi + BrtB;
+        if(FBrt < 1) FBrt = 1;
+        if(FBrt > MAX_BRT) FBrt = MAX_BRT;
     }
+    else FBrt = 0;
+
+    // ==== Average calculation ====
+    AvgBuf[AvgIndx++] = FBrt;   // Add new value
+    if(AvgIndx == AVG_SZ) AvgIndx = 0;
+    // Calculate sum
+    int32_t Average=0;
+    for(uint32_t i=0; i<AVG_SZ; i++) Average += AvgBuf[i];
+    // Calculate average
+    Average /= AVG_SZ;
+    //Uart.Printf("Rssi: %i; Brt: %i; Avg: %i\r", TopRssi, FBrt, Average);
+
+    Light.SetSmoothly((uint16_t)Average);
 }
 
 void Signal_t::Remember(uint8_t AAddress, int32_t RawRSSI) {
@@ -165,7 +217,7 @@ void Signal_t::Remember(uint8_t AAddress, int32_t RawRSSI) {
     RawRSSI = (RawRSSI / 2) - 69;    // now it is in dBm
     // Check if display
     Alien_t *Al = &Alien[AAddress - MIN_ADDRESS];
-    if (RawRSSI > MIN_RSSI_TO_USE) {
+    if (RawRSSI > Interface.MinLvl) {
         Al->New = true;
         Delay.Reset(&Al->Timer);
         Al->RSSI = RawRSSI;

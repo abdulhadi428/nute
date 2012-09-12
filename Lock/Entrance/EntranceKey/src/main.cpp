@@ -14,7 +14,7 @@
 #include "led.h"
 
 // Variables
-uint8_t ID = 6;
+uint8_t ID = 16;
 Acc_t Acc;
 bool IsOn;
 
@@ -55,7 +55,7 @@ void GeneralInit(void) {
 
     // Accelerometer
     Acc.Init();
-    Acc.Delay_ms = 4005;
+    Acc.Delay_ms = 9000;
     Acc.Enable();
 
     // Setup CC
@@ -74,66 +74,6 @@ void GeneralInit(void) {
     Led.Blink(702);
 }
 
-/*
-void Switchers_t::UpdateState(void) {
-    if (FrontIsOn()) {
-        if (BackIsOn()) {
-            Acc.Disable();
-            TxOn();
-        }
-        else {
-            Acc.Enable();
-            TxOff();
-        }
-    }
-    else {
-        Acc.Disable();
-        TxOff();
-        // Prepare to sleep: configure front switch GPIO line to be event source
-        // Connect EXTI Line to front switch GPIO
-        GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource1);
-        // Configure front switch EXTI line
-        EXTI_InitTypeDef EXTI_InitStructure;
-        EXTI_InitStructure.EXTI_Line = EXTI_Line1;
-        EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Event;
-        EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
-        EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-        EXTI_Init(&EXTI_InitStructure);
-        // Enter sleep mode
-        PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFE);
-        // At this stage the system has resumed from STOP mode
-        EXTI_InitStructure.EXTI_LineCmd = DISABLE;
-        EXTI_Init(&EXTI_InitStructure);
-    }
-}
-
-void Switchers_t::Task(void) {
-    static bool FrontWasOn = false, BackWasOn = false;
-    bool HasChanged = false;
-    if (Delay.Elapsed(&STimer, 198)) {
-        if (FrontIsOn() && !FrontWasOn) {
-            FrontWasOn = true;
-            HasChanged = true;
-        }
-        else if (!FrontIsOn()) {
-            FrontWasOn = false;
-            HasChanged = true;
-        }
-
-        if (BackIsOn() && !BackWasOn) {
-            BackWasOn = true;
-            HasChanged = true;
-        }
-        else if (!BackIsOn() && BackWasOn) {
-            BackWasOn = false;
-            HasChanged = true;
-        }
-
-        if (HasChanged) UpdateState();
-    } // if delay
-}
-
-*/
 // ================================ Events =====================================
 void Acc_t::EvtTrigger(void) {
     if (!IsOn) {
