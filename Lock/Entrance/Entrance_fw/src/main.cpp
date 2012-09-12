@@ -71,7 +71,7 @@ void GeneralInit(void) {
     // Outer interface
     klGpioSetupByN(GPIOB, 15, GPIO_Mode_Out_PP);    // VCC
     klGpioSetByN(GPIOB, 15);
-    Delay.ms(99);
+    Delay.ms(999);
     Lcd.Init();
     Keys.Init();
 
@@ -88,7 +88,7 @@ void GeneralInit(void) {
 /*
  * Both TX and RX are interrupt-driven, so IRQ enabled at init and commented out in EnterRX.
  */
-#define RX_WAIT_TIME    2
+#define RX_WAIT_TIME    4
 enum SearchState_t {IsCalling, IsWaiting} SearchState;
 uint8_t PktCounter=0;
 
@@ -146,6 +146,7 @@ void CC_t::IRQHandler() {
     }
     else { // Will be here if packet received successfully or in case of wrong address
         if (ReadRX()) {
+            //Uart.Printf("%u\r", RX_Pkt.To);
             // Check address
             if(RX_Pkt.To == CC_ADDRESS) {   // This packet is ours
                 //klPrintf("From: %u; RSSI: %u\r", RX_Pkt.From, RX_Pkt.RSSI);
@@ -229,6 +230,7 @@ void Signal_t::Task() {
 }
 
 void Signal_t::Remember(uint8_t AAddress, int32_t RawRSSI) {
+    //Uart.Printf("%u\r", AAddress - MIN_ADDRESS);
     // Calculate RSSI
     if (RawRSSI >= 128) RawRSSI -= 256;
     RawRSSI = (RawRSSI / 2) - 69;    // now it is in dBm
