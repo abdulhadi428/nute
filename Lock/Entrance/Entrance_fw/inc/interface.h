@@ -31,6 +31,9 @@ private:
     bool IsDisplayed;
     void Select(Selection_t ASelection);
     void EnterIdle(void);
+    // Inc / Dec
+    void IInc(bool AFast, int32_t *PValue);
+    void IDec(bool AFast, int32_t *PValue);
 public:
     int32_t MinLvl; // Set between -108 and 0. -108 means "Use all". 0 is impossible.
     int32_t MaxLvl; // At this value of RSSI brightness will be full
@@ -61,6 +64,7 @@ public:
     void KeyEnter(void);
     // Events
     void SettingChanged(void);  // Call after enter here
+    void SettingsLoad(void);
     void SettingsSave(void);
 };
 extern Interface_t Interface;

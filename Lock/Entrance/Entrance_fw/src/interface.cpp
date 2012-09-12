@@ -10,6 +10,17 @@
 Interface_t Interface;
 
 // =================================== Keys ====================================
+void Interface_t::IInc(bool AFast, int32_t *PValue) {
+    if(AFast and ((*PValue) %10 == 0)) (*PValue) +=10;
+    else (*PValue)++;
+    if((*PValue) > 0) (*PValue) = 0;
+}
+void Interface_t::IDec(bool AFast, int32_t *PValue) {
+    if(AFast and ((*PValue) %10 == 0)) (*PValue) -=10;
+    else (*PValue)--;
+    if((*PValue) < -111) (*PValue) = -111;
+}
+
 void Interface_t::KeyDown(bool IsLongPressed) {
     switch(State) {
         case stIdle:
@@ -19,13 +30,11 @@ void Interface_t::KeyDown(bool IsLongPressed) {
         case stChanging:
             Delay.Reset(&IStateTmr);
             if(ISelection == sMinLvl) {
-                MinLvl--;
-                if(MinLvl < -111) MinLvl = -111;
+                IDec(IsLongPressed, &MinLvl);
                 DisplayMinLvl();
             }
             else {
-                MaxLvl--;
-                if(MaxLvl < -111) MaxLvl = -111;
+                IDec(IsLongPressed, &MaxLvl);
                 DisplayMaxLvl();
             }
             break;
@@ -41,13 +50,11 @@ void Interface_t::KeyUp(bool IsLongPressed) {
         case stChanging:
             Delay.Reset(&IStateTmr);
             if(ISelection == sMinLvl) {
-                MinLvl++;
-                if(MinLvl > 0) MinLvl = 0;
+                IInc(IsLongPressed, &MinLvl);
                 DisplayMinLvl();
             }
             else {
-                MaxLvl++;
-                if(MaxLvl > 0) MaxLvl = 0;
+                IInc(IsLongPressed, &MaxLvl);
                 DisplayMaxLvl();
             }
             break;
@@ -63,7 +70,6 @@ void Interface_t::KeyEnter() {
 
         case stChanging:
             EnterIdle();
-            SettingChanged();
             break;
     }
 }
@@ -100,6 +106,8 @@ void Interface_t::EnterIdle() {
     State = stIdle;
     DisplayMinLvl();
     DisplayMaxLvl();
+    SettingChanged();
+    SettingsSave();
 }
 
 void Interface_t::Select(Selection_t ASelection) {

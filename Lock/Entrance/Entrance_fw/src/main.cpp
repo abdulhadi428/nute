@@ -13,11 +13,12 @@
 #include "lcd1200.h"
 #include "keys.h"
 #include "interface.h"
+#include "FlashStorage.h"
 
 Signal_t Signal;
 LedBlink_t Led;
-
 LedSmooth_t Light;
+FlashStorage_t Store;
 
 void GeneralInit();
 
@@ -26,7 +27,7 @@ void GeneralInit();
 int main(void) {
     GeneralInit();
 
-    /*
+    /* Outer interface connector. Beware: #10 is actually #1 here
      * 1 gnd
      * 2 vcc    PB15
      * 3 xcs    PB14
@@ -75,8 +76,7 @@ void GeneralInit(void) {
     Keys.Init();
 
     Interface.Init();
-    Interface.MinLvl = -60;
-    Interface.MaxLvl = -40;
+    Interface.SettingsLoad();
     Interface.DisplayMaxLvl();
     Interface.DisplayMinLvl();
     Interface.SettingChanged();
@@ -156,7 +156,23 @@ void CC_t::IRQHandler() {
     } // if is waiting
 }
 
-// ============================= Signal_t ======================================
+// ============================ Settings =======================================
+void Interface_t::SettingsLoad() {
+    int32_t Arr[2];
+    Store.Load((uint32_t*)Arr, 2);
+    if((Arr[0] < -111) or (Arr[0] > 0)) Interface.MinLvl = -45;
+    else Interface.MinLvl = Arr[0];
+    if((Arr[1] < -111) or (Arr[1] > 0)) Interface.MaxLvl = -63;
+    else Interface.MaxLvl = Arr[1];
+}
+
+void Interface_t::SettingsSave() {
+    uint32_t Arr[2];
+    Arr[0] = (uint32_t)Interface.MinLvl;
+    Arr[1] = (uint32_t)Interface.MaxLvl;
+    Store.Save(Arr, 2);
+}
+
 // Recalculate coefficients
 void Interface_t::SettingChanged() {
     // Coeffs of brightness conversion
@@ -164,6 +180,7 @@ void Interface_t::SettingChanged() {
     Signal.BrtB =   ((int32_t)(MIN_BRT - Signal.BrtA * MinLvl));
 }
 
+// ============================= Signal_t ======================================
 void Signal_t::Task() {
     if(!AllThemCalled) return;  // Nothing to do if we did not call everybody
     AllThemCalled = false;
@@ -182,7 +199,7 @@ void Signal_t::Task() {
         // Calculate top RSSI
         if(Al->Exists) {
             if(Al->RSSI > TopRssi) TopRssi = Al->RSSI;
-            Uart.Printf("ID: %u; Rssi: %i\r", i+MIN_ADDRESS, Al->RSSI);
+            //Uart.Printf("ID: %u; Rssi: %i\r", i+MIN_ADDRESS, Al->RSSI);
             Interface.DisplayRxLvl(i+MIN_ADDRESS, Al->RSSI);
         }
     } // for
