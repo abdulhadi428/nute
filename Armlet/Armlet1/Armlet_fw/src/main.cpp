@@ -11,6 +11,8 @@
 #include "led.h"
 #include "cc1101.h"
 #include "lcd1200.h"
+#include "beep.h"
+#include "battery.h"
 
 // Prototypes
 void GeneralInit(void);
@@ -19,12 +21,13 @@ void GeneralInit(void);
 int main(void) {
     GeneralInit();
 
-    //klGpioSetupByN(GPIOB, 15, GPIO_Mode_Out_PP);
-
     // ==== Main cycle ====
     while (1) {
     	Uart.Task();
     	Lcd.Task();
+    	Battery.Task();
+    	Beep.Task();
+    	Battery.Task();
         //CC.Task();
 
     } // while(1)
@@ -35,6 +38,9 @@ inline void GeneralInit(void) {
     klJtagDisable();
 
     Delay.Init();
+    Beep.Init();
+    Beep.SetFreqHz(2007);
+    Beep.Squeak(2, 7);
 
     Uart.Init(115200);
     Uart.Printf("\rArmlet1\r");
@@ -43,6 +49,7 @@ inline void GeneralInit(void) {
     Lcd.Printf(0, 0, "Armlet");
     Lcd.Backlight(0);
 
+    Battery.Init();
     // Setup CC
 //    CC.Init();
 //    CC.SetChannel(0);
@@ -53,6 +60,7 @@ inline void GeneralInit(void) {
     //Uart.Printf("ID: %X8 %X8 %X8\r", PktTx.IdArr[0], PktTx.IdArr[1], PktTx.IdArr[2]);
 }
 
+// ================================= Events ====================================
 void CC_t::TxEndHandler() {
 #ifdef ALWAYS_RX
 //    Receive();
