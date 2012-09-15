@@ -13,6 +13,8 @@
 #include "lcd1200.h"
 #include "beep.h"
 #include "battery.h"
+#include "interface.h"
+#include "kl_time.h"
 
 // Prototypes
 void GeneralInit(void);
@@ -28,6 +30,7 @@ int main(void) {
     	Battery.Task();
     	Beep.Task();
     	Battery.Task();
+    	Interface.Task();
         //CC.Task();
 
     } // while(1)
@@ -45,9 +48,10 @@ inline void GeneralInit(void) {
     Uart.Init(115200);
     Uart.Printf("\rArmlet1\r");
 
+    Time.Init();
     Lcd.Init();
-    Lcd.Printf(0, 0, "Armlet");
     Lcd.Backlight(0);
+    Interface.Init();
 
     Battery.Init();
     // Setup CC

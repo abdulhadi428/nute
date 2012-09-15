@@ -63,8 +63,8 @@ private:
     void WriteData(uint8_t AData);
     // High-level
     void GotoXY(uint8_t x, uint8_t y);
-    void PrintUint (uint32_t ANumber);
-    void PrintInt (int32_t ANumber);
+    void PrintUint (uint32_t ANumber, uint8_t ACharCount);
+    void PrintInt (int32_t ANumber, uint8_t ACharCount);
     void PrintString (const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert);
     void PrintStringLen(const char *S, uint16_t ALen, Invert_t AInvert);
 public:

@@ -140,12 +140,19 @@ void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
         }
         else { // not %
             if (WasPercent) {
+                // Get number of characters
+                char c1 = *(S+1);
+                uint8_t N;
+                if ((c1 >= '0') and (c1 <= '9')) {
+                    N = c1 - '0';
+                    S++;
+                }
+                else N = 0;
+                // Parse c
                 if (c == 'c') DrawChar((uint8_t)va_arg(Arg, int32_t), NotInverted);
-                else if (c == 'u') PrintUint(va_arg(Arg, uint32_t));
-                else if (c == 'i') PrintInt(va_arg(Arg, int32_t));
-//                else if (c == 'X') PrintAsHex(va_arg(Arg, uint32_t));
+                else if (c == 'u') PrintUint(va_arg(Arg, uint32_t), N);
+                else if (c == 'i') PrintInt(va_arg(Arg, int32_t), N);
 //                else if ((c == 's') || (c == 'S')) PrintString(va_arg(Arg, char*));
-//                else if (c == 'H') Print8HexArray(va_arg(Arg, uint8_t*), va_arg(Arg, uint32_t));
                 WasPercent = false;
             } // if was percent
             else DrawChar(c, NotInverted);
@@ -155,7 +162,7 @@ void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
     va_end(Arg);
 }
 
-void Lcd_t::PrintUint (uint32_t ANumber) {
+void Lcd_t::PrintUint (uint32_t ANumber, uint8_t ACharCount) {
     uint8_t digit = '0';
     bool ShouldPrint = false;
     const uint32_t m[9] = {1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10};
@@ -165,7 +172,7 @@ void Lcd_t::PrintUint (uint32_t ANumber) {
             digit++;
             ANumber -= m[i];
         }
-        if (digit != '0' || ShouldPrint) {
+        if ((digit != '0') or ShouldPrint or (9-i < ACharCount)) {
             DrawChar(digit, NotInverted);
             ShouldPrint = true;
         }
@@ -174,12 +181,12 @@ void Lcd_t::PrintUint (uint32_t ANumber) {
     DrawChar((uint8_t)('0'+ANumber), NotInverted);
 }
 
-void Lcd_t::PrintInt (int32_t ANumber) {
+void Lcd_t::PrintInt (int32_t ANumber, uint8_t ACharCount) {
     if (ANumber < 0) {
         DrawChar('-', NotInverted);
         ANumber = -ANumber;
     }
-    PrintUint (ANumber);
+    PrintUint (ANumber, ACharCount);
 }
 
 
