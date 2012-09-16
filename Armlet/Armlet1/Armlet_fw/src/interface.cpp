@@ -44,8 +44,9 @@ void Interface_t::KeyUp(bool IsLongPressed) {
 void Interface_t::KeyEnter() {
     switch(State) {
         case stIdle:
-            State = stMain;
+            State = stSetTime;
             Delay.Reset(&IStateTmr);
+            EnterSetTime();
             break;
 
         default:
@@ -61,7 +62,10 @@ void Interface_t::Task() {
         case stIdle:
             // Display time
             Lcd.Printf(0, 0, "%u2:%u2", Time.GetHour(), Time.GetMinute());
+            break;
 
+        case stSetTime:
+            if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) EnterIdle();
             break;
 
         default:
@@ -69,11 +73,22 @@ void Interface_t::Task() {
     }
 }
 
-// ================================= General ===================================
+// ================================= Menus ===================================
 void Interface_t::EnterIdle() {
     State = stIdle;
-
+    Lcd.Cls();
+    // Display time
+    Lcd.Printf(0, 0, "%u2:%u2", Time.GetHour(), Time.GetMinute());
 }
+
+// ==== Set Time menu ====
+void Interface_t::EnterSetTime() {
+    Lcd.Cls();
+    Lcd.Printf(0, 1, "Установите время");
+    Lcd.Printf(4, 4, " %u2 : %u2 ", Time.GetHour(), Time.GetMinute());
+}
+
+
 
 void Interface_t::Init() {
     // Draw background

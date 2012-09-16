@@ -15,6 +15,8 @@
 #include "battery.h"
 #include "interface.h"
 #include "kl_time.h"
+#include "i2c_mgr.h"
+#include "keys.h"
 
 // Prototypes
 void GeneralInit(void);
@@ -22,6 +24,7 @@ void GeneralInit(void);
 // ============================ Implementation =================================
 int main(void) {
     GeneralInit();
+    uint32_t Tmr;
 
     // ==== Main cycle ====
     while (1) {
@@ -31,8 +34,14 @@ int main(void) {
     	Beep.Task();
     	Battery.Task();
     	Interface.Task();
-        //CC.Task();
-
+    	Keys.Task();
+        CC.Task();
+        if(Interface.State == stSetTime) {
+            if(Delay.Elapsed(&Tmr, 99)) CC.Transmit();
+        }
+        else {
+            if(CC.Aim != caRx) CC.Receive();
+        }
     } // while(1)
 }
 
@@ -43,21 +52,23 @@ inline void GeneralInit(void) {
     Delay.Init();
     Beep.Init();
     Beep.SetFreqHz(2007);
-    Beep.Squeak(2, 7);
+    Beep.Squeak(2, 4);
 
     Uart.Init(115200);
     Uart.Printf("\rArmlet1\r");
+    i2cMgr.Init();
 
     Time.Init();
     Lcd.Init();
     Lcd.Backlight(0);
     Interface.Init();
+    Keys.Init();
 
     Battery.Init();
     // Setup CC
-//    CC.Init();
-//    CC.SetChannel(0);
-//    CC.SetPower(pl0dBm);
+    CC.Init();
+    CC.SetChannel(0);
+    CC.SetPower(pl0dBm);
 
     // Get unique ID
     //GetUniqueID(&PktTx.IdArr[0]);
@@ -66,6 +77,7 @@ inline void GeneralInit(void) {
 
 // ================================= Events ====================================
 void CC_t::TxEndHandler() {
+    Uart.Printf("tx\r");
 #ifdef ALWAYS_RX
 //    Receive();
 #else
@@ -76,6 +88,7 @@ void CC_t::TxEndHandler() {
 }
 
 void CC_t::NewPktHandler() {
+    Uart.Printf("rx\r");
     //Uart.Printf("NbID: %X8 %X8 %X8\r", PktRx.IdArr[0], PktRx.IdArr[1], PktRx.IdArr[2]);
     //Uart.Printf("dBm: %i\r", CC.RSSI_dBm(PktRx.RSSI));
 //    NCounter.Add(PktRx.IdArr);

@@ -34,7 +34,7 @@ void CC_t::Task(void) {
     //if ((IState != CC_STB_IDLE) or (IState != CC_STB_RX)) klPrintf("State: %X\r", IState);
 }
 
-void CC_t::IRQHandler() {
+void CC_t::IRQ0Handler() {
     if (Aim == caTx) {
         Aim = caIdle;
         TxEndHandler();
@@ -45,16 +45,18 @@ void CC_t::IRQHandler() {
         // Do not reenter RX here to allow safely enter TX right after RX
     }
 }
+void CC_t::IRQ2Handler() {
+
+}
 
 
 void CC_t::Init(void) {
     // ******** Hardware init section *******
-    // ==== GPIO init ====
-    klGpioSetupByMsk(CC_GPIO, CC_CS, GPIO_Mode_Out_PP);             // Configure CC_CS as Push-Pull output
-    klGpioSetupByMsk(CC_GPIO, CC_SCLK | CC_MOSI, GPIO_Mode_AF_PP);  // Configure MOSI & SCK as Alternate Function Push Pull
-    klGpioSetupByMsk(CC_GPIO, CC_MISO, GPIO_Mode_IN_FLOATING);      // Configure MISO as Input Floating
-    CS_Hi();
-
+    // ==== SPI GPIO init ====
+    klGpioSetupByMsk(GPIOA, GPIO_Pin_0, GPIO_Mode_Out_PP);              // Configure CC_CS as Push-Pull output
+    klGpioSetupByMsk(GPIOA, GPIO_Pin_5 | GPIO_Pin_7, GPIO_Mode_AF_PP);  // Configure MOSI & SCK as Alternate Function Push Pull
+    klGpioSetupByMsk(GPIOA, GPIO_Pin_6, GPIO_Mode_IN_FLOATING);         // Configure MISO as Input Floating
+    CsHi();
     // ==== SPI init ====    MSB first, master, SCK idle low
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
     SPI_InitTypeDef SPI_InitStructure;
@@ -68,15 +70,14 @@ void CC_t::Init(void) {
     SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
     SPI_Init(SPI1, &SPI_InitStructure);
     SPI_Cmd(SPI1, ENABLE);
-    // ******* Firmware init section *******
+
     Reset();
     FlushRxFIFO();
     RfConfig();
-
-    // ==== IRQ ====
-    IrqPin.Init(CC_GPIO, CC_GDO0_N, GPIO_Mode_IPD);
-    IrqPin.IrqSetup(EXTI_Trigger_Falling);
-    IrqPin.IrqEnable();
+    // ==== IRQs ====
+    IrqPin0.Init(GPIOA, 4, GPIO_Mode_IPD);
+    IrqPin0.IrqSetup(EXTI_Trigger_Falling);
+    IrqPin0.IrqEnable();
 }
 
 void CC_t::SetChannel(uint8_t AChannel) {
@@ -110,8 +111,8 @@ void CC_t::TransmitAndWaitIdle(void) {
     EnterIdle();
     WriteTX((uint8_t*)(&PktTx), CC_PKT_LEN);
     EnterTX();
-    while(IrqPin == 0); // Wait until sync word is sent
-    while(IrqPin == 1); // Wait until transmission completed
+    while(IrqPin0 == 0); // Wait until sync word is sent
+    while(IrqPin0 == 1); // Wait until transmission completed
 }
 
 void CC_t::Receive(void) {
@@ -129,7 +130,7 @@ int16_t CC_t::RSSI_dBm(uint8_t ARawRSSI) {
 
 // ============================= Inner use =====================================
 void CC_t::WriteTX(uint8_t* PArr, uint8_t ALen) {
-    CS_Lo();                                                // Start transmission
+    CsLo();                                                 // Start transmission
     BusyWait();                                             // Wait for chip to become ready
     ReadWriteByte(CC_FIFO|CC_WRITE_FLAG|CC_BURST_FLAG);     // Address with write & burst flags
     uint8_t b;
@@ -139,7 +140,7 @@ void CC_t::WriteTX(uint8_t* PArr, uint8_t ALen) {
         ReadWriteByte(b);  // Write bytes
       //  Uart.Printf("%X ", b);
     }
-    CS_Hi();    // End transmission
+    CsHi();    // End transmission
     //Uart.Printf("\r");
 }
 //#define CC_PRINT_RX
@@ -153,7 +154,7 @@ bool CC_t::ReadRX(uint8_t* PArr) {
 //    Uart.Printf("St: %X  ", b);
     if(b & 0x80) {  // CRC OK
 //    if(b) {  // FIFO not empty
-        CS_Lo();                                            // Start transmission
+        CsLo();                                            // Start transmission
         BusyWait();                                         // Wait for chip to become ready
         ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);  // Address with read & burst flags
         for (uint8_t i=0; i<CC_PKT_LEN+2; i++) {            // Read bytes
@@ -161,7 +162,7 @@ bool CC_t::ReadRX(uint8_t* PArr) {
             *PArr++ = b;
       //      Uart.Printf(" %X", b);
         }
-        CS_Hi();    // End transmission
+        CsHi();    // End transmission
         result = true;
     }
     //Uart.Printf("\r");
@@ -169,25 +170,25 @@ bool CC_t::ReadRX(uint8_t* PArr) {
 }
 
 uint8_t CC_t::ReadRegister (uint8_t ARegAddr){
-    CS_Lo();      // Start transmission
+    CsLo();      // Start transmission
     BusyWait();   // Wait for chip to become ready
     ReadWriteByte(ARegAddr | CC_READ_FLAG);     // Transmit header byte
     uint8_t FReply = ReadWriteByte(0);    // Read reply
-    CS_Hi();      // End transmission
+    CsHi();      // End transmission
     return FReply;
 }
 void CC_t::WriteRegister (uint8_t ARegAddr, uint8_t AData){
-    CS_Lo();                 // Start transmission
+    CsLo();                 // Start transmission
     BusyWait();              // Wait for chip to become ready
     ReadWriteByte(ARegAddr); // Transmit header byte
     ReadWriteByte(AData);    // Write data
-    CS_Hi();                 // End transmission
+    CsHi();                 // End transmission
 }
 void CC_t::WriteStrobe (uint8_t AStrobe){
-    CS_Lo();      // Start transmission
+    CsLo();      // Start transmission
     BusyWait();   // Wait for chip to become ready
     IState = ReadWriteByte(AStrobe);  // Write strobe
-    CS_Hi();      // End transmission
+    CsHi();      // End transmission
     IState &= 0b01110000; // Mask needed bits
 }
 
@@ -243,6 +244,12 @@ uint8_t CC_t::ReadWriteByte(uint8_t AByte) {
 void EXTI3_IRQHandler(void) {
     if(EXTI_GetITStatus(EXTI_Line3) != RESET) {
         EXTI_ClearITPendingBit(EXTI_Line3);
-        CC.IRQHandler();
+        CC.IRQ2Handler();
+    }
+}
+void EXTI4_IRQHandler(void) {
+    if(EXTI_GetITStatus(EXTI_Line4) != RESET) {
+        EXTI_ClearITPendingBit(EXTI_Line4);
+        CC.IRQ0Handler();
     }
 }

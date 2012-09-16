@@ -17,18 +17,8 @@
 #include "cc1101_rf_settings.h"
 #include "cc1101defins.h"
 
-// ================================== Defins ===================================
-#define CC_GPIO     GPIOA
-#define CC_GDO0     GPIO_Pin_3
-#define CC_GDO0_N   3
-#define CC_CS       GPIO_Pin_4
-#define CC_MOSI     GPIO_Pin_7
-#define CC_MISO     GPIO_Pin_6
-#define CC_SCLK     GPIO_Pin_5
-
 enum CCAim_t {caIdle, caRx, caTx};
 
-// ============================ Types & variables ==============================
 // ==== Packet ====
 struct Pkt_t {
     uint32_t IdArr[3];
@@ -44,12 +34,13 @@ class CC_t {
 private:
     uint8_t ReadWriteByte(uint8_t AByte);
     // Pins
-    klPinIrq_t IrqPin;
-    void CS_Hi(void) { CC_GPIO->BSRR = CC_CS; }
-    void CS_Lo(void) { CC_GPIO->BRR  = CC_CS; }
-    bool GDO0_IsHi(void) { return klGpioIsSetByMsk(CC_GPIO, CC_GDO0); }
-    void BusyWait(void)  { while (klGpioIsSetByMsk(CC_GPIO, CC_MISO));}
-
+    klPinIrq_t IrqPin0, IrqPin2;
+    void CsHi(void) { GPIOA->BSRR = GPIO_Pin_0; }
+    void CsLo(void) { GPIOA->BRR  = GPIO_Pin_0; }
+    bool GDO0_IsHi(void) { return klGpioIsSetByMsk(GPIOA, GPIO_Pin_4); }
+    bool GDO2_IsHi(void) { return klGpioIsSetByMsk(GPIOA, GPIO_Pin_3); }
+    void BusyWait(void)  { while (klGpioIsSetByMsk(GPIOA, GPIO_Pin_6));}
+    // General
     void WaitUntilChannelIsBusy(void);
     void RfConfig(void);
     void WriteTX(uint8_t* PArr, uint8_t ALen);
@@ -87,7 +78,8 @@ public:
         WriteStrobe(CC_SCAL);
     }
     // IRQ handler
-    void IRQHandler(void);
+    void IRQ0Handler(void);
+    void IRQ2Handler(void);
     void TxEndHandler(void);
     void NewPktHandler(void);
 };
@@ -96,7 +88,8 @@ extern CC_t CC;
 
 // Interrupt
 extern "C" {
-void EXTI3_IRQHandler(void);
+void EXTI3_IRQHandler(void);    // GDO0
+void EXTI4_IRQHandler(void);    // GDO2
 }
 
 #endif	/* _CC1101_H */

@@ -20,14 +20,16 @@ enum State_t {
 
 class Interface_t {
 private:
-    State_t State;
-    // Blink needed
+    // Needed for blink
     uint32_t IBlinkTmr, IStateTmr;
     void EnterIdle(void);
     // Inc / Dec
     void IInc(bool AFast, int32_t *PValue);
     void IDec(bool AFast, int32_t *PValue);
+    // ==== Menus ====
+    void EnterSetTime(void);
 public:
+    State_t State;
     void Init(void);
     void Task(void);
     void KeyDown(bool IsLongPressed);
