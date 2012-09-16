@@ -24,7 +24,7 @@ void GeneralInit(void);
 // ============================ Implementation =================================
 int main(void) {
     GeneralInit();
-    uint32_t Tmr;
+    uint32_t Tmr, n=0;
 
     // ==== Main cycle ====
     while (1) {
@@ -37,7 +37,10 @@ int main(void) {
     	Keys.Task();
         CC.Task();
         if(Interface.State == stSetTime) {
-            if(Delay.Elapsed(&Tmr, 99)) CC.Transmit();
+            if(Delay.Elapsed(&Tmr, 99)) {
+                CC.Transmit();
+                Lcd.Printf(0, 7, "%u     ", n++);
+            }
         }
         else {
             if(CC.Aim != caRx) CC.Receive();
@@ -89,6 +92,9 @@ void CC_t::TxEndHandler() {
 
 void CC_t::NewPktHandler() {
     Uart.Printf("rx\r");
+
+    static uint32_t n=0;
+    Lcd.Printf(0, 7, "rx %u   ", n++);
     //Uart.Printf("NbID: %X8 %X8 %X8\r", PktRx.IdArr[0], PktRx.IdArr[1], PktRx.IdArr[2]);
     //Uart.Printf("dBm: %i\r", CC.RSSI_dBm(PktRx.RSSI));
 //    NCounter.Add(PktRx.IdArr);

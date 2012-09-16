@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xsi:noNamespaceSchemaLocation="Project.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Version current="1"/>
+	<Format>Project</Format>
+	<Header>
+		<Program name="TopoR" version="5.3"/>
+		<GUID>{9E5A7289-17E7-4975-BCC8-21751CE1B074}</GUID>
+		<Annotation>Project file</Annotation>
+	</Header>
+	<Document>
+		<LocalLibrary />
+		<Pcb>
+			<File path=".\Armlet.fsx" Folder="-1" isopened="0"/>
+		</Pcb>
+		<Import>
+			<Specctra>
+			<Path name="D:\Nute\Lockets\Tirilde\Tirilde_hw\Tirilde.dsn"/>
+			<Path name="D:\Nute\Lockets\Tirilde\Tirilde_hw\Tirilde\Tirilde.dsn"/>
+			<Path name="D:\Nute\HandyDevices\Xtruder\Heater_hw\ac_switch.dsn"/>
+			<Path name="D:\Nute\HandyDevices\Xtruder\Heater_hw\Heater.dsn"/>
+			<Path name="D:\Nute\Armlet\Armlet1\Armlet_hw\Armlet.dsn"/>
+			</Specctra>
+		</Import>
+		<ARouteSessions>
+		</ARouteSessions>
+	</Document>
+</Project>

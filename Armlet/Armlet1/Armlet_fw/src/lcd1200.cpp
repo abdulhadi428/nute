@@ -109,7 +109,7 @@ void Lcd_t::WriteData(uint8_t AByte) {
  *  Cmds end up with 0.
  */
 void Lcd_t::Symbols(const uint8_t x, const uint8_t y, ...) {
-    GotoCharXY(x, y);
+    uint16_t Indx = CharXY2Indx(x, y);
     uint8_t FCharCode=1, RepeatCount;
     va_list Arg;
     va_start(Arg, y);    // Set pointer to last argument
@@ -117,7 +117,7 @@ void Lcd_t::Symbols(const uint8_t x, const uint8_t y, ...) {
         FCharCode = (uint8_t)va_arg(Arg, int32_t);
         if(FCharCode == 0) break;
         RepeatCount = (uint8_t)va_arg(Arg, int32_t);
-        for(uint8_t j=0; j<RepeatCount; j++) DrawChar(FCharCode, NotInverted);
+        for(uint8_t j=0; j<RepeatCount; j++) DrawChar(&Indx, FCharCode);
     }
     va_end(Arg);
 }
@@ -125,7 +125,7 @@ void Lcd_t::Symbols(const uint8_t x, const uint8_t y, ...) {
 
 // ================================= Printf ====================================
 void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
-    GotoCharXY(x, y);
+    uint16_t Indx = CharXY2Indx(x, y);
     char c;
     bool WasPercent = false;
     va_list Arg;
@@ -133,7 +133,7 @@ void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
     while ((c = *S) != 0) {
         if (c == '%') {
             if (WasPercent) {
-                DrawChar(c, NotInverted);  // %%
+                DrawChar(&Indx, c);  // %%
                 WasPercent = false;
             }
             else WasPercent = true;
@@ -149,20 +149,20 @@ void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
                 }
                 else N = 0;
                 // Parse c
-                if (c == 'c') DrawChar((uint8_t)va_arg(Arg, int32_t), NotInverted);
-                else if (c == 'u') PrintUint(va_arg(Arg, uint32_t), N);
-                else if (c == 'i') PrintInt(va_arg(Arg, int32_t), N);
+                if (c == 'c') DrawChar(&Indx, (uint8_t)va_arg(Arg, int32_t));
+                else if (c == 'u') PrintUint(&Indx, va_arg(Arg, uint32_t), N);
+                else if (c == 'i') PrintInt(&Indx, va_arg(Arg, int32_t), N);
 //                else if ((c == 's') || (c == 'S')) PrintString(va_arg(Arg, char*));
                 WasPercent = false;
             } // if was percent
-            else DrawChar(c, NotInverted);
+            else DrawChar(&Indx, c);
         }
         S++;
     } // while
     va_end(Arg);
 }
 
-void Lcd_t::PrintUint (uint32_t ANumber, uint8_t ACharCount) {
+void Lcd_t::PrintUint (uint16_t *PIndx, uint32_t ANumber, uint8_t ACharCount) {
     uint8_t digit = '0';
     bool ShouldPrint = false;
     const uint32_t m[9] = {1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10};
@@ -173,90 +173,73 @@ void Lcd_t::PrintUint (uint32_t ANumber, uint8_t ACharCount) {
             ANumber -= m[i];
         }
         if ((digit != '0') or ShouldPrint or (9-i < ACharCount)) {
-            DrawChar(digit, NotInverted);
+            DrawChar(PIndx, digit);
             ShouldPrint = true;
         }
         digit = '0';
     } // for
-    DrawChar((uint8_t)('0'+ANumber), NotInverted);
+    DrawChar(PIndx, (uint8_t)('0'+ANumber));
 }
 
-void Lcd_t::PrintInt (int32_t ANumber, uint8_t ACharCount) {
+void Lcd_t::PrintInt (uint16_t *PIndx, int32_t ANumber, uint8_t ACharCount) {
     if (ANumber < 0) {
-        DrawChar('-', NotInverted);
+        DrawChar(PIndx, '-');
         ANumber = -ANumber;
     }
-    PrintUint (ANumber, ACharCount);
+    return PrintUint(PIndx, ANumber, ACharCount);
 }
 
 
 // ================================ Graphics ===================================
-void Lcd_t::Cls() {
-    for (uint16_t i = 0; i < LCD_VIDEOBUF_SIZE; i++) IBuf[i] = 0x00;   // Empty
-}
-
-void Lcd_t::GotoCharXY(uint8_t x, uint8_t y) {
-    CurrentPosition =  (x<<2)+(x<<1);   // = x * 6; move to x
-    CurrentPosition += (y<<6)+(y<<5);   // = (*64)+(*32) = *96; move to y
-}
-void Lcd_t::GotoXY(uint8_t x, uint8_t y) {
-    CurrentPosition =  x;               // move to x
-    CurrentPosition += (y<<6)+(y<<5);   // = (*64)+(*32) = *96; move to y
-}
-
-void Lcd_t::DrawChar(uint8_t AChar, Invert_t AInvert) {
+/*
+ * Prints char at specified buf indx, returns next indx
+ */
+void Lcd_t::DrawChar(uint16_t *PIndx, uint8_t AChar) {
     uint8_t b;
     for(uint8_t i=0; i<6; i++) {
         b = Font_6x8_Data[AChar][i];
-        if(AInvert == Inverted) b = ~b;
-        IBuf[CurrentPosition++] = b;
-        if (CurrentPosition >= LCD_VIDEOBUF_SIZE) CurrentPosition = 0;
+        IBuf[*PIndx] = b;
+        (*PIndx)++;
+        if (*PIndx >= LCD_VIDEOBUF_SIZE) *PIndx = 0;
     }
 }
 
-void Lcd_t::PrintString(const uint8_t x, const uint8_t y, const char* S, Invert_t AInvert) {
-    GotoCharXY(x, y);
-    while (*S != '\0')
-        DrawChar(*S++, AInvert);
-}
-void Lcd_t::PrintStringLen(const char *S, uint16_t ALen, Invert_t AInvert) {
-    for (uint16_t i=0; ((i<ALen) && (*S != '\0')); i++)
-        DrawChar(*S++, AInvert);
-}
-
 void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img) {
-    uint16_t i=0;
+    uint16_t i=0, Indx;
     uint8_t Width = Img[i++], Height = Img[i++];
     for(uint8_t fy=y; fy<y+Height; fy++) {
-        GotoXY(x, fy);
+        Indx = XY2Indx(x, fy);
         for(uint8_t fx=x; fx<x+Width; fx++) {
-            IBuf[CurrentPosition++] = Img[i++];
-            if (CurrentPosition >= LCD_VIDEOBUF_SIZE) continue;
+            IBuf[Indx++] = Img[i++];
+            if (Indx >= LCD_VIDEOBUF_SIZE) break;
         } // fx
     } // fy
 }
 
+/*
+ * Draw char at any y, i.e. between lines
+ */
 void Lcd_t::DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode) {
-    uint16_t Pos;
+    uint16_t Indx;
     uint8_t b;
     // First row
     uint8_t Row = y/8;
     uint8_t ry = y - Row*8;         // y within row
-    Pos = x + (Row<<6) + (Row<<5);  // Move to position
+    Indx = x + (Row<<6) + (Row<<5);  // Move to position
     for (uint8_t xi=0; xi<6; xi++) {
         b = Font_6x8_Data[ACode][xi];
         b <<= ry;
-        IBuf[Pos++] |= b;
-        if (Pos >= LCD_VIDEOBUF_SIZE) Pos = 0;
+        IBuf[Indx++] |= b;
+        if (Indx >= LCD_VIDEOBUF_SIZE) Indx = 0;
     }
     // Second row
     Row++;
     ry = 8-ry;
-    Pos = x + (Row<<6) + (Row<<5);  // Move to position
+    Indx = x + (Row<<6) + (Row<<5);  // Move to position
     for (uint8_t xi=0; xi<6; xi++) {
         b = Font_6x8_Data[ACode][xi];
         b >>= ry;
-        IBuf[Pos++] |= b;
-        if (Pos >= LCD_VIDEOBUF_SIZE) Pos = 0;
+        IBuf[Indx++] |= b;
+        if (Indx >= LCD_VIDEOBUF_SIZE) Indx = 0;
     }
 }

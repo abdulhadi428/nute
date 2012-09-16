@@ -41,15 +41,9 @@ enum PseudoGraph_t {
     LineCrossDouble = 0x9E,
 };
 
-enum Invert_t {NotInverted, Inverted};
-
 class Lcd_t {
 private:
-    // Variables
     uint8_t IBuf[LCD_VIDEOBUF_SIZE];
-    uint16_t CurrentPosition;   // x, y to place data to
-    // Text
-    uint32_t Timer;
     // Pin driving functions
     void XRES_Hi(void) { LCD_GPIO->BSRR = LCD_XRES; }
     void XRES_Lo(void) { LCD_GPIO->BRR  = LCD_XRES; }
@@ -62,11 +56,12 @@ private:
     void WriteCmd(uint8_t ACmd);
     void WriteData(uint8_t AData);
     // High-level
-    void GotoXY(uint8_t x, uint8_t y);
-    void PrintUint (uint32_t ANumber, uint8_t ACharCount);
-    void PrintInt (int32_t ANumber, uint8_t ACharCount);
-    void PrintString (const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert);
-    void PrintStringLen(const char *S, uint16_t ALen, Invert_t AInvert);
+    uint16_t XY2Indx(uint8_t x, uint8_t y) { return (x + (y<<6)+(y<<5)); } // (y*64)+(y*32) = y*96;
+    uint16_t CharXY2Indx(uint8_t x, uint8_t y) { return ((x<<2)+(x<<1) + (y<<6)+(y<<5)); }   // = x * 6; = (y*64)+(y*32) = y*96;
+    void DrawChar(uint16_t *PIndx, uint8_t AChar);
+    void PrintUint(uint16_t *PIndx, uint32_t ANumber, uint8_t ACharCount);
+    void PrintInt (uint16_t *PIndx,  int32_t ANumber, uint8_t ACharCount);
+    void PrintString(uint16_t *PIndx, const char *S) { while (*S != '\0') DrawChar(PIndx, *S++); }
 public:
     // General use
     void Init(void);
@@ -74,10 +69,8 @@ public:
     void Shutdown(void);
     void Backlight(uint8_t ABrightness)  { TIM15->CCR2 = ABrightness; }
     // High-level
-    void GotoCharXY(uint8_t x, uint8_t y);
-    void DrawChar(uint8_t AChar, Invert_t AInvert);
     void Printf(const uint8_t x, const uint8_t y, const char *S, ...);
-    void Cls(void);
+    void Cls(void) { for(uint16_t i = 0; i < LCD_VIDEOBUF_SIZE; i++) IBuf[i] = 0x00; }   // zero buffer
     void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img);
     void DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode);
     // Symbols printing
