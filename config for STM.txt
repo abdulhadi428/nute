@@ -1,0 +1,7 @@
+External tools
+  Location:
+    C:\Program Files (x86)\STMicroelectronics\STM32 ST-LINK Utility\ST-LINK Utility\ST-LINK_CLI.exe
+  Working Directory:
+    ${project_loc}\Debug
+  Arguments:
+    -c SWD -ME -P "${project_name}.hex" 0x08000000 -Rst -Run
