@@ -1,0 +1,71 @@
+# EESchema Netlist Version 1.1 created  17/09/2012 16:52:12
+(
+ ( /504343DE CAP_0603 C1 0.1u
+  ( 1 /PB2 )
+  ( 2 GND )
+ )
+ ( /50571355 LED-3MM D1 LED
+  ( A N-000012 )
+  ( C GND )
+ )
+ ( /504343E1 SO8E DD1 M24C02
+  ( 1 /1 )
+  ( 2 /2 )
+  ( 3 /3 )
+  ( 4 GND )
+  ( 5 /I2C_SDA )
+  ( 6 /I2C_SCL )
+  ( 7 GND )
+  ( 8 /PB2 )
+ )
+ ( /505712FC SMD0603_FUSE F1 FUSE0R
+  ( 1 /1 )
+  ( 2 /PB2 )
+ )
+ ( /5057130E SMD0603_FUSE F2 FUSE0R
+  ( 1 /2 )
+  ( 2 /PB2 )
+ )
+ ( /50571311 SMD0603_FUSE F3 FUSE0R
+  ( 1 /3 )
+  ( 2 /PB2 )
+ )
+ ( /50571363 RES_0603 R1 100R
+  ( 1 /PB0 )
+  ( 2 N-000012 )
+ )
+ ( /4FCBBD2A CONN_2MM_2X5 XL1 CONN_10
+  ( 1 /PB2 )
+  ( 2 GND )
+  ( 3 ? )
+  ( 4 ? )
+  ( 5 ? )
+  ( 6 ? )
+  ( 7 /I2C_SCL )
+  ( 8 /I2C_SDA )
+  ( 9 /PB0 )
+  ( 10 ? )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C1
+ c*
+$endlist
+$component D1
+ LED*
+$endlist
+$component F1
+ SMD*
+$endlist
+$component F2
+ SMD*
+$endlist
+$component F3
+ SMD*
+$endlist
+$component R1
+ r*
+$endlist
+$endfootprintlist
+}
