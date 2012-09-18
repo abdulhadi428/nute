@@ -8,6 +8,7 @@
 #include "kl_time.h"
 #include "misc.h"
 #include "stm32f10x_pwr.h"
+#include "lcd1200.h"
 
 TimeCounter_t Time;
 
@@ -34,11 +35,9 @@ void TimeCounter_t::Init() {
         uint32_t FTmr;
         Delay.Reset(&FTmr);
         while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET) {    // Wait till LSE is ready
-            if (Delay.Elapsed(&FTmr, 1800)) {
-                Uart.Printf("32768 clk failure\r");
-                break;
-            }
+            if (Delay.Elapsed(&FTmr, 2700)) break;
         }
+        // Check if ok
         if (RCC_GetFlagStatus(RCC_FLAG_LSERDY)) {
             Uart.Printf("32768 clk started\r");
             RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);     // Select LSE as RTC Clock Source
@@ -48,6 +47,11 @@ void TimeCounter_t::Init() {
             // Set RTC prescaler: set RTC period to 1sec
             RTC_SetPrescaler(32767);// RTC period = RTCCLK/RTC_PR = (32.768 KHz)/(32767+1)
             RTC_WaitForLastTask();  // Wait until last write operation on RTC registers has finished
+            //Lcd.Printf(0,1, "32768 Ok");
+        }
+        else {
+            Uart.Printf("32768 fail\r");
+            Lcd.Printf(0,1, "32768 Fail");
         }
         // Set default date values and do not set time
 #ifdef DATE_ENABLED

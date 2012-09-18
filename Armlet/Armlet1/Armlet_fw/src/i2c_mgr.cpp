@@ -291,6 +291,10 @@ void i2cMgr_t::StopAndGetNext() {
 void i2cMgr_t::Init() {
     // Init GPIO - SCL & SDA
     klGpioSetupByMsk(GPIOB, GPIO_Pin_6 | GPIO_Pin_7, GPIO_Mode_AF_OD);
+#ifdef I2C_PIN_PULLUP
+    klGpioSetupByN(I2C_PIN_PORT, I2C_PIN_N, GPIO_Mode_Out_PP);
+    klGpioSetByN(I2C_PIN_PORT, I2C_PIN_N);  // Pull-up on
+#endif
     // I2C
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);    // I2C clock
     I2C_DeInit(I2C1);
@@ -352,6 +356,7 @@ uint8_t i2cMgr_t::SendStart(void) {
     return I2C_OK;
 }
 uint8_t i2cMgr_t::SendAddrTXPoll(uint8_t AAddr) {
+    //Uart.Printf("I2C TX Addr: %X\r", AAddr);
     uint32_t IEvt;
     I2C_Send7bitAddress(I2C1, (AAddr << 1), I2C_Direction_Transmitter);
     uint32_t FTimeout = I2C_TIMEOUT;

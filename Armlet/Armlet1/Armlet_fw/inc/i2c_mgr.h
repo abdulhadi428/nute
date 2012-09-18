@@ -17,8 +17,15 @@
 
 #include "kl_lib.h"
 
-#define I2C_POLL_ONLY
-#define I2C_CLOCK_FREQ          400000  // 100 or 400 kHz
+#define I2C_POLL_ONLY   // Decide which features needed. When POLL_ONLY, no Cmd Query and DMA will be used.
+#define I2C_CLOCK_FREQ          100000  // 100 or 400 kHz
+
+// Special pin for pulling i2c up
+#define I2C_PIN_PULLUP
+#ifdef I2C_PIN_PULLUP
+#define I2C_PIN_PORT    GPIOB
+#define I2C_PIN_N       8
+#endif
 
 // DMA
 #ifndef I2C_POLL_ONLY
@@ -72,7 +79,7 @@ struct I2C_Cmd_t {
 class i2cMgr_t {
 private:
 #ifndef I2C_POLL_ONLY
-    uint16_t Timer;
+    uint32_t Timer;
     bool IsError;
     I2C_Cmd_t *CmdToWrite, *CmdToRead;
     I2C_Cmd_t Commands[I2C_CMD_QUEUE_LENGTH];

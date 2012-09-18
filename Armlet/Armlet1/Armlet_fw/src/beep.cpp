@@ -23,7 +23,7 @@ void Beep_t::Init() {
     // ==== Output ====
     BEEP_TIM->CCMR1 = 0x60;     // Output1, PWM mode1
     BEEP_TIM->CCMR2 = 0;        // Outputs disabled
-    BEEP_TIM->CCER = 0x0001;    // Ch3 output enabled, active high
+    BEEP_TIM->CCER = 0x0001;    // Ch1 output enabled, active high
 }
 
 void Beep_t::SetFreqHz(uint32_t AFreq) {

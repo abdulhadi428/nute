@@ -28,8 +28,8 @@ public:
 		ICmd.DataToRead.Buf = Buf;
 		ICmd.DataToWrite.Buf = IBuf;
 	}
-    uint8_t Read(uint16_t AAddr, uint32_t ACount);
-    uint8_t Write(uint16_t AAddr, uint32_t ACount);
+    uint8_t Read(uint8_t DevAddr, uint16_t MemoryAAddr, uint32_t ACount);
+    uint8_t Write(uint8_t DevAddr, uint16_t MemoryAAddr, uint32_t ACount);
 };
 
 extern ee_t ee;

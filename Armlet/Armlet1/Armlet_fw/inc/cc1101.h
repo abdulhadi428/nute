@@ -27,11 +27,11 @@ struct Pkt_t {
 } PACKED;
 #define CC_PKT_LEN  (sizeof(Pkt_t)-2)
 
-extern Pkt_t PktRx, PktTx;
-extern klPin_t gp;
-
 class CC_t {
-private:
+protected:
+    CCAim_t Aim;
+    uint8_t IState;
+    // SPI communication
     uint8_t ReadWriteByte(uint8_t AByte);
     // Pins
     klPinIrq_t IrqPin0, IrqPin2;
@@ -58,8 +58,7 @@ private:
     void FlushTxFIFO(void)  { WriteStrobe(CC_SFTX); }
     void GetState(void)     { WriteStrobe(CC_SNOP); }
 public:
-    CCAim_t Aim;
-    uint8_t IState;
+    Pkt_t PktRx, PktTx;
     // Methods
     void Init(void);
     void Task(void);
@@ -77,20 +76,15 @@ public:
         while (IState != CC_STB_IDLE) EnterIdle();
         WriteStrobe(CC_SCAL);
     }
-    // IRQ handler
-    void IRQ0Handler(void);
-    void IRQ2Handler(void);
-    void TxEndHandler(void);
-    void NewPktHandler(void);
 };
 
-extern CC_t CC;
+//extern CC_t CC;
 
-// Interrupt
-extern "C" {
-void EXTI3_IRQHandler(void);    // GDO0
-void EXTI4_IRQHandler(void);    // GDO2
-}
+// ==== Interrupts ====
+//extern "C" {
+//void EXTI3_IRQHandler(void);    // GDO0
+//void EXTI4_IRQHandler(void);    // GDO2
+//}
 
 #endif	/* _CC1101_H */
 

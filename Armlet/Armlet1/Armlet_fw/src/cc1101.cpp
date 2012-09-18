@@ -8,8 +8,7 @@
 #include "cc1101.h"
 #include "kl_lib.h"
 
-CC_t CC;
-Pkt_t PktRx, PktTx;
+//CC_t CC;
 
 // ========================== Implementation ===================================
 void CC_t::Task(void) {
@@ -33,22 +32,6 @@ void CC_t::Task(void) {
     } //Switch
     //if ((IState != CC_STB_IDLE) or (IState != CC_STB_RX)) klPrintf("State: %X\r", IState);
 }
-
-void CC_t::IRQ0Handler() {
-    if (Aim == caTx) {
-        Aim = caIdle;
-        TxEndHandler();
-    }
-    else { // Was receiving
-        if (ReadRX((uint8_t*)&PktRx)) NewPktHandler();
-        FlushRxFIFO();
-        // Do not reenter RX here to allow safely enter TX right after RX
-    }
-}
-void CC_t::IRQ2Handler() {
-
-}
-
 
 void CC_t::Init(void) {
     // ******** Hardware init section *******
@@ -241,15 +224,15 @@ uint8_t CC_t::ReadWriteByte(uint8_t AByte) {
 }
 
 // ============================= Interrupts ====================================
-void EXTI3_IRQHandler(void) {
-    if(EXTI_GetITStatus(EXTI_Line3) != RESET) {
-        EXTI_ClearITPendingBit(EXTI_Line3);
-        CC.IRQ2Handler();
-    }
-}
-void EXTI4_IRQHandler(void) {
-    if(EXTI_GetITStatus(EXTI_Line4) != RESET) {
-        EXTI_ClearITPendingBit(EXTI_Line4);
-        CC.IRQ0Handler();
-    }
-}
+//void EXTI3_IRQHandler(void) {
+//    if(EXTI_GetITStatus(EXTI_Line3) != RESET) {
+//        EXTI_ClearITPendingBit(EXTI_Line3);
+//        IRQ2Handler();
+//    }
+//}
+//void EXTI4_IRQHandler(void) {
+//    if(EXTI_GetITStatus(EXTI_Line4) != RESET) {
+//        EXTI_ClearITPendingBit(EXTI_Line4);
+//        IRQ0Handler();
+//    }
+//}
