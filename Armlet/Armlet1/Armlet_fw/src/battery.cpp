@@ -76,9 +76,11 @@ void Battery_t::Task() {
             else if((State == bsHalf)  and (IValue < BATTERY_EMPTY))    State = bsEmpty;
             else if((State == bsEmpty) and (IValue < BATTERY_ZERO))     State = bsZero;
             // Charging slope
-            else if((State == bsHalf)  and (IValue > BATTERY_HALF+20))  State = bsFull;
-            else if((State == bsEmpty) and (IValue > BATTERY_EMPTY+20)) State = bsHalf;
-            else if((State == bsZero)  and (IValue > BATTERY_ZERO+20))  State = bsEmpty;
+            else if(State == bsCharging) {
+                if(IValue > BATTERY_HALF+20)  State = bsFull;
+                if(IValue > BATTERY_EMPTY+20) State = bsHalf;
+                if(IValue > BATTERY_ZERO+20)  State = bsEmpty;
+            }
         }
     }
 

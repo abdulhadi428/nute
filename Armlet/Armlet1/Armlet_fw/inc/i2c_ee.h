@@ -10,29 +10,45 @@
 
 #include "i2c_mgr.h"
 
-#define EE_BUFSIZE	99
-
 /*
  * Beware! Byte write time is about 5ms.
  * Therefore, device is unavailable right after Write Cmd.
  */
 
+#define BUSY_TIMEOUT    400 // ms; after this switch to Failure state
+#define SEARCH_DELAY    999 // ms; search every this delay
+#define DATA_DELAY      5   // ms
+#define PILL_ADDR       0b1010000
+#define INNER_EE_ADDR   0b1010111   // Inner EEPROM addr is 0b1010111
+
+enum eeState_t {esFailure, esNew, esBusy, esReady};
+
 class ee_t {
 private:
-	I2C_Cmd_t ICmd;
-	uint8_t IBuf[EE_BUFSIZE+1];
+	I2C_Cmd_t IDataCmd;
 public:
-	uint8_t *Buf;
-	void Init(void) {
-		Buf = &IBuf[1];
-		ICmd.DataToRead.Buf = Buf;
-		ICmd.DataToWrite.Buf = IBuf;
-	}
-    uint8_t Read(uint8_t DevAddr, uint16_t MemoryAAddr, uint32_t ACount);
-    uint8_t Write(uint8_t DevAddr, uint16_t MemoryAAddr, uint32_t ACount);
+	eeState_t GetState(void) {return (IDataCmd.State == CmdSucceded)? esReady : esFailure; }
+	void Init();
+	void Read(uint16_t MemoryAddr, uint8_t *PBuf, uint32_t ACount);
+	void Write(uint16_t MemoryAddr, uint8_t *PBuf, uint32_t ACount);
 };
 
-extern ee_t ee;
+class Pill_t {
+private:
+    I2C_Cmd_t IDataCmd, ISearchCmd;
+    uint32_t ITmr;
+    bool DataXch;
+    uint8_t IDevAddr;
+public:
+    eeState_t State;
+    void Init(uint8_t DevAddr);
+    void Task();
+    void Read(uint16_t MemoryAddr, uint8_t *PBuf, uint32_t ACount);
+    void Write(uint16_t MemoryAddr, uint8_t *PBuf, uint32_t ACount);
+};
+
+
+extern Pill_t Pill;
 
 
 #endif

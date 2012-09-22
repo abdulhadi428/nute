@@ -58,10 +58,15 @@ void Interface_t::KeyEnter() {
 
 // ==== Task ====
 void Interface_t::Task() {
+    static uint8_t OldMinute;
+    uint8_t Minute = Time.GetMinute();
     switch(State) {
         case stIdle:
             // Display time
-            Lcd.Printf(0, 0, "%02u:%02u", Time.GetHour(), Time.GetMinute());
+            if(Minute != OldMinute) {
+                Lcd.Printf(0, 0, "%02u:%02u", Time.GetHour(), Minute);
+                OldMinute = Minute;
+            }
             break;
 
         case stSetTime:
@@ -85,7 +90,7 @@ void Interface_t::EnterIdle() {
 void Interface_t::EnterSetTime() {
     Lcd.Cls();
     Lcd.Printf(0, 1, "Установите время");
-    Lcd.Printf(4, 4, " %02u : %02u ", Time.GetHour(), Time.GetMinute());
+    //Lcd.Printf(4, 4, " %u2 : %u2 ", Time.GetHour(), Time.GetMinute());
 }
 
 

@@ -17,15 +17,12 @@
 
 #include "kl_lib.h"
 
-#define I2C_POLL_ONLY   // Decide which features needed. When POLL_ONLY, no Cmd Query and DMA will be used.
+//#define I2C_POLL_ONLY   // Decide which features needed. When POLL_ONLY, no Cmd Query and DMA will be used.
 #define I2C_CLOCK_FREQ          100000  // 100 or 400 kHz
 
 // Special pin for pulling i2c up
-#define I2C_PIN_PULLUP
-#ifdef I2C_PIN_PULLUP
 #define I2C_PIN_PORT    GPIOB
 #define I2C_PIN_N       8
-#endif
 
 // DMA
 #ifndef I2C_POLL_ONLY
@@ -49,67 +46,67 @@
 
 
 // ================================ Data types =================================
-// Struct to write or read single register
-struct SingleReg_t {
-    uint8_t RegAddr;
-    uint8_t RegValue;
-} __attribute__ ((packed));
-#define I2C_SINGLEREG_SIZE      2
-
 struct Buf8_t {
-    uint8_t *Buf;
-    uint8_t Length;
-    uint8_t CurrentItem;
-} __attribute__ ((packed));
+    uint8_t *P;
+    uint32_t Length;
+};
 
-enum CmdState_t {CmdPending, CmdWritingAddrTX, CmdWritingAddrRX, CmdWritingOne, CmdWritingMany, CmdReadingOne, CmdReadingMany, CmdSucceded, CmdFailed};
+enum CmdState_t {CmdPending=0, CmdSucceded=1, CmdFailed=2,
+    CmdWritingAddrTX=3, CmdWritingAddrRX=4,
+    CmdWritingByte=5, CmdWritingBufSingle=6, CmdWritingBufMany=7,
+    CmdReadingBufSingle=8, CmdReadingBufMany=9
+};
 
 /* Any i2c transaction consists of one or two stages:
  * 1) Start - Addr+Write - [n bytes to write] - Stop
  * 2) Start - Addr+Write - [n bytes to write] - RepStart - Addr+Read - [m bytes to read] - Stop
  */
 
+//enum SingleBytePurpose_t {sbpNone, sbpWrite, sbpRead, sbpWriteRead};
 struct I2C_Cmd_t {
-    Buf8_t DataToWrite, DataToRead;	// Buffers of data to read or write
+    uint8_t Byte;     // Byte to write and/or read
+    bool ByteWrite;
+    //SingleBytePurpose_t SingleBytePurpose;
+    Buf8_t BufToWrite, BufToRead;	// Buffers of data to read or write
     uint8_t Address;        		// Device address
     CmdState_t State;
-    ftVoid_Void Callback;			// Function to execute when cmd is completed
 };
 
 class i2cMgr_t {
 private:
+    // Flags
+    bool IsNack() { return (I2C1->SR1 & 0x0400); }
+    bool IsAddrSent() { return (I2C1->SR1 & 0x0002); }
+    bool IsTransferCompleted() { return (I2C1->SR1 & 0x0004); }
+    bool IsRxNotEmpty() { return (I2C1->SR1 & 0x0040); }
+    void ClearAddrFlag() { (void)I2C1->SR1; (void)I2C1->SR2; }
+    bool IsBusy() {return (I2C1->SR2 & 0x0002); }
 #ifndef I2C_POLL_ONLY
     uint32_t Timer;
     bool IsError;
-    I2C_Cmd_t *CmdToWrite, *CmdToRead;
-    I2C_Cmd_t Commands[I2C_CMD_QUEUE_LENGTH];
+    uint32_t RIndx, WIndx;
+    I2C_Cmd_t *Cmd[I2C_CMD_QUEUE_LENGTH];
     // Task-based functions
-    void SendAddrTX(void);
-    uint8_t CheckAddrTXSending(void);
-    void SendAddrRX(void);
-    uint8_t CheckAddrRXSending(void);
-    void WriteOneByte(void);
-    uint8_t CheckOneByteWriting(void);
-    void WriteMany(void);
-    uint8_t CheckManyWriting(void);
-    void ReadOneByte(void);
-    uint8_t CheckOneByteReading(void);
-    void ReadMany(void);
-    uint8_t CheckManyReading(void);
-    void GetNext(void);
-    void StopAndGetNext(void);
+    void SendAddrRX() { I2C_Send7bitAddress(I2C1, ((Cmd[RIndx]->Address) << 1), I2C_Direction_Receiver); }
+    uint8_t CheckAddrRXSending();
+    void WriteMany();
+    uint8_t CheckManyWriting();
+    void ReadMany();
+    uint8_t CheckManyReading();
+    void GetNext();
+    void StopAndGetNext();
 #endif
     // Polling-based functions
-    uint8_t BusyWait(void);
-    uint8_t SendStart(void);
+    uint8_t BusyWait();
+    uint8_t SendStart();
     uint8_t SendAddrTXPoll(uint8_t AAddr);
     uint8_t SendAddrRXPoll(uint8_t AAddr);
-    uint8_t WriteOneBytePoll(void);
+    uint8_t WriteOneBytePoll();
 public:
-    void Init(void);
+    void Init();
 #ifndef I2C_POLL_ONLY
-    void Task(void);
-    void AddCmd(I2C_Cmd_t ACmd);
+    void Task();
+    void AddCmd(I2C_Cmd_t *PCmd);
 #endif
     uint8_t CmdPoll(I2C_Cmd_t ACmd);	// Perform Cmd in polling way
 };
