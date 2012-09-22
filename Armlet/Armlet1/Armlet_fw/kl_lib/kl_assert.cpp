@@ -16,8 +16,10 @@ void assertion_error(const char *filename, int line, const char *cond_string) {
 	Uart.Printf("assert(%s) violated in file '%s', line %d\r",
 				cond_string, filename, line);
 	Lcd.Cls();
+	Lcd.SetDrawMode(OVERWRITE_INVERTED);
 	Lcd.Printf(0, 0, "assert(%s) violated in file '%s', line %d",
 			   cond_string, filename, line);
+	Lcd.SetDrawMode(INVERT);
 	Vibro.Flinch(4);
 }
 

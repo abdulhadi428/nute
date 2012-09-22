@@ -36,13 +36,24 @@ int main(void) {
     unsigned int cycle = 0;
     // ==== Main cycle ====
     while (1) {
-
-    	assert(cycle != 5678);
+		cycle++;
 
     	if (!assertion_raised) {
-			Lcd.Printf(0, 1, "Hello, %s!", "world");
-			Lcd.Printf(0, 2, "Cycle: %08u", cycle++);
-			Lcd.Printf(0, 3, "%c%c%c", 'a', 'b', 'c');
+
+    		if (cycle % 103 == 0) {
+				for (int i = 0; i < 40; i++)
+					Lcd.PutPixel(i, i, 1);
+
+				Lcd.SetDrawMode(OVERWRITE_INVERTED);
+				Lcd.Printf(0, 1, "Hello, world!");
+				Lcd.Printf(1, 3, "%08u", cycle);
+				Lcd.SetDrawMode(OVERWRITE); // restore back
+				Lcd.Printf(1, 2, "zzz");
+    		}
+
+/*			Lcd.Printf(0, 1, "Hello, %s!", "world");
+			Lcd.Printf(0, 2, "Cycle: %08u", cycle);
+			Lcd.Printf(0, 3, "%c%c%c", 'a', 'b', 'c');*/
     	}
 
     	Uart.Task();

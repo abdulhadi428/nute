@@ -59,6 +59,8 @@ void Lcd_t::Init(void) {
     WriteCmd(0x10);    // X axis initialisation1
     WriteCmd(0x00);    // X axis initialisation2
     Cls();             // clear LCD buffer
+
+    draw_mode = OVERWRITE;
 }
 
 
@@ -105,88 +107,79 @@ void Lcd_t::WriteData(uint8_t AByte) {
     XCS_Hi();
 }
 
-/* ==== Pseudographics ====
- *  Every command consists of PseudoGraph_t AChar, uint8_t RepeatCount.
- *  Example: LineHorizDouble, 11 => print LineHorizDouble 11 times.
- *  Cmds end up with 0.
- */
-void Lcd_t::Symbols(const uint8_t x, const uint8_t y, ...) {
-    uint16_t Indx = CharXY2Indx(x, y);
+
+void Lcd_t::Symbols(int column, int row, ...) {
+    int index = column*6 + row*LCD_WIDTH;
     uint8_t FCharCode=1, RepeatCount;
     va_list Arg;
-    va_start(Arg, y);    // Set pointer to last argument
+    va_start(Arg, row);    // Set pointer to last argument
     while(1) {
         FCharCode = (uint8_t)va_arg(Arg, int32_t);
         if(FCharCode == 0) break;
         RepeatCount = (uint8_t)va_arg(Arg, int32_t);
-        for(uint8_t j=0; j<RepeatCount; j++) DrawChar(&Indx, FCharCode);
+        for(uint8_t j=0; j<RepeatCount; j++) DrawChar(&index, FCharCode);
     }
     va_end(Arg);
 }
 
 
-void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *format, ...) {
+void Lcd_t::Printf(int column, int row, const char *format, ...) {
 	char buf[LCD_STR_HEIGHT*LCD_STR_WIDTH+1];
     va_list args;
     va_start(args, format);
     tiny_vsprintf(buf, format, args);
     va_end(args);
 
-    uint16_t Indx = CharXY2Indx(x, y);
+    int index = column*6 + row*LCD_WIDTH;
     for (int i = 0; buf[i] != 0; i++)
-    	DrawChar(&Indx, buf[i]);
+    	DrawChar(&index, buf[i]);
 }
 
 // ================================ Graphics ===================================
 /*
  * Prints char at specified buf indx, returns next indx
  */
-void Lcd_t::DrawChar(uint16_t *PIndx, uint8_t AChar) {
+void Lcd_t::DrawChar(int *index, uint8_t AChar) {
     uint8_t b;
-    for(uint8_t i=0; i<6; i++) {
-        b = Font_6x8_Data[AChar][i];
-        IBuf[*PIndx] = b;
-        (*PIndx)++;
-        if (*PIndx >= LCD_VIDEOBUF_SIZE) *PIndx = 0;
+    for(uint8_t i=0; i < 6; i++) {
+        DrawBlock((*index)++, Font_6x8_Data[AChar][i], 0xFF);
+        if (*index >= LCD_VIDEOBUF_SIZE) *index = 0;
     }
 }
 
-void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img) {
-    uint16_t i=0, Indx;
-    uint8_t Width = Img[i++], Height = Img[i++];
-    for(uint8_t fy=y; fy<y+Height; fy++) {
-        Indx = XY2Indx(x, fy);
-        for(uint8_t fx=x; fx<x+Width; fx++) {
-            IBuf[Indx++] = Img[i++];
-            if (Indx >= LCD_VIDEOBUF_SIZE) break;
-        } // fx
-    } // fy
+void Lcd_t::DrawImage(int x, int y, const uint8_t* img) {
+	assert(y % 8 == 0);
+	y /= 8;
+    uint8_t width = *img++;
+    uint8_t height = *img++;
+    for(int fy = y; fy < y+height; fy++) {
+        int index = x + y*LCD_WIDTH;
+        for(int fx = x; fx < x+width; fx++) {
+            DrawBlock(index++, *img++, 255);
+            if (index > LCD_VIDEOBUF_SIZE) break;
+        }
+    }
 }
 
-/*
- * Draw char at any y, i.e. between lines
- */
-void Lcd_t::DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode) {
-    uint16_t Indx;
-    uint8_t b;
-    // First row
-    uint8_t Row = y/8;
-    uint8_t ry = y - Row*8;         // y within row
-    Indx = x + (Row<<6) + (Row<<5);  // Move to position
-    for (uint8_t xi=0; xi<6; xi++) {
-        b = Font_6x8_Data[ACode][xi];
-        b <<= ry;
-        IBuf[Indx++] |= b;
-        if (Indx >= LCD_VIDEOBUF_SIZE) Indx = 0;
-    }
-    // Second row
-    Row++;
-    ry = 8-ry;
-    Indx = x + (Row<<6) + (Row<<5);  // Move to position
-    for (uint8_t xi=0; xi<6; xi++) {
-        b = Font_6x8_Data[ACode][xi];
-        b >>= ry;
-        IBuf[Indx++] |= b;
-        if (Indx >= LCD_VIDEOBUF_SIZE) Indx = 0;
-    }
+void Lcd_t::DrawBlock(int index, uint8_t data, uint8_t mask) {
+	uint8_t *x = &IBuf[index];
+	assert((data & ~mask) == 0);
+	switch (draw_mode) {
+	case DRAW:
+		*x |= data;
+		break;
+	case CLEAR:
+		*x &= ~data;
+		break;
+	case OVERWRITE:
+		*x = (*x & ~mask) | data;
+		break;
+	case OVERWRITE_INVERTED:
+		*x = (*x & ~mask) | (data ^ mask);
+		break;
+	case INVERT:
+		*x ^= data;
+		break;
+	}
 }
+
