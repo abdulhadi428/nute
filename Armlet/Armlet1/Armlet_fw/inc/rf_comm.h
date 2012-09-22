@@ -33,9 +33,11 @@ private:
     void TxEndHandler(void);
     void NewPktHandler(void);
 public:
-    // Irq handlers; needed here to be called from C irq handlers
+    // Irq handlers; needed here to be called from C irq handlers.
+    // Not a part of public interface.
     void IRQ0Handler(void);
     void IRQ2Handler(void);
+
     // General
     void Init();
     void Task();

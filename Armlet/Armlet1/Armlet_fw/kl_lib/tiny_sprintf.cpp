@@ -18,6 +18,10 @@
 #endif
 
 
+// Print number n to buffer p in base base. If number is shorter
+// than width, it's prepended with spaces or zeros (if zero_padded
+// is set) from the left.
+// Return pointer to the next position in the buffer.
 char *put_uint(char *p, 
                unsigned int n, 
                unsigned int base, int width, bool zero_padded) {
@@ -49,17 +53,22 @@ int tiny_vsprintf(char *buf, const char *format, va_list args) {
             *p++ = c;
             continue;
         }
+
+        // Here goes optional width specification.
+        // If it starts with zero (zero_padded is true), it means we use '0'
+        // instead of ' ' as a filler.
         int width = 0;
         bool zero_padded = false;
         while (true) {
             c = *f++;
             if (c < '0' || c > '9')
                 break;
-            if (width ==0 && c == '0')
+            if (width == 0 && c == '0')
                 zero_padded = true;
             width *= 10;
             width += c-'0';
         }
+
         if (c == 's') {
             assert(width == 0 && !zero_padded); // not implemented
             char *s = va_arg(args, char*);

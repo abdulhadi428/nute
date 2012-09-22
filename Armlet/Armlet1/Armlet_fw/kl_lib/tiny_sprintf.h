@@ -5,6 +5,7 @@
 
 // Supported format specifiers:
 //   %s - string
+//   %c - char
 //   %d - int
 //   %[0][<width>]u - uint
 //   %[0][<width>]X - uint as hex
