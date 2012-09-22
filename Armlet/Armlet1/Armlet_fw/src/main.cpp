@@ -29,6 +29,10 @@ void GeneralInit(void);
 int main(void) {
     GeneralInit();
 
+    // DEBUG
+    uint32_t Tmr;
+    uint8_t i=0, j=0;
+
     unsigned int cycle = 0;
     // ==== Main cycle ====
     while (1) {
@@ -50,8 +54,20 @@ int main(void) {
 			Interface.Task();
 			Keys.Task();
 			Radio.Task();
+			i2cMgr.Task();
+			Pill.Task();
+
+			// Pill debug
+			if(Delay.Elapsed(&Tmr, 999)) {
+			    i++;
+			    if((Pill.State == esNew) or (Pill.State == esReady)) {
+			        if(i % 2 == 0) Pill.Write(7, &i, 1);
+			        else Pill.Read(7, &j, 1);
+			        Uart.Printf("i: %u; j: %u\r", i, j);
+			    }
+			    else Uart.Printf("Fail\r");
+			}
     	}
-        //i2cMgr.Task();
     } // while(1)
 }
 
@@ -72,8 +88,7 @@ inline void GeneralInit(void) {
     Radio.Init();
 
     i2cMgr.Init();
-    ee.Init();
-    if(ee.Read(0b1010111, 0, 4) != I2C_OK) Uart.Printf("EE Error\r");
+    Pill.Init(INNER_EE_ADDR);
 
     Time.Init();
 

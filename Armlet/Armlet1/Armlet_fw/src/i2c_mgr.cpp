@@ -174,7 +174,6 @@ void i2cMgr_t::Task() {
                 if(IsRxNotEmpty()) {
                     Cmd[RIndx]->BufToRead.P[0] = I2C_ReceiveData(I2C1);
                     Cmd[RIndx]->State = CmdSucceded;
-                    Uart.Printf("%X ok\r", Cmd[RIndx]->BufToRead.P[0]);
                     GetNext(); // Stop is already sent
                 }
                 break;  // Otherwise still reading byte
