@@ -69,7 +69,7 @@ void Battery_t::Task() {
             uint32_t IValue=0;
             for(uint32_t i=0; i<ADC_AVERAGE_COUNT; i++) IValue += ADCValues[i];
             IValue /= ADC_AVERAGE_COUNT;
-            Uart.Printf("U = %u\r", IValue);
+            //Uart.Printf("U = %u\r", IValue);
             // ==== Calculate battery state ====
             // Discharging slope
             if     ((State == bsFull)  and (IValue < BATTERY_HALF))     State = bsHalf;
