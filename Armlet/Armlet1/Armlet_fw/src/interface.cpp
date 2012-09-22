@@ -61,7 +61,7 @@ void Interface_t::Task() {
     switch(State) {
         case stIdle:
             // Display time
-            Lcd.Printf(0, 0, "%u2:%u2", Time.GetHour(), Time.GetMinute());
+            Lcd.Printf(0, 0, "%02u:%02u", Time.GetHour(), Time.GetMinute());
             break;
 
         case stSetTime:
@@ -78,14 +78,14 @@ void Interface_t::EnterIdle() {
     State = stIdle;
     Lcd.Cls();
     // Display time
-    Lcd.Printf(0, 0, "%u2:%u2", Time.GetHour(), Time.GetMinute());
+    Lcd.Printf(0, 0, "%02u:%02u", Time.GetHour(), Time.GetMinute());
 }
 
 // ==== Set Time menu ====
 void Interface_t::EnterSetTime() {
     Lcd.Cls();
     Lcd.Printf(0, 1, "Установите время");
-    Lcd.Printf(4, 4, " %u2 : %u2 ", Time.GetHour(), Time.GetMinute());
+    Lcd.Printf(4, 4, " %02u : %02u ", Time.GetHour(), Time.GetMinute());
 }
 
 

@@ -4,6 +4,8 @@
 #include "string.h"
 #include <stdarg.h>
 
+#include "tiny_sprintf.h"
+
 Lcd_t Lcd;
 
 void Lcd_t::Task(void) {
@@ -123,72 +125,17 @@ void Lcd_t::Symbols(const uint8_t x, const uint8_t y, ...) {
 }
 
 
-// ================================= Printf ====================================
-void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
+void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *format, ...) {
+	char buf[LCD_STR_HEIGHT*LCD_STR_WIDTH+1];
+    va_list args;
+    va_start(args, format);
+    tiny_vsprintf(buf, format, args);
+    va_end(args);
+
     uint16_t Indx = CharXY2Indx(x, y);
-    char c;
-    bool WasPercent = false;
-    va_list Arg;
-    va_start(Arg, S);    // Set pointer to first argument
-    while ((c = *S) != 0) {
-        if (c == '%') {
-            if (WasPercent) {
-                DrawChar(&Indx, c);  // %%
-                WasPercent = false;
-            }
-            else WasPercent = true;
-        }
-        else { // not %
-            if (WasPercent) {
-                // Get number of characters
-                char c1 = *(S+1);
-                uint8_t N;
-                if ((c1 >= '0') and (c1 <= '9')) {
-                    N = c1 - '0';
-                    S++;
-                }
-                else N = 0;
-                // Parse c
-                if (c == 'c') DrawChar(&Indx, (uint8_t)va_arg(Arg, int32_t));
-                else if (c == 'u') PrintUint(&Indx, va_arg(Arg, uint32_t), N);
-                else if (c == 'i') PrintInt(&Indx, va_arg(Arg, int32_t), N);
-//                else if ((c == 's') || (c == 'S')) PrintString(va_arg(Arg, char*));
-                WasPercent = false;
-            } // if was percent
-            else DrawChar(&Indx, c);
-        }
-        S++;
-    } // while
-    va_end(Arg);
+    for (int i = 0; buf[i] != 0; i++)
+    	DrawChar(&Indx, buf[i]);
 }
-
-void Lcd_t::PrintUint (uint16_t *PIndx, uint32_t ANumber, uint8_t ACharCount) {
-    uint8_t digit = '0';
-    bool ShouldPrint = false;
-    const uint32_t m[9] = {1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10};
-
-    for(uint8_t i=0; i<9; i++) {
-        while (ANumber >= m[i]) {
-            digit++;
-            ANumber -= m[i];
-        }
-        if ((digit != '0') or ShouldPrint or (9-i < ACharCount)) {
-            DrawChar(PIndx, digit);
-            ShouldPrint = true;
-        }
-        digit = '0';
-    } // for
-    DrawChar(PIndx, (uint8_t)('0'+ANumber));
-}
-
-void Lcd_t::PrintInt (uint16_t *PIndx, int32_t ANumber, uint8_t ACharCount) {
-    if (ANumber < 0) {
-        DrawChar(PIndx, '-');
-        ANumber = -ANumber;
-    }
-    return PrintUint(PIndx, ANumber, ACharCount);
-}
-
 
 // ================================ Graphics ===================================
 /*

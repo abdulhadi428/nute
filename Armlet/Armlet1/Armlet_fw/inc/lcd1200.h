@@ -59,9 +59,6 @@ private:
     uint16_t XY2Indx(uint8_t x, uint8_t y) { return (x + (y<<6)+(y<<5)); } // (y*64)+(y*32) = y*96;
     uint16_t CharXY2Indx(uint8_t x, uint8_t y) { return ((x<<2)+(x<<1) + (y<<6)+(y<<5)); }   // = x * 6; = (y*64)+(y*32) = y*96;
     void DrawChar(uint16_t *PIndx, uint8_t AChar);
-    void PrintUint(uint16_t *PIndx, uint32_t ANumber, uint8_t ACharCount);
-    void PrintInt (uint16_t *PIndx,  int32_t ANumber, uint8_t ACharCount);
-    void PrintString(uint16_t *PIndx, const char *S) { while (*S != '\0') DrawChar(PIndx, *S++); }
 public:
     // General use
     void Init(void);

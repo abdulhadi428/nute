@@ -97,7 +97,7 @@ void Radio_t::NewPktHandler() {
     int32_t rssi = RSSI_dBm(PktRx.RSSI);
     Uart.Printf("rx %d\r", rssi);
 //
-//    Lcd.Printf(0, 7, "rx %i   ", rssi);
+//    Lcd.Printf(0, 7, "rx %d   ", rssi);
     //Uart.Printf("NbID: %08X %08X %08X\r", PktRx.IdArr[0], PktRx.IdArr[1], PktRx.IdArr[2]);
     //Uart.Printf("dBm: %d\r", CC.RSSI_dBm(PktRx.RSSI));
     NbrAdd(PktRx.IdArr);

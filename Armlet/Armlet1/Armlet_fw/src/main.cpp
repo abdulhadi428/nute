@@ -26,8 +26,14 @@ void GeneralInit(void);
 // ============================ Implementation =================================
 int main(void) {
     GeneralInit();
+
+    unsigned int cycle = 0;
     // ==== Main cycle ====
     while (1) {
+    	Lcd.Printf(0, 1, "Hello, %s!", "world");
+    	Lcd.Printf(0, 2, "Cycle: %08u", cycle++);
+    	Lcd.Printf(0, 3, "%c%c%c", 'a', 'b', 'c');
+
     	Uart.Task();
     	Lcd.Task();
     	Battery.Task();

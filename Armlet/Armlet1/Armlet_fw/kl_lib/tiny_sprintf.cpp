@@ -66,6 +66,10 @@ int tiny_vsprintf(char *buf, const char *format, va_list args) {
             while (*s != 0)
                 *p++ = *s++;
         }
+        else if (c == 'c') {
+            assert(width == 0 && !zero_padded); // not implemented
+            *p++ = va_arg(args, int);
+        }
         else if (c == 'X') {
             unsigned int n = va_arg(args, unsigned int);
             p = put_uint(p, n, 16, width, zero_padded);
