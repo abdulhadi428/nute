@@ -180,12 +180,6 @@ private:
 #endif
     void IStartTx(void);
     void IBufWrite(uint8_t AByte);
-    // Printf
-    void IPrintUint(uint32_t ANumber, uint8_t ACharCount);
-    void IPrintInt (int32_t ANumber, uint8_t ACharCount);
-    void IPrintString (const char *S) { while (*S != '\0') IBufWrite (*S++); }
-    void IPrintAsHex (uint32_t ANumber, uint8_t ACharCount);
-    void IPrint8HexArray(uint8_t *Arr, uint32_t ALength);
 public:
     char UintToHexChar (uint8_t b) { return ((b<=0x09) ? (b+'0') : (b+'A'-10)); }
     void Printf(const char *S, ...);

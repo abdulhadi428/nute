@@ -71,5 +71,5 @@ inline void GeneralInit(void) {
 
     // Get unique CPU ID and place it into packet to transmit
     GetUniqueID(&Radio.PktTx.IdArr[0]);
-    Uart.Printf("ID: %X8 %X8 %X8\r", Radio.PktTx.IdArr[0], Radio.PktTx.IdArr[1], Radio.PktTx.IdArr[2]);
+    Uart.Printf("ID: %08X %08X %08X\r", Radio.PktTx.IdArr[0], Radio.PktTx.IdArr[1], Radio.PktTx.IdArr[2]);
 }

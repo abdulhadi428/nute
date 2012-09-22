@@ -95,11 +95,11 @@ void Radio_t::TxEndHandler() {
 
 void Radio_t::NewPktHandler() {
     int32_t rssi = RSSI_dBm(PktRx.RSSI);
-    Uart.Printf("rx %i\r", rssi);
+    Uart.Printf("rx %d\r", rssi);
 //
 //    Lcd.Printf(0, 7, "rx %i   ", rssi);
-    //Uart.Printf("NbID: %X8 %X8 %X8\r", PktRx.IdArr[0], PktRx.IdArr[1], PktRx.IdArr[2]);
-    //Uart.Printf("dBm: %i\r", CC.RSSI_dBm(PktRx.RSSI));
+    //Uart.Printf("NbID: %08X %08X %08X\r", PktRx.IdArr[0], PktRx.IdArr[1], PktRx.IdArr[2]);
+    //Uart.Printf("dBm: %d\r", CC.RSSI_dBm(PktRx.RSSI));
     NbrAdd(PktRx.IdArr);
     //Led.Blink(36, clYellow);  // DEBUG
 }
