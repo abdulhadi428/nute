@@ -13,7 +13,7 @@
 
 #else
 
-#define assert(x) ((void)0)
+#include "kl_assert.h"
 
 #endif
 

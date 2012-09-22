@@ -8,6 +8,7 @@
 #include "stm32f10x.h"
 #include <stdlib.h>
 #include "kl_lib.h"
+#include "kl_assert.h"
 #include "led.h"
 #include "rf_comm.h"
 #include "lcd1200.h"
@@ -20,6 +21,7 @@
 #include "keys.h"
 #include "vibro.h"
 
+
 // Prototypes
 void GeneralInit(void);
 
@@ -30,18 +32,25 @@ int main(void) {
     unsigned int cycle = 0;
     // ==== Main cycle ====
     while (1) {
-    	Lcd.Printf(0, 1, "Hello, %s!", "world");
-    	Lcd.Printf(0, 2, "Cycle: %08u", cycle++);
-    	Lcd.Printf(0, 3, "%c%c%c", 'a', 'b', 'c');
+
+    	assert(cycle != 5678);
+
+    	if (!assertion_raised) {
+			Lcd.Printf(0, 1, "Hello, %s!", "world");
+			Lcd.Printf(0, 2, "Cycle: %08u", cycle++);
+			Lcd.Printf(0, 3, "%c%c%c", 'a', 'b', 'c');
+    	}
 
     	Uart.Task();
     	Lcd.Task();
-    	Battery.Task();
-    	Beep.Task();
-    	Interface.Task();
-    	Keys.Task();
-        Radio.Task();
         Vibro.Task();
+    	if (!assertion_raised) {
+			Battery.Task();
+			Beep.Task();
+			Interface.Task();
+			Keys.Task();
+			Radio.Task();
+    	}
         //i2cMgr.Task();
     } // while(1)
 }
