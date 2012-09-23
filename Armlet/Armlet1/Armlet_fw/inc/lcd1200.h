@@ -66,8 +66,6 @@ private:
     void SDA_Lo (void) { LCD_GPIO->BRR  = LCD_SDA;  }
     void WriteCmd(uint8_t ACmd);
     void WriteData(uint8_t AData);
-    // Bit reverse-order to workaround LSB-only USART capability
-    uint16_t Reverse(uint8_t AByte);
     // High-level
     void DrawBlock(int index, uint8_t data, uint8_t mask);
     void DrawChar(int *index, uint8_t AChar);

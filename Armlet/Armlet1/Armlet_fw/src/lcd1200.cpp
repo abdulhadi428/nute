@@ -205,6 +205,7 @@ void Lcd_t::DrawImage(int x, int y, const uint8_t* img) {
     }
 }
 
+// Bits are to be reversed-order to workaround LSB-only USART capability
 void Lcd_t::DrawBlock(int index, uint8_t data, uint8_t mask) {
     assert((data & ~mask) == 0);
     // Get data from buffer
@@ -222,20 +223,11 @@ void Lcd_t::DrawBlock(int index, uint8_t data, uint8_t mask) {
         case OVERWRITE_INVERTED:    b = (b & ~mask) | (data ^ mask);    break;
         case INVERT:                b ^= data;		                    break;
 	}
-	// Put b back to buffer
+	// Put b back to buffer.
 	w = b;
     __ASM volatile ("rbit %0, %1" : "=r" (w) : "r" (w)); // Reverse bit order
     __ASM volatile ("rev %0, %1" : "=r" (w) : "r" (w)); // Reverse byte order
     w <<= 1;
     w |= 0x0001; // Set 'Data' bit
     IBuf[index] = w;
-}
-
-inline uint16_t Lcd_t::Reverse(uint8_t AByte) {
-    uint32_t Itmp = (uint32_t) AByte;
-    __ASM volatile ("rbit %0, %1" : "=r" (Itmp) : "r" (Itmp)); // Reverse bit order
-    __ASM volatile ("rev %0, %1" : "=r" (Itmp) : "r" (Itmp)); // Reverse byte order
-    Itmp <<= 1;
-    Itmp |= 0x0001; // Set 'Data' bit
-    return (uint16_t)Itmp;
 }
