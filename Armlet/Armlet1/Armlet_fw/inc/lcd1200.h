@@ -97,7 +97,7 @@ public:
     void PutPixel(int x, int y, int c) {
     	assert(c == 0 || c == 1);
     	int index = x + (y/8)*LCD_WIDTH;
-    	uint8_t mask = 1 << (y%8);
+    	uint8_t mask = 1 << (7-y%8);
 		DrawBlock(index, c ? mask : 0, mask);
     }
 };
