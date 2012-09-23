@@ -30,8 +30,8 @@ int main(void) {
     GeneralInit();
 
     // DEBUG
-    uint32_t Tmr;
-    uint8_t i=0, j=0;
+//    uint32_t Tmr;
+//    uint8_t i=0, j=0;
 
     unsigned int cycle = 0;
     // ==== Main cycle ====
@@ -69,15 +69,15 @@ int main(void) {
 			Pill.Task();
 
 			// Pill debug
-			if(Delay.Elapsed(&Tmr, 999)) {
-			    i++;
-			    if((Pill.State == esNew) or (Pill.State == esReady)) {
-			        if(i % 2 == 0) Pill.Write(7, &i, 1);
-			        else Pill.Read(7, &j, 1);
-			        Uart.Printf("i: %u; j: %u\r", i, j);
-			    }
-			    else Uart.Printf("Fail\r");
-			}
+//			if(Delay.Elapsed(&Tmr, 999)) {
+//			    i++;
+//			    if((Pill.State == esNew) or (Pill.State == esReady)) {
+//			        if(i % 2 == 0) Pill.Write(7, &i, 1);
+//			        else Pill.Read(7, &j, 1);
+//			        Uart.Printf("i: %u; j: %u\r", i, j);
+//			    }
+//			    else Uart.Printf("Fail\r");
+//			}
     	}
     } // while(1)
 }

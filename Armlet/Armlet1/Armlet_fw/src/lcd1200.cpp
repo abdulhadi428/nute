@@ -9,15 +9,10 @@
 Lcd_t Lcd;
 
 void Lcd_t::Task(void) {
-    // Output one byte of bufer every time
-    static uint16_t i=0;
-    WriteData(IBuf[i++]);
-    if (i == LCD_VIDEOBUF_SIZE) i=0;    // Start from beginning
+
 }
 
 void Lcd_t::Init(void) {
-    // Configure LCD_XRES, LCD_XCS, LCD_SCLK & LCD_SDA as Push-Pull output
-    klGpioSetupByMsk(LCD_GPIO, LCD_XRES | LCD_XCS | LCD_SCLK | LCD_SDA, GPIO_Mode_Out_PP);
     // ==== Backlight: Timer15 Ch2 ====
     // Setup pin
     klGpioSetupByMsk(GPIOB, GPIO_Pin_15, GPIO_Mode_AF_PP);
@@ -32,6 +27,10 @@ void Lcd_t::Init(void) {
     TIM15->BDTR = 0xC000;   // Main output Enable
     TIM15->CCMR1 = 0x6000;  // PWM mode1 on Ch2 enabled
     TIM15->CCER = 0x0010;   // Output2 enabled, polarity not inverted
+
+    // ==== GPIOs ====
+    // Configure LCD_XRES, LCD_XCS, LCD_SCLK & LCD_SDA as Push-Pull output
+    klGpioSetupByMsk(LCD_GPIO, LCD_XRES | LCD_XCS | LCD_SCLK | LCD_SDA, GPIO_Mode_Out_PP);
 
     // ========================= Init LCD ======================================
     SCLK_Lo();
@@ -61,10 +60,57 @@ void Lcd_t::Init(void) {
     Cls();             // clear LCD buffer
 
     draw_mode = OVERWRITE;
+
+    // ====================== Switch to USART + DMA ============================
+    klGpioSetupByMsk(LCD_GPIO, LCD_SCLK | LCD_SDA, GPIO_Mode_AF_PP);
+    // Workaround hardware bug with disabled CK3 when SPI2 is enabled
+    SPI2->CR2 |= SPI_CR2_SSOE;
+    // ==== USART init ====
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
+    // Usart clock: enabled, idle low, first edge, enable last bit pulse
+    USART_ClockInitTypeDef USART_ClockInitStructure;
+    USART_ClockInitStructure.USART_Clock = USART_Clock_Enable;
+    USART_ClockInitStructure.USART_CPOL = USART_CPOL_Low;
+    USART_ClockInitStructure.USART_CPHA = USART_CPHA_1Edge;
+    USART_ClockInitStructure.USART_LastBit = USART_LastBit_Enable;
+    USART_ClockInit(USART3, &USART_ClockInitStructure);
+    // Usart itself
+    USART_InitTypeDef USART_InitStructure;
+    USART_InitStructure.USART_BaudRate = 100000;
+    USART_InitStructure.USART_WordLength = USART_WordLength_9b;
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+    USART_InitStructure.USART_Parity = USART_Parity_No;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_Mode = USART_Mode_Tx;
+    USART_Init(USART3, &USART_InitStructure);
+    // Enable USART
+    USART_Cmd(USART3, ENABLE);
+    // ==== DMA ====
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+    DMA_InitTypeDef DMA_InitStructure;
+    DMA_DeInit(DMA1_Channel2);
+    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&USART3->DR;
+    DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&IBuf[0];
+    DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+    DMA_InitStructure.DMA_BufferSize = LCD_VIDEOBUF_SIZE;
+    DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+    DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+    DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+    DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+    DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+    DMA_InitStructure.DMA_Priority = DMA_Priority_Low;
+    DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+    DMA_Init(DMA1_Channel2, &DMA_InitStructure);
+    // Enable USARTy DMA TX request
+    USART_DMACmd(USART3, USART_DMAReq_Tx, ENABLE);
+    // Start transmission
+    XCS_Lo();
+    DMA_Cmd(DMA1_Channel2, ENABLE);          // Enable USARTy DMA TX Channel
 }
 
 
 void Lcd_t::Shutdown(void) {
+    DMA_Cmd(DMA1_Channel2, DISABLE);
     XRES_Lo();
     XCS_Lo();
     SCLK_Lo();
@@ -131,8 +177,7 @@ void Lcd_t::Printf(int column, int row, const char *format, ...) {
     va_end(args);
 
     int index = column*6 + row*LCD_WIDTH;
-    for (int i = 0; buf[i] != 0; i++)
-    	DrawChar(&index, buf[i]);
+    for (int i = 0; buf[i] != 0; i++) DrawChar(&index, buf[i]);
 }
 
 // ================================ Graphics ===================================
@@ -140,7 +185,6 @@ void Lcd_t::Printf(int column, int row, const char *format, ...) {
  * Prints char at specified buf indx, returns next indx
  */
 void Lcd_t::DrawChar(int *index, uint8_t AChar) {
-    uint8_t b;
     for(uint8_t i=0; i < 6; i++) {
         DrawBlock((*index)++, Font_6x8_Data[AChar][i], 0xFF);
         if (*index >= LCD_VIDEOBUF_SIZE) *index = 0;
@@ -162,24 +206,36 @@ void Lcd_t::DrawImage(int x, int y, const uint8_t* img) {
 }
 
 void Lcd_t::DrawBlock(int index, uint8_t data, uint8_t mask) {
-	uint8_t *x = &IBuf[index];
-	assert((data & ~mask) == 0);
+    assert((data & ~mask) == 0);
+    // Get data from buffer
+    uint32_t w = IBuf[index];
+    // Dig grapics bits from w
+    w >>= 1;
+    __ASM volatile ("rbit %0, %1" : "=r" (w) : "r" (w)); // Reverse bit order
+    __ASM volatile ("rev %0, %1" : "=r" (w) : "r" (w)); // Reverse byte order
+    uint8_t b = (uint8_t)w;
+    // Now process b with data.
 	switch (draw_mode) {
-	case DRAW:
-		*x |= data;
-		break;
-	case CLEAR:
-		*x &= ~data;
-		break;
-	case OVERWRITE:
-		*x = (*x & ~mask) | data;
-		break;
-	case OVERWRITE_INVERTED:
-		*x = (*x & ~mask) | (data ^ mask);
-		break;
-	case INVERT:
-		*x ^= data;
-		break;
+        case DRAW: 	                b |= data;		                    break;
+        case CLEAR:	                b &= ~data;		                    break;
+        case OVERWRITE:             b = (b & ~mask) | data;             break;
+        case OVERWRITE_INVERTED:    b = (b & ~mask) | (data ^ mask);    break;
+        case INVERT:                b ^= data;		                    break;
 	}
+	// Put b back to buffer
+	w = b;
+    __ASM volatile ("rbit %0, %1" : "=r" (w) : "r" (w)); // Reverse bit order
+    __ASM volatile ("rev %0, %1" : "=r" (w) : "r" (w)); // Reverse byte order
+    w <<= 1;
+    w |= 0x0001; // Set 'Data' bit
+    IBuf[index] = w;
 }
 
+inline uint16_t Lcd_t::Reverse(uint8_t AByte) {
+    uint32_t Itmp = (uint32_t) AByte;
+    __ASM volatile ("rbit %0, %1" : "=r" (Itmp) : "r" (Itmp)); // Reverse bit order
+    __ASM volatile ("rev %0, %1" : "=r" (Itmp) : "r" (Itmp)); // Reverse byte order
+    Itmp <<= 1;
+    Itmp |= 0x0001; // Set 'Data' bit
+    return (uint16_t)Itmp;
+}

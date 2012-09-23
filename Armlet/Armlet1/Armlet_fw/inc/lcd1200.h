@@ -55,25 +55,27 @@ enum DrawMode_t {
 
 class Lcd_t {
 private:
-    uint8_t IBuf[LCD_VIDEOBUF_SIZE];
+    uint16_t IBuf[LCD_VIDEOBUF_SIZE];
     DrawMode_t draw_mode;
     // Pin driving functions
     void XRES_Hi(void) { LCD_GPIO->BSRR = LCD_XRES; }
     void XRES_Lo(void) { LCD_GPIO->BRR  = LCD_XRES; }
-    void XCS_Hi (void) { LCD_GPIO->BSRR = LCD_XCS;  }
-    void XCS_Lo (void) { LCD_GPIO->BRR  = LCD_XCS;  }
     void SCLK_Hi(void) { LCD_GPIO->BSRR = LCD_SCLK; }
     void SCLK_Lo(void) { LCD_GPIO->BRR  = LCD_SCLK; }
     void SDA_Hi (void) { LCD_GPIO->BSRR = LCD_SDA;  }
     void SDA_Lo (void) { LCD_GPIO->BRR  = LCD_SDA;  }
     void WriteCmd(uint8_t ACmd);
     void WriteData(uint8_t AData);
-
+    // Bit reverse-order to workaround LSB-only USART capability
+    uint16_t Reverse(uint8_t AByte);
     // High-level
     void DrawBlock(int index, uint8_t data, uint8_t mask);
     void DrawChar(int *index, uint8_t AChar);
 
 public:
+    // IRQ
+    void XCS_Hi (void) { LCD_GPIO->BSRR = LCD_XCS;  }
+    void XCS_Lo (void) { LCD_GPIO->BRR  = LCD_XCS;  }
     // General use
     void Init(void);
     void Task(void);
@@ -81,13 +83,10 @@ public:
     void Backlight(uint8_t ABrightness)  { TIM15->CCR2 = ABrightness; }
 
     // High-level
-
-    void SetDrawMode(DrawMode_t mode) {
-    	draw_mode = mode;
-    }
+    void SetDrawMode(DrawMode_t mode) { draw_mode = mode; }
 
     void Printf(int column, int row, const char *S, ...);
-    void Cls(void) { for(int i = 0; i < LCD_VIDEOBUF_SIZE; i++) IBuf[i] = 0x00; }
+    void Cls(void) { for(int i=0; i < LCD_VIDEOBUF_SIZE; i++) IBuf[i] = 0x0001; }
     void DrawImage(int x, int y, const uint8_t *img);
 
     /* ==== Pseudographics ====
@@ -106,6 +105,7 @@ public:
 };
 
 extern Lcd_t Lcd;
+
 
 #endif	/* LCD110X_H */
 
