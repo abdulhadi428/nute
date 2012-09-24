@@ -1,0 +1,8 @@
+Crystal3: BMSTU DSP labs project. In process.
+Deluvio: automatic flowers shower. Completed.
+Lia: cat pet finder. Unfinished.
+LiCharger: Charger for Li-Ion batteries. Unfinished.
+ListCounter: printer paper counter. Completed.
+Oven: desk heater control device. Completed.
+VaultKeeper: signals water leakage over GSM. Partly completed.
+Xtruder: plastic extrusion system. In process.

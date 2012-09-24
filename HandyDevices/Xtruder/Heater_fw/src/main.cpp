@@ -28,7 +28,7 @@ public:
 // Prototypes
 void GeneralInit(void);
 void RegulationTask(void);
-uint8_t Regulator(int32_t Err);
+uint8_t Regulator(int32_t Err, uint8_t Y);
 
 // ============================== Implementation ===============================
 int main(void) {
@@ -89,14 +89,15 @@ inline void RegulationTask() {
         //Uart.Printf("%u;%i\r", t, Ads.Temperature[0]);
 
         // Regulate them
-        Outputs.Pwm[0] = Regulator(Interface.tToSet[0] - Ads.Temperature[0]);
+        Outputs.Pwm[0] = Regulator(Interface.tToSet[0] - Ads.Temperature[0], 6);
+        Outputs.Pwm[1] = Regulator(Interface.tToSet[1] - Ads.Temperature[1], 7);
     }
 }
 
 #define kp  ((int32_t)(0x10000 * 4.0e-1))
 #define ki  ((int32_t)(0x10000 * 4.0e-4))
 
-uint8_t Regulator(int32_t Err) {
+uint8_t Regulator(int32_t Err, uint8_t Y) {
     // Gain
     int32_t Gain = Err * kp;
     // Integrator
@@ -109,7 +110,7 @@ uint8_t Regulator(int32_t Err) {
 
     if(r<0) r=0;
     else if(r > PWM_TOP) r = PWM_TOP;
-    Lcd.Printf(0, 7, "Err=%i; r=%u  ", Err, r);
+    Lcd.Printf(0, Y, "Err=%i; r=%u  ", Err, r);
     return r;
 }
 

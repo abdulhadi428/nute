@@ -10,7 +10,21 @@
 #include "kl_lib.h"
 
 int main(void) {
-    Delay.Init();
+    RCC->APB2ENR |= 0x08;
+    GPIOB->CRH = 0x00300000;
+    GPIOB->ODR = 0x2000;
+
+    while(1);
+}
+
+//klGpioSetupByN(GPIOB, 13, GPIO_Mode_Out_PP);
+//klGpioSetByN(GPIOB, 13);
+
+
+/*
+ *    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+ *
+ *     Delay.Init();
     Led_t Led;
     Led.Init(GPIOB, 10);
 
@@ -20,4 +34,4 @@ int main(void) {
         Led.Off();
         Delay.ms(450);
     } // while 1
-}
+ */
