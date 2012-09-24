@@ -32,19 +32,11 @@ public:
     State_t State;
     void Init(void);
     void Task(void);
-    void KeyDown(bool IsLongPressed);
-    void KeyUp(bool IsLongPressed);
-    void KeyEnter(void);
     // Events
     void SettingChanged(void);
     void SettingsLoad(void);
     void SettingsSave(void);
 };
 extern Interface_t Interface;
-
-// Keypress events
-inline void Evt_KeyDown(bool IsLongPressed)  { Interface.KeyDown(IsLongPressed); }
-inline void Evt_KeyUp(bool IsLongPressed)    { Interface.KeyUp(IsLongPressed); }
-inline void Evt_KeyEnter(bool IsLongPressed) { Interface.KeyEnter(); }
 
 #endif /* MENU_H_ */

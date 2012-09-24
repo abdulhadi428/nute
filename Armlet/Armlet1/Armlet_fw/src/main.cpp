@@ -51,6 +51,20 @@ int main(void) {
 				Lcd.Printf(1, 2, "zzz");
     		}
 
+    		// I know it's inefficient...
+    		// But for testing, who cares?
+
+			Lcd.Printf(0, 4, Keys.Up.IsPressed() ? "up" : "  ");
+			Lcd.Printf(0, 5, Keys.Down.IsPressed() ? "down" : "    ");
+			Lcd.Printf(0, 6, Keys.Enter.IsPressed() ? "enter" : "     ");
+
+			if (Keys.Up.WasJustPressed() ||
+				Keys.Down.WasJustPressed())
+				Beep.Squeak(1, 5);
+
+			if (Keys.Enter.WasJustPressed())
+				Beep.Squeak(1, 10);
+
 /*			Lcd.Printf(0, 1, "Hello, %s!", "world");
 			Lcd.Printf(0, 2, "Cycle: %08u", cycle);
 			Lcd.Printf(0, 3, "%c%c%c", 'a', 'b', 'c');*/

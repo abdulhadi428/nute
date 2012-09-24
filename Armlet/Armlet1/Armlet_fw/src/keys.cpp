@@ -9,45 +9,30 @@
 
 Keys_t Keys;
 
+Key_t Keys_t::Up(GPIOB, GPIO_Pin_3);
+Key_t Keys_t::Down(GPIOB, GPIO_Pin_4);
+Key_t Keys_t::Enter(GPIOB, GPIO_Pin_5);
+
+Key_t *Keys_t::keys[] = {
+	&Keys_t::Up,
+	&Keys_t::Down,
+	&Keys_t::Enter
+};
+
 void Keys_t::Init() {
-    for(uint8_t i=0; i<KEY_COUNT; i++) {
-        klGpioSetupByMsk(KeyData[i].PGpioPort, KeyData[i].PinMask, GPIO_Mode_IPU);
-        Key[i].IsDown = false;
-    }
+	Delay.Reset(&timer);
+
+    for (unsigned int i = 0; i < countof(keys); i++)
+        klGpioSetupByMsk(keys[i]->PGpioPort, keys[i]->PinMask, GPIO_Mode_IPU);
 }
 
 void Keys_t::Task() {
-    if (!Delay.Elapsed(&Timer, KEY_DELAY)) return;
-    for(uint8_t i=0; i<KEY_COUNT; i++) {
-        if(HwPressed(i) and !Key[i].IsDown) {       // Just pressed
-            Uart.Printf("Key %u\r", i);
-            Key[i].IsDown = true;
-            KeyData[i].EventPressed(false);
-            Delay.Reset(&LongPressTimer);
-            Delay.Reset(&RepeatTimer);
-            Key[i].IsLongPress = false;
-            Key[i].IsRepeating = false;
-        }
-        else if(!HwPressed(i) and Key[i].IsDown) {  // Just depressed
-            Key[i].IsDown = false;
-        }
-        else if((HwPressed(i) and Key[i].IsDown)) { // Still pressed
-            // Check if long press
-            if(!Key[i].IsLongPress)
-                if(Delay.Elapsed(&LongPressTimer, KEY_LONGPRESS_DELAY))
-                    Key[i].IsLongPress = true;
-            // Check if repeat
-            if(!Key[i].IsRepeating) {
-                if(Delay.Elapsed(&RepeatTimer, KEY_BEFORE_REPEAT_DELAY)) {
-                    Key[i].IsRepeating = true;
-                    KeyData[i].EventPressed(Key[i].IsLongPress);
-                }
-            }
-            else {
-                if(Delay.Elapsed(&RepeatTimer, KEY_REPEAT_DELAY)) {
-                    KeyData[i].EventPressed(Key[i].IsLongPress);
-                }
-            }
-        }
-    } // for
+    if (!Delay.Elapsed(&timer, KEY_DELAY)) return;
+    for (unsigned int i = 0; i < countof(keys); i++) {
+    	Key_t &key = *keys[i];
+    	key.prev_pressed = key.is_pressed;
+    	key.is_pressed = klGpioIsClearByMsk(key.PGpioPort, key.PinMask);
+    	if (key.is_pressed && !key.prev_pressed)
+    		key.unhandled_presses++;
+    }
 }

@@ -22,24 +22,8 @@ void Interface_t::IDec(bool AFast, int32_t *PValue) {
     if((*PValue) < -111) (*PValue) = -111;
 }
 
+/*
 // ==== Keys ====
-void Interface_t::KeyDown(bool IsLongPressed) {
-    switch(State) {
-        case stIdle:
-            break;
-
-        default:
-            break;
-    } // switch
-}
-
-void Interface_t::KeyUp(bool IsLongPressed) {
-    switch(State) {
-        case stIdle:
-            break;
-        default:
-            break;    }
-}
 
 void Interface_t::KeyEnter() {
     switch(State) {
@@ -53,7 +37,7 @@ void Interface_t::KeyEnter() {
             EnterIdle();
             break;
     }
-}
+}*/
 
 
 // ==== Task ====

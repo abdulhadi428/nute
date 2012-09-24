@@ -12,39 +12,49 @@
 #include <inttypes.h>
 #include "interface.h"
 
-#define KEY_DELAY                   99      // ms
-#define KEY_BEFORE_REPEAT_DELAY     999     // ms
-#define KEY_REPEAT_DELAY            162     // ms
-#define KEY_LONGPRESS_DELAY         4005    // ms
+#define KEY_DELAY                   49      // ms
 
-typedef void(*ftVoidBool)(bool);
 
-struct KeyData_t {
+class Key_t {
+private:
     GPIO_TypeDef *PGpioPort;
     uint16_t PinMask;
-    ftVoidBool EventPressed;
+
+    bool prev_pressed;
+    bool is_pressed;
+	int unhandled_presses;
+public:
+	Key_t(GPIO_TypeDef *PGpioPort, uint16_t PinMask)
+		: PGpioPort(PGpioPort),
+		  PinMask(PinMask),
+		  prev_pressed(false),
+		  is_pressed(false),
+		  unhandled_presses(0) {}
+
+	bool IsPressed() { return is_pressed; }
+
+	bool WasJustPressed() {
+		if (unhandled_presses == 0) return false;
+		assert(unhandled_presses > 0);
+		unhandled_presses--;
+		return true;
+	}
+
+	friend class Keys_t;
 };
 
-// ==== Setup keys here ====
-const KeyData_t KeyData[] = {
-        {GPIOB, GPIO_Pin_3, Evt_KeyUp},      // Up
-        {GPIOB, GPIO_Pin_4, Evt_KeyDown},    // Down
-        {GPIOB, GPIO_Pin_5, Evt_KeyEnter},   // Enter
-};
-#define KEY_COUNT   countof(KeyData)
-
-struct Key_t {
-    bool IsDown, IsRepeating, IsLongPress;
-};
 
 class Keys_t {
 private:
-    uint32_t Timer, RepeatTimer, LongPressTimer;
-    Key_t Key[KEY_COUNT];
-    bool HwPressed(uint8_t AIndx) { return klGpioIsClearByMsk(KeyData[AIndx].PGpioPort, KeyData[AIndx].PinMask); }
+    uint32_t timer;
+    static Key_t *keys[];
 public:
     void Init(void);
     void Task(void);
+
+    static Key_t Up;
+    static Key_t Down;
+    static Key_t Enter;
 };
 
 extern Keys_t Keys;
