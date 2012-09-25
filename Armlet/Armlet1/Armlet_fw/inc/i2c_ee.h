@@ -47,6 +47,15 @@ public:
     void Write(uint16_t MemoryAddr, uint8_t *PBuf, uint32_t ACount);
 };
 
+// Pill data
+struct PillData_t {
+    uint8_t Type;
+    uint8_t ChargeCount;
+} PACKED;
+
+#define PILL_TYPE_BACTA     0
+#define PILL_TYPE_ANTIBIO   1
+#define PILL_TYPE_BANDAGE   2
 
 extern Pill_t Pill;
 

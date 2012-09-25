@@ -9,13 +9,12 @@
 #include "i2c_ee.h"
 #include "keys.h"
 
+#include "pill_editor_interface.h"
+
 static void Init();
 
 void PillEditorMain() {
     Init();
-
-    Lcd.Printf(0, 3, "I'm a pill.");
-    Lcd.Printf(0, 4, "Edit me!");
 
     while (1) {
     	Uart.Task();
@@ -27,6 +26,7 @@ void PillEditorMain() {
 		Keys.Task();
 		i2cMgr.Task();
 		Pill.Task();
+		PEInterface.Task();
     }
 }
 
@@ -42,10 +42,13 @@ static inline void Init() {
 
     Keys.Init();
 
+    PEInterface.Init();
+
     Battery.Init();
 
     i2cMgr.Init();
     Pill.Init(INNER_EE_ADDR);
+    //Pill.Init(PILL_ADDR);
 
     Beep.Init();
     Beep.SetFreqHz(2007);

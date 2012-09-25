@@ -24,7 +24,7 @@ void Pill_t::Task() {
             if(ISearchCmd.State == CmdSucceded) {
                 //Uart.Printf("%A\r", ISearchCmd.BufToRead.P, 7);
                 State = esNew;
-                Lcd.Printf(0, 7, "Pill");
+                //Lcd.Printf(0, 7, "Pill");
             }
             break;
 
