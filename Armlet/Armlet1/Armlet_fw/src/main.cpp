@@ -1,7 +1,7 @@
 
 
-int PlaygroundMain(void);
-int PillEditorMain(void);
+int PlaygroundMain(void) __attribute__ ((noreturn));
+int PillEditorMain(void) __attribute__ ((noreturn));
 
 
 int main(void) {
