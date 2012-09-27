@@ -1,11 +1,13 @@
 
 
-//int PlaygroundMain(void) __attribute__ ((noreturn));
-int PillEditorMain(void) __attribute__ ((noreturn));
+//void PlaygroundMain(void);
+//void PillEditorMain(void);
+void ArmletMain(void);
 
 
 int main(void) {
 	//PlaygroundMain();
-	PillEditorMain();
+	//PillEditorMain();
+	ArmletMain();
 }
 
