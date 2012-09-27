@@ -11,11 +11,13 @@ void Pill_t::Task() {
         if(Delay.Elapsed(&ITmr, DATA_DELAY)) {
             i2cMgr.AddCmd(&IDataCmd);
             DataXch = false;    // Data exchange has begun; next time send searching cmd
-            return;
+            //Uart.Printf("Added\r");
         }
+        return; // Do not check state while Cmd is not sent
     }
     else if(Delay.Elapsed(&ITmr, SEARCH_DELAY)) {
         i2cMgr.AddCmd(&ISearchCmd);
+        //Uart.Printf("Srch\r");
         return;
     }
 
@@ -29,15 +31,23 @@ void Pill_t::Task() {
             break;
 
         case esBusy:    // Check DataCmd
-            if (IDataCmd.State == CmdSucceded) State = esReady;
-            else if(IDataCmd.State == CmdFailed) State = esFailure;
+            if (IDataCmd.State == CmdSucceded) {
+                State = esReady;
+                //Uart.Printf("B S\r");
+                Uart.Printf("e %A\r\r", IDataCmd.BufToRead.P, IDataCmd.BufToRead.Length);
+            }
+            else if(IDataCmd.State == CmdFailed) {
+                State = esFailure;
+                //Uart.Printf("B F\r");
+            }
             break;
 
         case esNew:
         case esReady:
             if(ISearchCmd.State == CmdFailed) {
                 State = esFailure;
-                Lcd.Printf(0, 7, "    ");
+                //Lcd.Printf(0, 7, "    ");
+                //Uart.Printf("F\r");
             }
             break;
     } // switch

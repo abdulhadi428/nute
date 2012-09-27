@@ -55,6 +55,8 @@ public:
     static Key_t Up;
     static Key_t Down;
     static Key_t Enter;
+
+    bool AnyKeyWasJustPressed();
 };
 
 extern Keys_t Keys;

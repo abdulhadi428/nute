@@ -24,24 +24,35 @@ void PEIntf_t::Task() {
             if(Pill.State == esNew) {
                 IState = pstReading;
                 Pill.Read(0, (uint8_t*)&IPillData, 2);
+                Uart.Printf("R\r");
             }
             break;
 
         case pstReading:
             if(Pill.State == esReady) {
                 IState = pstIdle;
+                MState = msIdle;
                 // Prepare display
-                Lcd.Printf(0, 4, "Type:");
+                Lcd.Printf(0, 4, "Type:  ");
                 Lcd.Printf(0, 5, "Charge:");
                 PrintType(true);
                 PrintCharge(true);
                 Select(selType);
+                //Uart.Printf("R Idle\r");
             }
+            else if(Pill.State != esBusy) IState = pstNoPill;
             break;
 
         case pstWriting:
             if(Pill.State == esReady) {
+                MState = msIdle;
                 IState = pstIdle;
+            }
+            else if(Pill.State == esNew) {
+                //Uart.Printf("W New\r");
+                Lcd.Printf(0, 6, "Write failed");
+                IState = pstReading;
+                Pill.Read(0, (uint8_t*)&IPillData, 2);
             }
             break;
 
@@ -58,10 +69,17 @@ void PEIntf_t::Task() {
 void PEIntf_t::MenuHandler() {
     switch(MState) {
         case msIdle:
-            if(Keys.Down.IsPressed()) Select(selChrg);
-            if(Keys.Up.IsPressed()) Select(selType);
-            if(Keys.Enter.IsPressed()) {
-                MState = (SelId == selType)? msTypeEdit : msChargeEdit;
+            if(Keys.Down.WasJustPressed()) Select(selChrg);
+            if(Keys.Up.WasJustPressed()) Select(selType);
+            if(Keys.Enter.WasJustPressed()) {
+                if(SelId == selType) {
+                    MState = msTypeEdit;
+                    if(IPillData.Type > 2) {    // Handle NotSet condition
+                        IPillData.Type = 0;
+                        PrintType(IsDisplayed);
+                    }
+                }
+                else MState = msChargeEdit;
                 IsDisplayed = true;
                 Delay.Reset(&Tmr);
             }
@@ -69,34 +87,46 @@ void PEIntf_t::MenuHandler() {
 
         case msTypeEdit:
             // Blink the value
-            if(Delay.Elapsed(&Tmr, BLINK_DELAY)) {
+            if(Delay.Elapsed(&Tmr, PE_BLINK_DELAY)) {
                 IsDisplayed = !IsDisplayed;
                 PrintType(IsDisplayed);
             }
             // Handle keys
-            if(Keys.Down.IsPressed() and (IPillData.Type != 0)) IPillData.Type--;
-            if(Keys.Up.IsPressed() and (IPillData.Type < 2)) IPillData.Type++;
-//            if(Keys.Enter.IsPressed()) {
-//                PrintType(true);
-//                IState = pstWriting;
-//                Pill.Write(0, (uint8_t*)&IPillData, 2);
-//            }
+            if(Keys.AnyKeyWasJustPressed()) {
+                // Handle individual keys
+                if(Keys.Down.WasJustPressed() and (IPillData.Type != 0)) IPillData.Type--;
+                if(Keys.Up.WasJustPressed() and (IPillData.Type < 2))    IPillData.Type++;
+                PrintType(true);
+                IsDisplayed = true;
+                Delay.Reset(&Tmr);
+                if(Keys.Enter.WasJustPressed()) {
+                    IState = pstWriting;
+                    Pill.Write(0, (uint8_t*)&IPillData, 2);
+                    //Uart.Printf("WT\r");
+                }
+            }
             break;
 
         case msChargeEdit:
             // Blink the value
-            if(Delay.Elapsed(&Tmr, BLINK_DELAY)) {
+            if(Delay.Elapsed(&Tmr, PE_BLINK_DELAY)) {
                 IsDisplayed = !IsDisplayed;
                 PrintCharge(IsDisplayed);
             }
             // Handle keys
-            if(Keys.Down.IsPressed()) IPillData.ChargeCount--;
-            if(Keys.Up.IsPressed()) IPillData.ChargeCount++;
-//            if(Keys.Enter.IsPressed()) {
-//                PrintCharge(true);
-//                IState = pstWriting;
-//                Pill.Write(0, (uint8_t*)&IPillData, 2);
-//            }
+            if(Keys.AnyKeyWasJustPressed()) {
+                // Handle individual keys
+                if(Keys.Down.WasJustPressed()) IPillData.ChargeCount--;
+                if(Keys.Up.WasJustPressed())   IPillData.ChargeCount++;
+                PrintCharge(true);
+                IsDisplayed = true;
+                Delay.Reset(&Tmr);
+                if(Keys.Enter.WasJustPressed()) {
+                    IState = pstWriting;
+                    Pill.Write(0, (uint8_t*)&IPillData, 2);
+                    //Uart.Printf("WC\r");
+                }
+            }
             break;
     }
 }
@@ -133,4 +163,5 @@ void PEIntf_t::PrintCharge(bool ShowNotClear) {
 void PEIntf_t::Clear() {
     Lcd.Printf(0, 4, " No pill        ");
     Lcd.Printf(0, 5, "                ");
+    Lcd.Printf(0, 6, "                ");
 }

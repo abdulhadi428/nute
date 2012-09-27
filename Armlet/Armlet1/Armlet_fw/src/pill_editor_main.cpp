@@ -38,7 +38,7 @@ static inline void Init() {
     Uart.Init(115200);
     Uart.Printf("\rPill editor\r");
     Lcd.Init();
-    Lcd.Backlight(0);
+    Lcd.Backlight(4);
 
     Keys.Init();
 
@@ -47,8 +47,8 @@ static inline void Init() {
     Battery.Init();
 
     i2cMgr.Init();
-    Pill.Init(INNER_EE_ADDR);
-    //Pill.Init(PILL_ADDR);
+    //Pill.Init(INNER_EE_ADDR);
+    Pill.Init(PILL_ADDR);
 
     Beep.Init();
     Beep.SetFreqHz(2007);

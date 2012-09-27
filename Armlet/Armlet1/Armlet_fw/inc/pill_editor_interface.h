@@ -10,7 +10,7 @@
 
 #include "i2c_ee.h"
 
-#define BLINK_DELAY     306  // ms
+#define PE_BLINK_DELAY     360  // ms
 
 enum PEIntState_t {pstNoPill, pstReading, pstWriting, pstIdle};
 enum PESelection_t {selType, selChrg};

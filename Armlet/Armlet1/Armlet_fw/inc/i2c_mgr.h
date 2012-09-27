@@ -35,7 +35,6 @@
 // ================================= Constants =================================
 #define I2C_CMD_QUEUE_LENGTH    9
 #define I2C_TIMEOUT             50004
-#define I2C_TIMEOUT_MS          4
 
 // Error codes
 #define I2C_OK                  0
@@ -90,7 +89,6 @@ private:
     void SendAddrRX() { I2C_Send7bitAddress(I2C1, ((Cmd[RIndx]->Address) << 1), I2C_Direction_Receiver); }
     uint8_t CheckAddrRXSending();
     void WriteMany();
-    uint8_t CheckManyWriting();
     void ReadMany();
     uint8_t CheckManyReading();
     void GetNext();

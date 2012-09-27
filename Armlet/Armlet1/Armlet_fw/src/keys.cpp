@@ -36,3 +36,10 @@ void Keys_t::Task() {
     		key.unhandled_presses++;
     }
 }
+
+bool Keys_t::AnyKeyWasJustPressed() {
+    for(unsigned int i = 0; i < countof(keys); i++) {
+        if(keys[i]->unhandled_presses != 0) return true;
+    }
+    return false;
+}
