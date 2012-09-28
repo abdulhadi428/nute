@@ -46,6 +46,17 @@ enum UIState_t {
 
 UIState_t state = IDLE;
 
+void DrawForce() {
+	static int y = 0;
+	y = (y+1)%60;
+	for (int i = 0; i < 12; i++)
+		for (int j = 0; j < 65; j++)
+			Lcd.PutPixel(i, j, 0);
+	for (int i = 0; i < 5; i++) {
+		Lcd.PutPixel(5, y+i, 1);
+		Lcd.PutPixel(3+i, y, 1);
+	}
+}
 
 const char *menu_items[] = {
 	"Отмена меню ",
@@ -70,7 +81,7 @@ void DrawMenu() {
 	Lcd.SetDrawMode(OVERWRITE);
 }
 
-const int W = LCD_STR_WIDTH;
+const int W = LCD_STR_WIDTH-2; // for jedi stuff
 const int H = LCD_STR_HEIGHT;
 
 const int MAX_STATUS_LENGTH = 1000;
@@ -133,18 +144,18 @@ void DrawIdleScreen() {
 	for (int row = 0; row < H; row++) {
 		int i = row+scroll_position;
 		if (i >= 0 && i < num_status_lines)
-			Lcd.Printf(0, row, "%s", status_lines[i]);
+			Lcd.Printf(2, row, "%s", status_lines[i]);
 		else {
 			for (int j = 0; j < W; j++)
-				Lcd.Printf(j, row, " ");
+				Lcd.Printf(j+2, row, " ");
 		}
 	}
 
 	Lcd.SetDrawMode(OVERWRITE_INVERTED);
 	if (scroll_position > 0)
-		Lcd.Printf((W-5)/2, 0, " %c%c%c ", 0x18, 0x18, 0x18);
+		Lcd.Printf((W-5)/2+2, 0, " %c%c%c ", 0x18, 0x18, 0x18);
 	if (scroll_position+H < num_status_lines)
-		Lcd.Printf((W-5)/2, H-1, " %c%c%c ", 0x19, 0x19, 0x19);
+		Lcd.Printf((W-5)/2+2, H-1, " %c%c%c ", 0x19, 0x19, 0x19);
 	Lcd.SetDrawMode(OVERWRITE);
 }
 
@@ -181,6 +192,7 @@ void SetNotification(const char *text, int timeout) {
 void Task() {
 	switch (state) {
 	case IDLE:
+		DrawForce();
 		if (Keys.Up.WasJustPressed()) {
 			if (scroll_position > 0) {
 				scroll_position--;
