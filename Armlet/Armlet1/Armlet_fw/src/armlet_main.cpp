@@ -47,14 +47,14 @@ UIState_t state = IDLE;
 
 
 const char *menu_items[] = {
-	"Отмена меню",
+	"Отмена меню ",
 	"руку/ногу плазмо               й", // :(
-	"корпус плазмой",
+	"корпус плазмой ",
 	"руку/ногу прочим",
-	"корпус прочим",
+	"корпус прочим ",
 };
 int menu_index = 0;
-const int TIME_IN_MENU = 35; // in tenths of a second
+const int TIME_IN_MENU = 45; // in tenths of a second
 int time_in_menu;
 
 void DrawMenu() {
@@ -81,6 +81,7 @@ int num_status_lines = 0;
 int scroll_position = 0;
 
 void SetStatus(const char *new_status) {
+	assert(strlen(new_status) <= MAX_STATUS_LENGTH);
 	assert(W > 1);
 	if (strcmp(status, new_status) == 0)
 		return;
@@ -123,6 +124,7 @@ void SetStatus(const char *new_status) {
 		if (*p != ' ')
 			write_spaces = true;
 	}
+	assert(num_status_lines <= MAX_STATUS_LINES);
 	scroll_position = 0;
 }
 
