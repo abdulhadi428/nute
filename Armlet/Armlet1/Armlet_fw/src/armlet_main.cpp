@@ -40,7 +40,8 @@ void BacklightTask() {
 
 enum UIState_t {
 	IDLE,
-	MENU
+	MENU,
+	NOTIFICATION,
 };
 
 UIState_t state = IDLE;
@@ -147,6 +148,36 @@ void DrawIdleScreen() {
 	Lcd.SetDrawMode(OVERWRITE);
 }
 
+
+const int MAX_NOTIFICATION_LENGTH = 100;
+char notification[MAX_NOTIFICATION_LENGTH] = "none";
+int notification_time;
+int notification_timeout;
+
+
+void DrawNotification() {
+	Lcd.Printf(0, 1, "%s", notification);
+	if (notification_time < 30)
+		return;
+	int color = notification_time / 5 % 2;
+	for (int i = 0; i <= 6; i++) {
+		Lcd.PutPixel(LCD_WIDTH-1-i, LCD_HEIGHT-1-i, color);
+		Lcd.PutPixel(LCD_WIDTH-1, LCD_HEIGHT-1-i, color);
+		Lcd.PutPixel(LCD_WIDTH-1-i, LCD_HEIGHT-1, color);
+	}
+}
+
+void SetNotification(const char *text, int timeout) {
+	assert(strlen(text) <= MAX_NOTIFICATION_LENGTH);
+	strcpy(notification, text);
+	state = NOTIFICATION;
+	Lcd.Cls();
+	notification_timeout = timeout*10;
+	if (timeout >= 0)
+		Lighten();
+	notification_time = 0;
+}
+
 void Task() {
 	switch (state) {
 	case IDLE:
@@ -189,8 +220,38 @@ void Task() {
 		if (time_in_menu == 0 || Keys.Enter.WasJustPressed()) {
 			if (time_in_menu == 0)
 				menu_index = 0;
-			if (menu_index > 0)
-				Vibro.Flinch(1);
+			if (menu_index > 0) {
+				SetNotification("Ouch!", -1);
+			}
+			else {
+				state = IDLE;
+				Lcd.Cls();
+				DrawIdleScreen();
+			}
+		}
+		break;
+	case NOTIFICATION:
+		if (Keys.Up.WasJustPressed()) {
+		}
+		if (Keys.Down.WasJustPressed()) {
+		}
+		if (Keys.Enter.WasJustPressed() && notification_time >= 10) {
+			state = IDLE;
+			Lcd.Cls();
+			DrawIdleScreen();
+		}
+
+		if (notification_timeout < 0) {
+			if (notification_time == 10 ||
+				notification_time == 50 ||
+				notification_time == 150 ||
+				(notification_time >= 250 && notification_time % 20 == 0))
+				Vibro.Flinch(2);
+		}
+
+		DrawNotification();
+		notification_time++;
+		if (notification_timeout > 0 && notification_time > notification_timeout) {
 			state = IDLE;
 			Lcd.Cls();
 			DrawIdleScreen();
