@@ -214,7 +214,7 @@ void Lcd_t::DrawBlock(int index, uint8_t data, uint8_t mask) {
         case DRAW: 	                *w |= data2;		                    break;
         case CLEAR:	                *w &= ~data2;		                    break;
         case OVERWRITE:             *w = (*w & ~mask2) | data2;             break;
-        case OVERWRITE_INVERTED:    *w = (*w & ~mask2) | (data ^ mask2);    break;
+        case OVERWRITE_INVERTED:    *w = (*w & ~mask2) | (data2 ^ mask2);    break;
         case INVERT:                *w ^= data2;		                    break;
 	}
 }
