@@ -69,13 +69,97 @@ void DrawMenu() {
 	Lcd.SetDrawMode(OVERWRITE);
 }
 
+const int W = LCD_STR_WIDTH;
+const int H = LCD_STR_HEIGHT;
+
+const int MAX_STATUS_LENGTH = 1000;
+const int MAX_STATUS_LINES = MAX_STATUS_LENGTH/(W-2);
+
+char status[MAX_STATUS_LENGTH+1] = "None";
+char status_lines[MAX_STATUS_LINES][W+1];
+int num_status_lines = 0;
+int scroll_position = 0;
+
+void SetStatus(const char *new_status) {
+	assert(W > 1);
+	if (strcmp(status, new_status) == 0)
+		return;
+	num_status_lines = 1;
+	char *cur_line = status_lines[0];
+	int i = 0;
+	bool write_spaces = true;
+	for (const char *p = new_status; ; p++) {
+		bool need_new_line = false;
+		if (*p == 0)
+			need_new_line = true;
+		else if (i == W)
+			need_new_line = true;
+		else if (i == W-1 &&
+				 p[-1] == ' ' &&
+				 p[0] != 0 && p[0] != ' ' &&
+				 p[1] != ' ' && p[1] != '\n')
+			need_new_line = true;
+		else if (*p == '\n')
+			need_new_line = true;
+		// finalize current line
+		if (need_new_line) {
+			// TODO: replace filler with ' ' in release
+			while (i < W)
+				cur_line[i++] = '^';
+			cur_line[i] = 0;
+		}
+		if (*p == 0)
+			break;
+		// add new line
+		if (need_new_line) {
+			cur_line = status_lines[num_status_lines++];
+			i = 0;
+			write_spaces = (*p == '\n');
+		}
+
+		if (*p != '\n' && (*p != ' ' || write_spaces))
+			cur_line[i++] = *p;
+
+		if (*p != ' ')
+			write_spaces = true;
+	}
+	scroll_position = 0;
+}
+
+void DrawIdleScreen() {
+	for (int row = 0; row < H; row++) {
+		int i = row+scroll_position;
+		if (i >= 0 && i < num_status_lines)
+			Lcd.Printf(0, row, "%s", status_lines[i]);
+		else {
+			for (int j = 0; j < W; j++)
+				Lcd.Printf(j, row, " ");
+		}
+	}
+
+	Lcd.SetDrawMode(OVERWRITE_INVERTED);
+	if (scroll_position > 0)
+		Lcd.Printf((W-5)/2, 0, " %c%c%c ", 0x18, 0x18, 0x18);
+	if (scroll_position+H < num_status_lines)
+		Lcd.Printf((W-5)/2, H-1, " %c%c%c ", 0x19, 0x19, 0x19);
+	Lcd.SetDrawMode(OVERWRITE);
+}
+
 void Task() {
 	switch (state) {
 	case IDLE:
-		if (Keys.Up.WasJustPressed())
-			;
-		if (Keys.Down.WasJustPressed())
-			;
+		if (Keys.Up.WasJustPressed()) {
+			if (scroll_position > 0) {
+				scroll_position--;
+				DrawIdleScreen();
+			}
+		}
+		if (Keys.Down.WasJustPressed()) {
+			if (scroll_position+H < num_status_lines) {
+				scroll_position++;
+				DrawIdleScreen();
+			}
+		}
 		if (Keys.Enter.WasJustPressed()) {
 			menu_index = 0;
 			time_in_menu = TIME_IN_MENU;
@@ -107,6 +191,7 @@ void Task() {
 				Vibro.Flinch(1);
 			state = IDLE;
 			Lcd.Cls();
+			DrawIdleScreen();
 		}
 		break;
 	}
@@ -119,7 +204,10 @@ void ArmletMain() {
 	static uint32_t t = 0;
     Init();
 
-    Lcd.Printf(0, 1, "Браслет");
+    Lcd.Cls();
+
+    SetStatus("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.");
+    DrawIdleScreen();
 
     while (1) {
     	Uart.Task();
@@ -128,7 +216,7 @@ void ArmletMain() {
 
     	if (assertion_raised)
     		continue;
-		Battery.Task();
+		//Battery.Task();
 		Beep.Task();
 		Keys.Task();
 		Radio.Task();
