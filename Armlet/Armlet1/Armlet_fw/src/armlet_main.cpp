@@ -281,7 +281,7 @@ const char *GetStatus() {
 		ADD_MESSAGE("не могу встать даже на четвереньки");
 	}
 	else {
-		ADD_MESSAGE("всё болит, шевелиться больно");
+		ADD_MESSAGE("я без сознания");
 	}
 
 	if (respirator == 0)
@@ -324,6 +324,18 @@ void PillInserted() {
 		}
 		else {
 			SetNotification("Пустой контейнер от бакты", 3);
+		}
+	}
+	else if (pill_data.Type == 2) {
+		if (pill_data.ChargeCount > 0) {
+			SetNotification("Перевязка наложена", 3);
+			pill_data.ChargeCount = 0;
+			SavePill();
+			if (bleeding != 0)
+				bleeding -= 1;
+		}
+		else {
+			SetNotification("Израсходованный перевязочный материал", 3);
 		}
 	}
 }
