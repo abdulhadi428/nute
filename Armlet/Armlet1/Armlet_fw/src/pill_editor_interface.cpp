@@ -94,8 +94,8 @@ void PEIntf_t::MenuHandler() {
             // Handle keys
             if(Keys.AnyKeyWasJustPressed()) {
                 // Handle individual keys
-                if(Keys.Down.WasJustPressed() and (IPillData.Type != 0)) IPillData.Type--;
-                if(Keys.Up.WasJustPressed() and (IPillData.Type < 2))    IPillData.Type++;
+                if(Keys.Down.WasJustPressed()) IPillData.Type--;
+                if(Keys.Up.WasJustPressed())    IPillData.Type++;
                 PrintType(true);
                 IsDisplayed = true;
                 Delay.Reset(&Tmr);
@@ -143,14 +143,19 @@ void PEIntf_t::Select(PESelection_t NewSelId) {
     Lcd.Printf(15, yDesel, " ");
 }
 
+static const char* pill_type_names[] = {
+	"Bacta  ",
+	"Antibio",
+	"Bandage",
+	"Resp   ",
+};
+
 void PEIntf_t::PrintType(bool ShowNotClear) {
     if(ShowNotClear) {
-        switch(IPillData.Type) {
-            case PILL_TYPE_BACTA:   Lcd.Printf(8, 4, " Bacta "); break;
-            case PILL_TYPE_ANTIBIO: Lcd.Printf(8, 4, "Antibio"); break;
-            case PILL_TYPE_BANDAGE: Lcd.Printf(8, 4, "Bandage"); break;
-            default:                Lcd.Printf(8, 4, "Not set"); break;
-        }
+    	if (IPillData.Type < countof(pill_type_names))
+    		Lcd.Printf(8, 4, "%s", pill_type_names[IPillData.Type]);
+    	else
+    		Lcd.Printf(8, 4, "? (%03u)", IPillData.Type);
     }
     else Lcd.Printf(8, 4, "       ");
 }
