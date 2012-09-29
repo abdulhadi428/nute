@@ -244,10 +244,24 @@ const char *GetStatus() {
 		return "Я в сломанном респираторе";
 }
 
+void SavePill() {
+	Pill.Write(0, (uint8_t*)&pill_data, 2);
+}
+
 void PillInserted() {
 	if (pill_data.Type == 3) {
 		SetNotification("Надеваю респиратор", 3);
 		respirator = 1;
+	}
+	else if (pill_data.Type == 0) {
+		if (pill_data.ChargeCount > 0) {
+			SetNotification("Бакта зохавана", 3);
+			pill_data.ChargeCount = 0;
+			SavePill();
+		}
+		else {
+			SetNotification("Пустой контейнер от бакты", 3);
+		}
 	}
 }
 
