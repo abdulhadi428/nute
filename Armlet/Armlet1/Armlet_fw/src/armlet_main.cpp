@@ -37,6 +37,12 @@ void BacklightTask() {
 		Lcd.Backlight(LIGHT_INTENSITY*light/(LIGHT_FADE*10));
 }
 
+int rnd100() {
+	int x = rand();
+	x &= 0x0FFFFFFF; // to deal with negative shit
+	return x%100;
+}
+
 
 enum UIState_t {
 	IDLE,
@@ -231,17 +237,39 @@ void ProcessPill() {
 	}
 }
 
-
-
+int health = 1000;
+int bleeding = 0; // 0, 1 or 2
 int respirator = 0; // 0 - none, 1 - resp, 2 - broken
 
 const char *GetStatus() {
+	char *messages[10];
+	int num_messages = 0;
+
+#define ADD_MESSAGE(m) (messages[num_messages++] = (m))
+
+	if (bleeding == 1)
+		ADD_MESSAGE("у мен€ кровотечение");
+	else if (bleeding == 2)
+		ADD_MESSAGE("хлещет кровища");
+
 	if (respirator == 0)
-		return "я без респиратора";
+		ADD_MESSAGE("€ без респиратора");
 	else if (respirator == 1)
-		return "я в респираторе";
+		ADD_MESSAGE("€ в респираторе");
 	else if (respirator == 2)
-		return "я в сломанном респираторе";
+		ADD_MESSAGE("€ в сломанном респираторе");
+
+	ADD_MESSAGE("yo");
+
+#undef ADD_MESSAGE
+
+	char buf[1000] = "";
+	for (int i = 0; i < num_messages; i++) {
+		if (i > 0)
+			strcpy(buf+strlen(buf), "; ");
+		strcpy(buf+strlen(buf), messages[i]);
+	}
+	return buf;
 }
 
 void SavePill() {
@@ -272,6 +300,26 @@ void PillRemoved() {
 	}
 }
 
+void MedicineTask() {
+	if (rnd100() >= 10)
+		return;
+	if (rnd100() < 40)
+		health -= bleeding;
+}
+
+void Wound(int index) {
+	if (index == 1 || index == 3) {
+		if (bleeding < 2)
+			bleeding++;
+		health -= 200;
+		SetNotification("ћен€ ранило в конечность!", 3);
+	}
+	else {
+		bleeding = 2;
+		health -= 300;
+		SetNotification("ћен€ ранило в корпус!", 3);
+	}
+}
 
 void Task() {
 	switch (state) {
@@ -319,7 +367,7 @@ void Task() {
 			if (time_in_menu == 0)
 				menu_index = 0;
 			if (menu_index > 0) {
-				SetNotification("Ouch!", -1);
+				Wound(menu_index);
 			}
 			else {
 				state = IDLE;
