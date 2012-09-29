@@ -15,6 +15,9 @@
 
 Force_t Force;
 
+const int SPEEDUP = 10;
+
+
 const int LIGHT_FULL = 3;
 const int LIGHT_FADE = 3;
 const int LIGHT_INTENSITY = 20;
@@ -124,6 +127,7 @@ void SetStatus(const char *new_status) {
 	assert(W > 1);
 	if (strcmp(status, new_status) == 0)
 		return;
+	strcpy(status, new_status);
 	num_status_lines = 1;
 	char *cur_line = status_lines[0];
 	int i = 0;
@@ -166,8 +170,10 @@ void SetStatus(const char *new_status) {
 	assert(num_status_lines <= MAX_STATUS_LINES);
 	scroll_position = 0;
 
-	if (state == IDLE)
+	if (state == IDLE) {
+		Vibro.Flinch(1);
 		DrawIdleScreen();
+	}
 }
 
 
@@ -247,6 +253,15 @@ const char *GetStatus() {
 	char *messages[10];
 	int num_messages = 0;
 
+	if (health < 0) {
+		if (health != -666) {
+			SetNotification("Я умер(ла)", -1);
+			health = -666;
+		}
+		return "я мёртв(а)";
+	}
+
+
 #define ADD_MESSAGE(m) (messages[num_messages++] = (m))
 
 	if (bleeding == 1)
@@ -254,14 +269,27 @@ const char *GetStatus() {
 	else if (bleeding == 2)
 		ADD_MESSAGE("хлещет кровища");
 
+	if (health > 800) {
+	}
+	else if (health > 600) {
+		ADD_MESSAGE("ощущаю лёгкую слабость");
+	}
+	else if (health > 400) {
+		ADD_MESSAGE("без опоры подкашиваются ноги");
+	}
+	else if (health > 200) {
+		ADD_MESSAGE("не могу встать даже на четвереньки");
+	}
+	else {
+		ADD_MESSAGE("всё болит, шевелиться больно");
+	}
+
 	if (respirator == 0)
 		ADD_MESSAGE("я без респиратора");
 	else if (respirator == 1)
 		ADD_MESSAGE("я в респираторе");
 	else if (respirator == 2)
 		ADD_MESSAGE("я в сломанном респираторе");
-
-	ADD_MESSAGE("yo");
 
 #undef ADD_MESSAGE
 
@@ -288,6 +316,11 @@ void PillInserted() {
 			SetNotification("Бакта зохавана", 3);
 			pill_data.ChargeCount = 0;
 			SavePill();
+			if (bleeding != 2)
+				bleeding = 0;
+			health += 400;
+			if (health > 1000)
+				health = 1000;
 		}
 		else {
 			SetNotification("Пустой контейнер от бакты", 3);
@@ -303,7 +336,9 @@ void PillRemoved() {
 }
 
 void MedicineTask() {
-	if (rnd100() >= 10)
+	if (rnd100() >= 10*SPEEDUP)
+		return;
+	if (health == -666)
 		return;
 	if (rnd100() < 40)
 		health -= bleeding;
@@ -327,6 +362,7 @@ void Task() {
 	switch (state) {
 	case IDLE:
 	    Force.DrawForce();
+		MedicineTask();
 		SetStatus(GetStatus());
 		if (Keys.Up.WasJustPressed()) {
 			if (scroll_position > 0) {
