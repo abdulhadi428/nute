@@ -92,6 +92,25 @@ char status_lines[MAX_STATUS_LINES][W+1];
 int num_status_lines = 0;
 int scroll_position = 0;
 
+void DrawIdleScreen() {
+	for (int row = 0; row < H; row++) {
+		int i = row+scroll_position;
+		if (i >= 0 && i < num_status_lines)
+			Lcd.Printf(2, row, "%s", status_lines[i]);
+		else {
+			for (int j = 0; j < W; j++)
+				Lcd.Printf(j+2, row, " ");
+		}
+	}
+
+	Lcd.SetDrawMode(OVERWRITE_INVERTED);
+	if (scroll_position > 0)
+		Lcd.Printf((W-5)/2+2, 0, " %c%c%c ", 0x18, 0x18, 0x18);
+	if (scroll_position+H < num_status_lines)
+		Lcd.Printf((W-5)/2+2, H-1, " %c%c%c ", 0x19, 0x19, 0x19);
+	Lcd.SetDrawMode(OVERWRITE);
+}
+
 void SetStatus(const char *new_status) {
 	assert(strlen(new_status) <= MAX_STATUS_LENGTH);
 	assert(W > 1);
@@ -138,25 +157,9 @@ void SetStatus(const char *new_status) {
 	}
 	assert(num_status_lines <= MAX_STATUS_LINES);
 	scroll_position = 0;
-}
 
-void DrawIdleScreen() {
-	for (int row = 0; row < H; row++) {
-		int i = row+scroll_position;
-		if (i >= 0 && i < num_status_lines)
-			Lcd.Printf(2, row, "%s", status_lines[i]);
-		else {
-			for (int j = 0; j < W; j++)
-				Lcd.Printf(j+2, row, " ");
-		}
-	}
-
-	Lcd.SetDrawMode(OVERWRITE_INVERTED);
-	if (scroll_position > 0)
-		Lcd.Printf((W-5)/2+2, 0, " %c%c%c ", 0x18, 0x18, 0x18);
-	if (scroll_position+H < num_status_lines)
-		Lcd.Printf((W-5)/2+2, H-1, " %c%c%c ", 0x19, 0x19, 0x19);
-	Lcd.SetDrawMode(OVERWRITE);
+	if (state == IDLE)
+		DrawIdleScreen();
 }
 
 
@@ -183,16 +186,84 @@ void SetNotification(const char *text, int timeout) {
 	strcpy(notification, text);
 	state = NOTIFICATION;
 	Lcd.Cls();
+	Vibro.Flinch(2);
 	notification_timeout = timeout*10;
 	if (timeout >= 0)
 		Lighten();
 	notification_time = 0;
 }
 
+
+PillData_t pill_data;
+
+enum PillState_t {
+	PILL_NONE,
+	PILL_READING,
+	PILL_INSERTED,
+} pill_state;
+
+void PillInserted();
+void PillRemoved();
+
+void ProcessPill() {
+	switch (pill_state) {
+	case PILL_NONE:
+		if (Pill.State == esNew || Pill.State == esReady) {
+			Pill.Read(0, (uint8_t*)&pill_data, 2);
+			pill_state = PILL_READING;
+		}
+		break;
+	case PILL_READING:
+		if (Pill.State == esReady) {
+			pill_state = PILL_INSERTED;
+			PillInserted();
+		}
+		else if (Pill.State == esFailure) {
+			pill_state = PILL_NONE;
+		}
+		break;
+	case PILL_INSERTED:
+		if (Pill.State == esFailure || Pill.State == esNew) {
+			pill_state = PILL_NONE;
+			PillRemoved();
+		}
+		break;
+	}
+}
+
+
+
+int respirator = 0; // 0 - none, 1 - resp, 2 - broken
+
+const char *GetStatus() {
+	if (respirator == 0)
+		return "я без респиратора";
+	else if (respirator == 1)
+		return "я в респираторе";
+	else if (respirator == 2)
+		return "я в сломанном респираторе";
+}
+
+void PillInserted() {
+	if (pill_data.Type == 3) {
+		SetNotification("Ќадеваю респиратор", 3);
+		respirator = 1;
+	}
+}
+
+void PillRemoved() {
+	if (pill_data.Type == 3) {
+		SetNotification("—нимаю респиратор", 3);
+		respirator = 0;
+	}
+}
+
+
 void Task() {
 	switch (state) {
 	case IDLE:
 		DrawForce();
+		SetStatus(GetStatus());
 		if (Keys.Up.WasJustPressed()) {
 			if (scroll_position > 0) {
 				scroll_position--;
@@ -212,6 +283,7 @@ void Task() {
 			Lcd.Cls();
 			DrawMenu();
 		}
+		ProcessPill();
 		break;
 	case MENU:
 		if (Keys.Up.WasJustPressed()) {
@@ -322,7 +394,7 @@ static inline void Init() {
     Radio.Init();
 
     i2cMgr.Init();
-    Pill.Init(INNER_EE_ADDR);
+    Pill.Init(PILL_ADDR);
 
     Beep.Init();
     Beep.SetFreqHz(2007);
