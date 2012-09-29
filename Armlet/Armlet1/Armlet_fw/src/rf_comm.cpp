@@ -8,6 +8,7 @@
 #include "rf_comm.h"
 #include "lcd1200.h"
 #include <stdlib.h>
+#include "force.h"
 
 Radio_t Radio;
 
@@ -26,7 +27,7 @@ void Radio_t::Task() {
     // Neighbours
     static uint32_t NbrTmr;
     if(Delay.Elapsed(&NbrTmr, DEMONSTRATE_PERIOD)) {
-        NbrDemonstrate();
+        Force.SetCount(NbrCount);
         NbrCount = 0;   // Reset neighbours counter
     }
     /* ==== Sync task ====
@@ -72,13 +73,6 @@ void Radio_t::NbrAdd(uint32_t *ID) {
         IdTable[NbrCount][2] = ID[2];
         NbrCount++;
     }
-}
-
-void Radio_t::NbrDemonstrate() {
-    //Uart.Printf("Nb count: %u\r", NbrCount);
-    //Lcd.Printf(0, 7, "Nb: %u  ", NbrCount);
-//    if(NbrCount != 0) Led.SetColorSmoothly(clRed);
-//    else Led.SetColorSmoothly(clBlack);
 }
 
 // ================================= Events ====================================

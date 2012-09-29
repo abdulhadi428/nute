@@ -11,7 +11,9 @@
 #include "i2c_ee.h"
 #include "keys.h"
 #include "vibro.h"
+#include "force.h"
 
+Force_t Force;
 
 const int LIGHT_FULL = 3;
 const int LIGHT_FADE = 3;
@@ -52,17 +54,17 @@ enum UIState_t {
 
 UIState_t state = IDLE;
 
-void DrawForce() {
-	static int y = 0;
-	y = (y+1)%60;
-	for (int i = 0; i < 12; i++)
-		for (int j = 0; j < 65; j++)
-			Lcd.PutPixel(i, j, 0);
-	for (int i = 0; i < 5; i++) {
-		Lcd.PutPixel(5, y+i, 1);
-		Lcd.PutPixel(3+i, y, 1);
-	}
-}
+//void DrawForce() {
+//	static int y = 0;
+//	y = (y+1)%60;
+//	for (int i = 0; i < 12; i++)
+//		for (int j = 0; j < 65; j++)
+//			Lcd.PutPixel(i, j, 0);
+//	for (int i = 0; i < 5; i++) {
+//		Lcd.PutPixel(5, y+i, 1);
+//		Lcd.PutPixel(3+i, y, 1);
+//	}
+//}
 
 const char *menu_items[] = {
 	"Отмена меню ",
@@ -324,7 +326,7 @@ void Wound(int index) {
 void Task() {
 	switch (state) {
 	case IDLE:
-		DrawForce();
+	    Force.DrawForce();
 		SetStatus(GetStatus());
 		if (Keys.Up.WasJustPressed()) {
 			if (scroll_position > 0) {
@@ -412,6 +414,8 @@ static void Init();
 void ArmletMain() {
 	static uint32_t t = 0;
     Init();
+
+    Force.IsForceUser = true; // DEBUG
 
     Lcd.Cls();
 

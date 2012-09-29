@@ -193,11 +193,11 @@ void Lcd_t::DrawChar(int *index, uint8_t AChar) {
 
 void Lcd_t::DrawImage(int x, int y, const uint8_t* img) {
 	assert(y % 8 == 0);
-	y /= 8;
+	y /= 8; // y is now rows, not pixels
     uint8_t width = *img++;
     uint8_t height = *img++;
     for(int fy = y; fy < y+height; fy++) {
-        int index = x + y*LCD_WIDTH;
+        int index = x + fy*LCD_WIDTH;
         for(int fx = x; fx < x+width; fx++) {
             DrawBlock(index++, *img++, 255);
             if (index > LCD_VIDEOBUF_SIZE) break;

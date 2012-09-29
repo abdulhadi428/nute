@@ -25,7 +25,6 @@ private:
     // Neighbours counter
     uint32_t NbrCount;
     uint32_t IdTable[MAX_NB_COUNT][3];
-    void NbrDemonstrate();
     void NbrAdd(uint32_t *ID);
     // Sync module
     uint16_t CycleCounter;
