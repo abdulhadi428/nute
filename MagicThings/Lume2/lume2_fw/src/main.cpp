@@ -25,6 +25,7 @@ int main() {
         Uart.Task();
         Lcd.Task();
         Interface.Task();
+        Keys.Task();
     } // while 1
 }
 

@@ -15,27 +15,24 @@
 #define BLINK_DELAY     306  // ms
 #define STATE_DELAY     4005 // ms
 
-enum State_t {
-    stIdle, stMain, stSetTime
+enum MenuState_t {
+    msIdle, msHour, msMinute, msYear, msMonth, msDay
 };
 
 class Interface_t {
 private:
     DateTime_t IDateTime;
-    void DisplayTime();
-    void DisplayYear()  { Lcd.Printf(7, 4, "%04u", Time.GetYear()); }
-    void DisplayMonth() { Lcd.Printf(7, 5, "%02u", Time.GetMonth()); }
-    void DisplayDay()   { Lcd.Printf(7, 6, "%02u", Time.GetDay());  }
-    // Needed for blink
-    uint32_t IBlinkTmr, IStateTmr;
-    void EnterIdle(void);
+    void DisplayHour(bool ShowNotClear)   { Lcd.Printf(7,  2, (ShowNotClear? "%02u:" : "  :"), IDateTime.H); }
+    void DisplayMinute(bool ShowNotClear) { Lcd.Printf(10, 2, (ShowNotClear? "%02u:" : "  :"), IDateTime.M); }
+    void DisplaySecond(bool ShowNotClear) { Lcd.Printf(13, 2, (ShowNotClear? "%02u" : "  "),   IDateTime.S); }
+    void DisplayYear(bool ShowNotClear)   { Lcd.Printf(7,  4, (ShowNotClear? "%04u" : "    "), IDateTime.Year); }
+    void DisplayMonth(bool ShowNotClear)  { Lcd.Printf(7,  5, (ShowNotClear? "%02u" : "  "),   IDateTime.Month); }
+    void DisplayDay(bool ShowNotClear)    { Lcd.Printf(7,  6, (ShowNotClear? "%02u" : "  "),   IDateTime.Day);  }
     // Inc / Dec
-    void IInc(bool AFast, int32_t *PValue);
-    void IDec(bool AFast, int32_t *PValue);
-    // ==== Menus ====
-    void EnterSetTime(void);
+    void IInc(bool AFast, int32_t *PValue, int32_t AMaxValue, int32_t AMinValue);
+    void IDec(bool AFast, int32_t *PValue, int32_t AMaxValue, int32_t AMinValue);
 public:
-    State_t State;
+    MenuState_t State;
     void Init(void);
     void Task(void);
     // Events

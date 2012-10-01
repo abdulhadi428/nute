@@ -12,7 +12,7 @@
 
 // Neighbours counter
 #define MAX_NB_COUNT    11
-#define DEMONSTRATE_PERIOD  4005    // Demonstrate count every period, ms
+#define DEMONSTRATE_PERIOD  1008    // Demonstrate count every period, ms
 
 // Sync module
 #define ALWAYS_RX               // DEBUG

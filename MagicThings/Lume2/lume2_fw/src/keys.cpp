@@ -32,8 +32,17 @@ void Keys_t::Task() {
     	Key_t &key = *keys[i];
     	key.prev_pressed = key.is_pressed;
     	key.is_pressed = klGpioIsClearByMsk(key.PGpioPort, key.PinMask);
-    	if (key.is_pressed && !key.prev_pressed)
-    		key.unhandled_presses++;
+    	if(key.is_pressed) {
+    	    if(!key.prev_pressed) {
+                key.unhandled_presses++;
+                Delay.Reset(&key.LongPressTmr);
+                key.IDelay = BEFORE_LONGPRESS_DELAY;
+    	    }
+    	    else if(Delay.Elapsed(&key.LongPressTmr, key.IDelay)) {
+    	        key.unhandled_presses++;
+    	        key.IDelay = LONG_PRESS_DELAY;
+    	    }
+    	}
     }
 }
 

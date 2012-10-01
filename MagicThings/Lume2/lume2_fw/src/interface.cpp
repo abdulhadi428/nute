@@ -6,60 +6,193 @@
  */
 
 #include "interface.h"
+#include "keys.h"
 
 Interface_t Interface;
 
 // =================================== Keys ====================================
-void Interface_t::IInc(bool AFast, int32_t *PValue) {
+void Interface_t::IInc(bool AFast, int32_t *PValue, int32_t AMaxValue, int32_t AMinValue) {
     if(AFast and ((*PValue) %10 == 0)) (*PValue) +=10;
     else (*PValue)++;
-    if((*PValue) > 0) (*PValue) = 0;
+    if((*PValue) > AMaxValue) (*PValue) = AMinValue;
 }
-void Interface_t::IDec(bool AFast, int32_t *PValue) {
+void Interface_t::IDec(bool AFast, int32_t *PValue, int32_t AMaxValue, int32_t AMinValue) {
     if(AFast and ((*PValue) %10 == 0)) (*PValue) -=10;
     else (*PValue)--;
-    if((*PValue) < -111) (*PValue) = -111;
+    if((*PValue) < AMinValue) (*PValue) = AMaxValue;
 }
-
-/*
-// ==== Keys ====
-
-void Interface_t::KeyEnter() {
-    switch(State) {
-        case stIdle:
-            State = stSetTime;
-            Delay.Reset(&IStateTmr);
-            EnterSetTime();
-            break;
-
-        default:
-            EnterIdle();
-            break;
-    }
-}*/
 
 
 // ==== Task ====
 void Interface_t::Task() {
-    static uint32_t STmr=0;
-    //static uint8_t OldMinute;
-    //uint8_t Minute = Time.GetMinute();
+    static uint32_t STmr=0, IBlinkTmr=0, IStateTmr=0;
+    static bool IsDisplayed;
     switch(State) {
-        case stIdle:
+        case msIdle:
+            // Display time if needed
             if(Time.SecElapsed(&STmr, 1)) {
                 Time.GetDateTime(&IDateTime);
-                DisplayTime();
-                // Display Date
+                DisplayHour(true);
+                DisplayMinute(true);
+                DisplaySecond(true);
+                // Display New Date
                 if(IDateTime.H == 0 and IDateTime.M == 0 and IDateTime.S == 0) {
-                    DisplayYear();
-                    DisplayMonth();
-                    DisplayDay();
+                    DisplayYear(true);
+                    DisplayMonth(true);
+                    DisplayDay(true);
                 }
+            }
+            // Handle keys
+            if(Keys.Enter.WasJustPressed()) {
+                State = msHour;
+                IsDisplayed = true;
+                Delay.Reset(&IBlinkTmr);
+                Delay.Reset(&IStateTmr);    // to return to idle
             }
             break;
 
-        case stSetTime:
-         //   if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) EnterIdle();
+        case msHour:
+            // Handle keys
+            if(Keys.Down.WasJustPressed()) {
+                IDec(false, &IDateTime.H, 23, 0);
+                Delay.Reset(&IStateTmr);
+                DisplayHour(IsDisplayed = true);
+            }
+            else if(Keys.Up.WasJustPressed()) {
+                IInc(false, &IDateTime.H, 23, 0);
+                Delay.Reset(&IStateTmr);
+                DisplayHour(IsDisplayed = true);
+            }
+            else if(Keys.Enter.WasJustPressed()) {
+                IDateTime.S = 0;
+                DisplaySecond(true);
+                Delay.Reset(&IStateTmr);
+                DisplayHour(IsDisplayed = true);
+                State = msMinute;
+                Time.SetTime(IDateTime.H, IDateTime.M, 0);
+            }
+            // Handle autoexit
+            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) {
+                DisplayHour(true);
+                State = msIdle;
+                Time.SetTime(IDateTime.H, IDateTime.M, 0);
+            }
+            // Handle blink
+            else if(!Keys.Down.IsPressed() and !Keys.Up.IsPressed() and Delay.Elapsed(&IBlinkTmr, BLINK_DELAY))
+                DisplayHour(IsDisplayed = !IsDisplayed);   // Blink the value
+            break;
+
+        case msMinute:
+            // Handle keys
+            if(Keys.Down.WasJustPressed()) {
+                IDec(false, &IDateTime.M, 59, 0);
+                Delay.Reset(&IStateTmr);
+                DisplayMinute(IsDisplayed = true);
+            }
+            else if(Keys.Up.WasJustPressed()) {
+                IInc(false, &IDateTime.M, 59, 0);
+                Delay.Reset(&IStateTmr);
+                DisplayMinute(IsDisplayed = true);
+            }
+            else if(Keys.Enter.WasJustPressed()) {
+                Delay.Reset(&IStateTmr);
+                DisplayMinute(true);
+                State = msYear;
+                Time.SetTime(IDateTime.H, IDateTime.M, 0);
+            }
+            // Handle autoexit
+            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) {
+                DisplayMinute(true);
+                State = msIdle;
+                Time.SetTime(IDateTime.H, IDateTime.M, 0);
+            }
+            // Handle blink
+            else if(!Keys.Down.IsPressed() and !Keys.Up.IsPressed() and Delay.Elapsed(&IBlinkTmr, BLINK_DELAY))
+                DisplayMinute(IsDisplayed = !IsDisplayed);   // Blink the value
+            break;
+
+        case msYear:
+            // Handle keys
+            if(Keys.Down.WasJustPressed()) {
+                IDec(false, &IDateTime.Year, 2700, 0);
+                Delay.Reset(&IStateTmr);
+                DisplayYear(IsDisplayed = true);
+            }
+            else if(Keys.Up.WasJustPressed()) {
+                IInc(false, &IDateTime.Year, 2700, 0);
+                Delay.Reset(&IStateTmr);
+                DisplayYear(IsDisplayed = true);
+            }
+            else if(Keys.Enter.WasJustPressed()) {
+                DisplayYear(true);
+                State = msMonth;
+                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
+            }
+            // Handle autoexit
+            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) {
+                DisplayYear(true);
+                State = msIdle;
+                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
+            }
+            // Handle blink
+            else if(!Keys.Down.IsPressed() and !Keys.Up.IsPressed() and Delay.Elapsed(&IBlinkTmr, BLINK_DELAY))
+                DisplayYear(IsDisplayed = !IsDisplayed);   // Blink the value
+            break;
+
+        case msMonth:
+            // Handle keys
+            if(Keys.Down.WasJustPressed()) {
+                IDec(false, &IDateTime.Month, 12, 1);
+                Delay.Reset(&IStateTmr);
+                DisplayMonth(IsDisplayed = true);
+            }
+            else if(Keys.Up.WasJustPressed()) {
+                IInc(false, &IDateTime.Month, 12, 1);
+                Delay.Reset(&IStateTmr);
+                DisplayMonth(IsDisplayed = true);
+            }
+            else if(Keys.Enter.WasJustPressed()) {
+                DisplayMonth(true);
+                State = msDay;
+                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
+            }
+            // Handle autoexit
+            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) {
+                DisplayMonth(true);
+                State = msIdle;
+                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
+            }
+            // Handle blink
+            else if(!Keys.Down.IsPressed() and !Keys.Up.IsPressed() and Delay.Elapsed(&IBlinkTmr, BLINK_DELAY))
+                DisplayMonth(IsDisplayed = !IsDisplayed);   // Blink the value
+            break;
+
+        case msDay:
+            // Handle keys
+            if(Keys.Down.WasJustPressed()) {
+                IDec(false, &IDateTime.Day, 31, 1);
+                Delay.Reset(&IStateTmr);
+                DisplayDay(IsDisplayed = true);
+            }
+            else if(Keys.Up.WasJustPressed()) {
+                IInc(false, &IDateTime.Day, 31, 1);
+                Delay.Reset(&IStateTmr);
+                DisplayDay(IsDisplayed = true);
+            }
+            else if(Keys.Enter.WasJustPressed()) {
+                DisplayDay(true);
+                State = msIdle;
+                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
+            }
+            // Handle autoexit
+            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) {
+                DisplayDay(true);
+                State = msIdle;
+                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
+            }
+            // Handle blink
+            else if(!Keys.Down.IsPressed() and !Keys.Up.IsPressed() and Delay.Elapsed(&IBlinkTmr, BLINK_DELAY))
+                DisplayDay(IsDisplayed = !IsDisplayed);   // Blink the value
             break;
 
         default:
@@ -67,25 +200,7 @@ void Interface_t::Task() {
     }
 }
 
-// ================================= Menus ===================================
-void Interface_t::EnterIdle() {
-    State = stIdle;
-}
-
-// ==== Set Time menu ====
-void Interface_t::EnterSetTime() {
-    Lcd.Cls();
-    Lcd.Printf(0, 1, "Установите время");
-    //Lcd.Printf(4, 4, " %u2 : %u2 ", Time.GetHour(), Time.GetMinute());
-}
-
 // ================================= Common ====================================
-void Interface_t::DisplayTime() {
-    Lcd.Printf(7, 2, "%02u:%02u:%02u", IDateTime.H, IDateTime.M, IDateTime.S);
-}
-
-
-
 void Interface_t::Init() {
     // Draw background
     Lcd.Printf(0, 2, "Time:  ");
@@ -93,45 +208,13 @@ void Interface_t::Init() {
     Lcd.Printf(0, 5, "Month: ");
     Lcd.Printf(0, 6, "Day:   ");
 
-    DisplayTime();
-    DisplayYear();
-    DisplayMonth();
-    DisplayDay();
+    Time.GetDateTime(&IDateTime);
+    DisplayHour(true);
+    DisplayMinute(true);
+    DisplaySecond(true);
+    DisplayYear(true);
+    DisplayMonth(true);
+    DisplayDay(true);
 
-//    Lcd.Symbols(0, 0,   // Top line
-//            CornerTopLeftDouble, 1,
-//            LineHorizDouble, 7,
-//            LineHorizDoubleDown, 1,
-//            LineHorizDouble, 6,
-//            CornerTopRightDouble, 1,
-//            0);
-//    Lcd.Printf(0, 1, "%cMIN Lvl%c      %c", LineVertDouble, LineVertDouble, LineVertDouble);
-//    Lcd.Symbols(0, 2,   // Middle line
-//            LineVertDoubleRight, 1,
-//            LineHorizDouble, 7,
-//            LineCrossDouble, 1,
-//            LineHorizDouble, 6,
-//            LineVertDoubleLeft, 1,
-//            0);
-//    Lcd.Printf(0, 3, "%cMAX Lvl%c      %c", LineVertDouble, LineVertDouble, LineVertDouble);
-//    Lcd.Symbols(0, 4,   // Middle line
-//            LineVertDoubleRight, 1,
-//            LineHorizDouble, 7,
-//            LineCrossDouble, 1,
-//            LineHorizDouble, 6,
-//            LineVertDoubleLeft, 1,
-//            0);
-//
-//    // Current value
-//    Lcd.Printf(0, 5, "%c ID    %c      %c", LineVertDouble, LineVertDouble, LineVertDouble);
-//    Lcd.Printf(0, 6, "%c RX Lvl%c      %c", LineVertDouble, LineVertDouble, LineVertDouble);
-//    Lcd.Symbols(0, 7,   // Bottom line
-//            CornerBottomLeftDouble, 1,
-//            LineHorizDouble, 7,
-//            LineHorizDoubleUp, 1,
-//            LineHorizDouble, 6,
-//            CornerBottomRightDouble, 1,
-//            0);
-
-    EnterIdle();
+    State = msIdle;
 }

@@ -12,7 +12,9 @@
 #include <inttypes.h>
 #include "interface.h"
 
-#define KEY_DELAY                   49      // ms
+#define KEY_DELAY               49      // ms
+#define BEFORE_LONGPRESS_DELAY  810
+#define LONG_PRESS_DELAY        270    // ms
 
 
 class Key_t {
@@ -23,13 +25,16 @@ private:
     bool prev_pressed;
     bool is_pressed;
 	uint32_t unhandled_presses;
+	uint32_t LongPressTmr, IDelay;
 public:
 	Key_t(GPIO_TypeDef *PGpioPort, uint16_t PinMask)
 		: PGpioPort(PGpioPort),
 		  PinMask(PinMask),
 		  prev_pressed(false),
 		  is_pressed(false),
-		  unhandled_presses(0) {}
+		  unhandled_presses(0),
+		  LongPressTmr(0),
+		  IDelay(BEFORE_LONGPRESS_DELAY) {}
 
 	bool IsPressed() { return is_pressed; }
 

@@ -123,16 +123,13 @@ void GetUniqueID(uint32_t *IDArr);
 
 // ============================ Delay and time =================================
 struct Time_t {
-    uint8_t H, M, S;
-    void IncH(void) { if(++H > 23) { H=0; } }
-    void IncM(void) { if(++M > 59) { M = 0; IncH(); }  }
-    void IncS(void) { if(++S > 59) { S = 0; IncM(); }  }
+    int32_t H, M, S;
 };
 
 struct DateTime_t : Time_t {
-    uint16_t Year;
-    uint8_t Month;
-    uint8_t Day;
+    int32_t Year;
+    int32_t Month;
+    int32_t Day;
 } PACKED;
 
 // Systick is used here
