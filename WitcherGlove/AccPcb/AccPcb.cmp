@@ -1,0 +1,73 @@
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 30/09/2012 15:58:01
+
+BeginCmp
+TimeStamp = /5067E547;
+Reference = C1;
+ValeurCmp = 0.1u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5067E546;
+Reference = C2;
+ValeurCmp = 10u;
+IdModule  = CAP_0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /5067E549;
+Reference = DD1;
+ValeurCmp = LIS3;
+IdModule  = LGA16_3X3_5_3;
+EndCmp
+
+BeginCmp
+TimeStamp = /50680913;
+Reference = XL1;
+ValeurCmp = CONN_1;
+IdModule  = CONN1_D05X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /50680918;
+Reference = XL2;
+ValeurCmp = CONN_1;
+IdModule  = CONN1_D05X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /5068091C;
+Reference = XL3;
+ValeurCmp = CONN_1;
+IdModule  = CONN1_D05X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /50680924;
+Reference = XL4;
+ValeurCmp = CONN_1;
+IdModule  = CONN1_D05X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /5068092B;
+Reference = XL5;
+ValeurCmp = CONN_1;
+IdModule  = CONN1_D05X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /506810C0;
+Reference = XL6;
+ValeurCmp = CONN_1;
+IdModule  = CONN1_D05X1;
+EndCmp
+
+BeginCmp
+TimeStamp = /506810C5;
+Reference = XL7;
+ValeurCmp = CONN_1;
+IdModule  = CONN1_D05X1;
+EndCmp
+
+EndListe
