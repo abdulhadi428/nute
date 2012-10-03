@@ -52,6 +52,7 @@ class Keys_t {
 private:
     uint32_t timer;
     static Key_t *keys[];
+    bool AnyKeyWasPressed;
 public:
     void Init(void);
     void Task(void);
