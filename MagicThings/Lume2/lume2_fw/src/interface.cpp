@@ -10,37 +10,31 @@
 
 Interface_t Interface;
 
-// =================================== Keys ====================================
-void Interface_t::IInc(bool AFast, int32_t *PValue, int32_t AMaxValue, int32_t AMinValue) {
+void Interface_t::IInc(bool AFast, int32_t *PValue, int32_t AMinValue, int32_t AMaxValue) {
     if(AFast and ((*PValue) %10 == 0)) (*PValue) +=10;
     else (*PValue)++;
     if((*PValue) > AMaxValue) (*PValue) = AMinValue;
 }
-void Interface_t::IDec(bool AFast, int32_t *PValue, int32_t AMaxValue, int32_t AMinValue) {
+void Interface_t::IDec(bool AFast, int32_t *PValue, int32_t AMinValue, int32_t AMaxValue) {
     if(AFast and ((*PValue) %10 == 0)) (*PValue) -=10;
     else (*PValue)--;
     if((*PValue) < AMinValue) (*PValue) = AMaxValue;
 }
 
-
-// ==== Task ====
 void Interface_t::Task() {
-    static uint32_t STmr=0, IBlinkTmr=0, IStateTmr=0;
+    static uint32_t IBlinkTmr=0, IStateTmr=0;
     static bool IsDisplayed;
     switch(State) {
         case msIdle:
             // Display time if needed
-            if(Time.SecElapsed(&STmr, 1)) {
+            if(Time.SecElapsed(&ShowTmr, 1)) {
                 Time.GetDateTime(&IDateTime);
                 DisplayHour(true);
                 DisplayMinute(true);
                 DisplaySecond(true);
-                // Display New Date
-                if(IDateTime.H == 0 and IDateTime.M == 0 and IDateTime.S == 0) {
-                    DisplayYear(true);
-                    DisplayMonth(true);
-                    DisplayDay(true);
-                }
+                DisplayYear(true);
+                DisplayMonth(true);
+                DisplayDay(true);
             }
             // Handle keys
             if(Keys.Enter.WasJustPressed()) {
@@ -54,12 +48,12 @@ void Interface_t::Task() {
         case msHour:
             // Handle keys
             if(Keys.Down.WasJustPressed()) {
-                IDec(false, &IDateTime.H, 23, 0);
+                IDec(false, &IDateTime.H, 0, 23);
                 Delay.Reset(&IStateTmr);
                 DisplayHour(IsDisplayed = true);
             }
             else if(Keys.Up.WasJustPressed()) {
-                IInc(false, &IDateTime.H, 23, 0);
+                IInc(false, &IDateTime.H, 0, 23);
                 Delay.Reset(&IStateTmr);
                 DisplayHour(IsDisplayed = true);
             }
@@ -69,14 +63,9 @@ void Interface_t::Task() {
                 Delay.Reset(&IStateTmr);
                 DisplayHour(IsDisplayed = true);
                 State = msMinute;
-                Time.SetTime(IDateTime.H, IDateTime.M, 0);
             }
             // Handle autoexit
-            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) {
-                DisplayHour(true);
-                State = msIdle;
-                Time.SetTime(IDateTime.H, IDateTime.M, 0);
-            }
+            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) EnterIdle();
             // Handle blink
             else if(!Keys.Down.IsPressed() and !Keys.Up.IsPressed() and Delay.Elapsed(&IBlinkTmr, BLINK_DELAY))
                 DisplayHour(IsDisplayed = !IsDisplayed);   // Blink the value
@@ -85,12 +74,12 @@ void Interface_t::Task() {
         case msMinute:
             // Handle keys
             if(Keys.Down.WasJustPressed()) {
-                IDec(false, &IDateTime.M, 59, 0);
+                IDec(false, &IDateTime.M, 0, 59);
                 Delay.Reset(&IStateTmr);
                 DisplayMinute(IsDisplayed = true);
             }
             else if(Keys.Up.WasJustPressed()) {
-                IInc(false, &IDateTime.M, 59, 0);
+                IInc(false, &IDateTime.M, 0, 59);
                 Delay.Reset(&IStateTmr);
                 DisplayMinute(IsDisplayed = true);
             }
@@ -98,14 +87,9 @@ void Interface_t::Task() {
                 Delay.Reset(&IStateTmr);
                 DisplayMinute(true);
                 State = msYear;
-                Time.SetTime(IDateTime.H, IDateTime.M, 0);
             }
             // Handle autoexit
-            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) {
-                DisplayMinute(true);
-                State = msIdle;
-                Time.SetTime(IDateTime.H, IDateTime.M, 0);
-            }
+            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) EnterIdle();
             // Handle blink
             else if(!Keys.Down.IsPressed() and !Keys.Up.IsPressed() and Delay.Elapsed(&IBlinkTmr, BLINK_DELAY))
                 DisplayMinute(IsDisplayed = !IsDisplayed);   // Blink the value
@@ -114,26 +98,21 @@ void Interface_t::Task() {
         case msYear:
             // Handle keys
             if(Keys.Down.WasJustPressed()) {
-                IDec(false, &IDateTime.Year, 2700, 0);
+                IDec(false, &IDateTime.Year, YEAR_MIN, YEAR_MAX);
                 Delay.Reset(&IStateTmr);
                 DisplayYear(IsDisplayed = true);
             }
             else if(Keys.Up.WasJustPressed()) {
-                IInc(false, &IDateTime.Year, 2700, 0);
+                IInc(false, &IDateTime.Year, YEAR_MIN, YEAR_MAX);
                 Delay.Reset(&IStateTmr);
                 DisplayYear(IsDisplayed = true);
             }
             else if(Keys.Enter.WasJustPressed()) {
                 DisplayYear(true);
                 State = msMonth;
-                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
             }
             // Handle autoexit
-            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) {
-                DisplayYear(true);
-                State = msIdle;
-                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
-            }
+            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) EnterIdle();
             // Handle blink
             else if(!Keys.Down.IsPressed() and !Keys.Up.IsPressed() and Delay.Elapsed(&IBlinkTmr, BLINK_DELAY))
                 DisplayYear(IsDisplayed = !IsDisplayed);   // Blink the value
@@ -142,26 +121,21 @@ void Interface_t::Task() {
         case msMonth:
             // Handle keys
             if(Keys.Down.WasJustPressed()) {
-                IDec(false, &IDateTime.Month, 12, 1);
+                IDec(false, &IDateTime.Month, 1, 12);
                 Delay.Reset(&IStateTmr);
                 DisplayMonth(IsDisplayed = true);
             }
             else if(Keys.Up.WasJustPressed()) {
-                IInc(false, &IDateTime.Month, 12, 1);
+                IInc(false, &IDateTime.Month, 1, 12);
                 Delay.Reset(&IStateTmr);
                 DisplayMonth(IsDisplayed = true);
             }
             else if(Keys.Enter.WasJustPressed()) {
                 DisplayMonth(true);
                 State = msDay;
-                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
-            }
+             }
             // Handle autoexit
-            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) {
-                DisplayMonth(true);
-                State = msIdle;
-                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
-            }
+            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) EnterIdle();
             // Handle blink
             else if(!Keys.Down.IsPressed() and !Keys.Up.IsPressed() and Delay.Elapsed(&IBlinkTmr, BLINK_DELAY))
                 DisplayMonth(IsDisplayed = !IsDisplayed);   // Blink the value
@@ -170,37 +144,37 @@ void Interface_t::Task() {
         case msDay:
             // Handle keys
             if(Keys.Down.WasJustPressed()) {
-                IDec(false, &IDateTime.Day, 31, 1);
+                IDec(false, &IDateTime.Day, 1, MonthDays[LEAPYEAR(IDateTime.Year)][IDateTime.Month-1]);
                 Delay.Reset(&IStateTmr);
                 DisplayDay(IsDisplayed = true);
             }
             else if(Keys.Up.WasJustPressed()) {
-                IInc(false, &IDateTime.Day, 31, 1);
+                IInc(false, &IDateTime.Day, 1, MonthDays[LEAPYEAR(IDateTime.Year)][IDateTime.Month-1]);
                 Delay.Reset(&IStateTmr);
                 DisplayDay(IsDisplayed = true);
             }
-            else if(Keys.Enter.WasJustPressed()) {
-                DisplayDay(true);
-                State = msIdle;
-                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
-            }
+            else if(Keys.Enter.WasJustPressed()) EnterIdle();
             // Handle autoexit
-            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) {
-                DisplayDay(true);
-                State = msIdle;
-                Time.SetDate(IDateTime.Year, IDateTime.Month, IDateTime.Day);
-            }
+            else if(Delay.Elapsed(&IStateTmr, STATE_DELAY)) EnterIdle();
             // Handle blink
             else if(!Keys.Down.IsPressed() and !Keys.Up.IsPressed() and Delay.Elapsed(&IBlinkTmr, BLINK_DELAY))
                 DisplayDay(IsDisplayed = !IsDisplayed);   // Blink the value
             break;
-
-        default:
-            break;
     }
 }
 
-// ================================= Common ====================================
+void Interface_t::EnterIdle() {
+    DisplayHour(true);
+    DisplayMinute(true);
+    DisplaySecond(true);
+    DisplayYear(true);
+    DisplayMonth(true);
+    DisplayDay(true);
+    State = msIdle;
+    Time.SetDateTime(IDateTime);
+    Delay.Reset(&ShowTmr);  // Without this it could wait very long before displaying next second
+}
+
 void Interface_t::Init() {
     // Draw background
     Lcd.Printf(0, 2, "Time:  ");

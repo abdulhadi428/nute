@@ -13,46 +13,38 @@
 #include "stm32f10x_rtc.h"
 #include "stm32f10x_bkp.h"
 
-#define DATE_ENABLED
-//#define PRINT_ENABLED
+#define BKPREG_CHECK        BKP_DR1     // Register to store Time_is_set variable
 
-#define BKPREG_CHECK    BKP_DR1     // Register to store Time_is_set variable
+#define SECS_DAY            (24L * 60L * 60L)
+#define YEAR_MIN            2000
+#define YEAR_MAX            2099
+#define LEAPYEAR(year)      (!((year) % 4) && (((year) % 100) || !((year) % 400)))
+#define YEARSIZE(year)      (LEAPYEAR(year) ? 366 : 365)
 
-#ifdef DATE_ENABLED
-#define DEFAULT_YEAR    2012
-#define DEFAULT_MONTH   9
-#define DEFAULT_DAY     30
+const uint8_t MonthDays[2][12] = {
+    {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
+    {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+};
 
-#define BKPREG_YEAR     BKP_DR2
-#define BKPREG_MONTH    BKP_DR3
-#define BKPREG_DAY      BKP_DR4
-#endif
+struct DateTime_t {
+    int32_t H, M, S;
+    int32_t Year;
+    int32_t Month;
+    int32_t Day;
+} PACKED;
 
 class TimeCounter_t {
 public:
     bool TimeIsSet;
-#ifdef DATE_ENABLED
-    void DateUpdate(void);
-    bool IsLeap(uint16_t AYear);
-    void SetDate(uint16_t AYear, uint8_t AMonth, uint8_t ADay);
     void GetDateTime(DateTime_t *PDateTime);
-    uint16_t GetYear()  { return BKP_ReadBackupRegister(BKPREG_YEAR); }
-    uint16_t GetMonth() { return BKP_ReadBackupRegister(BKPREG_MONTH); }
-    uint16_t GetDay()   { return BKP_ReadBackupRegister(BKPREG_DAY); }
-#endif
-    void Init(void);
-    bool IsSet(void) {return (BKP_ReadBackupRegister(BKPREG_CHECK) == 0xA5A5); }
-    void SetTime(uint8_t AHour, uint8_t AMinute, uint8_t ASecond);
-    void GetTime(Time_t *PTime);
-    uint8_t GetHour(void)   { uint32_t t = RTC_GetCounter(); return (uint8_t)(t / 3600); }
-    uint8_t GetMinute(void) { uint32_t t = RTC_GetCounter(); return (uint8_t)((t % 3600) / 60); }
-#ifdef PRINT_ENABLED
-    void Print(void);
-#endif
+    void SetDateTime(DateTime_t ADateTime);
+    void Init();
+    bool IsSet() {return (BKP_ReadBackupRegister(BKPREG_CHECK) == 0xA5A5); }
     // Delay utils
     bool SecElapsed(uint32_t *PTimer, uint32_t ASeconds) {
-        if ((RTC_GetCounter() - *PTimer) >= ASeconds) {
-            *PTimer = RTC_GetCounter(); // Reset delay
+        uint32_t t = RTC_GetCounter();
+        if ((t - *PTimer) >= ASeconds) {
+            *PTimer = t; // Reset delay
             return true;
         }
         else return false;
@@ -61,10 +53,5 @@ public:
 };
 
 extern TimeCounter_t Time;
-
-// IRQ
-extern "C" {
-void RTC_IRQHandler(void);
-}
 
 #endif /* KL_TIME_H_ */

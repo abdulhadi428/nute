@@ -37,7 +37,7 @@ static inline void Init() {
     Uart.Init(115200);
     Uart.Printf("\rLume2\r");
     Lcd.Init();
-    Lcd.Backlight(4);
+    Lcd.Backlight(54);
 
     Time.Init();
     Keys.Init();

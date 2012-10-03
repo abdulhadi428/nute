@@ -122,16 +122,6 @@ void InitClock(Clk_t AClk);
 void GetUniqueID(uint32_t *IDArr);
 
 // ============================ Delay and time =================================
-struct Time_t {
-    int32_t H, M, S;
-};
-
-struct DateTime_t : Time_t {
-    int32_t Year;
-    int32_t Month;
-    int32_t Day;
-} PACKED;
-
 // Systick is used here
 extern uint32_t ITickCounter;
 class Delay_t {

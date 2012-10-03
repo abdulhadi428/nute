@@ -15,14 +15,6 @@ TimeCounter_t Time;
 //#define RTC_OUTPUT_ENABLE
 
 void TimeCounter_t::Init() {
-    // ==== IRQ ====
-    NVIC_InitTypeDef NVIC_InitStructure;
-    NVIC_InitStructure.NVIC_IRQChannel = RTC_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);    // Enable PWR and BKP clocks
     PWR_BackupAccessCmd(ENABLE);    // Allow access to BKP Domain
     // Check if time is set
@@ -50,13 +42,11 @@ void TimeCounter_t::Init() {
             //Lcd.Printf(0,1, "32768 Ok");
         }
         else {
-            Uart.Printf("32768 fail\r");
+            Uart.Printf("32768 Fail\r");
             Lcd.Printf(0,0, "32768 Fail");
         }
-        // Set default date values and do not set time
-#ifdef DATE_ENABLED
-        SetDate(DEFAULT_YEAR, DEFAULT_MONTH, DEFAULT_DAY);
-#endif
+        // Set default datetime values
+        SetDateTime((DateTime_t){0,0,0, 2000,1,1});
         BKP_WriteBackupRegister(BKPREG_CHECK, 0xA5A5);  // Signal is set
     }
     else {
@@ -64,9 +54,6 @@ void TimeCounter_t::Init() {
         RTC_WaitForSynchro();
         RTC_WaitForLastTask();
     }
-    // Enable IRQ
-    RTC_ITConfig(RTC_IT_SEC, ENABLE);
-    RTC_WaitForLastTask();
 
 #ifdef RTC_OUTPUT_ENABLE
     BKP_TamperPinCmd(DISABLE);      // To output RTCCLK/64 on Tamper pin, the tamper functionality must be disabled
@@ -74,132 +61,50 @@ void TimeCounter_t::Init() {
 #endif
 }
 
-void TimeCounter_t::GetTime(Time_t *PTime) {
-    uint32_t t = RTC_GetCounter();
-    PTime->H = t / 3600;
-    PTime->M = (t % 3600) / 60;
-    PTime->S = (t % 3600) % 60;
-}
-
-
-#ifdef PRINT_ENABLED
-void TimeCounter_t::Print(void) {
-    uint16_t Year = BKP_ReadBackupRegister(BKPREG_YEAR);
-    uint8_t Month = BKP_ReadBackupRegister(BKPREG_MONTH);
-    uint8_t Day   = BKP_ReadBackupRegister(BKPREG_DAY);
-
-    uint32_t t = RTC_GetCounter();
-    uint32_t THH = t / 3600;
-    uint32_t TMM = (t % 3600) / 60;
-    uint32_t TSS = (t % 3600) % 60;
-    Uart.Printf("%u-%u-%u %u:%u:%u\r", Year, Month, Day, THH, TMM, TSS);
-}
-#endif
-
-
-void TimeCounter_t::SetTime(uint8_t AHour, uint8_t AMinute, uint8_t ASecond) {
-    // Set time
-    uint32_t t = AHour*3600 + AMinute*60 + ASecond;
-    RTC_WaitForLastTask();
-    RTC_SetCounter(t);
-    RTC_WaitForLastTask();
-}
-
-#ifdef DATE_ENABLED
 void TimeCounter_t::GetDateTime(DateTime_t *PDateTime) {
-    PDateTime->Year  = BKP_ReadBackupRegister(BKPREG_YEAR);
-    PDateTime->Month = BKP_ReadBackupRegister(BKPREG_MONTH);
-    PDateTime->Day   = BKP_ReadBackupRegister(BKPREG_DAY);
-    uint32_t t = RTC_GetCounter();
-    PDateTime->H = t / 3600;
-    PDateTime->M = (t % 3600) / 60;
-    PDateTime->S = (t % 3600) % 60;
+    uint32_t time = RTC_GetCounter();
+    uint32_t dayclock, DayCount;
+    uint32_t year = YEAR_MIN;
+
+    // Calculate time
+    dayclock = time % SECS_DAY;
+    PDateTime->S = dayclock % 60;
+    PDateTime->M = (dayclock % 3600) / 60;
+    PDateTime->H = dayclock / 3600;
+
+    // Calculate year
+    DayCount = time / SECS_DAY;
+    while(DayCount >= YEARSIZE(year)) {
+        DayCount -= YEARSIZE(year);
+        year++;
+    }
+    PDateTime->Year = year;
+    // Calculate month
+    PDateTime->Month = 0;
+    uint32_t Leap = LEAPYEAR(year)? 1 : 0;
+    while (DayCount >= MonthDays[Leap][PDateTime->Month]) {
+        DayCount -= MonthDays[Leap][PDateTime->Month];
+        PDateTime->Month++;
+    }
+    PDateTime->Month++; // not in [0;11], but in [1;12]
+    PDateTime->Day = DayCount + 1;
 }
 
-bool TimeCounter_t::IsLeap(uint16_t AYear) {
-    if     ((AYear % 400)==0) return true;
-    else if((AYear % 100)==0) return false;
-    else if((AYear % 4  )==0) return true;
-    else return false;
+void TimeCounter_t::SetDateTime(DateTime_t ADateTime) {
+    uint32_t DayCount=0, seconds=0;
+    // Count days elapsed since YEAR_MIN
+    for(int32_t y=YEAR_MIN; y<ADateTime.Year; y++)
+        DayCount += YEARSIZE(y);
+    // Count days in monthes elapsed
+    uint32_t Leap = LEAPYEAR(ADateTime.Year)? 1 : 0;
+    for(int32_t m=0; m < ADateTime.Month-1; m++)
+        DayCount += MonthDays[Leap][m];
+
+    DayCount += ADateTime.Day-1;
+    seconds = ADateTime.H*3600 + ADateTime.M*60 + ADateTime.S;
+    seconds += DayCount * SECS_DAY;
+
+    RTC_WaitForLastTask();
+    RTC_SetCounter(seconds);
+    RTC_WaitForLastTask();
 }
-
-void TimeCounter_t::SetDate(uint16_t AYear, uint8_t AMonth, uint8_t ADay) {
-    // Check if date is correct
-    if(((AMonth==4 or AMonth==6 or AMonth==9 or AMonth==11) and ADay==31) or \
-        (AMonth==2 and ADay==31) or \
-        (AMonth==2 and ADay==30) or \
-        (AMonth==2 and ADay==29 and !IsLeap(AYear))) {
-        Uart.Printf("Wrong date\r");
-        return;
-    }
-    else {
-        BKP_WriteBackupRegister(BKPREG_YEAR, AYear);
-        BKP_WriteBackupRegister(BKPREG_MONTH, AMonth);
-        BKP_WriteBackupRegister(BKPREG_DAY, ADay);
-    }
-}
-
-// This function is called when 1 Day has elapsed
-void TimeCounter_t::DateUpdate(void) {
-    uint16_t Year = BKP_ReadBackupRegister(BKPREG_YEAR);
-    uint8_t Month = BKP_ReadBackupRegister(BKPREG_MONTH);
-    uint8_t Day   = BKP_ReadBackupRegister(BKPREG_DAY);
-
-    if(Month==2) {
-        if(Day < 28) Day++;
-        else if(Day == 28) {    // Leap Year Correction
-            if (IsLeap(Year)) Day++;
-            else {
-                Month++;
-                Day=1;
-            }
-        }
-        else if (Day == 29) {
-            Month++;
-            Day=1;
-        }
-    }
-    else if (Month==4 or Month==6 or Month==9 or Month==11) {
-        if(Day < 30) Day++;
-        else {  // == 30, inc month
-            Month++;
-            Day=1;
-        }
-    }
-    else { // 1, 3, 5, 7, 8, 10, 12
-        if(Day < 31) Day++;
-        else {  // == 31, inc month
-            if(Month != 12) {
-                Month++;
-                Day=1;
-            }
-            else { // New year
-                Month = 1;
-                Day = 1;
-                Year++;
-            }
-        }
-    }
-    // Save date
-    BKP_WriteBackupRegister(BKPREG_YEAR, Year);
-    BKP_WriteBackupRegister(BKPREG_MONTH, Month);
-    BKP_WriteBackupRegister(BKPREG_DAY, Day);
-}
-#endif
-
-// ================================== IRQ ======================================
-void RTC_IRQHandler(void) {
-    if (RTC_GetITStatus(RTC_IT_SEC) != RESET) {
-        RTC_ClearITPendingBit(RTC_IT_SEC);
-        NVIC_ClearPendingIRQ(RTC_IRQn);
-        if(RTC_GetCounter() == 86399) {
-            RTC_WaitForLastTask();
-            RTC_SetCounter(0);
-#ifdef DATE_ENABLED
-            Time.DateUpdate();
-#endif
-            RTC_WaitForLastTask();
-        }
-    }
-}
-

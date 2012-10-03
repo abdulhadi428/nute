@@ -28,6 +28,8 @@ private:
     void DisplayYear(bool ShowNotClear)   { Lcd.Printf(7,  4, (ShowNotClear? "%04u" : "    "), IDateTime.Year); }
     void DisplayMonth(bool ShowNotClear)  { Lcd.Printf(7,  5, (ShowNotClear? "%02u" : "  "),   IDateTime.Month); }
     void DisplayDay(bool ShowNotClear)    { Lcd.Printf(7,  6, (ShowNotClear? "%02u" : "  "),   IDateTime.Day);  }
+    uint32_t ShowTmr;
+    void EnterIdle();
     // Inc / Dec
     void IInc(bool AFast, int32_t *PValue, int32_t AMaxValue, int32_t AMinValue);
     void IDec(bool AFast, int32_t *PValue, int32_t AMaxValue, int32_t AMinValue);
