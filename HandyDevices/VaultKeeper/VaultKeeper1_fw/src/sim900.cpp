@@ -52,8 +52,8 @@ void sim900_t::On() {
         Com.Printf("3.");
         if(Command("AT+CMGF=1") != erOk) continue;  // SMS in text mode
         Com.Printf("4.");
-        if(DisableCellBrc()     != erOk) continue;  // Disable cell broadcast
-        Com.Printf("5.");
+//        if(DisableCellBrc()     != erOk) continue;  // Disable cell broadcast
+//        Com.Printf("5.");
         if(NetRegistration()    != erOk) continue;  // Wait for modem to connect
         Com.Printf("6.");
         //Command("AT+CSQ");                          // Get signal parameters

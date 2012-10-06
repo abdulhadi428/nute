@@ -18,7 +18,7 @@
 #define MDM_RX_TIMEOUT      450   // ms
 #define MDM_SIM_TIMEOUT     4005  // ms
 #define MDM_NETREG_TIMEOUT  20007 // ms
-#define GPRS_TIMEOUT        54000 // ms
+#define GPRS_TIMEOUT        180000// ms
 #define MDM_SMS_TIMEOUT     18000 // ms
 
 class sim900_t {
