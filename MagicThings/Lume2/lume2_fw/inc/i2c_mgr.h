@@ -20,10 +20,6 @@
 //#define I2C_POLL_ONLY   // Decide which features needed. When POLL_ONLY, no Cmd Query and DMA will be used.
 #define I2C_CLOCK_FREQ          100000  // 100 or 400 kHz
 
-// Special pin for pulling i2c up
-#define I2C_PIN_PORT    GPIOB
-#define I2C_PIN_N       8
-
 // DMA
 #ifndef I2C_POLL_ONLY
 #define I2C_DMA_CHNL_TX         DMA1_Channel6
@@ -80,6 +76,8 @@ private:
     bool IsRxNotEmpty() { return (I2C1->SR1 & 0x0040); }
     void ClearAddrFlag() { (void)I2C1->SR1; (void)I2C1->SR2; }
     bool IsBusy() {return (I2C1->SR2 & 0x0002); }
+    // Hardware init
+    void HwInit();
 #ifndef I2C_POLL_ONLY
     uint32_t Timer;
     bool IsError;

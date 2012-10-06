@@ -43,6 +43,7 @@ public:
 		unhandled_presses--;
 		return true;
 	}
+	void ResetPresses() { unhandled_presses = 0; }
 
 	friend class Keys_t;
 };

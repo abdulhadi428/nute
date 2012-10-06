@@ -8,7 +8,7 @@ i2cMgr_t i2cMgr;
 #ifndef I2C_POLL_ONLY
 void i2cMgr_t::Task() {
     if (IsError) {
-        Init();
+        HwInit();
         return;
     }
     uint8_t IEvt;
@@ -18,10 +18,12 @@ void i2cMgr_t::Task() {
         //Uart.Printf("R: %u; St: %u\r", RIndx, Cmd[RIndx]->State);
         switch(Cmd[RIndx]->State) {
             case CmdPending:
-                //Uart.Printf("==== Pnd %u ====\r", RIndx);
                 // Check if Busy and timeout after Stop
                 if(IsBusy()) {
-                    if(Delay.Elapsed(&Timer, 540)) IsError = true;   // Reset I2C
+                    if(Delay.Elapsed(&Timer, 117)) {
+                        Uart.Printf("Too busy\r");
+                        IsError = true;   // Reset I2C
+                    }
                     break;
                 }
                 // Clear flags
@@ -32,6 +34,7 @@ void i2cMgr_t::Task() {
                 if (SendStart() == I2C_OK) {    // Send Start
                     // Send Addr of needed type
                     if ((Cmd[RIndx]->BufToWrite.Length != 0) or Cmd[RIndx]->ByteWrite) {
+                        //Uart.Printf("Addr: %X\r", Cmd[RIndx]->Address);
                         I2C_Send7bitAddress(I2C1, ((Cmd[RIndx]->Address) << 1), I2C_Direction_Transmitter);
                         Cmd[RIndx]->State = CmdWritingAddrTX;
                     }
@@ -42,7 +45,6 @@ void i2cMgr_t::Task() {
                 } // if start
                 else {
                     Uart.Printf("Start fail\r");
-                    Cmd[RIndx]->State = CmdFailed;
                     IsError = true;
                 }
                 break;
@@ -68,9 +70,9 @@ void i2cMgr_t::Task() {
                     }
                 }
                 else if(IsNack()) {
-                    //Uart.Printf("NACK 1\r");
+                    Uart.Printf("%X NACK 1\r", Cmd[RIndx]->Address);
                     Cmd[RIndx]->State = CmdFailed;
-                    GetNext();
+                    StopAndGetNext();
                 }
                 break;  // Otherwise still sending address
 
@@ -110,7 +112,7 @@ void i2cMgr_t::Task() {
                 } // if byte sent
                 else if(IsNack()) {
                     Cmd[RIndx]->State = CmdFailed;
-                    GetNext();
+                    StopAndGetNext();
                     Uart.Printf("NACK 2\r");
                 }
                 break;  // Otherwise still sending byte
@@ -205,7 +207,7 @@ void i2cMgr_t::Task() {
                 IEvt = CheckManyReading();
                 if (IEvt == I2C_OK) {
                     Cmd[RIndx]->State = CmdSucceded;
-                    Uart.Printf("i %A\r", Cmd[RIndx]->BufToRead.P, Cmd[RIndx]->BufToRead.Length);
+                    //Uart.Printf("i %A\r", Cmd[RIndx]->BufToRead.P, Cmd[RIndx]->BufToRead.Length);
                     StopAndGetNext();
                 }
                 else if (IEvt != I2C_WAITING) { // Some error occured
@@ -296,10 +298,9 @@ void i2cMgr_t::StopAndGetNext() {
 #endif
 
 // ================================ Init & Add Cmd =============================
-void i2cMgr_t::Init() {
-    // Switch pull-up on
-    klGpioSetupByN(I2C_PIN_PORT, I2C_PIN_N, GPIO_Mode_Out_PP);
-    klGpioSetByN(I2C_PIN_PORT, I2C_PIN_N);  // Pull-up on
+void i2cMgr_t::HwInit() {
+	Uart.Printf("I2C HwInit\r");
+	Uart.FlushTx();
     I2C_DeInit(I2C1);
     // ==== First, check if bus is not in BUSY state ====
     klPin_t Scl, Sda;
@@ -307,19 +308,24 @@ void i2cMgr_t::Init() {
     Sda.Init(GPIOB, 7, GPIO_Mode_IN_FLOATING);
     Scl = 1;    // Clk Idle High
     Sda = 1;    // Try to set 1 on SDA
-    if(Sda == 0) while(1) {  // Look at result
-        // Send clock pulse
-        Scl = 0; Delay.ms(1);
-        Scl = 1; Delay.ms(1);
-        if(Sda == 1) {  // looks like released bus, send stop (SDA Lo-Hi when SCL High)
-            Scl = 0; Delay.ms(1);
-            Sda.Init(GPIOB, 7, GPIO_Mode_Out_OD);
-            Sda = 0; Delay.ms(1);
-            Scl = 1; Delay.ms(1);
-            Sda = 1; Delay.ms(1);
-            break;
-        }
-    } // while
+    if(Sda == 0) {
+    	Uart.Printf("SDA 0\r");
+    	Uart.FlushTx();
+    	while(1) {  // Look at result
+			// Send clock pulse
+			Scl = 0; Delay.ms(1);
+			Scl = 1; Delay.ms(1);
+			if(Sda == 1) {  // looks like released bus, send stop (SDA Lo-Hi when SCL High)
+				Scl = 0; Delay.ms(1);
+				Sda.Init(GPIOB, 7, GPIO_Mode_Out_OD);
+				Sda = 0; Delay.ms(1);
+				Scl = 1; Delay.ms(1);
+				Sda = 1; Delay.ms(1);
+				break;
+			}
+		} // while
+    	Uart.Printf("SDA ok\r");
+    }
     // ==== Proceed with init ====
     // Init GPIO - SCL & SDA
     klGpioSetupByMsk(GPIOB, GPIO_Pin_6 | GPIO_Pin_7, GPIO_Mode_AF_OD);
@@ -335,27 +341,34 @@ void i2cMgr_t::Init() {
     I2C_Init(I2C1, &I2C_InitStructure);
     I2C_Cmd(I2C1, ENABLE);
     I2C_GetLastEvent(I2C1); // Clear flags
+    // ==== Init DMA ====
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+#ifndef I2C_POLL_ONLY
+    IsError = false;
+#endif
+}
 
+void i2cMgr_t::Init() {
+	HwInit();
 #ifndef I2C_POLL_ONLY
     // ==== Init manager ====
     RIndx = 0;
     WIndx = 0;
     // Reset stage of all commands
     for (uint8_t i=0; i<I2C_CMD_QUEUE_LENGTH; i++) Cmd[i] = 0; // Reset all pointers
-    // ==== Init DMA ====
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
-    IsError = false;
 #endif
 }
 
 #ifndef I2C_POLL_ONLY
 void i2cMgr_t::AddCmd(I2C_Cmd_t *PCmd) {
     //Uart.Printf("WIndx: %u\r", WIndx);
-    PCmd->State = CmdPending;
-    Cmd[WIndx] = PCmd; // Add PCmd to buffer
-    //Uart.Printf("Cmd Addr: %X\r", PCmd->Address);
-    // Process command queue
-    if (++WIndx >= I2C_CMD_QUEUE_LENGTH) WIndx = 0;
+    if(Cmd[WIndx] == 0) {   // Check if buffer cell is empty
+        PCmd->State = CmdPending;
+        Cmd[WIndx] = PCmd; // Add PCmd to buffer
+        //Uart.Printf("Cmd Addr: %X\r", PCmd->Address);
+        if (++WIndx >= I2C_CMD_QUEUE_LENGTH) WIndx = 0; // Process command queue
+    }
+    else Uart.Printf("i2c q ovf\r");
 }
 
 void i2cMgr_t::GetNext() {
@@ -368,40 +381,46 @@ void i2cMgr_t::GetNext() {
 // =========================== Polling functions ===============================
 // Wait for Idle Bus
 uint8_t i2cMgr_t::BusyWait() {
-    uint32_t FTimeout = I2C_TIMEOUT;
-    while(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY))
-        if((FTimeout--) == 0) {
-            Uart.Printf("I2C BusyWait timeout\r");
+	uint32_t FTmr;
+	Delay.Reset(&FTmr);
+	uint16_t ISR2;
+	do {
+		ISR2 = I2C1->SR2;
+		if(Delay.Elapsed(&FTmr, 4)) {
+            Uart.Printf("I2C Bsy: %04X\r", ISR2);
             return I2C_ERR_TIMEOUT;
-        }
+		}
+	} while(ISR2 & 0x0002);
     return I2C_OK;
 }
 uint8_t i2cMgr_t::SendStart(void) {
     I2C_GenerateSTART(I2C1, ENABLE);
-    uint32_t FTimeout = I2C_TIMEOUT;
-    uint32_t IEvt;
+    uint32_t FTmr;
+    Delay.Reset(&FTmr);
+    uint16_t ISR1;
     do {
-        IEvt = I2C_GetLastEvent(I2C1);
-        if ((FTimeout--) == 0) {
-            Uart.Printf("S evt: %08X\r", IEvt);
+        ISR1 = I2C1->SR1;
+        if(Delay.Elapsed(&FTmr, 4)) {
+            Uart.Printf("S evt: %04X\r", ISR1);
             return I2C_ERR_NOMASTER;
         }
-    } while (IEvt != I2C_EVENT_MASTER_MODE_SELECT);
+    } while (!(ISR1 &0x0001));	// Start condition generated
     return I2C_OK;
 }
 uint8_t i2cMgr_t::SendAddrTXPoll(uint8_t AAddr) {
-    //Uart.Printf("I2C TX Addr: %X\r", AAddr);
+    Uart.Printf("Addr: %X\r", AAddr);
     uint32_t IEvt;
     I2C_Send7bitAddress(I2C1, (AAddr << 1), I2C_Direction_Transmitter);
-    uint32_t FTimeout = I2C_TIMEOUT;
+    uint32_t FTmr;
+    Delay.Reset(&FTmr);
     do {
         IEvt = I2C_GetLastEvent(I2C1);
         if (IEvt & I2C_EVENT_SLAVE_ACK_FAILURE) {   // NACK occured, slave doesn't answer
-            Uart.Printf("I2C Slave Addr TX NACK\r");
+            Uart.Printf("Addr TX NACK\r");
             return I2C_ERR_SLAVE_NACK;
         }
-        if ((FTimeout--) == 0) {
-            Uart.Printf("I2C Slave Addr Timeout\r");
+        if(Delay.Elapsed(&FTmr, 4)) {
+            Uart.Printf("Addr Err: %08X\r", IEvt);  // May occur if CPU clock is too low
             return I2C_ERR_TIMEOUT;
         }
     } while (IEvt != I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED);
@@ -415,11 +434,11 @@ uint8_t i2cMgr_t::SendAddrRXPoll(uint8_t AAddr) {
     do {
         IEvt = I2C_GetLastEvent(I2C1);
         if (IEvt & I2C_EVENT_SLAVE_ACK_FAILURE) {   // NACK occured, slave doesn't answer
-            Uart.Printf("I2C Slave Addr RX NACK\r");
+            Uart.Printf("Addr RX NACK\r");
             return I2C_ERR_SLAVE_NACK;
         }
         if ((FTimeout--) == 0) {
-            Uart.Printf("I2C Slave Addr Timeout\r");
+            Uart.Printf("Addr RX Err\r");
             return I2C_ERR_TIMEOUT;
         }
     } while (IEvt != I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED);
@@ -429,117 +448,115 @@ uint8_t i2cMgr_t::SendAddrRXPoll(uint8_t AAddr) {
 
 uint8_t i2cMgr_t::CmdPoll(I2C_Cmd_t ACmd) {
 	//Uart.Printf("i2c Cmd Poll\r");
-	if(BusyWait()) return I2C_ERR_TIMEOUT;
+	while(BusyWait()) HwInit();
 	if(ACmd.BufToWrite.Length == 0) return I2C_OK;
-	uint8_t rslt=I2C_ERR_TIMEOUT;
+	// ==== First stage ====
+    //Uart.Printf("i2c write: %A\r", ACmd.BufToWrite.P, ACmd.BufToWrite.Length);
+    while(SendStart() != I2C_OK) HwInit();
+	uint8_t rslt=I2C_OK;
     uint32_t IEvt, ITimeout;
     uint8_t i, b;
-	// ==== First stage ====
-    //Uart.Printf("i2c write: %A\r", ACmd.DataToWrite.Buf, ACmd.DataToWrite.Length);
-	if ((rslt = SendStart()) == I2C_OK) {
-		rslt = SendAddrTXPoll(ACmd.Address);
-		i = 0;
-		while((i < ACmd.BufToWrite.Length) and (rslt == I2C_OK)) {
-		    b = ACmd.BufToWrite.P[i];
-			//Uart.Printf("%X\r", b);
-			I2C_SendData(I2C1, b);
-			ITimeout = I2C_TIMEOUT;
-			do {	// Check if transmitted
-				IEvt = I2C_GetLastEvent(I2C1);
-				if (IEvt & I2C_EVENT_SLAVE_ACK_FAILURE) {   // NACK occured, slave doesn't answer
-					Uart.Printf("\rI2C Slave NACK\r");
-					rslt = I2C_ERR_SLAVE_NACK;
-					break;
-				}
-				if(ITimeout-- == 0) {
-					rslt = I2C_ERR_TIMEOUT;
-					break;
-				}
-			} while(IEvt != I2C_EVENT_MASTER_BYTE_TRANSMITTED);
-			i++;
-		} // while
+	rslt = SendAddrTXPoll(ACmd.Address);
+	i = 0;
+	while((i < ACmd.BufToWrite.Length) and (rslt == I2C_OK)) {
+		b = ACmd.BufToWrite.P[i];
+		//Uart.Printf("%X\r", b);
+		I2C_SendData(I2C1, b);
+		ITimeout = I2C_TIMEOUT;
+		do {	// Check if transmitted
+			IEvt = I2C_GetLastEvent(I2C1);
+			if (IEvt & I2C_EVENT_SLAVE_ACK_FAILURE) {   // NACK occured, slave doesn't answer
+				Uart.Printf("\rNACK\r");
+				rslt = I2C_ERR_SLAVE_NACK;
+				break;
+			}
+			if(ITimeout-- == 0) {
+				rslt = I2C_ERR_TIMEOUT;
+				break;
+			}
+		} while(IEvt != I2C_EVENT_MASTER_BYTE_TRANSMITTED);
+		i++;
+	} // while
+	if(rslt != I2C_OK) return rslt;
 
-		// ==== Second stage ====
-		if((ACmd.BufToRead.Length != 0) and (rslt == I2C_OK)) {
-			//Uart.Printf("i2c read %u\r", ACmd.DataToRead.Length);
-			if((rslt = SendStart()) == I2C_OK) {
-				if((rslt = SendAddrRXPoll(ACmd.Address)) == I2C_OK) {
-					// Act accordingly to number of bytes to receive
-					if(ACmd.BufToRead.Length == 1) {		// 1 byte to read
-						I2C_AcknowledgeConfig(I2C1, DISABLE);
-						I2C_GenerateSTOP(I2C1, ENABLE);
-						// Wait for the byte to be received
-						ITimeout = I2C_TIMEOUT;
-						while(1) {	// Check if received
-						    if(I2C_GetFlagStatus(I2C1, I2C_FLAG_RXNE) == SET) {
-								ACmd.BufToRead.P[0] = I2C_ReceiveData(I2C1);
-								break;
-							}
-							if(ITimeout-- == 0) {
-								rslt = I2C_ERR_TIMEOUT;
-								break;
-							}
-						} // while
-					} // if 1
-					else if(ACmd.BufToRead.Length == 2) {	// 2 bytes to read
-						I2C_AcknowledgeConfig(I2C1, DISABLE);
-						// Wait for the two bytes to be received
+	// ==== Second stage ====
+	if(ACmd.BufToRead.Length == 0) {
+		I2C_GenerateSTOP(I2C1, ENABLE);
+		return I2C_OK;
+	}
+	else {
+		//Uart.Printf("i2c read %u\r", ACmd.DataToRead.Length);
+		if((rslt = SendStart()) == I2C_OK) {
+			if((rslt = SendAddrRXPoll(ACmd.Address)) == I2C_OK) {
+				// Act accordingly to number of bytes to receive
+				if(ACmd.BufToRead.Length == 1) {		// 1 byte to read
+					I2C_AcknowledgeConfig(I2C1, DISABLE);
+					I2C_GenerateSTOP(I2C1, ENABLE);
+					// Wait for the byte to be received
+					ITimeout = I2C_TIMEOUT;
+					while(1) {	// Check if received
+						if(I2C_GetFlagStatus(I2C1, I2C_FLAG_RXNE) == SET) {
+							ACmd.BufToRead.P[0] = I2C_ReceiveData(I2C1);
+							break;
+						}
+						if(ITimeout-- == 0) {
+							rslt = I2C_ERR_TIMEOUT;
+							break;
+						}
+					} // while
+				} // if 1
+				else if(ACmd.BufToRead.Length == 2) {	// 2 bytes to read
+					I2C_AcknowledgeConfig(I2C1, DISABLE);
+					// Wait for the two bytes to be received
+					ITimeout = I2C_TIMEOUT;
+					while(1) {
+						IEvt = I2C_GetLastEvent(I2C1);
+						if(IEvt & I2C_FLAG_BTF) {
+							I2C_GenerateSTOP(I2C1, ENABLE);
+							ACmd.BufToRead.P[0] = I2C_ReceiveData(I2C1);
+							ACmd.BufToRead.P[1] = I2C_ReceiveData(I2C1);
+							break;
+						}
+						if(ITimeout-- == 0) {
+							rslt = I2C_ERR_TIMEOUT;
+							break;
+						}
+					} // while
+				}
+				else {	// many bytes to read
+					I2C_AcknowledgeConfig(I2C1, ENABLE);
+					i = 0;
+					while((i < ACmd.BufToRead.Length) and (rslt == I2C_OK)) {
 						ITimeout = I2C_TIMEOUT;
 						while(1) {
 							IEvt = I2C_GetLastEvent(I2C1);
-							if(IEvt & I2C_FLAG_BTF) {
-								I2C_GenerateSTOP(I2C1, ENABLE);
-								ACmd.BufToRead.P[0] = I2C_ReceiveData(I2C1);
-								ACmd.BufToRead.P[1] = I2C_ReceiveData(I2C1);
+							if(i == ACmd.BufToRead.Length-3) {	// Catch BTF
+								if(IEvt & I2C_FLAG_BTF) {
+									__disable_irq();
+									I2C_AcknowledgeConfig(I2C1, DISABLE);
+									ACmd.BufToRead.P[i] = I2C_ReceiveData(I2C1);
+									I2C_GenerateSTOP(I2C1, ENABLE);
+									i++;
+									ACmd.BufToRead.P[i] = I2C_ReceiveData(I2C1);
+									__enable_irq();
+									break;
+								}
+							}
+							else if(IEvt & I2C_FLAG_RXNE) {
+								ACmd.BufToRead.P[i] = I2C_ReceiveData(I2C1);
 								break;
 							}
+
 							if(ITimeout-- == 0) {
 								rslt = I2C_ERR_TIMEOUT;
 								break;
 							}
-						} // while
-					}
-					else {	// many bytes to read
-						I2C_AcknowledgeConfig(I2C1, ENABLE);
-						i = 0;
-						while((i < ACmd.BufToRead.Length) and (rslt == I2C_OK)) {
-							ITimeout = I2C_TIMEOUT;
-							while(1) {
-								IEvt = I2C_GetLastEvent(I2C1);
-								if(i == ACmd.BufToRead.Length-3) {	// Catch BTF
-									if(IEvt & I2C_FLAG_BTF) {
-										__disable_irq();
-										I2C_AcknowledgeConfig(I2C1, DISABLE);
-										ACmd.BufToRead.P[i] = I2C_ReceiveData(I2C1);
-										I2C_GenerateSTOP(I2C1, ENABLE);
-										i++;
-										ACmd.BufToRead.P[i] = I2C_ReceiveData(I2C1);
-										__enable_irq();
-										break;
-									}
-								}
-								else if(IEvt & I2C_FLAG_RXNE) {
-									ACmd.BufToRead.P[i] = I2C_ReceiveData(I2C1);
-									break;
-								}
-
-								if(ITimeout-- == 0) {
-									rslt = I2C_ERR_TIMEOUT;
-									break;
-								}
-							} // while 1
-							i++;
-						} // while
-					} // many bytes to read
-				} // Send addr
-			} // send repstart
-		} // if second stage
-
-		else {	// only write operation (or failure), generate Stop
-			//Uart.Printf("st\r");
-			I2C_GenerateSTOP(I2C1, ENABLE);
-		}
-	} // if start
-    //if(rslt == I2C_OK) Uart.Printf("Done\r");
+						} // while 1
+						i++;
+					} // while
+				} // many bytes to read
+			} // Send addr
+		} // send repstart
+	} // if second stage
 	return rslt;
 }

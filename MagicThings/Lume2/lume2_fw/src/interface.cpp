@@ -42,6 +42,8 @@ void Interface_t::Task() {
                 Delay.Reset(&BckLtTmr);
             }
             if(Keys.Enter.WasJustPressed()) {
+                Keys.Up.ResetPresses();
+                Keys.Down.ResetPresses();
                 State = msHour;
                 IsDisplayed = true;
                 Delay.Reset(&IBlinkTmr);

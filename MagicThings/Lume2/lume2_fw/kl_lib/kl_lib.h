@@ -111,6 +111,19 @@ public:
     void SetFreqHz(uint32_t AFreqHz) { klTimer_t::SetFreqHz(AFreqHz); }
 };
 
+// =========================== Colors ==========================================
+struct Color_t {
+    uint8_t Red, Green, Blue;
+    bool operator == (const Color_t AColor) { return ((Red == AColor.Red) and (Green == AColor.Green) and (Blue == AColor.Blue)); }
+    //bool operator != (const Color_t AColor) { return ((this->Red != AColor.Red) || (this->Green != AColor.Green) || (this->Blue != AColor.Blue)); }
+    //bool IsOn(void) const { return (Red || Green || Blue); }
+};
+#define clBlack     ((Color_t){0,   0,   0})
+#define clRed       ((Color_t){255, 0,   0})
+#define clGreen     ((Color_t){0,   255, 0})
+#define clBlue      ((Color_t){0,   0,   255})
+#define clYellow    ((Color_t){255, 255, 0})
+
 // ========================= System clock and ID ===============================
 enum Clk_t {clk1MHzInternal, clk2MHzInternal, clk4MHzInternal, clk8MHzInternal, clk8MHzExternal,
 #if defined STM32F10X_HD

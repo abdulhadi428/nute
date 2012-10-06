@@ -13,6 +13,8 @@
 #include "kl_time.h"
 #include "interface.h"
 #include "keys.h"
+#include "i2c_mgr.h"
+#include "leds_pca.h"
 
 // Prototypes
 static void Init();
@@ -26,6 +28,8 @@ int main() {
         Lcd.Task();
         Interface.Task();
         Keys.Task();
+        i2cMgr.Task();
+        Leds.Task();
     } // while 1
 }
 
@@ -43,5 +47,8 @@ static inline void Init() {
     Keys.Init();
     Interface.Init();
 
-//    i2cMgr.Init();
+    i2cMgr.Init();
+    Leds.Init();
+    Leds.Set(0, 0, 100);
+    Leds.Set(1, 0, 100);
 }
