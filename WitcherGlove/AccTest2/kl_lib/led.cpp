@@ -33,7 +33,7 @@ void LedBlink_t::Task() {
  */
 void LedSmooth_t::Init(GPIO_TypeDef *AGpio, uint16_t APinNumber, TIM_TypeDef* ATimer, uint16_t ATopValue, uint16_t APrescaler, uint8_t AChannelNumber, bool InvertedPolarity) {
     // ==== Gpio ====
-    klGpioSetupByN(AGpio, APinNumber, GPIO_Mode_AF_PP);
+    klPinSetup(AGpio, APinNumber, pmOutAFPushPull);
     // ==== Timer ====
     IPwmTimer = ATimer;
     // Clock
@@ -91,9 +91,9 @@ void LedSmooth_t::Task() {
 // ============================= RGBLed_t ======================================
 void LedRGB_t::Init() {
     // ==== GPIO ====
-	klGpioSetupByN(GPIOA, 10, GPIO_Mode_AF_PP);
-	klGpioSetupByN(GPIOA, 8,  GPIO_Mode_AF_PP);
-	klGpioSetupByN(GPIOA, 11, GPIO_Mode_AF_PP);
+    klPinSetup(GPIOA, 10, pmOutAFPushPull);
+    klPinSetup(GPIOA, 8,  pmOutAFPushPull);
+    klPinSetup(GPIOA, 11, pmOutAFPushPull);
     // ==== Timer ====
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);	// Clock
     // ==== Timebase and general ====

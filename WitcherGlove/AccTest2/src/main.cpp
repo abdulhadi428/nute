@@ -7,24 +7,21 @@
 
 
 
-static void Init();
+static inline void Init();
 
 int main() {
     Init();
 
-    uint32_t Tmr;
+  //  uint32_t Tmr;
     while(1) {
         Uart.Task();
-        if(Delay.Elapsed(&Tmr, 99)) {
+//        if(Delay.Elapsed(&Tmr, 99)) {
+        if(Acc.IrqIsHi()) {
             Acc.Read();
-//            uint16_t tmp = Acc.ReadReg(OUT_X_H);
-//            tmp <<= 8;
-//            tmp |= Acc.ReadReg(OUT_X_L);
-//            int16_t a = (int16_t)tmp;
-//            //Uart.Printf("X: %d; Y: %d; Z: %d\r", );
-//            Uart.Printf("tmp: %04X; a: %d\r", tmp, a);
         }
-    }
+
+
+    } // while(1)
 }
 
 static void Init() {

@@ -17,37 +17,50 @@
  * PA4 = 11 = IRQ
  */
 
-#define ACC_CLK     GPIO_Pin_0
-#define ACC_MOSI    GPIO_Pin_1
-#define ACC_MISO    GPIO_Pin_2
-#define ACC_CS      GPIO_Pin_3
-#define ACC_IRQ     GPIO_Pin_4
+#define ACC_CLK     0
+#define ACC_DODI    1
+//#define ACC_MISO    2
+#define ACC_CS      3
+#define ACC_IRQ     4
 
-#define ACC_FIFO_SZ 32
+#define ACC_FIFO_SZ (uint8_t)10  // Count of FIFO stored data, MAX=31
 
-struct Acceleration_t {
-    int16_t x, y, z;
-} PACKED;
+// Possible Datarate values
+#define ODR_1HZ         0x10
+#define ODR_10HZ        0x20
+#define ODR_25HZ        0x30
+#define ODR_50HZ        0x40
+#define ODR_100HZ       0x50
+#define ODR_200HZ       0x60
+#define ODR_400HZ       0x70
+#define ODR_1250HZ      0x90
+
+// Choose datarate here
+#define ACC_DATARATE    ODR_10HZ
+
+enum DataDir_t {ddIn, ddOut};   // relative to ARM
 
 class Acc_t {
 private:
-    void CsHi() { klGpioSetByMsk(GPIOA, ACC_CS); }
-    void CsLo() { klGpioClearByMsk(GPIOA, ACC_CS); }
-    void ClkHi() { klGpioSetByMsk(GPIOA, ACC_CLK);  }
-    void ClkLo() { klGpioClearByMsk(GPIOA, ACC_CLK); }
-    void MosiHi() { klGpioSetByMsk(GPIOA, ACC_MOSI);  }
-    void MosiLo() { klGpioClearByMsk(GPIOA, ACC_MOSI); }
-    bool MisoIsHi() { return klGpioIsSetByMsk(GPIOA, ACC_MISO); }
+    // Pin operations
+    void CsHi() { klPinSet(GPIOA, ACC_CS); }
+    void CsLo() { klPinClear(GPIOA, ACC_CS); }
+    void ClkHi() { klPinSet(GPIOA, ACC_CLK);  }
+    void ClkLo() { klPinClear(GPIOA, ACC_CLK); }
+    void DodiHi() { klPinSet(GPIOA, ACC_DODI);  }
+    void DodiLo() { klPinClear(GPIOA, ACC_DODI); }
+    bool DodiIsHi() { return klPinIsSet(GPIOA, ACC_DODI); }
+    // Read/Write
     void ReadNBytes(uint8_t *PDst, uint8_t N);
-    uint16_t ReadWord();
     void WriteByte(uint8_t AByte);
     void WriteReg(uint8_t AAddr, uint8_t AValue);
 
 public:
-    Acceleration_t Buf[ACC_FIFO_SZ];
-    void Init();
+    int16_t Axis[ACC_FIFO_SZ][3];
+    uint8_t Init();
     void Read();
     uint8_t ReadReg(uint8_t AAddr);
+    bool IrqIsHi() { return klPinIsSet(GPIOA, ACC_IRQ); }
 };
 
 extern Acc_t Acc;

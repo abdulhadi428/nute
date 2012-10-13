@@ -14,44 +14,23 @@
 
 #include "tiny_sprintf.h"
 
-// ======== GPIO =========
-void klGpioSetupByMsk (GPIO_TypeDef *PGpioPort, uint16_t APinMask, GPIOMode_TypeDef AMode) {
-    // Clock
-    int IClock = 0;
-    if      (PGpioPort == GPIOA) IClock = RCC_APB2Periph_GPIOA;
-    else if (PGpioPort == GPIOB) IClock = RCC_APB2Periph_GPIOB;
-    else if (PGpioPort == GPIOC) IClock = RCC_APB2Periph_GPIOC;
-    else if (PGpioPort == GPIOD) IClock = RCC_APB2Periph_GPIOD;
-    if ((AMode == GPIO_Mode_AF_OD) || (AMode == GPIO_Mode_AF_PP)) IClock |= RCC_APB2Periph_AFIO;
-    RCC_APB2PeriphClockCmd(IClock, ENABLE);
-
-    GPIO_InitTypeDef GPIO_InitStructure;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Pin = APinMask;
-    GPIO_InitStructure.GPIO_Mode = AMode;
-    GPIO_Init(PGpioPort, &GPIO_InitStructure);
-}
-
-
-void klPin_t::Init(GPIO_TypeDef *PGpioPort, uint16_t APinNumber, GPIOMode_TypeDef AMode) {
-    IPinNumber = APinNumber;
-    IPinMask = (uint16_t)(1<<APinNumber);
-    IGPIO = PGpioPort;
-    klGpioSetupByMsk(PGpioPort, IPinMask, AMode);
-}
-
 // ======== IRQ pin =========
-void klPinIrq_t::IrqSetup(EXTITrigger_TypeDef ATriggerType) {
+void klPinIrq_t::IrqSetup(GPIO_TypeDef *PGpioPort, const uint8_t APinNumber, EXTITrigger_TypeDef ATriggerType) {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+    IPinMask = 1 << APinNumber;
     // Get IRQ channel
-    if      ((IPinNumber >= 0)  and (IPinNumber <= 4))  IChannel = EXTI0_IRQn + IPinNumber;
-    else if ((IPinNumber >= 5)  and (IPinNumber <= 9))  IChannel = EXTI9_5_IRQn;
-    else if ((IPinNumber >= 10) and (IPinNumber <= 15)) IChannel = EXTI15_10_IRQn;
+    if      ((APinNumber >= 0)  and (APinNumber <= 4))  IChannel = EXTI0_IRQn + APinNumber;
+    else if ((APinNumber >= 5)  and (APinNumber <= 9))  IChannel = EXTI9_5_IRQn;
+    else if ((APinNumber >= 10) and (APinNumber <= 15)) IChannel = EXTI15_10_IRQn;
     // EXTI line config
-    if      (IGPIO == GPIOA) GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, IPinNumber);
-    else if (IGPIO == GPIOB) GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, IPinNumber);
-    else if (IGPIO == GPIOC) GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, IPinNumber);
-    else if (IGPIO == GPIOD) GPIO_EXTILineConfig(GPIO_PortSourceGPIOD, IPinNumber);
+    uint8_t N = APinNumber / 4;    // Indx of EXTICR register
+    uint8_t Shift = (APinNumber & 0x03) * 4;
+    AFIO->EXTICR[N] &= ~((uint32_t)0b1111 << Shift);    // Clear bits
+
+    if      (PGpioPort == GPIOA) AFIO->EXTICR[N] |= (uint32_t)0b0000 << Shift;
+    else if (PGpioPort == GPIOB) AFIO->EXTICR[N] |= (uint32_t)0b0001 << Shift;
+    else if (PGpioPort == GPIOC) AFIO->EXTICR[N] |= (uint32_t)0b0010 << Shift;
+    else if (PGpioPort == GPIOD) AFIO->EXTICR[N] |= (uint32_t)0b0011 << Shift;
     // Configure EXTI line
     EXTI_InitTypeDef   EXTI_InitStructure;
     EXTI_InitStructure.EXTI_Line = IPinMask;
@@ -340,10 +319,9 @@ void CmdUnit_t::Init(uint32_t ABaudrate) {
     IDmaIsIdle = true;
     // ==== Clocks init ====
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);      // UART clock
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
     // ==== GPIO init ====
-    klGpioSetupByN(GPIOA, 9, GPIO_Mode_AF_PP);          // TX1
+    klPinSetup(GPIOA, 9, pmOutAFPushPull);      // TX1
 #ifdef RX_ENABLED
     klGpioSetupByN(GPIOA, 10, GPIO_Mode_IPU);   // RX1
 #endif

@@ -9,13 +9,13 @@
 #define KL_GPIO_H_
 
 #include <inttypes.h>
-#include "stm32f10x_gpio.h"
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_exti.h"
 #include "stm32f10x_dma.h"
 
 // =============================== General =====================================
-#define PACKED __attribute__ ((__packed__))
+#define PACKED      __attribute__ ((__packed__))
+#define NORETURN    __attribute__ ((__noreturn__))
 #ifndef countof
 #define countof(A)  (sizeof(A)/sizeof(A[0]))
 #endif
@@ -24,25 +24,86 @@
 typedef void(*ftVoid_Void)(void);
 
 // ===================== Single pin manipulations ==============================
-/*
- * GPIO_Mode_AIN, GPIO_Mode_IN_FLOATING, GPIO_Mode_IPD, GPIO_Mode_IPU,
- * GPIO_Mode_Out_OD, GPIO_Mode_Out_PP, GPIO_Mode_AF_OD, GPIO_Mode_AF_PP
- */
+enum PinMode_t {
+    pmOutPushPull    = 0b0011,  // }
+    pmOutOpenDrain   = 0b0111,  // }
+    pmOutAFPushPull  = 0b1011,  // }
+    pmOutAFOpenDrain = 0b1111,  // } 50 MHz by default
+    pmInAnalog       = 0b0000,
+    pmInFloating     = 0b0100,
+    pmInPullUp       = 0b1100,  // 11 is reserved; used here for distinction
+    pmInPullDown     = 0b1000
+};
+
+enum PinSpeed_t {
+    ps10MHz = 0b1101,
+    ps2MHz  = 0b1110,
+    ps50MHz = 0b1111
+};
+
 // Set/clear
-static inline void klGpioSetByN     (GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { PGpioPort->BSRR = (uint16_t)(1<<APinNumber); }
-static inline void klGpioSetByMsk   (GPIO_TypeDef *PGpioPort, uint16_t APinMask)   { PGpioPort->BSRR = APinMask; }
-static inline void klGpioClearByN   (GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { PGpioPort->BRR  = (uint16_t)(1<<APinNumber); }
-static inline void klGpioClearByMsk (GPIO_TypeDef *PGpioPort, uint16_t APinMask)   { PGpioPort->BRR  = APinMask; }
-static inline void klGpioToggleByN  (GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { PGpioPort->ODR ^= (uint16_t)(1<<APinNumber); }
-static inline void klGpioToggleByMsk(GPIO_TypeDef *PGpioPort, uint16_t APinMask)   { PGpioPort->ODR ^= APinMask; }
+static inline void klPinSet    (GPIO_TypeDef *PGpioPort, const uint16_t APinNumber) { PGpioPort->BSRR = (uint16_t)(1<<APinNumber); }
+static inline void klPinClear  (GPIO_TypeDef *PGpioPort, const uint16_t APinNumber) { PGpioPort->BRR  = (uint16_t)(1<<APinNumber); }
+static inline void klPinToggle (GPIO_TypeDef *PGpioPort, const uint16_t APinNumber) { PGpioPort->ODR ^= (uint16_t)(1<<APinNumber); }
 // Check state
-static inline bool klGpioIsSetByMsk  (GPIO_TypeDef *PGpioPort, uint16_t APinMask)   { return (bool)(PGpioPort->IDR & APinMask); }
-static inline bool klGpioIsSetByN    (GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { return klGpioIsSetByMsk(PGpioPort, (uint16_t)(1<<APinNumber)); }
-static inline bool klGpioIsClearByMsk(GPIO_TypeDef *PGpioPort, uint16_t APinMask)   { return !((bool)(PGpioPort->IDR & APinMask)); }
-static inline bool klGpioIsClearByN  (GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { return klGpioIsClearByMsk(PGpioPort, (uint16_t)(1<<APinNumber)); }
+static inline bool klPinIsSet  (GPIO_TypeDef *PGpioPort, const uint16_t APinNumber) { return (PGpioPort->IDR & (uint16_t)(1<<APinNumber)); }
 // Setup
-void klGpioSetupByMsk  (GPIO_TypeDef *PGpioPort, uint16_t APinMask, GPIOMode_TypeDef AMode);
-static inline void klGpioSetupByN (GPIO_TypeDef *PGpioPort, uint16_t APinNumber, GPIOMode_TypeDef AMode) { klGpioSetupByMsk(PGpioPort, (uint16_t)(1<<APinNumber), AMode); }
+static inline void klPinSetup  (GPIO_TypeDef *PGpioPort, const uint16_t APinNumber, const PinMode_t AMode, const PinSpeed_t ASpeed = ps50MHz) {
+    // ==== Clock ====
+    uint16_t IClock = 0;
+    if     (PGpioPort == GPIOA) IClock = RCC_APB2Periph_GPIOA;
+    else if(PGpioPort == GPIOB) IClock = RCC_APB2Periph_GPIOB;
+    else if(PGpioPort == GPIOC) IClock = RCC_APB2Periph_GPIOC;
+    else if(PGpioPort == GPIOD) IClock = RCC_APB2Periph_GPIOD;
+    if((AMode == pmOutAFOpenDrain) or (AMode == pmOutAFPushPull)) IClock |= RCC_APB2Periph_AFIO;
+    RCC->APB2ENR |= IClock;
+    // ==== Pin ====
+    uint32_t CnfMode = (uint32_t)AMode;
+    // If output, modify mode with speed
+    if(CnfMode & 0b0011) CnfMode &= (uint32_t)ASpeed;
+    // Setup pull-up or pull-down
+    else if(AMode == pmInPullUp) {
+        CnfMode = (uint32_t)pmInPullDown;
+        PGpioPort->ODR |= 1<<APinNumber;
+    }
+    else if(AMode == pmInPullDown) PGpioPort->ODR &= ~(1<<APinNumber);
+    // Write needed bits to control reg
+    if(APinNumber <= 7) {
+        PGpioPort->CRL &= ~((uint32_t)0b1111 << (APinNumber * 4));  // clear previous bits
+        PGpioPort->CRL |= (CnfMode << (APinNumber * 4));
+    }
+    else {
+        PGpioPort->CRH &= ~((uint32_t)0b1111 << ((APinNumber - 8) * 4)); // clear previous bits
+        PGpioPort->CRH |= (CnfMode << ((APinNumber - 8) * 4));
+    }
+}
+// Fast switch
+static inline void klPinOutPushPull(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber, const PinSpeed_t ASpeed = ps50MHz) {
+    uint32_t CnfMode = (uint32_t)pmOutPushPull & (uint32_t)ASpeed;
+    // Write needed bits to control reg
+    if(APinNumber <= 7) {
+        PGpioPort->CRL &= ~((uint32_t)0b1111 << (APinNumber * 4));  // clear previous bits
+        PGpioPort->CRL |= (CnfMode << (APinNumber * 4));
+    }
+    else {
+        PGpioPort->CRH &= ~((uint32_t)0b1111 << ((APinNumber - 8) * 4)); // clear previous bits
+        PGpioPort->CRH |= (CnfMode << ((APinNumber - 8) * 4));
+    }
+}
+static inline void klPinInPullDown(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber) {
+    PGpioPort->ODR &= ~(1<<APinNumber);
+    // Write needed bits to control reg
+    if(APinNumber <= 7) {
+        PGpioPort->CRL &= ~((uint32_t)0b1111 << (APinNumber * 4));  // clear previous bits
+        PGpioPort->CRL |= ((uint32_t)pmInPullDown << (APinNumber * 4));
+    }
+    else {
+        PGpioPort->CRH &= ~((uint32_t)0b1111 << ((APinNumber - 8) * 4)); // clear previous bits
+        PGpioPort->CRH |= ((uint32_t)pmInPullDown << ((APinNumber - 8) * 4));
+    }
+}
+
+
 // Disable JTAG, leaving SWD
 static inline void klJtagDisable(void) {
     bool AfioWasEnabled = (RCC->APB2ENR & RCC_APB2ENR_AFIOEN);
@@ -55,31 +116,12 @@ static inline void klJtagDisable(void) {
 }
 
 // ==== Class for single pin manipulation ====
-class klPin_t {
-protected:
-    GPIO_TypeDef* IGPIO;
-    uint16_t IPinMask, IPinNumber;
-public:
-    klPin_t(GPIO_TypeDef *PGpioPort, uint16_t APinNumber, GPIOMode_TypeDef AMode) { Init(PGpioPort, APinNumber, AMode); }
-    klPin_t(void) { IGPIO = 0; IPinMask = 0; IPinNumber = 0; }
-    bool operator =(const bool AValue) {
-        if (AValue) Set();
-        else Clear();
-        return true;
-    }
-    operator bool() { return klGpioIsSetByMsk(IGPIO, IPinMask); }
-    void Init(GPIO_TypeDef *PGpioPort, uint16_t APinNumber, GPIOMode_TypeDef AMode);
-    void Set(void)    { klGpioSetByMsk   (IGPIO, IPinMask); }
-    void Clear(void)  { klGpioClearByMsk (IGPIO, IPinMask); }
-    void Toggle(void) { klGpioToggleByMsk(IGPIO, IPinMask); }
-};
-
-class klPinIrq_t : public klPin_t {
+class klPinIrq_t {
 private:
-    uint32_t IChannel;
+    uint16_t IPinMask;
+    uint8_t IChannel;
 public:
-    // Interrupt
-    void IrqSetup(EXTITrigger_TypeDef ATriggerType);
+    void IrqSetup(GPIO_TypeDef *PGpioPort, const uint8_t APinNumber, EXTITrigger_TypeDef ATriggerType);
     void IrqEnable(void);
     void IrqDisable(void);
 };

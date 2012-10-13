@@ -9,56 +9,45 @@
 
 Acc_t Acc;
 
-void Acc_t::Init() {
+// Returns 0 if OK and 1 if error
+uint8_t Acc_t::Init() {
     // GPIOs
-    klGpioSetupByMsk(GPIOA, ACC_CLK | ACC_MOSI | ACC_CS, GPIO_Mode_Out_PP);
-    klGpioSetupByMsk(GPIOA, ACC_MISO, GPIO_Mode_IPD);
-
+    klPinSetup(GPIOA, ACC_CLK,  pmOutPushPull);
+    klPinSetup(GPIOA, ACC_DODI, pmOutPushPull);
+    klPinSetup(GPIOA, ACC_CS,   pmOutPushPull);
+    klPinSetup(GPIOA, ACC_IRQ,  pmInPullDown);
     CsHi();
     ClkHi();
-
-    Delay.ms(10);
-
     // Send initial commands
-    WriteReg(CTRL_REG1, 0b00100111);    // 10 Hz, normal mode, all axis enabled
+    WriteReg(CTRL_REG1, 0b00000111 | ACC_DATARATE);    // ACC_DATARATE Hz, normal mode, all axis enabled
     WriteReg(CTRL_REG2, 0b00000000);    // Filter bypassed
-//    while(1);
-    WriteReg(CTRL_REG3, 0b00000000);    // IRQs disabled
-    WriteReg(CTRL_REG4, 0b00100000);    // cont update, LSB at L reg, +-8g, no HiRes, no SelfTest, 4-wire
-    //WriteReg(CTRL_REG5, 0b00000000);    // NormMode, FIFO disabled, Irq not latched, no 4D
+    WriteReg(CTRL_REG3, 0b00000100);    // FIFO watermark irq
+//    WriteReg(CTRL_REG4, 0b00100000);    // cont update, LSB at L reg, +-8g, no HiRes, no SelfTest, 4-wire
+    WriteReg(CTRL_REG4, 0b00100001);    // cont update, LSB at L reg, +-8g, no HiRes, no SelfTest, 3-wire
     WriteReg(CTRL_REG5, 0b01000000);    // NormMode, FIFO enabled, Irq not latched, no 4D
-    //WriteReg(CTRL_REG6, 0b00000000);    // ?? no doc
-    WriteReg(FIFO_CTRL_REG, 0b10000000);// FIFO mode = Stream, trigger linked to Int1, FIFO Threshold = 0
-    //WriteReg(FIFO_SRC_REG, 0b10000000); // ??
+    WriteReg(CTRL_REG6, 0b00000000);    // No IRQ2
+    WriteReg(FIFO_CTRL_REG, 0b10000000 | ACC_FIFO_SZ);// FIFO mode = Stream, trigger linked to Int1, FIFO Threshold = ACC_FIFO_SZ
     WriteReg(INT1_CFG, 0b00000000);     // Irqs disabled
     WriteReg(INT1_SOURCE, 0b00000000);  // Irqs disabled
+    // Read WhoAmI register to check connection
     uint8_t b = ReadReg(WHO_AM_I);
-    Uart.Printf("Wai: %X\r", b);
+    //Uart.Printf("Wai: %X\r", b);
+    return (b == 0x33)? 0 : 1;
 }
 
 void Acc_t::Read() {
-    // Read 3 Axis data
-    //Acceleration_t acc;
-    uint16_t w[3];
-    CsLo();   // Select chip
-//    WriteByte(OUT_X_H | 0xC0);    // Set R/W bit to 1, set M/S to 1
-//    ReadNBytes((uint8_t*)&acc, 1);
-    WriteByte(OUT_X_L | 0xC0);
-    ReadNBytes((uint8_t*)&w, 6);
-    CsHi();
-//    bool IsNegative = (w > 0x7FFF);
-//    w >>= 6;
-    int16_t a[3];
-    for(uint8_t i=0; i<3; i++) {
-        a[i] = w[i];
-        a[i] >>= 6;
+    // Read data ACC_FIFO_SZ times
+    for(uint8_t n=0; n<ACC_FIFO_SZ; n++) {
+        // Read 3 Axis data
+        CsLo();   // Select chip
+        WriteByte(OUT_X_L | 0xC0);
+        ReadNBytes((uint8_t*)&Axis[n][0], 6);
+        CsHi();
+        // Shift data right
+        for(uint8_t i=0; i<3; i++) Axis[n][i] >>= 6;
+        Uart.Printf("X: %d; Y: %d; Z: %d\r", Axis[n][0], Axis[n][1], Axis[n][2]);
     }
-    Uart.Printf("w: %04X; a: %d\r", w[2], a[2]);
-    //Uart.Printf("X: %d; Y: %d; Z: %d\r", acc.x, acc.y, acc.z);
-    //Uart.Printf("X: %04X; Y: %04X; Z: %04X\r", acc.x, acc.y, acc.z);
-//    for(uint8_t i=0; i<ACC_FIFO_SZ; i++) {
-//
-//    }
+    Uart.Printf("\r");
 }
 
 // ================================= Low-level =================================
@@ -78,37 +67,31 @@ void Acc_t::WriteReg(uint8_t AAddr, uint8_t AValue) {
     CsHi();
 }
 
+
 inline void Acc_t::ReadNBytes(uint8_t *PDst, uint8_t N) {
+    // Switch MOSI to input
+    klPinInPullDown(GPIOA, ACC_DODI);
     while(N) {
         uint8_t b=0;
         for(uint8_t i=0; i<8; i++) {
             ClkLo();
             b <<= 1;
-            if(MisoIsHi()) b |= 0x01;
+            if(DodiIsHi()) b |= 0x01;
             ClkHi();
         } // for
         *PDst = b;
         PDst++;
         N--;
     } // while
-}
-
-inline uint16_t Acc_t::ReadWord() {
-    uint16_t r=0;
-    for(uint8_t i=0; i<8; i++) {
-        ClkLo();
-        r <<= 1;
-        if(MisoIsHi()) r |= 0x01;
-        ClkHi();
-    }
-    return r;
+    // Switch MOSI back to output
+    klPinOutPushPull(GPIOA, ACC_DODI);
 }
 
 inline void Acc_t::WriteByte(uint8_t AByte) {
     for(uint8_t i=0; i<8; i++) {
         ClkLo();
-        if(AByte & 0x80) MosiHi();
-        else MosiLo();
+        if(AByte & 0x80) DodiHi();
+        else DodiLo();
         AByte <<= 1;
         ClkHi();
     }

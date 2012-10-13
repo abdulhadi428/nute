@@ -9,7 +9,6 @@
 #define LED_H_
 
 #include "stm32f10x.h"
-#include "stm32f10x_gpio.h"
 #include "stm32f10x_tim.h"
 
 #include "kl_lib.h"
@@ -19,9 +18,13 @@ protected:
     uint16_t IPinNumber;
     GPIO_TypeDef* IGPIO;
 public:
-    void Init(GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { IGPIO = PGpioPort; IPinNumber = APinNumber; klGpioSetupByN(PGpioPort, APinNumber, GPIO_Mode_Out_PP); }
-    void On(void)  { klGpioSetByN  (IGPIO, IPinNumber); }
-    void Off(void) { klGpioClearByN(IGPIO, IPinNumber); }
+    void Init(GPIO_TypeDef *PGpioPort, uint16_t APinNumber) {
+        IGPIO = PGpioPort;
+        IPinNumber = APinNumber;
+        klPinSetup(PGpioPort, APinNumber, pmOutPushPull);
+    }
+    void On(void)  { klPinSet  (IGPIO, IPinNumber); }
+    void Off(void) { klPinClear(IGPIO, IPinNumber); }
 };
 
 class LedBlink_t : public Led_t {
@@ -41,9 +44,13 @@ private:
     uint16_t IPinNumber;
     GPIO_TypeDef* IGPIO;
 public:
-    void Init(GPIO_TypeDef *PGpioPort, uint16_t APinNumber) { IGPIO = PGpioPort; IPinNumber = APinNumber; klGpioSetupByN(PGpioPort, APinNumber, GPIO_Mode_Out_OD); }
-    void On(void)  { klGpioClearByN(IGPIO, IPinNumber); }
-    void Off(void) { klGpioSetByN  (IGPIO, IPinNumber); }
+    void Init(GPIO_TypeDef *PGpioPort, uint16_t APinNumber) {
+        IGPIO = PGpioPort;
+        IPinNumber = APinNumber;
+        klPinSetup(PGpioPort, APinNumber, pmOutPushPull);
+    }
+    void On(void)  { klPinClear(IGPIO, IPinNumber); }
+    void Off(void) { klPinSet  (IGPIO, IPinNumber); }
     void Disable(void) { Off(); IsInsideBlink = false; }
     void Blink(uint32_t ABlinkDelay) {
         IsInsideBlink = true;
