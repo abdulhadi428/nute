@@ -60,9 +60,9 @@ namespace HackerTool.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap connect16x16 {
+        internal static System.Drawing.Bitmap connect2 {
             get {
-                object obj = ResourceManager.GetObject("connect16x16", resourceCulture);
+                object obj = ResourceManager.GetObject("connect2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -77,20 +77,6 @@ namespace HackerTool.Properties {
         internal static System.Drawing.Bitmap grafic_hide_all {
             get {
                 object obj = ResourceManager.GetObject("grafic hide all", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap hackers_wallpapers {
-            get {
-                object obj = ResourceManager.GetObject("hackers-wallpapers", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap logo {
-            get {
-                object obj = ResourceManager.GetObject("logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

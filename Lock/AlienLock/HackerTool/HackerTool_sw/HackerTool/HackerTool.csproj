@@ -11,7 +11,8 @@
     <RootNamespace>HackerTool</RootNamespace>
     <AssemblyName>HackerTool</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -38,11 +39,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms.DataVisualization" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -71,6 +67,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -82,15 +79,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\logo.gif" />
-    <None Include="Resources\hackers-wallpapers.jpg" />
-    <None Include="Resources\count.gif" />
-    <None Include="Resources\connect16x16.bmp" />
-    <None Include="Resources\stop 16x16.gif" />
-    <None Include="Resources\start.bmp" />
     <None Include="Resources\grafic hide all.bmp" />
+    <None Include="Resources\count.bmp" />
+    <None Include="Resources\connect2.bmp" />
+    <None Include="Resources\start.bmp" />
+    <None Include="Resources\stop 16x16.bmp" />
     <Content Include="space.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

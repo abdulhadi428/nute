@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
+using System.Linq;
 
 namespace HackerTool {
     public enum LockState_t { Disconnected, EnteringServiceCode, WaitingCommand, AskingNewCodeA, AskingNewCodeB, AskingNewServiceCode };
@@ -159,6 +159,7 @@ namespace HackerTool {
         }
         private void btnStopIteration_Click(object sender, EventArgs e) {
             timerIteration.Enabled = false;
+            progressBar1.Value = 0;
             txtConsole.AppendText("Iteration stopped." + Environment.NewLine);
         }
         private void btnReset_Click(object sender, EventArgs e) {
@@ -480,7 +481,7 @@ namespace HackerTool {
 
         #region ========================== Iteration ===========================
         double dif(int a1, int a2) {
-            int NoiseMagn = trackBar1.Value;
+            int NoiseMagn = Lock.Complexity+1;
             if (NoiseMagn > 0) {
                 a1 += RndValue.Next(-NoiseMagn, NoiseMagn);
                 if (a1 > 9) a1 -= 10;
@@ -493,7 +494,7 @@ namespace HackerTool {
             int NoiseMagn = 4 - HTool.U; //trackBar1.Value;
             //            return (1-dist)*.1+NoiseMagn*.01;
             //return (1 - dist) / (1 + NoiseMagn);
-            return (1 - dist)/(double)Lock.Complexity + NoiseMagn * .1 + .1;
+            return (1 - dist) * (4 - NoiseMagn) / (double)Lock.Complexity/4.0 + NoiseMagn * .1 + .1;
         }        // Distance function: returns 0...255, 255 means equality
        
         int Distance(int x1, int x2, int y1, int y2) {
@@ -520,10 +521,15 @@ namespace HackerTool {
                 timerIteration.Enabled = false;
                 return;
             }
-            //progressBar1.Value = HTool.U;
+            progressBar1.Value = HTool.U;
             //textBox3.Text = HTool.U.ToString();
 
             IterationCount++;
+            // Autoreset if needed
+            if (cbAutoreset.Checked && (IterationCount >= numericUpDown2.Value)) {
+                btnReset_Click(sender, null);
+                return;
+            }
             lblIterationCounter.Text = "Iteration: " + IterationCount.ToString();
             FillInstantTable();
             // Accumulate values
@@ -539,35 +545,12 @@ namespace HackerTool {
             for (int y = 0; y <= 9; y++) {
                 for (int x = 0; x <= 9; x++) {
                     NormValue = Math.Round(255 * (AccumTable[x, y] / MaxValue));
-                    dgvTable.Rows[y].Cells[x + 1].Style.BackColor = Color.FromArgb(0, (int)NormValue, 0);
+                    dgvTable.Rows[y].Cells[x + 1].Style.BackColor = Color.FromArgb(0, (int)NormValue, (int)NormValue);
                 }
             }
         }
 
         #endregion
-
-
-        // DEBUG controls
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e) {
-            Lock.Complexity = (int)numericUpDown1.Value;
-        }
-
-
-        #region ========= Autoreset =========
-        private void numericUpDownAutoReset_ValueChanged(object sender, EventArgs e) {
-            timerReset.Interval = (int)numericUpDownAutoReset.Value;
-        }
-
-        private void cbAutoreset_CheckedChanged(object sender, EventArgs e) {
-            timerReset.Enabled = cbAutoreset.Checked;
-        }
-
-        private void timerReset_Tick(object sender, EventArgs e) {
-            btnReset_Click(sender, e);
-        }
-
-        #endregion
-
 
 
 
@@ -622,18 +605,7 @@ namespace HackerTool {
             State = IState;     // Restore state
             return true;
         }
-/*
-        public bool Nop() {
-            LockState_t IState = State;     // Save current state
-            State = LockState_t.Disconnected;
-            if (!Tool.SendCmd("N")) return false;
-            if (!Tool.WaitAnswer()) return false;
-            // Check what received
-            if (!Tool.RXString.StartsWith("N")) return false;
-            State = IState;     // Restore state
-            return true;
-        }
- */ 
+
         public bool Open() {
             LockState_t IState = State;     // Save current state
             State = LockState_t.Disconnected;
