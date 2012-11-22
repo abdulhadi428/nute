@@ -15,6 +15,7 @@
 #include "keys.h"
 #include "i2c_mgr.h"
 #include "leds_pca.h"
+#include "showtime.h"
 
 // Prototypes
 static void Init();
@@ -34,7 +35,7 @@ int main() {
 }
 
 static inline void Init() {
-    InitClock(clk2MHzInternal);
+    InitClock(clk8MHzInternal);
     klJtagDisable();
 
     Delay.Init();
@@ -49,6 +50,4 @@ static inline void Init() {
 
     i2cMgr.Init();
     Leds.Init();
-    Leds.Set(0, 0, 100);
-    Leds.Set(1, 0, 100);
 }

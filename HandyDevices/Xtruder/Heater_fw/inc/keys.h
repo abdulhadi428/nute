@@ -26,8 +26,8 @@ struct KeyData_t {
 };
 
 const KeyData_t KeyData[] = {
-        {GPIOB, GPIO_Pin_5, KeyUp},      // Up
-        {GPIOB, GPIO_Pin_8, KeyDown},    // Down
+        {GPIOB, GPIO_Pin_5, KeyDown},      // Up
+        {GPIOB, GPIO_Pin_8, KeyUp},    // Down
         {GPIOB, GPIO_Pin_9, KeyEnter},   // Enter
 };
 #define KEY_COUNT   countof(KeyData)

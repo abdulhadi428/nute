@@ -9,13 +9,51 @@
 
 Acc_t Acc;
 
+
+
+
 // Returns 0 if OK and 1 if error
-uint8_t Acc_t::Init() {
+void Acc_t::Init() {
+    for(uint8_t n=0; n<ACC_COUNT; n++) {
+        Uart.Printf("%u: ", n);
+        Accs[n].Init();
+    }
+}
+
+void Acc_t::Task() {
+    // Read data ACC_FIFO_SZ times
+    for(uint8_t n=0; n<ACC_COUNT; n++) {
+        if(Accs[n].IrqIsHi()) {
+            Uart.Printf("%u:\r", n);
+            Accs[n].Read(&Axis[n][0][0]);
+        }
+    }
+    //Uart.Printf("\r");
+}
+
+// ================================= Single acc ================================
+void SingleAcc_t::Read(int16_t *PAxis) {
+    int16_t Buf[ACC_FIFO_SZ][3];
+    // Read data ACC_FIFO_SZ times
+    for(uint8_t n=0; n<ACC_FIFO_SZ; n++) {
+        // Read 3 Axis data
+        CsLo();   // Select chip
+        WriteByte(OUT_X_L | 0xC0);  // Read many
+        ReadNBytes((uint8_t*)&Buf[n][0], 6);
+        CsHi();
+        // Shift data right
+        for(uint8_t i=0; i<3; i++) Buf[n][i] >>= 6;
+        Uart.Printf("X: %d; Y: %d; Z: %d\r", Buf[n][0], Buf[n][1], Buf[n][2]);
+    }
+    Uart.Printf("\r");
+}
+
+void SingleAcc_t::Init() {
     // GPIOs
-    klPinSetup(GPIOA, ACC_CLK,  pmOutPushPull);
-    klPinSetup(GPIOA, ACC_DODI, pmOutPushPull);
-    klPinSetup(GPIOA, ACC_CS,   pmOutPushPull);
-    klPinSetup(GPIOA, ACC_IRQ,  pmInPullDown);
+    klPinSetup(PGpio, Clk, pmOutPushPull);
+    klPinSetup(PGpio, Io,  pmOutPushPull);
+    klPinSetup(PGpio, Cs,  pmOutPushPull);
+    klPinSetup(PGpio, Irq, pmInPullDown);
     CsHi();
     ClkHi();
     // Send initial commands
@@ -31,27 +69,11 @@ uint8_t Acc_t::Init() {
     WriteReg(INT1_SOURCE, 0b00000000);  // Irqs disabled
     // Read WhoAmI register to check connection
     uint8_t b = ReadReg(WHO_AM_I);
-    //Uart.Printf("Wai: %X\r", b);
-    return (b == 0x33)? 0 : 1;
+    Uart.Printf("Wai: %X\r", b);
+//    return (b == 0x33)? 0 : 1;
 }
 
-void Acc_t::Read() {
-    // Read data ACC_FIFO_SZ times
-    for(uint8_t n=0; n<ACC_FIFO_SZ; n++) {
-        // Read 3 Axis data
-        CsLo();   // Select chip
-        WriteByte(OUT_X_L | 0xC0);
-        ReadNBytes((uint8_t*)&Axis[n][0], 6);
-        CsHi();
-        // Shift data right
-        for(uint8_t i=0; i<3; i++) Axis[n][i] >>= 6;
-        Uart.Printf("X: %d; Y: %d; Z: %d\r", Axis[n][0], Axis[n][1], Axis[n][2]);
-    }
-    Uart.Printf("\r");
-}
-
-// ================================= Low-level =================================
-uint8_t Acc_t::ReadReg(uint8_t AAddr) {
+uint8_t SingleAcc_t::ReadReg(uint8_t AAddr) {
     CsLo();   // Select chip
     WriteByte(AAddr | 0x80);    // Set R/W bit to 1, left M/S 0
     uint8_t r;
@@ -60,23 +82,22 @@ uint8_t Acc_t::ReadReg(uint8_t AAddr) {
     return r;
 }
 
-void Acc_t::WriteReg(uint8_t AAddr, uint8_t AValue) {
+void SingleAcc_t::WriteReg(uint8_t AAddr, uint8_t AValue) {
     CsLo();   // Select chip
     WriteByte(AAddr);    // Left R/W bit 0, left M/S 0
     WriteByte(AValue);
     CsHi();
 }
 
-
-inline void Acc_t::ReadNBytes(uint8_t *PDst, uint8_t N) {
+inline void SingleAcc_t::ReadNBytes(uint8_t *PDst, uint8_t N) {
     // Switch MOSI to input
-    klPinInPullDown(GPIOA, ACC_DODI);
+    IoMakeIn();
     while(N) {
         uint8_t b=0;
         for(uint8_t i=0; i<8; i++) {
             ClkLo();
             b <<= 1;
-            if(DodiIsHi()) b |= 0x01;
+            if(IoIsHi()) b |= 0x01;
             ClkHi();
         } // for
         *PDst = b;
@@ -84,14 +105,14 @@ inline void Acc_t::ReadNBytes(uint8_t *PDst, uint8_t N) {
         N--;
     } // while
     // Switch MOSI back to output
-    klPinOutPushPull(GPIOA, ACC_DODI);
+    IoMakeOut();
 }
 
-inline void Acc_t::WriteByte(uint8_t AByte) {
+inline void SingleAcc_t::WriteByte(uint8_t AByte) {
     for(uint8_t i=0; i<8; i++) {
         ClkLo();
-        if(AByte & 0x80) DodiHi();
-        else DodiLo();
+        if(AByte & 0x80) IoHi();
+        else IoLo();
         AByte <<= 1;
         ClkHi();
     }

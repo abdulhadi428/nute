@@ -100,7 +100,7 @@ void NCounter_t::Add(uint32_t *ID) {
 
 void NCounter_t::Demonstrate() {
     //Uart.Printf("Nb count: %u\r", Count);
-    if(Count != 0) Led.SetColorSmoothly(clRed);
+    if(Count != 0) Led.SetColorSmoothly((Color_t){36, 99, 99});
     else Led.SetColorSmoothly(clBlack);
 }
 

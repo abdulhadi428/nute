@@ -18,7 +18,7 @@
 #include "kl_lib.h"
 
 //#define I2C_POLL_ONLY   // Decide which features needed. When POLL_ONLY, no Cmd Query and DMA will be used.
-#define I2C_CLOCK_FREQ          100000  // 100 or 400 kHz
+#define I2C_CLOCK_FREQ          800000  // 100 or 400 kHz
 
 // DMA
 #ifndef I2C_POLL_ONLY
@@ -47,21 +47,19 @@ struct Buf8_t {
 };
 
 enum CmdState_t {CmdPending=0, CmdSucceded=1, CmdFailed=2,
-    CmdWritingAddrTX=3, CmdWritingAddrRX=4,
-    CmdWritingByte=5, CmdWritingBufSingle=6, CmdWritingBufMany=7,
-    CmdReadingBufSingle=8, CmdReadingBufMany=9
+    CmdWrite=3, CmdRead=4,
+    CmdWritingByte=6, CmdWritingBufSingle=7, CmdWritingBufMany=8,
+    CmdReadingBufSingle=10, CmdReadingBufMany=11
 };
 
 /* Any i2c transaction consists of one or two stages:
- * 1) Start - Addr+Write - [n bytes to write] - Stop
- * 2) Start - Addr+Write - [n bytes to write] - RepStart - Addr+Read - [m bytes to read] - Stop
+ * 1) Start - Addr+Write - [one byte to write] - [n bytes to write] - Stop
+ * 2) Start - Addr+Write - [one byte to write] - [n bytes to write] - RepStart - Addr+Read - [m bytes to read] - Stop
  */
 
-//enum SingleBytePurpose_t {sbpNone, sbpWrite, sbpRead, sbpWriteRead};
 struct I2C_Cmd_t {
     uint8_t Byte;     // Byte to write and/or read
     bool ByteWrite;
-    //SingleBytePurpose_t SingleBytePurpose;
     Buf8_t BufToWrite, BufToRead;	// Buffers of data to read or write
     uint8_t Address;        		// Device address
     CmdState_t State;
@@ -84,11 +82,8 @@ private:
     uint32_t RIndx, WIndx;
     I2C_Cmd_t *Cmd[I2C_CMD_QUEUE_LENGTH];
     // Task-based functions
-    void SendAddrRX() { I2C_Send7bitAddress(I2C1, ((Cmd[RIndx]->Address) << 1), I2C_Direction_Receiver); }
-    uint8_t CheckAddrRXSending();
     void WriteMany();
     void ReadMany();
-    uint8_t CheckManyReading();
     void GetNext();
     void StopAndGetNext();
 #endif
@@ -99,16 +94,27 @@ private:
     uint8_t SendAddrRXPoll(uint8_t AAddr);
     uint8_t WriteOneBytePoll();
 public:
+    void IrqEvHandler();
+    void IrqErrHandler();
+    void IrqDmaTxHandler();
+    void IrqDmaRxHandler();
     void Init();
 #ifndef I2C_POLL_ONLY
     void Task();
     void AddCmd(I2C_Cmd_t *PCmd);
 #endif
-    uint8_t CmdPoll(I2C_Cmd_t ACmd);	// Perform Cmd in polling way
+    uint8_t CmdPoll(I2C_Cmd_t *PCmd);	// Perform Cmd in polling way
 };
 
 extern i2cMgr_t i2cMgr;
 
+// Interrupts
+extern "C" {
+void I2C1_EV_IRQHandler(void);
+void I2C1_ER_IRQHandler(void);
+void DMA1_Channel6_IRQHandler(void);
+void DMA1_Channel7_IRQHandler(void);
+}
 
 #endif	/* I2C_MGR_H */
 

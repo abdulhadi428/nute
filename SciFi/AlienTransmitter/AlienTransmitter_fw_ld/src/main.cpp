@@ -20,14 +20,14 @@
 #define LED_ENABLE
 
 // Variables
-uint8_t ID = 1;
+uint8_t ID = 4;
 #ifdef LED_ENABLE
 Led_t Led(GPIOA, 1);
 #endif
 Acc_t Acc;
 bool IsOn;
 // Switchers
-Switchers_t Switchers;
+//Switchers_t Switchers;
 
 // Prototypes
 void GeneralInit(void);
@@ -40,8 +40,8 @@ int main(void) {
 
     while (1) {
         CC.Task();
-        //Acc.Task();
-        //i2cMgr.Task();
+        Acc.Task();
+        i2cMgr.Task();
         //Switchers.Task();
         //Beep.Task();
     } // while 1
@@ -55,13 +55,15 @@ void GeneralInit(void) {
     Delay.Init();
     Delay.ms(63);
     UART_Init();
-    Beep.Init();
+    //Beep.Init();
 
     // Accelerometer
-    /*Acc.Init();
+    i2cMgr.Init();
+    Acc.Init();
     Acc.EvtTrigger = TxOn;
     Acc.EvtNoTrigger = TxOff;
-*/
+    Acc.Enable();
+
     // Setup CC
     CC.Init();
     CC.TX_Pkt.From = ID;
@@ -70,7 +72,7 @@ void GeneralInit(void) {
     CC.Shutdown();
     IsOn = false;
 
-    TxOn();
+    //TxOn();
     // Enable PWR and BKP clock
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE);
 
@@ -166,7 +168,7 @@ void TxOff(void) {
 #endif
     CC.Shutdown();
     IsOn = false;
-    Beep.SetSound(&Silence);
+    //Beep.SetSound(&Silence);
 }
 
 /*

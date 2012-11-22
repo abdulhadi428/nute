@@ -38,8 +38,8 @@ void Lcd_t::Init(void) {
     WriteCmd(0x2F);    // Charge pump on
     WriteCmd(0x40);    // Set start row address = 0
 
-    //WriteCmd(0xC8);    // mirror Y axis
-    WriteCmd(0xA1);    // Mirror X axis
+    WriteCmd(0xC8);    // mirror Y axis
+    //WriteCmd(0xA1);    // Mirror X axis
     // Set x=0, y=0
     WriteCmd(0xB0);    // Y axis initialization
     WriteCmd(0x10);    // X axis initialisation1

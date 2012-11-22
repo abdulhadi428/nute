@@ -7,6 +7,7 @@
 
 #include "interface.h"
 #include "keys.h"
+#include "showtime.h"
 
 Interface_t Interface;
 
@@ -24,6 +25,7 @@ void Interface_t::IDec(bool AFast, int32_t *PValue, int32_t AMinValue, int32_t A
 void Interface_t::Task() {
     static uint32_t IBlinkTmr=0, IStateTmr=0;
     static bool IsDisplayed;
+    static uint8_t OldH=27, OldM=99;    // Dummy values for first time
     switch(State) {
         case msIdle:
             // Display time if needed
@@ -35,6 +37,16 @@ void Interface_t::Task() {
                 DisplayYear(true);
                 DisplayMonth(true);
                 DisplayDay(true);
+                ShowTime.ShowMinute(IDateTime.S);
+                // Check if showtime has come
+                if(IDateTime.M != OldM) {
+                    OldM = IDateTime.M;
+                    //ShowTime.ShowMinute(IDateTime.M);
+                }
+                if(IDateTime.H != OldH) {
+                   OldH = IDateTime.H;
+                   ShowTime.ShowHour(IDateTime.H);
+               }
             }
             // Handle keys
             if(Keys.AnyKeyWasJustPressed()) {

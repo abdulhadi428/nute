@@ -12,13 +12,13 @@ static inline void Init();
 int main() {
     Init();
 
-  //  uint32_t Tmr;
+    //uint32_t Tmr;
     while(1) {
         Uart.Task();
-//        if(Delay.Elapsed(&Tmr, 99)) {
-        if(Acc.IrqIsHi()) {
-            Acc.Read();
-        }
+        Acc.Task();
+
+        //if(Delay.Elapsed(&Tmr, 990)) Uart.Printf("1 ");
+
 
 
     } // while(1)
@@ -29,7 +29,7 @@ static void Init() {
     InitClock(clk8MHzInternal);
 
     Delay.Init();
-    Uart.Init(115200);
+    Uart.Init(256000);
     Uart.Printf("\rAcc test2\r");
 
     Acc.Init();

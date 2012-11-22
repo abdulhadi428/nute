@@ -17,12 +17,6 @@
  * PA4 = 11 = IRQ
  */
 
-#define ACC_CLK     0
-#define ACC_DODI    1
-//#define ACC_MISO    2
-#define ACC_CS      3
-#define ACC_IRQ     4
-
 #define ACC_FIFO_SZ (uint8_t)10  // Count of FIFO stored data, MAX=31
 
 // Possible Datarate values
@@ -38,29 +32,56 @@
 // Choose datarate here
 #define ACC_DATARATE    ODR_10HZ
 
-enum DataDir_t {ddIn, ddOut};   // relative to ARM
+#define PIN_SET_DELAY   11 // CPU cycles
 
-class Acc_t {
+class SingleAcc_t {
 private:
+    GPIO_TypeDef *PGpio;
+    uint16_t Clk, Io, Cs, Irq;
     // Pin operations
-    void CsHi() { klPinSet(GPIOA, ACC_CS); }
-    void CsLo() { klPinClear(GPIOA, ACC_CS); }
-    void ClkHi() { klPinSet(GPIOA, ACC_CLK);  }
-    void ClkLo() { klPinClear(GPIOA, ACC_CLK); }
-    void DodiHi() { klPinSet(GPIOA, ACC_DODI);  }
-    void DodiLo() { klPinClear(GPIOA, ACC_DODI); }
-    bool DodiIsHi() { return klPinIsSet(GPIOA, ACC_DODI); }
+    void CsHi()   { klPinSet  (PGpio, Cs);  Delay.Loop(PIN_SET_DELAY);}
+    void CsLo()   { klPinClear(PGpio, Cs);  Delay.Loop(PIN_SET_DELAY);}
+    void ClkHi()  { klPinSet  (PGpio, Clk); Delay.Loop(PIN_SET_DELAY);}
+    void ClkLo()  { klPinClear(PGpio, Clk); Delay.Loop(PIN_SET_DELAY);}
+    void IoHi()   { klPinSet  (PGpio, Io);  Delay.Loop(PIN_SET_DELAY);}
+    void IoLo()   { klPinClear(PGpio, Io);  Delay.Loop(PIN_SET_DELAY);}
+    bool IoIsHi() { return klPinIsSet(PGpio, Io); }
+    void IoMakeIn()  { klPinInPullDown(PGpio, Io); }
+    void IoMakeOut() { klPinOutPushPull(PGpio, Io); }
     // Read/Write
     void ReadNBytes(uint8_t *PDst, uint8_t N);
     void WriteByte(uint8_t AByte);
     void WriteReg(uint8_t AAddr, uint8_t AValue);
+    uint8_t ReadReg(uint8_t AAddr);
+public:
+    SingleAcc_t (GPIO_TypeDef *PGpioPort,
+            uint16_t AClk, uint16_t AIo, uint16_t ACs, uint16_t AIrq)
+    : PGpio(PGpioPort), Clk(AClk), Io(AIo), Cs(ACs), Irq(AIrq) {}
+    void Init();    // Do not try to init in constructor: it is called before main() and therefore CPU is in not well-known state.
+    void Read(int16_t *PAxis);
+    bool IrqIsHi() { return klPinIsSet(PGpio, Irq); }
+};
+
+// ==== Setup GPIOs here ====
+// Port, Clk, Io, Cs, Irq
+static SingleAcc_t Accs[] = {
+        SingleAcc_t(GPIOC, 0, 1, 2, 3),
+        SingleAcc_t(GPIOA, 0, 1, 2, 3),
+        SingleAcc_t(GPIOA, 4, 5, 6, 7),
+        SingleAcc_t(GPIOB, 3, 4, 5, 6),
+        SingleAcc_t(GPIOC, 6, 7, 8, 9),
+        SingleAcc_t(GPIOA, 10, 11, 12, 15),
+};
+#define ACC_COUNT   countof(Accs)
+
+
+class Acc_t {
+private:
 
 public:
-    int16_t Axis[ACC_FIFO_SZ][3];
-    uint8_t Init();
-    void Read();
-    uint8_t ReadReg(uint8_t AAddr);
-    bool IrqIsHi() { return klPinIsSet(GPIOA, ACC_IRQ); }
+    int16_t Axis[ACC_COUNT][ACC_FIFO_SZ][3];
+    void Init();
+    void Task();
 };
 
 extern Acc_t Acc;

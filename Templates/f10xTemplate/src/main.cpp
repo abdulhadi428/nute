@@ -8,30 +8,36 @@
 #include "stm32f10x.h"
 #include "led.h"
 #include "kl_lib.h"
+#include "stm32f10x_gpio.h"
+
+#include "lcd6101.h"
 
 int main(void) {
-    RCC->APB2ENR |= 0x08;
-    GPIOB->CRH = 0x00300000;
-    GPIOB->ODR = 0x2000;
+    Uart.Init(115200);
+    Uart.Printf("Lcd\r");
 
-    while(1);
+    Lcd.Init();
+
+
+    while(1) {
+        Uart.Task();
+
+    }
 }
 
-//klGpioSetupByN(GPIOB, 13, GPIO_Mode_Out_PP);
-//klGpioSetByN(GPIOB, 13);
-
-
 /*
- *    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
- *
- *     Delay.Init();
-    Led_t Led;
-    Led.Init(GPIOB, 10);
+ *     klPinSetup(GPIOC, 8, pmOutAFPushPull);
 
-    while (1) {
-        Led.On();
-        Delay.ms(450);
-        Led.Off();
-        Delay.ms(450);
-    } // while 1
+    //AFIO->MAPR &= ~0x00000C00;
+    AFIO->MAPR |=  0x00000C00;
+
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+    TIM3->CR1 = 0x01;
+    TIM3->ARR = 100;
+    TIM3->PSC = 0;
+    TIM3->CCMR2 |= 0x0060;
+    TIM3->CCER  |= 0x0100;
+    TIM3->CCR3 = 54;
+ *
  */
