@@ -38,7 +38,7 @@ uint16_t FIFO_Class ::WriteData(uint16_t iDataSize,uint8_t* pDataBuf)
 	uint16_t i=0;
 	while (i<iDataSize)
 	{
-		if (WriteByte(*pDataBuf)==0) return i;
+		if (WriteByte(*pDataBuf)==0) return i; // 0 - буфер заполнен
 		i++;
 		pDataBuf++;
 	}

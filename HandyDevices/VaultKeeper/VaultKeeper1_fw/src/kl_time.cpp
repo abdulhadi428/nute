@@ -28,7 +28,7 @@ void TimeCounter_t::Init() {
     // Check if time is set
     if (!IsSet()) {
         TimeIsSet = false;
-        DbgUART.SendPrintF("Nothing is set\r");
+        DbgMessage.PrintF("Nothing is set\r");
         // ==== Rtc config ====
         BKP_DeInit();                   // Reset Backup Domain
         RCC_LSEConfig(RCC_LSE_ON);      // Enable LSE
@@ -36,12 +36,12 @@ void TimeCounter_t::Init() {
         Delay.Reset(&FTmr);
         while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET) {    // Wait till LSE is ready
             if (Delay.Elapsed(&FTmr, 1800)) {
-            	DbgUART.SendPrintF("32768 clk failure\r");
+            	DbgMessage.PrintF("32768 clk failure\r");
                 break;
             }
         }
         if (RCC_GetFlagStatus(RCC_FLAG_LSERDY)) {
-        	DbgUART.SendPrintF("32768 clk started\r");
+        	DbgMessage.PrintF("32768 clk started\r");
             RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);     // Select LSE as RTC Clock Source
             RCC_RTCCLKCmd(ENABLE);                      // Enable RTC Clock
             RTC_WaitForSynchro();                       // Wait for RTC registers synchronization
@@ -55,8 +55,10 @@ void TimeCounter_t::Init() {
         BKP_WriteBackupRegister(BKPREG_CHECK, 0xA5A5);  // Signal is set
     }
     else {
-    	DbgUART.SendPrintF("Something is stored\r");
-        RTC_WaitForSynchro();
+    	DbgMessage.PrintF("Something is stored\r");
+        RTC_WaitForSynchro();  // внимание!!! в иногда в этом месте может подвиснуть все. Возможно это связано со сбоем во время записи BKP регистров.
+        						// в этом случае нужно переписать сбойные регистры.
+        						// в последствии нужно изменить алгоритм проверки BKP регистров. например добавить CRC.
         RTC_WaitForLastTask();
     }
     // Enable IRQ
@@ -95,7 +97,7 @@ void TimeCounter_t::Print(void) {
     uint32_t THH = t / 3600;
     uint32_t TMM = (t % 3600) / 60;
     uint32_t TSS = (t % 3600) % 60;
-    DbgUART.SendPrintF("%u-%u-%u %u:%u:%u\r", Year, Month, Day, THH, TMM, TSS);
+    DbgMessage.PrintF("%u-%u-%u %u:%u:%u\r", Year, Month, Day, THH, TMM, TSS);
 }
 
 bool TimeCounter_t::IsLeap(uint16_t AYear) {
@@ -111,7 +113,7 @@ void TimeCounter_t::SetDate(uint16_t AYear, uint8_t AMonth, uint8_t ADay) {
         (AMonth==2 and ADay==31) or \
         (AMonth==2 and ADay==30) or \
         (AMonth==2 and ADay==29 and !IsLeap(AYear))) {
-    	DbgUART.SendPrintF("Wrong date\r");
+    	DbgMessage.PrintF("Wrong date\r");
         return;
     }
     else {

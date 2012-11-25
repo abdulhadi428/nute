@@ -26,7 +26,7 @@
 #define UART2_PARITY                USART_Parity_No
 #define UART2_BITS                  USART_StopBits_2
 
-#define PRINTF_BUF_SIZE		255
+
 //
 //typedef struct
 //{
@@ -50,8 +50,9 @@ public:
     void UART_StopRx(void);
     void UART_Enable(void);
     void UART_Disable(void);
-    void SendPrintF(const char *fmt, ...);
+    //void SendPrintF(const char *fmt, ...);
     void SendByte(char chData);
+    uint16_t SendDataBuf(uint16_t iDataSize,uint8_t* pchDataBuf);
 
     void UART_InterruptHandler(void);
     void UART_DeInit();

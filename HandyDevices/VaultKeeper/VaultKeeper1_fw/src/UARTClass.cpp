@@ -100,6 +100,7 @@ void  UART_Class ::SendByte(char chData)
 	UART_StartTx();
 }
 
+/*
 void UART_Class ::SendPrintF(const char *fmt, ...)
 {
 
@@ -113,6 +114,14 @@ void UART_Class ::SendPrintF(const char *fmt, ...)
   FIFO_TxData.WriteData(count,(uint8_t*) bp);
   UART_StartTx();
 
+}
+*/
+uint16_t UART_Class ::SendDataBuf(uint16_t iDataSize,uint8_t* pchDataBuf)
+{
+	uint16_t i;
+	i=FIFO_TxData.WriteData(iDataSize,pchDataBuf);
+	UART_StartTx();
+	return i;
 }
 
 void UART_Class :: UART_StartTx(void){USART_ITConfig( pUART, USART_IT_TXE, ENABLE );}

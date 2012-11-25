@@ -23,7 +23,7 @@ void Sensors_t::Init() {
     AdcInit();
     WaterInit();
     for (uint8_t i=0; i<ADC_CH_COUNT; i++) Chnl[i].Init();
-    //DbgUART.SendPrintF("ADC_CH_COUNT = %u\r", ADC_CH_COUNT);
+    //DbgMessage.PrintF("ADC_CH_COUNT = %u\r", ADC_CH_COUNT);
     ChIndx = ADC_CH_COUNT-1;    // To start from 0
     IPrepareToNextMeasure();
 }
@@ -37,7 +37,7 @@ void Sensors_t::Task() {
         uint32_t FValue=0;
         for(uint32_t i=0; i<ADC_AVERAGE_COUNT; i++) FValue += ADCValues[i];
         FValue /= ADC_AVERAGE_COUNT;
-        //DbgUART.SendPrintF("Ch %u = %u\r", ChIndx, FValue);
+        //DbgMessage.PrintF("Ch %u = %u\r", ChIndx, FValue);
         // === Process channels ===
         SnsChnl_t *PCh = &Chnl[ChIndx];
         if (SnsChnlParams[ChIndx].Name == SnsBattery) { // If battery
@@ -46,7 +46,7 @@ void Sensors_t::Task() {
                 if(PCh->StateLongPerspective == ssOk) {    // Power failure just occured
                     PCh->StateLongPerspective = ssFail;
                     PCh->HasChanged = true; // Fix immediately
-                    DbgUART.SendPrintF("Pwr failure; battery = %u\r", PCh->Value);
+                    DbgMessage.PrintF("Pwr failure; battery = %u\r", PCh->Value);
                 }
             }
             else {                          // Power is ok
@@ -54,7 +54,7 @@ void Sensors_t::Task() {
                 if(PCh->StateLongPerspective != ssOk) {    // Restoration just occured
                     PCh->StateLongPerspective = ssOk;
                     PCh->HasChanged = true; // Fix immediately
-                    DbgUART.SendPrintF("Pwr restored\r");
+                    DbgMessage.PrintF("Pwr restored\r");
                 }
             }
         } // if battery
@@ -77,7 +77,7 @@ void Sensors_t::Task() {
         }
         // Reporting unit
         if (ISituationChanged) {
-            DbgUART.SendPrintF("Need to report\r");
+            DbgMessage.PrintF("Need to report\r");
             WriteMeasurements();
             ISituationChanged = false;  // Changes written
             NeedToReport = true;        // Signal for reporting unit
@@ -123,8 +123,8 @@ void Sensors_t::WriteMeasurements() {
 
 // =============================== Channel =====================================
 void SnsChnl_t::ProcessNewValue(uint32_t AValue) {
-    //DbgUART.SendPrintF("Sns%u %u\r", IIndx, AValue);
-    //if(SnsChnlParams[ChIndx].Name == Sns3A) DbgUART.SendPrintF("Sns3A %u\r", AValue);
+    //DbgMessage.PrintF("Sns%u %u\r", IIndx, AValue);
+    //if(SnsChnlParams[ChIndx].Name == Sns3A) DbgMessage.PrintF("Sns3A %u\r", AValue);
     SnsState_t ssNow;
     if      (AValue < SHORT_ADC_VALUE) ssNow = ssShort;
     else if (AValue < WATER_ADC_VALUE) ssNow = ssWater;
@@ -133,7 +133,7 @@ void SnsChnl_t::ProcessNewValue(uint32_t AValue) {
 
     if (ssNow != StateLast) {   // State has changed since last time
         StateLast = ssNow;
-        DbgUART.SendPrintF("Sns%u: %u\r", ChIndx, ssNow);
+        DbgMessage.PrintF("Sns%u: %u\r", ChIndx, ssNow);
         Delay.Reset(&Timer);    // Do not take fast changes into account
     }
     else {  // State has not changed
@@ -141,7 +141,7 @@ void SnsChnl_t::ProcessNewValue(uint32_t AValue) {
             if(StateLongPerspective != StateLast) {
                 StateLongPerspective = StateLast;
                 HasChanged = true;
-                DbgUART.SendPrintF("Sns%u: change detected\r", ChIndx);
+                DbgMessage.PrintF("Sns%u: change detected\r", ChIndx);
             }
         }
     }
@@ -182,7 +182,7 @@ void Sensors_t::IPrepareToNextMeasure() {
         klGpioClearByMsk(SnsChnlParams[ChIndx].POutPort, SnsChnlParams[ChIndx].OutMask);
     // Calculate channel to measure
     if (++ChIndx >= ADC_CH_COUNT) ChIndx = 0;
-    //DbgUART.SendPrintF("ch = %u\r", ChIndx);
+    //DbgMessage.PrintF("ch = %u\r", ChIndx);
     // Switch on pull-up
     if(SnsChnlParams[ChIndx].POutPort != 0) // zero pointer protection
         klGpioSetByMsk(SnsChnlParams[ChIndx].POutPort, SnsChnlParams[ChIndx].OutMask);
@@ -241,7 +241,7 @@ void Sensors_t::UpdateWaterValue(void) {
     uint32_t V = ReadWaterValue();
     V++;
     WriteWaterValue(V);
-    DbgUART.SendPrintF("W: %u\r", V);
+    DbgMessage.PrintF("W: %u\r", V);
 }
 
 uint32_t Sensors_t::ReadWaterValue(void) {
