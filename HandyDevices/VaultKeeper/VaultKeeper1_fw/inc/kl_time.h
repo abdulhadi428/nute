@@ -12,6 +12,7 @@
 #include "kl_lib.h"
 #include "stm32f10x_rtc.h"
 #include "stm32f10x_bkp.h"
+#include "UARTClass.h"
 
 #define DEFAULT_YEAR    2012
 #define DEFAULT_MONTH   6
@@ -48,6 +49,7 @@ public:
 };
 
 extern TimeCounter_t Time;
+extern UART_Class DbgUART;
 
 // IRQ
 extern "C" {

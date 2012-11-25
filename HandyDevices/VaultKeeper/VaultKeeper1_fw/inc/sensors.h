@@ -12,6 +12,7 @@
 #include "string.h"
 #include "stm32f10x_dma.h"
 #include "stm32f10x_adc.h"
+#include "UARTClass.h"
 
 #define ADC_AVERAGE_COUNT   64      // Number of times to measure
 #define PULLUP_DEADTIME     18      // ms; time between pullup on and measurement start
@@ -134,7 +135,7 @@ public:
 
 extern SnsDataBuf_t SnsBuf;
 extern Sensors_t Sensors;
-
+extern UART_Class DbgUART;
 // Water sensor IRQ
 extern "C" {
 void EXTI4_IRQHandler(void);

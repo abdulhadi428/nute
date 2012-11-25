@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include "comline.h"
+//#include "comline.h"
 #include "kl_string.h"
 
 sim900_t Mdm;
@@ -26,7 +26,7 @@ void sim900_t::Init() {
 }
 
 void sim900_t::On() {
-    Com.Printf("Starting Mdm...\r");
+    DbgUART.SendPrintF("Starting Mdm...\r");
     State = erError;
     WriteIndx = 0;
     ReadIndx = 0;
@@ -45,36 +45,36 @@ void sim900_t::On() {
         PwrKeyPulse();      // Switch on
         // Wait and send AT
         Delay.ms(999);
-        Com.Printf("1.");
+        DbgUART.SendPrintF("1.");
         if(Command("AT")        != erOk) continue;  // Send AT and wait for Ok
-        Com.Printf("2.");
+        DbgUART.SendPrintF("2.");
         if(ProcessSim()         != erOk) continue;  // Wait for SIM to activate
-        Com.Printf("3.");
+        DbgUART.SendPrintF("3.");
         if(Command("AT+CMGF=1") != erOk) continue;  // SMS in text mode
-        Com.Printf("4.");
+        DbgUART.SendPrintF("4.");
 //        if(DisableCellBrc()     != erOk) continue;  // Disable cell broadcast
-//        Com.Printf("5.");
+//        DbgUART.SendPrintF("5.");
         if(NetRegistration()    != erOk) continue;  // Wait for modem to connect
-        Com.Printf("6.");
+        DbgUART.SendPrintF("6.");
         //Command("AT+CSQ");                          // Get signal parameters
         Command("AT+CMGD=1,4");                     // Delete all sms
         //if (Command("AT+CUSD=1,\"#100#\"", MDM_RX_TIMEOUT) == erOk) Delay.ms(4005);
         //if (Command("ATD#100#", MDM_RX_TIMEOUT) == erOk) Delay.ms(9000);
         State = erOk;
     } // while
-    Com.Printf("\rMdm ready\r");
+    DbgUART.SendPrintF("\rMdm ready\r");
 }
 
 void sim900_t::Off() {
     Command("AT+CPOWD=1");
     Delay.ms(4500);
     PowerOff();
-    Com.Printf("Mdm off\r");
+    DbgUART.SendPrintF("Mdm off\r");
 }
 
 // ============================= Call, SMS etc. ================================
 Error_t sim900_t::SendSMS(const char *ANumber, const char *AMsg) {
-    Com.Printf("Send SMS: %S; %S\r", ANumber, AMsg);
+    DbgUART.SendPrintF("Send SMS: %S; %S\r", ANumber, AMsg);
     // Surround number with double quotes
     BufReset();
     MPrintf("AT+CMGS=\"%S\"\r\n", ANumber);
@@ -83,16 +83,16 @@ Error_t sim900_t::SendSMS(const char *ANumber, const char *AMsg) {
         // Wait for echo
         BufReset();
         if (WaitString("OK", MDM_SMS_TIMEOUT) == erOk) {
-            Com.Printf("SMS sent\r");
+            DbgUART.SendPrintF("SMS sent\r");
             return erOk;
         }
     } // if >
-    Com.Printf("SMS failed\r");
+    DbgUART.SendPrintF("SMS failed\r");
     return erError;
 }
 
 Error_t sim900_t::GprsOn() {
-    Com.Printf("Connecting GPRS...\r");
+    DbgUART.SendPrintF("Connecting GPRS...\r");
     if (Command("AT+CGATT=1", GPRS_TIMEOUT) != erOk)                return erError;
     if (Command("AT+CGATT?", MDM_RX_TIMEOUT, "+CGATT: 1") != erOk)  return erError;
     WaitString("OK", MDM_RX_TIMEOUT);
@@ -100,42 +100,42 @@ Error_t sim900_t::GprsOn() {
     if(Command("AT+SAPBR=3,1,\"Contype\",\"GPRS\"") != erOk)        return erError;
     if(Command("AT+SAPBR=3,1,\"APN\",\"internet.mts.ru\"") != erOk) return erError;
     if(Command("AT+SAPBR=1,1", MDM_NETREG_TIMEOUT) != erOk)         return erError;     // Open GPRS context
-    Com.Printf("GPRS connected\r");
+    DbgUART.SendPrintF("GPRS connected\r");
     return erOk;
 }
 Error_t sim900_t::GprsOff(void) {
     Command("AT+SAPBR=0,1", MDM_NETREG_TIMEOUT);
     Error_t r = Command("AT+CGATT=0", MDM_NETREG_TIMEOUT);
-    Com.Printf("GPRS off\r");
+    DbgUART.SendPrintF("GPRS off\r");
     return r;
 }
 
 
 Error_t sim900_t::OpenConnection(const char *AHost) {
-    Com.Printf("Connecting %S ", AHost);
+    DbgUART.SendPrintF("Connecting %S ", AHost);
     klSPrintf(TxLine, "AT+CIPSTART=\"TCP\",\"%S\",\"80\"", AHost);
     if (Command(TxLine) == erOk) {
-        Com.Printf("#");
+        DbgUART.SendPrintF("#");
         if(WaitString("CONNECT", MDM_NETREG_TIMEOUT) == erOk) {
             if (strcmp(&RxLine[8], "OK") == 0) {
-                Com.Printf("#\rOk\r");
+                DbgUART.SendPrintF("#\rOk\r");
                 return erOk;
             }
         }
     }
-    Com.Printf("\r");
+    DbgUART.SendPrintF("\r");
     return erError;
 }
 
 Error_t sim900_t::CloseConnection(void) {
-    Com.Printf("Disconnecting\r");
+    DbgUART.SendPrintF("Disconnecting\r");
     return Command("AT+CIPCLOSE", MDM_NETREG_TIMEOUT);
 }
 
 
 enum LengthEncoding_t {leLength, leChunks, leNone};
 Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t ALen) {
-    Com.Printf("GET: %S%S\r", AHost, AUrl);
+    DbgUART.SendPrintF("GET: %S%S\r", AHost, AUrl);
     Error_t r = erError;
     BufReset();
     SendString("AT+CIPSEND");
@@ -148,7 +148,7 @@ Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t
         // Wait for echo
         BufReset();
         if (WaitString("SEND OK", MDM_NETREG_TIMEOUT) == erOk) {
-            Com.Printf("#");
+            DbgUART.SendPrintF("#");
             uint32_t FLen = 0;
 
             // ==== Receive header ====
@@ -179,9 +179,9 @@ Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t
                 else if (LengthEncoding == leChunks) {
                     while ((Indx < ALen-1) and (r == erOk)) {
                         if((r = WaitAnyString(MDM_NETREG_TIMEOUT)) == erOk) { // Receive chunk length
-//                                        Com.Printf("Rx: %S\r", RxLine);
+//                                        DbgUART.SendPrintF("Rx: %S\r", RxLine);
                             if (klHexToUint(RxLine, &FLen)) {           // Try to convert length
-//                                            Com.Printf("FLen: %u\r", FLen);
+//                                            DbgUART.SendPrintF("FLen: %u\r", FLen);
                                 if (FLen == 0) break;                   // End of data
                                 Delay.Reset(&Tmr);                      // Receive chunk
                                 while((Indx < FLen) and (r == erOk)) {
@@ -191,7 +191,7 @@ Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t
                             } // if hex2uint
                             else r = erError;
                         } // if waitstring
-//                                    Com.Printf("Indx2: %u\r", Indx);
+//                                    DbgUART.SendPrintF("Indx2: %u\r", Indx);
                     } // while indx < alen
                 }
 
@@ -214,14 +214,14 @@ Error_t sim900_t::GET(const char *AHost, const char *AUrl, char *AData, uint32_t
             } // if ok
         } // Send ok
     } // if >
-    if(r == erOk) Com.Printf("\rOk: %S\r", AData);
-    else Com.Printf("\rError\r");
+    if(r == erOk) DbgUART.SendPrintF("\rOk: %S\r", AData);
+    else DbgUART.SendPrintF("\rError\r");
     return r;
 }
 
 // numenor2012.ru, /request.php, data=aga
 Error_t sim900_t::POST(const char *AHost, const char *AUrl, const char *AData) {
-    Com.Printf("POST: %S%S; %S\r", AHost, AUrl, AData);
+    DbgUART.SendPrintF("POST: %S%S; %S\r", AHost, AUrl, AData);
     Error_t r = erError;
     BufReset();
     SendString("AT+CIPSEND");
@@ -238,8 +238,8 @@ Error_t sim900_t::POST(const char *AHost, const char *AUrl, const char *AData) {
         BufReset();
         r = WaitString("SEND OK", MDM_NETREG_TIMEOUT);
     } // if >
-    if(r == erOk) Com.Printf("Ok\r");
-    else Com.Printf("Error\r");
+    if(r == erOk) DbgUART.SendPrintF("Ok\r");
+    else DbgUART.SendPrintF("Error\r");
     return r;
 }
 
@@ -310,7 +310,7 @@ Error_t sim900_t::WaitString(const char *AString, uint32_t ATimeout) {
             else if (c == '\n') { // <lf> Line received
                 if(Indx != 0) {    // Something received
                     RxLine[Indx] = 0;  // end of string
-                    //Com.Printf("> %S\r", RxLine);
+                    //DbgUART.SendPrintF("> %S\r", RxLine);
                     if      (strncmp(RxLine, AString, strlen(AString)) == 0) return erOk;
                     else if (strncmp(RxLine, "ERROR", 5) == 0) return erError;
                     else Indx = 0;
@@ -352,7 +352,7 @@ Error_t sim900_t::WaitAnyString(uint32_t ATimeout) {
             if (c == '\r') continue;    // <cr>
             else if (c == '\n') {       // <lf> Line received
                 RxLine[Indx] = 0;   // end of string
-                //Com.Printf("> %S\r", RxLine);
+                //DbgUART.SendPrintF("> %S\r", RxLine);
                 return erOk;
             }
             else RxLine[Indx++] = c;
@@ -380,7 +380,7 @@ Error_t sim900_t::ReadRawData(char *Dst, uint32_t ALen, uint32_t ATimeout) {
         if (!BufIsEmpty()) Dst[Indx++] = BufRead();
     } // while
     Dst[Indx] = 0;   // Terminate string
-    //Com.Printf(">> %S\r", Dst);
+    //DbgUART.SendPrintF(">> %S\r", Dst);
     return (Indx == ALen)? erOk : erTimeout;
 }
 
@@ -392,44 +392,44 @@ Error_t sim900_t::Command(const char *ACmd, uint32_t ATimeout, const char *ARepl
 }
 
 Error_t sim900_t::ProcessSim() {
-    Com.Printf("Sim init ");
+    DbgUART.SendPrintF("Sim init ");
     uint32_t Tmr;
     Delay.Reset(&Tmr);
     while (!Delay.Elapsed(&Tmr, MDM_SIM_TIMEOUT)) {
-        Com.Printf("#");
+        DbgUART.SendPrintF("#");
         if (Command("AT+CPIN?", MDM_RX_TIMEOUT, "+CPIN: READY") == erOk) {
             WaitString("OK", MDM_RX_TIMEOUT);
-            Com.Printf("\rSim Ok\r");
+            DbgUART.SendPrintF("\rSim Ok\r");
             return erOk;
         }
         Delay.ms(450);
     } // while !elapsed
-    Com.Printf("\rSim error\r");
+    DbgUART.SendPrintF("\rSim error\r");
     return erTimeout;
 }
 
 Error_t sim900_t::DisableCellBrc(void) {
-    Com.Printf("DisableCellBrc ");
+    DbgUART.SendPrintF("DisableCellBrc ");
     uint32_t Tmr;
     Delay.Reset(&Tmr);
     while (!Delay.Elapsed(&Tmr, MDM_NETREG_TIMEOUT)) {
-        Com.Printf("#");
+        DbgUART.SendPrintF("#");
         if (Command("AT+CSCB=1") == erOk) {
-            Com.Printf("\rOk\r");
+            DbgUART.SendPrintF("\rOk\r");
             return erOk;
         }
         Delay.ms(1800);
     } // while !elapsed
-    Com.Printf("\rError\r");
+    DbgUART.SendPrintF("\rError\r");
     return erTimeout;
 }
 
 Error_t sim900_t::NetRegistration() {
-    Com.Printf("Net registration ");
+    DbgUART.SendPrintF("Net registration ");
     uint32_t FTimer;
     Delay.Reset(&FTimer);
     while (!Delay.Elapsed(&FTimer, MDM_NETREG_TIMEOUT)) {
-        Com.Printf("#");
+        DbgUART.SendPrintF("#");
         if (Command("AT+CREG?", MDM_RX_TIMEOUT, "+CREG:") == erOk) {
             char c = RxLine[9];
             WaitString("OK", MDM_RX_TIMEOUT);
@@ -437,11 +437,11 @@ Error_t sim900_t::NetRegistration() {
             switch (k) {
                 case 1: // Registered
                 case 5: // Roaming
-                    Com.Printf("\rNet connected\r");
+                    DbgUART.SendPrintF("\rNet connected\r");
                     return erOk;
                     break;
                 case 3: // Denied
-                    Com.Printf("\rDenied\r");
+                    DbgUART.SendPrintF("\rDenied\r");
                     return erError;
                     break;
                 default: break;
@@ -449,7 +449,7 @@ Error_t sim900_t::NetRegistration() {
         } // if needed reply
         Delay.ms(1800);
     } // while !elapsed
-    Com.Printf("\rTimeout\r");
+    DbgUART.SendPrintF("\rTimeout\r");
     return erTimeout;
 }
 

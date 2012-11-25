@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include "kl_lib.h"
 #include "stm32f10x_usart.h"
+#include "UARTClass.h"
 
 #define MDM_LINE_LEN        54
 #define MDM_DATA_LEN        540
@@ -83,6 +84,7 @@ public:
 };
 
 extern sim900_t Mdm;
+extern UART_Class DbgUART;
 
 // USART RX IRQ
 extern "C" {

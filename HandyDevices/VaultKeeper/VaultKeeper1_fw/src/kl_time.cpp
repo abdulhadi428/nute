@@ -8,7 +8,7 @@
 #include "kl_time.h"
 #include "misc.h"
 #include "stm32f10x_pwr.h"
-#include "comline.h"
+
 
 TimeCounter_t Time;
 
@@ -28,7 +28,7 @@ void TimeCounter_t::Init() {
     // Check if time is set
     if (!IsSet()) {
         TimeIsSet = false;
-        Com.Printf("Nothing is set\r");
+        DbgUART.SendPrintF("Nothing is set\r");
         // ==== Rtc config ====
         BKP_DeInit();                   // Reset Backup Domain
         RCC_LSEConfig(RCC_LSE_ON);      // Enable LSE
@@ -36,12 +36,12 @@ void TimeCounter_t::Init() {
         Delay.Reset(&FTmr);
         while (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET) {    // Wait till LSE is ready
             if (Delay.Elapsed(&FTmr, 1800)) {
-                Com.Printf("32768 clk failure\r");
+            	DbgUART.SendPrintF("32768 clk failure\r");
                 break;
             }
         }
         if (RCC_GetFlagStatus(RCC_FLAG_LSERDY)) {
-            Com.Printf("32768 clk started\r");
+        	DbgUART.SendPrintF("32768 clk started\r");
             RCC_RTCCLKConfig(RCC_RTCCLKSource_LSE);     // Select LSE as RTC Clock Source
             RCC_RTCCLKCmd(ENABLE);                      // Enable RTC Clock
             RTC_WaitForSynchro();                       // Wait for RTC registers synchronization
@@ -55,7 +55,7 @@ void TimeCounter_t::Init() {
         BKP_WriteBackupRegister(BKPREG_CHECK, 0xA5A5);  // Signal is set
     }
     else {
-        Com.Printf("Something is stored\r");
+    	DbgUART.SendPrintF("Something is stored\r");
         RTC_WaitForSynchro();
         RTC_WaitForLastTask();
     }
@@ -95,7 +95,7 @@ void TimeCounter_t::Print(void) {
     uint32_t THH = t / 3600;
     uint32_t TMM = (t % 3600) / 60;
     uint32_t TSS = (t % 3600) % 60;
-    Com.Printf("%u-%u-%u %u:%u:%u\r", Year, Month, Day, THH, TMM, TSS);
+    DbgUART.SendPrintF("%u-%u-%u %u:%u:%u\r", Year, Month, Day, THH, TMM, TSS);
 }
 
 bool TimeCounter_t::IsLeap(uint16_t AYear) {
@@ -111,7 +111,7 @@ void TimeCounter_t::SetDate(uint16_t AYear, uint8_t AMonth, uint8_t ADay) {
         (AMonth==2 and ADay==31) or \
         (AMonth==2 and ADay==30) or \
         (AMonth==2 and ADay==29 and !IsLeap(AYear))) {
-        Com.Printf("Wrong date\r");
+    	DbgUART.SendPrintF("Wrong date\r");
         return;
     }
     else {
