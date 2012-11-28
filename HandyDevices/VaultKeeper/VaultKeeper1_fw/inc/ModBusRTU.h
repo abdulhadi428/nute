@@ -9,6 +9,12 @@
 #define MODBUSRTU_H_
 #include <stdint.h>
 
+struct ModBusPacket_t {
+	uint8_t Addr;
+	uint8_t Addr;
+	uint8_t Addr;
+
+};
 
 class ModBusRTU_Class {
 private:

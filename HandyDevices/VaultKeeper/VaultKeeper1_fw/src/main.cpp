@@ -19,6 +19,7 @@
 #include "UARTClass.h"
 #include "tiny_sprintf.h"
 #include "DBG_Unit.h"
+#include "GPIO_config.h"
 
 #define VERSION_ID      "Minya" // "First" on Quenya. Used for HostKey generation. No more than 20 char
 #define HOST_ID         1002
@@ -53,17 +54,20 @@ void GenerateHostKey(void);
 int main(void) {
     GeneralInit();
     DbgUART.UART_Init(USART2);
-
+    DbgUART.eco_in_flag=1;
     Delay.ms(63);
+    DbgMessage.DbgEnable();
     DbgMessage.PrintF("\rVault Keeper1\rHostID: %u\r", HOST_ID);
     GenerateHostKey();
     Time.Init();
     Sensors.Init();
+    SimpleGPIO_Init();
+    LedOn();
     Mdm.Init();
     Report.SendNow();   // Get time
     Mdm.On();
-    //Mdm.SendSMS("+79169895800", "Aiya Feanaro!");
-
+    //Mdm.SendSMS("+79169895800", "Aiya Feanaro!  ^-^");
+    LedOff();
     // ==== Main cycle ====
     while (1) {
         Report.Task();

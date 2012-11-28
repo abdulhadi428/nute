@@ -16,12 +16,15 @@
 
 class DBG_Message_Class {
 private:
-
+	uint16_t DbgEnableFlag;
 public:
-    uint16_t  i;
+  /*  uint16_t  i;
     void Init(void);
     void Task(void);
     void SendData (void);
+    */
+	void DbgDisable(void){ DbgEnableFlag = 0; }
+	void DbgEnable(void){ DbgEnableFlag = 1; }
     void PrintF(const char *fmt, ...);
 };
 

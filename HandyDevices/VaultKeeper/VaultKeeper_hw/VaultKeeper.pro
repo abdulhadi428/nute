@@ -1,16 +1,6 @@
-update=09/05/2012 22:32:12
+update=21.11.2012 12:52:58
 version=1
 last_client=eeschema
-[cvpcb]
-version=1
-NetITyp=0
-NetIExt=.net
-PkgIExt=.pkg
-NetDir=
-LibDir=
-NetType=0
-[cvpcb/libraries]
-EquName1=devcms
 [general]
 version=1
 [pcbnew]
@@ -31,15 +21,20 @@ TxtLar=120
 MSegLar=59
 LastNetListRead=
 [pcbnew/libraries]
-LibDir=D:/libs/Kicad
 LibName1=Common_kl
 LibName2=Connectors_kl
 LibName3=pcb_details
 LibName4=Tittar_kl
 LibName5=Special
+LibDir=C:/Kicad
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms
 [eeschema]
 version=1
-LibDir=D:/libs/Kicad
+LibDir=C:/Kicad
 NetFmt=1
 HPGLSpd=20
 HPGLDm=15

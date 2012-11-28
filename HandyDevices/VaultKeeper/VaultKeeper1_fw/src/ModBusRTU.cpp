@@ -14,7 +14,7 @@ void ModBusRTU_Class :: Task(void)
 {
 
 }
-void ModBusRTU_Class :: SendData(void)
+void ModBusRTU_Class :: SendComand(uint8_t )
 {
 
 }

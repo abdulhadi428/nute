@@ -45,7 +45,7 @@ void sim900_t::On() {
         PwrKeyPulse();      // Switch on
         // Wait and send AT
         Delay.ms(999);
-        DbgMessage.PrintF("1.");
+        DbgMessage.PrintF("1.test");
         if(Command("AT")        != erOk) continue;  // Send AT and wait for Ok
         DbgMessage.PrintF("2.");
         if(ProcessSim()         != erOk) continue;  // Wait for SIM to activate
