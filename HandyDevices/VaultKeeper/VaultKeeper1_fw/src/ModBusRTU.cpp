@@ -14,7 +14,7 @@ void ModBusRTU_Class :: Task(void)
 {
 
 }
-void ModBusRTU_Class :: SendComand(uint8_t )
+void ModBusRTU_Class :: SendComand(ModBusPacket_t* pModBusPacket)
 {
 
 }
@@ -22,4 +22,7 @@ void ModBusRTU_Class :: GetData(void)
 {
 
 }
+void ModBusCrc16Calc(ModBusPacket_t* pModBusPacket)
+{
 
+}
