@@ -83,5 +83,11 @@ uint8_t RS485_Class :: BusIsReady(void)
 	if (ch485State==RS485_UART_READY_TO_TX) return 1;
 	else return 0;
 }
-
+/*
+uint8_t RS485_Class :: TxIsComplete(void)
+{
+	if (ch485State==RS485_UART_READY_TO_TX) return 1;
+	else return 0;
+}
+*/
 
