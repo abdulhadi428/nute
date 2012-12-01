@@ -20,6 +20,7 @@
 #include "tiny_sprintf.h"
 #include "DBG_Unit.h"
 #include "GPIO_config.h"
+#include "ModBusRTU.h"
 
 #define VERSION_ID      "Minya" // "First" on Quenya. Used for HostKey generation. No more than 20 char
 #define HOST_ID         1002
@@ -32,6 +33,13 @@ UART_Class* pUART5;
 
 UART_Class DbgUART;
 DBG_Message_Class DbgMessage;
+ModBusRTU_Class ModBusRTU;
+
+#define DEBUG_TASK_DELAY	1000
+void DebugTask (void);
+static void ModBusCALLBACK(uint8_t* pchBuf,uint16_t iDataSize,uint8_t chErrorCode);
+uint32_t iDebugTimer;
+bool bDebugFlag;
 
 #define RETRY_TIMEOUT   99      // s
 class Report_t {
@@ -60,20 +68,48 @@ int main(void) {
     DbgMessage.PrintF("\rVault Keeper1\rHostID: %u\r", HOST_ID);
     GenerateHostKey();
     Time.Init();
+    Delay.Reset(&iDebugTimer);
+    bDebugFlag=false;
     Sensors.Init();
     SimpleGPIO_Init();
+    ModBusRTU.Init();
+    ModBusRTU.SetCallBackFunc(ModBusCALLBACK);
     LedOn();
     Mdm.Init();
     Report.SendNow();   // Get time
     Mdm.On();
-    //Mdm.SendSMS("+79169895800", "Aiya Feanaro!  ^-^");
+   // Mdm.SendSMS("+79169895800", "Aiya Feanaro!  ^-^");
     LedOff();
     // ==== Main cycle ====
     while (1) {
+    	ModBusRTU.Task();
         Report.Task();
         Sensors.Task();
+        DebugTask();
     } // while 1
 }
+
+void DebugTask(void)
+{
+	uint8_t pchDebugData[]="Hello, i`am ModBus";
+
+	if (Delay.Elapsed(&iDebugTimer,DEBUG_TASK_DELAY))
+	{
+		if (bDebugFlag)
+		{
+			bDebugFlag=false;
+			LedOn();
+		}
+		else
+		{
+			bDebugFlag=true;
+			LedOff();
+			ModBusRTU.SendComand(0x55,0xAA,pchDebugData,4);
+		}
+	}
+
+}
+
 
 inline void GeneralInit(void) {
     // Setup system clock
@@ -115,7 +151,7 @@ void GenerateHostKey(void) {
 #define URL_REPORT      "/report.php"
 #define REPORT_MINUTE   18
 
-#define MDM_ENABLE     // DEBUG: comment this to disable modem
+//#define MDM_ENABLE     // DEBUG: comment this to disable modem
 void Report_t::Task(void) {
 #ifdef MDM_ENABLE
     if(!Time.TimeIsSet) {
@@ -239,3 +275,15 @@ Error_t Report_t::GetTime(void) {
     else return erError;
 }
 
+
+/* --------------- CALLBACK - функции -----------------*/
+void ModBusCALLBACK(uint8_t* pchBuf,uint16_t iDataSize,uint8_t chErrorCode)
+{
+	uint8_t i=0;
+	DbgMessage.PrintF("Callback.Size=%d Error code =%d \r Message:  ",iDataSize,chErrorCode);
+	while(i<iDataSize)
+	{
+		DbgMessage.PrintF("%X ",*(pchBuf+i));
+		i++;
+	}
+}

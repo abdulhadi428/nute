@@ -25,7 +25,6 @@ unsigned char crc8_tbl_buf(unsigned char * buf, unsigned char crc,unsigned long 
 unsigned short crc16_sft_buf(unsigned char * buf, unsigned short crc,unsigned long len);
 /* Table driven*/
 unsigned short crc16_tbl_buf(unsigned char * buf, unsigned short crc,unsigned long len);
-
 /************************************ CRC32 ************************************/
 /* Direct */
 unsigned long crc32_sft_buf(unsigned char * buf, unsigned long crc,unsigned long len);

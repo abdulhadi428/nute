@@ -27,6 +27,7 @@ void TimeCounter_t::Init() {
     PWR_BackupAccessCmd(ENABLE);    // Allow access to BKP Domain
     // Check if time is set
     if (!IsSet()) {
+    //if (true) {
         TimeIsSet = false;
         DbgMessage.PrintF("Nothing is set\r");
         // ==== Rtc config ====

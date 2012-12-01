@@ -11,6 +11,7 @@ void Driver485TxEnable(void)   		{GPIO_SetBits(DRIVER_485_EN_PORT,DRIVER_485_EN_
 void Driver485TxDisable(void)   		{GPIO_ResetBits(DRIVER_485_EN_PORT,DRIVER_485_EN_PIN);}
 void LedOn	(void)					{GPIO_SetBits(LED_PORT,LED_PIN);}
 void LedOff (void)					{GPIO_ResetBits(LED_PORT,LED_PIN);}
+bool LedIsOn(void)		 { return (GPIO_ReadInputDataBit(LED_PORT, LED_PIN) == Bit_RESET); }
 
 void SimpleGPIO_Init(void)
 {

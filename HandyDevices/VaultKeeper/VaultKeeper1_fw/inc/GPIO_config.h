@@ -24,6 +24,7 @@ void Driver485TxDisable(void)  ;
 #define LED_PIN           GPIO_Pin_2
 void LedOn	(void);
 void LedOff	(void);
+bool LedIsOn(void);
 
 void SimpleGPIO_Init (void);
 
