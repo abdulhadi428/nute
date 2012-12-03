@@ -1,4 +1,4 @@
-update=10/11/2012 16:36:03
+update=03/12/2012 18:29:51
 version=1
 last_client=eeschema
 [general]
@@ -71,10 +71,10 @@ LibName3=pcb_details
 LibName4=power
 LibName5=Power_kl
 LibName6=RF ICs
-LibName7=Sensors
-LibName8=st_kl
-LibName9=Tittar_kl
-LibName10=Transistors_kl
-LibName11=Audio_kl
-LibName12=Antennas_kl
-LibName13=memory
+LibName7=st_kl
+LibName8=Tittar_kl
+LibName9=Transistors_kl
+LibName10=Audio_kl
+LibName11=Antennas_kl
+LibName12=OpAmp_kl
+LibName13=Sensors
