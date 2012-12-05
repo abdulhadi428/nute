@@ -1,16 +1,6 @@
-update=02/12/2012 17:05:08
+update=06/12/2012 00:10:54
 version=1
-last_client=eeschema
-[cvpcb]
-version=1
-NetITyp=0
-NetIExt=.net
-PkgIExt=.pkg
-NetDir=
-LibDir=
-NetType=0
-[cvpcb/libraries]
-EquName1=devcms
+last_client=cvpcb
 [pcbnew]
 version=1
 PadDrlX=320
@@ -66,17 +56,12 @@ MaxLnkS=3
 ShowRat=0
 ShowMRa=1
 [pcbnew/libraries]
-LibDir=
-LibName1=sockets
-LibName2=connect
-LibName3=discret
-LibName4=pin_array
-LibName5=divers
-LibName6=libcms
-LibName7=display
-LibName8=valves
-LibName9=led
-LibName10=dip_sockets
+LibName1=Common_kl
+LibName2=Connectors_kl
+LibName3=display_kl
+LibName4=pcb_details
+LibName5=Tittar_kl
+LibDir=D:/libs/Kicad
 [general]
 version=1
 [eeschema]
@@ -119,3 +104,8 @@ LibName5=Power_kl
 LibName6=st_kl
 LibName7=Tittar_kl
 LibName8=power
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms

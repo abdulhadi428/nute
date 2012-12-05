@@ -1,0 +1,466 @@
+# EESchema Netlist Version 1.1 created  06/12/2012 00:37:47
+(
+ ( /50BB4D6D BUZZER_HC0903 BZ1 BUZZER
+  ( 1 +BATT )
+  ( 2 /BuzzerOut )
+ )
+ ( /50BCC0B2 CAP_0603 C1 4.7u
+  ( 1 +BATT )
+  ( 2 GND )
+ )
+ ( /50BCC0B3 CAP_0603 C2 1u
+  ( 1 /LedHigh )
+  ( 2 GND )
+ )
+ ( /50BB4D78 CAP_0603 C3 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /50BB4D7D CAP_0603 C4 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /50BB4D16 CAP_0603 C5 0.1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /50BB4D7E CAP_0603 C6 4.7u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /50BB6097 CAP_0603 C7 0.1u
+  ( 1 GND )
+  ( 2 +3.3V )
+ )
+ ( /50BB4D80 CAP_0603 C8 1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /50BBDD3D CAP_0603 C9 4.7u
+  ( 1 +BATT )
+  ( 2 /Led_a )
+ )
+ ( /50BBDEFA CAP_0805 C10 10u
+  ( 1 +BATT )
+  ( 2 GND )
+ )
+ ( /50BFA0CA CAP_0805 C11 10u
+  ( 1 +BATT )
+  ( 2 GND )
+ )
+ ( /50BFA0D5 CAP_0805 C12 10u
+  ( 1 +BATT )
+  ( 2 GND )
+ )
+ ( /50BFA0D2 CAP_0805 C13 10u
+  ( 1 +BATT )
+  ( 2 GND )
+ )
+ ( /50BBD7D0 CAP_0603 C14 10n
+  ( 1 N-000005 )
+  ( 2 GND )
+ )
+ ( /50BB4D2E CAP_0603 C15 1u
+  ( 1 +BATT )
+  ( 2 GND )
+ )
+ ( /50BB4D2F CAP_0603 C16 1u
+  ( 1 +3.3V )
+  ( 2 GND )
+ )
+ ( /50BCC0B9 DIODE_SOD323 D1 BAT54WS
+  ( A /Bck_mid )
+  ( C /LedHigh )
+ )
+ ( /50BFA553 LED-3MM D2 LED
+  ( A N-000025 )
+  ( C GND )
+ )
+ ( /50BBDAE8 DIODE_SMA_DO214AC D3 SS14
+  ( A /L_low )
+  ( C /Led_a )
+ )
+ ( /50BBE0F1 $noname$ D4 LED
+  ( A /Led_a )
+  ( C /Led_c )
+ )
+ ( /50BFAA0E DIODE_SOD323 D5 BAT54WS
+  ( A /BuzzerOut )
+  ( C +BATT )
+ )
+ ( /50BBD57C $noname$ DA1 ZXLD1322
+  ( 1 /Green_Light )
+  ( 2 N-000004 )
+  ( 3 N-000005 )
+  ( 4 ? )
+  ( 5 /Emitter )
+  ( 6 /Emitter )
+  ( 7 /Emitter )
+  ( 8 /L_low )
+  ( 9 /L_low )
+  ( 10 ? )
+  ( 11 /Led_c )
+  ( 12 +BATT )
+  ( 13 N-000003 )
+  ( 14 N-000003 )
+  ( PAD GND )
+ )
+ ( /50BB4D2D SOT23-5 DA2 AAT3221
+  ( 1 +BATT )
+  ( 2 GND )
+  ( 3 +BATT )
+  ( 4 ? )
+  ( 5 +3.3V )
+ )
+ ( /50BB4D25 SC82AB DA3 NCP662SQ
+  ( 1 GND )
+  ( 2 +BATT )
+  ( 3 +3.3V )
+  ( 4 +BATT )
+ )
+ ( /50BB4D9C LQFP48 DD1 STM32F100C4
+  ( 1 +3.3V )
+  ( 2 ? )
+  ( 3 ? )
+  ( 4 ? )
+  ( 5 ? )
+  ( 6 ? )
+  ( 7 ? )
+  ( 8 GND )
+  ( 9 +3.3V )
+  ( 10 /Btn1 )
+  ( 11 /Btn2 )
+  ( 12 /Btn3 )
+  ( 13 /Btn4 )
+  ( 14 /Btn5 )
+  ( 15 ? )
+  ( 16 ? )
+  ( 17 ? )
+  ( 18 /UBat/2 )
+  ( 19 /Green_Light )
+  ( 20 ? )
+  ( 21 /LCD_SDA )
+  ( 22 /LCD_XRES )
+  ( 23 GND )
+  ( 24 +3.3V )
+  ( 25 /LCD_SCLK )
+  ( 26 /BckLtEnable )
+  ( 27 /LCD_XCS )
+  ( 28 /LCD_BCKLT )
+  ( 29 /BuzzerIn )
+  ( 30 ? )
+  ( 31 ? )
+  ( 32 ? )
+  ( 33 ? )
+  ( 34 ? )
+  ( 35 GND )
+  ( 36 +3.3V )
+  ( 37 ? )
+  ( 38 ? )
+  ( 39 ? )
+  ( 40 ? )
+  ( 41 ? )
+  ( 42 ? )
+  ( 43 ? )
+  ( 44 GND )
+  ( 45 N-000040 )
+  ( 46 ? )
+  ( 47 GND )
+  ( 48 +3.3V )
+ )
+ ( /50BFA636 SMD0603_FUSE F1 FUSE0R
+  ( 1 GND )
+  ( 2 /LedLow )
+ )
+ ( /50BFAA5E Hole3_5_out6mm HOLE1 HOLE_METALLED
+  ( Hle GND )
+ )
+ ( /50BFAA64 Hole3_5_out6mm HOLE2 HOLE_METALLED
+  ( Hle GND )
+ )
+ ( /50BFA6D0 IND_1812 L1 100uH
+  ( 1 +BATT )
+  ( 2 /Bck_mid )
+ )
+ ( /50BBDC0A IND_SR0604 L2 10uH
+  ( 1 +BATT )
+  ( 2 /L_low )
+ )
+ ( /50BFA6E7 SOT23 Q1 MMBT2222
+  ( 1 N-000055 )
+  ( 2 GND )
+  ( 3 /Bck_mid )
+ )
+ ( /50BFA619 SOT23 Q2 MMBT2222
+  ( 1 N-000062 )
+  ( 2 GND )
+  ( 3 /LedLow )
+ )
+ ( /50BB4D70 SOT23 Q3 MMBT2222
+  ( 1 N-000047 )
+  ( 2 GND )
+  ( 3 /BuzzerOut )
+ )
+ ( /50BFA6E5 RES_0603 R1 1k
+  ( 1 N-000055 )
+  ( 2 /LCD_BCKLT )
+ )
+ ( /50BFA547 RES_0603 R2 100R
+  ( 1 N-000025 )
+  ( 2 N-000040 )
+ )
+ ( /50BFA6A6 RES_0603 R3 1k
+  ( 1 N-000062 )
+  ( 2 /BckLtEnable )
+ )
+ ( /50BFA294 RES_0805 R4 R*
+  ( 1 +BATT )
+  ( 2 /Led_c )
+ )
+ ( /50BFA29B RES_0805 R5 R*
+  ( 1 +BATT )
+  ( 2 /Led_c )
+ )
+ ( /50BFA2A0 RES_0805 R6 R*
+  ( 1 +BATT )
+  ( 2 /Led_c )
+ )
+ ( /50BFA29F RES_0805 R7 R*
+  ( 1 +BATT )
+  ( 2 /Led_c )
+ )
+ ( /50BB4D6E RES_0603 R8 1k
+  ( 1 /BuzzerIn )
+  ( 2 N-000047 )
+ )
+ ( /50BBD753 RES_0603 R10 1.5k
+  ( 1 N-000004 )
+  ( 2 GND )
+ )
+ ( /50BBD86C RES_0805 R11 R*
+  ( 1 /Emitter )
+  ( 2 GND )
+ )
+ ( /50BFA280 RES_0805 R12 R*
+  ( 1 /Emitter )
+  ( 2 GND )
+ )
+ ( /50BFA284 RES_0805 R13 R*
+  ( 1 /Emitter )
+  ( 2 GND )
+ )
+ ( /50BFA289 RES_0805 R14 R*
+  ( 1 /Emitter )
+  ( 2 GND )
+ )
+ ( /50BB4D36 RES_0603 R15 390k
+  ( 1 +BATT )
+  ( 2 /UBat/2 )
+ )
+ ( /50BB4D35 RES_0603 R16 390k
+  ( 1 /UBat/2 )
+  ( 2 GND )
+ )
+ ( /50BB4D76 BUTTON_6x6SMD SW1 BUTTON
+  ( 1 /Btn1 )
+  ( 2 GND )
+ )
+ ( /50BB4D5F BUTTON_6x6SMD SW2 BUTTON
+  ( 1 /Btn2 )
+  ( 2 GND )
+ )
+ ( /50BB4D60 BUTTON_6x6SMD SW3 BUTTON
+  ( 1 /Btn3 )
+  ( 2 GND )
+ )
+ ( /50BFAF5D BUTTON_6x6_CORNER SW4 BUTTON_H
+  ( 1 /Btn4 )
+  ( 2 GND )
+  ( H GND )
+ )
+ ( /50BFAF70 BUTTON_6x6_CORNER SW5 BUTTON_H
+  ( 1 /Btn5 )
+  ( 2 GND )
+  ( H GND )
+ )
+ ( /50BFA842 SIL-3 SW6 SWITCH
+  ( 1 /Batt )
+  ( 2 +BATT )
+  ( 3 ? )
+ )
+ ( /50BB555C CONN_NOKIA_LCD XL1 CONN_NOKIA_LCD10
+  ( 1 /LCD_SCLK )
+  ( 2 /LCD_SDA )
+  ( 3 GND )
+  ( 4 /LCD_XCS )
+  ( 5 /LCD_XRES )
+  ( 6 /LedHigh )
+  ( 7 /LedLow )
+  ( 8 ? )
+  ( 9 +3.3V )
+  ( 10 +3.3V )
+ )
+ ( /50BF9BCD SIL1_SQUARE_1MM5 XL2 CONN_1
+  ( 1 /Batt )
+ )
+ ( /50BF9BD3 SIL1_ROUND_1MM5 XL3 CONN_1
+  ( 1 GND )
+ )
+)
+*
+{ Allowed footprints by component:
+$component C1
+ c*
+$endlist
+$component C2
+ c*
+$endlist
+$component C3
+ c*
+$endlist
+$component C4
+ c*
+$endlist
+$component C5
+ c*
+$endlist
+$component C6
+ c*
+$endlist
+$component C7
+ c*
+$endlist
+$component C8
+ c*
+$endlist
+$component C9
+ c*
+$endlist
+$component C10
+ c*
+$endlist
+$component C11
+ c*
+$endlist
+$component C12
+ c*
+$endlist
+$component C13
+ c*
+$endlist
+$component C14
+ c*
+$endlist
+$component C15
+ c*
+$endlist
+$component C16
+ c*
+$endlist
+$component D1
+ d*
+$endlist
+$component D2
+ LED*
+$endlist
+$component D3
+ d*
+$endlist
+$component D4
+ LED*
+$endlist
+$component D5
+ d*
+$endlist
+$component DA2
+ SOT23-5
+$endlist
+$component DA3
+ SC82AB
+$endlist
+$component DD1
+ LQFP48
+$endlist
+$component F1
+ SMD*
+$endlist
+$component HOLE1
+ HOLE*
+$endlist
+$component HOLE2
+ HOLE*
+$endlist
+$component L1
+ IND*
+$endlist
+$component L2
+ IND*
+$endlist
+$component R1
+ r*
+$endlist
+$component R2
+ r*
+$endlist
+$component R3
+ r*
+$endlist
+$component R4
+ r*
+$endlist
+$component R5
+ r*
+$endlist
+$component R6
+ r*
+$endlist
+$component R7
+ r*
+$endlist
+$component R8
+ r*
+$endlist
+$component R10
+ r*
+$endlist
+$component R11
+ r*
+$endlist
+$component R12
+ r*
+$endlist
+$component R13
+ r*
+$endlist
+$component R14
+ r*
+$endlist
+$component R15
+ r*
+$endlist
+$component R16
+ r*
+$endlist
+$component SW1
+ BUTTON*
+$endlist
+$component SW2
+ BUTTON*
+$endlist
+$component SW3
+ BUTTON*
+$endlist
+$component SW4
+ BUTTON*
+$endlist
+$component SW5
+ BUTTON*
+$endlist
+$component SW6
+ BUTTON*
+$endlist
+$component XL1
+ CON_NOKIA_LCD
+$endlist
+$endfootprintlist
+}
