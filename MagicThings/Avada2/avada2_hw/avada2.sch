@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 06/12/2012 00:38:38
+EESchema Schematic File Version 2  date 06/12/2012 14:48:30
 LIBS:Transistors_kl
 LIBS:Connectors_kl
 LIBS:display_kl
@@ -14,7 +14,7 @@ $Descr A3 16535 11700
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "5 dec 2012"
+Date "6 dec 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -23,15 +23,30 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 Wire Wire Line
+	12900 3050 13850 3050
+Wire Wire Line
+	12900 3050 12900 2550
+Wire Wire Line
+	13850 3250 13800 3250
+Wire Wire Line
+	12250 3050 12350 3050
+Wire Wire Line
+	12350 2950 12250 2950
+Wire Wire Line
+	1800 5200 1700 5200
+Wire Wire Line
+	1850 5450 1850 5400
+Wire Wire Line
+	1850 5400 1700 5400
+Wire Wire Line
+	1700 5300 1850 5300
+Wire Wire Line
+	1700 5100 1800 5100
+Wire Wire Line
 	14000 2400 14000 2350
 Connection ~ 14250 8950
 Wire Wire Line
 	14150 8950 14250 8950
-Connection ~ 14350 6900
-Wire Wire Line
-	14350 6900 14350 6650
-Wire Wire Line
-	14350 6650 14450 6650
 Connection ~ 9700 10200
 Wire Wire Line
 	9350 10100 9350 10200
@@ -415,16 +430,70 @@ Connection ~ 4550 2150
 Wire Wire Line
 	9700 9650 9500 9650
 Wire Wire Line
-	14850 6650 14950 6650
-Wire Wire Line
-	14950 6650 14950 6900
-Connection ~ 14950 6900
-Wire Wire Line
 	14250 9150 14250 8700
 Wire Wire Line
 	14250 8700 14150 8700
 Wire Wire Line
 	14000 2700 14000 2650
+Wire Wire Line
+	12900 2550 12250 2550
+$Comp
+L CONN_2 XL?
+U 1 1 50C077CC
+P 14050 3150
+F 0 "XL?" V 14000 3150 40  0000 C CNN
+F 1 "CONN_2" V 14100 3150 40  0000 C CNN
+	1    14050 3150
+	1    0    0    -1  
+$EndComp
+Text Label 13300 3050 0    60   ~ 0
+TX1
+$Comp
+L GND #PWR?
+U 1 1 50C077B8
+P 13800 3250
+F 0 "#PWR?" H 13890 3230 30  0001 C CNN
+F 1 "GND" H 13800 3170 30  0001 C CNN
+	1    13800 3250
+	0    -1   -1   0   
+$EndComp
+Text Label 12350 3050 0    60   ~ 0
+SWCLK
+Text Label 12350 2950 0    60   ~ 0
+SWDIO
+Text Notes 1150 4800 0    60   ~ 0
+Programming
+Text Label 1800 5200 0    60   ~ 0
+SWDIO
+Text Label 1800 5100 0    60   ~ 0
+SWCLK
+$Comp
+L ST_SWD XL?
+U 1 1 50C07760
+P 1350 5250
+F 0 "XL?" H 1200 5550 60  0000 C CNN
+F 1 "ST_SWD" H 1550 5550 60  0000 C CNN
+	1    1350 5250
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 50C0775F
+P 1850 5450
+F 0 "#PWR?" H 1940 5430 30  0001 C CNN
+F 1 "GND" H 1850 5370 30  0001 C CNN
+	1    1850 5450
+	1    0    0    -1  
+$EndComp
+$Comp
+L +3.3V #PWR?
+U 1 1 50C0775E
+P 1850 5300
+F 0 "#PWR?" H 1850 5260 30  0001 C CNN
+F 1 "+3.3V" H 1930 5330 30  0000 C CNN
+	1    1850 5300
+	1    0    0    -1  
+$EndComp
 $Comp
 L BUTTON_H SW5
 U 1 1 50BFAF70
@@ -489,15 +558,6 @@ F 1 "HOLE_METALLED" H 13300 8750 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L D_SHOTTKY D5
-U 1 1 50BFAA0E
-P 14650 6650
-F 0 "D5" H 14650 6750 40  0000 C CNN
-F 1 "BAT54WS" H 14650 6550 40  0000 C CNN
-	1    14650 6650
-	1    0    0    -1  
-$EndComp
-$Comp
 L PWR_FLAG #FLG04
 U 1 1 50BFA906
 P 9350 10100
@@ -531,12 +591,9 @@ $EndComp
 NoConn ~ 12250 2150
 NoConn ~ 12250 2250
 NoConn ~ 12250 2350
-NoConn ~ 12250 2550
 NoConn ~ 12250 2650
 NoConn ~ 12250 2750
 NoConn ~ 12250 2850
-NoConn ~ 12250 2950
-NoConn ~ 12250 3050
 NoConn ~ 12250 3150
 NoConn ~ 12250 3650
 NoConn ~ 12250 3750

@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 06/12/2012 00:37:47
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 06/12/2012 14:49:11
 
 BeginCmp
 TimeStamp = /50BB4D6D;
@@ -145,13 +145,6 @@ TimeStamp = /50BBE0F1;
 Reference = D4;
 ValeurCmp = LED;
 IdModule  = ;
-EndCmp
-
-BeginCmp
-TimeStamp = /50BFAA0E;
-Reference = D5;
-ValeurCmp = BAT54WS;
-IdModule  = DIODE_SOD323;
 EndCmp
 
 BeginCmp
@@ -404,6 +397,20 @@ TimeStamp = /50BF9BD3;
 Reference = XL3;
 ValeurCmp = CONN_1;
 IdModule  = SIL1_ROUND_1MM5;
+EndCmp
+
+BeginCmp
+TimeStamp = /50C077CC;
+Reference = XL4;
+ValeurCmp = CONN_2;
+IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /50C07760;
+Reference = XL5;
+ValeurCmp = ST_SWD;
+IdModule  = SIL-4;
 EndCmp
 
 EndListe
