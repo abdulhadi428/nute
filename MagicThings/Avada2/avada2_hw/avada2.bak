@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 06/12/2012 14:48:27
+EESchema Schematic File Version 2  date 15/12/2012 18:39:26
 LIBS:Transistors_kl
 LIBS:Connectors_kl
 LIBS:display_kl
@@ -14,7 +14,7 @@ $Descr A3 16535 11700
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "6 dec 2012"
+Date "15 dec 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -22,6 +22,16 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+NoConn ~ 5800 6650
+$Comp
+L LED_RAD D?
+U 1 1 50CC977D
+P 5800 6850
+F 0 "D?" H 5950 6990 50  0000 C CNN
+F 1 "LED_RAD" H 5720 6990 50  0000 C CNN
+	1    5800 6850
+	-1   0    0    1   
+$EndComp
 Wire Wire Line
 	12900 3050 13850 3050
 Wire Wire Line
@@ -965,15 +975,6 @@ F 0 "#PWR018" H 5090 2080 30  0001 C CNN
 F 1 "GND" H 5000 2020 30  0001 C CNN
 	1    5000 2100
 	1    0    0    -1  
-$EndComp
-$Comp
-L LED D4
-U 1 1 50BBE0F1
-P 5800 6850
-F 0 "D4" H 5900 6990 50  0000 C CNN
-F 1 "LED" H 5720 6990 50  0000 C CNN
-	1    5800 6850
-	-1   0    0    1   
 $EndComp
 $Comp
 L +BATT #PWR019

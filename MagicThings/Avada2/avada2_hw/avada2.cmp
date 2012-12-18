@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 06/12/2012 14:49:11
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 15/12/2012 21:22:51
 
 BeginCmp
 TimeStamp = /50BB4D6D;
@@ -141,17 +141,17 @@ IdModule  = DIODE_SMA_DO214AC;
 EndCmp
 
 BeginCmp
-TimeStamp = /50BBE0F1;
+TimeStamp = /50CC977D;
 Reference = D4;
-ValeurCmp = LED;
-IdModule  = ;
+ValeurCmp = LED_RAD;
+IdModule  = LED_RAD;
 EndCmp
 
 BeginCmp
 TimeStamp = /50BBD57C;
 Reference = DA1;
 ValeurCmp = ZXLD1322;
-IdModule  = ;
+IdModule  = DFN1443;
 EndCmp
 
 BeginCmp
@@ -375,7 +375,7 @@ BeginCmp
 TimeStamp = /50BFA842;
 Reference = SW6;
 ValeurCmp = SWITCH;
-IdModule  = SIL-3;
+IdModule  = SWITCH;
 EndCmp
 
 BeginCmp
@@ -400,16 +400,16 @@ IdModule  = SIL1_ROUND_1MM5;
 EndCmp
 
 BeginCmp
-TimeStamp = /50C077CC;
+TimeStamp = /50C07760;
 Reference = XL4;
-ValeurCmp = CONN_2;
-IdModule  = SIL-2;
+ValeurCmp = ST_SWD;
+IdModule  = SIL-4;
 EndCmp
 
 BeginCmp
-TimeStamp = /50C07760;
+TimeStamp = /50C077CC;
 Reference = XL5;
-ValeurCmp = ST_SWD;
+ValeurCmp = CONN_2;
 IdModule  = SIL-4;
 EndCmp
 
