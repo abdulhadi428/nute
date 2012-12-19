@@ -1,7 +1,7 @@
-# EESchema Netlist Version 1.1 created  12/17/2012 10:00:34 PM
+# EESchema Netlist Version 1.1 created  19/12/2012 01:59:38
 (
- ( /50C07572 $noname$ ANT1 ANT_PCB_MONO
-  ( 1 N-000133 )
+ ( /50C07572 TESTPOINT_0_5MM ANT1 ANT_PCB_MONO
+  ( 1 N-000123 )
  )
  ( /4F891826 BUZZER_NOKIA BZ1 BUZZER
   ( 1 +BATT )
@@ -9,22 +9,22 @@
  )
  ( /5045D4EF CAP_0402 C1 100pF
   ( 1 GND )
-  ( 2 N-000054 )
- )
- ( /5045D4EE CAP_0402 C2 1.5pF
-  ( 1 N-000116 )
-  ( 2 N-000117 )
- )
- ( /5045D4F0 CAP_0402 C3 1pF
-  ( 1 N-000117 )
   ( 2 N-000053 )
  )
+ ( /5045D4EE CAP_0402 C2 1.5pF
+  ( 1 N-000107 )
+  ( 2 N-000108 )
+ )
+ ( /5045D4F0 CAP_0402 C3 1pF
+  ( 1 N-000108 )
+  ( 2 N-000052 )
+ )
  ( /5045D4ED CAP_0402 C4 1.5pF
-  ( 1 N-000053 )
+  ( 1 N-000052 )
   ( 2 GND )
  )
  ( /5045D4EC CAP_0402 C5 3.3pF
-  ( 1 N-000115 )
+  ( 1 N-000106 )
   ( 2 GND )
  )
  ( /4D2F4E92 CAP_0402 C6 220pF
@@ -53,26 +53,26 @@
  )
  ( /50910431 CAP_0402 C12 10n
   ( 1 GND )
-  ( 2 N-000012 )
+  ( 2 N-000014 )
  )
  ( /50910434 CAP_0402 C13 47n
   ( 1 GND )
-  ( 2 N-000013 )
+  ( 2 N-000019 )
  )
  ( /4D2F4A18 CAP_0402 C14 0.1u
-  ( 1 N-000060 )
+  ( 1 N-000059 )
   ( 2 GND )
  )
  ( /509120C0 CAP_0402 C15 10n
   ( 1 GND )
-  ( 2 N-000022 )
+  ( 2 N-000016 )
  )
  ( /50904A06 CAP_0402 C16 10pF
-  ( 1 N-000015 )
+  ( 1 N-000012 )
   ( 2 GND )
  )
  ( /50904A09 CAP_0402 C17 10pF
-  ( 1 N-000014 )
+  ( 1 N-000056 )
   ( 2 GND )
  )
  ( /507F1C4B CAP_0402 C18 0.1u
@@ -148,11 +148,11 @@
   ( 2 GND )
  )
  ( /508FD1DF CAP_0402 C36 20pF
-  ( 1 N-000112 )
+  ( 1 N-000103 )
   ( 2 GND )
  )
  ( /508E9D77 CAP_0402 C37 20pF
-  ( 1 N-000113 )
+  ( 1 N-000104 )
   ( 2 GND )
  )
  ( /508E9774 CAP_0402 C38 0.1u
@@ -184,7 +184,7 @@
   ( 2 GND )
  )
  ( /50B065F8 CAP_0402 C45 0.1u
-  ( 1 N-000027 )
+  ( 1 N-000025 )
   ( 2 GND )
  )
  ( /508FFBDA CAP_0402 C46 0.1u
@@ -208,23 +208,23 @@
   ( 2 GND )
  )
  ( /50C08AA1 CAP_0402 C51 0.1u
-  ( 1 N-000138 )
+  ( 1 N-000135 )
   ( 2 GND )
  )
  ( /50BCBD55 CAP_0402 C52 0.1u
-  ( 1 N-000141 )
+  ( 1 N-000139 )
   ( 2 /klNFC_Tx )
  )
  ( /50BCBD8A CAP_0402 C53 100pF
-  ( 1 N-000140 )
-  ( 2 N-000120 )
+  ( 1 N-000134 )
+  ( 2 N-000112 )
  )
  ( /50BCBDA9 CAP_0402 C54 1u
-  ( 1 N-000028 )
-  ( 2 N-000119 )
+  ( 1 N-000024 )
+  ( 2 N-000124 )
  )
  ( /50BD1076 CAP_0402 C55 20pF
-  ( 1 N-000129 )
+  ( 1 N-000122 )
   ( 2 /klNFC_Rx )
  )
  ( /50C08AC4 CAP_0402 C56 0.1u
@@ -236,11 +236,11 @@
   ( 2 GND )
  )
  ( /50A7C8FC CAP_0402 C58 150pF
-  ( 1 N-000141 )
+  ( 1 N-000139 )
   ( 2 GND )
  )
  ( /50BCBDFC CAP_0402 C59 1n
-  ( 1 N-000121 )
+  ( 1 N-000110 )
   ( 2 GND )
  )
  ( /50CF2970 DIODE_SOD80C D1 PMLL4148
@@ -252,8 +252,8 @@
   ( C /XLed2 )
  )
  ( /50A7C8BF DIODE_SOD80C D3 PMLL4148
-  ( A N-000119 )
-  ( C N-000121 )
+  ( A N-000124 )
+  ( C N-000110 )
  )
  ( /50A29BFD SC82AB DA1 NCP583SQ
   ( 1 +BATT )
@@ -297,33 +297,33 @@
   ( 47 GND )
  )
  ( /50BCBD8E SOT23-8 DA3 MAX4453
-  ( 1 N-000140 )
-  ( 2 N-000118 )
+  ( 1 N-000134 )
+  ( 2 N-000109 )
   ( 3 AGND )
   ( 4 GND )
   ( 5 AGND )
-  ( 6 N-000139 )
-  ( 7 N-000028 )
-  ( 8 N-000138 )
+  ( 6 N-000137 )
+  ( 7 N-000024 )
+  ( 8 N-000135 )
  )
  ( /50A74898 SOT23-5 DA4 MCP73832
   ( 1 /Charge )
   ( 2 GND )
   ( 3 +BATT )
   ( 4 +5V )
-  ( 5 N-000051 )
+  ( 5 N-000049 )
  )
  ( /4D2F47C3 QFN20 DD1 CC1101
   ( 1 /CC_SCK )
   ( 2 /CC_MISO )
   ( 3 /CC_GDO2 )
   ( 4 +3.3V )
-  ( 5 N-000060 )
+  ( 5 N-000059 )
   ( 6 /CC_GDO0 )
   ( 7 /CC_CS )
-  ( 8 N-000015 )
+  ( 8 N-000012 )
   ( 9 +3.3V )
-  ( 10 N-000014 )
+  ( 10 N-000056 )
   ( 11 +3.3V )
   ( 12 /RF1 )
   ( 13 /RF2 )
@@ -359,7 +359,7 @@
   ( 2 ? )
   ( 3 ? )
   ( 4 ? )
-  ( 5 N-000112 )
+  ( 5 N-000103 )
   ( 6 N-000072 )
   ( 7 ? )
   ( 8 /ACC_IRQ )
@@ -385,7 +385,7 @@
   ( 28 /LCD_XCS )
   ( 29 /LCD_SDA )
   ( 30 /LCD_XRES )
-  ( 31 N-000062 )
+  ( 31 N-000063 )
   ( 32 +3.3V )
   ( 33 /LCD_SCLK )
   ( 34 /VS_SCLK )
@@ -401,7 +401,7 @@
   ( 44 /USB_DM )
   ( 45 /USB_DP )
   ( 46 /SWDIO )
-  ( 47 N-000108 )
+  ( 47 N-000086 )
   ( 48 +3.3V )
   ( 49 /SWCLK )
   ( 50 /klNFCModulation )
@@ -456,31 +456,31 @@
   ( PAD GND )
  )
  ( /509818E6 IND_0402 L1 18nH
-  ( 1 N-000054 )
-  ( 2 N-000117 )
+  ( 1 N-000053 )
+  ( 2 N-000108 )
  )
  ( /5098187A IND_0402 L2 12nH
-  ( 1 N-000117 )
+  ( 1 N-000108 )
   ( 2 /RF1 )
  )
  ( /509818B1 IND_0402 L3 12nH
-  ( 1 N-000115 )
-  ( 2 N-000116 )
+  ( 1 N-000106 )
+  ( 2 N-000107 )
  )
  ( /509818B5 IND_0402 L4 12nH
-  ( 1 N-000133 )
-  ( 2 N-000115 )
+  ( 1 N-000123 )
+  ( 2 N-000106 )
  )
  ( /50981897 IND_0402 L5 12nH
-  ( 1 N-000053 )
+  ( 1 N-000052 )
   ( 2 /RF2 )
  )
  ( /509818D6 IND_0402 L6 18nH
-  ( 1 N-000116 )
-  ( 2 N-000053 )
+  ( 1 N-000107 )
+  ( 2 N-000052 )
  )
  ( /50A7C81D IND_1812 L7 100uH
-  ( 1 N-000141 )
+  ( 1 N-000139 )
   ( 2 GND )
  )
  ( /4FCBDC43 VIBRO_IPH4S M1 MOTOR
@@ -488,18 +488,18 @@
   ( 2 /MotorOut )
  )
  ( /4FCBDBFB SOT23 Q1 MMBT2222
-  ( 1 N-000049 )
+  ( 1 N-000048 )
   ( 2 GND )
   ( 3 /MotorOut )
  )
  ( /4F80B572 SOT23 Q2 MMBT2222
-  ( 1 N-000056 )
+  ( 1 N-000057 )
   ( 2 GND )
   ( 3 /BuzzerOut )
  )
  ( /50B065FB TSOP752 Q3 TSOP75256
   ( 1 GND )
-  ( 2 N-000027 )
+  ( 2 N-000025 )
   ( 3 /XotarIn )
   ( 4 GND )
  )
@@ -509,12 +509,12 @@
   ( 3 /SD_VDD )
  )
  ( /50BCBE9F SOT23 Q5 BC848CL
-  ( 1 N-000129 )
+  ( 1 N-000122 )
   ( 2 GND )
   ( 3 /klNFC_Rx )
  )
  ( /50CF3421 SOT23 Q6 MMBT2222
-  ( 1 N-000123 )
+  ( 1 N-000111 )
   ( 2 GND )
   ( 3 /XLed2 )
  )
@@ -532,14 +532,14 @@
  )
  ( /4FCBDBF9 RES_0402 R4 1k
   ( 1 /Motor )
-  ( 2 N-000049 )
+  ( 2 N-000048 )
  )
  ( /4F80B5A7 RES_0402 R5 1k
   ( 1 /Buzzer )
-  ( 2 N-000056 )
+  ( 2 N-000057 )
  )
  ( /50910430 RES_0402 R6 20
-  ( 1 N-000012 )
+  ( 1 N-000014 )
   ( 2 /SND_R )
  )
  ( /5045D6D1 RES_0402 R7 390k
@@ -547,7 +547,7 @@
   ( 2 /UBat_2 )
  )
  ( /50910435 RES_0402 R8 10
-  ( 1 N-000013 )
+  ( 1 N-000019 )
   ( 2 /SND_C )
  )
  ( /5045D6D2 RES_0402 R9 390k
@@ -555,15 +555,15 @@
   ( 2 GND )
  )
  ( /5045D6CD RES_0402 R10 2k
-  ( 1 N-000051 )
+  ( 1 N-000049 )
   ( 2 GND )
  )
  ( /509120BF RES_0402 R11 20
-  ( 1 N-000022 )
+  ( 1 N-000016 )
   ( 2 /SND_L )
  )
  ( /507F998D RES_0402 R12 15R
-  ( 1 N-000102 )
+  ( 1 N-000098 )
   ( 2 /LCD_BCKLT )
  )
  ( /50B063F0 RES_0603 R13 150
@@ -572,7 +572,7 @@
  )
  ( /5090CA07 RES_0402 R14 200R
   ( 1 N-000072 )
-  ( 2 N-000113 )
+  ( 2 N-000104 )
  )
  ( /508FFBDD RES_0402 R15 47k
   ( 1 /SD_VDD )
@@ -596,30 +596,30 @@
  )
  ( /50B065FA RES_0402 R20 100
   ( 1 /XotarPower )
-  ( 2 N-000027 )
+  ( 2 N-000025 )
  )
  ( /50B0675B RES_0603 R21 150
   ( 1 /XLed1 )
   ( 2 +BATT )
  )
  ( /50A2002F RES_0402 R22 22
-  ( 1 N-000019 )
+  ( 1 N-000007 )
   ( 2 /USB_DM )
  )
  ( /50A2002E RES_0402 R23 22
-  ( 1 N-000135 )
+  ( 1 N-000128 )
   ( 2 /USB_DP )
  )
  ( /50A2002C RES_0402 R24 1k5
-  ( 1 N-000135 )
+  ( 1 N-000128 )
   ( 2 /USB_CABLE )
  )
  ( /50C08AB9 RES_0402 R25 100
-  ( 1 N-000138 )
+  ( 1 N-000135 )
   ( 2 /klNFC_Vcc )
  )
  ( /50BCC594 RES_0402 R26 10k
-  ( 1 N-000121 )
+  ( 1 N-000110 )
   ( 2 GND )
  )
  ( /50BCBEB5 RES_0402 R27 10k
@@ -632,19 +632,19 @@
  )
  ( /50BCBAFD RES_0402 R29 1k
   ( 1 /klNFC_Tx )
-  ( 2 N-000118 )
+  ( 2 N-000109 )
  )
  ( /50BCBD8C RES_0402 R30 10k
-  ( 1 N-000120 )
-  ( 2 N-000139 )
+  ( 1 N-000112 )
+  ( 2 N-000137 )
  )
  ( /50A74A16 RES_0402 R31 100k
   ( 1 +5V )
   ( 2 /ExtPwr )
  )
  ( /50BCBECD RES_0402 R32 10k
-  ( 1 N-000121 )
-  ( 2 N-000129 )
+  ( 1 N-000110 )
+  ( 2 N-000122 )
  )
  ( /50BCBB2A RES_0402 R33 1k
   ( 1 AGND )
@@ -652,19 +652,19 @@
  )
  ( /50BD2536 RES_0402 R34 10k
   ( 1 AGND )
-  ( 2 N-000120 )
+  ( 2 N-000112 )
  )
  ( /50BCFF8E RES_0402 R35 1k
   ( 1 GND )
-  ( 2 N-000119 )
+  ( 2 N-000124 )
  )
  ( /50BCBB03 RES_0402 R36 20k
-  ( 1 N-000118 )
-  ( 2 N-000140 )
+  ( 1 N-000109 )
+  ( 2 N-000134 )
  )
  ( /50BCBD8B RES_0402 R37 330k
-  ( 1 N-000139 )
-  ( 2 N-000028 )
+  ( 1 N-000137 )
+  ( 2 N-000024 )
  )
  ( /50A74A33 RES_0402 R38 100k
   ( 1 /ExtPwr )
@@ -672,52 +672,43 @@
  )
  ( /50CF341F RES_0402 R39 1k
   ( 1 /XotarLED )
-  ( 2 N-000123 )
+  ( 2 N-000111 )
  )
- ( /50C0737E BUTTON_6x6_CORNER SW1 BUTTON_H
+ ( /50D0E6F6 BUTTON_4x4_SMD SW1 BUTTON
   ( 1 /BtnCol0 )
   ( 2 /BtnRow0 )
-  ( H GND )
  )
- ( /50C073BA BUTTON_6x6_CORNER SW2 BUTTON_H
+ ( /50D0E6FC BUTTON_4x4_SMD SW2 BUTTON
   ( 1 /BtnCol1 )
   ( 2 /BtnRow0 )
-  ( H GND )
  )
- ( /50C073BC BUTTON_6x6_CORNER SW3 BUTTON_H
+ ( /50D0E700 BUTTON_4x4_SMD SW3 BUTTON
   ( 1 /BtnCol2 )
   ( 2 /BtnRow0 )
-  ( H GND )
  )
- ( /50C07394 BUTTON_6x6_CORNER SW4 BUTTON_H
+ ( /50D0E704 BUTTON_4x4_SMD SW4 BUTTON
   ( 1 /BtnCol0 )
   ( 2 /BtnRow1 )
-  ( H GND )
  )
- ( /50C073B7 BUTTON_6x6_CORNER SW5 BUTTON_H
+ ( /50D0E70C BUTTON_4x4_SMD SW5 BUTTON
   ( 1 /BtnCol1 )
   ( 2 /BtnRow1 )
-  ( H GND )
  )
- ( /50C073BF BUTTON_6x6_CORNER SW6 BUTTON_H
+ ( /50D0E713 BUTTON_4x4_SMD SW6 BUTTON
   ( 1 /BtnCol2 )
   ( 2 /BtnRow1 )
-  ( H GND )
  )
- ( /50C07399 BUTTON_6x6_CORNER SW7 BUTTON_H
+ ( /50D0E707 BUTTON_4x4_SMD SW7 BUTTON
   ( 1 /BtnCol0 )
   ( 2 /BtnRow2 )
-  ( H GND )
  )
- ( /50C073B6 BUTTON_6x6_CORNER SW8 BUTTON_H
+ ( /50D0E70F BUTTON_4x4_SMD SW8 BUTTON
   ( 1 /BtnCol1 )
   ( 2 /BtnRow2 )
-  ( H GND )
  )
- ( /50C073C0 BUTTON_6x6_CORNER SW9 BUTTON_H
+ ( /50D0E716 BUTTON_4x4_SMD SW9 BUTTON
   ( 1 /BtnCol2 )
   ( 2 /BtnRow2 )
-  ( H GND )
  )
  ( /4D2F4BD7 TESTPOINT_0_5MM TP2 TESTPOINT
   ( 1 /CC_GDO0 )
@@ -726,11 +717,11 @@
   ( 1 /CC_GDO2 )
  )
  ( /508E97C0 CAP_0402 VCap1 2.2u
-  ( 1 N-000062 )
+  ( 1 N-000063 )
   ( 2 GND )
  )
  ( /508E97E6 CAP_0402 VCap2 2.2u
-  ( 1 N-000108 )
+  ( 1 N-000086 )
   ( 2 GND )
  )
  ( /50A56FD2 CONN_NOKIA_24_04 XL1 CONN_NOKIA_LCD24
@@ -756,17 +747,15 @@
   ( 20 GND )
   ( 21 GND )
   ( 22 +3.3V )
-  ( 23 N-000102 )
+  ( 23 N-000098 )
   ( 24 GND )
   ( H GND )
  )
- ( /50A20679 $noname$ XL2 CONN_AUDIOJACK
+ ( /50D020DB CONN_AUDIO_CKX3_5_30 XL2 CONN_AUDIO_SIMPLE
   ( 1 /SND_C )
   ( 2 /SND_R )
-  ( 3 ? )
-  ( 4 /SND_L )
-  ( 5 ? )
-  ( 6 /SND_C )
+  ( 3 /SND_L )
+  ( H GND )
  )
  ( /50BF65D6 CONN_DIL2X5 XL3 CONN_5X2
   ( 1 GND )
@@ -825,8 +814,8 @@
  )
  ( /50A2002B USB_KMMX_ABSMT5SG_30TR XL10 USB_MICRO_B
   ( 1 +5V )
-  ( 2 N-000019 )
-  ( 3 N-000135 )
+  ( 2 N-000007 )
+  ( 3 N-000128 )
   ( 4 GND )
   ( 5 GND )
   ( SHLD GND )
@@ -837,13 +826,13 @@
   ( 3 GND )
  )
  ( /50904A0A CRYSTAL_03225C4 XTAL1 27MHz
-  ( 1 N-000015 )
-  ( 2 N-000014 )
+  ( 1 N-000012 )
+  ( 2 N-000056 )
   ( H GND )
  )
  ( /508E9D6A CRYSTAL_0503x4-4 XTAL2 12.0MHz
-  ( 1 N-000112 )
-  ( 2 N-000113 )
+  ( 1 N-000103 )
+  ( 2 N-000104 )
   ( H GND )
  )
 )

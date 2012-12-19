@@ -197,7 +197,9 @@
 		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/f0test"/>
 		</configuration>
-		<configuration configurationName="Debug"/>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/klNfcF0"/>
+		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
