@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 12/19/2012 4:28:20 PM
+EESchema Schematic File Version 2  date 12/20/2012 9:43:33 PM
 LIBS:Connectors_kl
 LIBS:display_kl
 LIBS:pcb_details
@@ -19,7 +19,7 @@ $Descr A2 23400 16535
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "19 dec 2012"
+Date "20 dec 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -1292,7 +1292,7 @@ U 1 1 50D1ABA0
 P 3850 5300
 F 0 "R44" V 3930 5150 50  0000 C CNN
 F 1 "150" V 3850 5300 50  0000 C CNN
-F 2 "RES_0402" V 3930 5400 28  0000 C CNN
+F 2 "RES_0603" V 3930 5400 28  0000 C CNN
 	1    3850 5300
 	0    -1   -1   0   
 $EndComp
@@ -2097,7 +2097,7 @@ U 1 1 50B063F0
 P 3850 5100
 F 0 "R13" V 3930 4950 50  0000 C CNN
 F 1 "150" V 3850 5100 50  0000 C CNN
-F 2 "RES_0402" V 3930 5200 28  0000 C CNN
+F 2 "RES_0603" V 3930 5200 28  0000 C CNN
 	1    3850 5100
 	0    -1   -1   0   
 $EndComp

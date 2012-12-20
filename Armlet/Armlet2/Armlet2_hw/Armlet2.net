@@ -1,4 +1,4 @@
-# EESchema Netlist Version 1.1 created  19/12/2012 23:55:51
+# EESchema Netlist Version 1.1 created  12/20/2012 9:22:41 PM
 (
  ( /50C07572 TESTPOINT_0_5MM ANT1 ANT_PCB_MONO
   ( 1 N-000123 )
@@ -562,7 +562,7 @@
   ( 1 N-000016 )
   ( 2 /SND_L )
  )
- ( /507F998D RES_0402 R12 15R
+ ( /507F998D RES_0603 R12 15R
   ( 1 N-000100 )
   ( 2 /LCD_BCKLT )
  )
@@ -690,7 +690,7 @@
   ( 1 /P2_SDA )
   ( 2 /PeriphPwr )
  )
- ( /50D1ABA0 RES_0402 R44 150
+ ( /50D1ABA0 RES_0603 R44 150
   ( 1 /PeriphPwr2 )
   ( 2 /PeriphPwr )
  )
