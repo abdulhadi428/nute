@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 12/20/2012 9:22:41 PM
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 21/12/2012 00:17:04
 
 BeginCmp
 TimeStamp = /50C07572;
@@ -502,6 +502,20 @@ TimeStamp = /50AE987E;
 Reference = DD4;
 ValeurCmp = STM32F050K4_6;
 IdModule  = QFN32;
+EndCmp
+
+BeginCmp
+TimeStamp = /50D36602;
+Reference = HOLE1;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole2_2mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /50D36606;
+Reference = HOLE2;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole2_2mm;
 EndCmp
 
 BeginCmp
