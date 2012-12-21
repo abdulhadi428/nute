@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 21/12/2012 00:16:42
+EESchema Schematic File Version 2  date 21/12/2012 13:21:40
 LIBS:Connectors_kl
 LIBS:display_kl
 LIBS:pcb_details
@@ -19,7 +19,7 @@ $Descr A2 23400 16535
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "20 dec 2012"
+Date "21 dec 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -2815,7 +2815,7 @@ L C C19
 U 1 1 5093C9E8
 P 2650 3550
 F 0 "C19" H 2550 3450 50  0000 L CNN
-F 1 "0.1u" H 2550 3650 50  0000 L CNN
+F 1 "1u" H 2550 3650 50  0000 L CNN
 F 2 "CAP_0603" V 2750 3400 28  0000 C BNN
 	1    2650 3550
 	1    0    0    -1  
