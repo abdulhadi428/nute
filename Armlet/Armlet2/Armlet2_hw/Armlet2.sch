@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 21/12/2012 13:21:40
+EESchema Schematic File Version 2  date 12/21/2012 7:50:58 PM
 LIBS:Connectors_kl
 LIBS:display_kl
 LIBS:pcb_details
@@ -2157,7 +2157,7 @@ F 1 "CONN_2" V 10350 12000 40  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 10900 10100 0    60   ~ 0
-Timers usage\n\nTIM1 - Buzzer Carrier\nTIM2 - Xotar In\nTIM3 - XotarOut Carrier\nTIM14 - XotarOut Data\nTIM16 - Motor In On/Off\nTIM17 - Buzzer On/Off\n
+Timers usage\n\nTIM1 - Buzzer Carrier\nTIM2 - Xotar In\nTIM3 - XotarOut Carrier\nTIM14 - XotarOut Data\nTIM16 - Vibro waveform\nTIM17 - Buzzer On/Off\n
 Text Label 9550 12500 0    60   ~ 0
 SB_SWCLK
 Text Label 9550 12400 0    60   ~ 0
@@ -3920,7 +3920,7 @@ P 21000 7450
 F 0 "M1" H 20750 7700 60  0000 C CNN
 F 1 "MOTOR" H 21150 7700 60  0000 C CNN
 	1    21000 7450
-	-1   0    0    1   
+	1    0    0    -1  
 $EndComp
 $Comp
 L NPN Q1

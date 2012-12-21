@@ -11,13 +11,18 @@
 		<LocalLibrary />
 		<Pcb>
 			<File path=".\Armlet2.fsx" Folder="-1" isopened="1"/>
+			<File path=".\Armlet2-1.fsx" Folder="-1" isopened="0"/>
 		</Pcb>
+		<Documents path="D:\Nute\Armlet\Armlet2\Armlet2_hw\Armlet2\"/>
 		<Import>
 			<Specctra>
 			<Path name="D:\Nute\Armlet\Armlet2\Armlet2_hw\Armlet2.dsn"/>
 			</Specctra>
 		</Import>
 		<ARouteSessions>
+			<Session name="Armlet2-1" date="2012-12-21 19:15:08" path=".\autoroute_Armlet2-1_121221191508\">
+			<File path=".\autoroute_Armlet2-1_121221191508\Armlet2-1_3554-162s.fsb" Folder="-1" isopened="0"/>
+			</Session>
 		</ARouteSessions>
 	</Document>
 </Project>

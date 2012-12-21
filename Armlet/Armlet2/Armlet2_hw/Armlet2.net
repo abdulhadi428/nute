@@ -1,4 +1,4 @@
-# EESchema Netlist Version 1.1 created  21/12/2012 13:21:45
+# EESchema Netlist Version 1.1 created  12/21/2012 7:54:43 PM
 (
  ( /50D36606 $noname  HOLE2 HOLE_METALLED {Lib=HOLE_METALLED}
   (  Hle GND )
@@ -755,8 +755,8 @@
   (    2 GND )
  )
  ( /4FCBDC43 $noname  M1 MOTOR {Lib=MOTOR}
-  (    1 +BATT )
-  (    2 /MotorOut )
+  (    1 /MotorOut )
+  (    2 +BATT )
  )
  ( /4FCBDBFB $noname  Q1 MMBT2222 {Lib=NPN}
   (    1 N-000041 )
@@ -1607,7 +1607,7 @@ Net 47 "+BATT" "+BATT"
  R7 1
  XL11 1
  C26 1
- M1 1
+ M1 2
  BZ1 1
 Net 48 "/Charge" "Charge"
  DD4 10
@@ -1823,7 +1823,7 @@ Net 119 "/PeriphPwr" "PeriphPwr"
  R13 2
  R43 2
 Net 120 "/MotorOut" "MotorOut"
- M1 2
+ M1 1
  D1 A
  Q1 3
 Net 121 "AGND" "AGND"
