@@ -1,6 +1,6 @@
-update=12/17/2012 6:28:04 PM
+update=24/12/2012 01:57:02
 version=1
-last_client=cvpcb
+last_client=pcbnew
 [general]
 version=1
 [eeschema]
@@ -48,6 +48,11 @@ LibName10=Audio_kl
 LibName11=Antennas_kl
 LibName12=OpAmp_kl
 LibName13=Sensors
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms
 [pcbnew]
 version=1
 PadDrlX=0
@@ -66,6 +71,7 @@ TxtLar=120
 MSegLar=59
 LastNetListRead=Armlet.net
 [pcbnew/libraries]
+LibDir=D:/libs/Kicad
 LibName1=Common_kl
 LibName2=Connectors_kl
 LibName3=pcb_details
@@ -74,9 +80,4 @@ LibName5=Batteries_kl
 LibName6=display_kl
 LibName7=Special
 LibName8=Sensors
-LibDir=D:/libs/Kicad
-[cvpcb]
-version=1
-NetIExt=net
-[cvpcb/libraries]
-EquName1=devcms
+LibName9=Antennas_kl

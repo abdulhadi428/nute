@@ -3,7 +3,7 @@
 	<Version current="1"/>
 	<Format>Project</Format>
 	<Header>
-		<Program name="TopoR" version="5.3"/>
+		<Program name="TopoR" version="5.4"/>
 		<GUID>{41F9BCDC-CE4B-4971-808D-3B48772C033F}</GUID>
 		<Annotation>Project file</Annotation>
 	</Header>
@@ -12,12 +12,6 @@
 		<Pcb>
 			<File path=".\Armlet2.fsx" Folder="-1" isopened="1"/>
 		</Pcb>
-		<Documents path="D:\Nute\Armlet\Armlet2\Armlet2_hw\Armlet2\"/>
-		<Import>
-			<Specctra>
-			<Path name="D:\Nute\Armlet\Armlet2\Armlet2_hw\Armlet2.dsn"/>
-			</Specctra>
-		</Import>
 		<ARouteSessions>
 		</ARouteSessions>
 	</Document>

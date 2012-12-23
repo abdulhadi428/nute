@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 22/12/2012 17:00:07
+EESchema Schematic File Version 2  date 24/12/2012 02:32:59
 LIBS:Connectors_kl
 LIBS:display_kl
 LIBS:pcb_details
@@ -19,7 +19,7 @@ $Descr A2 23400 16535
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "22 dec 2012"
+Date "23 dec 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -27,6 +27,26 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L GND #PWR?
+U 1 1 50D78699
+P 12450 2250
+F 0 "#PWR?" H 12540 2230 30  0001 C CNN
+F 1 "GND" H 12450 2170 30  0001 C CNN
+	1    12450 2250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	12450 2200 12450 2250
+$Comp
+L ANT_PCB_MONO_GND ANT1
+U 1 1 50D78689
+P 12250 1900
+F 0 "ANT1" H 12100 2150 60  0000 C CNN
+F 1 "ANT_PCB_MONO_GND" H 12450 2050 60  0000 C CNN
+	1    12250 1900
+	1    0    0    -1  
+$EndComp
 Wire Wire Line
 	21500 7500 21500 7450
 Wire Wire Line
@@ -1809,15 +1829,6 @@ Text Label 1800 7900 0    60   ~ 0
 SWDIO
 Text Label 4200 5100 0    60   ~ 0
 PeriphPwr
-$Comp
-L ANT_PCB_MONO ANT1
-U 1 1 50C07572
-P 12250 1900
-F 0 "ANT1" H 12050 2150 60  0000 C CNN
-F 1 "ANT_PCB_MONO" H 12300 2050 60  0000 C CNN
-	1    12250 1900
-	1    0    0    -1  
-$EndComp
 Text Label 13100 14050 0    60   ~ 0
 klNFC_Tx
 Text Notes 18900 14250 0    60   ~ 0
