@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 12/21/2012 7:50:58 PM
+EESchema Schematic File Version 2  date 22/12/2012 17:00:07
 LIBS:Connectors_kl
 LIBS:display_kl
 LIBS:pcb_details
@@ -19,7 +19,7 @@ $Descr A2 23400 16535
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "21 dec 2012"
+Date "22 dec 2012"
 Rev ""
 Comp ""
 Comment1 ""
@@ -27,17 +27,41 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Wire Wire Line
+	21500 7500 21500 7450
+Wire Wire Line
+	6500 12300 6100 12300
+Wire Wire Line
+	6500 11800 6100 11800
+Wire Wire Line
+	6200 12100 6500 12100
+Wire Wire Line
+	6200 11900 6500 11900
+Wire Wire Line
+	9500 12300 9400 12300
+Wire Wire Line
+	9500 11600 9400 11600
+Wire Wire Line
+	9400 11700 9500 11700
+Wire Wire Line
+	9400 11500 9500 11500
+Wire Wire Line
+	16200 10850 16300 10850
+Wire Wire Line
+	16200 11550 16300 11550
+Wire Wire Line
+	14800 12150 14800 11850
+Wire Wire Line
+	13400 11550 13500 11550
+Wire Wire Line
+	13400 10850 13500 10850
 Connection ~ 11700 15000
 Wire Wire Line
 	11600 14750 11700 14750
 Wire Wire Line
 	11700 14750 11700 15600
 Wire Wire Line
-	9400 11100 9450 11100
-Wire Wire Line
-	9500 12600 9400 12600
-Wire Wire Line
-	9500 11800 9400 11800
+	9400 11800 9450 11800
 Wire Wire Line
 	9400 11200 9900 11200
 Wire Wire Line
@@ -56,8 +80,6 @@ Wire Wire Line
 	1350 5900 1450 5900
 Wire Wire Line
 	1450 5000 1350 5000
-Wire Wire Line
-	15900 11900 14100 11900
 Wire Wire Line
 	21500 3100 21500 3000
 Wire Wire Line
@@ -167,12 +189,6 @@ Wire Wire Line
 Wire Wire Line
 	10000 12000 9400 12000
 Wire Wire Line
-	6000 12200 6500 12200
-Wire Wire Line
-	6000 12000 6500 12000
-Wire Wire Line
-	6000 11800 6500 11800
-Wire Wire Line
 	9400 12200 9450 12200
 Wire Wire Line
 	9400 12500 9550 12500
@@ -241,10 +257,6 @@ Wire Wire Line
 	1850 3450 1900 3450
 Wire Wire Line
 	1900 3450 1900 4100
-Wire Wire Line
-	21150 7050 21500 7050
-Wire Wire Line
-	21500 7050 21500 7500
 Wire Wire Line
 	19600 4050 21400 4050
 Wire Wire Line
@@ -318,9 +330,6 @@ Wire Wire Line
 	1900 2100 1850 2100
 Wire Wire Line
 	1850 1300 1900 1300
-Connection ~ 15700 11900
-Wire Wire Line
-	15700 12150 15700 11900
 Connection ~ 20650 2650
 Wire Wire Line
 	20650 1450 20650 1400
@@ -340,33 +349,6 @@ Wire Wire Line
 	6000 3200 6000 3600
 Wire Wire Line
 	5750 3500 5750 3600
-Connection ~ 15700 11500
-Wire Wire Line
-	15700 11500 15700 11750
-Connection ~ 15700 11100
-Wire Wire Line
-	15700 11100 15700 11350
-Wire Wire Line
-	14100 11900 14100 12150
-Wire Wire Line
-	14100 11750 14100 11500
-Connection ~ 15050 11750
-Wire Wire Line
-	15050 11750 15100 11750
-Wire Wire Line
-	15050 12450 15050 11350
-Wire Wire Line
-	15050 11350 15100 11350
-Connection ~ 14250 12150
-Wire Wire Line
-	14250 12150 14300 12150
-Connection ~ 13450 12150
-Wire Wire Line
-	13500 12150 13450 12150
-Wire Wire Line
-	13450 12450 13450 11350
-Wire Wire Line
-	13450 11350 13500 11350
 Wire Wire Line
 	6800 8200 8750 8200
 Wire Wire Line
@@ -678,7 +660,7 @@ Wire Wire Line
 	8100 9150 8100 9250
 Connection ~ 7350 8400
 Wire Wire Line
-	9400 11500 9550 11500
+	9400 12800 9550 12800
 Wire Wire Line
 	15100 3950 15100 3800
 Wire Wire Line
@@ -766,29 +748,6 @@ Wire Wire Line
 Wire Wire Line
 	8750 8500 7800 8500
 Connection ~ 7850 8500
-Wire Wire Line
-	13500 11750 13450 11750
-Connection ~ 13450 11750
-Wire Wire Line
-	14300 11350 14250 11350
-Wire Wire Line
-	14250 11350 14250 12450
-Wire Wire Line
-	14300 11750 14250 11750
-Connection ~ 14250 11750
-Wire Wire Line
-	14100 11350 14100 11100
-Wire Wire Line
-	14100 11100 15900 11100
-Wire Wire Line
-	14900 11350 14900 11100
-Connection ~ 14900 11100
-Wire Wire Line
-	14900 11750 14900 11500
-Connection ~ 14900 11500
-Wire Wire Line
-	14900 12150 14900 11900
-Connection ~ 14900 11900
 Connection ~ 5750 3050
 Wire Wire Line
 	5850 3050 5750 3050
@@ -853,9 +812,6 @@ Wire Wire Line
 	18200 2550 17800 2550
 Wire Wire Line
 	20650 2650 20650 2400
-Wire Wire Line
-	15100 12150 15050 12150
-Connection ~ 15050 12150
 Wire Wire Line
 	1900 1500 1850 1500
 Connection ~ 1900 1500
@@ -956,11 +912,6 @@ Wire Wire Line
 	21350 4650 21350 4050
 Connection ~ 21350 4050
 Wire Wire Line
-	20500 7450 20500 7050
-Wire Wire Line
-	20500 7050 20750 7050
-Connection ~ 20500 7450
-Wire Wire Line
 	1850 3550 1900 3550
 Connection ~ 1900 3550
 Wire Wire Line
@@ -1027,17 +978,11 @@ Wire Wire Line
 Wire Wire Line
 	6100 12400 6500 12400
 Wire Wire Line
-	6500 11900 6000 11900
-Wire Wire Line
-	6500 12100 6000 12100
-Wire Wire Line
-	6500 12300 6000 12300
-Wire Wire Line
 	10100 12100 9400 12100
 Wire Wire Line
 	1800 8600 1700 8600
 Wire Wire Line
-	9550 11600 9400 11600
+	9550 11100 9400 11100
 Wire Wire Line
 	21500 12000 21500 11800
 Wire Wire Line
@@ -1188,8 +1133,6 @@ Wire Wire Line
 Wire Wire Line
 	21000 2700 21100 2700
 Wire Wire Line
-	14100 11500 15900 11500
-Wire Wire Line
 	4100 5300 4150 5300
 Connection ~ 4150 5100
 Wire Wire Line
@@ -1206,13 +1149,170 @@ Wire Wire Line
 Wire Wire Line
 	3400 6900 3400 6450
 Wire Wire Line
-	9400 11700 9500 11700
-Wire Wire Line
-	9400 12300 9500 12300
-Wire Wire Line
 	4150 5300 4150 5100
 Wire Wire Line
 	11700 15000 11600 15000
+Wire Wire Line
+	12800 10950 12800 10850
+Wire Wire Line
+	12800 11300 12800 11200
+Wire Wire Line
+	12800 11650 12800 11550
+Wire Wire Line
+	13450 11950 13450 11850
+Wire Wire Line
+	14950 11950 14950 11850
+Wire Wire Line
+	14200 11950 14200 11850
+Wire Wire Line
+	15600 11650 15600 11550
+Wire Wire Line
+	15600 11300 15600 11200
+Wire Wire Line
+	15600 10950 15600 10850
+Wire Wire Line
+	13500 11200 13400 11200
+Wire Wire Line
+	14050 11850 14050 12150
+Wire Wire Line
+	15550 11850 15550 12150
+Wire Wire Line
+	16300 11200 16200 11200
+Wire Wire Line
+	9500 11900 9400 11900
+Wire Wire Line
+	9400 12600 9500 12600
+Wire Wire Line
+	6500 12000 6200 12000
+Wire Wire Line
+	6100 11700 6500 11700
+Wire Wire Line
+	6100 12200 6500 12200
+Wire Notes Line
+	13800 11500 13800 10700
+Wire Notes Line
+	13800 11500 15450 11500
+Wire Notes Line
+	15450 11500 15450 10700
+Wire Notes Line
+	15450 10700 13800 10700
+Text Label 9500 11500 0    60   ~ 0
+Btn7
+Text Label 9500 11600 0    60   ~ 0
+Btn8
+Text Label 9500 11700 0    60   ~ 0
+Btn9
+Text Label 9500 12600 0    60   ~ 0
+Btn4
+Text Label 9500 12300 0    60   ~ 0
+Btn5
+Text Label 9500 11900 0    60   ~ 0
+Btn6
+Text Label 6200 12100 0    60   ~ 0
+Btn1
+Text Label 6200 12000 0    60   ~ 0
+Btn2
+Text Label 6200 11900 0    60   ~ 0
+Btn3
+Text Label 16300 11550 0    60   ~ 0
+Btn9
+Text Label 16300 11200 0    60   ~ 0
+Btn8
+Text Label 16300 10850 0    60   ~ 0
+Btn7
+Text Label 15550 12150 0    60   ~ 0
+Btn6
+Text Label 14800 12150 0    60   ~ 0
+Btn5
+Text Label 14050 12150 0    60   ~ 0
+Btn4
+Text Label 13500 11550 0    60   ~ 0
+Btn3
+Text Label 13500 11200 0    60   ~ 0
+Btn2
+Text Label 13500 10850 0    60   ~ 0
+Btn1
+$Comp
+L GND #PWR?
+U 1 1 50D5A369
+P 15600 10950
+F 0 "#PWR?" H 15690 10930 30  0001 C CNN
+F 1 "GND" H 15600 10870 30  0001 C CNN
+	1    15600 10950
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 50D5A368
+P 15600 11300
+F 0 "#PWR?" H 15690 11280 30  0001 C CNN
+F 1 "GND" H 15600 11220 30  0001 C CNN
+	1    15600 11300
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 50D5A366
+P 15600 11650
+F 0 "#PWR?" H 15690 11630 30  0001 C CNN
+F 1 "GND" H 15600 11570 30  0001 C CNN
+	1    15600 11650
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 50D5A363
+P 14200 11950
+F 0 "#PWR?" H 14290 11930 30  0001 C CNN
+F 1 "GND" H 14200 11870 30  0001 C CNN
+	1    14200 11950
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 50D5A362
+P 14950 11950
+F 0 "#PWR?" H 15040 11930 30  0001 C CNN
+F 1 "GND" H 14950 11870 30  0001 C CNN
+	1    14950 11950
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 50D5A35C
+P 13450 11950
+F 0 "#PWR?" H 13540 11930 30  0001 C CNN
+F 1 "GND" H 13450 11870 30  0001 C CNN
+	1    13450 11950
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 50D5A358
+P 12800 11650
+F 0 "#PWR?" H 12890 11630 30  0001 C CNN
+F 1 "GND" H 12800 11570 30  0001 C CNN
+	1    12800 11650
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 50D5A351
+P 12800 11300
+F 0 "#PWR?" H 12890 11280 30  0001 C CNN
+F 1 "GND" H 12800 11220 30  0001 C CNN
+	1    12800 11300
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 50D5A341
+P 12800 10950
+F 0 "#PWR?" H 12890 10930 30  0001 C CNN
+F 1 "GND" H 12800 10870 30  0001 C CNN
+	1    12800 10950
+	1    0    0    -1  
+$EndComp
 $Comp
 L GND #PWR01
 U 1 1 50D36626
@@ -1240,8 +1340,6 @@ F 1 "HOLE_METALLED" H 10750 14800 60  0000 C CNN
 	1    11300 14750
 	1    0    0    -1  
 $EndComp
-NoConn ~ 6500 11700
-NoConn ~ 9400 11900
 Text Notes 3250 4900 0    60   ~ 0
 Peripheral Power
 $Comp
@@ -1253,15 +1351,15 @@ F 1 "CONN_4" V 1200 6050 40  0000 C CNN
 	1    1150 6050
 	1    0    0    -1  
 $EndComp
-Text Label 9500 12600 0    60   ~ 0
+Text Label 6100 12200 0    60   ~ 0
 P2_SDA
-Text Label 9500 12300 0    60   ~ 0
+Text Label 6100 12300 0    60   ~ 0
 P2_SCL
-Text Label 9500 11700 0    60   ~ 0
+Text Label 6100 11700 0    60   ~ 0
 P1_SCL
-Text Label 9500 11800 0    60   ~ 0
+Text Label 6100 11800 0    60   ~ 0
 P1_SDA
-Text Label 9450 11100 0    60   ~ 0
+Text Label 9450 11800 0    60   ~ 0
 PeriphPwr
 Text Notes 3250 5750 0    60   ~ 0
 Peripheral\nI2C Pull-Ups
@@ -1346,82 +1444,82 @@ $EndComp
 $Comp
 L BUTTON SW9
 U 1 1 50D0E716
-P 15400 12150
-F 0 "SW9" H 15200 12300 50  0000 C CNN
-F 1 "BUTTON" H 15500 12300 50  0000 C CNN
-	1    15400 12150
+P 15900 11550
+F 0 "SW9" H 15700 11700 50  0000 C CNN
+F 1 "BUTTON" H 16000 11700 50  0000 C CNN
+	1    15900 11550
 	1    0    0    -1  
 $EndComp
 $Comp
 L BUTTON SW6
 U 1 1 50D0E713
-P 15400 11750
-F 0 "SW6" H 15200 11900 50  0000 C CNN
-F 1 "BUTTON" H 15500 11900 50  0000 C CNN
-	1    15400 11750
+P 15250 11850
+F 0 "SW6" H 15050 12000 50  0000 C CNN
+F 1 "BUTTON" H 15350 12000 50  0000 C CNN
+	1    15250 11850
 	1    0    0    -1  
 $EndComp
 $Comp
 L BUTTON SW8
 U 1 1 50D0E70F
-P 14600 12150
-F 0 "SW8" H 14400 12300 50  0000 C CNN
-F 1 "BUTTON" H 14700 12300 50  0000 C CNN
-	1    14600 12150
+P 15900 11200
+F 0 "SW8" H 15700 11350 50  0000 C CNN
+F 1 "BUTTON" H 16000 11350 50  0000 C CNN
+	1    15900 11200
 	1    0    0    -1  
 $EndComp
 $Comp
 L BUTTON SW5
 U 1 1 50D0E70C
-P 14600 11750
-F 0 "SW5" H 14400 11900 50  0000 C CNN
-F 1 "BUTTON" H 14700 11900 50  0000 C CNN
-	1    14600 11750
+P 14500 11850
+F 0 "SW5" H 14300 12000 50  0000 C CNN
+F 1 "BUTTON" H 14600 12000 50  0000 C CNN
+	1    14500 11850
 	1    0    0    -1  
 $EndComp
 $Comp
 L BUTTON SW7
 U 1 1 50D0E707
-P 13800 12150
-F 0 "SW7" H 13600 12300 50  0000 C CNN
-F 1 "BUTTON" H 13900 12300 50  0000 C CNN
-	1    13800 12150
+P 15900 10850
+F 0 "SW7" H 15700 11000 50  0000 C CNN
+F 1 "BUTTON" H 16000 11000 50  0000 C CNN
+	1    15900 10850
 	1    0    0    -1  
 $EndComp
 $Comp
 L BUTTON SW4
 U 1 1 50D0E704
-P 13800 11750
-F 0 "SW4" H 13600 11900 50  0000 C CNN
-F 1 "BUTTON" H 13900 11900 50  0000 C CNN
-	1    13800 11750
+P 13750 11850
+F 0 "SW4" H 13550 12000 50  0000 C CNN
+F 1 "BUTTON" H 13850 12000 50  0000 C CNN
+	1    13750 11850
 	1    0    0    -1  
 $EndComp
 $Comp
 L BUTTON SW3
 U 1 1 50D0E700
-P 15400 11350
-F 0 "SW3" H 15200 11500 50  0000 C CNN
-F 1 "BUTTON" H 15500 11500 50  0000 C CNN
-	1    15400 11350
+P 13100 11550
+F 0 "SW3" H 12900 11700 50  0000 C CNN
+F 1 "BUTTON" H 13200 11700 50  0000 C CNN
+	1    13100 11550
 	1    0    0    -1  
 $EndComp
 $Comp
 L BUTTON SW2
 U 1 1 50D0E6FC
-P 14600 11350
-F 0 "SW2" H 14400 11500 50  0000 C CNN
-F 1 "BUTTON" H 14700 11500 50  0000 C CNN
-	1    14600 11350
+P 13100 11200
+F 0 "SW2" H 12900 11350 50  0000 C CNN
+F 1 "BUTTON" H 13200 11350 50  0000 C CNN
+	1    13100 11200
 	1    0    0    -1  
 $EndComp
 $Comp
 L BUTTON SW1
 U 1 1 50D0E6F6
-P 13800 11350
-F 0 "SW1" H 13600 11500 50  0000 C CNN
-F 1 "BUTTON" H 13900 11500 50  0000 C CNN
-	1    13800 11350
+P 13100 10850
+F 0 "SW1" H 12900 11000 50  0000 C CNN
+F 1 "BUTTON" H 13200 11000 50  0000 C CNN
+	1    13100 10850
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1470,15 +1568,6 @@ F 1 "1k" V 18250 12150 50  0000 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L DIODE D1
-U 1 1 50CF2970
-P 20950 7050
-F 0 "D1" H 20950 7150 40  0000 C CNN
-F 1 "PMLL4148" H 20950 6950 40  0000 C CNN
-	1    20950 7050
-	1    0    0    1   
-$EndComp
-$Comp
 L GND #PWR04
 U 1 1 50C4EDBC
 P 18450 15250
@@ -1515,7 +1604,6 @@ I2C_PullPwr
 Text Label 14700 1550 0    60   ~ 0
 I2C_PullPwr
 NoConn ~ 9400 12900
-NoConn ~ 9400 12800
 NoConn ~ 11850 7550
 NoConn ~ 11850 8900
 NoConn ~ 11850 8800
@@ -2347,7 +2435,7 @@ Text Notes 1050 7450 0    60   ~ 0
 Programming
 Text Notes 15800 4600 0    60   ~ 0
 Peripherals usage\n\nSDIO - SD Card\nUSB\n\nUART1 - debug output\nUART3 - LCD data link\nUART4 - klNFC\nUART6 - South Bridge Bus\n\nSPI1 - CC (Radio) Bus\nSPI2 - Audio Bus\n\nTIM4 Ch4 - LCD backlight
-Text Label 9550 11600 0    60   ~ 0
+Text Label 9550 11100 0    60   ~ 0
 ExtPwr
 Text Label 8900 15100 0    60   ~ 0
 ExtPwr
@@ -3086,32 +3174,8 @@ F 1 "GND" H 6000 3520 30  0001 C CNN
 	1    6000 3600
 	1    0    0    -1  
 $EndComp
-Text Label 6000 12100 0    60   ~ 0
-BtnCol0
-Text Label 6000 12200 0    60   ~ 0
-BtnCol1
-Text Label 6000 12300 0    60   ~ 0
-BtnCol2
-Text Label 6000 11800 0    60   ~ 0
-BtnRow0
-Text Label 6000 11900 0    60   ~ 0
-BtnRow1
-Text Label 6000 12000 0    60   ~ 0
-BtnRow2
 Text Notes 14500 10100 0    60   ~ 0
 Buttons
-Text Label 15050 12450 0    60   ~ 0
-BtnCol2
-Text Label 14250 12450 0    60   ~ 0
-BtnCol1
-Text Label 13450 12450 0    60   ~ 0
-BtnCol0
-Text Label 15900 11900 0    60   ~ 0
-BtnRow2
-Text Label 15900 11500 0    60   ~ 0
-BtnRow1
-Text Label 15900 11100 0    60   ~ 0
-BtnRow0
 $Comp
 L C C44
 U 1 1 509003DF
@@ -3577,7 +3641,7 @@ Text Notes 15150 2200 0    60   ~ 0
 Accelerometer\nI2C Addr =\n001100(A0) =\n0011001\n
 Text Notes 15150 1250 0    60   ~ 0
 I2C pull-ups
-Text Label 9550 11500 0    60   ~ 0
+Text Label 9550 12800 0    60   ~ 0
 Charge
 $Comp
 L +BATT #PWR095
@@ -3912,7 +3976,7 @@ CC_GDO2
 Text Label 6350 2400 0    60   ~ 0
 CC_GDO2
 Text Label 6100 12400 0    60   ~ 0
-Motor
+Vibro
 $Comp
 L MOTOR M1
 U 1 1 4FCBDC43
@@ -3950,9 +4014,9 @@ F 1 "1k" V 19450 7800 50  0000 C CNN
 	0    -1   -1   0   
 $EndComp
 Text Label 18750 7800 0    60   ~ 0
-Motor
+Vibro
 Text Label 20050 7450 0    60   ~ 0
-MotorOut
+VibroOut
 $Comp
 L GND #PWR0118
 U 1 1 4FCBD7EC
