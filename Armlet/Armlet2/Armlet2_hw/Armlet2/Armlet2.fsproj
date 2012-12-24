@@ -3,7 +3,7 @@
 	<Version current="1"/>
 	<Format>Project</Format>
 	<Header>
-		<Program name="TopoR" version="5.4"/>
+		<Program name="TopoR" version="5.3"/>
 		<GUID>{41F9BCDC-CE4B-4971-808D-3B48772C033F}</GUID>
 		<Annotation>Project file</Annotation>
 	</Header>
