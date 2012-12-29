@@ -8,7 +8,7 @@
 #include "kl_lib_f205.h"
 #include <stdarg.h>
 #include "tiny_sprintf.h"
-//#include "stm32f0xx_usart.h"
+#include "stm32f2xx_usart.h"
 /*
 // ============================== Delay ========================================
 Delay_t Delay;
@@ -30,7 +30,7 @@ void Delay_t::ms(uint32_t Ams) {
 void SysTick_Handler(void) {
     ITickCounter++;
 }
-
+*/
 // ============================== UART command =================================
 CmdUnit_t Uart;
 
@@ -38,53 +38,50 @@ void CmdUnit_t::Printf(const char *format, ...) {
     char buf[200];
     va_list args;
     va_start(args, format);
-    tiny_vsprintf(buf, format, args);
+    uint32_t Cnt = tiny_vsprintf(buf, format, args);
     va_end(args);
-    for (int i = 0; buf[i] != 0; i++) IBufWrite(buf[i]);
-    if (IDmaIsIdle) IStartTx();
-}
-
-void CmdUnit_t::IBufWrite(uint8_t AByte) {
-    if(TxIndx < UART_TXBUF_SIZE) PBuf[TxIndx++] = AByte;    // Write byte to current buffer if possible
-    else {
-        if(IDmaIsIdle) IStartTx();  // otherwise, start transmission of current buffer and write byte to next one
-        else FlushTx();
-        PBuf[TxIndx++] = AByte;
+    // Check if message fits in buffer's remainder
+    if(Cnt > (UART_TXBUF_SIZE - (PWrite - TXBuf))) PWrite = TXBuf;  // Set pointer to start
+    // Place bytes to buffer
+    for(uint32_t i=0; (i<Cnt) and (i<UART_TXBUF_SIZE); i++) *PWrite++ = buf[i];
+    if(PWrite == &TXBuf[UART_TXBUF_SIZE-1]) PWrite = TXBuf; // Handle circular buffer
+    // Start transmission if DMA is idle
+    if(IDmaIsIdle) {        // Send ICountToSend chars staring from PRead
+        ICountToSend = Cnt;
+        IStartTx();
+        PRead = PWrite;     // Reset read pointer for next time
+        ICountToSend = 0;   // Nothing to send next time
+    }
+    else {                  // DMA is busy transmitting, prepare for it to empty
+        ICountToSend += Cnt;
     }
 }
 
-// Empty buffers now
-void CmdUnit_t::FlushTx() {
-    while(!IDmaIsIdle or (TxIndx != 0)) {
-        while(!IDmaIsIdle);   // wait DMA
-        if(TxIndx != 0) IStartTx();
-    }
-}
-
-void CmdUnit_t::IStartTx(void) {
+void CmdUnit_t::IStartTx() {
     IDmaIsIdle = false;
-    // Start DMA
-    USART_DMACmd(USART1, USART_DMAReq_Tx, DISABLE);
-    DMA_Cmd(UART_DMA_CHNL, DISABLE);
-    UART_DMA_CHNL->CMAR = (uint32_t) PBuf;  // Set memory base address
-    UART_DMA_CHNL->CNDTR = TxIndx;          // Set count to transmit
-    DMA_Cmd(UART_DMA_CHNL, ENABLE);
+    DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)PRead;
+    DMA_InitStructure.DMA_BufferSize = ICountToSend;
+    DMA_Init(UART1TX_DMA_STREAM, &DMA_InitStructure);
+
     USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
-    // Switch to next buf
-    PBuf = (PBuf == TXBuf1)? TXBuf2 : TXBuf1;
-    TxIndx = 0;
+    DMA_Cmd(UART1TX_DMA_STREAM, ENABLE);
+//    UART_DMA_CHNL->CMAR = (uint32_t) PBuf;  // Set memory base address
+//    UART_DMA_CHNL->CNDTR = TxIndx;          // Set count to transmit
+//    DMA_Cmd(UART_DMA_CHNL, ENABLE);
+//    USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
 }
 
 // ==== Init & DMA ====
 void CmdUnit_t::Init(uint32_t ABaudrate) {
-    PBuf = TXBuf1;
-    TxIndx = 0;
+    PWrite = TXBuf;
+    PRead = TXBuf;
+    ICountToSend = 0;
     IDmaIsIdle = true;
     // ==== Clocks init ====
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);      // UART clock
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
     // ==== GPIO init ====
-    PinSetupAlterFunc(GPIOA, 9, poPushPull, pudNone, AF1);      // TX1
+    PinSetupAlterFunc(GPIOA, 9, omPushPull, pudNone, AF7);      // TX1
 #ifdef RX_ENABLED
     klGpioSetupByN(GPIOA, 10, GPIO_Mode_IPU);   // RX1
 #endif
@@ -101,32 +98,39 @@ void CmdUnit_t::Init(uint32_t ABaudrate) {
     USART_InitStructure.USART_Mode = USART_Mode_Tx;
 #endif
     USART_Init(USART1, &USART_InitStructure);
+
     // Remap USART1 TX DMA Ch to DMA Ch4
     //SYSCFG->CFGR1 |= SYSCFG_CFGR1_USART1TX_DMA_RMP;
     // ==== DMA ====
-    DMA_InitTypeDef DMA_InitStructure;
-    DMA_DeInit(UART_DMA_CHNL);
-    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &USART1->TDR;
-    DMA_InitStructure.DMA_MemoryBaseAddr     = (uint32_t) PBuf;
-    DMA_InitStructure.DMA_BufferSize         = UART_TXBUF_SIZE;
-    DMA_InitStructure.DMA_Priority           = DMA_Priority_High;
-    DMA_InitStructure.DMA_DIR                = DMA_DIR_PeripheralDST;
-    DMA_InitStructure.DMA_Mode               = DMA_Mode_Normal;
+    /* Here only the unchanged parameters of the DMA initialization structure are
+     * configured. During the program operation, the DMA will be configured with
+     * different parameters according to the operation phase.
+     */
+    DMA_DeInit(UART1TX_DMA_STREAM);
+    DMA_InitStructure.DMA_Channel            = UART1TX_DMA_CHNL;
+    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &USART1->DR;
     DMA_InitStructure.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
-    DMA_InitStructure.DMA_MemoryInc          = DMA_MemoryInc_Enable;
     DMA_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte;
+    DMA_InitStructure.DMA_PeripheralBurst    = DMA_PeripheralBurst_Single;
+    DMA_InitStructure.DMA_MemoryInc          = DMA_MemoryInc_Enable;
     DMA_InitStructure.DMA_MemoryDataSize     = DMA_MemoryDataSize_Byte;
-    DMA_InitStructure.DMA_M2M                = DMA_M2M_Disable;
-    DMA_Init(UART_DMA_CHNL, &DMA_InitStructure);
-    // Enable DMA1 Ch2 Transfer Complete interrupt
-    DMA_ITConfig(UART_DMA_CHNL, DMA_IT_TC, ENABLE);
-
-    // ==== Interrupts ====
-    NVIC_InitTypeDef NVIC_InitStructure;
-    NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel2_3_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
+    DMA_InitStructure.DMA_MemoryBurst        = DMA_MemoryBurst_Single;
+    DMA_InitStructure.DMA_Mode               = DMA_Mode_Normal;
+    DMA_InitStructure.DMA_FIFOMode           = DMA_FIFOMode_Disable;
+    DMA_InitStructure.DMA_FIFOThreshold      = DMA_FIFOThreshold_Full;
+    DMA_InitStructure.DMA_Priority           = DMA_Priority_High;
+    DMA_InitStructure.DMA_DIR                = DMA_DIR_MemoryToPeripheral;
+//    DMA_InitStructure.DMA_BufferSize         = UART_TXBUF_SIZE;
+//    DMA_Init(UART_DMA_CHNL, &DMA_InitStructure);
+//    // Enable DMA1 Ch2 Transfer Complete interrupt
+//    DMA_ITConfig(UART_DMA_CHNL, DMA_IT_TC, ENABLE);
+//
+//    // ==== Interrupts ====
+//    NVIC_InitTypeDef NVIC_InitStructure;
+//    NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel2_3_IRQn;
+//    NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
+//    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+//    NVIC_Init(&NVIC_InitStructure);
 
 #ifdef RX_ENABLED
     // ==== NVIC ====
@@ -185,16 +189,14 @@ void USART1_IRQHandler(void) {
 #endif
 
 void CmdUnit_t::IRQDmaTxHandler() {
-    if(DMA_GetITStatus(DMA1_IT_TC2)) {
-        DMA_ClearITPendingBit(DMA1_IT_GL2); // Clear CH2 IRQ global bit
-        // Switch to next buffer if needed
-        if(TxIndx != 0) IStartTx();
-        else IDmaIsIdle = true;
-    }
+//    if(DMA_GetITStatus(DMA1_IT_TC2)) {
+//        DMA_ClearITPendingBit(DMA1_IT_GL2); // Clear CH2 IRQ global bit
+//        // Switch to next buffer if needed
+//        if(TxIndx != 0) IStartTx();
+//        else IDmaIsIdle = true;
+//    }
 }
 
 void DMA1_Channel2_3_IRQHandler(void) {
     Uart.IRQDmaTxHandler();
 }
-
-*/

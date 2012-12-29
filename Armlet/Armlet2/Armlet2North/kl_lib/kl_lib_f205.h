@@ -11,6 +11,7 @@
 #include "stm32f2xx.h"
 #include "stm32f2xx_rcc.h"
 #include "stm32f2xx_tim.h"
+#include "stm32f2xx_dma.h"
 
 extern "C" {
 //void _init(void);   // Need to calm linker
@@ -32,8 +33,8 @@ void __attribute__ ((weak)) _init(void)  {}
 //    pmAnalog    = 0b11
 //};
 enum PinOutMode_t {
-    poPushPull  = 0,
-    poOpenDrain = 1
+    omPushPull  = 0,
+    omOpenDrain = 1
 };
 enum PinPullUpDown_t {
     pudNone = 0b00,
@@ -64,6 +65,7 @@ static inline void PinClockEnable(GPIO_TypeDef *PGpioPort) {
     else if(PGpioPort == GPIOC) RCC->AHB1ENR |= RCC_AHB1Periph_GPIOC;
     else if(PGpioPort == GPIOD) RCC->AHB1ENR |= RCC_AHB1Periph_GPIOD;
 }
+// GPIOA, 1, omPushPull/omOpenDrain, pudNone/pudPullUp/pudPullDown, ps2MHz/ps25MHz/ps50MHz/ps100MHz
 static inline void PinSetupOut(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber, const PinOutMode_t PinOutMode, const PinPullUpDown_t APullUpDown = pudNone, const PinSpeed_t ASpeed = ps50MHz) {
     // Clock
     PinClockEnable(PGpioPort);
@@ -140,11 +142,13 @@ extern Delay_t Delay;
 extern "C" {
 void SysTick_Handler(void);
 }
-
-// ============================== UART command =================================
-#define UART_TXBUF_SIZE     45
-#define UART_DMA_CHNL       DMA1_Channel2
-#define UART_DMA_FLAG_TC    DMA1_FLAG_TC2
+*/
+// ============================== UART command unit ============================
+// USART1: DMA2, Chnl 4, Stream 7
+#define UART_TXBUF_SIZE         27
+#define UART1TX_DMA_CHNL        DMA_Channel_4
+#define UART1TX_DMA_STREAM      DMA2_Stream7
+#define UART1TX_DMA_FLAG_TC     DMA_FLAG_TCIF7
 
 //#define RX_ENABLED
 
@@ -155,8 +159,10 @@ enum CmdState_t {csNone, csInProgress, csReady};
 
 class CmdUnit_t {
 private:
-    uint8_t TXBuf1[UART_TXBUF_SIZE], TXBuf2[UART_TXBUF_SIZE];
-    uint8_t *PBuf, TxIndx;
+    DMA_InitTypeDef DMA_InitStructure;
+    uint8_t TXBuf[UART_TXBUF_SIZE];
+    uint8_t *PWrite, *PRead;
+    uint16_t ICountToSend;
     bool IDmaIsIdle;
 #ifdef RX_ENABLED
     CmdState_t CmdState;
@@ -165,11 +171,10 @@ private:
     void CmdReset(void) { RxIndx = 0; CmdState = csNone; }
 #endif
     void IStartTx();
-    void IBufWrite(uint8_t AByte);
 public:
     char UintToHexChar (uint8_t b) { return ((b<=0x09) ? (b+'0') : (b+'A'-10)); }
     void Printf(const char *S, ...);
-    void FlushTx();
+    void FlushTx() { while(!IDmaIsIdle); }  // wait DMA
     void Init(uint32_t ABaudrate);
 #ifdef RX_ENABLED
     void Task();
@@ -191,6 +196,6 @@ void DMA1_Channel2_3_IRQHandler(void);
 
 
 extern CmdUnit_t Uart;
-*/
+
 
 #endif /* KL_LIB_F2XX_H_ */
