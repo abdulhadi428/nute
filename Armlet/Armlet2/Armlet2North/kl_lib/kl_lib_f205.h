@@ -145,7 +145,7 @@ void SysTick_Handler(void);
 
 // ============================== UART command unit ============================
 // USART1: DMA2, Chnl 4, Stream 7
-#define UART_TXBUF_SIZE         18
+#define UART_TXBUF_SIZE         90
 #define UART1TX_DMA_CHNL        DMA_Channel_4
 #define UART1TX_DMA_STREAM      DMA2_Stream7
 #define UART1TX_DMA_FLAG_TC     DMA_FLAG_TCIF7
@@ -159,7 +159,6 @@ enum CmdState_t {csNone, csInProgress, csReady};
 
 class CmdUnit_t {
 private:
-    DMA_InitTypeDef DMA_InitStructure;
     uint8_t TXBuf[UART_TXBUF_SIZE];
     uint8_t *PWrite, *PRead;
     uint16_t ICountToSendNext;
@@ -170,10 +169,7 @@ private:
     uint8_t RxIndx;
     void CmdReset(void) { RxIndx = 0; CmdState = csNone; }
 #endif
-    void IStartTx();
 public:
-    void Task();
-    char UintToHexChar (uint8_t b) { return ((b<=0x09) ? (b+'0') : (b+'A'-10)); }
     void Printf(const char *S, ...);
     void FlushTx() { while(!IDmaIsIdle); }  // wait DMA
     void Init(uint32_t ABaudrate);
@@ -192,7 +188,7 @@ void USART1_IRQHandler(void);
 }
 #endif
 extern "C" {
-void DMA1_Channel2_3_IRQHandler(void);
+void DMA2_Stream7_IRQHandler(void);
 }
 
 

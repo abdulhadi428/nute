@@ -10,6 +10,7 @@
 #include <string.h>
 #include "tiny_sprintf.h"
 #include "stm32f2xx_usart.h"
+#include "misc.h"
 
 // ============================== Delay ========================================
 Delay_t Delay;
@@ -34,6 +35,8 @@ void SysTick_Handler(void) {
 
 // ============================== UART command =================================
 CmdUnit_t Uart;
+#define UADMA_DATASIZE      UART1TX_DMA_STREAM->NDTR
+#define UADMA_MEMPOINTER    UART1TX_DMA_STREAM->M0AR
 
 void CmdUnit_t::Printf(const char *format, ...) {
     char buf[200];
@@ -50,10 +53,8 @@ void CmdUnit_t::Printf(const char *format, ...) {
         ICountToSendNext = 0;       // Reset next-time counter
         // Start DMA
         IDmaIsIdle = false;
-        DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)TXBuf;
-        DMA_InitStructure.DMA_BufferSize = Cnt;
-        DMA_Init(UART1TX_DMA_STREAM, &DMA_InitStructure);
-        USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+        UADMA_MEMPOINTER = (uint32_t)TXBuf;
+        UADMA_DATASIZE = Cnt;
         DMA_Cmd(UART1TX_DMA_STREAM, ENABLE);
     }
     else {
@@ -70,37 +71,6 @@ void CmdUnit_t::Printf(const char *format, ...) {
             PWrite = TXBuf + Remainder;
         }
     } // if not idle
-}
-
-void CmdUnit_t::Task() {
-    if(DMA_GetFlagStatus(UART1TX_DMA_STREAM, UART1TX_DMA_FLAG_TC)) {
-        DMA_ClearFlag(UART1TX_DMA_STREAM, UART1TX_DMA_FLAG_TC);
-        DMA_Cmd(UART1TX_DMA_STREAM, DISABLE);
-        USART_DMACmd(USART1, USART_DMAReq_Tx, DISABLE);
-
-        if(ICountToSendNext != 0) {
-            DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)PRead;
-            // Handle pointer
-            uint32_t BytesLeft = UART_TXBUF_SIZE - (PRead - TXBuf);
-            if(ICountToSendNext < BytesLeft) {      // Data fits in buffer without split
-                DMA_InitStructure.DMA_BufferSize = ICountToSendNext;
-                PRead += ICountToSendNext;
-                ICountToSendNext = 0;
-            }
-            else {  // Some portion of data placed in the beginning
-                DMA_InitStructure.DMA_BufferSize = BytesLeft;
-                PRead = TXBuf;  // Set pointer to beginning
-                ICountToSendNext -= BytesLeft;
-            }
-            // Restart DMA
-            DMA_Init(UART1TX_DMA_STREAM, &DMA_InitStructure);
-            USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
-            DMA_Cmd(UART1TX_DMA_STREAM, ENABLE);
-        }
-        else {
-            IDmaIsIdle = true;
-        }
-    } // if getflagstatus
 }
 
 // ==== Init & DMA ====
@@ -131,14 +101,13 @@ void CmdUnit_t::Init(uint32_t ABaudrate) {
 #endif
     USART_Init(USART1, &USART_InitStructure);
 
-    // Remap USART1 TX DMA Ch to DMA Ch4
-    //SYSCFG->CFGR1 |= SYSCFG_CFGR1_USART1TX_DMA_RMP;
     // ==== DMA ====
     /* Here only the unchanged parameters of the DMA initialization structure are
      * configured. During the program operation, the DMA will be configured with
      * different parameters according to the operation phase.
      */
     DMA_DeInit(UART1TX_DMA_STREAM);
+    DMA_InitTypeDef DMA_InitStructure;
     DMA_InitStructure.DMA_Channel            = UART1TX_DMA_CHNL;
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &USART1->DR;
     DMA_InitStructure.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
@@ -152,17 +121,19 @@ void CmdUnit_t::Init(uint32_t ABaudrate) {
     DMA_InitStructure.DMA_FIFOThreshold      = DMA_FIFOThreshold_Full;
     DMA_InitStructure.DMA_Priority           = DMA_Priority_High;
     DMA_InitStructure.DMA_DIR                = DMA_DIR_MemoryToPeripheral;
-//    DMA_InitStructure.DMA_BufferSize         = UART_TXBUF_SIZE;
-//    DMA_Init(UART_DMA_CHNL, &DMA_InitStructure);
-//    // Enable DMA1 Ch2 Transfer Complete interrupt
-//    DMA_ITConfig(UART_DMA_CHNL, DMA_IT_TC, ENABLE);
-//
-//    // ==== Interrupts ====
-//    NVIC_InitTypeDef NVIC_InitStructure;
-//    NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel2_3_IRQn;
-//    NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
-//    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//    NVIC_Init(&NVIC_InitStructure);
+    DMA_InitStructure.DMA_Memory0BaseAddr    = (uint32_t)TXBuf; // }
+    DMA_InitStructure.DMA_BufferSize         = UART_TXBUF_SIZE; // } dummy
+    DMA_Init(UART1TX_DMA_STREAM, &DMA_InitStructure);
+    // Enable DMA Transfer Complete interrupt
+    DMA_ITConfig(UART1TX_DMA_STREAM, DMA_IT_TC, ENABLE);
+
+    // ==== Interrupts ====
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream7_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 
 #ifdef RX_ENABLED
     // ==== NVIC ====
@@ -176,6 +147,7 @@ void CmdUnit_t::Init(uint32_t ABaudrate) {
 #endif
     // Enable USART
     USART_Cmd(USART1, ENABLE);
+    USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
 }
 
 #ifdef RX_ENABLED
@@ -221,14 +193,30 @@ void USART1_IRQHandler(void) {
 #endif
 
 void CmdUnit_t::IRQDmaTxHandler() {
-//    if(DMA_GetITStatus(DMA1_IT_TC2)) {
-//        DMA_ClearITPendingBit(DMA1_IT_GL2); // Clear CH2 IRQ global bit
-//        // Switch to next buffer if needed
-//        if(TxIndx != 0) IStartTx();
-//        else IDmaIsIdle = true;
-//    }
+    if(DMA_GetFlagStatus(UART1TX_DMA_STREAM, UART1TX_DMA_FLAG_TC)) {
+        DMA_ClearFlag(UART1TX_DMA_STREAM, UART1TX_DMA_FLAG_TC);
+        DMA_Cmd(UART1TX_DMA_STREAM, DISABLE);   // Registers may be changed only when stream is disabled
+
+        if(ICountToSendNext == 0) IDmaIsIdle = true;
+        else {  // There is something to transmit more
+            UADMA_MEMPOINTER = (uint32_t)PRead;
+            // Handle pointer
+            uint32_t BytesLeft = UART_TXBUF_SIZE - (PRead - TXBuf);
+            if(ICountToSendNext < BytesLeft) {      // Data fits in buffer without split
+                UADMA_DATASIZE = ICountToSendNext;
+                PRead += ICountToSendNext;
+                ICountToSendNext = 0;
+            }
+            else {  // Some portion of data placed in the beginning
+                UADMA_DATASIZE = BytesLeft;
+                PRead = TXBuf;  // Set pointer to beginning
+                ICountToSendNext -= BytesLeft;
+            }
+            DMA_Cmd(UART1TX_DMA_STREAM, ENABLE);    // Restart DMA
+        }
+    } // if getflagstatus
 }
 
-void DMA1_Channel2_3_IRQHandler(void) {
+void DMA2_Stream7_IRQHandler(void) {
     Uart.IRQDmaTxHandler();
 }

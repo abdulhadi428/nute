@@ -14,17 +14,16 @@ void Init();
 
 int main(void) {
     Init();
+    Uart.Printf("\rArmlet2 North\r");
 
     PinSetupOut(GPIOB, 9, omPushPull);
     PinSet(GPIOB, 9);
 
-    //Uart.Printf("abcdefghij\r");
     uint32_t Tmr, i=0;
     while(1) {
-        //Uart.Task();
         if(Delay.Elapsed(&Tmr, 999)) {
-            Uart.Printf("%02u\r", i++);
-            Uart.Printf("%02u\r", i++);
+            Uart.Printf("%03u\r", i++);
+            Uart.Printf("%03u\r", i++);
         }
     }
 }
