@@ -7,9 +7,10 @@
 
 #include "kl_lib_f205.h"
 #include <stdarg.h>
+#include <string.h>
 #include "tiny_sprintf.h"
 #include "stm32f2xx_usart.h"
-/*
+
 // ============================== Delay ========================================
 Delay_t Delay;
 uint32_t ITickCounter;
@@ -30,7 +31,7 @@ void Delay_t::ms(uint32_t Ams) {
 void SysTick_Handler(void) {
     ITickCounter++;
 }
-*/
+
 // ============================== UART command =================================
 CmdUnit_t Uart;
 
@@ -40,42 +41,73 @@ void CmdUnit_t::Printf(const char *format, ...) {
     va_start(args, format);
     uint32_t Cnt = tiny_vsprintf(buf, format, args);
     va_end(args);
-    // Check if message fits in buffer's remainder
-    if(Cnt > (UART_TXBUF_SIZE - (PWrite - TXBuf))) PWrite = TXBuf;  // Set pointer to start
-    // Place bytes to buffer
-    for(uint32_t i=0; (i<Cnt) and (i<UART_TXBUF_SIZE); i++) *PWrite++ = buf[i];
-    if(PWrite == &TXBuf[UART_TXBUF_SIZE-1]) PWrite = TXBuf; // Handle circular buffer
-    // Start transmission if DMA is idle
-    if(IDmaIsIdle) {        // Send ICountToSend chars staring from PRead
-        ICountToSend = Cnt;
-        IStartTx();
-        PRead = PWrite;     // Reset read pointer for next time
-        ICountToSend = 0;   // Nothing to send next time
+    if(Cnt > UART_TXBUF_SIZE) Cnt = UART_TXBUF_SIZE;    // Shrink too long string
+
+    if(IDmaIsIdle) {
+        memcpy(TXBuf, buf, Cnt);    // Place string to buffer from beginning
+        PWrite = TXBuf + Cnt;       // Prepare pointer for next time
+        PRead = TXBuf + Cnt;        // Prepare pointer for next time
+        ICountToSendNext = 0;       // Reset next-time counter
+        // Start DMA
+        IDmaIsIdle = false;
+        DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)TXBuf;
+        DMA_InitStructure.DMA_BufferSize = Cnt;
+        DMA_Init(UART1TX_DMA_STREAM, &DMA_InitStructure);
+        USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+        DMA_Cmd(UART1TX_DMA_STREAM, ENABLE);
     }
-    else {                  // DMA is busy transmitting, prepare for it to empty
-        ICountToSend += Cnt;
-    }
+    else {
+        ICountToSendNext += Cnt;
+        uint32_t BytesFree = UART_TXBUF_SIZE - (PWrite - TXBuf);
+        if(Cnt < BytesFree) {   // Message fits in buffer, no splitting needed
+            memcpy(PWrite, buf, Cnt);
+            PWrite += Cnt;
+        }
+        else { // Cnt >= BytesFree
+            memcpy(PWrite, buf, BytesFree);
+            uint32_t Remainder = Cnt - BytesFree;
+            if(Remainder) memcpy(TXBuf, &buf[BytesFree], Remainder);
+            PWrite = TXBuf + Remainder;
+        }
+    } // if not idle
 }
 
-void CmdUnit_t::IStartTx() {
-    IDmaIsIdle = false;
-    DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)PRead;
-    DMA_InitStructure.DMA_BufferSize = ICountToSend;
-    DMA_Init(UART1TX_DMA_STREAM, &DMA_InitStructure);
+void CmdUnit_t::Task() {
+    if(DMA_GetFlagStatus(UART1TX_DMA_STREAM, UART1TX_DMA_FLAG_TC)) {
+        DMA_ClearFlag(UART1TX_DMA_STREAM, UART1TX_DMA_FLAG_TC);
+        DMA_Cmd(UART1TX_DMA_STREAM, DISABLE);
+        USART_DMACmd(USART1, USART_DMAReq_Tx, DISABLE);
 
-    USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
-    DMA_Cmd(UART1TX_DMA_STREAM, ENABLE);
-//    UART_DMA_CHNL->CMAR = (uint32_t) PBuf;  // Set memory base address
-//    UART_DMA_CHNL->CNDTR = TxIndx;          // Set count to transmit
-//    DMA_Cmd(UART_DMA_CHNL, ENABLE);
-//    USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+        if(ICountToSendNext != 0) {
+            DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)PRead;
+            // Handle pointer
+            uint32_t BytesLeft = UART_TXBUF_SIZE - (PRead - TXBuf);
+            if(ICountToSendNext < BytesLeft) {      // Data fits in buffer without split
+                DMA_InitStructure.DMA_BufferSize = ICountToSendNext;
+                PRead += ICountToSendNext;
+                ICountToSendNext = 0;
+            }
+            else {  // Some portion of data placed in the beginning
+                DMA_InitStructure.DMA_BufferSize = BytesLeft;
+                PRead = TXBuf;  // Set pointer to beginning
+                ICountToSendNext -= BytesLeft;
+            }
+            // Restart DMA
+            DMA_Init(UART1TX_DMA_STREAM, &DMA_InitStructure);
+            USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+            DMA_Cmd(UART1TX_DMA_STREAM, ENABLE);
+        }
+        else {
+            IDmaIsIdle = true;
+        }
+    } // if getflagstatus
 }
 
 // ==== Init & DMA ====
 void CmdUnit_t::Init(uint32_t ABaudrate) {
     PWrite = TXBuf;
     PRead = TXBuf;
-    ICountToSend = 0;
+    ICountToSendNext = 0;
     IDmaIsIdle = true;
     // ==== Clocks init ====
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);      // UART clock

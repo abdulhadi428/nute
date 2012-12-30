@@ -121,7 +121,7 @@ static inline void PinSetupAlterFunc(GPIO_TypeDef *PGpioPort, const uint16_t APi
     PGpioPort->AFR[n] &= ~(0b1111 << Shift);
     PGpioPort->AFR[n] |= (uint32_t)AAlterFunc << Shift;
 }
-/*
+
 // ============================ Delay and time =================================
 // Systick is used here
 extern uint32_t ITickCounter;
@@ -142,10 +142,10 @@ extern Delay_t Delay;
 extern "C" {
 void SysTick_Handler(void);
 }
-*/
+
 // ============================== UART command unit ============================
 // USART1: DMA2, Chnl 4, Stream 7
-#define UART_TXBUF_SIZE         27
+#define UART_TXBUF_SIZE         18
 #define UART1TX_DMA_CHNL        DMA_Channel_4
 #define UART1TX_DMA_STREAM      DMA2_Stream7
 #define UART1TX_DMA_FLAG_TC     DMA_FLAG_TCIF7
@@ -162,7 +162,7 @@ private:
     DMA_InitTypeDef DMA_InitStructure;
     uint8_t TXBuf[UART_TXBUF_SIZE];
     uint8_t *PWrite, *PRead;
-    uint16_t ICountToSend;
+    uint16_t ICountToSendNext;
     bool IDmaIsIdle;
 #ifdef RX_ENABLED
     CmdState_t CmdState;
@@ -172,6 +172,7 @@ private:
 #endif
     void IStartTx();
 public:
+    void Task();
     char UintToHexChar (uint8_t b) { return ((b<=0x09) ? (b+'0') : (b+'A'-10)); }
     void Printf(const char *S, ...);
     void FlushTx() { while(!IDmaIsIdle); }  // wait DMA

@@ -8,6 +8,8 @@
 
 #include "kl_lib_f205.h"
 
+#include "stm32f2xx_usart.h"
+
 void Init();
 
 int main(void) {
@@ -16,13 +18,19 @@ int main(void) {
     PinSetupOut(GPIOB, 9, omPushPull);
     PinSet(GPIOB, 9);
 
-    Uart.Printf("Armlet2 North\r");
+    //Uart.Printf("abcdefghij\r");
+    uint32_t Tmr, i=0;
     while(1) {
+        //Uart.Task();
+        if(Delay.Elapsed(&Tmr, 999)) {
+            Uart.Printf("%02u\r", i++);
+            Uart.Printf("%02u\r", i++);
+        }
     }
 }
 
 inline void Init() {
-    //Delay.Init();
+    Delay.Init();
     Uart.Init(115200);
 }
 
