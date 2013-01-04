@@ -5,10 +5,11 @@
  *      Author: kreyl
  */
 
-#include "kl_lib_f205.h"
+#include "kl_lib_f2xx.h"
 #include <stdarg.h>
 #include <string.h>
 #include "tiny_sprintf.h"
+/*
 #include "stm32f2xx_usart.h"
 #include "misc.h"
 
@@ -100,13 +101,13 @@ void CmdUnit_t::Init(uint32_t ABaudrate) {
     USART_InitStructure.USART_Mode = USART_Mode_Tx;
 #endif
     USART_Init(USART1, &USART_InitStructure);
-
+*/
     // ==== DMA ====
     /* Here only the unchanged parameters of the DMA initialization structure are
      * configured. During the program operation, the DMA will be configured with
      * different parameters according to the operation phase.
      */
-    DMA_DeInit(UART1TX_DMA_STREAM);
+/*    DMA_DeInit(UART1TX_DMA_STREAM);
     DMA_InitTypeDef DMA_InitStructure;
     DMA_InitStructure.DMA_Channel            = UART1TX_DMA_CHNL;
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &USART1->DR;
@@ -220,3 +221,4 @@ void CmdUnit_t::IRQDmaTxHandler() {
 void DMA2_Stream7_IRQHandler(void) {
     Uart.IRQDmaTxHandler();
 }
+*/

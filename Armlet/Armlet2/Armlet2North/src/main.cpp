@@ -6,31 +6,163 @@
  * Created on May 27, 2011, 6:37 PM
  */
 
-#include "kl_lib_f205.h"
+//#include "kl_lib_f2xx.h"
+//#include "lcd2630.h"
 
-#include "stm32f2xx_usart.h"
+#include "ch.hpp"
+#include "hal.h"
+#include "test.h"
+#include "evtimer.h"
 
-void Init();
+using namespace chibios_rt;
 
-int main(void) {
-    Init();
-    Uart.Printf("\rArmlet2 North\r");
+/*
+ * LED blink sequences.
+ * NOTE: Sequences must always be terminated by a GOTO instruction.
+ * NOTE: The sequencer language could be easily improved but this is outside
+ *       the scope of this demo.
+ */
+#define SLEEP           0
+#define GOTO            1
+#define STOP            2
+#define BITCLEAR        3
+#define BITSET          4
 
-    PinSetupOut(GPIOB, 9, omPushPull);
-    PinSet(GPIOB, 9);
+typedef struct {
+  uint8_t       action;
+  uint32_t      value;
+} seqop_t;
 
-    uint32_t Tmr, i=0;
-    while(1) {
-        if(Delay.Elapsed(&Tmr, 999)) {
-            Uart.Printf("%03u\r", i++);
-            Uart.Printf("%03u\r", i++);
-        }
+// Flashing sequence for LED1.
+static const seqop_t LED1_sequence[] =
+{
+  {BITCLEAR, 1},
+  {SLEEP,    200},
+  {BITSET,   1},
+  {SLEEP,    800},
+  {BITCLEAR, 1},
+  {SLEEP,    400},
+  {BITSET,   1},
+  {SLEEP,    600},
+  {BITCLEAR, 1},
+  {SLEEP,    600},
+  {BITSET,   1},
+  {SLEEP,    400},
+  {BITCLEAR, 1},
+  {SLEEP,    800},
+  {BITSET,   1},
+  {SLEEP,    200},
+  {GOTO,     0}
+};
+
+/*
+ * Sequencer thread class. It can drive LEDs or other output pins.
+ * Any sequencer is just an instance of this class, all the details are
+ * totally encapsulated and hidden to the application level.
+ */
+class SequencerThread : public EnhancedThread<128> {
+private:
+  const seqop_t *base, *curr;                   // Thread local variables.
+
+protected:
+  virtual msg_t Main(void) {
+    while (true) {
+      switch(curr->action) {
+      case SLEEP:
+        Sleep(curr->value);
+        break;
+      case GOTO:
+        curr = &base[curr->value];
+        continue;
+      case STOP:
+        return 0;
+      case BITCLEAR:
+        //palClearPort(GPIOC, curr->value);
+        break;
+      case BITSET:
+        //palSetPort(GPIOC, curr->value);
+        break;
+      }
+      curr++;
     }
+  }
+
+public:
+  SequencerThread(const seqop_t *sequence) : EnhancedThread<128>("sequencer") {
+
+    base = curr = sequence;
+  }
+};
+
+/*
+ * Tester thread class. This thread executes the test suite.
+ */
+class TesterThread : public EnhancedThread<256> {
+
+protected:
+  virtual msg_t Main(void) {
+
+    return TestThread(&SD2);
+    //return TestThread(0);
+  }
+
+public:
+  TesterThread(void) : EnhancedThread<256>("tester") {
+  }
+};
+
+/*
+ * Executed as an event handler at 500mS intervals.
+ */
+static void TimerHandler(eventid_t id) {
+
+  (void)id;
+//  if (palReadPad(GPIOA, GPIOA_BUTTON)) {
+    TesterThread tester;
+    tester.Wait();
+//  };
 }
 
-inline void Init() {
-    Delay.Init();
-    Uart.Init(115200);
+/*
+ * Application entry point.
+ */
+int main(void) {
+  static const evhandler_t evhndl[] = {
+    TimerHandler
+  };
+  static EvTimer evt;
+  struct EventListener el0;
+
+  /*
+   * System initializations.
+   * - HAL initialization, this also initializes the configured device drivers
+   *   and performs the board-specific initializations.
+   * - Kernel initialization, the main() function becomes a thread and the
+   *   RTOS is active.
+   */
+  halInit();
+  System::Init();
+
+  /*
+   * Activates the serial driver 2 using the driver default configuration.
+   */
+  sdStart(&SD2, NULL);
+
+  evtInit(&evt, 500);                   // Initializes an event timer.
+  evtStart(&evt);                       // Starts the event timer.
+  chEvtRegister(&evt.et_es, &el0, 0);   // Registers a listener on the source.
+
+  /*
+   * Starts several instances of the SequencerThread class, each one operating
+   * on a different LED.
+   */
+  SequencerThread blinker1(LED1_sequence);
+
+  /*
+   * Serves timer events.
+   */
+  while (true)
+    Event::Dispatch(evhndl, Event::WaitOne(ALL_EVENTS));
+
+  return 0;
 }
-
-

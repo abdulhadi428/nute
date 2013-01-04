@@ -9,9 +9,9 @@
 #define KL_LIB_F2XX_H_
 
 #include "stm32f2xx.h"
-#include "stm32f2xx_rcc.h"
-#include "stm32f2xx_tim.h"
-#include "stm32f2xx_dma.h"
+//#include "stm32f2xx_rcc.h"
+//#include "stm32f2xx_tim.h"
+//#include "stm32f2xx_dma.h"
 
 extern "C" {
 //void _init(void);   // Need to calm linker
@@ -26,12 +26,6 @@ void __attribute__ ((weak)) _init(void)  {}
 
 
 // ===================== Single pin manipulations ==============================
-//enum PinMode_t {
-//    pmIn        = 0b00,
-////    pmOut       = 0b01,
-////    pmAlterFunc = 0b10,
-//    pmAnalog    = 0b11
-//};
 enum PinOutMode_t {
     omPushPull  = 0,
     omOpenDrain = 1
@@ -51,7 +45,7 @@ enum PinAF_t {
     AF0=0, AF1=1, AF2=2, AF3=3, AF4=4, AF5=5, AF6=6, AF7=7,
     AF8=8, AF9=9,AF10=10, AF11=11, AF12=12, AF13=13, AF14=14, AF15=15
 };
-
+/*
 // Set/clear
 static inline void PinSet    (GPIO_TypeDef *PGpioPort, const uint16_t APinNumber) { PGpioPort->BSRRL = (uint32_t)(1<<APinNumber); }
 static inline void PinClear  (GPIO_TypeDef *PGpioPort, const uint16_t APinNumber) { PGpioPort->BSRRH = (uint32_t)(1<<APinNumber); }
@@ -121,6 +115,13 @@ static inline void PinSetupAlterFunc(GPIO_TypeDef *PGpioPort, const uint16_t APi
     PGpioPort->AFR[n] &= ~(0b1111 << Shift);
     PGpioPort->AFR[n] |= (uint32_t)AAlterFunc << Shift;
 }
+// Fast switch
+static inline void PinFastOutPP(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber) {
+    // Setup mode
+    PGpioPort->MODER &= ~(0b11 << (APinNumber*2));  // clear previous bits
+    PGpioPort->MODER |= 0b01 << (APinNumber*2);     // Set new bits
+}
+
 
 // ============================ Delay and time =================================
 // Systick is used here
@@ -193,6 +194,6 @@ void DMA2_Stream7_IRQHandler(void);
 
 
 extern CmdUnit_t Uart;
-
+*/
 
 #endif /* KL_LIB_F2XX_H_ */
