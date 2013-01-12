@@ -9,37 +9,11 @@
 #include <stdarg.h>
 #include <string.h>
 #include "tiny_sprintf.h"
-/*
-#include "stm32f2xx_usart.h"
-#include "misc.h"
-
-// ============================== Delay ========================================
-Delay_t Delay;
-uint32_t ITickCounter;
-bool Delay_t::Elapsed(uint32_t *AVar, const uint32_t ADelay) {
-    if ((uint32_t)(ITickCounter - (*AVar)) >= ADelay) {
-        *AVar = ITickCounter; // Reset delay
-        return true;
-    }
-    else return false;
-}
-
-void Delay_t::ms(uint32_t Ams) {
-    uint32_t __ticks = (SystemCoreClock / 8000) * Ams;
-    Loop(__ticks);
-}
-
-// IRQ
-void SysTick_Handler(void) {
-    ITickCounter++;
-}
 
 // ============================== UART command =================================
-CmdUnit_t Uart;
-#define UADMA_DATASIZE      UART1TX_DMA_STREAM->NDTR
-#define UADMA_MEMPOINTER    UART1TX_DMA_STREAM->M0AR
+DbgUart_t Uart;
 
-void CmdUnit_t::Printf(const char *format, ...) {
+void DbgUart_t::Printf(const char *format, ...) {
     char buf[200];
     va_list args;
     va_start(args, format);
@@ -54,9 +28,9 @@ void CmdUnit_t::Printf(const char *format, ...) {
         ICountToSendNext = 0;       // Reset next-time counter
         // Start DMA
         IDmaIsIdle = false;
-        UADMA_MEMPOINTER = (uint32_t)TXBuf;
-        UADMA_DATASIZE = Cnt;
-        DMA_Cmd(UART1TX_DMA_STREAM, ENABLE);
+        dmaStreamSetMemory0(STM32_DMA2_STREAM7, TXBuf);
+        dmaStreamSetTransactionSize(STM32_DMA2_STREAM7, Cnt);
+        dmaStreamEnable(STM32_DMA2_STREAM7);
     }
     else {
         ICountToSendNext += Cnt;
@@ -75,150 +49,64 @@ void CmdUnit_t::Printf(const char *format, ...) {
 }
 
 // ==== Init & DMA ====
-void CmdUnit_t::Init(uint32_t ABaudrate) {
+// Wrapper for IRQ
+extern "C" {
+void DbgUartIrq(void *p, uint32_t flags) { Uart.IRQDmaTxHandler(); }
+}
+void DbgUart_t::Init(uint32_t ABaudrate) {
     PWrite = TXBuf;
     PRead = TXBuf;
     ICountToSendNext = 0;
     IDmaIsIdle = true;
-    // ==== Clocks init ====
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);      // UART clock
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
-    // ==== GPIO init ====
     PinSetupAlterFunc(GPIOA, 9, omPushPull, pudNone, AF7);      // TX1
-#ifdef RX_ENABLED
-    klGpioSetupByN(GPIOA, 10, GPIO_Mode_IPU);   // RX1
-#endif
+
     // ==== USART configuration ====
-    USART_InitTypeDef USART_InitStructure;
-    USART_InitStructure.USART_BaudRate = ABaudrate;
-    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-    USART_InitStructure.USART_StopBits = USART_StopBits_1;
-    USART_InitStructure.USART_Parity = USART_Parity_No;
-    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-#ifdef RX_ENABLED
-    USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
-#else
-    USART_InitStructure.USART_Mode = USART_Mode_Tx;
-#endif
-    USART_Init(USART1, &USART_InitStructure);
-*/
+    RCC->APB2ENR |= RCC_APB2ENR_USART1EN;   // UART clock
+    // Integer part computing in case Oversampling mode is 16 Samples
+    uint32_t integerdivider = ((25 * 8000000) / (4 * (ABaudrate)));
+    uint32_t tmpreg = (integerdivider / 100) << 4;
+    uint32_t fractionaldivider = integerdivider - (100 * (tmpreg >> 4));
+    tmpreg |= ((((fractionaldivider * 16) + 50) / 100)) & ((uint8_t)0x0F);
+    USART1->BRR = tmpreg;
+    USART1->CR2 = 0;
+    USART1->CR3 = USART_CR3_DMAT;   // Enable DMA at transmitter
+    USART1->CR1 = USART_CR1_TE;     // Transmitter enabled
+
     // ==== DMA ====
-    /* Here only the unchanged parameters of the DMA initialization structure are
-     * configured. During the program operation, the DMA will be configured with
-     * different parameters according to the operation phase.
-     */
-/*    DMA_DeInit(UART1TX_DMA_STREAM);
-    DMA_InitTypeDef DMA_InitStructure;
-    DMA_InitStructure.DMA_Channel            = UART1TX_DMA_CHNL;
-    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &USART1->DR;
-    DMA_InitStructure.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
-    DMA_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte;
-    DMA_InitStructure.DMA_PeripheralBurst    = DMA_PeripheralBurst_Single;
-    DMA_InitStructure.DMA_MemoryInc          = DMA_MemoryInc_Enable;
-    DMA_InitStructure.DMA_MemoryDataSize     = DMA_MemoryDataSize_Byte;
-    DMA_InitStructure.DMA_MemoryBurst        = DMA_MemoryBurst_Single;
-    DMA_InitStructure.DMA_Mode               = DMA_Mode_Normal;
-    DMA_InitStructure.DMA_FIFOMode           = DMA_FIFOMode_Disable;
-    DMA_InitStructure.DMA_FIFOThreshold      = DMA_FIFOThreshold_Full;
-    DMA_InitStructure.DMA_Priority           = DMA_Priority_High;
-    DMA_InitStructure.DMA_DIR                = DMA_DIR_MemoryToPeripheral;
-    DMA_InitStructure.DMA_Memory0BaseAddr    = (uint32_t)TXBuf; // }
-    DMA_InitStructure.DMA_BufferSize         = UART_TXBUF_SIZE; // } dummy
-    DMA_Init(UART1TX_DMA_STREAM, &DMA_InitStructure);
-    // Enable DMA Transfer Complete interrupt
-    DMA_ITConfig(UART1TX_DMA_STREAM, DMA_IT_TC, ENABLE);
-
-    // ==== Interrupts ====
-    NVIC_InitTypeDef NVIC_InitStructure;
-    NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream7_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-
-#ifdef RX_ENABLED
-    // ==== NVIC ====
-    // Enable the USART Interrupt
-    NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-    // Enable RX interrupt
-    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-#endif
-    // Enable USART
-    USART_Cmd(USART1, ENABLE);
-    USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+    // Here only the unchanged parameters of the DMA are configured.
+    dmaStreamAllocate     (STM32_DMA2_STREAM7, 1, DbgUartIrq, NULL);
+    dmaStreamSetPeripheral(STM32_DMA2_STREAM7, &USART1->DR);
+    dmaStreamSetMode      (STM32_DMA2_STREAM7,
+            STM32_DMA_CR_CHSEL(4) |     // DMA2 Stream7 Channel4 is USART1_TX request
+            STM32_DMA_CR_PL(0) |        // Priority is low
+            STM32_DMA_CR_MSIZE_BYTE |
+            STM32_DMA_CR_PSIZE_BYTE |
+            STM32_DMA_CR_MINC |         // Memory pointer increase
+            STM32_DMA_CR_DIR_M2P |      // Direction is memory to peripheral
+            STM32_DMA_CR_TCIE           // Enable Transmission Complete IRQ
+             );
+    USART1->CR1 |= USART_CR1_UE;        // Enable USART
 }
 
-#ifdef RX_ENABLED
-void CmdUnit_t::Task() {
-    if (CmdState == csReady) {
-        NewCmdHandler();
-        CmdReset();
-    }
-}
-#endif
 
 // ==== IRQs ====
-#ifdef RX_ENABLED
-void CmdUnit_t::IRQHandler() {
-    if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
-        char b = USART1->DR;
-        if (b != '\n') switch (CmdState) {  // Ignore \n
-            case csNone:
-                RXBuf[RxIndx++] = b;
-                CmdState = csInProgress;
-                break;
-            case csInProgress:
-                // Check if end of cmd
-                if (b == '\r') {
-                    CmdState = csReady;
-                    RXBuf[RxIndx] = 0;
-                }
-                else {
-                    RXBuf[RxIndx++] = b;
-                    // Check if too long
-                    if (RxIndx == UART_RXBUF_SIZE) CmdReset();
-                }
-                break;
-            case csReady:   // New byte received, but command still not handled
-                break;
-        } // switch
-    } // if rx
-}
-
-void USART1_IRQHandler(void) {
-    CmdUnit.IRQHandler();
-}
-#endif
-
-void CmdUnit_t::IRQDmaTxHandler() {
-    if(DMA_GetFlagStatus(UART1TX_DMA_STREAM, UART1TX_DMA_FLAG_TC)) {
-        DMA_ClearFlag(UART1TX_DMA_STREAM, UART1TX_DMA_FLAG_TC);
-        DMA_Cmd(UART1TX_DMA_STREAM, DISABLE);   // Registers may be changed only when stream is disabled
-
-        if(ICountToSendNext == 0) IDmaIsIdle = true;
-        else {  // There is something to transmit more
-            UADMA_MEMPOINTER = (uint32_t)PRead;
-            // Handle pointer
-            uint32_t BytesLeft = UART_TXBUF_SIZE - (PRead - TXBuf);
-            if(ICountToSendNext < BytesLeft) {      // Data fits in buffer without split
-                UADMA_DATASIZE = ICountToSendNext;
-                PRead += ICountToSendNext;
-                ICountToSendNext = 0;
-            }
-            else {  // Some portion of data placed in the beginning
-                UADMA_DATASIZE = BytesLeft;
-                PRead = TXBuf;  // Set pointer to beginning
-                ICountToSendNext -= BytesLeft;
-            }
-            DMA_Cmd(UART1TX_DMA_STREAM, ENABLE);    // Restart DMA
+void DbgUart_t::IRQDmaTxHandler() {
+    dmaStreamDisable(STM32_DMA2_STREAM7);    // Registers may be changed only when stream is disabled
+    if(ICountToSendNext == 0) IDmaIsIdle = true;
+    else {  // There is something to transmit more
+        dmaStreamSetMemory0(STM32_DMA2_STREAM7, PRead);
+        // Handle pointer
+        uint32_t BytesLeft = UART_TXBUF_SIZE - (PRead - TXBuf);
+        if(ICountToSendNext < BytesLeft) {  // Data fits in buffer without split
+            dmaStreamSetTransactionSize(STM32_DMA2_STREAM7, ICountToSendNext);
+            PRead += ICountToSendNext;
+            ICountToSendNext = 0;
         }
-    } // if getflagstatus
+        else {  // Some portion of data placed in the beginning
+            dmaStreamSetTransactionSize(STM32_DMA2_STREAM7, BytesLeft);
+            PRead = TXBuf;  // Set pointer to beginning
+            ICountToSendNext -= BytesLeft;
+        }
+        dmaStreamEnable(STM32_DMA2_STREAM7);    // Restart DMA
+    }
 }
-
-void DMA2_Stream7_IRQHandler(void) {
-    Uart.IRQDmaTxHandler();
-}
-*/

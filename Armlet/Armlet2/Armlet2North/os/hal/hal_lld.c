@@ -51,38 +51,39 @@
 /**
  * @brief   Initializes the backup domain.
  */
+/*
 static void hal_lld_backup_domain_init(void) {
 
-  /* Backup domain access enabled and left open.*/
+  // Backup domain access enabled and left open.
   PWR->CR |= PWR_CR_DBP;
 
-  /* Reset BKP domain if different clock source selected.*/
+  // Reset BKP domain if different clock source selected.
   if ((RCC->BDCR & STM32_RTCSEL_MASK) != STM32_RTCSEL){
-    /* Backup domain reset.*/
+    // Backup domain reset.
     RCC->BDCR = RCC_BDCR_BDRST;
     RCC->BDCR = 0;
   }
 
-  /* If enabled then the LSE is started.*/
+  // If enabled then the LSE is started.
 #if STM32_LSE_ENABLED
   RCC->BDCR |= RCC_BDCR_LSEON;
   while ((RCC->BDCR & RCC_BDCR_LSERDY) == 0)
-    ;                                     /* Waits until LSE is stable.   */
+    ;                                     // Waits until LSE is stable.
 #endif
 
 #if STM32_RTCSEL != STM32_RTCSEL_NOCLOCK
-  /* If the backup domain hasn't been initialized yet then proceed with
-     initialization.*/
+  // If the backup domain hasn't been initialized yet then proceed with
+ //   initialization.
   if ((RCC->BDCR & RCC_BDCR_RTCEN) == 0) {
-    /* Selects clock source.*/
+    // Selects clock source.
     RCC->BDCR |= STM32_RTCSEL;
 
-    /* RTC clock enabled.*/
+    //RTC clock enabled.
     RCC->BDCR |= RCC_BDCR_RTCEN;
   }
-#endif /* STM32_RTCSEL != STM32_RTCSEL_NOCLOCK */
+#endif //STM32_RTCSEL != STM32_RTCSEL_NOCLOCK
 }
-
+*/
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
@@ -121,7 +122,7 @@ void hal_lld_init(void) {
   rccEnablePWRInterface(FALSE);
 
   /* Initializes the backup domain.*/
-  hal_lld_backup_domain_init();
+  //hal_lld_backup_domain_init(); // kl
 
 #if defined(STM32_DMA_REQUIRED)
   dmaInit();

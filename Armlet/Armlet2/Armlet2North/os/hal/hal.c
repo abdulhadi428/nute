@@ -123,8 +123,6 @@ void halInit(void) {
 #if HAL_USE_RTC || defined(__DOXYGEN__)
   rtcInit();
 #endif
-  /* Board specific initialization.*/
-  boardInit();
 }
 
 #if HAL_IMPLEMENTS_COUNTERS || defined(__DOXYGEN__)

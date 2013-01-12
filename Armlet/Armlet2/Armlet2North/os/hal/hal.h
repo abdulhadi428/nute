@@ -41,6 +41,8 @@
 
 #include "hal_lld.h"
 
+#include "stm32_dma.h"
+
 //#include "tm.h"
 //#include "pal.h"
 //#include "adc.h"
@@ -52,7 +54,7 @@
 //#include "mac.h"
 //#include "pwm.h"
 //#include "rtc.h"
-#include "serial.h"
+//#include "serial.h"
 //#include "sdc.h"
 //#include "spi.h"
 //#include "uart.h"

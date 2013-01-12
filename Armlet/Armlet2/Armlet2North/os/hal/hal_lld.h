@@ -602,7 +602,7 @@
  * @brief   USB/SDIO clock setting.
  */
 #if !defined(STM32_CLOCK48_REQUIRED) || defined(__DOXYGEN__)
-#define STM32_CLOCK48_REQUIRED      TRUE
+#define STM32_CLOCK48_REQUIRED      FALSE
 #endif
 
 /**

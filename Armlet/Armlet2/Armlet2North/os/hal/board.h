@@ -469,14 +469,5 @@
 #define VAL_GPIOI_AFRL      0x00000000
 #define VAL_GPIOI_AFRH      0x00000000
 */
-#if !defined(_FROM_ASM_)
-#ifdef __cplusplus
-extern "C" {
-#endif
-  void boardInit(void);
-#ifdef __cplusplus
-}
-#endif
-#endif /* _FROM_ASM_ */
 
 #endif /* _BOARD_H_ */

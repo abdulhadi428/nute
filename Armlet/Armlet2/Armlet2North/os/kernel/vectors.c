@@ -301,7 +301,7 @@ void Vector148(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector14C(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector150(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector154(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector158(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector158(void);// __attribute__((weak, alias("_unhandled_exception")));   // FIXME
 void Vector15C(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector160(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector164(void) __attribute__((weak, alias("_unhandled_exception")));

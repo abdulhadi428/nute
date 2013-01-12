@@ -70,12 +70,6 @@
 #define STM32_ADC_ADC1_IRQ_PRIORITY         5
 
 /*
- * CAN driver system settings.
- */
-#define STM32_CAN_USE_CAN1                  FALSE
-#define STM32_CAN_CAN1_IRQ_PRIORITY         11
-
-/*
  * EXT driver system settings.
  */
 #define STM32_EXT_EXTI0_IRQ_PRIORITY        6
@@ -163,8 +157,8 @@
 /*
  * SERIAL driver system settings.
  */
-#define STM32_SERIAL_USE_USART1             TRUE
-#define STM32_SERIAL_USE_USART2             TRUE
+#define STM32_SERIAL_USE_USART1             FALSE
+#define STM32_SERIAL_USE_USART2             FALSE
 #define STM32_SERIAL_USE_USART3             FALSE
 #define STM32_SERIAL_USE_UART4              FALSE
 #define STM32_SERIAL_USE_UART5              FALSE
