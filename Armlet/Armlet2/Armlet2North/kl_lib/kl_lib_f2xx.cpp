@@ -78,7 +78,7 @@ void DbgUart_t::Init(uint32_t ABaudrate) {
     dmaStreamSetPeripheral(STM32_DMA2_STREAM7, &USART1->DR);
     dmaStreamSetMode      (STM32_DMA2_STREAM7,
             STM32_DMA_CR_CHSEL(4) |     // DMA2 Stream7 Channel4 is USART1_TX request
-            STM32_DMA_CR_PL(0) |        // Priority is low
+            DMA_PRIORITY_LOW |
             STM32_DMA_CR_MSIZE_BYTE |
             STM32_DMA_CR_PSIZE_BYTE |
             STM32_DMA_CR_MINC |         // Memory pointer increase

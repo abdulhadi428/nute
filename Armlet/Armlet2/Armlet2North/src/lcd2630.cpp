@@ -1,11 +1,16 @@
 #include "lcd2630.h"
 #include "kl_lib_f2xx.h"
 #include "lcd_font.h"
-//#include "stm32f2xx_usart.h"
+#include "stm32f2xx_usart.h"
 #include <string.h>
 #include <stdarg.h>
 #include "core_cmInstr.h"
-/*
+
+// Commands
+#define CMD_SLEEP_OUT   0x11
+#define CMD_RAM_WRITE   0x2C
+
+
 Lcd_t Lcd;
 
 inline static void LcdUartInit();
@@ -28,13 +33,15 @@ void Lcd_t::Init(void) {
     XCS_Hi();
     // Reset display
     XRES_Lo();
-    Delay.ms(7);
     XRES_Hi();
 
     LcdUartInit();
 
-    WriteCmd(0x11);   // Sleep Out
-    Delay.ms(207);    // 120 ms needed
+    WriteCmd(CMD_SLEEP_OUT);
+    volatile uint32_t i=0;
+    while(i<207000) i++;
+
+    //halPolledDelay(207);    // 120 ms needed
 
 //    // Read ID
 //    ID[0] = ReadByte(0xDA);
@@ -48,22 +55,13 @@ void Lcd_t::Init(void) {
     //WriteCmd(0x3A, 1, 0x06);    // Pixel format: VIPF=0(undef), IFPF=18 bit per pixel
     WriteCmd(0x3A, 1, 0x05);    // Pixel format: VIPF=0(undef), IFPF=16 bit per pixel
     //WriteCmd(0x3A, 1, 0x03);    // Pixel format: VIPF=0(undef), IFPF=12 bit per pixel
-    // Write LUT
-//    XCS_Lo();           // Select chip
-//    Write9Bit(0x2D);    // Send Cmd byte
-//    SCLK_Lo();
-//    for (uint8_t i = 0; i < 32; i++) Write9Bit(0x100 | (i<<1));
-//    for (uint8_t i = 0; i < 64; i++) Write9Bit(0x100 | i);
-//    for (uint8_t i = 0; i < 32; i++) Write9Bit(0x100 | (i<<1));
-//    SCLK_Lo();
-//    XCS_Hi();
 
     WriteCmd(0x29);             // Display on
     WriteCmd(0x20);             // Inv off
     WriteCmd(0x13);             // Normal Display Mode ON
     WriteCmd(0x36, 1, 0xA0);    // Display mode: Y inv, X none-inv, Row/Col exchanged
-    Cls();                      // clear LCD buffer
-    PutStr("To be or not to be", 0, 0, 0x001F, 0xFFFF);
+    Cls(clBlue);                // clear LCD buffer
+    //PutStr("To be or not to be", 0, 0, 0x001F, 0xFFFF);
     //PutStr("A", 18, 9, 0xFF, 0x00);
 }
 
@@ -78,7 +76,7 @@ void Lcd_t::Write9Bit(uint16_t AWord) {
     uint32_t dw = AWord;
     dw = __RBIT(dw);
     dw >>= 23;
-    while(!(USART3->SR & USART_FLAG_TXE));
+    while(!(USART3->SR & USART_SR_TXE));    // wait for empty TX buffer
     USART3->DR = dw & 0x000001FF;
 }
 
@@ -96,7 +94,7 @@ void Lcd_t::WriteCmd(uint16_t ACmd, uint8_t AParamCount, ...) {
         AParamCount--;
     }
     va_end(args);
-    while(!(USART3->SR & USART_FLAG_TC));
+    while(!(USART3->SR & USART_SR_TC));    // wait for transmission to complete
     XCS_Hi();
 }
 
@@ -137,7 +135,7 @@ uint32_t Lcd_t::Read24(uint8_t ACmd) {
     PinSetupOut(LCD_GPIO, LCD_SDA,  omPushPull);
     return Rslt;
 }
-*/
+
 /* ==== Pseudographics ====
  *  Every command consists of PseudoGraph_t AChar, uint8_t RepeatCount.
  *  Example: LineHorizDouble, 11 => print LineHorizDouble 11 times.
@@ -158,7 +156,7 @@ void Lcd_t::Symbols(const uint8_t x, const uint8_t y, ...) {
     va_end(Arg);
 }
 
-
+*/
 // ================================= Printf ====================================
 void Lcd_t::PutChar(char c, int x, int y, uint16_t fColor, uint16_t bColor) {
     y += 6;
@@ -219,7 +217,7 @@ void Lcd_t::PutChar(char c, int x, int y, uint16_t fColor, uint16_t bColor) {
 //        }
     }
     // terminate the Write Memory command
-    while(!(USART3->SR & USART_FLAG_TC));
+    while(!(USART3->SR & USART_SR_TC));
     XCS_Hi();
 }
 
@@ -234,7 +232,7 @@ void Lcd_t::PutStr(const char *pString, int x, int y, uint16_t fColor, uint16_t 
         if (y > 160) break;
     }
 }
-
+/*
 
 void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
     GotoCharXY(x, y);
@@ -266,31 +264,24 @@ void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
     } // while
     va_end(Arg);
 }
-
+*/
 // ================================ Graphics ===================================
-void Lcd_t::Cls() {
+void Lcd_t::Cls(Color_t Color) {
     uint8_t x=1, y=1, w=160, h=130;
     WriteCmd(0x2A, 4, 0, x, 0, x+w-1);    // Set column bounds
     WriteCmd(0x2B, 4, 0, y, 0, y+h-1);    // Set row bounds
     // Write data
     XCS_Lo();           // Select chip
-    Write9Bit(0x2C);    // Send Cmd byte
-//    SCLK_Lo();
-//    for (uint16_t i=0; i<w*h/2; i++) {
-//        Write9Bit(0x100 | 0x00);
-//        Write9Bit(0x100 | 0x00);
-//        Write9Bit(0x100 | 0x00);
-//    }
+    Write9Bit(CMD_RAM_WRITE);
     // 16 bit
     for (uint16_t i=0; i<w*h; i++) {
-        Write9Bit(0x100 | 0xF0);
-        Write9Bit(0x100 | 0xF0);
+        Write9Bit(0x100 | 0x00);
+        Write9Bit(0x100 | 0x0F);
     }
-//    SCLK_Lo();
-    while(!(USART3->SR & USART_FLAG_TC));
+    while(!(USART3->SR & USART_SR_TC));
     XCS_Hi();
 }
-
+/*
 void Lcd_t::GotoCharXY(uint8_t x, uint8_t y) {
     CurrentPosition =  (x<<2)+(x<<1);   // = x * 6; move to x
     CurrentPosition += (y<<6)+(y<<5);   // = (*64)+(*32) = *96; move to y
@@ -356,32 +347,24 @@ void Lcd_t::DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode) {
         if (Pos >= LCD_VIDEOBUF_SIZE) Pos = 0;
     }
 }
-
+*/
 // =========================== Low-level hardware ==============================
 void LcdUartInit() {
     // Pins
     PinSetupAlterFunc(LCD_GPIO, LCD_SCLK, omPushPull, pudNone, AF7);
     PinSetupAlterFunc(LCD_GPIO, LCD_SDA,  omPushPull, pudNone, AF7);
     // ==== USART init ====
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
-    USART_OverSampling8Cmd(USART3, ENABLE);
+    rccEnableUSART3(FALSE);     // Usart3 CLK, no clock in low-power
     // Usart clock: enabled, idle low, first edge, enable last bit pulse
-    USART_ClockInitTypeDef USART_ClockInitStructure;
-    USART_ClockInitStructure.USART_Clock = USART_Clock_Enable;
-    USART_ClockInitStructure.USART_CPOL = USART_CPOL_Low;
-    USART_ClockInitStructure.USART_CPHA = USART_CPHA_1Edge;
-    USART_ClockInitStructure.USART_LastBit = USART_LastBit_Enable;
-    USART_ClockInit(USART3, &USART_ClockInitStructure);
-    // Usart itself
-    USART_InitTypeDef USART_InitStructure;
-    USART_InitStructure.USART_BaudRate = 1000000;
-    USART_InitStructure.USART_WordLength = USART_WordLength_9b;
-    USART_InitStructure.USART_StopBits = USART_StopBits_1;
-    USART_InitStructure.USART_Parity = USART_Parity_No;
-    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    USART_InitStructure.USART_Mode = USART_Mode_Tx;
-    USART_Init(USART3, &USART_InitStructure);
-    // Enable USART
-    USART_Cmd(USART3, ENABLE);
+    USART3->CR1 = USART_CR1_UE; // Enable UART
+    USART3->CR2 = USART_CR2_CLKEN | USART_CR2_LBCL;
+    USART3->BRR = 1<<4;         // Baudrate = Fck/(8*number)
+//    //USART3->CR3 = USART_CR3_DMAT;   // Enable DMA for transmission
+    USART3->CR1 =
+            USART_CR1_OVER8 |   // Use 8 samples per bit, not 16 - to increase speed
+            USART_CR1_UE |      // Enable USART
+            USART_CR1_M |       // 9 data bit
+            USART_CR1_TE;       // Transmitter enable
+    // After enabling transmitter, it will send empty character
+    while(!(USART3->SR & USART_SR_TC));    // wait for transmission to complete
 }
-*/

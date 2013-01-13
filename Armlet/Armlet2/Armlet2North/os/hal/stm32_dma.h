@@ -152,6 +152,12 @@
                                      STM32_DMA_CR_MSIZE_MASK)
 #define STM32_DMA_CR_PL_MASK        DMA_SxCR_PL
 #define STM32_DMA_CR_PL(n)          ((n) << 16)
+
+// KL: DMA priority levels
+#define DMA_PRIORITY_LOW            STM32_DMA_CR_PL(0b00)
+#define DMA_PRIORITY_MEDIUM         STM32_DMA_CR_PL(0b01)
+#define DMA_PRIORITY_HIGH           STM32_DMA_CR_PL(0b10)
+#define DMA_PRIORITY_VERY_HIGH      STM32_DMA_CR_PL(0b11)
 /** @} */
 
 /**
