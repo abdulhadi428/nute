@@ -12,17 +12,17 @@
 
 // ============================== UART command =================================
 DbgUart_t Uart;
+static char UartBuf[198];
 
 void DbgUart_t::Printf(const char *format, ...) {
-    char buf[200];
     va_list args;
     va_start(args, format);
-    uint32_t Cnt = tiny_vsprintf(buf, format, args);
+    uint32_t Cnt = tiny_vsprintf(UartBuf, format, args);
     va_end(args);
     if(Cnt > UART_TXBUF_SIZE) Cnt = UART_TXBUF_SIZE;    // Shrink too long string
 
     if(IDmaIsIdle) {
-        memcpy(TXBuf, buf, Cnt);    // Place string to buffer from beginning
+        memcpy(TXBuf, UartBuf, Cnt);// Place string to buffer from beginning
         PWrite = TXBuf + Cnt;       // Prepare pointer for next time
         PRead = TXBuf + Cnt;        // Prepare pointer for next time
         ICountToSendNext = 0;       // Reset next-time counter
@@ -36,13 +36,13 @@ void DbgUart_t::Printf(const char *format, ...) {
         ICountToSendNext += Cnt;
         uint32_t BytesFree = UART_TXBUF_SIZE - (PWrite - TXBuf);
         if(Cnt < BytesFree) {   // Message fits in buffer, no splitting needed
-            memcpy(PWrite, buf, Cnt);
+            memcpy(PWrite, UartBuf, Cnt);
             PWrite += Cnt;
         }
         else { // Cnt >= BytesFree
-            memcpy(PWrite, buf, BytesFree);
+            memcpy(PWrite, UartBuf, BytesFree);
             uint32_t Remainder = Cnt - BytesFree;
-            if(Remainder) memcpy(TXBuf, &buf[BytesFree], Remainder);
+            if(Remainder) memcpy(TXBuf, &UartBuf[BytesFree], Remainder);
             PWrite = TXBuf + Remainder;
         }
     } // if not idle
