@@ -11,6 +11,7 @@
 
 #include "kl_lib_f2xx.h"
 #include "lcd2630.h"
+#include "application.h"
 
 //static WORKING_AREA(waThread1, 128);
 //static msg_t Thread1(void *arg) {
@@ -50,4 +51,6 @@ void Init() {
     Uart.Init(115200);
     Uart.Printf("Armlet2\r");
     Lcd.Init();
+    // Application init
+    App.Init();
 }

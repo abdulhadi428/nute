@@ -7,14 +7,14 @@
 #include "core_cmInstr.h"
 
 // Commands
-#define CMD_SLEEP_OUT   0x11
-#define CMD_RAM_WRITE   0x2C
+#define CMD_SLEEP_OUT   0x011
+#define CMD_RAM_WRITE   0x068   // Reversed and shifted 0x2C
 
 // Variables
 Lcd_t Lcd;
 uint8_t PackedBuf[LCD_H][LCD_W];        // color RRR-GGG-BB
 bool Changed[AREA_H_CNT][AREA_W_CNT];   // Flags "rect changed"
-uint16_t BufToWrite[AREA_H*AREA_W*2];   // Buffer to write to display
+uint16_t BufToWrite[(1+4)+(1+4)+1+(AREA_H*AREA_W*3)/2];   // Buffer to write to display, 3/2 bytes per pixel and cmds ahead
 
 // Pin driving functions
 #define LCD_DELAY   { volatile uint32_t i=0; while(i<999) i++; }
@@ -25,10 +25,15 @@ void XCS_Lo () { PinClear(LCD_GPIO, LCD_XCS);  LCD_DELAY}
 
 // Prototypes
 static inline void LcdUartInit();
-static void Write9Bit(uint16_t AWord);
+static inline void Write9Bit(uint16_t AWord);
 static void WriteCmd(uint16_t ACmd, uint8_t AParamCount=0, ...);
 static inline void SetBounds(uint8_t x0, uint8_t Width, uint8_t y0, uint8_t Height);
-
+static inline uint16_t ReverseAndShift(uint16_t AData) {
+    uint32_t dw = AData;
+    dw = __RBIT(dw);
+    dw >>= 23;
+    return (uint16_t)dw;
+}
 
 // ==== Lcd Thread ====
 static WORKING_AREA(waLcdThread, 128);
@@ -41,35 +46,35 @@ static msg_t LcdThread(void *arg) {
                 if(Changed[ya][xa]) {
                     Changed[ya][xa] = false;
                     uint8_t x0 = xa * AREA_W, y0 = ya * AREA_H; // Coords of top left corner of area
-                    //Uart.Printf("%u; %u;   %u; %u\r", xc, yc, x0, y0);
-                    //chThdSleepMilliseconds(99);
+                    // Setup bounds
+                    BufToWrite[2] = ReverseAndShift(0x100 | (x0+LCD_X_0));
+                    BufToWrite[4] = ReverseAndShift(0x100 | (x0+LCD_X_0+AREA_W-1));
+                    BufToWrite[7] = ReverseAndShift(0x100 | (y0+LCD_Y_0));
+                    BufToWrite[9] = ReverseAndShift(0x100 | (y0+LCD_Y_0+AREA_H-1));
                     // Fill buffer to write
-                    uint16_t i=0;
-                    for(uint8_t x=x0; x<(x0+AREA_W); x++) {
-                        for(uint8_t y=y0; y<(y0+AREA_H); y++) {
-                            uint8_t v = PackedBuf[y][x];
-                            uint8_t r = v & 0b11100000;
-                            uint8_t g = v & 0b00011100;
-                            uint8_t b = v & 0b00000011;
-                            // First byte
-                            uint32_t dw = 0x0100 | r | (g>>2);
-                            dw = __RBIT(dw);
-                            dw >>= 23;
-                            BufToWrite[i++] = dw;
-                            // Second byte
-                            dw = 0x0100 | (b<<3);
-                            dw = __RBIT(dw);
-                            dw >>= 23;
-                            BufToWrite[i++] = dw;
-                        } // for y
-                    } // for x
-                    // Start transmission
-                    SetBounds(x0, AREA_W, y0, AREA_H);
+                    uint16_t Counter=11; // There is commands ahead
+                    for(uint8_t y=y0; y<(y0+AREA_H); y++) {
+                        uint8_t x=x0;
+                        while(x<(x0+AREA_W)) {
+                            // Pixel 1
+                            uint8_t v = PackedBuf[y][x++];
+                            uint16_t r = v & 0b00000111;
+                            uint16_t g = v & 0b00111000;
+                            uint16_t b = v & 0b11000000;
+                            BufToWrite[Counter++] = 0x001 | (r<<1) | (g<<2);
+                            // Pixel 2
+                            v = PackedBuf[y][x++];
+                            r = v & 0b00000111;
+                            BufToWrite[Counter++]   = 0x001 | (b>>5) | (r<<5);
+                            g = v & 0b00111000;
+                            b = v & 0b11000000;
+                            BufToWrite[Counter++] = 0x001 | (g>>2) | (b>>1);
+                        } // while x
+                    } // for y
                     // Write data
                     XCS_Lo();           // Select chip
-                    Write9Bit(CMD_RAM_WRITE);
-                    // 16 bit
-                    for (i=0; i<(AREA_H*AREA_W*2); i++) {
+
+                    for (uint16_t i=0; i<Counter; i++) {
                         while(!(USART3->SR & USART_SR_TXE));    // wait for empty TX buffer
                         USART3->DR = BufToWrite[i];
                     }
@@ -82,7 +87,6 @@ static msg_t LcdThread(void *arg) {
     return 0;
 }
 
-
 void Lcd_t::Init() {
     // Configure LCD_XRES, LCD_XCS, LCD_SCLK & LCD_SDA as Push-Pull output
     PinSetupOut(LCD_GPIO, LCD_XRES, omPushPull);
@@ -90,6 +94,14 @@ void Lcd_t::Init() {
     PinSetupOut(LCD_GPIO, LCD_BCKLT,omPushPull);    // Backlight
 
     BacklightOn();
+    // Init buffer to write: add bound commands
+    BufToWrite[0]  = ReverseAndShift(0x02A);    // Set column bounds
+    BufToWrite[1]  = ReverseAndShift(0x100);    // 0
+    BufToWrite[3]  = ReverseAndShift(0x100);    // 0
+    BufToWrite[5]  = ReverseAndShift(0x02B);    // Set Row bounds
+    BufToWrite[6]  = ReverseAndShift(0x100);    // 0
+    BufToWrite[8]  = ReverseAndShift(0x100);    // 0
+    BufToWrite[10] = CMD_RAM_WRITE;
     // ========================= Init LCD ======================================
     XCS_Hi();
     // Reset display
@@ -104,14 +116,14 @@ void Lcd_t::Init() {
 
     WriteCmd(0x13);             // Normal Display Mode ON
     //WriteCmd(0x3A, 1, 0x06);    // Pixel format: VIPF=0(undef), IFPF=18 bit per pixel
-    WriteCmd(0x3A, 1, 0x05);    // Pixel format: VIPF=0(undef), IFPF=16 bit per pixel
-    //WriteCmd(0x3A, 1, 0x03);    // Pixel format: VIPF=0(undef), IFPF=12 bit per pixel
+    //WriteCmd(0x3A, 1, 0x05);    // Pixel format: VIPF=0(undef), IFPF=16 bit per pixel
+    WriteCmd(0x3A, 1, 0x03);    // Pixel format: VIPF=0(undef), IFPF=12 bit per pixel
 
     WriteCmd(0x29);             // Display on
     WriteCmd(0x20);             // Inv off
     WriteCmd(0x13);             // Normal Display Mode ON
     WriteCmd(0x36, 1, 0xA0);    // Display mode: Y inv, X none-inv, Row/Col exchanged
-    Cls(clYellow);                // clear LCD buffer
+    Cls(clWhite);                // clear LCD buffer
     //PutStr("To be or not to be", 0, 0, 0x001F, 0xFFFF);
     //PutStr("A", 18, 9, 0xFF, 0x00);
     chThdCreateStatic(waLcdThread, sizeof(waLcdThread), NORMALPRIO, LcdThread, NULL);
@@ -151,11 +163,6 @@ void WriteCmd(uint16_t ACmd, uint8_t AParamCount, ...) {
     XCS_Hi();
 }
 
-void SetBounds(uint8_t x0, uint8_t Width, uint8_t y0, uint8_t Height) {
-    WriteCmd(0x2A, 4, 0, x0+LCD_X_0, 0, x0+AREA_W+LCD_X_0-1);    // Set column bounds
-    WriteCmd(0x2B, 4, 0, y0+LCD_Y_0, 0, y0+AREA_H+LCD_Y_0-1);    // Set row bounds
-
-}
 // =============================================================================
 
 uint8_t Lcd_t::ReadByte(uint8_t ACmd) {
