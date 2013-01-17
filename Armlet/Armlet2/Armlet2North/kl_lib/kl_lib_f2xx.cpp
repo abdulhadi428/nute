@@ -10,6 +10,8 @@
 #include <string.h>
 #include "tiny_sprintf.h"
 
+uint32_t SysCoreClock;
+
 // ============================== UART command =================================
 DbgUart_t Uart;
 static char UartBuf[198];

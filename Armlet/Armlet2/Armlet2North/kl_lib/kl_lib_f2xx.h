@@ -22,12 +22,14 @@
 #define countof(A)  (sizeof(A)/sizeof(A[0]))
 #endif
 
+extern uint32_t SysCoreClock;  // Frequency of core, Hz
+
 // ============================ Simple delay ===================================
-//static inline void Loop(volatile uint32_t ACounter) { while(ACounter--); }
-//static inline void ms(uint32_t Ams) {
-//    uint32_t __ticks = (SystemCoreClock / 8000) * Ams;
-//    Loop(__ticks);
-//}
+static inline void DelayLoop(volatile uint32_t ACounter) { while(ACounter--); }
+static inline void Delay_ms(uint32_t Ams) {
+    volatile uint32_t __ticks = (SysCoreClock / 4000) * Ams;
+    DelayLoop(__ticks);
+}
 
 // ===================== Single pin manipulations ==============================
 enum PinOutMode_t {

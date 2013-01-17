@@ -47,6 +47,8 @@ void Init() {
 //    PinSetupOut(GPIOB, 9, omPushPull);
 //    PinSet(GPIOB, 9);
 //    chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+    // Setup System Core Clock. Fix it in future clock cwitching.
+    SysCoreClock = 16000000;
 
     Uart.Init(115200);
     Uart.Printf("Armlet2\r");

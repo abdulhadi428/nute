@@ -17,7 +17,7 @@ bool Changed[AREA_H_CNT][AREA_W_CNT];   // Flags "rect changed"
 uint16_t BufToWrite[(1+4)+(1+4)+1+(AREA_H*AREA_W*3)/2];   // Buffer to write to display, 3/2 bytes per pixel and cmds ahead
 
 // Pin driving functions
-#define LCD_DELAY   { volatile uint32_t i=0; while(i<999) i++; }
+#define LCD_DELAY   Delay_ms(1);
 void XRES_Hi() { PinSet  (LCD_GPIO, LCD_XRES); LCD_DELAY}
 void XRES_Lo() { PinClear(LCD_GPIO, LCD_XRES); LCD_DELAY}
 void XCS_Hi () { PinSet  (LCD_GPIO, LCD_XCS);  LCD_DELAY}
@@ -27,7 +27,6 @@ void XCS_Lo () { PinClear(LCD_GPIO, LCD_XCS);  LCD_DELAY}
 static inline void LcdUartInit();
 static inline void Write9Bit(uint16_t AWord);
 static void WriteCmd(uint16_t ACmd, uint8_t AParamCount=0, ...);
-static inline void SetBounds(uint8_t x0, uint8_t Width, uint8_t y0, uint8_t Height);
 static inline uint16_t ReverseAndShift(uint16_t AData) {
     uint32_t dw = AData;
     dw = __RBIT(dw);
@@ -41,8 +40,8 @@ static msg_t LcdThread(void *arg) {
     (void)arg;
     chRegSetThreadName("Lcd");
     while(1) {
-        for(uint8_t xa=0; xa<AREA_W_CNT; xa++) {
-            for(uint8_t ya=0; ya<AREA_H_CNT; ya++) {
+        for(uint8_t ya=0; ya<AREA_H_CNT; ya++) {
+            for(uint8_t xa=0; xa<AREA_W_CNT; xa++) {
                 if(Changed[ya][xa]) {
                     Changed[ya][xa] = false;
                     uint8_t x0 = xa * AREA_W, y0 = ya * AREA_H; // Coords of top left corner of area
@@ -72,17 +71,14 @@ static msg_t LcdThread(void *arg) {
                         } // while x
                     } // for y
                     // Write data
-                    XCS_Lo();           // Select chip
-
                     for (uint16_t i=0; i<Counter; i++) {
                         while(!(USART3->SR & USART_SR_TXE));    // wait for empty TX buffer
                         USART3->DR = BufToWrite[i];
                     }
                     while(!(USART3->SR & USART_SR_TC));
-                    XCS_Hi();
                 } // if changed
-            } // xc
-        } // yc
+            } // xa
+        } // ya
     } // while 1
     return 0;
 }
@@ -104,15 +100,13 @@ void Lcd_t::Init() {
     BufToWrite[10] = CMD_RAM_WRITE;
     // ========================= Init LCD ======================================
     XCS_Hi();
-    // Reset display
-    XRES_Lo();
-    XRES_Hi();
-
+    XRES_Lo();  // }
+    XRES_Hi();  // } Reset display
     LcdUartInit();
+    XCS_Lo();   // Interface is always enabled
 
     WriteCmd(CMD_SLEEP_OUT);
-    volatile uint32_t i=0;
-    while(i<207000) i++;
+    Delay_ms(207);
 
     WriteCmd(0x13);             // Normal Display Mode ON
     //WriteCmd(0x3A, 1, 0x06);    // Pixel format: VIPF=0(undef), IFPF=18 bit per pixel
@@ -146,7 +140,6 @@ void Write9Bit(uint16_t AWord) {
 }
 
 void WriteCmd(uint16_t ACmd, uint8_t AParamCount, ...) {
-    XCS_Lo();   // Select chip
     // Send Cmd 0 bit and Cmd byte
     Write9Bit(ACmd);
     // Send params if exist
@@ -160,7 +153,6 @@ void WriteCmd(uint16_t ACmd, uint8_t AParamCount, ...) {
     }
     va_end(args);
     while(!(USART3->SR & USART_SR_TC));    // wait for transmission to complete
-    XCS_Hi();
 }
 
 // =============================================================================
