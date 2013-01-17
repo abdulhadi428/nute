@@ -10,11 +10,16 @@
 #define CMD_SLEEP_OUT   0x011
 #define CMD_RAM_WRITE   0x068   // Reversed and shifted 0x2C
 
+// DMA
+#define LCD_DMA         STM32_DMA1_STREAM3
+
 // Variables
 Lcd_t Lcd;
 uint8_t PackedBuf[LCD_H][LCD_W];        // color RRR-GGG-BB
 bool Changed[AREA_H_CNT][AREA_W_CNT];   // Flags "rect changed"
-uint16_t BufToWrite[(1+4)+(1+4)+1+(AREA_H*AREA_W*3)/2];   // Buffer to write to display, 3/2 bytes per pixel and cmds ahead
+// Buffer to write to display, 3/2 bytes per pixel and cmds ahead
+#define BUF2WRITE_SZ    ((1+4)+(1+4)+1+(AREA_H*AREA_W*3)/2)
+uint16_t BufToWrite[BUF2WRITE_SZ];
 
 // Pin driving functions
 #define LCD_DELAY   Delay_ms(1);
@@ -71,11 +76,9 @@ static msg_t LcdThread(void *arg) {
                         } // while x
                     } // for y
                     // Write data
-                    for (uint16_t i=0; i<Counter; i++) {
-                        while(!(USART3->SR & USART_SR_TXE));    // wait for empty TX buffer
-                        USART3->DR = BufToWrite[i];
-                    }
-                    while(!(USART3->SR & USART_SR_TC));
+                    dmaStreamSetTransactionSize(LCD_DMA, BUF2WRITE_SZ);
+                    dmaStreamEnable(LCD_DMA);
+                    dmaWaitCompletion(LCD_DMA);
                 } // if changed
             } // xa
         } // ya
@@ -90,6 +93,7 @@ void Lcd_t::Init() {
     PinSetupOut(LCD_GPIO, LCD_BCKLT,omPushPull);    // Backlight
 
     BacklightOn();
+
     // Init buffer to write: add bound commands
     BufToWrite[0]  = ReverseAndShift(0x02A);    // Set column bounds
     BufToWrite[1]  = ReverseAndShift(0x100);    // 0
@@ -98,7 +102,7 @@ void Lcd_t::Init() {
     BufToWrite[6]  = ReverseAndShift(0x100);    // 0
     BufToWrite[8]  = ReverseAndShift(0x100);    // 0
     BufToWrite[10] = CMD_RAM_WRITE;
-    // ========================= Init LCD ======================================
+    // ======= Init LCD =======
     XCS_Hi();
     XRES_Lo();  // }
     XRES_Hi();  // } Reset display
@@ -107,8 +111,8 @@ void Lcd_t::Init() {
 
     WriteCmd(CMD_SLEEP_OUT);
     Delay_ms(207);
-
     WriteCmd(0x13);             // Normal Display Mode ON
+
     //WriteCmd(0x3A, 1, 0x06);    // Pixel format: VIPF=0(undef), IFPF=18 bit per pixel
     //WriteCmd(0x3A, 1, 0x05);    // Pixel format: VIPF=0(undef), IFPF=16 bit per pixel
     WriteCmd(0x3A, 1, 0x03);    // Pixel format: VIPF=0(undef), IFPF=12 bit per pixel
@@ -118,11 +122,23 @@ void Lcd_t::Init() {
     WriteCmd(0x13);             // Normal Display Mode ON
     WriteCmd(0x36, 1, 0xA0);    // Display mode: Y inv, X none-inv, Row/Col exchanged
     Cls(clWhite);                // clear LCD buffer
-    //PutStr("To be or not to be", 0, 0, 0x001F, 0xFFFF);
-    //PutStr("A", 18, 9, 0xFF, 0x00);
+    // ======= DMA =======
+    // Here only the unchanged parameters of the DMA are configured
+    dmaStreamAllocate     (LCD_DMA, 1, NULL, NULL);
+    dmaStreamSetPeripheral(LCD_DMA, &USART3->DR);
+    dmaStreamSetMemory0   (LCD_DMA, BufToWrite);
+    dmaStreamSetMode      (LCD_DMA,
+            STM32_DMA_CR_CHSEL(4)       // DMA1 Stream3 Channel4 is USART3_TX request
+            | DMA_PRIORITY_HIGH
+            | STM32_DMA_CR_MSIZE_HWORD
+            | STM32_DMA_CR_PSIZE_HWORD
+            | STM32_DMA_CR_MINC         // Memory pointer increase
+            | STM32_DMA_CR_DIR_M2P      // Direction is memory to peripheral
+             );
+    USART3->CR3 = USART_CR3_DMAT;       // Enable DMA at transmitter
+    // ======= Create and start thread =======
     chThdCreateStatic(waLcdThread, sizeof(waLcdThread), NORMALPRIO, LcdThread, NULL);
 }
-
 
 void Lcd_t::Shutdown(void) {
     XRES_Lo();
@@ -132,11 +148,8 @@ void Lcd_t::Shutdown(void) {
 
 // =============================== Local use ===================================
 void Write9Bit(uint16_t AWord) {
-    uint32_t dw = AWord;
-    dw = __RBIT(dw);
-    dw >>= 23;
     while(!(USART3->SR & USART_SR_TXE));    // wait for empty TX buffer
-    USART3->DR = dw & 0x000001FF;
+    USART3->DR = ReverseAndShift(AWord);
 }
 
 void WriteCmd(uint16_t ACmd, uint8_t AParamCount, ...) {
@@ -152,7 +165,6 @@ void WriteCmd(uint16_t ACmd, uint8_t AParamCount, ...) {
         AParamCount--;
     }
     va_end(args);
-    while(!(USART3->SR & USART_SR_TC));    // wait for transmission to complete
 }
 
 // =============================================================================
@@ -411,7 +423,6 @@ void LcdUartInit() {
     USART3->CR1 = USART_CR1_UE; // Enable UART
     USART3->CR2 = USART_CR2_CLKEN | USART_CR2_LBCL;
     USART3->BRR = 1<<4;         // Baudrate = Fck/(8*number)
-//    //USART3->CR3 = USART_CR3_DMAT;   // Enable DMA for transmission
     USART3->CR1 =
             USART_CR1_OVER8 |   // Use 8 samples per bit, not 16 - to increase speed
             USART_CR1_UE |      // Enable USART
