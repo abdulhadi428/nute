@@ -12,10 +12,6 @@
 #include "ch.h"
 #include "hal.h"
 
-//#include "stm32f2xx_rcc.h"
-//#include "stm32f2xx_tim.h"
-//#include "stm32f2xx_dma.h"
-
 // =============================== General =====================================
 #define PACKED __attribute__ ((__packed__))
 #ifndef countof
@@ -130,7 +126,7 @@ static inline void PinFastOutPP(GPIO_TypeDef *PGpioPort, const uint16_t APinNumb
 }
 
 // ============================== UART command unit ============================
-#define UART_TXBUF_SIZE         90
+#define UART_TXBUF_SIZE         900
 
 class DbgUart_t {
 private:
@@ -144,10 +140,6 @@ public:
     void Init(uint32_t ABaudrate);
     void IRQDmaTxHandler();
 };
-
-//extern "C" {
-//CH_IRQ_HANDLER(DMA2_Stream7_IRQHandler);
-//}
 
 extern DbgUart_t Uart;
 

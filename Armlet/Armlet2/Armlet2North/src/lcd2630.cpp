@@ -1,25 +1,24 @@
 #include "lcd2630.h"
 #include "kl_lib_f2xx.h"
 #include "lcd_font.h"
-#include "stm32f2xx_usart.h"
 #include <string.h>
 #include <stdarg.h>
 #include "core_cmInstr.h"
+#include "tiny_sprintf.h"
 
-// Commands
-#define CMD_SLEEP_OUT   0x011
-#define CMD_RAM_WRITE   0x068   // Reversed and shifted 0x2C
+#include "lcdFont8x8.h"
 
-// DMA
 #define LCD_DMA         STM32_DMA1_STREAM3
 
 // Variables
 Lcd_t Lcd;
-uint8_t PackedBuf[LCD_H][LCD_W];        // color RRR-GGG-BB
+uint8_t PackedBuf[LCD_H][LCD_W];
 bool Changed[AREA_H_CNT][AREA_W_CNT];   // Flags "rect changed"
-// Buffer to write to display, 3/2 bytes per pixel and cmds ahead
+// Buffer to write to display, 3/2 bytes per pixel, plus several cmds at beginning
 #define BUF2WRITE_SZ    ((1+4)+(1+4)+1+(AREA_H*AREA_W*3)/2)
 uint16_t BufToWrite[BUF2WRITE_SZ];
+// Buffer for printf
+static char CharBuf[198];
 
 // Pin driving functions
 #define LCD_DELAY   Delay_ms(1);
@@ -101,7 +100,7 @@ void Lcd_t::Init() {
     BufToWrite[5]  = ReverseAndShift(0x02B);    // Set Row bounds
     BufToWrite[6]  = ReverseAndShift(0x100);    // 0
     BufToWrite[8]  = ReverseAndShift(0x100);    // 0
-    BufToWrite[10] = CMD_RAM_WRITE;
+    BufToWrite[10] = ReverseAndShift(0x02C);    // RAM Write
     // ======= Init LCD =======
     XCS_Hi();
     XRES_Lo();  // }
@@ -109,7 +108,7 @@ void Lcd_t::Init() {
     LcdUartInit();
     XCS_Lo();   // Interface is always enabled
 
-    WriteCmd(CMD_SLEEP_OUT);
+    WriteCmd(0x011);            // Sleep out
     Delay_ms(207);
     WriteCmd(0x13);             // Normal Display Mode ON
 
@@ -121,7 +120,7 @@ void Lcd_t::Init() {
     WriteCmd(0x20);             // Inv off
     WriteCmd(0x13);             // Normal Display Mode ON
     WriteCmd(0x36, 1, 0xA0);    // Display mode: Y inv, X none-inv, Row/Col exchanged
-    Cls(clWhite);                // clear LCD buffer
+    //Cls(clWhite);                // clear LCD buffer
     // ======= DMA =======
     // Here only the unchanged parameters of the DMA are configured
     dmaStreamAllocate     (LCD_DMA, 1, NULL, NULL);
@@ -167,46 +166,6 @@ void WriteCmd(uint16_t ACmd, uint8_t AParamCount, ...) {
     va_end(args);
 }
 
-// =============================================================================
-
-uint8_t Lcd_t::ReadByte(uint8_t ACmd) {
-    XCS_Lo();   // Select chip
-    // Send Cmd 0 bit and Cmd byte
-    Write9Bit(ACmd);
-    // Read data
-    uint8_t Rslt = 0;
-    PinSetupIn(LCD_GPIO, LCD_SDA, pudNone);
-    for(uint8_t i=0; i<8; i++) {
-        Rslt <<= 1;
-        if(PinIsSet(LCD_GPIO, LCD_SDA)) Rslt |= 0x01;
-    }
-    XCS_Hi();
-    PinSetupOut(LCD_GPIO, LCD_SDA,  omPushPull);
-    return Rslt;
-}
-
-uint32_t Lcd_t::Read24(uint8_t ACmd) {
-    XCS_Lo();   // Select chip
-    // Send Cmd 0 bit and Cmd byte
-    Write9Bit(ACmd);
-    // Read data
-    uint32_t Rslt = 0;
-    PinSetupIn(LCD_GPIO, LCD_SDA, pudNone);
-    // Dummy clock cycle
-//    SCLK_Hi();
-//    SCLK_Lo();
-    // Read data
-    for(uint8_t i=0; i<24; i++) {
-        Rslt <<= 1;
-//        SCLK_Hi();
-        if(PinIsSet(LCD_GPIO, LCD_SDA)) Rslt |= 0x01;
-//        SCLK_Lo();
-    }
-    XCS_Hi();
-    PinSetupOut(LCD_GPIO, LCD_SDA,  omPushPull);
-    return Rslt;
-}
-
 /* ==== Pseudographics ====
  *  Every command consists of PseudoGraph_t AChar, uint8_t RepeatCount.
  *  Example: LineHorizDouble, 11 => print LineHorizDouble 11 times.
@@ -229,113 +188,53 @@ void Lcd_t::Symbols(const uint8_t x, const uint8_t y, ...) {
 
 */
 // ================================= Printf ====================================
-void Lcd_t::PutChar(char c, int x, int y, uint16_t fColor, uint16_t bColor) {
-    y += 6;
-    uint16_t i,j;
-    uint16_t nCols;
-    uint16_t nRows;
-    unsigned int nBytes;
-    unsigned char PixelRow;
-    unsigned char Mask;
-    uint16_t Word0;
-    //uint16_t Word1;
-    unsigned char *pFont;
-    unsigned char *pChar;
-
-    // get pointer to the beginning of the selected font table
-    pFont = 0;//(unsigned char *)FONT8x8;
-    // get the nColumns, nRows and nBytes
-    nCols = 8;
-    nRows = 8;
-    nBytes = 8;
-    // get pointer to the first byte of the desired character
-    pChar = pFont + (nBytes * (c - 0x1F));
-
-    WriteCmd(0x2A, 4, 0, y, 0, y+nCols-1);    // Set column bounds
-    WriteCmd(0x2B, 4, 0, x, 0, x+nRows-1);    // Set row bounds
-
-    // WRITE MEMORY
-    XCS_Lo();           // Select chip
-    Write9Bit(0x02C);    // Send Cmd byte
-//    SCLK_Lo();
-    // loop on each row, working backwards from the bottom to the top
-    for(i = 0; i < nRows; i++) {
-        // copy pixel row from font table and then decrement row
-        PixelRow = *pChar++;
+// FIXME: add check for Changed array overflow
+uint16_t Lcd_t::PutChar(uint8_t x, uint8_t y, char c, Color_t ForeClr, Color_t BckClr) {
+    char *PFont = (char*)Font8x8;  // Font to use
+    // Read font params
+    uint8_t nCols = PFont[0];
+    uint8_t nRows = PFont[1];
+    uint16_t nBytes = PFont[2];
+    // Get pointer to the first byte of the desired character
+    const char *PChar = Font8x8 + (nBytes * (c - 0x1F));
+    // Iterate rows of the char
+    uint8_t row, col;
+    for(uint8_t row = 0; row < nRows; row++) {
+        if((y+row) >= LCD_H) break;
+        uint8_t PixelRow = *PChar++;
         // loop on each pixel in the row (left to right)
-        // Note: we do two pixels each loop
-        Mask = 0x80;
-        for (j = 0; j < nCols; j++) {
-            if ((PixelRow & Mask) == 0) Word0 = bColor;
-            else                        Word0 = fColor;
-            Mask = Mask >> 1;
-            Write9Bit(0x100 | ((Word0 >> 8) & 0x00FF));
-            Write9Bit(0x100 | (Word0 & 0x00FF));
-        }
-//        for (j = 0; j < nCols; j += 2) {
-//            // if pixel bit set, use foreground color; else use the background color
-//            // now get the pixel color for two successive pixels
-//            if ((PixelRow & Mask) == 0) Word0 = bColor;
-//            else                        Word0 = fColor;
-//            Mask = Mask >> 1;
-//            if ((PixelRow & Mask) == 0) Word1 = bColor;
-//            else                        Word1 = fColor;
-//            Mask = Mask >> 1;
-//            // use this information to output three data bytes
-//            Write9Bit(0x100 | ((Word0 >> 4) & 0xFF));
-//            Write9Bit(0x100 | (((Word0 & 0xF) << 4) | ((Word1 >> 8) & 0xF)));
-//            Write9Bit(0x100 | (Word1 & 0xFF));
-//        }
-    }
-    // terminate the Write Memory command
-    while(!(USART3->SR & USART_SR_TC));
-    XCS_Hi();
+        uint8_t Mask = 0x80;
+        for (col = 0; col < nCols; col++) {
+            if((x+col) >= LCD_W) break;
+            PackedBuf[y+row][x+col] = (PixelRow & Mask)? ForeClr : BckClr;
+            Mask >>= 1;
+        } // col
+    } // row
+    // Mark area as changed
+    uint8_t xaStart = x / AREA_W;
+    uint8_t yaStart = y / AREA_H;
+    uint8_t xaEnd = (x+nCols) / AREA_W;
+    uint8_t yaEnd = (y+nRows) / AREA_H;
+    for(row = yaStart; row<=yaEnd; row++)
+        for(col = xaStart; col<=xaEnd; col++)
+            Changed[row][col] = true;
+    // Return next pixel to right
+    return x+nCols;
 }
 
-void Lcd_t::PutStr(const char *pString, int x, int y, uint16_t fColor, uint16_t bColor) {
-    // loop until null-terminator is seen
-    while (*pString != 0x00) {
-        // draw the character
-        PutChar(*pString++, x, y, fColor, bColor);
-        // advance the y position
-        y = y + 8;
-        // bail out if y exceeds 131
-        if (y > 160) break;
+void Lcd_t::Printf(uint8_t x, uint8_t y, const Color_t ForeClr, const Color_t BckClr, const char *S, ...) {
+    // Printf to buffer
+    va_list args;
+    va_start(args, S);
+    uint32_t Cnt = tiny_vsprintf(CharBuf, S, args);
+    va_end(args);
+    // Draw what printed
+    for(uint32_t i=0; i<Cnt; i++) {
+        x = PutChar(x, y, CharBuf[i], ForeClr, BckClr);
+        if(x>160) break;
     }
 }
-/*
 
-void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
-    GotoCharXY(x, y);
-    char c;
-    bool WasPercent = false;
-    va_list Arg;
-    va_start(Arg, S);    // Set pointer to first argument
-    while ((c = *S) != 0) {
-        if (c == '%') {
-            if (WasPercent) {
-                DrawChar(c, NotInverted);  // %%
-                WasPercent = false;
-            }
-            else WasPercent = true;
-        }
-        else { // not %
-            if (WasPercent) {
-                if (c == 'c') DrawChar((uint8_t)va_arg(Arg, int32_t), NotInverted);
-                else if (c == 'u') PrintUint(va_arg(Arg, uint32_t));
-                else if (c == 'i') PrintInt(va_arg(Arg, int32_t));
-//                else if (c == 'X') PrintAsHex(va_arg(Arg, uint32_t));
-//                else if ((c == 's') || (c == 'S')) PrintString(va_arg(Arg, char*));
-//                else if (c == 'H') Print8HexArray(va_arg(Arg, uint8_t*), va_arg(Arg, uint32_t));
-                WasPercent = false;
-            } // if was percent
-            else DrawChar(c, NotInverted);
-        }
-        S++;
-    } // while
-    va_end(Arg);
-}
-*/
 // ================================ Graphics ===================================
 void Lcd_t::Cls(Color_t Color) {
     for(uint8_t x=0; x<LCD_W; x++)
@@ -346,10 +245,6 @@ void Lcd_t::Cls(Color_t Color) {
             Changed[yc][xc] = true;
 }
 /*
-void Lcd_t::GotoCharXY(uint8_t x, uint8_t y) {
-    CurrentPosition =  (x<<2)+(x<<1);   // = x * 6; move to x
-    CurrentPosition += (y<<6)+(y<<5);   // = (*64)+(*32) = *96; move to y
-}
 void Lcd_t::GotoXY(uint8_t x, uint8_t y) {
     CurrentPosition =  x;               // move to x
     CurrentPosition += (y<<6)+(y<<5);   // = (*64)+(*32) = *96; move to y
@@ -363,16 +258,6 @@ void Lcd_t::DrawChar(uint8_t AChar, Invert_t AInvert) {
         IBuf[CurrentPosition++] = b;
         if (CurrentPosition >= LCD_VIDEOBUF_SIZE) CurrentPosition = 0;
     }
-}
-
-void Lcd_t::PrintString(const uint8_t x, const uint8_t y, const char* S, Invert_t AInvert) {
-    GotoCharXY(x, y);
-    while (*S != '\0')
-        DrawChar(*S++, AInvert);
-}
-void Lcd_t::PrintStringLen(const char *S, uint16_t ALen, Invert_t AInvert) {
-    for (uint16_t i=0; ((i<ALen) && (*S != '\0')); i++)
-        DrawChar(*S++, AInvert);
 }
 
 void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img) {
@@ -412,6 +297,7 @@ void Lcd_t::DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode) {
     }
 }
 */
+
 // =========================== Low-level hardware ==============================
 void LcdUartInit() {
     // Pins
