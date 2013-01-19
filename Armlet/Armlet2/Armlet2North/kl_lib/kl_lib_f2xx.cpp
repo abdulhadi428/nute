@@ -64,12 +64,7 @@ void DbgUart_t::Init(uint32_t ABaudrate) {
 
     // ==== USART configuration ====
     RCC->APB2ENR |= RCC_APB2ENR_USART1EN;   // UART clock
-    // Integer part computing in case Oversampling mode is 16 Samples
-    uint32_t integerdivider = ((25 * 8000000) / (4 * (ABaudrate)));
-    uint32_t tmpreg = (integerdivider / 100) << 4;
-    uint32_t fractionaldivider = integerdivider - (100 * (tmpreg >> 4));
-    tmpreg |= ((((fractionaldivider * 16) + 50) / 100)) & ((uint8_t)0x0F);
-    USART1->BRR = tmpreg;
+    USART1->BRR = STM32_PCLK2 / 115200;
     USART1->CR2 = 0;
     USART1->CR3 = USART_CR3_DMAT;   // Enable DMA at transmitter
     USART1->CR1 = USART_CR1_TE;     // Transmitter enabled

@@ -96,7 +96,12 @@ static inline void PinSetupAnalog(GPIO_TypeDef *PGpioPort, const uint16_t APinNu
     PGpioPort->PUPDR &= ~(0b11 << (APinNumber*2)); // clear previous bits
     PGpioPort->PUPDR |= (uint32_t)APullUpDown << (APinNumber*2);
 }
-static inline void PinSetupAlterFunc(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber, const PinOutMode_t PinOutMode, const PinPullUpDown_t APullUpDown, const PinAF_t AAlterFunc, const PinSpeed_t ASpeed = ps50MHz) {
+static inline void PinSetupAlterFunc(GPIO_TypeDef *PGpioPort,
+        const uint16_t APinNumber,
+        const PinOutMode_t PinOutMode,
+        const PinPullUpDown_t APullUpDown,
+        const PinAF_t AAlterFunc,
+        const PinSpeed_t ASpeed = ps50MHz) {
     // Clock
     PinClockEnable(PGpioPort);
     // Setup mode

@@ -301,14 +301,15 @@ void Lcd_t::DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode) {
 // =========================== Low-level hardware ==============================
 void LcdUartInit() {
     // Pins
-    PinSetupAlterFunc(LCD_GPIO, LCD_SCLK, omPushPull, pudNone, AF7);
-    PinSetupAlterFunc(LCD_GPIO, LCD_SDA,  omPushPull, pudNone, AF7);
+    PinSetupAlterFunc(LCD_GPIO, LCD_SCLK, omPushPull, pudNone, AF7, ps100MHz);
+    PinSetupAlterFunc(LCD_GPIO, LCD_SDA,  omPushPull, pudNone, AF7, ps100MHz);
     // ==== USART init ====
     rccEnableUSART3(FALSE);     // Usart3 CLK, no clock in low-power
     // Usart clock: enabled, idle low, first edge, enable last bit pulse
     USART3->CR1 = USART_CR1_UE; // Enable UART
     USART3->CR2 = USART_CR2_CLKEN | USART_CR2_LBCL;
-    USART3->BRR = 1<<4;         // Baudrate = Fck/(8*number)
+    uint16_t brr = ((STM32_PCLK2*2) / 2000000) & 0xFFF0;
+    USART3->BRR = (brr == 0)? (1<<4) : brr; // Baudrate
     USART3->CR1 =
             USART_CR1_OVER8 |   // Use 8 samples per bit, not 16 - to increase speed
             USART_CR1_UE |      // Enable USART
