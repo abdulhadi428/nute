@@ -11,6 +11,7 @@
 #include "stm32f2xx.h"
 #include "ch.h"
 #include "hal.h"
+#include "clocking.h"
 
 // =============================== General =====================================
 #define PACKED __attribute__ ((__packed__))
@@ -18,12 +19,10 @@
 #define countof(A)  (sizeof(A)/sizeof(A[0]))
 #endif
 
-extern uint32_t SysCoreClock;  // Frequency of core, Hz
-
 // ============================ Simple delay ===================================
 static inline void DelayLoop(volatile uint32_t ACounter) { while(ACounter--); }
 static inline void Delay_ms(uint32_t Ams) {
-    volatile uint32_t __ticks = (SysCoreClock / 4000) * Ams;
+    volatile uint32_t __ticks = (Clk.AHBFreqHz / 4000) * Ams;
     DelayLoop(__ticks);
 }
 

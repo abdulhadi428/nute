@@ -8,6 +8,7 @@
 #include "peripheral.h"
 #include "ch.h"
 #include "hal.h"
+#include "clocking.h"
 
 // Variables
 bool KeyPressed[KEY_COUNT];
@@ -75,7 +76,7 @@ void SBUartInit() {
     rccEnableUSART6(FALSE);         // Usart6 CLK, no clock in low-power
     SB_UART->CR1 = USART_CR1_UE;    // Enable UART
     SB_UART->CR2 = 0;
-    SB_UART->BRR = STM32_PCLK2 / SB_BAUDRATE;    // Baudrate
+    SB_UART->BRR = SB_UART_CLK / SB_BAUDRATE;    // Baudrate
     SB_UART->CR1 =
             USART_CR1_UE |      // Enable USART
             USART_CR1_TE |      // Transmitter enable

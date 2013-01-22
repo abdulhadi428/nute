@@ -21,14 +21,15 @@ static msg_t LcdThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
 
-    //Color_t c = clRed;
+    Color_t c = clBlack;
     while(1) {
         chThdSleepMilliseconds(1800);
-        Lcd.Cls(clBlack);
+        Lcd.Cls(c);
         for(uint8_t y=0; y<120; y+=16) {
             chThdSleepMilliseconds(999);
-            Lcd.Printf(0, y, clWhite, clBlack, "YA=%u", y);
+            Lcd.Printf(0, y, clBlue, c, "YA=%u", y);
         }
+        c = (c == clBlack)? clWhite : clBlack;
 //        Lcd.Cls(c);
 //        switch(c) {
 //            case clRed: c = clGreen; break;

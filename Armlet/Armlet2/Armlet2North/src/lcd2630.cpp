@@ -308,7 +308,7 @@ void LcdUartInit() {
     // Usart clock: enabled, idle low, first edge, enable last bit pulse
     USART3->CR1 = USART_CR1_UE; // Enable UART
     USART3->CR2 = USART_CR2_CLKEN | USART_CR2_LBCL;
-    uint16_t brr = ((STM32_PCLK2*2) / 2000000) & 0xFFF0;
+    uint16_t brr = ((Clk.APB1FreqHz*2) / 4000000) & 0xFFF0;
     USART3->BRR = (brr == 0)? (1<<4) : brr; // Baudrate
     USART3->CR1 =
             USART_CR1_OVER8 |   // Use 8 samples per bit, not 16 - to increase speed

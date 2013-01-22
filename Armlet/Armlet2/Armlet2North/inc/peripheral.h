@@ -68,12 +68,14 @@ struct Pill_t {
 extern Pill_t Pill[PILL_COUNT_MAX];
 
 // ==== SouthBridge class ====
-#define SB_GPIO     GPIOC
-#define SB_RST      5
-#define SB_IN       6
-#define SB_OUT      7
-#define SB_UART     USART6
-#define SB_BAUDRATE 100000
+#define SB_GPIO         GPIOC
+#define SB_RST          5
+#define SB_IN           6
+#define SB_OUT          7
+#define SB_UART         USART6
+#define SB_UART_CLK     (Clk.APB2FreqHz)
+#define SB_BAUDRATE     100000
+
 enum SbStatus_t {sbsOn, sbsOff, sbsError};
 
 class SouthBridge_t {

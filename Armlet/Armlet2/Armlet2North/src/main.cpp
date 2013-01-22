@@ -18,24 +18,32 @@ static inline void Init();
 
 // Application entry point.
 int main(void) {
+    // ==== Setup clock ====
+    uint8_t ClkResult = 1;
+    Clk.SetupFlashLatency(16);
+    // 12 MHz/6 = 2; 2*192 = 384; 384/8 = 48 (preAHB divider); 384/8 = 48 (USB clock)
+    Clk.SetupPLLDividers(6, 192, pllSysDiv8, 8);
+    // 48/4 = 12 MHz core clock. APB1 & APB2 clock derive on AHB clock
+    Clk.SetupBusDividers(ahbDiv4, apbDiv1, apbDiv1);
+    if((ClkResult = Clk.SwitchToPLL()) == 0) Clk.HSIDisable();
+    Clk.UpdateFreqValues();
+
+    // ==== Init OS ====
     halInit();
     chSysInit();
+    // Init Hard & Soft
     Init();
+    // Report problem with clock if any
+    if(ClkResult) Uart.Printf("Clock failure\r");
 
-    //uint32_t i=0;
     while(TRUE) {
         chThdSleepMilliseconds(999);
-        //Uart.Printf("%u %u %u\r", i, i, i);
-        //i++;
     }
 }
 
 void Init() {
-    // Setup System Core Clock. Fix it in future clock switching.
-    SysCoreClock = 16000000;
-
     Uart.Init(115200);
-    Uart.Printf("Armlet2\r");
+    Uart.Printf("Armlet2 AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
     Lcd.Init();
     SouthBridge.Init();
     // Application init

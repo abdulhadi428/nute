@@ -37,20 +37,6 @@
  */
 #define BOARD_ARMLET2
 #define BOARD_NAME              "Armlet2"
-
-/*
- * Board frequencies.
- * NOTE: The LSE crystal is not fitted by default on the board.
- */
-#define STM32_LSECLK            0
-#define STM32_HSECLK            12000000
-
-/*
- * Board voltages.
- * Required for performance limits calculation.
- */
-#define STM32_VDD               330
-
 /*
  * MCU type as defined in the ST header file stm32f2xx.h.
  */

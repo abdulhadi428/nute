@@ -106,7 +106,7 @@ typedef funcp_t * funcpp_t;
  * @brief   Destructors invocation switch.
  */
 #if !defined(CRT0_CALL_DESTRUCTORS) || defined(__DOXYGEN__)
-#define CRT0_CALL_DESTRUCTORS       TRUE
+#define CRT0_CALL_DESTRUCTORS       FALSE
 #endif
 
 /** @} */
@@ -192,13 +192,13 @@ extern funcp_t __init_array_end;
  * @brief   Destructors table start.
  * @pre     The symbol must be aligned to a 32 bits boundary.
  */
-extern funcp_t __fini_array_start;
+//extern funcp_t __fini_array_start; // KL
 
 /**
  * @brief   Destructors table end.
  * @pre     The symbol must be aligned to a 32 bits boundary.
  */
-extern funcp_t __fini_array_end;
+//extern funcp_t __fini_array_end; // KL
 
 /** @} */
 
