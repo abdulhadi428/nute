@@ -14,12 +14,15 @@ private:
 public:
 };
 
+enum UsbStatus_t {usOn, usOff, usFailure};
 
 class Usb_t {
 private:
 
 public:
-
+    UsbStatus_t Status;
+    void On();
+    void Off();
 };
 
 extern Usb_t Usb;
