@@ -19,6 +19,12 @@
 #define countof(A)  (sizeof(A)/sizeof(A[0]))
 #endif
 
+// DMA
+#define DMA_PRIORITY_LOW        STM32_DMA_CR_PL(0b00)
+#define DMA_PRIORITY_MEDIUM     STM32_DMA_CR_PL(0b01)
+#define DMA_PRIORITY_HIGH       STM32_DMA_CR_PL(0b10)
+#define DMA_PRIORITY_VERYHIGH   STM32_DMA_CR_PL(0b11)
+
 // ============================ Simple delay ===================================
 static inline void DelayLoop(volatile uint32_t ACounter) { while(ACounter--); }
 static inline void Delay_ms(uint32_t Ams) {

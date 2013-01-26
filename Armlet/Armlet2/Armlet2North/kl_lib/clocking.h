@@ -77,7 +77,7 @@ extern Clk_t Clk;
  * any other initialization.
  */
 extern "C" {
-void __late_init(void);
+void __early_init(void);
 }
 
 #endif /* CLOCKING_H_ */
