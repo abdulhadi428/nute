@@ -5,10 +5,10 @@
  *      Author: kreyl
  */
 
-#include "peripheral.h"
 #include "ch.h"
 #include "hal.h"
 #include "clocking.h"
+#include "southbridge.h"
 
 // Variables
 bool KeyPressed[KEY_COUNT];
@@ -22,11 +22,12 @@ SouthBridge_t SouthBridge;
 static inline void IResetLo() { PinClear(SB_GPIO, SB_RST); }
 static inline void IResetHi() { PinSet  (SB_GPIO, SB_RST); }
 static inline void SBUartInit();
-// ==== Lcd Thread ====
+
+// ==== Southbridge Thread ====
 static WORKING_AREA(waSBThread, 128);
 static msg_t SBThread(void *arg) {
     (void)arg;
-    chRegSetThreadName("Lcd");
+    chRegSetThreadName("Southbridge");
     while(1) {
         // Stop thread if off
         if(SouthBridge.Status == sbsOff) chSchGoSleepS(THD_STATE_SUSPENDED);
@@ -39,15 +40,26 @@ static msg_t SBThread(void *arg) {
 void SouthBridge_t::Init() {
     // Reset South Bridge
     PinSetupOut(GPIOC, 5, omPushPull);
-    IResetLo();
-    Status = sbsOff;
+    Shutdown();
     // Create and start thread
     chThdCreateStatic(waSBThread, sizeof(waSBThread), NORMALPRIO, SBThread, NULL);
     On();   // Switch it on
 }
 
 void SouthBridge_t::On() {
-    // Init inner variables
+    Shutdown();
+    IInitVars();
+    SBUartInit();
+    IResetHi();
+    SB_UART->DR = 'a';
+}
+
+void SouthBridge_t::Shutdown() {
+    Status = sbsOff;
+    IResetLo();
+}
+
+void SouthBridge_t::IInitVars() {
     Status = sbsOff;    // }
     FwVersion = 0;      // } Will be changed by receiving AnswerToReset
     // Init external structures
@@ -57,15 +69,6 @@ void SouthBridge_t::On() {
     PwrStatus.Voltage_mV = 0;
     IR.RxSize = 0;
     for(uint8_t i=0; i<PILL_COUNT_MAX; i++) Pill[i].Status = psNotConnected;
-    // Init hardware
-    SBUartInit();
-    // Remove Reset => switch it on
-    IResetHi();
-}
-
-void SouthBridge_t::Shutdown() {
-    Status = sbsOff;
-    IResetLo();
 }
 
 void SBUartInit() {

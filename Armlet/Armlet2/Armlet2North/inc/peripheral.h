@@ -13,7 +13,8 @@
 
 // ==== Keys ====
 #define KEY_COUNT   9
-extern bool KeyPressed[KEY_COUNT];
+enum KeyStatus_t {keyReleased=0, keyPressed=1};
+extern KeyStatus_t Key[KEY_COUNT];
 
 // ==== Power ====
 struct PwrStatus_t {
@@ -51,63 +52,21 @@ struct IR_t {
     IRStatus_t Status;
     uint8_t RxBuf[IR_RXBUF_SZ];
     uint32_t RxSize;
-    void Transmit(uint8_t PwrPercent, uint32_t DataSz, uint8_t *PData);
+    void Transmit(uint8_t PwrPercent, uint16_t Data);
 };
 extern IR_t IR;
 
 // ==== Pills ====
 #define PILL_COUNT_MAX  8   // max count of simultaneously connected pills
+#define PILL_BUF_SZ     6   // Number bytes in inner buffer. Also used to determine packet size. Do not set large numbers; this will slow down communication between S & N bridges.
 enum PillStatus_t {psIdle=0, psBusy=1, psNotConnected=2, psError=3};
 struct Pill_t {
     PillStatus_t Status;
     uint8_t Address;
-    uint8_t *PReadBuf;
-    void Read(uint32_t MemAddress, uint32_t DataSize);  // Data will be placed in PReadBuf
-    void Write(uint32_t MemAddress, uint32_t DataSize, uint8_t *PData);
+    uint8_t Data[PILL_BUF_SZ];
+    void Read(uint16_t MemAddress, uint32_t DataSize);  // Data will be placed in PReadBuf
+    void Write(uint16_t MemAddress, uint32_t DataSize, uint8_t *PData);
 };
 extern Pill_t Pill[PILL_COUNT_MAX];
-
-// ==== SouthBridge class ====
-#define SB_GPIO         GPIOC
-#define SB_RST          5
-#define SB_IN           6
-#define SB_OUT          7
-#define SB_UART         USART6
-#define SB_UART_CLK     (Clk.APB2FreqHz)
-#define SB_BAUDRATE     100000
-
-enum SbStatus_t {sbsOn, sbsOff, sbsError};
-
-class SouthBridge_t {
-private:
-
-public:
-    //Thread *itp;    // need for IRQ
-    SbStatus_t Status;
-    uint32_t FwVersion;
-    void Init();
-    void On();
-    void Shutdown();
-};
-extern SouthBridge_t SouthBridge;
-
-// North To South Bridge commands
-#define NTS_KEY_GET_STATUS      10
-#define NTS_PWR_GET_STATUS      20
-#define NTS_VIBRO_FLINCH        30
-#define NTS_BEEP                40
-#define NTS_IR_TRANSMIT         50
-#define NTS_PILL_STATUS         60
-#define NTS_PILL_READ           61
-#define NTS_PILL_WRITE          62
-
-// South To North Bridge commands
-#define STN_ATR                 100
-#define STN_KEY_STATUS          110
-#define STN_PWR_STATUS          120
-#define STN_IR_STATUS           150
-#define STN_IR_RECEPTION        151
-#define STN_PILL_INFO           160
-
 
 #endif /* PERIPHERAL_H_ */

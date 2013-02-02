@@ -29,9 +29,9 @@ int main() {
     Clk.UpdateFreqValues();
 
     // ==== Init OS ====
-    halInit();
+    halInit();      // Here USB low level drv inited: pointers setup, for example
     chSysInit();
-    // Init Hard & Soft
+    // ==== Init Hard & Soft ====
     Init();
     // Report problem with clock if any
     if(ClkResult) Uart.Printf("Clock failure\r");
