@@ -34,15 +34,20 @@ struct VibroCmd_t {
 void VibroCmd(uint32_t CmdCount, VibroCmd_t *PCmds);
 
 // ==== Beep ====
-enum BeepAction_t {baSilence=0, baBeep=1};
-struct BeepCmd_t {
-    BeepAction_t Action;
-    uint32_t Time_ms;
+#define BEEP_MAX_CHUNK_COUNT    9
+#define BEEP_SILENCE            0
+struct BeepChunk_t {
+    uint8_t VolumePercent;   // 0 means silence, 1...100 means volume
+    uint16_t Time_ms;
     uint16_t Freq_Hz;
-    uint8_t VolumePercent;
+} PACKED;
+#define BEEP_CHUNK_SZ   sizeof(BeepChunk_t)
+struct BeepSequence_t {
+    uint8_t Count;
+    BeepChunk_t Chunk[BEEP_MAX_CHUNK_COUNT];
 } PACKED;
 // Send commands to beep with this function
-void BeepCmd(uint32_t CmdCount, BeepCmd_t *PCmds);
+void Beep(const BeepSequence_t *PSequence);
 
 // ==== Infrared ====
 enum IRStatus_t {irIdle=0, irTransmitting=1, irReceiving=2};
@@ -58,7 +63,12 @@ extern IR_t IR;
 
 // ==== Pills ====
 #define PILL_COUNT_MAX  8   // max count of simultaneously connected pills
-#define PILL_BUF_SZ     6   // Number bytes in inner buffer. Also used to determine packet size. Do not set large numbers; this will slow down communication between S & N bridges.
+/* Number bytes in inner buffer. Also used to determine packet size.
+ * See struct SbPkt_t in southbridge.h for more info about size.
+ * Do not set large numbers; this will slow down communication between S & N bridges.
+ */
+#define PILL_BUF_SZ     4
+
 enum PillStatus_t {psIdle=0, psBusy=1, psNotConnected=2, psError=3};
 struct Pill_t {
     PillStatus_t Status;

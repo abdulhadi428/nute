@@ -12,7 +12,9 @@
 #include "kl_lib_f2xx.h"
 #include "lcd2630.h"
 #include "peripheral.h"
+#include "southbridge.h"
 #include "application.h"
+
 
 static inline void Init();
 

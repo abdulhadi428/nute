@@ -10,10 +10,13 @@
 #include "hal.h"
 
 #include "lcd2630.h"
+#include "peripheral.h"
+#include "BeepSequences.h"
 
 App_t App;
 
 // Prototypes
+
 
 // =============================== App Thread ==================================
 static WORKING_AREA(waLcdThread, 128);
@@ -28,8 +31,10 @@ static msg_t LcdThread(void *arg) {
         for(uint8_t y=0; y<120; y+=16) {
             chThdSleepMilliseconds(999);
             Lcd.Printf(0, y, clBlue, c, "YA=%u", y);
+            Beep(&ShortBeep);
         }
         c = (c == clBlack)? clWhite : clBlack;
+
 //        Lcd.Cls(c);
 //        switch(c) {
 //            case clRed: c = clGreen; break;
