@@ -18,14 +18,96 @@ IR_t IR;
 Pill_t Pill[PILL_COUNT_MAX];
 SouthBridge_t SouthBridge;
 
+#define SB_PKT_START      0xEE
+
+class Transmitter_t {
+private:
+    //uint8_t *PSrc, *Dst;
+    //uint32_t SrcSz, DstSz, LastPackSz;
+    uint32_t BufCounter;
+    void Transmit();
+    uint8_t TxBuf[SB_UARTBUF_SZ];
+    uint8_t *PArray;
+    uint32_t ArraySz;
+    uint8_t AddBytePacked(uint8_t Byte);
+    void PackArray();
+public:
+    void SendCmd(SBCmd_t *PCmd);
+} Transmitter;
+
 // ========================== Peripheral functions =============================
 void Beep(const BeepSequence_t *PSequence) {
     SBCmd_t Cmd;
-    Cmd.CmdType = NTS_BEEP_HEADER;
+    Cmd.CmdType = NTS_BEEP;
     Cmd.Ptr = (void*)PSequence;
-    SouthBridge.PutCmd(&Cmd);
+    // Count of bytes of sequence: 1 + N*5
+    Cmd.DataSz = 1 + BEEP_CHUNK_SZ * PSequence->Count;
+    SouthBridge.AddCmd(&Cmd);
 }
 
+
+// =============================== Transmitter =================================
+void Transmitter_t::SendCmd(SBCmd_t *PCmd) {
+    PArray = (uint8_t*)(PCmd->Ptr);
+    ArraySz = PCmd->DataSz;
+    // Build the pkt
+    TxBuf[0] = SB_PKT_START;        // Start of pkt
+    BufCounter = 1;
+    AddBytePacked(PCmd->CmdType);   // Cmd code
+    PackArray();
+    Transmit();  // Transmit builded pkt
+    // Check if pkt did not fit in buf and additional data sennding required
+    while(ArraySz) {
+        BufCounter = 1;
+        AddBytePacked(CMD_ADDITIONAL_DATA);  // Cmd code
+        PackArray();
+        Transmit();  // Transmit builded pkt
+    }
+}
+
+/*
+ * Packs single byte, tries put result to buf. If buf overflow could occur,
+ * returns 1 and do nothing with buffer. If succeded, returns 0 and increases
+ * BufCounter.
+ */
+uint8_t Transmitter_t::AddBytePacked(uint8_t Byte) {
+    if(Byte == 0xEE) {
+        if(BufCounter < SB_UARTBUF_SZ-1) {  // Check if enough place for two bytes
+            TxBuf[BufCounter++] = Byte;
+            TxBuf[BufCounter++] = Byte;
+            return 0;
+        }
+    }
+    else {
+        if (BufCounter < SB_UARTBUF_SZ)  {  // Check if enough space for one byte
+            TxBuf[BufCounter++] = Byte;
+            return 0;
+        }
+    }
+    return 1;
+}
+/*
+ * Packs Array byte-by-byte to buf, decreasing ArraySz. If buf overflow could occur,
+ * just
+ * After return, *Src contains pointer to next element of Src,
+ * PSrcSz contains number of bytes left in Src.
+ * Returns pointer to next element of Dst.
+ */
+void Transmitter_t::PackArray() {
+    while(ArraySz) {
+        if(AddBytePacked(*PArray)) return;
+        PArray++;
+        ArraySz--;
+    }
+}
+
+void Transmitter_t::Transmit() {
+    dmaStreamSetMemory0(SB_DMA_STREAM, TxBuf);
+    dmaStreamSetTransactionSize(SB_DMA_STREAM, BufCounter);
+    dmaStreamEnable(SB_DMA_STREAM);
+    // FIXME
+    dmaWaitCompletion(SB_DMA_STREAM);
+}
 
 // =============================== SouthBridge =================================
 // Inner use
@@ -49,50 +131,20 @@ static msg_t SBThread(void *arg) {
 
 // ==== Southbridge ====
 void SouthBridge_t::FetchAndDispatchCmd() {
-    // ==== Fetch Cmd ====
+    // Fetch Cmd
     if(PCmdRead->CmdType == CMD_NONE) return;
-
-    // ==== Dispatch cmd ====
-    //while(!IsNTSIdle);  // Wait previous transmission to complete
-    NTSPkt.MsgType = PCmdRead->CmdType;
-    switch(PCmdRead->CmdType) {
-        case NTS_BEEP_HEADER: DispatchBeep(); break;
-
-        default: break;
-    } // switch
-
-    // ==== Handle buffer ====
+    // Dispatch cmd
+    Transmitter.SendCmd(PCmdRead);
+    // Handle buffer
     PCmdRead->CmdType = CMD_NONE;   // Mark current as dispatched
     PCmdRead++;
     if(PCmdRead >= &CmdBuf[SB_CMDBUF_SZ]) PCmdRead = CmdBuf;
 }
 
-// ================ Dispatchers =============
-void SouthBridge_t::DispatchBeep() {
-    BeepSequence_t *PSeq = (BeepSequence_t*)PCmdRead->Ptr;
-    // First stage: header. Chunk count and first chunk.
-    NTSPkt.ChunkCnt = PSeq->Count;
-    memcpy(&NTSPkt.Chunk0, &PSeq->Chunk[0], BEEP_CHUNK_SZ);
-    Transmit(&NTSPkt, SB_PKT_SZ);
-    // Second stage: remaining chunks
-    uint8_t cnt = PSeq->Count - 1;
-    if(cnt) {   // More chunks
-        uint16_t Length = BEEP_CHUNK_SZ * cnt;
-        memcpy(IBuf, &PSeq->Chunk[1], Length);
-        Transmit(IBuf, Length);
-    }
-}
 
 // ================= General ===============
-void SouthBridge_t::Transmit(void *Ptr, uint16_t Length) {
-    dmaStreamSetMemory0(SB_DMA_STREAM, Ptr);
-    dmaStreamSetTransactionSize(SB_DMA_STREAM, Length);
-    dmaStreamEnable(SB_DMA_STREAM);
-    dmaWaitCompletion(SB_DMA_STREAM);
-}
-
-void SouthBridge_t::PutCmd(SBCmd_t *PCmd) {
-    while(PCmdWrite->CmdType != CMD_NONE);      // Wait for empty cmd slot
+void SouthBridge_t::AddCmd(SBCmd_t *PCmd) {
+    while(PCmdWrite->CmdType != CMD_NONE);  // Wait for empty cmd slot
     memcpy(PCmdWrite, PCmd, SB_CMD_SZ);     // Write cmd to buf
     // Handle buffer
     PCmdWrite++;
@@ -124,7 +176,8 @@ void SouthBridge_t::Shutdown() {
 void SouthBridge_t::IInitVars() {
     Status = sbsOff;    // }
     FwVersion = 0;      // } Will be changed by receiving AnswerToReset
-    // Init buffer
+    IsTxIdle = true;
+    // Init cmd buffer
     for(uint8_t i=0; i<SB_CMDBUF_SZ; i++) CmdBuf[i].CmdType = CMD_NONE;
     PCmdRead = CmdBuf;
     PCmdWrite = CmdBuf;

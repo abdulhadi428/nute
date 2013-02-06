@@ -21,8 +21,10 @@
 
 #define SB_DMA_STREAM   STM32_DMA2_STREAM6
 
+// ========================== Packets =========================
+
 //SB to NB msg structure.
-struct SbPkt_t {
+struct SbPktold_t {
     uint8_t MsgType;
     union {
         // ATR data, R; size = 1+4 = 5 bytes
@@ -65,32 +67,26 @@ struct SbPkt_t {
     }; // union
 } PACKED;
 
-#define SB_PKT_SZ       sizeof(SbPkt_t)
-
 // =========================== Southridge class ================================
 struct SBCmd_t {
     uint8_t CmdType;
     void *Ptr;
-    uint16_t wData;
+    uint32_t DataSz;
 } PACKED;
 #define SB_CMD_SZ   sizeof(SBCmd_t)
 
 enum SbStatus_t {sbsOn=0, sbsOff=1, sbsError=2};
-#define SB_CMDBUF_SZ    16 // Buf size of MailBox
-#define SB_UARTBUF_SZ   90
+#define SB_CMDBUF_SZ    16  // Buf size of MailBox
+#define SB_UARTBUF_SZ   99  // Buf size to transmit and receive. Be careful not to overflow it by changing other parameters!
 class SouthBridge_t {
 private:
+    bool IsTxIdle;
     void IInitVars();
-    SbPkt_t NTSPkt, STNPkt;
     SBCmd_t CmdBuf[SB_CMDBUF_SZ];     // Queue of commands
-    uint8_t IBuf[SB_UARTBUF_SZ];
     SBCmd_t *PCmdRead, *PCmdWrite;
-    void Transmit(void *Ptr, uint16_t Length);
-    // function-dependant dispatchers
-    void DispatchBeep();
 public:
     void FetchAndDispatchCmd();
-    void PutCmd(SBCmd_t *PCmd);
+    void AddCmd(SBCmd_t *PCmd);
     SbStatus_t Status;
     uint32_t FwVersion;
     void Init();
@@ -100,24 +96,23 @@ public:
 extern SouthBridge_t SouthBridge;
 
 // ==================================== Commands ===============================
-#define CMD_NONE                0
+#define CMD_NONE                0x00
+#define CMD_ADDITIONAL_DATA     0x01
 // North To South Bridge commands
-#define NTS_VIBRO_HEADER        30
-#define NTS_VIBRO_SEQUENCE      31
-#define NTS_BEEP_HEADER         40
-#define NTS_BEEP_SEQUENCE       41
-#define NTS_IR_TRANSMIT         50
-#define NTS_PILL_READ           60
-#define NTS_PILL_WRITE          61
+#define NTS_VIBRO               0x10
+#define NTS_BEEP                0x20
+#define NTS_IR_TRANSMIT         0x30
+#define NTS_PILL_READ           0x40
+#define NTS_PILL_WRITE          0x41
 
 // South To North Bridge commands
-#define STN_ATR                 100
-#define STN_KEY_STATUS          110
-#define STN_PWR_STATUS          120
-#define STN_IR_IDLE             150
-#define STN_IR_RECEPTION        151
-#define STN_PILL_STATUS         160
-#define STN_PILL_DATA           161
+#define STN_ATR                 0x70
+#define STN_KEY_STATUS          0x80
+#define STN_PWR_STATUS          0x90
+#define STN_IR_IDLE             0xA0
+#define STN_IR_RECEPTION        0xB0
+#define STN_PILL_STATUS         0xC0
+#define STN_PILL_DATA           0xC1
 
 
 

@@ -34,7 +34,7 @@ const BeepSequence_t BeepBeep = {
         {
                 {50, 180, 2000},
                 {BEEP_SILENCE, 180},
-                {50, 180, 2000},
+                {0xEE, 180, 2000},
         }
 };
 

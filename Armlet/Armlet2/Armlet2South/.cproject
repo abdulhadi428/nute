@@ -18,28 +18,22 @@
 				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" description="" id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335" name="Debug" parent="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug">
 					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335." name="/" resourcePath="">
 						<toolChain id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.toolchain.debug.181865713" name="ARM Windows GCC (Yagarto)" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.toolchain.debug">
-							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.debugging.level.1191560112" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.default" valueType="enumerated"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.debugging.level.1191560112" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.none" valueType="enumerated"/>
 							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.createflash.1002581967" name="Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.createflash" value="true" valueType="boolean"/>
 							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.createlisting.916787115" name="Create Extended Listing" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.createlisting" value="false" valueType="boolean"/>
 							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.printsize.587061117" name="Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.addtools.printsize" value="true" valueType="boolean"/>
-							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.target.processor.557042681" name="Processor" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.target.processor" value="org.eclipse.cdt.cross.arm.gnu.base.option.mcpu.cortex-m3" valueType="enumerated"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.target.processor.557042681" name="Processor" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.target.processor" value="org.eclipse.cdt.cross.arm.gnu.base.option.mcpu.cortex-m0" valueType="enumerated"/>
 							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.target.thumb.1076202382" name="Thumb (-mthumb)" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.option.target.thumb" value="true" valueType="boolean"/>
 							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.platform.debug.715915378" isAbstract="false" name="Windows Platform" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.platform.debug"/>
-							<builder buildPath="${workspace_loc:/rock_fw_eclipse/Debug}" id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.builder.debug.1762047410" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="ARM Yagarto Windows GNU Make builder" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.builder.debug">
-								<outputEntries>
-									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Debug"/>
-									<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="outputPath" name="Release"/>
-								</outputEntries>
-							</builder>
+							<builder buildPath="${workspace_loc:/rock_fw_eclipse/Debug}" id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.builder.debug.1762047410" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="ARM Yagarto Windows GNU Make builder" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.builder.debug"/>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.assembler.debug.1127529188" name="ARM Yagarto Windows GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.assembler.debug">
 								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.preprocessor.def.997609142" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.preprocessor.def"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths.889117715" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="D:/Nute/Armlet/Armlet2/Armlet2North/inc"/>
-									<listOptionValue builtIn="false" value="D:/Nute/Armlet/Armlet2/Armlet2North/kl_lib"/>
+									<listOptionValue builtIn="false" value="../inc"/>
+									<listOptionValue builtIn="false" value="../kl_lib"/>
+									<listOptionValue builtIn="false" value="../os"/>
 									<listOptionValue builtIn="false" value="../os/hal"/>
 									<listOptionValue builtIn="false" value="../os/include"/>
-									<listOptionValue builtIn="false" value="../os"/>
-									<listOptionValue builtIn="false" value="../usb"/>
 								</option>
 								<inputType id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.assembler.base.input.1176252281" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.assembler.base.input"/>
 							</tool>
@@ -47,12 +41,11 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level.825938673" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.size" valueType="enumerated"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.1538035050" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths.515377244" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="D:/Nute/Armlet/Armlet2/Armlet2North/inc"/>
-									<listOptionValue builtIn="false" value="D:/Nute/Armlet/Armlet2/Armlet2North/kl_lib"/>
-									<listOptionValue builtIn="false" value="../os/hal"/>
-									<listOptionValue builtIn="false" value="../os/include"/>
+									<listOptionValue builtIn="false" value="../inc"/>
+									<listOptionValue builtIn="false" value="../kl_lib"/>
 									<listOptionValue builtIn="false" value="../os"/>
-									<listOptionValue builtIn="false" value="../usb"/>
+									<listOptionValue builtIn="false" value="../os/include"/>
+									<listOptionValue builtIn="false" value="../os/hal"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std.810702603" name="Language Standard" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std" value="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std.gnu99" valueType="enumerated"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.shortenums.1479849223" name="Short enumerations (-fshort-enums)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.shortenums" value="false" valueType="boolean"/>
@@ -66,12 +59,11 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level.1095850732" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.size" valueType="enumerated"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.preprocessor.def.766591626" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.preprocessor.def"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.include.paths.169281654" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="D:/Nute/Armlet/Armlet2/Armlet2North/inc"/>
-									<listOptionValue builtIn="false" value="D:/Nute/Armlet/Armlet2/Armlet2North/kl_lib"/>
-									<listOptionValue builtIn="false" value="../os/hal"/>
-									<listOptionValue builtIn="false" value="../os/include"/>
+									<listOptionValue builtIn="false" value="../inc"/>
+									<listOptionValue builtIn="false" value="../kl_lib"/>
 									<listOptionValue builtIn="false" value="../os"/>
-									<listOptionValue builtIn="false" value="../usb"/>
+									<listOptionValue builtIn="false" value="../os/include"/>
+									<listOptionValue builtIn="false" value="../os/hal"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.packstruct.656188834" name="Pack structures (-fpack-struct)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.packstruct" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.shortenums.1113447329" name="Short enumerations (-fshort-enums)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.shortenums" value="false" valueType="boolean"/>
@@ -80,12 +72,11 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.misc.std.2062920262" name="Language Standard" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.misc.std" value="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.misc.std.gnucpp0x" valueType="enumerated"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.misc.unsignedbitfields.121048591" name="Bitfields are unsigned (-funsigned-bitfields)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.misc.unsignedbitfields" value="true" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.warnings.abi.297565351" name="ABI warnings (-Wabi)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.warnings.abi" value="false" valueType="boolean"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.other.otherflags.714346858" name="Other flags" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.other.otherflags" value="-c -fmessage-length=0 -Wno-psabi" valueType="string"/>
 								<inputType id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.cpp.compiler.base.input.1015517108" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.cpp.compiler.base.input"/>
 							</tool>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.c.linker.debug.239810353" name="ARM Yagarto Windows GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.c.linker.debug"/>
 							<tool command="arm-none-eabi-g++" id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.linker.debug.1285891753" name="ARM Yagarto Windows GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.linker.debug">
-								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.scriptfile.1214536228" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.scriptfile" value="..\os\hal\STM32F205xB.ld" valueType="string"/>
+								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.scriptfile.1214536228" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.scriptfile" value="..\os\hal\stm32f051x8.ld" valueType="string"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostart.726486028" name="Do not use standard start files (-nostartfiles)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostart" value="true" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nodeflibs.145078896" name="Do not use default libraries (-nodefaultlibs)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nodeflibs" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.strip.876540653" name="Omit all symbol information (-s)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.strip" value="false" valueType="boolean"/>
@@ -106,9 +97,6 @@
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.printsize.debug.1991510706" name="ARM Yagarto Windows GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.printsize.debug"/>
 						</toolChain>
 					</folderInfo>
-					<sourceEntries>
-						<entry excluding="kernel" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
@@ -145,13 +133,9 @@
 									<listOptionValue builtIn="false" value="../lib/inc"/>
 									<listOptionValue builtIn="false" value="../lib/startup"/>
 									<listOptionValue builtIn="false" value="../kl_lib"/>
-									<listOptionValue builtIn="false" value="../usb2xx"/>
 									<listOptionValue builtIn="false" value="../os"/>
-									<listOptionValue builtIn="false" value="../os/kernel/inc"/>
-									<listOptionValue builtIn="false" value="../os/kernel"/>
+									<listOptionValue builtIn="false" value="../os/include"/>
 									<listOptionValue builtIn="false" value="../os/hal"/>
-									<listOptionValue builtIn="false" value="../os/hal/otgv1"/>
-									<listOptionValue builtIn="false" value="../usb"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.preprocessor.def.1374409005" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F10X_LD_VL"/>
@@ -169,13 +153,9 @@
 									<listOptionValue builtIn="false" value="../lib/inc"/>
 									<listOptionValue builtIn="false" value="../lib/startup"/>
 									<listOptionValue builtIn="false" value="../kl_lib"/>
-									<listOptionValue builtIn="false" value="../usb2xx"/>
 									<listOptionValue builtIn="false" value="../os"/>
-									<listOptionValue builtIn="false" value="../os/kernel/inc"/>
-									<listOptionValue builtIn="false" value="../os/kernel"/>
+									<listOptionValue builtIn="false" value="../os/include"/>
 									<listOptionValue builtIn="false" value="../os/hal"/>
-									<listOptionValue builtIn="false" value="../os/hal/otgv1"/>
-									<listOptionValue builtIn="false" value="../usb"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.1084576824" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F10X_LD_VL"/>
@@ -193,13 +173,9 @@
 									<listOptionValue builtIn="false" value="../lib/inc"/>
 									<listOptionValue builtIn="false" value="../lib/startup"/>
 									<listOptionValue builtIn="false" value="../kl_lib"/>
-									<listOptionValue builtIn="false" value="../usb2xx"/>
 									<listOptionValue builtIn="false" value="../os"/>
-									<listOptionValue builtIn="false" value="../os/kernel/inc"/>
-									<listOptionValue builtIn="false" value="../os/kernel"/>
+									<listOptionValue builtIn="false" value="../os/include"/>
 									<listOptionValue builtIn="false" value="../os/hal"/>
-									<listOptionValue builtIn="false" value="../os/hal/otgv1"/>
-									<listOptionValue builtIn="false" value="../usb"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.preprocessor.def.1305385472" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F10X_LD_VL"/>
@@ -219,9 +195,6 @@
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.printsize.release.833196718" name="ARM Yagarto Windows GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.printsize.release"/>
 						</toolChain>
 					</folderInfo>
-					<sourceEntries>
-						<entry excluding="kernel" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
@@ -237,7 +210,7 @@
 			<resource resourceType="PROJECT" workspacePath="/f0test"/>
 		</configuration>
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/Armlet2North"/>
+			<resource resourceType="PROJECT" workspacePath="/Armlet2South"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
@@ -327,49 +300,6 @@
 				</scannerInfoProvider>
 			</profile>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590.;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.compiler.release.1518844965;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.cpp.compiler.base.input.1270747630">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCWinManagedMakePerProjectProfileCPP"/>
-			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
-				<buildOutputProvider>
-					<openAction enabled="true" filePath=""/>
-					<parser enabled="true"/>
-				</buildOutputProvider>
-				<scannerInfoProvider id="specsFile">
-					<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
-					<parser enabled="true"/>
-				</scannerInfoProvider>
-			</profile>
-			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
-				<buildOutputProvider>
-					<openAction enabled="true" filePath=""/>
-					<parser enabled="true"/>
-				</buildOutputProvider>
-				<scannerInfoProvider id="specsFile">
-					<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
-					<parser enabled="true"/>
-				</scannerInfoProvider>
-			</profile>
-			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP">
-				<buildOutputProvider>
-					<openAction enabled="true" filePath=""/>
-					<parser enabled="true"/>
-				</buildOutputProvider>
-				<scannerInfoProvider id="specsFile">
-					<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
-					<parser enabled="true"/>
-				</scannerInfoProvider>
-			</profile>
-			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC">
-				<buildOutputProvider>
-					<openAction enabled="true" filePath=""/>
-					<parser enabled="true"/>
-				</buildOutputProvider>
-				<scannerInfoProvider id="specsFile">
-					<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
-					<parser enabled="true"/>
-				</scannerInfoProvider>
-			</profile>
-		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335.;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.c.compiler.debug.337689320;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.c.compiler.base.input.865268392">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCWinManagedMakePerProjectProfileC"/>
 			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
@@ -413,7 +343,50 @@
 				</scannerInfoProvider>
 			</profile>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335.;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.compiler.debug.644845196;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.cpp.compiler.base.input.1015517108">
+		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590.;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.c.compiler.release.373859270;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.c.compiler.base.input.1286574621">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCWinManagedMakePerProjectProfileC"/>
+			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfile">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.cpp" command="g++" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+			<profile id="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/specs.c" command="gcc" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590.;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.compiler.release.1518844965;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.cpp.compiler.base.input.1270747630">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCWinManagedMakePerProjectProfileCPP"/>
 			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
 				<buildOutputProvider>
@@ -456,8 +429,8 @@
 				</scannerInfoProvider>
 			</profile>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590.;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.c.compiler.release.373859270;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.c.compiler.base.input.1286574621">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCWinManagedMakePerProjectProfileC"/>
+		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.debug.698379335.;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.compiler.debug.644845196;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.cpp.compiler.base.input.1015517108">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCWinManagedMakePerProjectProfileCPP"/>
 			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
 				<buildOutputProvider>
 					<openAction enabled="true" filePath=""/>
