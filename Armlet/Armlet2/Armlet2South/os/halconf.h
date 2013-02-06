@@ -34,6 +34,8 @@
 
 #include "mcuconf.h"
 
+#define STM32_DMA_REQUIRED   // KL
+
 /**
  * @brief   Enables the TM subsystem.
  */

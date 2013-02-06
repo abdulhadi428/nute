@@ -29,7 +29,7 @@ uint8_t Clk_t::HSIEnable() {
     do {
         if(RCC->CR & RCC_CR_HSIRDY) return 0;   // HSE is ready
         StartUpCounter++;
-    } while(StartUpCounter < HSE_STARTUP_TIMEOUT);
+    } while(StartUpCounter < HSI_STARTUP_TIMEOUT);
     return 1; // Timeout
 }
 
@@ -45,53 +45,48 @@ uint8_t Clk_t::PLLEnable() {
 }
 
 void Clk_t::UpdateFreqValues() {
-    uint32_t tmp, pllvco=0, InputDiv_M, Multi_N, SysDiv_P;
-    uint32_t SysFreqHz;     // SYSCLK, 168 MHz max, used for Ethernet PTP clk
+    uint32_t tmp, HsePreDiv, PllMul;
+    uint32_t SysClkHz;
     // Figure out SysClk
     tmp = RCC->CFGR & RCC_CFGR_SWS;
     switch(tmp) {
         case 0x04: // HSE
-            SysFreqHz = CRYSTAL_FREQ_HZ;
+            SysClkHz = CRYSTAL_FREQ_HZ;
             break;
 
         case 0x08: // PLL used as system clock source
             // Get different PLL dividers
-//            InputDiv_M = RCC->PLLCFGR & RCC_PLLCFGR_PLLM;
-//            Multi_N    = (RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> 6;
-//            SysDiv_P   = (((RCC->PLLCFGR & RCC_PLLCFGR_PLLP) >> 16) + 1 ) * 2;
-//            // Calculate pll freq
-//            pllvco = (RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC_HSE)? CRYSTAL_FREQ_HZ : HSI_VALUE;
-//            pllvco = (pllvco / InputDiv_M) * Multi_N;
-//            SysFreqHz = pllvco / SysDiv_P;
+            HsePreDiv = (RCC->CFGR2 & RCC_CFGR2_PREDIV1) + 1;
+            PllMul = ((RCC->CFGR & RCC_CFGR_PLLMULL) >> 18) + 2;
+            if(PllMul > 16) PllMul = 16;
+            // Which src is used as pll input?
+            SysClkHz = ((RCC->CFGR & RCC_CFGR_PLLSRC) == RCC_CFGR_PLLSRC_HSI_Div2)? (HSI_FREQ_HZ/2) : (CRYSTAL_FREQ_HZ / HsePreDiv);
+            SysClkHz *= PllMul;
             break;
 
         default: // HSI
-            SysFreqHz = HSI_FREQ_HZ;
+            SysClkHz = HSI_FREQ_HZ;
             break;
     } // switch
 
     // AHB freq
     const uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};
     tmp = AHBPrescTable[((RCC->CFGR & RCC_CFGR_HPRE) >> 4)];
-    AHBFreqHz = SysFreqHz >> tmp;
-    // APB freqs
+    AHBFreqHz = SysClkHz >> tmp;
+    // APB freq
     const uint8_t APBPrescTable[8] = {0, 0, 0, 0, 1, 2, 3, 4};
-//    tmp = APBPrescTable[(RCC->CFGR & RCC_CFGR_PPRE1) >> 10];
-    APB1FreqHz = AHBFreqHz >> tmp;
-//    tmp = APBPrescTable[(RCC->CFGR & RCC_CFGR_PPRE2) >> 13];
-    APB2FreqHz = AHBFreqHz >> tmp;
+    tmp = APBPrescTable[(RCC->CFGR & RCC_CFGR_PPRE) >> 8];
+    APBFreqHz = AHBFreqHz >> tmp;
 }
 
 // ==== Common use ====
-
-// AHB, APB1, APB2
-void Clk_t::SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div) {
+// AHB, APB
+void Clk_t::SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APBDiv) {
     // Setup dividers
     uint32_t tmp = RCC->CFGR;
-//    tmp &= ~(RCC_CFGR_HPRE | RCC_CFGR_PPRE1 | RCC_CFGR_PPRE2);  // Clear bits
+    tmp &= ~(RCC_CFGR_HPRE | RCC_CFGR_PPRE);  // Clear bits
     tmp |= ((uint32_t)AHBDiv)  << 4;
-    tmp |= ((uint32_t)APB1Div) << 10;
-    tmp |= ((uint32_t)APB2Div) << 13;
+    tmp |= ((uint32_t)APBDiv) << 8;
     RCC->CFGR = tmp;
 }
 
@@ -124,57 +119,30 @@ uint8_t Clk_t::SwitchToPLL() {
 }
 
 // Disable PLL first!
-// InputDiv_M: 2...63;  Multi_N:  2...432;
-// SysDiv_P: sd2,4,6,8; UsbDiv_Q: 2...15.
-uint8_t Clk_t::SetupPLLDividers(uint8_t InputDiv_M, uint16_t Multi_N, PllSysDiv_P_t SysDiv_P, uint8_t UsbDiv_Q) {
+// HsePreDiv: 1...16; PllMul: pllMul[]
+uint8_t Clk_t::SetupPLLDividers(uint8_t HsePreDiv, PllMul_t PllMul) {
     if(RCC->CR & RCC_CR_PLLON) return 1;    // PLL must be disabled to change dividers
-//    RCC->PLLCFGR =
-//            RCC_PLLCFGR_PLLSRC_HSE |        // Use only HSE as src
-//            ((uint32_t)InputDiv_M << 0) |
-//            ((uint32_t)Multi_N  << 6) |
-//            ((uint32_t)SysDiv_P << 16) |
-//            ((uint32_t)UsbDiv_Q << 24);
+    // Set HSE divider
+    HsePreDiv--;
+    if(HsePreDiv > 0x0F) HsePreDiv = 0x0F;
+    uint32_t tmp = RCC->CFGR2;
+    tmp &= ~RCC_CFGR2_PREDIV1;
+    tmp |= HsePreDiv;
+    RCC->CFGR2 = tmp;
+    // Setup PLL divider
+    tmp = RCC->CFGR;
+    tmp &= ~RCC_CFGR_PLLMULL;
+    tmp |= ((uint32_t)PllMul) << 18;
+    RCC->CFGR = tmp;
     return 0;
 }
 
-// Setup Flash latency depending on CPU freq and voltage. Page 54 of ref manual.
-uint8_t Clk_t::SetupFlashLatency(uint8_t AHBClk_MHz, uint16_t Voltage_mV) {
-//    uint32_t tmp = FLASH_ACR_PRFTEN |FLASH_ACR_ICEN |FLASH_ACR_DCEN;
-//    if((2700 < Voltage_mV) and (Voltage_mV <= 3600)) {
-//        if     (AHBClk_MHz <= 30) tmp |= FLASH_ACR_LATENCY_0WS;
-//        else if(AHBClk_MHz <= 60) tmp |= FLASH_ACR_LATENCY_1WS;
-//        else if(AHBClk_MHz <= 90) tmp |= FLASH_ACR_LATENCY_2WS;
-//        else                      tmp |= FLASH_ACR_LATENCY_3WS;
-//    }
-//    else if((2400 < Voltage_mV) and (Voltage_mV <= 2700)) {
-//        if     (AHBClk_MHz <= 24) tmp |= FLASH_ACR_LATENCY_0WS;
-//        else if(AHBClk_MHz <= 48) tmp |= FLASH_ACR_LATENCY_1WS;
-//        else if(AHBClk_MHz <= 72) tmp |= FLASH_ACR_LATENCY_2WS;
-//        else if(AHBClk_MHz <= 96) tmp |= FLASH_ACR_LATENCY_3WS;
-//        else                      tmp |= FLASH_ACR_LATENCY_4WS;
-//    }
-//    else if((2100 < Voltage_mV) and (Voltage_mV <= 2400)) {
-//        if     (AHBClk_MHz <= 18) tmp |= FLASH_ACR_LATENCY_0WS;
-//        else if(AHBClk_MHz <= 36) tmp |= FLASH_ACR_LATENCY_1WS;
-//        else if(AHBClk_MHz <= 54) tmp |= FLASH_ACR_LATENCY_2WS;
-//        else if(AHBClk_MHz <= 72) tmp |= FLASH_ACR_LATENCY_3WS;
-//        else if(AHBClk_MHz <= 90) tmp |= FLASH_ACR_LATENCY_4WS;
-//        else if(AHBClk_MHz <=108) tmp |= FLASH_ACR_LATENCY_5WS;
-//        else                      tmp |= FLASH_ACR_LATENCY_6WS;
-//    }
-//    else if((1650 < Voltage_mV) and (Voltage_mV <= 2100)) {
-//        if     (AHBClk_MHz <= 16) tmp |= FLASH_ACR_LATENCY_0WS;
-//        else if(AHBClk_MHz <= 32) tmp |= FLASH_ACR_LATENCY_1WS;
-//        else if(AHBClk_MHz <= 48) tmp |= FLASH_ACR_LATENCY_2WS;
-//        else if(AHBClk_MHz <= 64) tmp |= FLASH_ACR_LATENCY_3WS;
-//        else if(AHBClk_MHz <= 80) tmp |= FLASH_ACR_LATENCY_4WS;
-//        else if(AHBClk_MHz <= 96) tmp |= FLASH_ACR_LATENCY_5WS;
-//        else if(AHBClk_MHz <=112) tmp |= FLASH_ACR_LATENCY_6WS;
-//        else                      tmp |= FLASH_ACR_LATENCY_7WS;
-//    }
-//    else return 1;
-
-//    FLASH->ACR = tmp;
+// Setup Flash latency depending on CPU freq. Page 53 of ref manual.
+uint8_t Clk_t::SetupFlashLatency() {
+    uint32_t tmp = FLASH->ACR;
+    if(AHBFreqHz <= 24000000) tmp &= ~FLASH_ACR_LATENCY;
+    else tmp |= FLASH_ACR_LATENCY;
+    FLASH->ACR = tmp;
     return 0;
 }
 
@@ -184,17 +152,9 @@ uint8_t Clk_t::SetupFlashLatency(uint8_t AHBClk_MHz, uint16_t Voltage_mV) {
  * any other initialization.
  */
 void __early_init(void) {
-    RCC->APB1ENR = RCC_APB1ENR_PWREN;   // PWR clock enable
-    PWR->CR = 0;                        // PWR initialization
-
     // Enable HSI. It is enabled by default, but who knows.
     RCC->CR |= RCC_CR_HSION;
     while(!(RCC->CR & RCC_CR_HSIRDY));
-
-    // Setup Flash and Bus clocks
-    Clk.SetupBusDividers(ahbDiv2, apbDiv1, apbDiv1);
-    Clk.SetupFlashLatency(16);
-    Clk.UpdateFreqValues();
 
     // SYSCFG clock enabled here because it is a multi-functional unit
     // shared among multiple drivers using external IRQs

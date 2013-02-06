@@ -153,9 +153,9 @@ void SouthBridge_t::AddCmd(SBCmd_t *PCmd) {
 
 void SouthBridge_t::Init() {
     // Reset South Bridge
-    PinSetupOut(GPIOC, 5, omPushPull);
+    //PinSetupOut(GPIOC, 5, omPushPull);
     Status = sbsOff;
-    IResetLo();
+    //IResetLo();
     // Create and start thread
     chThdCreateStatic(waSBThread, sizeof(waSBThread), NORMALPRIO, SBThread, NULL);
     On();   // Switch it on
@@ -165,7 +165,7 @@ void SouthBridge_t::On() {
     Shutdown();
     IInitVars();
     SBUartInit();
-    IResetHi();
+    //IResetHi();
 }
 
 void SouthBridge_t::Shutdown() {

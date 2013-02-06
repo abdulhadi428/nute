@@ -49,8 +49,6 @@ enum PllMul_t {
     pllMul16=14
 };
 
-
-
 enum AHBDiv_t {
     ahbDiv1=0b0000,
     ahbDiv2=0b1000,
@@ -63,7 +61,6 @@ enum AHBDiv_t {
     ahbDiv512=0b1111
 };
 enum APBDiv_t {apbDiv1=0b000, apbDiv2=0b100, apbDiv4=0b101, apbDiv8=0b110, apbDiv16=0b111};
-enum PllSysDiv_P_t {pllSysDiv2=0b00, pllSysDiv4=0b01, pllSysDiv6=0b10, pllSysDiv8=0b11};
 
 class Clk_t {
 private:
@@ -72,9 +69,8 @@ private:
     uint8_t PLLEnable();
 public:
     // Frequency values
-    uint32_t AHBFreqHz;     // HCLK: AHB Buses, Core, Memory, DMA; 120 MHz max
-    uint32_t APB1FreqHz;    // PCLK1: APB1 Bus clock; 30 MHz max
-    uint32_t APB2FreqHz;    // PCLK2: APB2 Bus clock; 60 MHz max
+    uint32_t AHBFreqHz;     // HCLK: AHB Bus, Core, Memory, DMA; 48 MHz max
+    uint32_t APBFreqHz;     // PCLK: APB Bus clock; 48 MHz max
     // SysClk switching
     uint8_t SwitchToHSI();
     uint8_t SwitchToHSE();
@@ -82,10 +78,10 @@ public:
     void HSEDisable() { RCC->CR &= ~RCC_CR_HSEON; }
     void HSIDisable() { RCC->CR &= ~RCC_CR_HSION; }
     void PLLDisable() { RCC->CR &= ~RCC_CR_PLLON; }
-    void SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div);
-    uint8_t SetupPLLDividers(uint8_t InputDiv_M, uint16_t Multi_N, PllSysDiv_P_t SysDiv_P, uint8_t UsbDiv_Q);
+    void SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APBDiv);
+    uint8_t SetupPLLDividers(uint8_t HsePreDiv, PllMul_t PllMul);
     void UpdateFreqValues();
-    uint8_t SetupFlashLatency(uint8_t AHBClk_MHz, uint16_t Voltage_mV=3300);
+    uint8_t SetupFlashLatency();
 };
 
 extern Clk_t Clk;

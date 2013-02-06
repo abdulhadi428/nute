@@ -136,7 +136,7 @@ static inline void PinFastOutPP(GPIO_TypeDef *PGpioPort, const uint16_t APinNumb
 }
 
 // ============================== UART command unit ============================
-#define UART_TXBUF_SIZE         900
+#define UART_TXBUF_SIZE         90
 
 class DbgUart_t {
 private:
