@@ -81,7 +81,7 @@ public:
     void SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APBDiv);
     uint8_t SetupPLLDividers(uint8_t HsePreDiv, PllMul_t PllMul);
     void UpdateFreqValues();
-    uint8_t SetupFlashLatency();
+    void SetupFlashLatency();
 };
 
 extern Clk_t Clk;

@@ -138,12 +138,12 @@ uint8_t Clk_t::SetupPLLDividers(uint8_t HsePreDiv, PllMul_t PllMul) {
 }
 
 // Setup Flash latency depending on CPU freq. Page 53 of ref manual.
-uint8_t Clk_t::SetupFlashLatency() {
+// Call after UpdateFreqValues.
+void Clk_t::SetupFlashLatency() {
     uint32_t tmp = FLASH->ACR;
     if(AHBFreqHz <= 24000000) tmp &= ~FLASH_ACR_LATENCY;
     else tmp |= FLASH_ACR_LATENCY;
     FLASH->ACR = tmp;
-    return 0;
 }
 
 /*

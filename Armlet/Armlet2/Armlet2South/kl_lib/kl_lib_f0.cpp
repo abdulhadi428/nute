@@ -11,6 +11,7 @@
 #include "tiny_sprintf.h"
 
 // ============================== UART command =================================
+#ifdef DBG_UART_ENABLED
 DbgUart_t Uart;
 static char UartBuf[198];
 
@@ -58,7 +59,7 @@ void DbgUart_t::Init(uint32_t ABaudrate) {
     PRead = TXBuf;
     ICountToSendNext = 0;
     IDmaIsIdle = true;
-    PinSetupAlterFunc(GPIOA, 9, poPushPull, pudNone, AF1);      // TX1
+    PinSetupAlterFunc(GPIOA, 9, omPushPull, pudNone, AF1);      // TX1
 
     // ==== USART configuration ====
     rccEnableUSART1(FALSE);     // UART clock
@@ -104,3 +105,5 @@ void DbgUart_t::IRQDmaTxHandler() {
         dmaStreamEnable(STM32_DMA1_STREAM2);    // Restart DMA
     }
 }
+#endif
+

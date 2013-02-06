@@ -34,8 +34,8 @@ static inline void Delay_ms(uint32_t Ams) {
 
 // ===================== Single pin manipulations ==============================
 enum PinOutMode_t {
-    poPushPull  = 0,
-    poOpenDrain = 1
+    omPushPull  = 0,
+    omOpenDrain = 1
 };
 enum PinPullUpDown_t {
     pudNone = 0b00,
@@ -133,6 +133,9 @@ static inline void PinSetupAlterFunc(
 }
 
 // ============================== UART command =================================
+//#define DBG_UART_ENABLED
+
+#ifdef DBG_UART_ENABLED
 #define UART_TXBUF_SIZE     45
 
 class DbgUart_t {
@@ -149,5 +152,6 @@ public:
 };
 
 extern DbgUart_t Uart;
+#endif
 
 #endif /* KL_LIB_F0XX_H_ */

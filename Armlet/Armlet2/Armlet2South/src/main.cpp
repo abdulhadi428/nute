@@ -10,28 +10,34 @@
 #include "hal.h"
 
 #include "kl_lib_f0.h"
-
+#include "bridge.h"
+#include "main.h"
 
 static inline void Init();
 
 int main(void) {
+    // ==== Init clock system ====
     Clk.UpdateFreqValues();
+    Clk.SetupFlashLatency();
     // ==== Init OS ====
     halInit();
     chSysInit();
     // ==== Init Hard & Soft ====
     Init();
-    // Report problem with clock if any
-    //if(ClkResult) Uart.Printf("Clock failure\r");
+
+    SBCmd_t Cmd;
+    Cmd.CmdType = STN_ATR;
+    Cmd.DataSz = 4;
+    Cmd.Ptr = (void*)&FwVersion;
 
     while(TRUE) {
         chThdSleepMilliseconds(999);
-        //Uart.Printf("Cl\r");
+        Bridge.AddCmd(&Cmd);
     }
 }
 
 void Init() {
-    Uart.Init(115200);
-    Uart.Printf("Southbridge2 AHB=%u; APB=%u\r", Clk.AHBFreqHz, Clk.APBFreqHz);
-
+    //Uart.Init(115200);
+    //Uart.Printf("Southbridge2 AHB=%u; APB=%u\r", Clk.AHBFreqHz, Clk.APBFreqHz);
+    Bridge.Init();
 }

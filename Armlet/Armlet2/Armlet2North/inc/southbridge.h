@@ -27,11 +27,8 @@
 struct SbPktold_t {
     uint8_t MsgType;
     union {
-        // ATR data, R; size = 1+4 = 5 bytes
-        struct {
-            uint8_t Status;
-            uint32_t Version;
-        } ATR PACKED;
+        // ATR data, R; size = 4 bytes
+        uint32_t Version;
 
         // Beep header data, W; size = 1+5 = 6
         struct {
