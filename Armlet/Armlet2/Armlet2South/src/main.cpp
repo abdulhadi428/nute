@@ -25,14 +25,8 @@ int main(void) {
     // ==== Init Hard & Soft ====
     Init();
 
-    SBCmd_t Cmd;
-    Cmd.CmdType = STN_ATR;
-    Cmd.DataSz = 4;
-    Cmd.Ptr = (void*)&FwVersion;
-
     while(TRUE) {
         chThdSleepMilliseconds(999);
-        Bridge.AddCmd(&Cmd);
     }
 }
 
@@ -40,4 +34,11 @@ void Init() {
     //Uart.Init(115200);
     //Uart.Printf("Southbridge2 AHB=%u; APB=%u\r", Clk.AHBFreqHz, Clk.APBFreqHz);
     Bridge.Init();
+
+    // Send ATR
+    SBCmd_t Cmd;
+    Cmd.CmdType = STN_ATR;
+    Cmd.DataSz = 4;
+    Cmd.Ptr = (void*)&FwVersion;
+    Bridge.AddCmd(&Cmd);
 }
