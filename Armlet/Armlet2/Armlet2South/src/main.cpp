@@ -12,6 +12,7 @@
 #include "kl_lib_f0.h"
 #include "bridge.h"
 #include "main.h"
+#include "keys.h"
 
 static inline void Init();
 
@@ -34,6 +35,8 @@ void Init() {
     //Uart.Init(115200);
     //Uart.Printf("Southbridge2 AHB=%u; APB=%u\r", Clk.AHBFreqHz, Clk.APBFreqHz);
     Bridge.Init();
+
+    Keys.Init();
 
     // Send ATR
     SBCmd_t Cmd;
