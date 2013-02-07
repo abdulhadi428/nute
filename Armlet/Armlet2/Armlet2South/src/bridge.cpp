@@ -18,7 +18,7 @@ Bridge_t Bridge;
 
 // =============================== Transmitter =================================
 class Transmitter_t {
-    private:
+private:
     uint32_t BufCounter;
     void Transmit();
     uint8_t TxBuf[SB_UARTBUF_SZ];
@@ -93,6 +93,57 @@ void Transmitter_t::Transmit() {
     chSysUnlock();
 }
 
+// =============================== Receiver ====================================
+//enum PktState_t {psMsgType, ps
+class Rcvr_t {
+private:
+    bool wStart, WasEE; // Unpacker
+    uint8_t MsgType;
+    void ProcessByte(uint8_t b);
+public:
+    void UnpackByte(uint8_t b);
+    void Reset() { wStart=true; WasEE=false; MsgType=CMD_NONE; }
+} Rcvr;
+
+void Rcvr_t::UnpackByte(uint8_t b) {
+    // Process the byte: remove start of pkt, unpack byte
+    if(wStart) {
+        if(b == 0xEE) wStart = false; // Wait for correct pkt start
+    }
+    else {
+        if(b == 0xEE) {
+            if(WasEE) { // EE EE means EE
+                WasEE = false;
+                ProcessByte(b);
+            }
+            else WasEE = true;
+        }
+        else {  // not EE
+            if(WasEE) Reset();  // EE xx means error
+            else ProcessByte(b);
+        }
+    } // if start
+}
+
+void Rcvr_t::ProcessByte(uint8_t b) {
+    if(MsgType == CMD_NONE) {
+        MsgType = b;    // First payload byte of pkt
+        switch(MsgType) {
+            case NTS_BEEP:
+
+                break;
+
+            default:
+                Reset();    // Unknown Cmd
+                return;
+                break;
+        }
+    }
+    else {  // Cmd is correct
+
+    }
+}
+
 // =============================== SouthBridge =================================
 // Inner use
 static inline void UartInit();
@@ -106,9 +157,22 @@ void IrqSBTxCompleted(void *p, uint32_t flags) {
     chSchReadyI(Bridge.PTxThread);
     chSysUnlockFromIsr();
 }
+
+// UART RX irq
+CH_IRQ_HANDLER(STM32_USART1_HANDLER) {
+    CH_IRQ_PROLOGUE();
+    // Clear flags
+    uint32_t isr = USART1->ISR;
+    USART1->ICR = isr;
+    // Put byte to queue
+    chSysLockFromIsr();
+    chIQPutI(&Bridge.iqueue, USART1->RDR);
+    chSysUnlockFromIsr();
+    CH_IRQ_EPILOGUE();
+}
 } // extern C
 
-// ==== Bridge Thread ====
+// ==== Bridge Threads ====
 static WORKING_AREA(waTxThread, 128);
 static msg_t TxThread(void *arg) {
     (void)arg;
@@ -116,6 +180,19 @@ static msg_t TxThread(void *arg) {
     while(1) {
         if(Bridge.IsCmdQueueEmpty()) chThdYield();  // No commands - do not waste time
         else Bridge.DispatchCmd();
+    }
+    return 0;
+}
+
+static WORKING_AREA(waRxThread, 128);
+static msg_t RxThread(void *arg) {
+    (void)arg;
+    chRegSetThreadName("BridgeRx");
+    msg_t Msg;
+    while(1) {
+        // Fetch byte from queue
+        Msg = chIQGetTimeout(&Bridge.iqueue, TIME_INFINITE);
+        if(Msg >= Q_OK) Rcvr.UnpackByte((uint8_t)Msg);
     }
     return 0;
 }
@@ -140,32 +217,34 @@ void Bridge_t::AddCmd(SBCmd_t *PCmd) {
 
 void Bridge_t::Init() {
     UartInit();
-    IInitVars();
-    // Create and start thread
-    PTxThread = chThdCreateStatic(waTxThread, sizeof(waTxThread), NORMALPRIO, TxThread, NULL);
-}
-
-void Bridge_t::IInitVars() {
     // Init cmd buffer
     for(uint8_t i=0; i<SB_CMDBUF_SZ; i++) CmdBuf[i].CmdType = CMD_NONE;
     PCmdRead = CmdBuf;
     PCmdWrite = CmdBuf;
-    // Init external structures
-
+    chIQInit(&iqueue, RxBuf, SB_UARTBUF_SZ, NULL, &Bridge);
+    Rcvr.Reset();
+    // Create and start threads
+    PTxThread = chThdCreateStatic(waTxThread, sizeof(waTxThread), NORMALPRIO, TxThread, NULL);
+    chThdCreateStatic(waRxThread, sizeof(waRxThread), NORMALPRIO, RxThread, NULL);
 }
 
 void UartInit() {
     // Pins
-    PinSetupAlterFunc(GPIOA, 9, omPushPull,  pudNone,   AF1);
-    //PinSetupAlterFunc(SB_GPIO, SB_IN,  omOpenDrain, pudPullUp, AF8);
+    PinSetupAlterFunc(GPIOA, 9,  omPushPull,  pudNone,   AF1);
+    PinSetupAlterFunc(GPIOA, 10, omOpenDrain, pudPullUp, AF1);
+
     // ==== USART init ====
     rccEnableUSART1(FALSE);         // Usart1 CLK, no clock in low-power
     USART1->BRR = Clk.APBFreqHz / SB_BAUDRATE;    // Baudrate
     USART1->CR2 = 0;
     USART1->CR3 = USART_CR3_DMAT;   // Enable DMA at transmitter
     USART1->CR1 =
-            USART_CR1_TE |          // Transmitter enable
-            USART_CR1_RE;           // Receiver enable
+            USART_CR1_TE            // Transmitter enable
+            | USART_CR1_RE          // Receiver enable
+            | USART_CR1_RXNEIE;     // RX Irq enable
+    USART1->ICR = 0xFFFFFFFF;
+    nvicEnableVector(STM32_USART1_NUMBER, CORTEX_PRIORITY_MASK(STM32_SERIAL_USART1_PRIORITY));
+
     // ==== DMA ====
     // Here only the unchanged parameters of the DMA are configured.
     dmaStreamAllocate     (STM32_DMA1_STREAM2, 1, IrqSBTxCompleted, NULL);
@@ -180,4 +259,3 @@ void UartInit() {
             );
     USART1->CR1 |= USART_CR1_UE;        // Enable USART
 }
-

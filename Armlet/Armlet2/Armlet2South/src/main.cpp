@@ -13,6 +13,7 @@
 #include "bridge.h"
 #include "main.h"
 #include "keys.h"
+#include "beep.h"
 
 static inline void Init();
 
@@ -37,6 +38,7 @@ void Init() {
     Bridge.Init();
 
     Keys.Init();
+    Beep.Init();
 
     // Send ATR
     SBCmd_t Cmd;

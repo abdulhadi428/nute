@@ -41,10 +41,11 @@ struct SBCmd_t {
 #define SB_UARTBUF_SZ   99  // Buf size to transmit and receive. Be careful not to overflow it by changing other parameters!
 class Bridge_t {
 private:
-    void IInitVars();
     SBCmd_t CmdBuf[SB_CMDBUF_SZ];     // Queue of commands
     SBCmd_t *PCmdRead, *PCmdWrite;
 public:
+    uint8_t RxBuf[SB_UARTBUF_SZ];
+    InputQueue iqueue;
     Thread *PTxThread;
     inline bool IsCmdQueueEmpty() { return (PCmdRead->CmdType == CMD_NONE); }
     void DispatchCmd();
