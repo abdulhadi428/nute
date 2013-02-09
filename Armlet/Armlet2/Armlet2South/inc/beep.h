@@ -8,10 +8,31 @@
 #ifndef BEEP_H_
 #define BEEP_H_
 
-class Beep_t {
+#include "feeder.h"
+#include "kl_lib_f0.h"
 
+struct BeepChunk_t {
+    uint8_t VolumePercent;   // 0 means silence, 1...100 means volume
+    uint16_t Time_ms;
+    uint16_t Freq_Hz;
+} PACKED;
+#define BEEP_CHUNK_SZ   sizeof(BeepChunk_t)
+
+#define BEEP_MAX_CHUNK_COUNT    9
+
+class Beep_t : public Feeder_t {
+private:
+    Thread *PThread;
+    uint32_t ChunkCnt;
+    BeepChunk_t Buf[BEEP_MAX_CHUNK_COUNT], *PChunk;
+    void On(uint8_t Volume)  { TIM1->CCR4 = Volume; TIM1->CCER = TIM_CCER_CC4E; }
+    void Off() { TIM1->CCER = 0; }
+    void SetFreqHz(uint32_t AFreq);
 public:
     void Init();
+    FeederRetVal_t FeedStart(uint8_t Byte);
+    FeederRetVal_t FeedData(uint8_t Byte);
+    void Squeak();
 };
 
 extern Beep_t Beep;

@@ -33,12 +33,10 @@ int main(void) {
 }
 
 void Init() {
-    //Uart.Init(115200);
-    //Uart.Printf("Southbridge2 AHB=%u; APB=%u\r", Clk.AHBFreqHz, Clk.APBFreqHz);
-    Bridge.Init();
-
     Keys.Init();
     Beep.Init();
+
+    Bridge.Init();
 
     // Send ATR
     SBCmd_t Cmd;

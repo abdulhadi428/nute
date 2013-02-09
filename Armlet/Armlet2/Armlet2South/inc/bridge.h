@@ -10,6 +10,9 @@
 
 #define SB_BAUDRATE     115200
 
+#include "ch.h"
+#include "kl_lib_f0.h"
+
 // ==================================== Commands ===============================
 #define CMD_NONE                0x00
 #define CMD_ADDITIONAL_DATA     0x01

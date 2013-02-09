@@ -12,9 +12,18 @@
 #include "bridge.h"
 #include "string.h"     // For memcpy
 
+#include "beep.h"
+
+
 #define SB_PKT_START      0xEE
 
 Bridge_t Bridge;
+
+// Feeders
+Feeder_t* const PFeeders[] = {
+        &Beep,
+};
+#define FEEDER_CNT  countof(PFeeders)
 
 // =============================== Transmitter =================================
 class Transmitter_t {
@@ -94,54 +103,50 @@ void Transmitter_t::Transmit() {
 }
 
 // =============================== Receiver ====================================
-//enum PktState_t {psMsgType, ps
 class Rcvr_t {
 private:
-    bool wStart, WasEE; // Unpacker
-    uint8_t MsgType;
-    void ProcessByte(uint8_t b);
+    bool WaitingStart, WasEE; // Unpacker
+    Feeder_t *PFeeder;
+    void SortByte(uint8_t b);
 public:
     void UnpackByte(uint8_t b);
-    void Reset() { wStart=true; WasEE=false; MsgType=CMD_NONE; }
+    void Reset() {
+        WaitingStart=true; WasEE=false; PFeeder=NULL;
+    }
 } Rcvr;
 
 void Rcvr_t::UnpackByte(uint8_t b) {
     // Process the byte: remove start of pkt, unpack byte
-    if(wStart) {
-        if(b == 0xEE) wStart = false; // Wait for correct pkt start
+    if(WaitingStart) {
+        if(b == 0xEE) WaitingStart = false; // Wait for correct pkt start
     }
     else {
         if(b == 0xEE) {
             if(WasEE) { // EE EE means EE
                 WasEE = false;
-                ProcessByte(b);
+                SortByte(b);
             }
             else WasEE = true;
         }
         else {  // not EE
             if(WasEE) Reset();  // EE xx means error
-            else ProcessByte(b);
+            else SortByte(b);
         }
     } // if start
 }
 
-void Rcvr_t::ProcessByte(uint8_t b) {
-    if(MsgType == CMD_NONE) {
-        MsgType = b;    // First payload byte of pkt
-        switch(MsgType) {
-            case NTS_BEEP:
-
-                break;
-
-            default:
-                Reset();    // Unknown Cmd
+void Rcvr_t::SortByte(uint8_t b) {
+    if(PFeeder == NULL) {   // Iterate them all
+        for(uint8_t i=0; i<FEEDER_CNT; i++) {
+            if(PFeeders[i]->FeedStart(b) == frvOk) {
+                PFeeder = PFeeders[i];
                 return;
-                break;
+            }
         }
+        // Noone agreed
+        Reset();
     }
-    else {  // Cmd is correct
-
-    }
+    else if(PFeeder->FeedData(b) == frvNoMore) Reset();
 }
 
 // =============================== SouthBridge =================================
