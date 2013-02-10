@@ -34,20 +34,15 @@ struct VibroCmd_t {
 void VibroCmd(uint32_t CmdCount, VibroCmd_t *PCmds);
 
 // ==== Beep ====
-#define BEEP_MAX_CHUNK_COUNT    9
-#define BEEP_SILENCE            0
+
 struct BeepChunk_t {
-    uint8_t VolumePercent;   // 0 means silence, 1...100 means volume
+    int8_t VolumePercent;   // 0 means silence, 1...100 means volume, -1 means end
     uint16_t Time_ms;
     uint16_t Freq_Hz;
 } PACKED;
 #define BEEP_CHUNK_SZ   sizeof(BeepChunk_t)
-struct BeepSequence_t {
-    uint8_t Count;
-    BeepChunk_t Chunk[BEEP_MAX_CHUNK_COUNT];
-} PACKED;
 // Send commands to beep with this function
-void Beep(const BeepSequence_t *PSequence);
+void Beep(const BeepChunk_t *PSequence);
 
 // ==== Infrared ====
 enum IRStatus_t {irIdle=0, irTransmitting=1, irReceiving=2};

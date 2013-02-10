@@ -21,21 +21,18 @@
  */
 
 #include "peripheral.h"
+#define BEEP_END    {-1, 0, 0}
 
-const BeepSequence_t ShortBeep = {
-        1,
-        {
-                {50, 180, 2000},
-        }
+const BeepChunk_t ShortBeep[] = {
+        {50, 180, 2000},
+        BEEP_END
 };
 
-const BeepSequence_t BeepBeep = {
-        3,
-        {
-                {50, 180, 2000},
-                {BEEP_SILENCE, 180},
-                {0xEE, 180, 2000},
-        }
+const BeepChunk_t BeepBeep[] = {
+        {9, 54, 2000},
+        {0, 54},
+        {9, 54, 2000},
+        BEEP_END
 };
 
 
