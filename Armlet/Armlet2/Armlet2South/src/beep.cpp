@@ -6,7 +6,6 @@
  */
 
 #include "beep.h"
-#include "bridge.h"
 
 #define BEEP_TOP_VALUE   270 // 100% volume means on/off ratio 1/1
 
@@ -23,6 +22,7 @@ static msg_t BeepThread(void *arg) {
 
 void Beep_t::Init() {
     PChunk = NULL;
+    ResetOccured = false;
     // GPIO
     PinSetupAlterFunc(GPIOA, 11, omPushPull, pudNone, AF2);
     // Timer
@@ -48,20 +48,26 @@ void Beep_t::Squeak() {
         chSysUnlock();
     }
     else {
+        chSysLock();
         uint8_t Volume = PChunk->VolumePercent;
+        uint16_t Delay = PChunk->Time_ms;
         if(Volume > 100) Volume = 100;
         if(Volume > 0) {
             SetFreqHz(PChunk->Freq_Hz);
             On(Volume);
         }
         else Off();
-        chThdSleepMilliseconds(PChunk->Time_ms);
-        ChunkCnt--;
-        if(ChunkCnt == 0) {
-            PChunk = NULL;
-            Off();
-        }
-        else PChunk++;
+        chSysUnlock();
+        chThdSleepMilliseconds(Delay);
+        if(ResetOccured) ResetOccured = false;
+        else {
+            // Check if last chunk
+            if(PChunk == &Buf[BEEP_MAX_CHUNK_COUNT-1]) {
+                PChunk = NULL;
+                Off();
+            }
+            else PChunk++;
+        } // if reset
     }
 }
 
@@ -71,33 +77,34 @@ void Beep_t::SetFreqHz(uint32_t FreqHz) {
     TIM1->PSC = (uint16_t)FPrescaler;
 }
 
+// ==== Feeding data ====
 FeederRetVal_t Beep_t::FeedStart(uint8_t Byte) {
     if(Byte == NTS_BEEP) {  // Good MsgType
-        FWaitState = fwsDataCnt;
+        Reset();
         return frvOk;
     }
     else return frvNoMore;
 }
 
+#define MAX_BYTE_CNT    (BEEP_MAX_CHUNK_COUNT * BEEP_CHUNK_SZ)
 FeederRetVal_t Beep_t::FeedData(uint8_t Byte) {
-    if(FWaitState == fwsDataCnt) {
-        ChunkCnt = Byte;
-        if(ChunkCnt > BEEP_MAX_CHUNK_COUNT) ChunkCnt = BEEP_MAX_CHUNK_COUNT;
-        FWaitState = fwsData;
-        PFeedData = (uint8_t*)Buf;    // Setup pointer
-        FdrByteCnt = ChunkCnt * BEEP_CHUNK_SZ;  // Setup byte counter
+    *PFeedData = Byte;
+    FdrByteCnt++;
+    // Check if last possible byte received
+    if(FdrByteCnt >= MAX_BYTE_CNT) {
+        FeederEndPkt(); // Start beep
+        return frvNoMore;
     }
-    else {
-        *PFeedData++ = Byte;
-        FdrByteCnt--;
-        if(FdrByteCnt == 0) {   // All data received
-            // Start playing
-            PChunk = Buf;
-            chSysLock();
-            chSchWakeupS(PThread, 0);
-            chSysUnlock();
-            return frvNoMore;
-        }
-    }
+    PFeedData++;
     return frvOk;
+}
+
+void Beep_t::FeederEndPkt() {
+    ChunkCnt = FdrByteCnt / BEEP_CHUNK_SZ;
+    if(ChunkCnt > 0) {
+        PChunk = Buf;
+        chSysLock();
+        chSchWakeupS(PThread, 0);
+        chSysUnlock();
+    }
 }

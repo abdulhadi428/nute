@@ -15,9 +15,6 @@
 #define SB_UARTBUF_SZ           99
 #define SB_CMDBUF_SZ            16  // Buf size of cmd queue
 
-#define SB_PKT_START            0xEE
-#define SB_PKT_END              0xFE
-
 // =============================== Commands ====================================
 #define CMD_NONE                0x00
 #define CMD_ADDITIONAL_DATA     0x01
@@ -54,6 +51,7 @@ private:
     uint16_t ArraySz;
     void AddByte(uint8_t Byte) { TxBuf[BufCounter++] = Byte; }
     uint8_t PackByte(uint8_t Byte);
+    void PackWord(uint16_t Word) {PackByte(Word & 0xFF); PackByte((Word >> 8) & 0xFF); }
     void PackArray();
     void Transmit();
     // Command queue
@@ -73,33 +71,42 @@ void IrqSBTxCompleted(void *p, uint32_t flags);
 
 // ================================ Receiver ===================================
 enum FeederRetVal_t {frvOk, frvNoMore};
-enum FeederWaitState_t {fwsDataCnt, fwsData};
 
 // Abstract class of dispatcher
 class Feeder_t {
 protected:
-    FeederWaitState_t FWaitState;
     uint8_t *PFeedData;
     uint32_t FdrByteCnt;
 public:
     virtual FeederRetVal_t FeedStart(uint8_t Byte) = 0;
     virtual FeederRetVal_t FeedData(uint8_t Byte) = 0;
+    virtual void FeederEndPkt() = 0;
 };
 
 // Receiver class
+enum RcvrState_t {rsStart, rsMsgType, rsLength1, rsLength2, rsData};
 class Rcvr_t {
 private:
-    bool WaitingStart, WasEE; // Unpacker
+    RcvrState_t RState;
+    uint8_t IMsgType;
+    uint16_t ILength;
+    bool WasEE; // Unpacker
     Feeder_t *PFeeder;
     void SortByte(uint8_t b);
-    void EndOfPkt() {}
+    void EndOfPkt();
+    uint8_t RxBuf[SB_UARTBUF_SZ];
 public:
-    void UnpackByte(uint8_t b);
-    void Reset() { WaitingStart=true; PFeeder=0; }
+    InputQueue iqueue;
+    void ProcessByte(uint8_t b);
+    void Reset() { RState = rsStart; PFeeder = 0; }
+    void Init();
 };
 
 extern Transmitter_t Transmitter;
 extern Rcvr_t Rcvr;
+
+extern Feeder_t* const PFeeders[];
+extern const uint8_t FeederCnt;
 
 
 #endif /* SOUTHBRIDGETXRX_H_ */

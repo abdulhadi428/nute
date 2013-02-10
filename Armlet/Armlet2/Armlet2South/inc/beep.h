@@ -8,11 +8,11 @@
 #ifndef BEEP_H_
 #define BEEP_H_
 
-#include "feeder.h"
+#include "SouthbridgeTxRx.h"
 #include "kl_lib_f0.h"
 
 struct BeepChunk_t {
-    uint8_t VolumePercent;   // 0 means silence, 1...100 means volume
+    int8_t VolumePercent;   // 0 means silence, 1...100 means volume, -1 means end
     uint16_t Time_ms;
     uint16_t Freq_Hz;
 } PACKED;
@@ -23,15 +23,27 @@ struct BeepChunk_t {
 class Beep_t : public Feeder_t {
 private:
     Thread *PThread;
-    uint32_t ChunkCnt;
+    bool ResetOccured;
+    int32_t ChunkCnt;
     BeepChunk_t Buf[BEEP_MAX_CHUNK_COUNT], *PChunk;
     void On(uint8_t Volume)  { TIM1->CCR4 = Volume; TIM1->CCER = TIM_CCER_CC4E; }
     void Off() { TIM1->CCER = 0; }
     void SetFreqHz(uint32_t AFreq);
+    void Reset() {
+        ResetOccured = true;
+        ChunkCnt = 0;
+        PChunk = 0;
+        FdrByteCnt = 0;
+        PFeedData = (uint8_t*)Buf;
+        Off();
+    }
 public:
-    void Init();
+    // Feeder
     FeederRetVal_t FeedStart(uint8_t Byte);
     FeederRetVal_t FeedData(uint8_t Byte);
+    void FeederEndPkt();
+    // General
+    void Init();
     void Squeak();
 };
 

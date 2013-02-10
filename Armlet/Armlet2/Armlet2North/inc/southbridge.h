@@ -20,6 +20,7 @@
 #define SB_BAUDRATE     115200
 
 #define SB_DMA_STREAM   STM32_DMA2_STREAM6
+#define SB_UART_RX_REG  SB_UART->DR
 
 // ========================== Packets =========================
 

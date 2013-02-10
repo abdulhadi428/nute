@@ -7,7 +7,7 @@
 
 #include "keys.h"
 #include "ch.h"
-#include "bridge.h"
+#include "SouthbridgeTxRx.h"
 
 Keys_t Keys;
 
@@ -37,7 +37,7 @@ static msg_t KeysThread(void *arg) {
         }
         // Send data if needed
         if(StatusChanged) {
-            Bridge.AddCmd((SBCmd_t*)&KeysCmd);
+            Transmitter.AddCmd((SBCmd_t*)&KeysCmd);
             StatusChanged = false;
         }
     }

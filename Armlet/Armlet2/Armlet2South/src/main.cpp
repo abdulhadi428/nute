@@ -10,7 +10,7 @@
 #include "hal.h"
 
 #include "kl_lib_f0.h"
-#include "bridge.h"
+#include "southbridge.h"
 #include "main.h"
 #include "keys.h"
 #include "beep.h"
@@ -43,5 +43,5 @@ void Init() {
     Cmd.CmdType = STN_ATR;
     Cmd.DataSz = 4;
     Cmd.Ptr = (void*)&FwVersion;
-    Bridge.AddCmd(&Cmd);
+    Transmitter.AddCmd(&Cmd);
 }

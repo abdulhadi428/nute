@@ -10,28 +10,27 @@
 #include <string.h>
 
 Transmitter_t Transmitter;
-//Rcvr_t Rcvr;
+Rcvr_t Rcvr;
 
 // =============================== Transmitter =================================
 // ==== Cmd dispatching ====
 void Transmitter_t::DispatchCmd() {
     // ==== Build the pkt ====
     BufCounter = 0;
-    AddByte(SB_PKT_START);          // Start of pkt
+    AddByte(0xEE);                  // Start of pkt
     PackByte(PCmdRead->CmdType);    // Msg type
+    PackWord(PCmdRead->DataSz);     // Size of unpacked data
     // Cmd's data
     PArray = (uint8_t*)(PCmdRead->Ptr);
     ArraySz = PCmdRead->DataSz;
     PackArray();
-    AddByte(SB_PKT_END);            // End of pkt
     Transmit();                     // Transmit builded pkt
     // Check if pkt did not fit in buf and additional data sennding required
     while(ArraySz) {
         BufCounter = 0;
-        AddByte(SB_PKT_START);
+        AddByte(0xEE);
         PackByte(CMD_ADDITIONAL_DATA);
         PackArray();
-        AddByte(SB_PKT_END);        // End of pkt
         Transmit();                 // Transmit builded pkt
     }
     // ==== Handle buffer ====
@@ -45,15 +44,15 @@ void Transmitter_t::DispatchCmd() {
  * BufCounter.
  */
 uint8_t Transmitter_t::PackByte(uint8_t Byte) {
-    if((Byte == 0xEE) or (Byte == 0xFE)) {
-        if(BufCounter < SB_UARTBUF_SZ-2) {  // Check if enough place for two bytes+End of pkt
+    if(Byte == 0xEE) {
+        if(BufCounter < SB_UARTBUF_SZ-1) {  // Check if enough place for two bytes
             TxBuf[BufCounter++] = 0xEE;
             TxBuf[BufCounter++] = Byte;
             return 0;
         }
     }
     else {
-        if (BufCounter < SB_UARTBUF_SZ-1)  {  // Check if enough space for one byte+End of pkt
+        if (BufCounter < SB_UARTBUF_SZ)  {  // Check if enough space for one byte
             TxBuf[BufCounter++] = Byte;
             return 0;
         }
@@ -123,45 +122,106 @@ void Transmitter_t::Init() {
     for(uint8_t i=0; i<SB_CMDBUF_SZ; i++) CmdBuf[i].CmdType = CMD_NONE;
     PCmdRead = CmdBuf;
     PCmdWrite = CmdBuf;
-    SBUartInit();
     // Create and start thread
     PThread = chThdCreateStatic(waTxThread, sizeof(waTxThread), NORMALPRIO, TxThread, NULL);
 }
 
 // =============================== Receiver ====================================
-void Rcvr_t::UnpackByte(uint8_t b) {
-    // Process the byte: remove start of pkt, unpack byte
-    if(WaitingStart) {
-        if(b == 0xEE) WaitingStart = false; // Wait for correct pkt start
+static WORKING_AREA(waRxThread, 128);
+static msg_t RxThread(void *arg) {
+    (void)arg;
+    chRegSetThreadName("BridgeRx");
+    msg_t Msg;
+    while(1) {
+        // Fetch byte from queue
+        Msg = chIQGetTimeout(&Rcvr.iqueue, TIME_INFINITE);
+        if(Msg >= Q_OK) Rcvr.ProcessByte((uint8_t)Msg);
+    }
+    return 0;
+}
+
+// UART RX irq
+extern "C" {
+CH_IRQ_HANDLER(SB_UART_RX_IRQ) {
+    CH_IRQ_PROLOGUE();
+    // Clear flags
+//    uint32_t isr = USART1->ISR;
+//    USART1->ICR = isr;
+    // Put byte to queue
+    chSysLockFromIsr();
+    chIQPutI(&Rcvr.iqueue, SB_UART_RX_REG);
+    chSysUnlockFromIsr();
+    CH_IRQ_EPILOGUE();
+}
+} // extern C
+
+void Rcvr_t::Init() {
+    chIQInit(&iqueue, RxBuf, SB_UARTBUF_SZ, NULL, NULL);
+    Reset();
+    // Create and start threads
+    chThdCreateStatic(waRxThread, sizeof(waRxThread), NORMALPRIO, RxThread, NULL);
+}
+
+void Rcvr_t::ProcessByte(uint8_t b) {
+    if(RState == rsStart) {
+        if(b == 0xEE) RState = rsMsgType; // Wait for correct pkt start
     }
     else {
         if(WasEE) {
             WasEE = false;
-            // EE EE means EE, EE FE means FE
-            if((b == 0xEE) or (b == 0xFE)) SortByte(b);
-            else Reset();  // EE xx means error
+            if(b == 0xEE) SortByte(b);  // EE EE means EE
+            else Reset();               // EE xx means error
         }
         else { // Was not EE
             if(b == 0xEE) WasEE = true;
-            else if(b == 0xFE) EndOfPkt();
             else SortByte(b);
         }
     } // if start
 }
 
-//void Rcvr_t::SortByte(uint8_t b) {
-//    if(PFeeder == NULL) {   // Iterate them all
-//        for(uint8_t i=0; i<FEEDER_CNT; i++) {
-//            if(PFeeders[i]->FeedStart(b) == frvOk) {
-//                PFeeder = PFeeders[i];
-//                return;
-//            }
-//        }
-//        // Noone agreed
-//        Reset();
-//    }
-//    else if(PFeeder->FeedData(b) == frvNoMore) Reset();
-//}
+void Rcvr_t::SortByte(uint8_t b) {
+    switch(RState) {
+        case rsMsgType:
+            IMsgType = b;
+            if(IMsgType == CMD_ADDITIONAL_DATA) {
+                if(PFeeder == NULL) Reset();
+                else RState = rsData;
+            }
+            else RState = rsLength1;
+            break;
 
+        case rsLength1: // lower byte of length
+            RState = rsLength2;
+            ILength = b;
+            break;
 
+        case rsLength2: // high byte of length
+            *(((uint8_t*)&ILength)+1) = b;
+            // Find Feeder
+            for(uint8_t i=0; i<FeederCnt; i++) {
+                if(PFeeders[i]->FeedStart(IMsgType) == frvOk) {
+                    PFeeder = PFeeders[i];
+                    break; // get out of for
+                }
+            } // for
+            if(PFeeder != 0) RState = rsData;   // was found
+            else Reset();                       // was not found
+            break;
 
+        case rsData:
+            ILength--;
+            if(PFeeder->FeedData(b) == frvNoMore) Reset();
+            else if(ILength == 0) { // This byte was last one
+                PFeeder->FeederEndPkt();
+                Reset();
+            }
+            break;
+
+        default: Reset(); break;
+    } // switch
+}
+
+void Rcvr_t::EndOfPkt() {
+    if(PFeeder == NULL) Reset();
+    else PFeeder->FeederEndPkt();
+}

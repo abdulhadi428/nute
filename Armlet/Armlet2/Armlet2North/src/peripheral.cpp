@@ -47,6 +47,7 @@ void SouthBridge_t::Init() {
     Status = sbsOff;
     //IResetLo();
     Transmitter.Init();
+    SBUartInit();
 }
 
 void SouthBridge_t::On() {
