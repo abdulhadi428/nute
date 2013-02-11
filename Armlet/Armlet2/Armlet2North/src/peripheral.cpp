@@ -13,11 +13,19 @@
 #include "SouthbridgeTxRx.h"
 
 // Variables
-bool KeyPressed[KEY_COUNT];
+KeyStatus_t Key[KEY_COUNT];
 PwrStatus_t PwrStatus;
 IR_t IR;
 Pill_t Pill[PILL_COUNT_MAX];
 SouthBridge_t SouthBridge;
+
+// Feeders
+KeysFdr_t KeysFdr;
+
+Feeder_t* const PFeeders[] = {
+        &KeysFdr,
+};
+const uint8_t FeederCnt = countof(PFeeders);
 
 // ========================== Peripheral functions =============================
 void Beep(const BeepChunk_t *PSequence) {
@@ -33,6 +41,24 @@ void Beep(const BeepChunk_t *PSequence) {
     Transmitter.AddCmd(&Cmd);
 }
 
+// ================================== Keys =====================================
+// ==== Feeding data ====
+FeederRetVal_t KeysFdr_t::FeedStart(uint8_t Byte) {
+    if(Byte == STN_KEY_STATUS) {
+        PFeedData = (uint8_t*)&Key[0];
+        FdrByteCnt = 0;
+        return frvOk;
+    }
+    return frvNoMore;
+}
+FeederRetVal_t KeysFdr_t::FeedData(uint8_t Byte) {
+    *PFeedData = Byte;
+    FdrByteCnt++;
+    // Check if last possible byte received
+    if(FdrByteCnt >= KEY_COUNT) return frvNoMore;
+    PFeedData++;
+    return frvOk;
+}
 
 // =============================== SouthBridge =================================
 // Inner use
@@ -40,13 +66,14 @@ static inline void IResetLo() { PinClear(SB_GPIO, SB_RST); }
 //static inline void IResetHi() { PinSet  (SB_GPIO, SB_RST); }
 inline void SBUartInit();
 
-// ================= General ===============
 void SouthBridge_t::Init() {
     // Reset South Bridge
     //PinSetupOut(GPIOC, 5, omPushPull);
     Status = sbsOff;
     //IResetLo();
+    IInitVars();
     Transmitter.Init();
+    Rcvr.Init();
     SBUartInit();
 }
 
@@ -66,7 +93,7 @@ void SouthBridge_t::IInitVars() {
     Status = sbsOff;    // }
     FwVersion = 0;      // } Will be changed by receiving AnswerToReset
     // Init external structures
-    for(uint8_t i=0; i<KEY_COUNT; i++) KeyPressed[i] = 0;
+    for(uint8_t i=0; i<KEY_COUNT; i++) Key[i] = keyReleased;
     PwrStatus.ExternalPwrOn = false;
     PwrStatus.IsCharging = false;
     PwrStatus.Voltage_mV = 0;
@@ -80,6 +107,7 @@ void SBUartInit() {
     // Pins
     PinSetupAlterFunc(SB_GPIO, SB_OUT, omPushPull,  pudNone,   AF8);
     PinSetupAlterFunc(SB_GPIO, SB_IN,  omOpenDrain, pudPullUp, AF8);
+
     // ==== USART init ====
     rccEnableUSART6(FALSE);         // Usart6 CLK, no clock in low-power
     SB_UART->CR1 = USART_CR1_UE;    // Enable UART
@@ -87,8 +115,11 @@ void SBUartInit() {
     SB_UART->CR3 = USART_CR3_DMAT;  // Enable DMA at transmitter
     SB_UART->BRR = SB_UART_CLK / SB_BAUDRATE;    // Baudrate
     SB_UART->CR1 =
-            USART_CR1_TE |      // Transmitter enable
-            USART_CR1_RE;       // Receiver enable
+            USART_CR1_TE            // Transmitter enable
+            | USART_CR1_RE          // Receiver enable
+            | USART_CR1_RXNEIE;     // RX Irq enable
+    nvicEnableVector(STM32_USART6_NUMBER, CORTEX_PRIORITY_MASK(STM32_SERIAL_USART6_PRIORITY));
+
     // ==== DMA ====
     // Here only the unchanged parameters of the DMA are configured.
     dmaStreamAllocate     (SB_DMA_STREAM, 1, IrqSBTxCompleted, NULL);

@@ -31,7 +31,7 @@ static msg_t AppThread(void *arg) {
         for(uint8_t y=0; y<120; y+=16) {
             chThdSleepMilliseconds(999);
             Lcd.Printf(0, y, clBlue, c, "YA=%u", y);
-            Beep(BeepBeep);
+            //Beep(BeepBeep);
 
         }
         c = (c == clBlack)? clWhite : clBlack;
@@ -47,7 +47,32 @@ static msg_t AppThread(void *arg) {
     return 0;
 }
 
+// ================================ Keys =======================================
+KeyStatus_t PrevKeyStatus[KEY_COUNT];
+static WORKING_AREA(waKeysThread, 32);
+static msg_t KeysThread(void *arg) {
+    (void)arg;
+    chRegSetThreadName("Keys");
+
+    while(1) {
+        chThdSleepMilliseconds(207);
+        for(uint8_t i=0; i<KEY_COUNT; i++) {
+            if((Key[i] == keyPressed) and (PrevKeyStatus[i] == keyReleased)) {
+                // Keypress occured
+                PrevKeyStatus[i] = keyPressed;
+                Beep(ShortBeep);
+            }
+            else if((Key[i] == keyReleased) and (PrevKeyStatus[i] == keyPressed)) {
+                // Key release occured
+                PrevKeyStatus[i] = keyReleased;
+            }
+        }
+    }
+    return 0;
+}
+
 // =============================== App class ===================================
 void App_t::Init() {
     chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, AppThread, NULL);
+    chThdCreateStatic(waKeysThread, sizeof(waKeysThread), NORMALPRIO, KeysThread, NULL);
 }

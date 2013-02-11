@@ -30,7 +30,7 @@ static inline void UartInit();
 // =============================== SouthBridge =================================
 void Bridge_t::Init() {
     Transmitter.Init();
-    Rcvr.Init();
+    //Rcvr.Init();
     UartInit();
 }
 

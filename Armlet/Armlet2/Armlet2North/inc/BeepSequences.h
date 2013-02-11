@@ -24,7 +24,7 @@
 #define BEEP_END    {-1, 0, 0}
 
 const BeepChunk_t ShortBeep[] = {
-        {50, 180, 2000},
+        {9, 54, 2000},
         BEEP_END
 };
 

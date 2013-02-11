@@ -9,6 +9,7 @@
 #define SOUTHBRIDGE_H_
 
 #include "peripheral.h"
+#include "SouthbridgeTxRx.h"
 
 // ==== SouthBridge class ====
 #define SB_GPIO         GPIOC
@@ -21,6 +22,7 @@
 
 #define SB_DMA_STREAM   STM32_DMA2_STREAM6
 #define SB_UART_RX_REG  SB_UART->DR
+#define SB_UART_RX_IRQ  STM32_USART6_HANDLER
 
 // ========================== Packets =========================
 
@@ -80,5 +82,17 @@ public:
 extern SouthBridge_t SouthBridge;
 
 void SBUartInit();
+
+// =========================== Periph classes ==================================
+class KeysFdr_t : public Feeder_t {
+private:
+public:
+    // Feeder
+    FeederRetVal_t FeedStart(uint8_t Byte);
+    FeederRetVal_t FeedData(uint8_t Byte);
+    void FeederEndPkt() {}
+};
+
+extern KeysFdr_t KeysFdr;
 
 #endif /* SOUTHBRIDGE_H_ */
