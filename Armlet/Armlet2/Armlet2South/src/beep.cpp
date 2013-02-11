@@ -35,7 +35,6 @@ void Beep_t::Init() {
     TIM1->CCR4 = 0;     // Initially, volume = 0
     TIM1->CCMR1 = 0;    // Outputs disabled
     TIM1->CCMR2 = TIM_CCMR2_OC4M_2 | TIM_CCMR2_OC4M_1;  // Output4, PWM mode1
-    //TIM1->CCER = TIM_CCER_CC4E; // Output4 enabled
     // Thread
     PThread = chThdCreateStatic(waBeepThread, sizeof(waBeepThread), NORMALPRIO, BeepThread, NULL);
 }
@@ -62,7 +61,7 @@ void Beep_t::Squeak() {
         if(ResetOccured) ResetOccured = false;
         else {
             // Check if last chunk
-            if(PChunk == &Buf[BEEP_MAX_CHUNK_COUNT-1]) {
+            if(PChunk == &Buf[ChunkCnt-1]) {
                 PChunk = NULL;
                 Off();
             }
@@ -91,12 +90,11 @@ FeederRetVal_t Beep_t::FeedData(uint8_t Byte) {
     *PFeedData = Byte;
     FdrByteCnt++;
     // Check if last possible byte received
-    if(FdrByteCnt >= MAX_BYTE_CNT) {
-        FeederEndPkt(); // Start beep
-        return frvNoMore;
+    if(FdrByteCnt >= MAX_BYTE_CNT) return frvNoMore;
+    else {
+        PFeedData++;
+        return frvOk;
     }
-    PFeedData++;
-    return frvOk;
 }
 
 void Beep_t::FeederEndPkt() {

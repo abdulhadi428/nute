@@ -27,7 +27,6 @@ static msg_t KeysThread(void *arg) {
     bool StatusChanged = false;
     while(1) {
         chThdSleepMilliseconds(KEYS_POLL_PERIOD_MS);
-        chThdSleepMilliseconds(450);
         // Check keys
         for(i=0; i<KEYS_CNT; i++) {
             CurrentStatus = PinIsSet(KeyPin[i].PGpioPort, KeyPin[i].PinNumber)? KEY_RELEASED : KEY_PRESSED;
@@ -36,7 +35,6 @@ static msg_t KeysThread(void *arg) {
                 Keys.Status[i] = CurrentStatus;
             }
         }
-        USART1->TDR = 0xBB;
         // Send data if needed
         if(StatusChanged) {
             Transmitter.AddCmd((SBCmd_t*)&KeysCmd);

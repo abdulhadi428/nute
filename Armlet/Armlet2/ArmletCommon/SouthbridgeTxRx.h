@@ -17,6 +17,7 @@
 
 // =============================== Commands ====================================
 #define CMD_NONE                0x00
+#define CMD_DISPATCHED          0x00
 #define CMD_ADDITIONAL_DATA     0x01
 // North To South Bridge commands
 #define NTS_VIBRO               0x10
@@ -55,12 +56,13 @@ private:
     void PackArray();
     void Transmit();
     // Command queue
-    SBCmd_t CmdBuf[SB_CMDBUF_SZ];     // Queue of commands
-    SBCmd_t *PCmdRead, *PCmdWrite;
+    Semaphore CmdSem;
+    SBCmd_t CmdBuf[SB_CMDBUF_SZ];
+    msg_t Msgs[SB_CMDBUF_SZ];
 public:
-    inline bool IsCmdQueueEmpty() { return (PCmdRead->CmdType == CMD_NONE); }
+    Mailbox CmdMailbox;
     Thread *PThread;
-    void DispatchCmd();
+    void DispatchCmd(SBCmd_t *PCmd);
     void Init();
     void AddCmd(SBCmd_t *PCmd);
 };

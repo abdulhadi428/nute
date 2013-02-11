@@ -55,7 +55,7 @@ static msg_t KeysThread(void *arg) {
     chRegSetThreadName("Keys");
 
     while(1) {
-        chThdSleepMilliseconds(207);
+        chThdSleepMilliseconds(54);
         for(uint8_t i=0; i<KEY_COUNT; i++) {
             if((Key[i] == keyPressed) and (PrevKeyStatus[i] == keyReleased)) {
                 // Keypress occured

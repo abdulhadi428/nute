@@ -42,7 +42,6 @@ void Beep(const BeepChunk_t *PSequence) {
 }
 
 // ================================== Keys =====================================
-// ==== Feeding data ====
 FeederRetVal_t KeysFdr_t::FeedStart(uint8_t Byte) {
     if(Byte == STN_KEY_STATUS) {
         PFeedData = (uint8_t*)&Key[0];
