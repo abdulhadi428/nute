@@ -25,13 +25,12 @@ struct PwrStatus_t {
 extern PwrStatus_t PwrStatus;
 
 // ==== Vibro ====
-enum VibroAction_t {vaStop=0, vaFlinch=1};
-struct VibroCmd_t {
-    VibroAction_t Action;
-    uint32_t Time_ms;
+struct VibroChunk_t {
+    int8_t Intencity;  // 0 means off, 1...100 means intencity, -1 means end
+    uint16_t Time_ms;
 } PACKED;
 // Send commands to vibro with this function
-void VibroCmd(uint32_t CmdCount, VibroCmd_t *PCmds);
+void Vibro(const VibroChunk_t *PSequence);
 
 // ==== Beep ====
 
