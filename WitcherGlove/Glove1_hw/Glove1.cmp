@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 12/02/2013 01:33:06
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 2/12/2013 3:48:28 PM
 
 BeginCmp
 TimeStamp = /508FD1DF;
@@ -143,6 +143,13 @@ EndCmp
 BeginCmp
 TimeStamp = /51194F86;
 Reference = D4;
+ValeurCmp = LED;
+IdModule  = LED-5MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /511A2BA3;
+Reference = D5;
 ValeurCmp = LED;
 IdModule  = LED-5MM;
 EndCmp
@@ -403,6 +410,13 @@ BeginCmp
 TimeStamp = /5045D6D2;
 Reference = R27;
 ValeurCmp = 390k;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /511A2BA2;
+Reference = R28;
+ValeurCmp = 100R;
 IdModule  = RES_0603;
 EndCmp
 

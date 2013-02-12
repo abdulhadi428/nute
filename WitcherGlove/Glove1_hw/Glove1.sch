@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 12/02/2013 01:54:06
+EESchema Schematic File Version 2  date 2/12/2013 3:47:38 PM
 LIBS:Connectors_kl
 LIBS:display_kl
 LIBS:pcb_details
@@ -19,7 +19,7 @@ $Descr A3 16535 11700
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "11 feb 2013"
+Date "12 feb 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -27,24 +27,12 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-Text Label 5600 1950 0    60   ~ 0
-Charge
+Wire Wire Line
+	10900 2550 10750 2550
+Wire Wire Line
+	10250 2550 10350 2550
 Wire Wire Line
 	5900 1950 5600 1950
-NoConn ~ 9000 4350
-NoConn ~ 5900 3450
-NoConn ~ 9000 3250
-NoConn ~ 9000 2550
-NoConn ~ 9000 2750
-$Comp
-L +5V #PWR01
-U 1 1 51195B8A
-P 9200 2650
-F 0 "#PWR01" H 9200 2610 30  0001 C CNN
-F 1 "+5V" H 9280 2680 30  0000 C CNN
-	1    9200 2650
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5500 2750 5900 2750
 Wire Wire Line
@@ -557,6 +545,51 @@ Wire Wire Line
 	4700 2650 5900 2650
 Wire Wire Line
 	5900 2850 5500 2850
+Wire Wire Line
+	9750 2550 9000 2550
+$Comp
+L GND #PWR?
+U 1 1 511A2BD2
+P 10900 2550
+F 0 "#PWR?" H 10990 2530 30  0001 C CNN
+F 1 "GND" H 10900 2470 30  0001 C CNN
+	1    10900 2550
+	0    -1   -1   0   
+$EndComp
+$Comp
+L LED D?
+U 1 1 511A2BA3
+P 10550 2550
+F 0 "D?" H 10650 2690 50  0000 C CNN
+F 1 "LED" H 10470 2690 50  0000 C CNN
+	1    10550 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R?
+U 1 1 511A2BA2
+P 10000 2550
+F 0 "R?" V 10080 2400 50  0000 C CNN
+F 1 "100R" V 10000 2550 50  0000 C CNN
+F 2 "RES_0603" V 10080 2650 28  0000 C CNN
+	1    10000 2550
+	0    1    -1   0   
+$EndComp
+Text Label 5600 1950 0    60   ~ 0
+Charge
+NoConn ~ 9000 4350
+NoConn ~ 5900 3450
+NoConn ~ 9000 3250
+NoConn ~ 9000 2750
+$Comp
+L +5V #PWR01
+U 1 1 51195B8A
+P 9200 2650
+F 0 "#PWR01" H 9200 2610 30  0001 C CNN
+F 1 "+5V" H 9280 2680 30  0000 C CNN
+	1    9200 2650
+	1    0    0    -1  
+$EndComp
 Text Label 5350 2950 0    60   ~ 0
 PeriphPwr1
 Text Label 5500 2750 0    60   ~ 0
