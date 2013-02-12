@@ -30,7 +30,7 @@
 #define ODR_1250HZ      0x90
 
 // Choose datarate here
-#define ACC_DATARATE    ODR_10HZ
+#define ACC_DATARATE    ODR_100HZ
 
 #define PIN_SET_DELAY   11 // CPU cycles
 
@@ -58,7 +58,7 @@ public:
             uint16_t AClk, uint16_t AIo, uint16_t ACs, uint16_t AIrq)
     : PGpio(PGpioPort), Clk(AClk), Io(AIo), Cs(ACs), Irq(AIrq) {}
     void Init();    // Do not try to init in constructor: it is called before main() and therefore CPU is in not well-known state.
-    void Read(int16_t *PAxis);
+    void Read(int16_t *a);
     bool IrqIsHi() { return klPinIsSet(PGpio, Irq); }
 };
 
@@ -79,7 +79,7 @@ class Acc_t {
 private:
 
 public:
-    int16_t Axis[ACC_COUNT][ACC_FIFO_SZ][3];
+    int16_t a[18];
     void Init();
     void Task();
 };

@@ -24,28 +24,32 @@ void Acc_t::Task() {
     // Read data ACC_FIFO_SZ times
     for(uint8_t n=0; n<ACC_COUNT; n++) {
         if(Accs[n].IrqIsHi()) {
-            Uart.Printf("%u:\r", n);
-            Accs[n].Read(&Axis[n][0][0]);
+            //Uart.Printf("%u ", n);
+            Accs[n].Read(&a[n*3]);
         }
     }
-    //Uart.Printf("\r");
+
+    // Print data
+    static uint32_t Tmr;
+    if(Delay.Elapsed(&Tmr, 4)) {
+        for(uint8_t n=0; n<6; n++) {
+            for(uint8_t i=0; i<3; i++) Uart.Printf(" %d", a[3*n+i]);
+            Uart.Printf(";");
+        }
+        Uart.Printf("\r\n");
+    }
 }
 
 // ================================= Single acc ================================
-void SingleAcc_t::Read(int16_t *PAxis) {
-    int16_t Buf[ACC_FIFO_SZ][3];
-    // Read data ACC_FIFO_SZ times
-    for(uint8_t n=0; n<ACC_FIFO_SZ; n++) {
-        // Read 3 Axis data
-        CsLo();   // Select chip
-        WriteByte(OUT_X_L | 0xC0);  // Read many
-        ReadNBytes((uint8_t*)&Buf[n][0], 6);
-        CsHi();
-        // Shift data right
-        for(uint8_t i=0; i<3; i++) Buf[n][i] >>= 6;
-        Uart.Printf("X: %d; Y: %d; Z: %d\r", Buf[n][0], Buf[n][1], Buf[n][2]);
-    }
-    Uart.Printf("\r");
+void SingleAcc_t::Read(int16_t *a) {
+    // Read 3 Axis data
+    CsLo();   // Select chip
+    WriteByte(OUT_X_L | 0xC0);  // Read many
+    ReadNBytes((uint8_t*)a, 6);
+    CsHi();
+    // Shift data right
+    for(uint8_t i=0; i<3; i++) a[i] >>= 6;
+    //Uart.Printf("X: %d; Y: %d; Z: %d\r", a[0], a[1], a[2]);
 }
 
 void SingleAcc_t::Init() {
@@ -59,12 +63,15 @@ void SingleAcc_t::Init() {
     // Send initial commands
     WriteReg(CTRL_REG1, 0b00000111 | ACC_DATARATE);    // ACC_DATARATE Hz, normal mode, all axis enabled
     WriteReg(CTRL_REG2, 0b00000000);    // Filter bypassed
-    WriteReg(CTRL_REG3, 0b00000100);    // FIFO watermark irq
+    //WriteReg(CTRL_REG3, 0b00000100);    // FIFO watermark irq
+    WriteReg(CTRL_REG3, 0b00010000);    // Data ready irq
 //    WriteReg(CTRL_REG4, 0b00100000);    // cont update, LSB at L reg, +-8g, no HiRes, no SelfTest, 4-wire
     WriteReg(CTRL_REG4, 0b00100001);    // cont update, LSB at L reg, +-8g, no HiRes, no SelfTest, 3-wire
-    WriteReg(CTRL_REG5, 0b01000000);    // NormMode, FIFO enabled, Irq not latched, no 4D
+    //WriteReg(CTRL_REG5, 0b01000000);    // NormMode, FIFO enabled, Irq not latched, no 4D
+    WriteReg(CTRL_REG5, 0b00000000);    // NormMode, FIFO disabled, Irq not latched, no 4D
     WriteReg(CTRL_REG6, 0b00000000);    // No IRQ2
-    WriteReg(FIFO_CTRL_REG, 0b10000000 | ACC_FIFO_SZ);// FIFO mode = Stream, trigger linked to Int1, FIFO Threshold = ACC_FIFO_SZ
+    //WriteReg(FIFO_CTRL_REG, 0b10000000 | ACC_FIFO_SZ);// FIFO mode = Stream, trigger linked to Int1, FIFO Threshold = ACC_FIFO_SZ
+    WriteReg(FIFO_CTRL_REG, 0b00000000);// FIFO mode = Bypass
     WriteReg(INT1_CFG, 0b00000000);     // Irqs disabled
     WriteReg(INT1_SOURCE, 0b00000000);  // Irqs disabled
     // Read WhoAmI register to check connection
