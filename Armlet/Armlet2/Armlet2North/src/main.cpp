@@ -13,6 +13,8 @@
 #include "lcd2630.h"
 #include "peripheral.h"
 #include "southbridge.h"
+#include "cc1101.h"
+
 #include "application.h"
 
 
@@ -49,6 +51,7 @@ void Init() {
     Uart.Printf("Armlet2 AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
     Lcd.Init();
     SouthBridge.Init();
+    Radio.Init();
     // Application init
     App.Init();
 }
