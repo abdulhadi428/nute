@@ -21,8 +21,8 @@ static msg_t BeepThread(void *arg) {
 }
 
 void Beep_t::Init() {
-    PChunk = NULL;
-    ResetOccured = false;
+    Reset();
+    IsWritingData = false;
     // GPIO
     PinSetupAlterFunc(GPIOA, 11, omPushPull, pudNone, AF2);
     // Timer
@@ -40,15 +40,17 @@ void Beep_t::Init() {
 }
 
 void Beep_t::Squeak() {
-    if(PChunk == NULL) {
+    if((IsWritingData) or (PChunk == NULL)) {
+        Off();
         // Put thread to sleep, it will be waken when new sequence is ready
         chSysLock();
+        IsSleeping = true;
         chSchGoSleepS(THD_STATE_SUSPENDED);
         chSysUnlock();
     }
-    else {
+    else {  // not writing and not null
         chSysLock();
-        uint8_t Volume = PChunk->VolumePercent;
+        int8_t Volume = PChunk->VolumePercent;
         uint16_t Delay = PChunk->Time_ms;
         if(Volume > 100) Volume = 100;
         if(Volume > 0) {
@@ -58,16 +60,22 @@ void Beep_t::Squeak() {
         else Off();
         chSysUnlock();
         chThdSleepMilliseconds(Delay);
-        if(ResetOccured) ResetOccured = false;
-        else {
-            // Check if last chunk
-            if(PChunk == &Buf[ChunkCnt-1]) {
-                PChunk = NULL;
-                Off();
-            }
-            else PChunk++;
-        } // if reset
+        if(IsWritingData) return;   // Writing started during waiting
+        // Switch to next chunk
+        if(PChunk == &Buf[ChunkCnt-1]) {
+            PChunk = NULL;
+            Off();
+        }
+        else PChunk++;
     }
+}
+
+void Beep_t::Reset() {
+    ChunkCnt = 0;
+    PChunk = 0;
+    FdrByteCnt = 0;
+    PFeedData = (uint8_t*)Buf;
+    Off();
 }
 
 void Beep_t::SetFreqHz(uint32_t FreqHz) {
@@ -79,6 +87,7 @@ void Beep_t::SetFreqHz(uint32_t FreqHz) {
 // ==== Feeding data ====
 FeederRetVal_t Beep_t::FeedStart(uint8_t Byte) {
     if(Byte == NTS_BEEP) {  // Good MsgType
+        IsWritingData = true;
         Reset();
         return frvOk;
     }
@@ -101,8 +110,12 @@ void Beep_t::FeederEndPkt() {
     ChunkCnt = FdrByteCnt / BEEP_CHUNK_SZ;
     if(ChunkCnt > 0) {
         PChunk = Buf;
+        IsWritingData = false;
         chSysLock();
-        chSchWakeupS(PThread, 0);
+        if(IsSleeping) {
+            chSchWakeupS(PThread, 0);
+            IsSleeping = false;
+        }
         chSysUnlock();
     }
 }

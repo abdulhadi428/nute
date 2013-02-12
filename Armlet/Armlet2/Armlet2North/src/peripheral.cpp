@@ -41,6 +41,19 @@ void Beep(const BeepChunk_t *PSequence) {
     Transmitter.AddCmd(&Cmd);
 }
 
+void Vibro(const VibroChunk_t *PSequence) {
+    SBCmd_t Cmd;
+    Cmd.CmdType = NTS_VIBRO;
+    Cmd.Ptr = (void*)PSequence;
+    // Count of bytes of sequence
+    Cmd.DataSz = 0;
+    while(PSequence->Intencity >= 0) {
+        Cmd.DataSz += VIBRO_CHUNK_SZ;
+        PSequence++;
+    }
+    Transmitter.AddCmd(&Cmd);
+}
+
 // ================================== Keys =====================================
 FeederRetVal_t KeysFdr_t::FeedStart(uint8_t Byte) {
     if(Byte == STN_KEY_STATUS) {

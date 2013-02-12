@@ -83,6 +83,7 @@ public:
     virtual FeederRetVal_t FeedStart(uint8_t Byte) = 0;
     virtual FeederRetVal_t FeedData(uint8_t Byte) = 0;
     virtual void FeederEndPkt() = 0;
+    virtual void Init() = 0;
 };
 
 // Receiver class

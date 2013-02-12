@@ -13,22 +13,26 @@
 #include "string.h"     // For memcpy
 #include "SouthbridgeTxRx.h"
 
+#include "keys.h"
 #include "beep.h"
+#include "vibro.h"
 
 Bridge_t Bridge;
 
 Feeder_t* const PFeeders[] = {
         &Beep,
+        &Vibro,
 };
 const uint8_t FeederCnt = countof(PFeeders);
 
 static inline void UartInit();
 
-// ================================ Receiver ===================================
-
-
 // =============================== SouthBridge =================================
 void Bridge_t::Init() {
+    // Peripheral blocks
+    Keys.Init();
+    for(uint8_t i=0; i<FeederCnt; i++) PFeeders[i]->Init();
+
     Transmitter.Init();
     Rcvr.Init();
     UartInit();

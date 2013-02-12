@@ -23,20 +23,13 @@ struct BeepChunk_t {
 class Beep_t : public Feeder_t {
 private:
     Thread *PThread;
-    bool ResetOccured;
+    bool IsWritingData, IsSleeping;
     int32_t ChunkCnt;
     BeepChunk_t Buf[BEEP_MAX_CHUNK_COUNT], *PChunk;
     void On(uint8_t Volume)  { TIM1->CCR4 = Volume; TIM1->CCER = TIM_CCER_CC4E; }
     void Off() { TIM1->CCER = 0; }
     void SetFreqHz(uint32_t AFreq);
-    void Reset() {
-        ResetOccured = true;
-        ChunkCnt = 0;
-        PChunk = 0;
-        FdrByteCnt = 0;
-        PFeedData = (uint8_t*)Buf;
-        Off();
-    }
+    void Reset();
 public:
     // Feeder
     FeederRetVal_t FeedStart(uint8_t Byte);

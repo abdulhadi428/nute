@@ -24,7 +24,7 @@
 #define VIBRO_END    {-1, 0}
 
 const VibroChunk_t ShortBrr[] = {
-        {100, 450},
+        {100, 45},
         VIBRO_END
 };
 

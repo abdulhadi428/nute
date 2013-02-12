@@ -12,8 +12,6 @@
 #include "kl_lib_f0.h"
 #include "southbridge.h"
 #include "main.h"
-#include "keys.h"
-#include "beep.h"
 
 static inline void Init();
 
@@ -33,15 +31,12 @@ int main(void) {
 }
 
 void Init() {
-    Keys.Init();
-    Beep.Init();
-
     Bridge.Init();
 
     // Send ATR
-    SBCmd_t Cmd;
-    Cmd.CmdType = STN_ATR;
-    Cmd.DataSz = 4;
-    Cmd.Ptr = (void*)&FwVersion;
-    Transmitter.AddCmd(&Cmd);
+//    SBCmd_t Cmd;
+//    Cmd.CmdType = STN_ATR;
+//    Cmd.DataSz = 4;
+//    Cmd.Ptr = (void*)&FwVersion;
+//    Transmitter.AddCmd(&Cmd);
 }

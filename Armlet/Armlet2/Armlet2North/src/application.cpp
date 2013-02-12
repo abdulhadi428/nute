@@ -12,6 +12,7 @@
 #include "lcd2630.h"
 #include "peripheral.h"
 #include "BeepSequences.h"
+#include "VibroSequences.h"
 
 App_t App;
 
@@ -28,7 +29,7 @@ static msg_t AppThread(void *arg) {
     while(1) {
         chThdSleepMilliseconds(1800);
         Lcd.Cls(c);
-        for(uint8_t y=0; y<120; y+=16) {
+        for(uint8_t y=0; y<128; y+=8) {
             chThdSleepMilliseconds(999);
             Lcd.Printf(0, y, clBlue, c, "YA=%u", y);
             //Beep(BeepBeep);
@@ -61,6 +62,7 @@ static msg_t KeysThread(void *arg) {
                 // Keypress occured
                 PrevKeyStatus[i] = keyPressed;
                 Beep(ShortBeep);
+                Vibro(ShortBrr);
             }
             else if((Key[i] == keyReleased) and (PrevKeyStatus[i] == keyPressed)) {
                 // Key release occured

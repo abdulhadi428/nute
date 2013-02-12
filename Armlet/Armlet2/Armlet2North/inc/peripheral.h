@@ -29,11 +29,11 @@ struct VibroChunk_t {
     int8_t Intencity;  // 0 means off, 1...100 means intencity, -1 means end
     uint16_t Time_ms;
 } PACKED;
+#define VIBRO_CHUNK_SZ   sizeof(VibroChunk_t)
 // Send commands to vibro with this function
 void Vibro(const VibroChunk_t *PSequence);
 
 // ==== Beep ====
-
 struct BeepChunk_t {
     int8_t VolumePercent;   // 0 means silence, 1...100 means volume, -1 means end
     uint16_t Time_ms;
