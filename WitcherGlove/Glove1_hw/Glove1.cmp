@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 2/12/2013 3:48:28 PM
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 13/02/2013 12:39:02
 
 BeginCmp
 TimeStamp = /508FD1DF;
@@ -421,6 +421,13 @@ IdModule  = RES_0603;
 EndCmp
 
 BeginCmp
+TimeStamp = /511B530F;
+Reference = SW1;
+ValeurCmp = SWITCH;
+IdModule  = SIL-3;
+EndCmp
+
+BeginCmp
 TimeStamp = /508E97C0;
 Reference = VCap1;
 ValeurCmp = 2.2u;
@@ -474,6 +481,13 @@ TimeStamp = /50C07A60;
 Reference = XL6;
 ValeurCmp = CONN_NOKIA_BAT;
 IdModule  = CONN_NOKIA_ACC;
+EndCmp
+
+BeginCmp
+TimeStamp = /511B5E72;
+Reference = XL7;
+ValeurCmp = CONN_4;
+IdModule  = SIL-4;
 EndCmp
 
 BeginCmp

@@ -12,6 +12,11 @@
 		<Pcb>
 			<File path=".\Glove1.fsx" Folder="-1" isopened="1"/>
 		</Pcb>
+		<Import>
+			<Specctra>
+			<Path name="D:\Nute\WitcherGlove\Glove1_hw\Glove1.dsn"/>
+			</Specctra>
+		</Import>
 		<ARouteSessions>
 		</ARouteSessions>
 	</Document>
