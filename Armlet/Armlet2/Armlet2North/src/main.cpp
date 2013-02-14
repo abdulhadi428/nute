@@ -14,6 +14,7 @@
 #include "peripheral.h"
 #include "southbridge.h"
 #include "cc1101.h"
+#include "kl_sd.h"
 
 #include "application.h"
 
@@ -48,10 +49,24 @@ int main() {
 
 void Init() {
     Uart.Init(115200);
-    Uart.Printf("Armlet2 AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+    Uart.Printf("Armlet2 AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
     Lcd.Init();
     SouthBridge.Init();
     Radio.Init();
+    SD.Init();
     // Application init
     App.Init();
 }
+
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
+//
+//void chDbgPanic(const char *msg1, const char *msg2) {
+//    Uart.Printf("%s %s\r", msg1, msg2);
+//}
+//
+//#ifdef __cplusplus
+//}
+//#endif
+

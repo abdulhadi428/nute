@@ -80,6 +80,19 @@ void Clk_t::UpdateFreqValues() {
     APB1FreqHz = AHBFreqHz >> tmp;
     tmp = APBPrescTable[(RCC->CFGR & RCC_CFGR_PPRE2) >> 13];
     APB2FreqHz = AHBFreqHz >> tmp;
+
+    // ==== USB and SDIO freq ====
+    UsbSdioFreqHz = 0;      // Will be changed only in case of PLL enabled
+    if(RCC->CR & RCC_CR_PLLON) {
+        // Get different PLL dividers
+        InputDiv_M = RCC->PLLCFGR & RCC_PLLCFGR_PLLM;
+        Multi_N    = (RCC->PLLCFGR & RCC_PLLCFGR_PLLN) >> 6;
+        uint32_t SysDiv_Q = (RCC->PLLCFGR & RCC_PLLCFGR_PLLQ) >> 24;
+        // Calculate pll freq
+        pllvco = (RCC->PLLCFGR & RCC_PLLCFGR_PLLSRC_HSE)? CRYSTAL_FREQ_HZ : HSI_VALUE;
+        pllvco = (pllvco / InputDiv_M) * Multi_N;
+        if(SysDiv_Q >= 2) UsbSdioFreqHz = pllvco / SysDiv_Q;
+    }
 }
 
 // ==== Common use ====
@@ -190,11 +203,6 @@ void __early_init(void) {
     // Enable HSI. It is enabled by default, but who knows.
     RCC->CR |= RCC_CR_HSION;
     while(!(RCC->CR & RCC_CR_HSIRDY));
-
-    // Setup Flash and Bus clocks
-    Clk.SetupBusDividers(ahbDiv2, apbDiv1, apbDiv1);
-    Clk.SetupFlashLatency(16);
-    Clk.UpdateFreqValues();
 
     // SYSCFG clock enabled here because it is a multi-functional unit
     // shared among multiple drivers using external IRQs

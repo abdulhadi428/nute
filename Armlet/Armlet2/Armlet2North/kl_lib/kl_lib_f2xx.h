@@ -61,10 +61,10 @@ static inline void PinToggle (GPIO_TypeDef *PGpioPort, const uint16_t APinNumber
 static inline bool PinIsSet(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber) { return (PGpioPort->IDR & (uint32_t)(1<<APinNumber)); }
 // Setup
 static inline void PinClockEnable(GPIO_TypeDef *PGpioPort) {
-    if     (PGpioPort == GPIOA) RCC->AHB1ENR |= (uint32_t)0x00000001;
-    else if(PGpioPort == GPIOB) RCC->AHB1ENR |= (uint32_t)0x00000002;
-    else if(PGpioPort == GPIOC) RCC->AHB1ENR |= (uint32_t)0x00000004;
-    else if(PGpioPort == GPIOD) RCC->AHB1ENR |= (uint32_t)0x00000008;
+    if     (PGpioPort == GPIOA) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+    else if(PGpioPort == GPIOB) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
+    else if(PGpioPort == GPIOC) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+    else if(PGpioPort == GPIOD) RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
 }
 // GPIOA, 1, omPushPull/omOpenDrain, pudNone/pudPullUp/pudPullDown, ps2MHz/ps25MHz/ps50MHz/ps100MHz
 static inline void PinSetupOut(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber, const PinOutMode_t PinOutMode, const PinPullUpDown_t APullUpDown = pudNone, const PinSpeed_t ASpeed = ps50MHz) {

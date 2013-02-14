@@ -8,6 +8,8 @@
 #ifndef CC1101_H_
 #define CC1101_H_
 
+#include <inttypes.h>
+
 // ==== Packet ====
 struct Pkt_t {
     uint32_t IdArr[3];

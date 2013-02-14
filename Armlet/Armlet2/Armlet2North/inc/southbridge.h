@@ -91,6 +91,7 @@ public:
     FeederRetVal_t FeedStart(uint8_t Byte);
     FeederRetVal_t FeedData(uint8_t Byte);
     void FeederEndPkt() {}
+    void Init() {}
 };
 
 extern KeysFdr_t KeysFdr;

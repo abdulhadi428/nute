@@ -194,7 +194,7 @@ extern ch_trace_buffer_t dbg_trace_buffer;
 #if !defined(chDbgAssert)
 #define chDbgAssert(c, m, r) {                                              \
   if (!(c))                                                                 \
-    chDbgPanic(m);                                                          \
+    chDbgPanic(m, r);                                                          \
 }
 #endif /* !defined(chDbgAssert) */
 /** @} */
@@ -236,7 +236,7 @@ extern "C" {
 #endif
 #if CH_DBG_ENABLED
   extern const char *dbg_panic_msg;
-  void chDbgPanic(const char *msg);
+  void chDbgPanic(const char *msg1, const char *msg2);
 #endif
 #ifdef __cplusplus
 }

@@ -96,7 +96,7 @@ void halInit(void) {
   sdInit();
 #endif
 #if HAL_USE_SDC || defined(__DOXYGEN__)
-  sdcInit();
+  //KL All in Kl_sdc sdcInit();
 #endif
 #if HAL_USE_SPI || defined(__DOXYGEN__)
   spiInit();

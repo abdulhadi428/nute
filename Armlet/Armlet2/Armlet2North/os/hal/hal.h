@@ -38,28 +38,27 @@
 
 /* Abstract interfaces.*/
 #include "io_channel.h"
-//#include "io_block.h"
+#include "io_block.h"
 
 /* Shared headers.*/
-//#include "mmcsd.h"
+#include "mmcsd.h"
 
 /* Layered drivers.*/
-/*#include "tm.h"
-#include "pal.h"
-#include "adc.h"
-#include "can.h"
-#include "ext.h"
-#include "gpt.h"
-#include "i2c.h"
-#include "icu.h"
-#include "mac.h"
-#include "pwm.h"
-#include "rtc.h"
-#include "serial.h"
+//#include "tm.h"
+//#include "pal.h"
+//#include "adc.h"
+//#include "can.h"
+//#include "ext.h"
+//#include "gpt.h"
+//#include "i2c.h"
+//#include "icu.h"
+//#include "mac.h"
+//#include "pwm.h"
+//#include "rtc.h"
+//#include "serial.h"
 #include "sdc.h"
-#include "spi.h"
-#include "uart.h"
-*/
+//#include "spi.h"
+//#include "uart.h"
 
 /* Complex drivers.*/
 //#include "mmc_spi.h"
