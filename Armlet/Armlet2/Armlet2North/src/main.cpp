@@ -34,7 +34,7 @@ int main() {
     Clk.UpdateFreqValues();
 
     // ==== Init OS ====
-    halInit();      // Here USB low level drv inited: pointers setup, for example
+    halInit();
     chSysInit();
     // ==== Init Hard & Soft ====
     Init();

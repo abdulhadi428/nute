@@ -51,6 +51,7 @@
 									<listOptionValue builtIn="false" value="../os"/>
 									<listOptionValue builtIn="false" value="../usb"/>
 									<listOptionValue builtIn="false" value="../os/sd"/>
+									<listOptionValue builtIn="false" value="../kl_lib"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std.810702603" name="Language Standard" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std" value="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std.gnu99" valueType="enumerated"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.shortenums.1479849223" name="Short enumerations (-fshort-enums)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.shortenums" value="false" valueType="boolean"/>
@@ -287,8 +288,8 @@
 				<parser enabled="true"/>
 			</scannerInfoProvider>
 		</profile>
-		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590.;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.assembler.release.1923129565;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.assembler.base.input.172199398">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCWinManagedMakePerProjectProfileC"/>
+		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590.;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.compiler.release.1518844965;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.cpp.compiler.base.input.1270747630">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCWinManagedMakePerProjectProfileCPP"/>
 			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
 				<buildOutputProvider>
 					<openAction enabled="true" filePath=""/>
@@ -330,8 +331,8 @@
 				</scannerInfoProvider>
 			</profile>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590.;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.compiler.release.1518844965;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.cpp.compiler.base.input.1270747630">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCWinManagedMakePerProjectProfileCPP"/>
+		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.release.1988423590.;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.assembler.release.1923129565;org.eclipse.cdt.cross.arm.gnu.yagarto.windows.assembler.base.input.172199398">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCWinManagedMakePerProjectProfileC"/>
 			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
 				<buildOutputProvider>
 					<openAction enabled="true" filePath=""/>

@@ -34,20 +34,24 @@ void sd_t::Init() {
         Uart.Printf("SD connect error\r");
         return;
     }
+    else {
+        Uart.Printf("SD capacity: %u\r", SDCD1.capacity);
+    }
+
     err = f_mount(0, &SDC_FS);
     if (err != FR_OK) {
         Uart.Printf("SD mount error\r");
         sdcDisconnect(&SDCD1);
         return;
     }
-    Uart.Printf("SD filesystem mounted\r");
+    //Uart.Printf("SD filesystem mounted\r");
     IsReady = TRUE;
 
-    FRESULT rslt;
-    FIL IFile;
-    // Open file
-    rslt = f_open(&IFile, "settings.ini", FA_READ+FA_OPEN_EXISTING);
-    Uart.Printf("OpenFile: %u\r", (uint8_t)rslt);
+//    FRESULT rslt;
+//    FIL IFile;
+//    // Open file
+//    rslt = f_open(&IFile, "settings.ini", FA_READ+FA_OPEN_EXISTING);
+//    Uart.Printf("OpenFile: %u\r", (uint8_t)rslt);
 }
 
 

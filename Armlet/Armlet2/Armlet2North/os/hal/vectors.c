@@ -273,7 +273,7 @@ void VectorF4(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorF8(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorFC(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector100(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector104(void) __attribute__((weak, alias("_unhandled_exception")));
+//void Vector104(void) __attribute__((weak, alias("_unhandled_exception")));    // SDIO
 void Vector108(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector10C(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector110(void) __attribute__((weak, alias("_unhandled_exception")));

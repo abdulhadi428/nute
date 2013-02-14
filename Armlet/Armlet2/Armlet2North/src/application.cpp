@@ -14,19 +14,34 @@
 #include "BeepSequences.h"
 #include "VibroSequences.h"
 
+#include "ff.h"
+
 App_t App;
 
 // Prototypes
 
-
+FIL IFile;
 // =============================== App Thread ==================================
-static WORKING_AREA(waAppThread, 128);
+static WORKING_AREA(waAppThread, 2048);
 static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
 
     Color_t c = clBlack;
+
+
+    FRESULT rslt;
+
+    // Open file
+    Uart.Printf("O\r");
+    Delay_ms(450);
+    rslt = f_open(&IFile, "settings.ini", FA_READ+FA_OPEN_EXISTING);
+    Delay_ms(450);
+    //Uart.Printf("OpenFile: %u\r", (uint8_t)rslt);
+
     while(1) {
+
+
         chThdSleepMilliseconds(1800);
         Lcd.Cls(c);
         for(uint8_t y=0; y<128; y+=8) {
