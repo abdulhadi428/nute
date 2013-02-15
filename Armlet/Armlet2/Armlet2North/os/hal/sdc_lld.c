@@ -29,7 +29,7 @@
 /*
  TODO: Try preerase blocks before writing (ACMD23).
  */
-#include "kl_lib_f2xx.h"
+
 #include <string.h>
 
 #include "ch.h"
@@ -159,51 +159,29 @@ static bool_t sdc_lld_prepare_write(SDCDriver *sdcp, uint32_t startblk,
  */
 static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
                                            uint32_t *resp) {
+
   /* Note the mask is checked before going to sleep because the interrupt
      may have occurred before reaching the critical zone.*/
-//    Uart.Printf("wait_tran_end\r");
-//    uint32_t DbgV;
-//      DbgV = SDIO->MASK;
-//      Uart.Printf("Mask=%X\r", DbgV);
-
   chSysLock();
-  while(!(USART1->SR & USART_SR_TXE));
-  USART1->DR = 'a';
-
-  // KL Debug
-  //uint32_t DbgV;
-  //DbgV = SDIO->MASK;
-  //Uart.Printf("WTE Mask=%X\r", DbgV);
   if (SDIO->MASK != 0) {
-    //  Uart.Printf("Waiting SDIO Irq\r");
-      while(!(USART1->SR & USART_SR_TXE));
-      USART1->DR = 'b';
-    //chDbgAssert(sdcp->thread == NULL, "sdc_lld_start_data_transaction(), #1", "not NULL");
+    chDbgAssert(sdcp->thread == NULL,
+                "sdc_lld_start_data_transaction(), #1", "not NULL");
     sdcp->thread = chThdSelf();
     chSchGoSleepS(THD_STATE_SUSPENDED);
-    while(!(USART1->SR & USART_SR_TXE));
-    USART1->DR = 'c';
-    //chDbgAssert(sdcp->thread == NULL, "sdc_lld_start_data_transaction(), #2", "not NULL");
+    chDbgAssert(sdcp->thread == NULL,
+                "sdc_lld_start_data_transaction(), #2", "not NULL");
   }
-  while(!(USART1->SR & USART_SR_TXE));
-  USART1->DR = 'd';
-  //DbgV = SDIO->STA;
-  //Uart.Printf("WTE STA=%X\r", DbgV);
+
   if ((SDIO->STA & SDIO_STA_DATAEND) == 0) {
     chSysUnlock();
-    Uart.Printf("\rsta: %X\r", SDIO->STA);
     return CH_FAILED;
   }
-  while(!(USART1->SR & USART_SR_TXE));
-  USART1->DR = 'f';
-  //Uart.Printf("22\r");
+
 #if (defined(STM32F4XX) || defined(STM32F2XX))
   /* Wait until DMA channel enabled to be sure that all data transferred.*/
   while (sdcp->dma->stream->CR & STM32_DMA_CR_EN)
     ;
-  //Uart.Printf("23\r");
-  while(!(USART1->SR & USART_SR_TXE));
-  USART1->DR = 'g';
+
   /* DMA event flags must be manually cleared.*/
   dmaStreamClearInterrupt(sdcp->dma);
 
@@ -211,8 +189,6 @@ static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
   SDIO->DCTRL = 0;
   chSysUnlock();
 
-  while(!(USART1->SR & USART_SR_TXE));
-  USART1->DR = 'h';
   /* Wait until interrupt flags to be cleared.*/
   /*while (((DMA2->LISR) >> (sdcp->dma->ishift)) & STM32_DMA_ISR_TCIF)
     dmaStreamClearInterrupt(sdcp->dma);*/
@@ -229,8 +205,7 @@ static bool_t sdc_lld_wait_transaction_end(SDCDriver *sdcp, uint32_t n,
   /* Finalize transaction.*/
   if (n > 1)
     return sdc_lld_send_cmd_short_crc(sdcp, MMCSD_CMD_STOP_TRANSMISSION, 0, resp);
-  while(!(USART1->SR & USART_SR_TXE));
-  USART1->DR = 'j';
+
   return CH_SUCCESS;
 }
 
@@ -313,11 +288,6 @@ static void sdc_lld_error_cleanup(SDCDriver *sdcp,
  *
  * @isr
  */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 CH_IRQ_HANDLER(STM32_SDIO_HANDLER) {
 
   CH_IRQ_PROLOGUE();
@@ -334,16 +304,8 @@ CH_IRQ_HANDLER(STM32_SDIO_HANDLER) {
 
   chSysUnlockFromIsr();
 
-  while(!(USART1->SR & USART_SR_TXE));
-  USART1->DR = 'Q';
-
   CH_IRQ_EPILOGUE();
 }
-
-#ifdef __cplusplus
-}
-#endif
-
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -387,15 +349,15 @@ void sdc_lld_start(SDCDriver *sdcp) {
 
   if (sdcp->state == BLK_STOP) {
     /* Note, the DMA must be enabled before the IRQs.*/
-//    bool_t b;
-//    b = dmaStreamAllocate(sdcp->dma, STM32_SDC_SDIO_IRQ_PRIORITY, NULL, NULL);
-//    chDbgAssert(!b, "i2c_lld_start(), #3", "stream already allocated");
-//    dmaStreamSetPeripheral(sdcp->dma, &SDIO->FIFO);
-//#if (defined(STM32F4XX) || defined(STM32F2XX))
-//    dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS | STM32_DMA_FCR_FTH_FULL);
-//#endif
-//    nvicEnableVector(STM32_SDIO_NUMBER,
-//                     CORTEX_PRIORITY_MASK(STM32_SDC_SDIO_IRQ_PRIORITY));
+    bool_t b;
+    b = dmaStreamAllocate(sdcp->dma, STM32_SDC_SDIO_IRQ_PRIORITY, NULL, NULL);
+    chDbgAssert(!b, "i2c_lld_start(), #3", "stream already allocated");
+    dmaStreamSetPeripheral(sdcp->dma, &SDIO->FIFO);
+#if (defined(STM32F4XX) || defined(STM32F2XX))
+    dmaStreamSetFIFO(sdcp->dma, STM32_DMA_FCR_DMDIS | STM32_DMA_FCR_FTH_FULL);
+#endif
+    nvicEnableVector(STM32_SDIO_NUMBER,
+                     CORTEX_PRIORITY_MASK(STM32_SDC_SDIO_IRQ_PRIORITY));
     rccEnableSDIO(FALSE);
   }
 
@@ -646,45 +608,23 @@ bool_t sdc_lld_send_cmd_long_crc(SDCDriver *sdcp, uint8_t cmd, uint32_t arg,
  */
 bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                             uint8_t *buf, uint32_t n) {
-
   uint32_t resp[1];
 
   chDbgCheck((n < (0x1000000 / MMCSD_BLOCK_SIZE)), "max transaction size");
 
-  SDIO->DTIMER = STM32_SDC_READ_TIMEOUT;
-  //SDIO->DTIMER = 0xFFFFFFFF;    // KL
+  //SDIO->DTIMER = STM32_SDC_READ_TIMEOUT;
+  SDIO->DTIMER = 0xFFFFFFFF;    // KL
 
   /* Checks for errors and waits for the card to be ready for reading.*/
   if (_sdc_wait_for_transfer_state(sdcp))
     return CH_FAILED;
 
-  //Uart.Printf("wfts passed\r");
-
   /* Prepares the DMA channel for writing.*/
-
-  dmaStreamAllocate(STM32_DMA2_STREAM3, STM32_SDC_SDIO_IRQ_PRIORITY, NULL, NULL);
-  dmaStreamSetPeripheral(STM32_DMA2_STREAM3, &SDIO->FIFO);
-  dmaStreamSetFIFO(STM32_DMA2_STREAM3, STM32_DMA_FCR_DMDIS | STM32_DMA_FCR_FTH_FULL);
-
-  dmaStreamSetMemory0(STM32_DMA2_STREAM3, buf);
-  dmaStreamSetTransactionSize(STM32_DMA2_STREAM3,
+  dmaStreamSetMemory0(sdcp->dma, buf);
+  dmaStreamSetTransactionSize(sdcp->dma,
                               (n * MMCSD_BLOCK_SIZE) / sizeof (uint32_t));
-  dmaStreamSetMode(STM32_DMA2_STREAM3,
-          STM32_DMA_CR_CHSEL(DMA_CHANNEL)
-          | STM32_DMA_CR_PL(STM32_SDC_SDIO_DMA_PRIORITY)
-          | STM32_DMA_CR_PSIZE_WORD
-          | STM32_DMA_CR_MSIZE_WORD
-          | STM32_DMA_CR_MINC
-          | STM32_DMA_CR_PFCTRL
-          | STM32_DMA_CR_PBURST_INCR4
-          | STM32_DMA_CR_MBURST_INCR4
-          | STM32_DMA_CR_DIR_P2M
-          );
-  dmaStreamEnable(STM32_DMA2_STREAM3);
-
-  nvicEnableVector(STM32_SDIO_NUMBER, CORTEX_PRIORITY_MASK(STM32_SDC_SDIO_IRQ_PRIORITY));
-
-  //Uart.Printf("Dma: %X; Dma mode: %X\r", sdcp->dma, sdcp->dmamode | STM32_DMA_CR_DIR_P2M);
+  dmaStreamSetMode(sdcp->dma, sdcp->dmamode | STM32_DMA_CR_DIR_P2M);
+  dmaStreamEnable(sdcp->dma);
 
   /* Setting up data transfer.*/
   SDIO->ICR   = STM32_SDIO_ICR_ALL_FLAGS;
@@ -699,8 +639,6 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
   if (sdc_lld_prepare_read(sdcp, startblk, n, resp) == TRUE)
     goto error;
 
-  //Uart.Printf("sdc_lld_prepare_read passed\r");
-
   /* Transaction starts just after DTEN bit setting.*/
   SDIO->DCTRL = SDIO_DCTRL_DTDIR |
                 SDIO_DCTRL_DBLOCKSIZE_3 |
@@ -709,7 +647,7 @@ bool_t sdc_lld_read_aligned(SDCDriver *sdcp, uint32_t startblk,
                 SDIO_DCTRL_DTEN;
   if (sdc_lld_wait_transaction_end(sdcp, n, resp) == TRUE)
     goto error;
-  Uart.Printf("sdc_lld_wait_transaction_end passed\r");
+
   return CH_SUCCESS;
 
 error:

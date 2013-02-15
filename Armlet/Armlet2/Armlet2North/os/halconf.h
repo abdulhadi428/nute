@@ -261,6 +261,12 @@
 /* SDC driver related settings.                                              */
 /*===========================================================================*/
 
+/*
+ * SDIO clock divider: SDIO_CK frequency = SDIOCLK / [CLKDIV + 2]
+ */
+#define STM32_SDIO_DIV_HS   2   // Work clock:    48MHz / (2+2)   = 12MHz
+#define STM32_SDIO_DIV_LS   120 // Initial clock: 48MHz / (120+2) = 393kHz, less than 400
+
 /**
  * @brief   Number of initialization attempts before rejecting the card.
  * @note    Attempts are performed at 10mS intervals.

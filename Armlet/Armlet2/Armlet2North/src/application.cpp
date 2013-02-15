@@ -18,6 +18,8 @@
 
 App_t App;
 
+char Str[255];
+
 // Prototypes
 
 // =============================== App Thread ==================================
@@ -36,7 +38,19 @@ static msg_t AppThread(void *arg) {
     Delay_ms(450);
     rslt = f_open(&SD.File, "settings.ini", FA_READ+FA_OPEN_EXISTING);
     Delay_ms(450);
-    //Uart.Printf("OpenFile: %u\r", (uint8_t)rslt);
+    Uart.Printf("OpenFile: %u\r", (uint8_t)rslt);
+    if(rslt == FR_OK) {
+        Uart.Printf("Size: %u\r", SD.File.fsize);
+        uint32_t N=0;
+        rslt = f_read(&SD.File, Str, 250, (UINT*)&N);
+        if(rslt == FR_OK) {
+            Uart.Printf("N: %u; Str: %s\r", N, Str);
+        }
+        else Uart.Printf("ReadFile: %u\r", (uint8_t)rslt);
+        f_close(&SD.File);
+    }
+
+
 
     while(1) {
 

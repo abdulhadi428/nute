@@ -133,22 +133,6 @@
 #define STM32_DMA_REQUIRED
 #endif
 
-/*
- * SDIO clock divider.
- */
-#if (defined(STM32F4XX) || defined(STM32F2XX))
-#define STM32_SDIO_DIV_HS                   0
-#define STM32_SDIO_DIV_LS                   120
-
-#elif STM32_HCLK > 48000000
-#define STM32_SDIO_DIV_HS                   1
-#define STM32_SDIO_DIV_LS                   178
-#else
-
-#define STM32_SDIO_DIV_HS                   0
-#define STM32_SDIO_DIV_LS                   118
-#endif
-
 /**
  * @brief   SDIO data timeouts in SDIO clock cycles.
  */

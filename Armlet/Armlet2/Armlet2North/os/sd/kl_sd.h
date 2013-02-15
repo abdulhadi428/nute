@@ -12,6 +12,8 @@
 #include "ch.h"
 #include "hal.h"
 
+// See SDIO clock divider in halconf.h
+
 class sd_t {
 private:
     FATFS SDC_FS;
