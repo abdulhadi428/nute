@@ -18,41 +18,17 @@
 
 App_t App;
 
-char Str[255];
-
 // Prototypes
 
 // =============================== App Thread ==================================
-static WORKING_AREA(waAppThread, 2048);
+static WORKING_AREA(waAppThread, 128);
 static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
 
     Color_t c = clBlack;
 
-    // Open file
-    FRESULT rslt;
-    rslt = f_open(&SD.File, "settings.ini", FA_READ+FA_OPEN_EXISTING);
-    Uart.Printf("OpenFile: %u\r", (uint8_t)rslt);
-    if(rslt == FR_OK) {
-        Uart.Printf("Size: %u\r", SD.File.fsize);
-        uint32_t N=0;
-        rslt = f_read(&SD.File, Str, 250, (UINT*)&N);
-        if(rslt == FR_OK) {
-            Uart.Printf("N: %u; Str: %s\r", N, Str);
-        }
-        else Uart.Printf("ReadFile: %u\r", (uint8_t)rslt);
-        f_close(&SD.File);
-    }
-
-    uint32_t Count=0;
-    iniReadUint32("Sound", "Count", "settings.ini", &Count);
-    Uart.Printf("Cnt: %u\r", Count);
-
-
     while(1) {
-
-
         chThdSleepMilliseconds(1800);
         Lcd.Cls(c);
         for(uint8_t y=0; y<128; y+=8) {
