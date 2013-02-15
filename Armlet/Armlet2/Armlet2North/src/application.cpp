@@ -14,13 +14,12 @@
 #include "BeepSequences.h"
 #include "VibroSequences.h"
 
-#include "ff.h"
+#include "kl_sd.h"
 
 App_t App;
 
 // Prototypes
 
-FIL IFile;
 // =============================== App Thread ==================================
 static WORKING_AREA(waAppThread, 2048);
 static msg_t AppThread(void *arg) {
@@ -35,7 +34,7 @@ static msg_t AppThread(void *arg) {
     // Open file
     Uart.Printf("O\r");
     Delay_ms(450);
-    rslt = f_open(&IFile, "settings.ini", FA_READ+FA_OPEN_EXISTING);
+    rslt = f_open(&SD.File, "settings.ini", FA_READ+FA_OPEN_EXISTING);
     Delay_ms(450);
     //Uart.Printf("OpenFile: %u\r", (uint8_t)rslt);
 

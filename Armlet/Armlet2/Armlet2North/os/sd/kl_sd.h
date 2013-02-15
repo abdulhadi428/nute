@@ -18,6 +18,7 @@ private:
     uint8_t fbuff[1024];
 public:
     bool IsReady;
+    FIL File;
     void Init();
 };
 

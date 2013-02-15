@@ -65,7 +65,7 @@
  * @brief   SDIO DMA priority (0..3|lowest..highest).
  */
 #if !defined(STM32_SDC_SDIO_DMA_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_SDC_SDIO_DMA_PRIORITY         2
+#define STM32_SDC_SDIO_DMA_PRIORITY         3
 #endif
 
 /**
