@@ -30,14 +30,9 @@ static msg_t AppThread(void *arg) {
 
     Color_t c = clBlack;
 
-
-    FRESULT rslt;
-
     // Open file
-    Uart.Printf("O\r");
-    Delay_ms(450);
+    FRESULT rslt;
     rslt = f_open(&SD.File, "settings.ini", FA_READ+FA_OPEN_EXISTING);
-    Delay_ms(450);
     Uart.Printf("OpenFile: %u\r", (uint8_t)rslt);
     if(rslt == FR_OK) {
         Uart.Printf("Size: %u\r", SD.File.fsize);
@@ -50,6 +45,9 @@ static msg_t AppThread(void *arg) {
         f_close(&SD.File);
     }
 
+    uint32_t Count=0;
+    iniReadUint32("Sound", "Count", "settings.ini", &Count);
+    Uart.Printf("Cnt: %u\r", Count);
 
 
     while(1) {
