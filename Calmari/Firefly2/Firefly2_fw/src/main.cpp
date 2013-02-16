@@ -15,6 +15,11 @@
 
 Adc_t Adc;
 
+#define ADC_VALUE_TO_OFF    144
+#define ADC_VALUE_TO_ON     54
+
+#define LED_COLOR           clBlue
+
 static inline void Init();
 
 int main(void) {
@@ -29,11 +34,16 @@ int main(void) {
 
     while(TRUE) {
         chThdSleepMilliseconds(360);
-        Adc.StartConversion();
-        while(!(ADC1->ISR & ADC_ISR_EOC));
-        uint16_t rslt = ADC1->DR;
+        uint32_t rslt = 0;
+        for(uint8_t i=0; i<8; i++) {
+            Adc.StartConversion();
+            while(!Adc.ConversionCompleted());
+            rslt += Adc.Result();
+        }
+        rslt >>= 3;
         Uart.Printf("Adc: %u\r", rslt);
-
+        if(rslt > ADC_VALUE_TO_OFF) Led.SetColorSmoothly(clBlack);
+        if(rslt < ADC_VALUE_TO_ON)  Led.SetColorSmoothly(LED_COLOR);
     }
 }
 
@@ -41,9 +51,7 @@ void Init() {
     Uart.Init(115200);
     Uart.Printf("\rFirefly2\r");
     Led.Init();
-
     Adc.Init();
-    Adc.StartConversion();
 }
 
 // =============================== Phototransistor =============================

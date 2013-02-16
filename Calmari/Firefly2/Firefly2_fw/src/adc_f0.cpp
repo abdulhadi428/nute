@@ -13,12 +13,9 @@ void Adc_t::Init() {
     rccEnableADC1(FALSE);
     PinSetupAnalog(GPIOB, 1, pudNone);
 
-    rccResetADC1();
-    //ContModeEnable();
     ChannelConfig(ADC_Channel_9, ADC_SampleTime_55_5Cycles);
     Calibrate();    // Must be performed when ADC is disabled
     Enable();       // May configure only enabled ADC
-
 }
 
 void Adc_t::ChannelConfig(uint32_t Channel, uint32_t SampleTime) {

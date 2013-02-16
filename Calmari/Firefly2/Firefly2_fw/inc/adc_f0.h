@@ -13,6 +13,8 @@
 #define ADC_SAMPLE_POWER    3
 #define ADC_BUF_SZ          (1<<ADC_SAMPLE_POWER)
 
+#define ADC_DMA_STREAM      STM32_DMA1_STREAM1
+
 class Adc_t {
 private:
     uint16_t Buf[ADC_BUF_SZ];
@@ -26,6 +28,8 @@ public:
         while(!(ADC1->ISR & ADC_ISR_ADRDY));    // wait until ready
     }
     void Calibrate();
+    bool ConversionCompleted() { return (ADC1->ISR & ADC_ISR_EOC); }
+    uint16_t Result() { return ADC1->DR; }
 };
 
 // ADC sampling_times
