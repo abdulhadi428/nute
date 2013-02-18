@@ -29,16 +29,16 @@ static msg_t RadioThread(void *arg) {
     (void)arg;
     chRegSetThreadName("Radio");
     while(1) {
-        switch(IState) {
-            case rIdle:
+//        switch(IState) {
+//            case rIdle:
                 CC.TransmitAndWaitIdle(&PktTx, CC_PKT_LEN);
-                Uart.Printf("t");
-                chThdSleepMilliseconds(450);
-                break;
-
-            case rService:
-                break;
-        }
+                //Uart.Printf("t");
+                chThdSleepMilliseconds(4);
+//                break;
+//
+//            case rService:
+//                break;
+//        }
     } // while 1
     return 0;
 }
@@ -51,8 +51,8 @@ void Radio_t::Init() {
     ClearContacts();
 
     CC.Init();
-    CC.SetChannel(0);
-    CC.SetPower(Pwr0dBm);
+    //CC.SetChannel(0);
+    //CC.SetPower(PwrPlus12dBm);
 
     // ==== Create and start thread ====
     chThdCreateStatic(waRadioThread, sizeof(waRadioThread), NORMALPRIO, RadioThread, NULL);

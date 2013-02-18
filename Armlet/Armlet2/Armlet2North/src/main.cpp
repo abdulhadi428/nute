@@ -52,7 +52,7 @@ void Init() {
     Uart.Printf("Armlet2 AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
     Lcd.Init();
     SouthBridge.Init();
-    Radio.Init();
+    //Radio.Init();
     SD.Init();
     // Application init
     App.Init();

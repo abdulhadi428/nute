@@ -17,12 +17,12 @@ void sd_t::Init() {
     IsReady = FALSE;
 
     // Bus pins
-    PinSetupAlterFunc(GPIOC,  8, omPushPull, pudPullUp, AF12, ps25MHz);
-    PinSetupAlterFunc(GPIOC,  9, omPushPull, pudPullUp, AF12, ps25MHz);
-    PinSetupAlterFunc(GPIOC, 10, omPushPull, pudPullUp, AF12, ps25MHz);
-    PinSetupAlterFunc(GPIOC, 11, omPushPull, pudPullUp, AF12, ps25MHz);
-    PinSetupAlterFunc(GPIOC, 12, omPushPull, pudNone,   AF12, ps25MHz);
-    PinSetupAlterFunc(GPIOD,  2, omPushPull, pudPullUp, AF12, ps25MHz);
+    PinSetupAlterFunc(GPIOC,  8, omPushPull, pudPullUp, AF12, ps50MHz);
+    PinSetupAlterFunc(GPIOC,  9, omPushPull, pudPullUp, AF12, ps50MHz);
+    PinSetupAlterFunc(GPIOC, 10, omPushPull, pudPullUp, AF12, ps50MHz);
+    PinSetupAlterFunc(GPIOC, 11, omPushPull, pudPullUp, AF12, ps50MHz);
+    PinSetupAlterFunc(GPIOC, 12, omPushPull, pudNone,   AF12, ps50MHz);
+    PinSetupAlterFunc(GPIOD,  2, omPushPull, pudPullUp, AF12, ps50MHz);
     // Power pin
     PinSetupOut(GPIOC, 4, omPushPull, pudNone);
     PinClear(GPIOC, 4); // Power on

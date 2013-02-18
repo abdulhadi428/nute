@@ -20,22 +20,23 @@
 #define CC_RX_FIFO_SIZE     32
 
 // =================================== Power ===================================
-#define PwrMinus30dBm   0x03
-#define PwrMinus20dBm   0x17
-#define PwrMinus15dBm   0x1D
-#define PwrMinus10dBm   0x26
-#define PwrMinus6dBm    0x37
-#define Pwr0dBm         0x50
-#define PwrPlus5dBm     0x81
-#define PwrPlus7dBm     0xCB
-#define PwrPlus10dBm    0xC2
+#define PwrMinus30dBm       0x03
+#define PwrMinus20dBm       0x17
+#define PwrMinus15dBm       0x1D
+#define PwrMinus10dBm       0x26
+#define PwrMinus6dBm        0x37
+#define Pwr0dBm             0x50
+#define PwrPlus5dBm         0x86
+#define PwrPlus7dBm         0xCD
+#define PwrPlus10dBm        0xC5
+#define PwrPlus12dBm        0xC0
 
 #define CC_PATABLE_INITIAL  Pwr0dBm
 
 // ===================== Frequency 868 MHz: RF Studio ==========================
-#define CC_FREQ2_VALUE      0x21        // Frequency control word, high byte.
-#define CC_FREQ1_VALUE      0x62        // Frequency control word, middle byte.
-#define CC_FREQ0_VALUE      0x76        // Frequency control word, low byte.
+#define CC_FREQ2_VALUE      0x20        // Frequency control word, high byte.
+#define CC_FREQ1_VALUE      0x25        // Frequency control word, middle byte.
+#define CC_FREQ0_VALUE      0xED        // Frequency control word, low byte.
 
 // =================================== Common ==================================
 //#define CC_MDMCFG1_VALUE    0b10100010  // FEC=1, Preamble length=010 => 4bytes, Ch spacing=10=2
@@ -44,8 +45,8 @@
 
 #define CC_MCSM0_VALUE      0x18        // Calibrate at IDLE->RX,TX
 // Clear channel signal
-//#define CC_CCA_MODE         0b00000000  // Always clear
-#define CC_CCA_MODE         0b00100000  // Unless currently receiving a packet
+#define CC_CCA_MODE         0b00000000  // Always clear
+//#define CC_CCA_MODE         0b00100000  // Unless currently receiving a packet
 #define CC_RXOFF_MODE       0b00000000  // RX->IDLE
 //#define CC_RXOFF_MODE       0b00001100  // RX->RX
 #define CC_TXOFF_MODE       0b00000000  // TX->IDLE
@@ -129,9 +130,9 @@
 #define CC_FSCTRL0_VALUE    0x00        // } Frequency synthesizer control: RF studio, nothing to do here
 
 #define CC_MDMCFG4_VALUE    0x2D        // }
-#define CC_MDMCFG3_VALUE    0x3B        // } Modem configuration: RF Studio, nothing to do here
+#define CC_MDMCFG3_VALUE    0x2F        // } Modem configuration: RF Studio, nothing to do here
 #define CC_MDMCFG2_VALUE    0x13        // Filter, modulation format, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
-#define CC_MDMCFG0_VALUE    0xF8        // Modem configuration: RF Studio, nothing to do here
+#define CC_MDMCFG0_VALUE    0xFF        // Modem configuration: RF Studio, nothing to do here
 
 #define CC_DEVIATN_VALUE    0x62        // Modem deviation setting - RF studio, nothing to do here
 #define CC_FREND1_VALUE     0xB6        // Front end RX configuration - RF studio, no docs, nothing to do
@@ -139,7 +140,7 @@
 
 #define CC_FOCCFG_VALUE     0x1D        // Frequency Offset Compensation - RF studio, some unknown reasons for settings
 #define CC_BSCFG_VALUE      0x1C        // Bit synchronization Configuration - RF studio, some unknown reasons for settings
-#define CC_AGCCTRL2_VALUE   0x07        // AGC control: 00 - all gain settings, 000 - max possible gain, 111 - target ampl=42dB
+#define CC_AGCCTRL2_VALUE   0xC7        // AGC control: 00 - all gain settings, 000 - max possible gain, 111 - target ampl=42dB
 #define CC_AGCCTRL1_VALUE   0x00        // Generally, nothing interesting
 #define CC_AGCCTRL0_VALUE   0xB0        // AGC filter settings: RF studio, some unknown reasons for settings
 
