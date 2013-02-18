@@ -8,6 +8,13 @@
 #ifndef RADIO_H_
 #define RADIO_H_
 
+/*
+ * Top-level radio protocol is here.
+ * Application level at top side, and pkt leve at bottom.
+ *
+ */
+
+
 #include "ch.h"
 
 struct Contact_t {

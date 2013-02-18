@@ -20,28 +20,17 @@
 #define CC_RX_FIFO_SIZE     32
 
 // =================================== Power ===================================
-#define plN30dBm    0
-#define plN20dBm    1
-#define plN15dBm    2
-#define plN10dBm    3
-#define plN6dBm     4
-#define pl0dBm      5
-#define plP5dBm     6
-#define plP7dBm     7
-#define plP10dBm    8
-const uint8_t CC_PwrLevels[9] = {
-        0x03,   // -30 dBm
-        0x17,   // -20 dBm
-        0x1D,   // -15 dBm
-        0x26,   // -10 dBm
-        0x37,   // -6 dBm
-        0x50,   // 0 dBm
-        0x81,   // +5 dBm
-        0xCB,   // +7 dBm
-        0xC2    // +10 dBm
-};
+#define PwrMinus30dBm   0x03
+#define PwrMinus20dBm   0x17
+#define PwrMinus15dBm   0x1D
+#define PwrMinus10dBm   0x26
+#define PwrMinus6dBm    0x37
+#define Pwr0dBm         0x50
+#define PwrPlus5dBm     0x81
+#define PwrPlus7dBm     0xCB
+#define PwrPlus10dBm    0xC2
 
-#define CC_PATABLE_INITIAL  CC_PwrLevels[pl0dBm]
+#define CC_PATABLE_INITIAL  Pwr0dBm
 
 // ===================== Frequency 868 MHz: RF Studio ==========================
 #define CC_FREQ2_VALUE      0x21        // Frequency control word, high byte.
@@ -72,6 +61,7 @@ const uint8_t CC_PwrLevels[9] = {
 //#define CC_PKTCTRL1_VALUE   0b00001110  // PQT=0, CRC autoflush=1, Append=1, Address check = 10 (check, 0 is broadcast)
 #define CC_PKTCTRL1_VALUE   0b00001100  // PQT=0, CRC autoflush=1, Append status=1, Address check = 00 (no check)
 #define CC_PKTCTRL0_VALUE   0b01000100  // WhiteData=1, PKTFormat=normal, CRC enabled, Fixed Length
+//#define CC_PKTCTRL0_VALUE   0b01000101  // WhiteData=1, PKTFormat=normal, CRC enabled, Variable Length
 #define CC_ADDR_VALUE       0x01        // Device address.
 
 // ========================= Bitrate-specific ==================================

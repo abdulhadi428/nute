@@ -83,7 +83,11 @@ static inline void PinSetupOut(GPIO_TypeDef *PGpioPort, const uint16_t APinNumbe
     PGpioPort->OSPEEDR &= ~(0b11 << (APinNumber*2)); // clear previous bits
     PGpioPort->OSPEEDR |= (uint32_t)ASpeed << (APinNumber*2);
 }
-static inline void PinSetupIn(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber, const PinPullUpDown_t APullUpDown) {
+static inline void PinSetupIn(
+        GPIO_TypeDef *PGpioPort,
+        const uint16_t APinNumber,
+        const PinPullUpDown_t APullUpDown
+        ) {
     // Clock
     PinClockEnable(PGpioPort);
     // Setup mode
@@ -101,7 +105,8 @@ static inline void PinSetupAnalog(GPIO_TypeDef *PGpioPort, const uint16_t APinNu
     PGpioPort->PUPDR &= ~(0b11 << (APinNumber*2)); // clear previous bits
     PGpioPort->PUPDR |= (uint32_t)APullUpDown << (APinNumber*2);
 }
-static inline void PinSetupAlterFunc(GPIO_TypeDef *PGpioPort,
+static inline void PinSetupAlterFunc(
+        GPIO_TypeDef *PGpioPort,
         const uint16_t APinNumber,
         const PinOutMode_t PinOutMode,
         const PinPullUpDown_t APullUpDown,

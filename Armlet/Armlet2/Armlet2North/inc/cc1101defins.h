@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   cc2500defins.h
  * Author: Kreyl Laurelindo
  *
@@ -45,7 +45,6 @@
 #define CC_RXBYTES      0x3B|CC_BURST_FLAG
 #define CC_RCCTRL1_STATUS 0x3C|CC_BURST_FLAG
 #define CC_RCCTRL0_STATUS 0x3D|CC_BURST_FLAG
-
 
 // States
 #define CC_ST_SLEEP         0

@@ -13,7 +13,7 @@
 #include "lcd2630.h"
 #include "peripheral.h"
 #include "southbridge.h"
-#include "cc1101.h"
+#include "radio.h"
 #include "kl_sd.h"
 
 #include "application.h"
