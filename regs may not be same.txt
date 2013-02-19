@@ -1,0 +1,12 @@
+Upon issuing the make command from stlink/example/libs_stm/build, I received the following error:
+
+make[1]: Entering directory /home/thb/projects/stlink/stlink/example/libs_stm/build'
+arm-none-eabi-gcc -mcpu=cortex-m3 -Wall -O2 -mlittle-endian -mthumb -mcpu=cortex-m3 -ffreestanding -nostdlib -nostdinc -I../inc/stm32f10x -I../inc/device_support -I../inc/core_support -I../inc/base -c -o ../inc/core_support/core_cm3.o ../inc/core_support/core_cm3.c
+/tmp/ccVFQZtE.s: Assembler messages:
+/tmp/ccVFQZtE.s:318: Error: registers may not be the same --strexb r0,r0,[r1]'
+/tmp/ccVFQZtE.s:333: Error: registers may not be the same -- strexh r0,r0,[r1]'
+make[1]: *** [../inc/core_support/core_cm3.o] Error 1
+make[1]: Leaving directory/home/thb/projects/stlink/stlink/example/libs_stm/build'
+make: *** [all] Error 2
+
+The behavior of strexb and strexh is apparently undefined when the two registers are the same. I have attached a patch that fixes the issue. The problems are on lines 736 and 753 of inc/core_support/core_cm3.c. The : "=r" (result) should be changed to : "=&r" (result), which will cause GCC to use a different register for the target operand
