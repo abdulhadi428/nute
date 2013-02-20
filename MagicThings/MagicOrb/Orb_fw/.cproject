@@ -117,7 +117,7 @@
 			<resource resourceType="PROJECT" workspacePath="/AccTx"/>
 		</configuration>
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/MagicOrbControl"/>
+			<resource resourceType="PROJECT" workspacePath="/MagicOrb"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>

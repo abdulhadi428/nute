@@ -10,27 +10,22 @@
 #include "kl_lib.h"
 #include "cc2500.h"
 #include "adc.h"
-#include "led.h"
 
-//#define _TX_
-
-// Variables
-#ifdef _TX_
-
-#endif
+#include "led_table.h"
 
 // Prototypes
-static void Init();
+static inline void Init();
+static void SendDataTask();
 
 // ============================== Implementation ===============================
 int main(void) {
     Init();
-
-    uint32_t Tmr;
     while(1) {
         //Led.Task();
-        //CC.Task();
+        CC.Task();
         Uart.Task();
+        SendDataTask();
+        Adc.Task();
     }
 }
 
@@ -40,70 +35,39 @@ static inline void Init() {
 
     Delay.Init();
     Uart.Init(115200);
-#ifdef _TX_
-    Uart.Printf("\rMagicOrb TX\r");
-#else
-    Uart.Printf("\rMagicOrb\r");
-#endif
+    Uart.Printf("\rMagicOrb Control\r");
+
+    Adc.Init();
 
     // Setup CC
-//    CC.Init();
-//    CC.SetChannel(CC_CHNL);
-//    CC.SetAddress(7);
-//    CC.Wake();
+    CC.Init();
+    CC.SetChannel(CC_CHNL);
 
-    //Led.Init(GPIOA, 1);
+    // Switch on Pwr LED
+    klGpioSetupByN(GPIOB, 12, GPIO_Mode_Out_PP);
+    klGpioSetByN(GPIOB, 12);
 }
 
-// =============================== CC handling =================================
-/*
- * Both TX and RX are interrupt-driven, so IRQ enabled at init and commented out in EnterRX.
- */
-void CC_t::Task(void) {
-    if (IsShutdown) return;
-    // Do with CC what needed
-    GetState();
-    switch (State) {
-        case CC_STB_RX_OVF:
-            Uart.Printf("RX ovf\r");
-            FlushRxFIFO();
-            break;
-        case CC_STB_TX_UNDF:
-            Uart.Printf("TX undf\r");
-            FlushTxFIFO();
-            break;
+uint32_t SDTmr;
+void SendDataTask() {
+    if(Delay.Elapsed(&SDTmr, 7)) {
+        //Uart.Printf("%u; %u; %u; %u\r", R[0], R[1], R[2], R[3]);
+        R[0] >>= 4;
+        R[1] >>= 4;
+        R[2] >>= 4;
+        R[3] >>= 4;
 
-        case CC_STB_IDLE:
-#ifdef _TX_
-        	if(Acc.NewData()) {
-				//Uart.Printf("TX\r");
-				// Prepare packet to send
-        		TX_Pkt.Addr = 207;
-				TX_Pkt.x = Acc.x;
-				TX_Pkt.y = Acc.y;
-				TX_Pkt.z = Acc.z;
-				WriteTX();
-				EnterTX();
-        	}
-#else
-        	//Uart.Printf("RX\r");
-        	EnterRX();
-#endif
-            break;
+//        CC.TX_Pkt.R = (R[0] < LED_TABLE_SZ)? LedTable[R[0]] : 255;
+//        CC.TX_Pkt.G = (R[1] < LED_TABLE_SZ)? LedTable[R[1]] : 255;
+//        CC.TX_Pkt.B = (R[2] < LED_TABLE_SZ)? LedTable[R[2]] : 255;
+//        CC.TX_Pkt.W = (R[3] < LED_TABLE_SZ)? LedTable[R[3]] : 255;
 
-        default: // Just get out in other cases
-            //klPrintf("Other: %X\r", State);
-            break;
-    } //Switch
-}
+        CC.TX_Pkt.R = R[0];
+        CC.TX_Pkt.G = R[1];
+        CC.TX_Pkt.B = R[2];
+        CC.TX_Pkt.W = R[3];
+        //Uart.Printf("%u; %u; %u; %u\r", CC.TX_Pkt.R, CC.TX_Pkt.G, CC.TX_Pkt.B, CC.TX_Pkt.W);
 
-void CC_t::IRQHandler() {
-#ifndef _TX_
-	// Will be here if packet received successfully or in case of wrong address
-	//if (ReadRX())  // Proceed if read was successful
-	ReadRX();
-	if(RX_Pkt.Addr == 207) Uart.Printf("%d;%d;%d;\r", RX_Pkt.x, RX_Pkt.y, RX_Pkt.z);
-
-	FlushRxFIFO();
-#endif
+        CC.SendPkt();
+    }
 }

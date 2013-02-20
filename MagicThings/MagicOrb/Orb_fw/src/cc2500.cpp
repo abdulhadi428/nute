@@ -50,7 +50,7 @@ void CC_t::Init(void) {
     Reset();
     FlushRxFIFO();
     RfConfig();
-    //IRQEnable();
+    IRQEnable();
 }
 
 void CC_t::SetChannel(uint8_t AChannel) {
@@ -93,7 +93,7 @@ void CC_t::IRQDisable(void) {
 }
 
 void CC_t::EnterRX(void) {
-    //NewPktRcvd = false;
+    NewPktRcvd = false;
     WriteStrobe(CC_SRX);
     //IRQEnable();
 }
@@ -115,22 +115,22 @@ bool CC_t::ReadRX() {
     FifoSize &= 0x7F;                               // Remove MSB
     if(FifoSize == 0) return false;
 #ifdef CC_PRINT_RX
-    klPrintf("Size: %u    ", FifoSize);
+    Uart.Printf("Size: %u    ", FifoSize);
 #endif
     if (FifoSize > (CC_PKT_LEN+2)) FifoSize = CC_PKT_LEN+2;
     CS_Lo();                                        // Start transmission
     BusyWait();                                     // Wait for chip to become ready
-    ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);              // Address with read & burst flags
-    for (uint8_t i=0; i<FifoSize; i++) {    // Read bytes
+    ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);  // Address with read & burst flags
+    for (uint8_t i=0; i<FifoSize; i++) {            // Read bytes
         b = ReadWriteByte(0);
         *p++ = b;
 #ifdef CC_PRINT_RX
-        klPrintf("0x%u ", b);
+        Uart.Printf("0x%u ", b);
 #endif
     }
     CS_Hi();    // End transmission
 #ifdef CC_PRINT_RX
-    klPrintf("\r");
+    Uart.Printf("\r");
 #endif
     return true;
 }
@@ -215,8 +215,8 @@ void EXTI3_IRQHandler(void) {
 }
 
 void CC_t::Task(void) {
-    if(!Delay.Elapsed(&Timer, 4)) return;
     // Do with CC what needed
+    if(!Delay.Elapsed(&Timer, 18)) return;
     GetState();
     switch (State) {
         case CC_STB_RX_OVF:
@@ -228,6 +228,11 @@ void CC_t::Task(void) {
             FlushTxFIFO();
             break;
 
+        case CC_STB_IDLE:
+            //Uart.Printf("EntRx\r");
+            EnterRX();
+            break;
+
         default: // Just get out in other cases
             //klPrintf("Other: %X\r", State);
             break;
@@ -236,10 +241,10 @@ void CC_t::Task(void) {
 
 void CC_t::IRQHandler() {
     // Will be here if packet received successfully or in case of wrong address
-    //if (ReadRX())  // Proceed if read was successful
-//  ReadRX();
+    if (ReadRX()) {  // Proceed if read was successful
+        NewPktRcvd = true;
+    }
 //  if(RX_Pkt.Addr == 207) Uart.Printf("%d;%d;%d;\r", RX_Pkt.x, RX_Pkt.y, RX_Pkt.z);
-//
-//  FlushRxFIFO();
+    FlushRxFIFO();
 }
 

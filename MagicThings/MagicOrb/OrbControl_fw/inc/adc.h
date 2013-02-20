@@ -22,21 +22,22 @@ class Adc_t {
 private:
     uint16_t ADCValues[ADC_AVERAGE_COUNT];
 protected:
-    uint16_t IValue;
+    uint32_t IValue;
     uint32_t Timer;
-    void Measure(void);
+    bool MeasurementCompleted() {
+        if(DMA_GetFlagStatus(DMA1_FLAG_TC1)) {
+            DMA_ClearFlag(DMA1_FLAG_TC1);
+            return true;
+        }
+        else return false;
+    }
 public:
-    void Init(void);
+    void Init();
+    void Task();
 };
 
-class Battery_t : public Adc_t {
-public:
-    BatteryState_t State;
-    void Task(void);
-    void EvtNewState(void) {}
-};
+extern Adc_t Adc;
 
-
-extern Battery_t Battery;
+extern uint16_t R[4];
 
 #endif /* ADC_H_ */
