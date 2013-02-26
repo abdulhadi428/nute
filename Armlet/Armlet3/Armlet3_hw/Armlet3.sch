@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 2/26/2013 5:42:32 PM
+EESchema Schematic File Version 2  date 2/26/2013 7:36:17 PM
 LIBS:Connectors_kl
 LIBS:display_kl
 LIBS:pcb_details
@@ -28,7 +28,35 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 Wire Wire Line
-	9200 8450 9700 8450
+	12950 9950 13150 9950
+Wire Wire Line
+	12950 9750 13150 9750
+Wire Wire Line
+	9050 7850 9700 7850
+Wire Wire Line
+	12950 9350 13150 9350
+Wire Wire Line
+	12950 9050 13150 9050
+Wire Wire Line
+	9700 7750 9050 7750
+Wire Wire Line
+	9700 7550 9050 7550
+Wire Wire Line
+	9700 7350 9050 7350
+Wire Wire Line
+	9700 7150 9050 7150
+Wire Wire Line
+	1850 1300 1950 1300
+Wire Wire Line
+	1850 1500 1950 1500
+Wire Wire Line
+	1850 1700 1950 1700
+Wire Wire Line
+	1850 1900 1950 1900
+Wire Wire Line
+	1850 2300 1950 2300
+Wire Wire Line
+	13350 10450 13850 10450
 Wire Wire Line
 	13700 6850 13700 5350
 Wire Wire Line
@@ -72,12 +100,6 @@ Wire Wire Line
 	16100 2850 16250 2850
 Wire Wire Line
 	13150 6250 12950 6250
-Wire Wire Line
-	9400 7850 9700 7850
-Wire Wire Line
-	9400 7650 9700 7650
-Wire Wire Line
-	9400 7350 9700 7350
 Connection ~ 7450 9850
 Wire Wire Line
 	7400 9850 9700 9850
@@ -124,11 +146,9 @@ Wire Notes Line
 Wire Notes Line
 	13850 12050 13850 11250
 Wire Wire Line
-	9300 8250 9700 8250
+	14150 10400 14550 10400
 Wire Wire Line
-	9300 8050 9700 8050
-Wire Wire Line
-	9700 7150 9400 7150
+	14150 10200 14550 10200
 Wire Wire Line
 	16350 11750 16250 11750
 Wire Wire Line
@@ -311,7 +331,7 @@ Wire Wire Line
 Wire Wire Line
 	21500 12000 21500 11800
 Wire Wire Line
-	9300 7550 9700 7550
+	9300 7950 9700 7950
 Connection ~ 13000 14550
 Wire Wire Line
 	13000 14700 13000 14550
@@ -412,22 +432,6 @@ Wire Wire Line
 Wire Wire Line
 	2650 3750 2650 3900
 Connection ~ 2650 3200
-Wire Wire Line
-	1850 1700 2000 1700
-Connection ~ 1900 2100
-Wire Wire Line
-	1900 2600 1900 1300
-Wire Wire Line
-	1900 2600 1850 2600
-Connection ~ 1900 1600
-Wire Wire Line
-	1900 1600 1850 1600
-Connection ~ 1900 1900
-Wire Wire Line
-	1900 1900 1850 1900
-Connection ~ 1900 1500
-Wire Wire Line
-	1900 1500 1850 1500
 Wire Wire Line
 	20650 2650 20650 2400
 Wire Wire Line
@@ -831,20 +835,6 @@ Wire Wire Line
 	20650 1450 20650 1400
 Connection ~ 20650 2650
 Wire Wire Line
-	1900 1300 1850 1300
-Wire Wire Line
-	1900 2100 1850 2100
-Connection ~ 1900 1700
-Wire Wire Line
-	1900 1800 1850 1800
-Connection ~ 1900 1800
-Wire Wire Line
-	1850 1400 1900 1400
-Connection ~ 1900 1400
-Wire Wire Line
-	1900 2300 1850 2300
-Connection ~ 1900 2300
-Wire Wire Line
 	2650 3350 2650 3200
 Wire Wire Line
 	2800 3200 1850 3200
@@ -1051,13 +1041,9 @@ Wire Wire Line
 Wire Wire Line
 	16250 11400 16350 11400
 Wire Wire Line
-	9400 7250 9700 7250
+	14550 10300 14150 10300
 Wire Wire Line
-	9400 7050 9700 7050
-Wire Wire Line
-	9700 8150 9300 8150
-Wire Wire Line
-	9700 8350 9300 8350
+	14550 10500 14150 10500
 Wire Wire Line
 	21500 7500 21500 7450
 Wire Wire Line
@@ -1098,16 +1084,107 @@ Connection ~ 7200 9750
 Wire Wire Line
 	12950 9150 13050 9150
 Wire Wire Line
-	9700 7450 9400 7450
-Wire Wire Line
-	9700 7750 9400 7750
-Wire Wire Line
-	9700 7950 9400 7950
-Wire Wire Line
 	12950 7050 13050 7050
 Wire Wire Line
 	13050 7750 12950 7750
-Text Label 9200 8450 0    60   ~ 0
+Wire Wire Line
+	1950 2600 1850 2600
+Wire Wire Line
+	1950 2100 1850 2100
+Wire Wire Line
+	1950 1800 1850 1800
+Wire Wire Line
+	1950 1600 1850 1600
+Wire Wire Line
+	1950 1400 1850 1400
+Wire Wire Line
+	9050 7050 9700 7050
+Wire Wire Line
+	9050 7250 9700 7250
+Wire Wire Line
+	9050 7450 9700 7450
+Wire Wire Line
+	9050 7650 9700 7650
+Wire Wire Line
+	13150 8950 12950 8950
+Wire Wire Line
+	13150 9250 12950 9250
+Wire Wire Line
+	13150 9550 12950 9550
+Wire Wire Line
+	13150 9650 12950 9650
+Wire Wire Line
+	13150 9850 12950 9850
+Text Label 6200 8100 0    60   ~ 0
+LCD_DC_SCLK
+Text Label 6200 8000 0    60   ~ 0
+LCD_RD
+Text Label 9050 7850 0    60   ~ 0
+LCD_WR
+Text Label 6200 8600 0    60   ~ 0
+LCD_PAR_SPI
+Text Label 9100 5850 0    60   ~ 0
+LCD_DA0_SDA
+Text Label 9100 5650 0    60   ~ 0
+LCD_DC_SCLK
+Text Label 15800 9700 0    60   ~ 0
+LCD_XRES
+Text Label 15800 9900 0    60   ~ 0
+LCD_XCS
+Text Label 9050 7050 0    60   ~ 0
+LCD_DA0_SDA
+Text Label 15800 9400 0    60   ~ 0
+LCD_DC_SCLK
+Text Label 9050 7150 0    60   ~ 0
+LCD_DA1
+Text Label 9050 7250 0    60   ~ 0
+LCD_DA2
+Text Label 9050 7350 0    60   ~ 0
+LCD_DA3
+Text Label 9050 7450 0    60   ~ 0
+LCD_DA4
+Text Label 9050 7550 0    60   ~ 0
+LCD_DA5
+Text Label 9050 7650 0    60   ~ 0
+LCD_DA6
+Text Label 9050 7750 0    60   ~ 0
+LCD_DA7
+Text Label 15800 9300 0    60   ~ 0
+LCD_RD
+Text Label 15800 9500 0    60   ~ 0
+LCD_WR
+Text Label 15800 9800 0    60   ~ 0
+LCD_PAR_SPI
+Text Label 1950 2600 0    60   ~ 0
+LCD_PAR_SPI
+Text Label 1950 2300 0    60   ~ 0
+LCD_WR
+Text Label 1950 2100 0    60   ~ 0
+LCD_RD
+Text Label 1950 1900 0    60   ~ 0
+LCD_DA7
+Text Label 1950 1800 0    60   ~ 0
+LCD_DA6
+Text Label 1950 1700 0    60   ~ 0
+LCD_DA5
+Text Label 1950 1600 0    60   ~ 0
+LCD_DA4
+Text Label 1950 1500 0    60   ~ 0
+LCD_DA3
+Text Label 1950 1400 0    60   ~ 0
+LCD_DA2
+Text Label 1950 1300 0    60   ~ 0
+LCD_DA1
+$Comp
+L STM32F205VX-100 DD?
+U 1 1 512C8AE1
+P 11350 7750
+F 0 "DD?" H 10750 10350 60  0000 C CNN
+F 1 "STM32F205VX-100" H 11400 10350 60  0000 C CNN
+	1    11350 7750
+	1    0    0    -1  
+$EndComp
+Text Label 13350 10450 0    60   ~ 0
 PeriphPwr
 Text Label 14250 3100 0    60   ~ 0
 ACC_IRQ
@@ -1351,15 +1428,6 @@ F 2 "RES_0402" V 9130 10400 28  0000 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L STM32F205VX-100 DD?
-U 1 1 512C8AE1
-P 11350 7750
-F 0 "DD?" H 10750 10350 60  0000 C CNN
-F 1 "STM32F205VX-100" H 11400 10350 60  0000 C CNN
-	1    11350 7750
-	1    0    0    -1  
-$EndComp
-$Comp
 L GND #PWR?
 U 1 1 50D78699
 P 12450 2250
@@ -1377,23 +1445,23 @@ F 1 "ANT_PCB_MONO_GND" H 12450 2050 60  0000 C CNN
 	1    12250 1900
 	1    0    0    -1  
 $EndComp
-Text Label 9400 7750 0    60   ~ 0
+Text Label 13150 9750 0    60   ~ 0
 Btn7
-Text Label 9400 7850 0    60   ~ 0
+Text Label 13150 9850 0    60   ~ 0
 Btn8
-Text Label 9400 7950 0    60   ~ 0
+Text Label 13150 9950 0    60   ~ 0
 Btn9
-Text Label 9400 7350 0    60   ~ 0
+Text Label 13150 9350 0    60   ~ 0
 Btn4
-Text Label 9400 7450 0    60   ~ 0
+Text Label 13150 9550 0    60   ~ 0
 Btn5
-Text Label 9400 7650 0    60   ~ 0
+Text Label 13150 9650 0    60   ~ 0
 Btn6
-Text Label 9400 7050 0    60   ~ 0
+Text Label 13150 8950 0    60   ~ 0
 Btn1
-Text Label 9400 7150 0    60   ~ 0
+Text Label 13150 9050 0    60   ~ 0
 Btn2
-Text Label 9400 7250 0    60   ~ 0
+Text Label 13150 9250 0    60   ~ 0
 Btn3
 Text Label 16350 12100 0    60   ~ 0
 Btn9
@@ -1532,13 +1600,13 @@ F 1 "CONN_4" V 1200 6050 40  0000 C CNN
 	1    1150 6050
 	1    0    0    -1  
 $EndComp
-Text Label 9300 8250 0    60   ~ 0
+Text Label 14150 10400 0    60   ~ 0
 P2_SDA
-Text Label 9300 8350 0    60   ~ 0
+Text Label 14150 10500 0    60   ~ 0
 P2_SCL
-Text Label 9300 8050 0    60   ~ 0
+Text Label 14150 10200 0    60   ~ 0
 P1_SCL
-Text Label 9300 8150 0    60   ~ 0
+Text Label 14150 10300 0    60   ~ 0
 P1_SDA
 Text Notes 3250 5750 0    60   ~ 0
 Peripheral\nI2C Pull-Ups
@@ -2768,15 +2836,6 @@ F 2 "IND_0402" V 10210 1660 40  0000 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L GND #PWR057
-U 1 1 5093C9A8
-P 2000 1700
-F 0 "#PWR057" H 2090 1680 30  0001 C CNN
-F 1 "GND" H 2000 1620 30  0001 C CNN
-	1    2000 1700
-	0    -1   -1   0   
-$EndComp
-$Comp
 L +3.3V #PWR058
 U 1 1 5093C9EA
 P 2800 3200
@@ -3720,7 +3779,7 @@ Text Label 13100 5650 0    60   ~ 0
 CC_GDO2
 Text Label 6350 2400 0    60   ~ 0
 CC_GDO2
-Text Label 9300 7550 0    60   ~ 0
+Text Label 9300 7950 0    60   ~ 0
 Vibro
 $Comp
 L MOTOR M1
@@ -3775,10 +3834,6 @@ Text Label 9100 5750 0    60   ~ 0
 LCD_XRES
 Text Label 9100 5550 0    60   ~ 0
 LCD_XCS
-Text Label 9100 5850 0    60   ~ 0
-LCD_SDA
-Text Label 9100 5650 0    60   ~ 0
-LCD_SCLK
 Text Label 9100 6150 0    60   ~ 0
 LCD_BCKLT
 Text Notes 2500 650  0    60   ~ 0
@@ -3795,9 +3850,9 @@ $EndComp
 Text Label 2900 2900 0    60   ~ 0
 LCD_BCKLT
 Text Label 1950 2200 0    60   ~ 0
-LCD_SCLK
+LCD_DC_SCLK
 Text Label 1950 1200 0    60   ~ 0
-LCD_SDA
+LCD_DA0_SDA
 Text Label 1950 2700 0    60   ~ 0
 LCD_XCS
 Text Label 1950 2500 0    60   ~ 0
