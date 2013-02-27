@@ -16,6 +16,8 @@ struct Pkt_t {
 } PACKED;
 #define CC_PKT_LEN  (sizeof(Pkt_t)-2)
 
+#define RX
+
 
 // =============================== Variables ===================================
 Radio_t Radio;
@@ -31,9 +33,13 @@ static msg_t RadioThread(void *arg) {
     while(1) {
 //        switch(IState) {
 //            case rIdle:
+#ifdef RX
+            CC.Receive();
+#else
                 CC.TransmitAndWaitIdle(&PktTx, CC_PKT_LEN);
                 //Uart.Printf("t");
                 chThdSleepMilliseconds(4);
+#endif
 //                break;
 //
 //            case rService:
