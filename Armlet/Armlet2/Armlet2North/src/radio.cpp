@@ -35,6 +35,7 @@ static msg_t RadioThread(void *arg) {
 //            case rIdle:
 #ifdef RX
             CC.Receive();
+
 #else
                 CC.TransmitAndWaitIdle(&PktTx, CC_PKT_LEN);
                 //Uart.Printf("t");

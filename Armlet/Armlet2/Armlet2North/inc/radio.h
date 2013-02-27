@@ -14,7 +14,6 @@
  *
  */
 
-
 #include "ch.h"
 
 struct Contact_t {

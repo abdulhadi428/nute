@@ -78,7 +78,7 @@ void cc1101_t::TransmitAndWaitIdle(void *Ptr, uint8_t Length) {
 void cc1101_t::Receive(void) {
     while(IState != CC_STB_IDLE) EnterIdle();
     //Aim = caRx;
-    //EnterRX();  // After that, some time will be wasted to recalibrate
+    EnterRX();  // After that, some time will be wasted to recalibrate
 }
 
 // Return RSSI in dBm
