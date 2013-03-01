@@ -234,7 +234,7 @@ void Vector58(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector5C(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector60(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector64(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector68(void) __attribute__((weak, alias("_unhandled_exception")));
+//void Vector68(void) __attribute__((weak, alias("_unhandled_exception"))); // EXTI4, CC1101
 void Vector6C(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector70(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector74(void) __attribute__((weak, alias("_unhandled_exception")));

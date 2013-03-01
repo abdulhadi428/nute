@@ -7,6 +7,8 @@
 
 #include "cc1101.h"
 
+#define GPIO0_IRQ_MASK  ((uint32_t)0x10)    // Line 4
+
 cc1101_t CC;
 
 void cc1101_t::Init() {
@@ -33,14 +35,16 @@ void cc1101_t::Init() {
     FlushRxFIFO();
     RfConfig();
 
-    GetState();
-    Uart.Printf("CC: %X\r", IState);
-
-
-    // ==== IRQs ====
-//    IrqPin0.Init(GPIOA, 4, GPIO_Mode_IPD);
-//    IrqPin0.IrqSetup(EXTI_Trigger_Falling);
-//    IrqPin0.IrqEnable();
+    // ==== IRQ ====
+    rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, FALSE); // Enable sys cfg controller
+    SYSCFG->EXTICR[1] &= 0xFFFFFFF0;    // EXTI4 is connected to PortA
+    // Configure EXTI line
+    EXTI->IMR  |=  GPIO0_IRQ_MASK;      // Interrupt mode enabled
+    EXTI->EMR  &= ~GPIO0_IRQ_MASK;      // Event mode disabled
+    EXTI->RTSR &= ~GPIO0_IRQ_MASK;      // Rising trigger disabled
+    EXTI->FTSR |=  GPIO0_IRQ_MASK;      // Falling trigger enabled
+    EXTI->PR    =  GPIO0_IRQ_MASK;      // Clean irq flag
+    nvicEnableVector(EXTI4_IRQn, CORTEX_PRIORITY_MASK(STM32_EXT_EXTI4_IRQ_PRIORITY));
 }
 
 // ========================== TX, RX, freq and power ===========================
@@ -76,9 +80,41 @@ void cc1101_t::TransmitAndWaitIdle(void *Ptr, uint8_t Length) {
 }
 
 void cc1101_t::Receive(void) {
-    while(IState != CC_STB_IDLE) EnterIdle();
+    //while(IState != CC_STB_IDLE) EnterIdle();
     //Aim = caRx;
+    PinSet(GPIOB, 0);
+
     EnterRX();  // After that, some time will be wasted to recalibrate
+//    while(!GDO2IsHi());
+    while(!GDO0IsHi());     // Wait until sync word is sent
+    while(GDO0IsHi());      // Wait until transmission completed
+
+    //PinClear(GPIOB, 0);
+    FlushRxFIFO();
+    //Uart.Printf("1\r");
+//    uint8_t b;
+////    bool result=false;
+////    b = ReadRegister(CC_RXBYTES);
+////    Uart.Printf("Sz: %X  ", b);
+//    // Get pkt status
+//    b = ReadRegister(CC_PKTSTATUS);
+////    Uart.Printf("St: %X  ", b);
+//    if(b & 0x80) {  // CRC OK
+////    if(b) {  // FIFO not empty
+//        CsLo();                                            // Start transmission
+//        //BusyWait();                                         // Wait for chip to become ready
+//        ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);  // Address with read & burst flags
+//        for (uint8_t i=0; i<12+2; i++) {            // Read bytes
+//            b = ReadWriteByte(0);
+//            //*PArr++ = b;
+//      //      Uart.Printf(" %X", b);
+//        }
+//        CsHi();    // End transmission
+////        result = true;
+//    }
+//    Uart.Printf("\r");
+    //FlushRxFIFO();
+    //Uart.Printf("2\r");
 }
 
 // Return RSSI in dBm
@@ -177,3 +213,16 @@ void cc1101_t::RfConfig() {
     WriteRegister(CC_MCSM1, CC_MCSM1_VALUE);
 }
 
+// ============================= Interrupts ====================================
+extern "C" {
+
+CH_IRQ_HANDLER(EXTI4_IRQHandler) {
+    CH_IRQ_PROLOGUE();
+    EXTI->PR = (1 << 4);  // Clean irq flag
+
+    PinClear(GPIOB, 0);
+
+    CH_IRQ_EPILOGUE();
+}
+
+} // extern c

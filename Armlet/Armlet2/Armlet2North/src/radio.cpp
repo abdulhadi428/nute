@@ -30,16 +30,32 @@ static WORKING_AREA(waRadioThread, 128);
 static msg_t RadioThread(void *arg) {
     (void)arg;
     chRegSetThreadName("Radio");
+
+    PinSetupOut(GPIOB, 0, omPushPull, pudNone);
+
+    PktTx.IdArr[0] = 0x12345678;
+    PktTx.IdArr[1] = 0;
+    PktTx.IdArr[2] = 0xDEADBEEF;
+
+    Uart.Printf("RX\r");
+
     while(1) {
 //        switch(IState) {
 //            case rIdle:
 #ifdef RX
-            CC.Receive();
+        //PinSet(GPIOB, 0);
+        CC.Receive();
+        //PinClear(GPIOB, 0);
+        chThdSleepMilliseconds(2);
 
 #else
-                CC.TransmitAndWaitIdle(&PktTx, CC_PKT_LEN);
-                //Uart.Printf("t");
-                chThdSleepMilliseconds(4);
+
+            PinSet(GPIOB, 0);
+            CC.TransmitAndWaitIdle(&PktTx, CC_PKT_LEN);
+            PinClear(GPIOB, 0);
+
+            //Uart.Printf("t");
+            chThdSleepMilliseconds(4);
 #endif
 //                break;
 //
