@@ -50,12 +50,13 @@ private:
     // Strobes
     void CReset()       { WriteStrobe(CC_SRES); }
     void FlushRxFIFO()  { WriteStrobe(CC_SFRX); }
-    void EnterRX()      { WriteStrobe(CC_SRX);  }
     void EnterTX()      { WriteStrobe(CC_STX);  }
     void PowerDown()    { WriteStrobe(CC_SPWD); }
     void FlushTxFIFO()  { WriteStrobe(CC_SFTX); }
     void GetState()     { WriteStrobe(CC_SNOP); }
 public:
+    void EnterRX()      { WriteStrobe(CC_SRX);  }
+
     void Init();
     int16_t RSSI_dBm(uint8_t ARawRSSI);
     void SetChannel(uint8_t AChannel);

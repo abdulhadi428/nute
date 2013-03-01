@@ -21,6 +21,8 @@ struct Pkt_t {
 
 // =============================== Variables ===================================
 Radio_t Radio;
+static Thread *PThread;
+
 static RadioState_t IState;
 
 Pkt_t PktTx;
@@ -44,9 +46,11 @@ static msg_t RadioThread(void *arg) {
 //            case rIdle:
 #ifdef RX
         //PinSet(GPIOB, 0);
-        CC.Receive();
+        //CC.Receive();
+        CC.EnterRX();
+
         //PinClear(GPIOB, 0);
-        chThdSleepMilliseconds(2);
+        chThdSleepMilliseconds(18);
 
 #else
 
@@ -78,7 +82,7 @@ void Radio_t::Init() {
     //CC.SetPower(PwrPlus12dBm);
 
     // ==== Create and start thread ====
-    chThdCreateStatic(waRadioThread, sizeof(waRadioThread), NORMALPRIO, RadioThread, NULL);
+    PThread = chThdCreateStatic(waRadioThread, sizeof(waRadioThread), HIGHPRIO, RadioThread, NULL);
 }
 
 
