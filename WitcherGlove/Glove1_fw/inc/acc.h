@@ -28,16 +28,19 @@ private:
     bool SdaIsHi()  { return PinIsSet(GPIO, Sda); }
     // Delay
     void ILoop(volatile uint32_t lp) { while(lp--); }
-    void IDelay() { ILoop(9); }
+    void IDelay() { ILoop(2); }
     // i2c operations
     uint8_t Start();
     void Stop();
     void WriteByte(uint8_t b);
     bool IsAcked();
+    uint8_t ReadByte();
+    void Ack();
+    void Nack();
 public:
     void Init(GPIO_TypeDef *PGPIO, uint16_t AScl, uint16_t ASda);
-    uint8_t WriteBuf(uint8_t Addr, uint8_t *P, uint16_t Sz);
-
+    uint8_t WriteBuf(uint8_t Addr, uint8_t *PW, uint16_t SzW);
+    uint8_t WriteReadBuf(uint8_t Addr, uint8_t *PW, uint16_t SzW, uint8_t *PR, uint16_t SzR);
 };
 
 class SingleAcc_t {
@@ -53,6 +56,7 @@ public:
 
 // Registers addresses
 #define ACC_REG_STATUS          0x00
+#define ACC_REG_
 #define ACC_REG_XYZ_DATA_CFG    0x0E
 #define ACC_FF_MT_CFG           0x15
 #define ACC_FF_MT_SRC           0x16
