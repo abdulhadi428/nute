@@ -7,30 +7,46 @@
 
 #include "acc.h"
 
-Acc_t Acc;
+SingleAcc_t Acc[ACC_CNT];
 
-void Acc_t::Init() {
+void AccInit() {
     // Init pwr
     PinSetupOut(GPIOA, 15, omPushPull);
     PinSet(GPIOA, 15);
-    // Init Accs
-    //IAcc[0].Init(GPIOA, 1, 3, 4);
-    IAcc[6].Init(GPIOB, 13, 14, 15);
+    chThdSleepMilliseconds(126);
+    // Set ports & pins
+    Acc[0].SetPortAndPins(GPIOA, 1, 3, 4);
+    Acc[1].SetPortAndPins(GPIOA, 5, 6, 7);
+    Acc[2].SetPortAndPins(GPIOC, 0, 1, 2);
+    Acc[3].SetPortAndPins(GPIOC, 3, 4, 5);
+    Acc[4].SetPortAndPins(GPIOC, 6, 7, 8);
+    Acc[5].SetPortAndPins(GPIOC, 10, 11, 12);
+    Acc[6].SetPortAndPins(GPIOB, 13, 14, 15);
+    // Init
+    for(uint8_t i=0; i<ACC_CNT; i++) {
+        Acc[i].Init();
+        if(!Acc[i].IsOperational) Uart.Printf("Acc %u is not operational\r", i);
+    }
 }
 
 
 // =============================== SingleAcc_t =================================
-void SingleAcc_t::Init(GPIO_TypeDef *PGPIO, uint16_t AScl, uint16_t ASda, uint16_t AIrq) {
-    i2c.Init(PGPIO, AScl, ASda);
-    Irq = AIrq;
-    PinSetupIn(PGPIO, Irq, pudNone);
+void SingleAcc_t::Init() {
+    i2c.Init(GPIO, Scl, Sda);
+    IsOperational = false;
+    PinSetupIn(GPIO, Irq, pudNone);
 
     // ==== Setup initial registers ====
     uint8_t BufW[6];
+    uint8_t Rslt;
     // Setup High-Pass filter and acceleration scale
     BufW[0] = ACC_REG_XYZ_DATA_CFG;
     BufW[1] = 0x01; // No filter, scale = 4g
-    i2c.WriteBuf(ACC_ADDR, BufW, 2);
+    Rslt = i2c.WriteBuf(ACC_ADDR, BufW, 2);
+    if(Rslt) {
+        IsOperational = false;
+        return;
+    }
     // Control registers
     BufW[0] = ACC_REG_CONTROL1; // CtrReg[0] is register address
     BufW[1] = 0x21;     // DR=100 => 50Hz data rate; Mode = Active
@@ -38,19 +54,36 @@ void SingleAcc_t::Init(GPIO_TypeDef *PGPIO, uint16_t AScl, uint16_t ASda, uint16
     BufW[3] = 0x02;     // No IRQ; IRQ output active high
     BufW[4] = 0x00;     // All interrupts disabled
     BufW[5] = 0x04;     // FreeFall IRQ is routed to INT1 pin
-    i2c.WriteBuf(ACC_ADDR, BufW, 6);
-
-    uint8_t BufR[7];
-    //BufW[0] = ACC_REG_STATUS;
-    BufW[0] = 0x01;
-
-    while(1) {
-        chThdSleepMilliseconds(153);
-        i2c.WriteReadBuf(ACC_ADDR, BufW, 1, BufR, 6);
-        Uart.Printf("X: %u; Y: %u; Z: %u\r", BufR[0], BufR[2], BufR[4]);
+    Rslt = i2c.WriteBuf(ACC_ADDR, BufW, 6);
+    if(Rslt) {
+        IsOperational = false;
+        return;
     }
+    IsOperational = true;
+    ReadAccelerations();
+}
 
+static int16_t Convert(uint8_t HiByte, uint8_t LoByte) {
+    int16_t w;
+    w = HiByte;
+    w <<= 8;
+    w |= LoByte;
+    w /= 16;
+    return w;
+}
 
+void SingleAcc_t::ReadAccelerations() {
+    if(!IsOperational) return;
+    uint8_t BufW[1], BufR[6];
+    BufW[0] = ACC_REG_OUT_X_MSB;
+    if(i2c.WriteReadBuf(ACC_ADDR, BufW, 1, BufR, 6) != 0) {
+        IsOperational = false;
+        Uart.Printf("Fail\r");
+    }
+    // Convert received values to signed integers
+    a[0] = Convert(BufR[0], BufR[1]);
+    a[1] = Convert(BufR[2], BufR[3]);
+    a[2] = Convert(BufR[4], BufR[5]);
 }
 
 // ================================== i2c_t ====================================
@@ -60,8 +93,8 @@ void i2c_t::Init(GPIO_TypeDef *PGPIO, uint16_t AScl, uint16_t ASda) {
     Scl = AScl;
     Sda = ASda;
     // Setup pins
-    PinSetupOut(GPIO, Scl, omOpenDrain, pudNone);
-    PinSetupOut(GPIO, Sda, omOpenDrain, pudNone);
+    PinSetupOut(GPIO, Scl, omOpenDrain, pudNone, ps100MHz);
+    PinSetupOut(GPIO, Sda, omOpenDrain, pudNone, ps100MHz);
     SclHi();
     SdaHi();
 }

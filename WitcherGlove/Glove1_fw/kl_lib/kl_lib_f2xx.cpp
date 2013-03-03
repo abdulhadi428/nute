@@ -63,7 +63,7 @@ void DbgUart_t::Init(uint32_t ABaudrate) {
 
     // ==== USART configuration ====
     UART_RCC_ENABLE();
-    UART->BRR = Clk.APB2FreqHz / 115200;
+    UART->BRR = Clk.APB2FreqHz / ABaudrate;
     UART->CR2 = 0;
     UART->CR3 = USART_CR3_DMAT;   // Enable DMA at transmitter
     UART->CR1 = USART_CR1_TE;     // Transmitter enabled

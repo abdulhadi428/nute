@@ -46,11 +46,12 @@ int main() {
 }
 
 void Init() {
-    Uart.Init(115200);
+    Uart.Init(256000);
     Uart.Printf("Glove1 AHB=%u; APB1=%u; APB2=%u; Usb=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
 
     LedsInit();
-    Acc.Init();
+
+    AccInit();
     // Application init
-//    App.Init();
+    App.Init();
 }

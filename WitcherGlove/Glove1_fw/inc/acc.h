@@ -28,7 +28,7 @@ private:
     bool SdaIsHi()  { return PinIsSet(GPIO, Sda); }
     // Delay
     void ILoop(volatile uint32_t lp) { while(lp--); }
-    void IDelay() { ILoop(2); }
+    void IDelay() { ILoop(4); }
     // i2c operations
     uint8_t Start();
     void Stop();
@@ -46,30 +46,34 @@ public:
 class SingleAcc_t {
 private:
     i2c_t i2c;
-    uint16_t Irq;
+    GPIO_TypeDef *GPIO;
+    uint16_t Scl, Sda, Irq;
 public:
-    void Init(GPIO_TypeDef *PGPIO, uint16_t AScl, uint16_t ASda, uint16_t AIrq);
-
+    bool IsOperational;
+    int16_t a[3];
+    void SetPortAndPins(GPIO_TypeDef *PGPIO, uint16_t AScl, uint16_t ASda, uint16_t AIrq) {
+        GPIO = PGPIO;
+        Scl = AScl;
+        Sda = ASda;
+        Irq = AIrq;
+    }
+    void Init();
+    void ReadAccelerations();
 };
 
-#define ACC_CNT     1
+#define ACC_CNT     7
 
 // Registers addresses
 #define ACC_REG_STATUS          0x00
-#define ACC_REG_
+#define ACC_REG_OUT_X_MSB       0x01
 #define ACC_REG_XYZ_DATA_CFG    0x0E
 #define ACC_FF_MT_CFG           0x15
 #define ACC_FF_MT_SRC           0x16
 #define ACC_FF_MT_THS           0x17
 #define ACC_REG_CONTROL1        0x2A
 
-class Acc_t {
-private:
-    SingleAcc_t IAcc[ACC_CNT];
-public:
-    void Init();
-};
+void AccInit();
 
-extern Acc_t Acc;
+extern SingleAcc_t Acc[ACC_CNT];
 
 #endif /* ACC_H_ */
