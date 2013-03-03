@@ -28,7 +28,7 @@ private:
     bool SdaIsHi()  { return PinIsSet(GPIO, Sda); }
     // Delay
     void ILoop(volatile uint32_t lp) { while(lp--); }
-    void IDelay() { ILoop(4); }
+    void IDelay() { ILoop(2); }
     // i2c operations
     uint8_t Start();
     void Stop();

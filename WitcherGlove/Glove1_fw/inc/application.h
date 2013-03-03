@@ -12,6 +12,7 @@ class App_t {
 private:
 
 public:
+    bool Enabled;
     void Init();
 };
 

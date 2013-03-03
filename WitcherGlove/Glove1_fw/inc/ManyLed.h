@@ -10,7 +10,9 @@
 
 #include "kl_lib_f2xx.h"
 
-extern Pin_t RedLed, GreenLed, YellowLed, BlueLed, UvLed;
+#define LED_TOP_BRT 250
+
+extern PwmPin_t RedLed, GreenLed, YellowLed, BlueLed, UvLed;
 
 void LedsInit();
 

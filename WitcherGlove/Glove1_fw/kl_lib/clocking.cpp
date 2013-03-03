@@ -7,6 +7,7 @@
 
 #include "clocking.h"
 #include "stm32_rcc.h"
+#include "chconf.h"
 
 Clk_t Clk;
 
@@ -95,7 +96,11 @@ void Clk_t::UpdateFreqValues() {
     }
 }
 
-// ==== Common use ====
+// Update systick timer setting
+void Clk_t::UpdateSysTimer() {
+    SysTick->LOAD = AHBFreqHz / CH_FREQUENCY - 1;
+    SysTick->VAL = 0;
+}
 
 // AHB, APB1, APB2
 void Clk_t::SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div) {

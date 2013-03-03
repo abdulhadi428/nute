@@ -13,7 +13,7 @@ void AccInit() {
     // Init pwr
     PinSetupOut(GPIOA, 15, omPushPull);
     PinSet(GPIOA, 15);
-    chThdSleepMilliseconds(126);
+    chThdSleepMilliseconds(450);
     // Set ports & pins
     Acc[0].SetPortAndPins(GPIOA, 1, 3, 4);
     Acc[1].SetPortAndPins(GPIOA, 5, 6, 7);
@@ -205,39 +205,55 @@ uint8_t i2c_t::WriteBuf(uint8_t Addr, uint8_t *PW, uint16_t SzW) {
 }
 
 uint8_t i2c_t::WriteReadBuf(uint8_t Addr, uint8_t *PW, uint16_t SzW, uint8_t *PR, uint16_t SzR) {
-    if(Start() != 0) return 1;
+    uint8_t Rslt = 0;
+    chSysLock();
+    if(Start() != 0) {
+        Rslt = 1;
+        goto End;
+    }
     // Write Addr with Write bit (0)
     WriteByte(Addr<<1);
     if(!IsAcked()) {
-        Stop();
+        Rslt = 2;
         Uart.Printf("Addr NACK\r");
-        return 2;
+        goto End;
     }
+    chSysUnlock();
+
     // Write data
+    chSysLock();
     while(SzW--) {
         WriteByte(*PW++);
         if(!IsAcked()) {
-            Stop();
+            Rslt = 3;
             Uart.Printf("NACK\r");
-            return 3;
+            goto End;
         }
     }
+    chSysUnlock();
+
     // Send repeated start
+    chSysLock();
     Start();
     // Write Addr with Read bit (1)
     WriteByte((Addr<<1) | 0x01);
     if(!IsAcked()) {
-        Stop();
+        Rslt = 4;
         Uart.Printf("Addr NACK\r");
-        return 4;
+        goto End;
     }
+    chSysUnlock();
+
     // Read data
+    chSysLock();
     while(SzR) {
         *PR++ = ReadByte();
         if(SzR != 1) Ack();
         else Nack();
         SzR--;
     }
+    End:
     Stop();
-    return 0;
+    chSysUnlock();
+    return Rslt;
 }

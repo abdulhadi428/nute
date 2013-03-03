@@ -141,15 +141,14 @@ static inline void PinFastOutPP(GPIO_TypeDef *PGpioPort, const uint16_t APinNumb
 }
 
 
-struct Pin_t {
-    GPIO_TypeDef *GPIO;
-    uint16_t N;
-    void SetupOut() { PinSetupOut(GPIO, N, omPushPull); }
-    void On()  { PinSet(GPIO, N); }
-    void Off() { PinClear(GPIO, N); }
-
+class PwmPin_t {
+private:
+    __IO uint32_t *PCCR;
+public:
+    void Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, uint16_t TopValue);
+    void On(uint16_t Brightness) { *PCCR = Brightness; }
+    void Off() { *PCCR = 0; }
 };
-
 
 
 // ============================== UART command unit ============================
