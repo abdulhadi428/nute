@@ -5,17 +5,14 @@ Sound_t Sound;
 
 FIL IFile;
 
-#define BUF_SZ  512
+#define BUF_SZ  4096
 uint8_t Buf[BUF_SZ], *PBuf;
 UINT BufSz=0;
 
-static void WriteData(uint8_t *P, uint16_t Sz);
 static void StopNow();
 static void WriteTrailingZeroes();
 static uint8_t BusyWait();
 static uint8_t ReadWriteByte(uint8_t AByte);
-
-static FRESULT FillBuf();
 
 // Pin operations
 static inline void Rst_Lo()   { PinClear(VS_GPIO, VS_RST); }
@@ -32,26 +29,29 @@ static msg_t SoundThread(void *arg) {
     (void)arg;
     chRegSetThreadName("Sound");
 
-    uint16_t SzToSend=0;
+    //PinSetupOut(GPIOB, 0, omPushPull, pudNone);
+    //PinSet(GPIOB, 0);
+    FRESULT rslt;
 
     while(1) {
-        chThdSleepMilliseconds(4);
         //Uart.Printf("%u\r", Sound.State);
         switch (Sound.State) {
             case sndPlaying:
                 // Check if buf is empty
                 if(BufSz == 0) {
-                    if(FillBuf() != FR_OK) StopNow();
-                    else if(BufSz == 0) StopNow();  // Check if EOF
+                    PBuf = Buf;
+                    rslt = f_read(&IFile, Buf, BUF_SZ, &BufSz);
+                    if((rslt != FR_OK) or (BufSz == 0)) StopNow();
                 } // if buf is empty
                 else {
                     // Upload data
-                    if(DreqIsHi()) {
-                        SzToSend = (BufSz > 32)? 32 : BufSz;
-                        WriteData(PBuf, SzToSend);
-                        PBuf += SzToSend;
-                        BufSz -= SzToSend;
+                    XDCS_Lo();  // Start transmission
+                    while(DreqIsHi() and BufSz) {
+                        ReadWriteByte(*PBuf);
+                        PBuf++;
+                        BufSz--;
                     }
+                    XDCS_Hi();
                 }
                 break;
 
@@ -59,7 +59,9 @@ static msg_t SoundThread(void *arg) {
                 if(DreqIsHi()) StopNow();
                 break;
 
-            default: break; // just get out
+            default:
+                chThdSleepMilliseconds(45);
+                break; // just get out
         } // switch
     }
     return 0;
@@ -83,7 +85,7 @@ void Sound_t::Init() {
     VS_SPI_RCC_EN();
     // NoCRC, FullDuplex, 8bit, MSB, Baudrate, Master, ClkLowIdle(CPOL=0),
     // FirstEdge(CPHA=0), NSS software controlled and is 1
-    VS_SPI->CR1 = SPI_CR1_SSM | SPI_CR1_SSI | SPI_CR1_MSTR | SPI_BAUDRATE_DIV8;
+    VS_SPI->CR1 = SPI_CR1_SSM | SPI_CR1_SSI | SPI_CR1_MSTR | SPI_BAUDRATE_DIV4;
     VS_SPI->CR2 = 0;
     VS_SPI->I2SCFGR &= ~((uint16_t)SPI_I2SCFGR_I2SMOD);
     VS_SPI->CR1 |= SPI_CR1_SPE; // Enable SPI
@@ -93,7 +95,7 @@ void Sound_t::Init() {
     Clk.MCO1Enable(mco1HSE, mcoDiv1);   // Only after reset, as pins are grounded when Rst is Lo
     chThdSleepMicroseconds(450);
 //    CmdWrite(VS_REG_MODE, (VS_SM_SDINEW | VS_SM_RESET));    // Perform software reset
-    CmdWrite(VS_REG_MODE, 0x0800);  // Native SPI mode
+    CmdWrite(VS_REG_MODE, 0x0802);  // Native SPI mode, Layer I + II enabled
     CmdWrite(VS_REG_CLOCKF, 0x8000 + (12000000/2000));    // x4, XTALI = 12.288 MHz
 //    CmdWrite(VS_REG_MIXERVOL, (VS_SMV_ACTIVE | VS_SMV_GAIN2));
 //    CmdWrite(VS_REG_RECCTRL, VS_SARC_DREQ512);
@@ -125,24 +127,6 @@ void Sound_t::Play(const char* AFilename) {
 }
 
 // ================================ Inner use ==================================
-FRESULT FillBuf() {
-    FRESULT rslt;
-    PBuf = Buf;
-    rslt = f_read(&IFile, Buf, BUF_SZ, &BufSz);
-    // Check if ok
-    if(rslt != FR_OK) Uart.Printf("ReadFile error: %u", rslt);
-    return rslt;
-}
-
-void WriteData(uint8_t *P, uint16_t Sz) {
-    //Uart.Printf("%u\r", Sz);
-    if(Sz == 0) return;
-    if(BusyWait() != VS_OK) return;     // Get out in case of timeout
-    XDCS_Lo();  // Start transmission
-    for(uint16_t i=0; i<Sz; i++) ReadWriteByte(P[i]);
-    XDCS_Hi();
-}
-
 void StopNow() {
     Uart.Printf("StopNow\r");
     WriteTrailingZeroes();

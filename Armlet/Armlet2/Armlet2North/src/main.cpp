@@ -55,8 +55,9 @@ void Init() {
     SouthBridge.Init();
 //    Radio.Init();
     SD.Init();
-//    Sound.Init();
-//    Sound.Play("alive.wav");
+    Sound.Init();
+    //Sound.Play("alive.wav");
+    Sound.Play("Sylvans.mp3");
     // Application init
     //App.Init();
 }
