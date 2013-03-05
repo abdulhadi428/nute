@@ -7,6 +7,7 @@
 
 #include "clocking.h"
 #include "stm32_rcc.h"
+#include "kl_lib_f2xx.h"
 
 Clk_t Clk;
 
@@ -96,7 +97,6 @@ void Clk_t::UpdateFreqValues() {
 }
 
 // ==== Common use ====
-
 // AHB, APB1, APB2
 void Clk_t::SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div) {
     // Setup dividers
@@ -189,6 +189,12 @@ uint8_t Clk_t::SetupFlashLatency(uint8_t AHBClk_MHz, uint16_t Voltage_mV) {
 
     FLASH->ACR = tmp;
     return 0;
+}
+
+void Clk_t::MCO1Enable(Mco1Src_t Src, McoDiv_t Div) {
+    PinSetupAlterFunc(GPIOA, 8, omPushPull, pudNone, AF0, ps50MHz);
+    RCC->CFGR &= ~(RCC_CFGR_MCO1 | RCC_CFGR_MCO1PRE);   // First, disable output and clear settings
+    RCC->CFGR |= ((uint32_t)Src) | ((uint32_t)Div);
 }
 
 /*

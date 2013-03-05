@@ -68,7 +68,7 @@ int tiny_vsprintf(char *buf, const char *format, va_list args) {
             width += c-'0';
         }
 
-        if (c == 's') {
+        if((c == 's') or (c == 'S')) {
             char *s = va_arg(args, char*);
             while (*s != 0)
                 *p++ = *s++;

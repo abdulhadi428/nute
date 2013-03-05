@@ -45,6 +45,8 @@ enum AHBDiv_t {
 };
 enum APBDiv_t {apbDiv1=0b000, apbDiv2=0b100, apbDiv4=0b101, apbDiv8=0b110, apbDiv16=0b111};
 enum PllSysDiv_P_t {pllSysDiv2=0b00, pllSysDiv4=0b01, pllSysDiv6=0b10, pllSysDiv8=0b11};
+enum Mco1Src_t {mco1HSI=0x00000000, mco1LSE=0x00200000, mco1HSE=0x00400000, mco1PLL=0x00600000};
+enum McoDiv_t {mcoDiv1=0x00000000, mcoDiv2=0x04000000, mcoDiv3=0x05000000, mcoDiv4=0x06000000, mcoDiv5=0x07000000};
 
 class Clk_t {
 private:
@@ -68,6 +70,8 @@ public:
     uint8_t SetupPLLDividers(uint8_t InputDiv_M, uint16_t Multi_N, PllSysDiv_P_t SysDiv_P, uint8_t UsbDiv_Q);
     void UpdateFreqValues();
     uint8_t SetupFlashLatency(uint8_t AHBClk_MHz, uint16_t Voltage_mV=3300);
+    // Clock output
+    void MCO1Enable(Mco1Src_t Src, McoDiv_t Div);
 };
 
 extern Clk_t Clk;

@@ -49,13 +49,15 @@ private:
     void WriteTX(uint8_t* Ptr, uint8_t Length);
     // Strobes
     void CReset()       { WriteStrobe(CC_SRES); }
-    void FlushRxFIFO()  { WriteStrobe(CC_SFRX); }
     void EnterTX()      { WriteStrobe(CC_STX);  }
     void PowerDown()    { WriteStrobe(CC_SPWD); }
     void FlushTxFIFO()  { WriteStrobe(CC_SFTX); }
     void GetState()     { WriteStrobe(CC_SNOP); }
 public:
     void EnterRX()      { WriteStrobe(CC_SRX);  }
+    void FlushRxFIFO()  { WriteStrobe(CC_SFRX); }
+
+    uint8_t ReadFifo(uint8_t *PBuf, uint8_t Length);
 
     void Init();
     int16_t RSSI_dBm(uint8_t ARawRSSI);

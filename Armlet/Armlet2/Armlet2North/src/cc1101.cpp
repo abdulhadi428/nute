@@ -117,6 +117,28 @@ void cc1101_t::Receive(void) {
     //Uart.Printf("2\r");
 }
 
+uint8_t cc1101_t::ReadFifo(uint8_t *PBuf, uint8_t Length) {
+    uint8_t b, Cnt=0;
+    Cnt = ReadRegister(CC_RXBYTES);
+    b = ReadRegister(CC_PKTSTATUS);
+    //Uart.Printf("Sz: %X; st: %X\r", Cnt, b);
+
+    if(b & 0x80) {
+        CsLo();                                             // Start transmission
+        //BusyWait();                                       // Wait for chip to become ready
+        ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG);  // Address with read & burst flags
+        for (uint8_t i=0; i<Length; i++) {                  // Read bytes
+            b = ReadWriteByte(0);
+            *PBuf++ = b;
+            //Uart.Printf(" %X", b);
+        }
+        CsHi();    // End transmission
+    }
+    else Cnt = 0;   // Signal that nothing was read
+    FlushRxFIFO();
+    return 1;
+}
+
 // Return RSSI in dBm
 int16_t cc1101_t::RSSI_dBm(uint8_t ARawRSSI) {
     int16_t RSSI = ARawRSSI;
@@ -129,7 +151,7 @@ int16_t cc1101_t::RSSI_dBm(uint8_t ARawRSSI) {
 // =========================== Registers & Strobes =============================
 uint8_t cc1101_t::ReadWriteByte(uint8_t AByte) {
     CC_SPI->DR = AByte;
-    while (!(CC_SPI->SR & SPI_SR_RXNE));  // Wait for SPI transmission to complete
+    while(!(CC_SPI->SR & SPI_SR_RXNE));  // Wait for SPI transmission to complete
     return CC_SPI->DR;
 }
 
@@ -213,16 +235,4 @@ void cc1101_t::RfConfig() {
     WriteRegister(CC_MCSM1, CC_MCSM1_VALUE);
 }
 
-// ============================= Interrupts ====================================
-extern "C" {
 
-CH_IRQ_HANDLER(EXTI4_IRQHandler) {
-    CH_IRQ_PROLOGUE();
-    EXTI->PR = (1 << 4);  // Clean irq flag
-
-    PinClear(GPIOB, 0);
-
-    CH_IRQ_EPILOGUE();
-}
-
-} // extern c

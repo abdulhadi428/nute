@@ -46,12 +46,6 @@ void sd_t::Init() {
         return;
     }
     IsReady = TRUE;
-
-//    FRESULT rslt;
-//    FIL IFile;
-//    // Open file
-//    rslt = f_open(&IFile, "settings.ini", FA_READ+FA_OPEN_EXISTING);
-//    Uart.Printf("OpenFile: %u\r", (uint8_t)rslt);
 }
 
 // ========================== ini files operations =============================

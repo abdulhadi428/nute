@@ -25,6 +25,16 @@
 #define DMA_PRIORITY_HIGH       STM32_DMA_CR_PL(0b10)
 #define DMA_PRIORITY_VERYHIGH   STM32_DMA_CR_PL(0b11)
 
+// SPI
+#define SPI_BAUDRATE_DIV2       ((uint16_t)0b000 << 3)
+#define SPI_BAUDRATE_DIV4       ((uint16_t)0b001 << 3)
+#define SPI_BAUDRATE_DIV8       ((uint16_t)0b010 << 3)
+#define SPI_BAUDRATE_DIV16      ((uint16_t)0b011 << 3)
+#define SPI_BAUDRATE_DIV32      ((uint16_t)0b100 << 3)
+#define SPI_BAUDRATE_DIV64      ((uint16_t)0b101 << 3)
+#define SPI_BAUDRATE_DIV128     ((uint16_t)0b110 << 3)
+#define SPI_BAUDRATE_DIV256     ((uint16_t)0b111 << 3)
+
 // ============================ Simple delay ===================================
 static inline void DelayLoop(volatile uint32_t ACounter) { while(ACounter--); }
 static inline void Delay_ms(uint32_t Ams) {
