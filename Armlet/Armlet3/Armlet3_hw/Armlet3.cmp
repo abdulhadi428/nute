@@ -1,10 +1,10 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 2/27/2013 6:53:05 PM
+Cmp-Mod V01 Created by CvPcb (2013-03-04 BZR 3984)-stable date = 09/03/2013 20:02:44
 
 BeginCmp
 TimeStamp = /512E0F27;
 Reference = ANT1;
 ValeurCmp = ANT_PCB_MONO;
-IdModule  = ANT_880_INVF;
+IdModule  = ANT_ARMLET3;
 EndCmp
 
 BeginCmp
@@ -442,6 +442,27 @@ IdModule  = CAP_0402;
 EndCmp
 
 BeginCmp
+TimeStamp = /51399AB7;
+Reference = C62;
+ValeurCmp = *;
+IdModule  = CAP_0402;
+EndCmp
+
+BeginCmp
+TimeStamp = /51399AC5;
+Reference = C63;
+ValeurCmp = *;
+IdModule  = CAP_0402;
+EndCmp
+
+BeginCmp
+TimeStamp = /513B4B3F;
+Reference = C64;
+ValeurCmp = 1u;
+IdModule  = CAP_0402;
+EndCmp
+
+BeginCmp
 TimeStamp = /50B06782;
 Reference = D2;
 ValeurCmp = LED;
@@ -572,6 +593,13 @@ TimeStamp = /50A7C81D;
 Reference = L7;
 ValeurCmp = 100uH;
 IdModule  = IND_1812;
+EndCmp
+
+BeginCmp
+TimeStamp = /51399AB1;
+Reference = L8;
+ValeurCmp = *;
+IdModule  = IND_0402;
 EndCmp
 
 BeginCmp
@@ -753,6 +781,13 @@ BeginCmp
 TimeStamp = /512C982D;
 Reference = R18;
 ValeurCmp = 47R;
+IdModule  = RES_0402;
+EndCmp
+
+BeginCmp
+TimeStamp = /51337D22;
+Reference = R19;
+ValeurCmp = 1k;
 IdModule  = RES_0402;
 EndCmp
 
@@ -1006,6 +1041,13 @@ TimeStamp = /50C0787A;
 Reference = XL6;
 ValeurCmp = ST_SWD;
 IdModule  = SIL-4;
+EndCmp
+
+BeginCmp
+TimeStamp = /5139A7E1;
+Reference = XL7;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
 EndCmp
 
 BeginCmp
