@@ -14,6 +14,7 @@
 
 #include "application.h"
 #include "ManyLed.h"
+#include "vibro.h"
 
 static inline void Init();
 
@@ -88,6 +89,7 @@ void Init() {
     PinSetupIn(GPIOB, 2, pudPullUp);
 
     AccInit();
+    VibroInit();
     // Application init
     App.Init();
 }
