@@ -15,6 +15,7 @@
 #include "application.h"
 #include "ManyLed.h"
 #include "vibro.h"
+#include "infrared.h"
 
 static inline void Init();
 
@@ -90,6 +91,8 @@ void Init() {
 
     AccInit();
     VibroInit();
+    IR.Init();
+
     // Application init
     App.Init();
 }
