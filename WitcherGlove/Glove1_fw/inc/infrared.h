@@ -11,7 +11,6 @@
 #include "kl_lib_f2xx.h"
 
 #define IR_CARRIER_HZ   57000
-#define IR_MOD_TMR      TIM5
 
 // Delays, uS
 #define IR_SPACE_US     600
