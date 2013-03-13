@@ -16,6 +16,7 @@
 
 #include "VibroSequences.h"
 #include "vibro.h"
+#include "infrared.h"
 
 App_t App;
 
@@ -107,6 +108,14 @@ static WORKING_AREA(waAppThread, 1024);
 static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
+
+    // IR test
+    IR.TransmitWord(0x0000, 100);
+    while(1) {
+        chThdSleepMilliseconds(45);
+
+    }
+
 
     int8_t IsSimilar=-1;
     int16_t chance=INIT_CHANCE;

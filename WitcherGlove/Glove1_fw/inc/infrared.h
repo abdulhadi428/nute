@@ -10,26 +10,29 @@
 
 #include "kl_lib_f2xx.h"
 
-#define IR_CARRIER_HZ   57000
+#define IR_CARRIER_HZ   56000
+#define IR_BIT_NUMBER   14
+
+#define IR_TX_DMA_STR   STM32_DMA1_STREAM2
+#define IR_TX_DMA_CHNL  6
 
 // Delays, uS
-#define IR_SPACE_US     600
-#define IR_HEADER_US    (IR_SPACE_US + 2400)
-#define IR_ZERO_US      (IR_SPACE_US + 600)
-#define IR_ONE_US       (IR_SPACE_US + 1200)
-
-// Counts
-#define IR_BIT_NUMBER   14
-#define IR_DELAY_COUNT  (1 + IR_BIT_NUMBER) // first delay for header
+#define IR_TICK_US      600 // Protocol smallest time unit, us
+/* Header = 4 * IR_TICK_US
+ * Space  = 1 * IR_TICK_US
+ * Zero   = 1 * IR_TICK_US
+ * One    = 2 * IR_TICK_US
+ */
 
 class Infrared_t {
 private:
-    uint16_t BufDelays[IR_DELAY_COUNT];
-    uint16_t MaxPower;
+    uint16_t Buf[4+1 + IR_BIT_NUMBER*(2+1) + 1];    // Buffer of power values: header + all one's + 1 delay after
+    uint32_t MaxPower;
     PwmPin_t Carrier;
 public:
+    bool IsBusy;
     void Init();
-    void TransmitWord(uint16_t wData, uint16_t Power);
+    void TransmitWord(uint16_t wData, uint8_t PwrPercent);
 };
 
 extern Infrared_t IR;
