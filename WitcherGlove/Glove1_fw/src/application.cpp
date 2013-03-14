@@ -112,7 +112,9 @@ static msg_t AppThread(void *arg) {
     // IR test
     IR.TransmitWord(0x0000, 100);
     while(1) {
-        chThdSleepMilliseconds(45);
+        chThdSleepMilliseconds(450);
+        uint16_t N = IR_TX_DMA_STR->stream->NDTR;
+        Uart.Printf("%u\r", N);
 
     }
 

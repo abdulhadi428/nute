@@ -13,8 +13,8 @@
 #define IR_CARRIER_HZ   56000
 #define IR_BIT_NUMBER   14
 
-#define IR_TX_DMA_STR   STM32_DMA1_STREAM2
-#define IR_TX_DMA_CHNL  6
+#define IR_TX_DMA_STR   STM32_DMA2_STREAM0  // }
+#define IR_TX_DMA_CHNL  6                   // } TIM1 trig
 
 // Delays, uS
 #define IR_TICK_US      600 // Protocol smallest time unit, us
