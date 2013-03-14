@@ -15,6 +15,9 @@
 
 #define IR_TX_DMA_STR   STM32_DMA2_STREAM0  // }
 #define IR_TX_DMA_CHNL  6                   // } TIM1 trig
+#define IR_TX_INVERTED  false                // Set true if active low output is needed
+
+#define IR_CAR_TMR      TIM1
 
 // Delays, uS
 #define IR_TICK_US      600 // Protocol smallest time unit, us
@@ -26,9 +29,9 @@
 
 class Infrared_t {
 private:
+    PwmPin_t Carrier;
     uint16_t Buf[4+1 + IR_BIT_NUMBER*(2+1) + 1];    // Buffer of power values: header + all one's + 1 delay after
     uint32_t MaxPower;
-    PwmPin_t Carrier;
 public:
     bool IsBusy;
     void Init();

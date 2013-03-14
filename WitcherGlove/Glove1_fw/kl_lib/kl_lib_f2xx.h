@@ -144,7 +144,7 @@ static inline void PinFastOutPP(GPIO_TypeDef *PGpioPort, const uint16_t APinNumb
 class PwmPin_t {
 public:
     __IO uint32_t *PCCR;
-    void Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, uint16_t TopValue);
+    void Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, uint16_t TopValue, bool Inverted=false);
     void On(uint16_t Brightness) { *PCCR = Brightness; }
     void Off() { *PCCR = 0; }
 };
