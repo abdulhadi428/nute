@@ -167,8 +167,7 @@ void DbgUart_t::Init(uint32_t ABaudrate) {
     PRead = TXBuf;
     ICountToSendNext = 0;
     IDmaIsIdle = true;
-    //PinSetupAlterFunc(GPIOA, 9, omPushPull, pudNone, AF7);      // TX1
-    PinSetupAlterFunc(GPIOA, 2, omPushPull, pudNone, AF7);      // TX2
+    PinSetupAlterFunc(UART_GPIO, UART_TX_PIN, omPushPull, pudNone, UART_AF);
 
     // ==== USART configuration ====
     UART_RCC_ENABLE();
@@ -178,7 +177,7 @@ void DbgUart_t::Init(uint32_t ABaudrate) {
     UART->CR1 = USART_CR1_TE;     // Transmitter enabled
 
     // ==== DMA ====
-    // Here only the unchanged parameters of the DMA are configured.
+    // Here only unchanged parameters of the DMA are configured.
     dmaStreamAllocate     (UART_DMA, 1, DbgUartIrq, NULL);
     dmaStreamSetPeripheral(UART_DMA, &UART->DR);
     dmaStreamSetMode      (UART_DMA,

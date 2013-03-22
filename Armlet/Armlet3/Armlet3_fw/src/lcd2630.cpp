@@ -17,41 +17,35 @@ static inline void XRES_Hi() { PinSet  (LCD_GPIO, LCD_XRES); LCD_DELAY}
 static inline void XRES_Lo() { PinClear(LCD_GPIO, LCD_XRES); LCD_DELAY}
 static inline void XCS_Hi () { PinSet  (LCD_GPIO, LCD_XCS);  LCD_DELAY}
 static inline void XCS_Lo () { PinClear(LCD_GPIO, LCD_XCS);  LCD_DELAY}
-static inline void DC_Hi ()  { PinSet  (LCD_GPIO, LCD_DC);   LCD_DELAY}
-static inline void DC_Lo ()  { PinClear(LCD_GPIO, LCD_DC);   LCD_DELAY}
-#define WR_HI()     LCD_GPIO->BSRRL = 1<<LCD_WR
-#define WR_LO()     LCD_GPIO->BSRRH = 1<<LCD_WR
-static inline void RD_Hi ()  { PinSet  (LCD_GPIO, LCD_RD);   LCD_DELAY}
-static inline void RD_Lo ()  { PinClear(LCD_GPIO, LCD_RD);   LCD_DELAY}
-
-// Prototypes
-static void WriteCmd(uint16_t ACmd, uint8_t AParamCount=0, ...);
+__attribute__ ((always_inline)) static inline void DC_Hi()  { PinSet  (LCD_GPIO, LCD_DC);   LCD_DELAY}
+__attribute__ ((always_inline)) static inline void DC_Lo()  { PinClear(LCD_GPIO, LCD_DC);   LCD_DELAY}
+__attribute__ ((always_inline)) static inline void WR_Hi()  { PinSet  (LCD_GPIO, LCD_WR);   LCD_DELAY}
+__attribute__ ((always_inline)) static inline void RD_Hi()  { PinSet  (LCD_GPIO, LCD_RD);   LCD_DELAY}
+//__attribute__ ((always_inline)) static inline void RD_Lo()  { PinClear(LCD_GPIO, LCD_RD);   LCD_DELAY}
 
 // ==== Lcd Thread ====
-static WORKING_AREA(waLcdThread, 128);
-static msg_t LcdThread(void *arg) {
-    (void)arg;
-    chRegSetThreadName("Lcd");
-    while(1) {
-        chThdSleepMilliseconds(999);
-    } // while 1
-    return 0;
-}
+//static WORKING_AREA(waLcdThread, 128);
+//static msg_t LcdThread(void *arg) {
+//    (void)arg;
+//    chRegSetThreadName("Lcd");
+//    while(1) {
+//        chThdSleepMilliseconds(999);
+//    } // while 1
+//    return 0;
+//}
 
 void Lcd_t::Init() {
     // Backlight
-    BckLt.Init(LCD_BCKLT_GPIO, LCD_BCKLT_PIN, LCD_BCKLT_TMR, LCD_BCKLT_CHNL, (LCD_TOP_BRIGHTNESS*2));
-    // Configure LCD_XRES, LCD_XCS, LCD_SCLK & LCD_SDA as Push-Pull output
-    PinSetupOut(LCD_GPIO, LCD_DC,   omPushPull);
-    PinSetupOut(LCD_GPIO, LCD_WR,   omPushPull);
-    PinSetupOut(LCD_GPIO, LCD_RD,   omPushPull);
-    PinSetupOut(LCD_GPIO, LCD_XRES, omPushPull);
-    PinSetupOut(LCD_GPIO, LCD_XCS,  omPushPull);
+    BckLt.Init(LCD_BCKLT_GPIO, LCD_BCKLT_PIN, LCD_BCKLT_TMR, LCD_BCKLT_CHNL, LCD_TOP_BRIGHTNESS);
+    PinSetupOut(LCD_GPIO, LCD_DC,   omPushPull, pudNone, ps100MHz);
+    PinSetupOut(LCD_GPIO, LCD_WR,   omPushPull, pudNone, ps100MHz);
+    PinSetupOut(LCD_GPIO, LCD_RD,   omPushPull, pudNone, ps100MHz);
+    PinSetupOut(LCD_GPIO, LCD_XRES, omPushPull, pudNone, ps100MHz);
+    PinSetupOut(LCD_GPIO, LCD_XCS,  omPushPull, pudNone, ps100MHz);
     // Configure data bus as outputs
-    for(uint8_t i=0; i<8; i++) PinSetupOut(LCD_GPIO, i, omPushPull, pudNone, ps50MHz);
+    for(uint8_t i=0; i<8; i++) PinSetupOut(LCD_GPIO, i, omPushPull, pudNone, ps100MHz);
 
     BacklightOn(100);
-
     // Init buffer to write: add bound commands
 //    BufToWrite[0]  = ReverseAndShift(0x02A);    // Set column bounds
 //    BufToWrite[1]  = ReverseAndShift(0x100);    // 0
@@ -65,26 +59,36 @@ void Lcd_t::Init() {
     XRES_Lo();  // }
     XRES_Hi();  // } Reset display
     DC_Lo();    // Command mode by default
-    WR_HI();    // Default hi
+    WR_Hi();    // Default hi
     RD_Hi();    // Default hi
     XCS_Lo();   // Interface is always enabled
 
-    WriteCmd(0x011);            // Sleep out
+    WriteCmd(0x11);         // Sleep out
     Delay_ms(207);
-    WriteCmd(0x13);             // Normal Display Mode ON
+    WriteCmd(0x13);         // Normal Display Mode ON
 
-    //WriteCmd(0x3A, 1, 0x06);    // Pixel format: VIPF=0(undef), IFPF=18 bit per pixel
-    //WriteCmd(0x3A, 1, 0x05);    // Pixel format: VIPF=0(undef), IFPF=16 bit per pixel
-    WriteCmd(0x3A, 1, 0x03);    // Pixel format: VIPF=0(undef), IFPF=12 bit per pixel
+    //WriteCmd(0x3A, 0x06);    // Pixel format: VIPF=0(undef), IFPF=18 bit per pixel
+    WriteCmd(0x3A, 0x05);    // Pixel format: VIPF=0(undef), IFPF=16 bit per pixel
+    //WriteCmd(0x3A, 0x03);   // Pixel format: VIPF=0(undef), IFPF=12 bit per pixel
 
-    WriteCmd(0x29);             // Display on
-    WriteCmd(0x20);             // Inv off
-    WriteCmd(0x13);             // Normal Display Mode ON
-    WriteCmd(0x36, 1, 0xA0);    // Display mode: Y inv, X none-inv, Row/Col exchanged
-    //Cls(clWhite);                // clear LCD buffer
+    WriteCmd(0x29);         // Display on
+    WriteCmd(0x20);         // Inv off
+    WriteCmd(0x13);         // Normal Display Mode ON
+    WriteCmd(0x36, 0xA0);   // Display mode: Y inv, X none-inv, Row/Col exchanged
+    //Cls(clBlue);
+
+    PinSetupOut(GPIOD, 6, omPushPull);
+    while(1) {
+        PinSet(GPIOD, 6);
+        Cls(clGreen);
+        PinClear(GPIOD, 6);
+        Cls(clRed);
+    }
+    //Cls(clWhite);
+
 
     // ======= Create and start thread =======
-    chThdCreateStatic(waLcdThread, sizeof(waLcdThread), NORMALPRIO, LcdThread, NULL);
+    //chThdCreateStatic(waLcdThread, sizeof(waLcdThread), NORMALPRIO, LcdThread, NULL);
 }
 
 void Lcd_t::Shutdown(void) {
@@ -94,28 +98,25 @@ void Lcd_t::Shutdown(void) {
 }
 
 // =============================== Local use ===================================
-static inline void WriteByte(uint8_t Byte) {
+__attribute__ ((always_inline)) static inline void WriteByte(uint8_t Byte) {
     LCD_GPIO->BSRRH = LCD_MASK_WR;  // Clear bus and set WR Low
     LCD_GPIO->BSRRL = Byte;         // Place data on bus
-    LCD_DELAY
-    WR_HI();    // Data is sent by Lo-to-Hi transition
-} __attribute__ (())
+    LCD_GPIO->BSRRL = (1<<LCD_WR);  // WR high
+}
 
+// ==== WriteCmd ====
+void Lcd_t::WriteCmd(uint8_t ACmd) {
+    // DC is lo by default => Cmd by default
+    WriteByte(ACmd);    // Send Cmd byte
+}
 
-void WriteCmd(uint16_t ACmd, uint8_t AParamCount, ...) {
-
-    // Send Cmd 0 bit and Cmd byte
-    Write9Bit(ACmd);
-    // Send params if exist
-    va_list args;
-    va_start(args, AParamCount);
-    while(AParamCount) {
-        uint16_t w = (uint8_t)va_arg(args, int);
-        w |= 0x100;     // Add "Data" bit
-        Write9Bit(w);   // Send Data byte
-        AParamCount--;
-    }
-    va_end(args);
+void Lcd_t::WriteCmd(uint8_t ACmd, uint8_t AData) {
+    // DC is lo by default => Cmd by default
+    WriteByte(ACmd);    // Send Cmd byte
+    // Send data
+    DC_Hi();
+    WriteByte(AData);
+    DC_Lo();
 }
 
 /* ==== Pseudographics ====
@@ -140,37 +141,36 @@ void Lcd_t::Symbols(const uint8_t x, const uint8_t y, ...) {
 
 */
 // ================================= Printf ====================================
-// FIXME: add check for Changed array overflow
 uint16_t Lcd_t::PutChar(uint8_t x, uint8_t y, char c, Color_t ForeClr, Color_t BckClr) {
     char *PFont = (char*)Font8x8;  // Font to use
     // Read font params
     uint8_t nCols = PFont[0];
-    uint8_t nRows = PFont[1];
-    uint16_t nBytes = PFont[2];
+//    uint8_t nRows = PFont[1];
+//    uint16_t nBytes = PFont[2];
     // Get pointer to the first byte of the desired character
-    const char *PChar = Font8x8 + (nBytes * (c - 0x1F));
+//    const char *PChar = Font8x8 + (nBytes * (c - 0x1F));
     // Iterate rows of the char
-    uint8_t row, col;
-    for(uint8_t row = 0; row < nRows; row++) {
-        if((y+row) >= LCD_H) break;
-        uint8_t PixelRow = *PChar++;
-        // loop on each pixel in the row (left to right)
-        uint8_t Mask = 0x80;
-        for (col = 0; col < nCols; col++) {
-            if((x+col) >= LCD_W) break;
-            PackedBuf[y+row][x+col] = (PixelRow & Mask)? ForeClr : BckClr;
-            Mask >>= 1;
-        } // col
-    } // row
-    // Mark area as changed
-    uint8_t xaStart = x / AREA_W;
-    uint8_t yaStart = y / AREA_H;
-    uint8_t xaEnd = (x+nCols) / AREA_W;
-    uint8_t yaEnd = (y+nRows) / AREA_H;
-    for(row = yaStart; row<=yaEnd; row++)
-        for(col = xaStart; col<=xaEnd; col++)
-            Changed[row][col] = true;
-    // Return next pixel to right
+//    uint8_t row, col;
+//    for(uint8_t row = 0; row < nRows; row++) {
+//        if((y+row) >= LCD_H) break;
+//        uint8_t PixelRow = *PChar++;
+//        // loop on each pixel in the row (left to right)
+//        uint8_t Mask = 0x80;
+//        for (col = 0; col < nCols; col++) {
+//            if((x+col) >= LCD_W) break;
+//            PackedBuf[y+row][x+col] = (PixelRow & Mask)? ForeClr : BckClr;
+//            Mask >>= 1;
+//        } // col
+//    } // row
+//    // Mark area as changed
+//    uint8_t xaStart = x / AREA_W;
+//    uint8_t yaStart = y / AREA_H;
+//    uint8_t xaEnd = (x+nCols) / AREA_W;
+//    uint8_t yaEnd = (y+nRows) / AREA_H;
+//    for(row = yaStart; row<=yaEnd; row++)
+//        for(col = xaStart; col<=xaEnd; col++)
+//            Changed[row][col] = true;
+//    // Return next pixel to right
     return x+nCols;
 }
 
@@ -189,12 +189,34 @@ void Lcd_t::Printf(uint8_t x, uint8_t y, const Color_t ForeClr, const Color_t Bc
 
 // ================================ Graphics ===================================
 void Lcd_t::Cls(Color_t Color) {
-    for(uint8_t x=0; x<LCD_W; x++)
-        for(uint8_t y=0; y<LCD_H; y++)
-            PackedBuf[y][x] = (uint8_t)Color;
-    for(uint8_t xc=0; xc<AREA_W_CNT; xc++)
-        for(uint8_t yc=0; yc<AREA_H_CNT; yc++)
-            Changed[yc][xc] = true;
+    // Set column bounds
+    WriteByte(0x2A);
+    DC_Hi();
+    WriteByte(0x00);            // }
+    WriteByte(LCD_X_0);         // } Col addr start = 0
+    WriteByte(0x00);            // }
+    WriteByte(LCD_X_0+LCD_W-1); // } Col addr end
+    DC_Lo();
+    // Set row bounds
+    WriteByte(0x2B);
+    DC_Hi();
+    WriteByte(0x00);            // }
+    WriteByte(LCD_Y_0);         // } Row addr start = 0
+    WriteByte(0x00);            // }
+    WriteByte(LCD_Y_0+LCD_H-1); // } Row addr end
+    DC_Lo();
+    // Write RAM
+    uint8_t MSB = (uint8_t)(((uint16_t)Color) >> 8);
+    uint8_t LSB = (uint8_t)(((uint16_t)Color) & 0x00FF);
+    WriteByte(0x2C);    // Memory write
+    DC_Hi();
+    for(uint8_t x=0; x<LCD_W; x++) {
+        for(uint8_t y=0; y<LCD_H; y++) {
+            WriteByte(MSB);
+            WriteByte(LSB);
+        }
+    }
+    DC_Lo();
 }
 /*
 void Lcd_t::GotoXY(uint8_t x, uint8_t y) {
@@ -249,24 +271,3 @@ void Lcd_t::DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode) {
     }
 }
 */
-
-// =========================== Low-level hardware ==============================
-void LcdUartInit() {
-    // Pins
-    PinSetupAlterFunc(LCD_GPIO, LCD_SCLK, omPushPull, pudNone, AF7, ps100MHz);
-    PinSetupAlterFunc(LCD_GPIO, LCD_SDA,  omPushPull, pudNone, AF7, ps100MHz);
-    // ==== USART init ====
-    rccEnableUSART3(FALSE);     // Usart3 CLK, no clock in low-power
-    // Usart clock: enabled, idle low, first edge, enable last bit pulse
-    USART3->CR1 = USART_CR1_UE; // Enable UART
-    USART3->CR2 = USART_CR2_CLKEN | USART_CR2_LBCL;
-    uint16_t brr = ((Clk.APB1FreqHz*2) / 4000000) & 0xFFF0;
-    USART3->BRR = (brr == 0)? (1<<4) : brr; // Baudrate
-    USART3->CR1 =
-            USART_CR1_OVER8 |   // Use 8 samples per bit, not 16 - to increase speed
-            USART_CR1_UE |      // Enable USART
-            USART_CR1_M |       // 9 data bit
-            USART_CR1_TE;       // Transmitter enable
-    // After enabling transmitter, it will send empty character
-    while(!(USART3->SR & USART_SR_TC));    // wait for transmission to complete
-}

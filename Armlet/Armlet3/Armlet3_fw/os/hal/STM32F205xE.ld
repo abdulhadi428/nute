@@ -1,6 +1,7 @@
 /*
     ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
                  2011,2012 Giovanni Di Sirio.
+                 2013.03.21 Kreyl
 
     This file is part of ChibiOS/RT.
 
@@ -19,15 +20,15 @@
 */
 
 /*
- * ST32F205xB memory setup.
+ * ST32F205xE memory setup.
  */
 __main_stack_size__     = 0x0400;
 __process_stack_size__  = 0x0400;
 
 MEMORY
 {
-    flash : org = 0x08000000, len = 128k
-    ram : org = 0x20000000, len = 64k
+    flash : org = 0x08000000, len = 512k
+    ram : org = 0x20000000, len = 112k
 }
 
 __ram_start__           = ORIGIN(ram);

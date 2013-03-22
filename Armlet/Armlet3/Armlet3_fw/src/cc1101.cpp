@@ -118,7 +118,7 @@ void cc1101_t::Receive(void) {
 }
 
 uint8_t cc1101_t::ReadFifo(uint8_t *PBuf, uint8_t Length) {
-    uint8_t b, Cnt=0;
+    uint8_t b, Cnt;
     Cnt = ReadRegister(CC_RXBYTES);
     b = ReadRegister(CC_PKTSTATUS);
     //Uart.Printf("Sz: %X; st: %X\r", Cnt, b);

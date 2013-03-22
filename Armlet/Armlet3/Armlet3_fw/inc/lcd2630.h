@@ -19,24 +19,24 @@
 #define LCD_RD          10
 #define LCD_XCS         11
 #define LCD_XRES        12
-#define LCD_MASK_WR     (0x000F | (1<<LCD_WR))  // clear bus and set WR low
+#define LCD_MASK_WR     (0x00FF | (1<<LCD_WR))  // clear bus and set WR low
 
 
 #define LCD_BCKLT_GPIO  GPIOB
 #define LCD_BCKLT_PIN   9
-#define LCD_BCKLT_TMR   10
+#define LCD_BCKLT_TMR   11
 #define LCD_BCKLT_CHNL  1
 
-// Color palette: BB-GGG-RRR; LSB first => lowest red is 0b00000100, not 0b00000001
+// Color palette: 5R-6G-5B
 enum Color_t {
-    clBlack     = 0b00000000,
-    clRed       = 0b00000111,
-    clGreen     = 0b00111000,
-    clBlue      = 0b11000000,
-    clYellow    = 0b00111111,
-    clMagenta   = 0b11000111,
-    clCyan      = 0b11111000,
-    clWhite     = 0b11111111,
+    clBlack     = 0x0000,
+    clRed       = 0xF800,
+    clGreen     = 0x07E0,
+    clBlue      = 0x001F,
+    clYellow    = 0xFFE0,
+    clMagenta   = 0xF81F,
+    clCyan      = 0x07FF,
+    clWhite     = 0xFFFF,
 };
 
 enum PseudoGraph_t {
@@ -64,6 +64,8 @@ enum PseudoGraph_t {
 class Lcd_t {
 private:
     PwmPin_t BckLt;
+    void WriteCmd(uint8_t ACmd);
+    void WriteCmd(uint8_t ACmd, uint8_t AData);
     void GotoXY(uint8_t x, uint8_t y);
     uint16_t PutChar(uint8_t x, uint8_t y, char c, Color_t ForeClr, Color_t BckClr);
 public:

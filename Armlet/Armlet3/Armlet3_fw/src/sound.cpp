@@ -85,7 +85,7 @@ void Sound_t::Init() {
     VS_SPI_RCC_EN();
     // NoCRC, FullDuplex, 8bit, MSB, Baudrate, Master, ClkLowIdle(CPOL=0),
     // FirstEdge(CPHA=0), NSS software controlled and is 1
-    VS_SPI->CR1 = SPI_CR1_SSM | SPI_CR1_SSI | SPI_CR1_MSTR | SPI_BAUDRATE_DIV4;
+    //VS_SPI->CR1 = SPI_CR1_SSM | SPI_CR1_SSI | SPI_CR1_MSTR | SPI_BAUDRATE_DIV4;
     VS_SPI->CR2 = 0;
     VS_SPI->I2SCFGR &= ~((uint16_t)SPI_I2SCFGR_I2SMOD);
     VS_SPI->CR1 |= SPI_CR1_SPE; // Enable SPI

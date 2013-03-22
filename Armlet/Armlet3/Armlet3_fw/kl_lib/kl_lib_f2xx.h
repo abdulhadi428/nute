@@ -65,9 +65,15 @@ static inline void PinClockEnable(GPIO_TypeDef *PGpioPort) {
     else if(PGpioPort == GPIOB) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
     else if(PGpioPort == GPIOC) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
     else if(PGpioPort == GPIOD) RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN;
+    else if(PGpioPort == GPIOE) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOEEN;
 }
 // GPIOA, 1, omPushPull/omOpenDrain, pudNone/pudPullUp/pudPullDown, ps2MHz/ps25MHz/ps50MHz/ps100MHz
-static inline void PinSetupOut(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber, const PinOutMode_t PinOutMode, const PinPullUpDown_t APullUpDown = pudNone, const PinSpeed_t ASpeed = ps50MHz) {
+static inline void PinSetupOut(
+        GPIO_TypeDef *PGpioPort,
+        const uint16_t APinNumber,
+        const PinOutMode_t PinOutMode,
+        const PinPullUpDown_t APullUpDown = pudNone,
+        const PinSpeed_t ASpeed = ps50MHz) {
     // Clock
     PinClockEnable(PGpioPort);
     // Setup mode
@@ -153,6 +159,9 @@ public:
 // ============================== UART command unit ============================
 #define UART_TXBUF_SIZE     900
 #define UART                USART2
+#define UART_GPIO           GPIOD
+#define UART_TX_PIN         5
+#define UART_AF             AF7
 #define UART_DMA            STM32_DMA1_STREAM6
 #define UART_DMA_CHNL       4
 #define UART_RCC_ENABLE()   rccEnableUSART2(FALSE)
