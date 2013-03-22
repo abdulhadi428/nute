@@ -11,11 +11,6 @@
 #include <stdint.h>
 #include "kl_lib_f2xx.h"
 
-// ==== Keys ====
-#define KEY_COUNT   9
-enum KeyStatus_t {keyReleased=0, keyPressed=1};
-extern KeyStatus_t Key[KEY_COUNT];
-
 // ==== Power ====
 struct PwrStatus_t {
     bool ExternalPwrOn;

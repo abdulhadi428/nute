@@ -12,7 +12,6 @@
 #include "peripheral.h"
 
 // Variables
-KeyStatus_t Key[KEY_COUNT];
 PwrStatus_t PwrStatus;
 IR_t IR;
 Pill_t Pill[PILL_COUNT_MAX];
