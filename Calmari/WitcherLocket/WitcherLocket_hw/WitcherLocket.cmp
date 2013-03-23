@@ -1,0 +1,178 @@
+Cmp-Mod V01 Created by CvPcb (2013-03-19 BZR 4004)-stable date = 23/03/2013 22:56:19
+
+BeginCmp
+TimeStamp = /5102E877;
+Reference = C1;
+ValeurCmp = 0.1u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5102E876;
+Reference = C2;
+ValeurCmp = 10u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5102E86D;
+Reference = C3;
+ValeurCmp = 0.1u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5102E86E;
+Reference = C4;
+ValeurCmp = 10u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5102E871;
+Reference = D1;
+ValeurCmp = BAT54WS;
+IdModule  = DIODE_SOD323;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFB45;
+Reference = D2;
+ValeurCmp = LED;
+IdModule  = LED0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFC1E;
+Reference = D3;
+ValeurCmp = LED;
+IdModule  = LED0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFC2D;
+Reference = D4;
+ValeurCmp = LED;
+IdModule  = LED0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFC3C;
+Reference = D5;
+ValeurCmp = LED;
+IdModule  = LED0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /514E04B5;
+Reference = D6;
+ValeurCmp = LED;
+IdModule  = LED-3MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /514E053B;
+Reference = D7;
+ValeurCmp = LED;
+IdModule  = LED-3MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /514E05CD;
+Reference = D8;
+ValeurCmp = LED;
+IdModule  = LED-3MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /514E066B;
+Reference = D9;
+ValeurCmp = LED;
+IdModule  = LED-3MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /5102E878;
+Reference = DA1;
+ValeurCmp = NCP1400;
+IdModule  = SOT23-5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5102E873;
+Reference = L1;
+ValeurCmp = 22uH;
+IdModule  = IND_1210;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFB81;
+Reference = R1;
+ValeurCmp = 47R;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFBF1;
+Reference = R2;
+ValeurCmp = 47R;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFC00;
+Reference = R3;
+ValeurCmp = 47R;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFC0F;
+Reference = R4;
+ValeurCmp = 47R;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFE91;
+Reference = SW1;
+ValeurCmp = SWITCH_2X;
+IdModule  = BUTTON_PSM6;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFE73;
+Reference = SW2;
+ValeurCmp = SWITCH_2X;
+IdModule  = BUTTON_PSM6;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFEA0;
+Reference = SW3;
+ValeurCmp = SWITCH_2X;
+IdModule  = BUTTON_PSM6;
+EndCmp
+
+BeginCmp
+TimeStamp = /514DFE82;
+Reference = SW4;
+ValeurCmp = SWITCH_2X;
+IdModule  = BUTTON_PSM6;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F2E5201;
+Reference = XL1;
+ValeurCmp = CONN_1;
+IdModule  = SIL1_SQUARE_1MM5;
+EndCmp
+
+BeginCmp
+TimeStamp = /4F2E5204;
+Reference = XL2;
+ValeurCmp = CONN_1;
+IdModule  = SIL1_ROUND_1MM5;
+EndCmp
+
+EndListe
