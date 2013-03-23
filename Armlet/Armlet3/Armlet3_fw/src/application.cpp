@@ -51,10 +51,10 @@ static msg_t AppThread(void *arg) {
 
     while(1) {
         chThdSleepMilliseconds(1800);
-        Lcd.Cls(c);
+        //Lcd.Cls(c);
         for(uint8_t y=0; y<128; y+=8) {
             chThdSleepMilliseconds(999);
-            Lcd.Printf(0, y, clBlue, c, "YA=%u", y);
+            //Lcd.Printf(0, y, clBlue, c, "YA=%u", y);
             //Beep(BeepBeep);
 
         }
