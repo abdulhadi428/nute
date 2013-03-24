@@ -70,12 +70,12 @@ void Lcd_t::Init() {
 
     Cls(clBlack);
 
-    PutBitmap(45, 45, 10, 10, (uint16_t*)0x08000000);
-
-    uint16_t Buf[120];
-    GetBitmap(45, 45, 10, 10, Buf);
-    for(uint8_t i=0; i<100; i++) Uart.Printf("%04X ", Buf[i]);
-    Uart.Printf("\r");
+//    PutBitmap(45, 45, 10, 10, (uint16_t*)0x08000000);
+//
+//    uint16_t Buf[120];
+//    GetBitmap(45, 45, 10, 10, Buf);
+//    for(uint8_t i=0; i<100; i++) Uart.Printf("%04X ", Buf[i]);
+//    Uart.Printf("\r");
     // ======= Create and start thread =======
     //chThdCreateStatic(waLcdThread, sizeof(waLcdThread), NORMALPRIO, LcdThread, NULL);
 }

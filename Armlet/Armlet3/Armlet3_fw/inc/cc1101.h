@@ -38,7 +38,7 @@ private:
     void CsLo() { PinClear(CC_GPIO, CC_CS); }
     bool GDO0IsHi() { return PinIsSet(CC_GPIO, CC_GDO0); }
     bool GDO2IsHi() { return PinIsSet(CC_GPIO, CC_GDO2); }
-    void BusyWait(void)  { while(PinIsSet(CC_GPIO, CC_MISO)); }
+    void BusyWait() { while(PinIsSet(CC_GPIO, CC_MISO)); }
     // General
     uint8_t ReadWriteByte(uint8_t AByte);
     void RfConfig();
@@ -48,14 +48,14 @@ private:
     void WriteStrobe(uint8_t AStrobe);
     void WriteTX(uint8_t* Ptr, uint8_t Length);
     // Strobes
-    void CReset()       { WriteStrobe(CC_SRES); }
-    void EnterTX()      { WriteStrobe(CC_STX);  }
-    void PowerDown()    { WriteStrobe(CC_SPWD); }
-    void FlushTxFIFO()  { WriteStrobe(CC_SFTX); }
-    void GetState()     { WriteStrobe(CC_SNOP); }
+    void CReset()      { WriteStrobe(CC_SRES); }
+    void EnterTX()     { WriteStrobe(CC_STX);  }
+    void PowerDown()   { WriteStrobe(CC_SPWD); }
+    void FlushTxFIFO() { WriteStrobe(CC_SFTX); }
+    void GetState()    { WriteStrobe(CC_SNOP); }
 public:
-    void EnterRX()      { WriteStrobe(CC_SRX);  }
-    void FlushRxFIFO()  { WriteStrobe(CC_SFRX); }
+    void EnterRX()     { WriteStrobe(CC_SRX);  }
+    void FlushRxFIFO() { WriteStrobe(CC_SFRX); }
 
     uint8_t ReadFifo(uint8_t *PBuf, uint8_t Length);
 

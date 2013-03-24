@@ -16,7 +16,16 @@ struct Pkt_t {
 } PACKED;
 #define CC_PKT_LEN  (sizeof(Pkt_t)-2)
 
-#define RX
+//#define RX
+
+#define DBG_PINS
+
+#ifdef DBG_PINS
+#define DBG_GPIO1   GPIOD
+#define DBG_PIN1    6
+#define DBG1_SET()  PinSet(DBG_GPIO1, DBG_PIN1);
+#define DBG1_CLR()  PinClear(DBG_GPIO1, DBG_PIN1);
+#endif
 
 
 // =============================== Variables ===================================
@@ -35,24 +44,26 @@ static msg_t RadioThread(void *arg) {
     (void)arg;
     chRegSetThreadName("Radio");
 
-    PinSetupOut(GPIOB, 0, omPushPull, pudNone);
+#ifdef DBG_PINS
+    PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull, pudNone);
+#endif
 
     PktTx.IdArr[0] = 0x12345678;
     PktTx.IdArr[1] = 0;
     PktTx.IdArr[2] = 0xDEADBEEF;
 
-    chBSemInit(&semIrq, 0); // Not taken
+    chBSemInit(&semIrq, 0); // IRQ semaphore, Not taken
 
-    Uart.Printf("RX\r");
+    //Uart.Printf("RX\r");
 
     while(1) {
 //        switch(IState) {
 //            case rIdle:
 #ifdef RX
-        PinSet(GPIOB, 0);
+        DBG1_SET();
         CC.EnterRX();
         chBSemWait(&semIrq);
-        PinClear(GPIOB, 0);
+        DBG1_CLR();
         uint8_t r = CC.ReadFifo((uint8_t*)&PktRx, sizeof(Pkt_t));
         if(r) {
             //Uart.Printf("RSSI: %d\r", PktRx.RSSI);
@@ -61,16 +72,16 @@ static msg_t RadioThread(void *arg) {
         }
 
         //PinClear(GPIOB, 0);
-        chThdSleepMilliseconds(99);
+        //chThdSleepMilliseconds(99);
 
 #else
 
-            PinSet(GPIOB, 0);
-            CC.TransmitAndWaitIdle(&PktTx, CC_PKT_LEN);
-            PinClear(GPIOB, 0);
+        DBG1_SET();
+        CC.TransmitAndWaitIdle(&PktTx, CC_PKT_LEN);
+        DBG1_CLR();
 
-            //Uart.Printf("t");
-            chThdSleepMilliseconds(4);
+        //Uart.Printf("t");
+        chThdSleepMilliseconds(4);
 #endif
 //                break;
 //

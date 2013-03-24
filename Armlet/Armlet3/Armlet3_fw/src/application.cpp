@@ -44,10 +44,10 @@ static msg_t AppThread(void *arg) {
 //        else Uart.Printf("ReadFile: %u\r", (uint8_t)rslt);
 //        f_close(&SD.File);
 //    }
-
-//    uint32_t Count=0;
-//    iniReadUint32("Sound", "Count", "settings.ini", &Count);
-//    Uart.Printf("Cnt: %u\r", Count);
+    Uart.Printf("1\r");
+    uint32_t Count=0;
+    iniReadUint32("Sound", "Count", "settings.ini", &Count);
+    Uart.Printf("Cnt: %u\r", Count);
 
     while(1) {
         chThdSleepMilliseconds(1800);

@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-03-04 BZR 3984)-stable date = 09/03/2013 20:02:44
+Cmp-Mod V01 Created by CvPcb (2013-03-04 BZR 3984)-stable date = 24/03/2013 23:38:20
 
 BeginCmp
 TimeStamp = /512E0F27;
@@ -59,7 +59,7 @@ EndCmp
 BeginCmp
 TimeStamp = /4D2F5088;
 Reference = C7;
-ValeurCmp = 0.01u;
+ValeurCmp = 10n;
 IdModule  = CAP_0402;
 EndCmp
 
@@ -73,7 +73,7 @@ EndCmp
 BeginCmp
 TimeStamp = /4D2F50B5;
 Reference = C9;
-ValeurCmp = 0.01u;
+ValeurCmp = 10n;
 IdModule  = CAP_0402;
 EndCmp
 
@@ -192,14 +192,14 @@ EndCmp
 BeginCmp
 TimeStamp = /5045D6CC;
 Reference = C26;
-ValeurCmp = 4.7u;
+ValeurCmp = 10u;
 IdModule  = CAP_0805;
 EndCmp
 
 BeginCmp
 TimeStamp = /5045D6E0;
 Reference = C27;
-ValeurCmp = 4.7u;
+ValeurCmp = 10u;
 IdModule  = CAP_0805;
 EndCmp
 
@@ -213,7 +213,7 @@ EndCmp
 BeginCmp
 TimeStamp = /5045D6DA;
 Reference = C29;
-ValeurCmp = 1u;
+ValeurCmp = DNM;
 IdModule  = CAP_0402;
 EndCmp
 
@@ -444,14 +444,14 @@ EndCmp
 BeginCmp
 TimeStamp = /51399AB7;
 Reference = C62;
-ValeurCmp = *;
+ValeurCmp = 3.3pF;
 IdModule  = CAP_0402;
 EndCmp
 
 BeginCmp
 TimeStamp = /51399AC5;
 Reference = C63;
-ValeurCmp = *;
+ValeurCmp = 6.8pF;
 IdModule  = CAP_0402;
 EndCmp
 
@@ -479,7 +479,7 @@ EndCmp
 BeginCmp
 TimeStamp = /50A29BFD;
 Reference = DA1;
-ValeurCmp = NCP583SQ;
+ValeurCmp = DNM;
 IdModule  = SC82AB;
 EndCmp
 
@@ -598,7 +598,7 @@ EndCmp
 BeginCmp
 TimeStamp = /51399AB1;
 Reference = L8;
-ValeurCmp = *;
+ValeurCmp = 15nH;
 IdModule  = IND_0402;
 EndCmp
 
@@ -654,7 +654,7 @@ EndCmp
 BeginCmp
 TimeStamp = /512E0860;
 Reference = Q7;
-ValeurCmp = BC848CL;
+ValeurCmp = DNM;
 IdModule  = SOT23;
 EndCmp
 
@@ -703,7 +703,7 @@ EndCmp
 BeginCmp
 TimeStamp = /5045D6D1;
 Reference = R7;
-ValeurCmp = 390k;
+ValeurCmp = 330k;
 IdModule  = RES_0402;
 EndCmp
 
@@ -717,7 +717,7 @@ EndCmp
 BeginCmp
 TimeStamp = /5045D6D2;
 Reference = R9;
-ValeurCmp = 390k;
+ValeurCmp = 330k;
 IdModule  = RES_0402;
 EndCmp
 
@@ -759,14 +759,14 @@ EndCmp
 BeginCmp
 TimeStamp = /512E07B7;
 Reference = R15;
-ValeurCmp = 1k;
+ValeurCmp = DNM;
 IdModule  = RES_0402;
 EndCmp
 
 BeginCmp
 TimeStamp = /512E0C53;
 Reference = R16;
-ValeurCmp = 10k;
+ValeurCmp = DNM;
 IdModule  = RES_0402;
 EndCmp
 
