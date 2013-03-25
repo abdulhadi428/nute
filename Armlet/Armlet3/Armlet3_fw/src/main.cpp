@@ -15,9 +15,9 @@
 #include "radio.h"
 #include "kl_sd.h"
 #include "sound.h"
+#include "keys.h"
 
 #include "application.h"
-
 
 static inline void Init();
 
@@ -51,11 +51,12 @@ void Init() {
     Uart.Init(115200);
     Uart.Printf("Armlet2 AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
     //Lcd.Init();
-    Radio.Init();
+    //Radio.Init();
     //SD.Init();
+    KeysInit();
     //Sound.Init();
     //Sound.Play("alive.wav");
     //Sound.Play("Sylvans.mp3");
     // Application init
-    //App.Init();
+    App.Init();
 }

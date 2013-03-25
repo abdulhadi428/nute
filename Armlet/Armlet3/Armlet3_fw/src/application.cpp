@@ -13,6 +13,7 @@
 #include "peripheral.h"
 #include "BeepSequences.h"
 #include "VibroSequences.h"
+#include "keys.h"
 
 #include "kl_sd.h"
 
@@ -20,15 +21,16 @@ App_t App;
 
 char Str[255];
 
+static EventListener EvtLstnrApp;
+
 // Prototypes
+#define RegisterEvtKeys(KEYS_MASK)  chEvtRegisterMask(&EvtSrcKey, &EvtLstnrApp, (KEYS_MASK))
 
 // =============================== App Thread ==================================
 static WORKING_AREA(waAppThread, 1024);
 static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
-
-    Color_t c = clBlack;
 
     // Open file
 //    FRESULT rslt;
@@ -44,21 +46,28 @@ static msg_t AppThread(void *arg) {
 //        else Uart.Printf("ReadFile: %u\r", (uint8_t)rslt);
 //        f_close(&SD.File);
 //    }
-    Uart.Printf("1\r");
-    uint32_t Count=0;
-    iniReadUint32("Sound", "Count", "settings.ini", &Count);
-    Uart.Printf("Cnt: %u\r", Count);
+//    Uart.Printf("1\r");
+//    uint32_t Count=0;
+//    iniReadUint32("Sound", "Count", "settings.ini", &Count);
+//    Uart.Printf("Cnt: %u\r", Count);
+
+//    Color_t c = clBlack;
+
+    // Register
+    RegisterEvtKeys(KEY_A);    // Register Key event
 
     while(1) {
-        chThdSleepMilliseconds(1800);
+        //chThdSleepMilliseconds(450);
+        chEvtWaitOne(KEY_A);
+        Uart.Printf("Evt: \r");
         //Lcd.Cls(c);
-        for(uint8_t y=0; y<128; y+=8) {
-            chThdSleepMilliseconds(999);
-            //Lcd.Printf(0, y, clBlue, c, "YA=%u", y);
-            //Beep(BeepBeep);
-
-        }
-        c = (c == clBlack)? clWhite : clBlack;
+//        for(uint8_t y=0; y<128; y+=8) {
+//            chThdSleepMilliseconds(999);
+//            //Lcd.Printf(0, y, clBlue, c, "YA=%u", y);
+//            //Beep(BeepBeep);
+//
+//        }
+//        c = (c == clBlack)? clWhite : clBlack;
 
 //        Lcd.Cls(c);
 //        switch(c) {

@@ -9,7 +9,8 @@
 #include "ch.h"
 
 //Keys_t Keys;
-uint8_t PrevStatus[KEYS_CNT];
+static uint8_t PrevStatus[KEYS_CNT];
+EventSource EvtSrcKey;
 
 // ==== Keys Thread ====
 static WORKING_AREA(waKeysThread, 128);
@@ -25,6 +26,8 @@ static msg_t KeysThread(void *arg) {
             CurrentStatus = PinIsSet(KEY_GPIO, KeyPin[i])? KEY_RELEASED : KEY_PRESSED;
             if(PrevStatus[i] != CurrentStatus) {
                 PrevStatus[i] = CurrentStatus;
+                Uart.Printf("Key %u\r", i);
+                chEvtBroadcast(&EvtSrcKey);
             }
         }
     }
@@ -33,6 +36,7 @@ static msg_t KeysThread(void *arg) {
 
 // ==== Keys methods ====
 void KeysInit() {
+    chEvtInit(&EvtSrcKey);
     for(uint8_t i=0; i<KEYS_CNT; i++) {
         PrevStatus[i] = KEY_RELEASED;
         PinSetupIn(KEY_GPIO, KeyPin[i], pudPullUp);
