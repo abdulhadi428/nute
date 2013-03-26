@@ -29,9 +29,9 @@ const uint16_t KeyPin[] = {
 #define KEY_A       0x001
 #define KEY_B       0x002
 #define KEY_C       0x004
-#define KEY_LEFT    0x008
-#define KEY_OK      0x010
-#define KEY_RIGHT   0x020
+#define KEY_L    0x008
+#define KEY_M      0x010
+#define KEY_R   0x020
 #define KEY_X       0x040
 #define KEY_Y       0x080
 #define KEY_Z       0x100
@@ -43,6 +43,7 @@ const uint16_t KeyPin[] = {
 #define KEY_RELEASED    0
 
 extern EventSource EvtSrcKey;
+extern uint8_t KeyStatus[KEYS_CNT];
 
 void KeysInit();
 

@@ -24,7 +24,7 @@ char Str[255];
 static EventListener EvtLstnrApp;
 
 // Prototypes
-#define RegisterEvtKeys(KEYS_MASK)  chEvtRegisterMask(&EvtSrcKey, &EvtLstnrApp, (KEYS_MASK))
+#define RegisterEvtKeys(Elp)  chEvtRegister(&EvtSrcKey, Elp, 0)
 
 // =============================== App Thread ==================================
 static WORKING_AREA(waAppThread, 1024);
@@ -54,12 +54,12 @@ static msg_t AppThread(void *arg) {
 //    Color_t c = clBlack;
 
     // Register
-    RegisterEvtKeys(KEY_A);    // Register Key event
+    RegisterEvtKeys(&EvtLstnrApp);    // Register Key event
 
     while(1) {
         //chThdSleepMilliseconds(450);
-        chEvtWaitOne(KEY_A);
-        Uart.Printf("Evt: \r");
+        chEvtWaitOne(1);
+        Uart.Printf("Evt key \r");
         //Lcd.Cls(c);
 //        for(uint8_t y=0; y<128; y+=8) {
 //            chThdSleepMilliseconds(999);
