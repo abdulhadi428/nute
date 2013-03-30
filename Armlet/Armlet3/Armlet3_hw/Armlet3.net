@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source D:/Nute/Armlet/Armlet3/Armlet3_hw/Armlet3.sch)
-    (date "24/03/2013 23:38:01")
+    (date "28/03/2013 20:32:28")
     (tool "eeschema (2013-03-04 BZR 3984)-stable"))
   (components
     (comp (ref R19)
@@ -108,7 +108,7 @@
       (sheetpath (names /) (tstamps /))
       (tstamp 512C9938))
     (comp (ref R18)
-      (value 47R)
+      (value 51R)
       (footprint RES_0402)
       (libsource (lib Tittar_kl) (part R))
       (sheetpath (names /) (tstamps /))
@@ -546,7 +546,7 @@
       (sheetpath (names /) (tstamps /))
       (tstamp 50910430))
     (comp (ref R14)
-      (value 200R)
+      (value 220R)
       (footprint RES_0402)
       (libsource (lib Tittar_kl) (part R))
       (sheetpath (names /) (tstamps /))
@@ -1249,7 +1249,9 @@
         (fp LQFP100))
       (fields
         (field (name Reference) DD)
-        (field (name Value) STM32F205Vx-100))
+        (field (name Value) STM32F205Vx-100)
+        (field (name Footprint) ~)
+        (field (name Datasheet) ~))
       (pins
         (pin (num 1) (name PE2) (type passive))
         (pin (num 2) (name PE3) (type passive))
