@@ -6,7 +6,6 @@
  */
 
 #include "cc1101.h"
-#include "rCommon.h"
 
 #define GPIO0_IRQ_MASK  ((uint32_t)0x10)    // Line 4
 
@@ -74,7 +73,11 @@ void cc1101_t::Transmit(rPkt_t *pPkt) {
     chSysUnlock();  // Will be here when IRQ will fire
 }
 
+/*
+ * Enter RX mode and wait reception for Timeout_ms.
+ */
 RxResult_t cc1101_t::Receive(uint32_t Timeout_ms, rPkt_t *pPkt) {
+    FlushRxFIFO();
     EnterRX();  // After that, some time will be wasted to recalibrate
     chSysLock();
     PWaitingThread = chThdSelf();
@@ -108,7 +111,7 @@ RxResult_t cc1101_t::Receive(uint32_t Timeout_ms, rPkt_t *pPkt) {
             return rrOk;
         }
         else {  // CRC Error
-            FlushRxFIFO();
+
             return rrPktFail;
         }
     } // IRQ or Timeout

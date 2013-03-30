@@ -12,7 +12,7 @@
 #include "kl_lib_f2xx.h"
 #include "lcd2630.h"
 #include "peripheral.h"
-#include "radio.h"
+#include "lvl1_assym.h"
 #include "kl_sd.h"
 #include "sound.h"
 #include "keys.h"
@@ -49,14 +49,16 @@ int main() {
 
 void Init() {
     Uart.Init(115200);
-    Uart.Printf("Armlet2 AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
+    Uart.Printf("Armlet3 AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
     //Lcd.Init();
     //Radio.Init();
     //SD.Init();
-    KeysInit();
+    //KeysInit();
     //Sound.Init();
     //Sound.Play("alive.wav");
     //Sound.Play("Sylvans.mp3");
+    // Radio
+    rLvl1_Init();
     // Application init
-    App.Init();
+    //App.Init();
 }

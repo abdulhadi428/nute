@@ -84,7 +84,12 @@
 		<link>
 			<name>Radio</name>
 			<type>2</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Radio</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/Common_fw/Radio</locationURI>
+		</link>
+		<link>
+			<name>kl_lib</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Common_fw/kl_lib</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
