@@ -35,7 +35,7 @@ struct rPkt_t {
 // Devices
 #define RBOTTOM_ID      1000
 #define RTOP_ID         1099
-#define RDEVICE_CNT     (1+RTOP_ID-RBOTTOM_ID)
+#define RDEVICE_CNT     ((1+RTOP_ID)-RBOTTOM_ID)
 // Concentrators
 #define RCONC_BOTTOM_ID 100
 #define RCONC_TOP_ID    104
@@ -78,7 +78,9 @@ extern Surround_t Surround;
 #define R_RX_WAIT_MS    (RTIMESLOT_MS - R_TX_TIME_MS)   // How long to wait reply
 
 // Minimum time worth sleeping
-#define RMIN_TIME_TO_SLEEP_MS   12  // Worst time to start
+#define RMIN_TIME_TO_SLEEP_MS   12
+// Start RX this-number-of-timeslots earlier than exact value
+#define RRX_START_RESERVE       1
 
 // Time to wait in discovery mode
 #define RDISCOVERY_RX_MS        (RTIMESLOT_MS * 2)

@@ -68,7 +68,7 @@ static inline void rTask() {
 void rTmrCallback(void *p) {
     // ==== Periodic code here ====
     CurrentN++;
-    if(CurrentN > RDEVICE_CNT) CurrentN = 0;
+    if(CurrentN >= RDEVICE_CNT) CurrentN = 0;
 
     // Restart the timer, resume thread if needed
     chSysLockFromIsr();
@@ -87,14 +87,19 @@ static rPkt_t pktTxAck, pktRx;
 // Calculates how long to wait for our timeslot
 static uint32_t CalcWaitRx_ms(uint16_t RcvdID) {
     uint16_t TimeslotsToWait;
-    if(RcvdID < SelfID) TimeslotsToWait = SelfID - RcvdID;
-    return 0;   // FIXME
+    if(SelfID >= RcvdID) TimeslotsToWait = SelfID - RcvdID;
+    else TimeslotsToWait = RDEVICE_CNT - (RcvdID - SelfID);
+    // Add some reserve
+    if(TimeslotsToWait >= RRX_START_RESERVE) TimeslotsToWait -= RRX_START_RESERVE;
+    Uart.Printf("Self:%u; Rc: %u; TS: %u\r", SelfID, RcvdID, TimeslotsToWait);
+    // Convert timeslots to ms
+    return (TimeslotsToWait * RTIMESLOT_MS);
 }
 
 static void SleepIfLongToWait(uint16_t RcvdID) {
-    return;
     // Calculate how long to wait to enter RX
     uint32_t msToWaitRx = CalcWaitRx_ms(RcvdID);
+    Uart.Printf("ms: %u\r", msToWaitRx);
     // Restart EnterRx timer and enter sleep
     chVTReset(&rTmr);
     if(msToWaitRx > RMIN_TIME_TO_SLEEP_MS) {    // If enough time to sleep
@@ -105,6 +110,7 @@ static void SleepIfLongToWait(uint16_t RcvdID) {
 }
 
 static inline void rDiscovery() {
+    //Uart.Printf("Dsc\r");
     bool SomeoneIsNear = false, Retry = false;
     int8_t BestRssi = -126; // Lowest possible
     systime_t fTime;
@@ -148,7 +154,7 @@ static inline void rDiscovery() {
     // Decide which channel to use
     if(SomeoneIsNear == false) rMode = rmAlone; // Silence answers our cries
     else {  // Some concentrator is near
-        //Uart.Printf("Dsc: %u\r", CntrN);
+        Uart.Printf("Dsc: %u\r", CntrN);
         rMode = rmInSync;
         CC.SetChannel(CntrN);
         // Calculate how much time passed since we found concentrator
@@ -163,6 +169,7 @@ static inline void rDiscovery() {
 static inline void rInSync() {
     RxResult_t RxRslt = CC.Receive(RDISCOVERY_RX_MS, &pktRx);
     if(RxRslt == rrOk) {
+        Uart.Printf("Pkt To=%u; From=%u; Cmd=%u\r", pktRx.To, pktRx.From, pktRx.Cmd);
         // Check if pkt is ours
         if(pktRx.To == SelfID) {
             // Reply with ACK if ReplyQueue is empty
@@ -179,7 +186,7 @@ static inline void rInSync() {
             if(pktRx.Cmd != RCMD_PING) {
                 // ...
             }
-            Uart.Printf("Pkt\r");
+
             // Now for long  time there will be no requests. Perform discovery.
             rDiscovery();
         } // if pkt is ours

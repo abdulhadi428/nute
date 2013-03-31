@@ -70,7 +70,7 @@ public:
     void Transmit(rPkt_t *pPkt);
     RxResult_t Receive(uint32_t Timeout_ms, rPkt_t *pPkt);
     void EnterIdle()  { WriteStrobe(CC_SIDLE); }
-    void Sleep() { /*WriteStrobe(CC_SPWD);*/ }
+    void Sleep() { WriteStrobe(CC_SPWD); }
 };
 
 extern cc1101_t CC;
