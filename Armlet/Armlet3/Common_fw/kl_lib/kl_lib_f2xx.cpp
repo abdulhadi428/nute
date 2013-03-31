@@ -12,7 +12,6 @@
 
 // ================================ PWM pin ====================================
 void PwmPin_t::Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, uint16_t TopValue, bool Inverted) {
-    TIM_TypeDef* Tim;
     switch(TimN) {
         case 1:
             Tim = TIM1;
@@ -117,6 +116,14 @@ void PwmPin_t::Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, 
         default: break;
     }
     *PCCR = 0;
+}
+
+void PwmPin_t::SetFreqHz(uint32_t FreqHz) {
+    uint32_t divider = Tim->ARR * FreqHz;
+    if(divider == 0) return;
+    uint32_t FPrescaler = Clk.APB1FreqHz / divider;
+    if(FPrescaler != 0) FPrescaler--;   // do not decrease in case of high freq
+    Tim->PSC = (uint16_t)FPrescaler;
 }
 
 // ============================== UART command =================================
