@@ -44,6 +44,28 @@ void Beeper_t::Beep(const BeepChunk_t *PSequence) {
 }
 
 // ================================== Vibro ====================================
-void Vibro(const VibroChunk_t *PSequence) {
+#define VIBRO_TOP_VALUE   207
+Vibrator_t Vibro;
+// Timer callback
+void VibroTmrCallback(void *p) {
+    Vibro.Vibrate((const VibroChunk_t*)p);
 }
 
+void Vibrator_t::Init() {
+    Pin.Init(GPIOE, 14, 1, 4, VIBRO_TOP_VALUE);
+    Pin.SetFreqHz(171);
+}
+
+void Vibrator_t::Vibrate(const VibroChunk_t *PSequence) {
+    chVTReset(&Tmr);
+    // Process chunk
+    int8_t Intencity = PSequence->Intencity;
+    if((Intencity < 0) or (PSequence->Time_ms == 0)) {    // Nothing to play
+        Pin.Off();
+        return;
+    }
+    if(Intencity > 100) Intencity = 100;  // Normalize volume
+    Pin.On(Intencity);
+    // Start timer
+    chVTSet(&Tmr, MS2ST(PSequence->Time_ms), VibroTmrCallback, (void*)(PSequence+1));
+}

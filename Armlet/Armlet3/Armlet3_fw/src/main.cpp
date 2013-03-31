@@ -55,7 +55,7 @@ void Init() {
     //SD.Init();
     //KeysInit();
     Beeper.Init();
-
+    Vibro.Init();
     //Sound.Init();
     //Sound.Play("alive.wav");
     //Sound.Play("Sylvans.mp3");

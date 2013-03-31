@@ -57,9 +57,9 @@ static msg_t AppThread(void *arg) {
     RegisterEvtKeys(&EvtLstnrApp);    // Register Key event
 
     while(1) {
-        chThdSleepMilliseconds(450);
-        Beeper.Beep(BeepBeep);
-
+        chThdSleepMilliseconds(999);
+        //Beeper.Beep(BeepBeep);
+        Vibro.Vibrate(BrrBrr);
         //chEvtWaitOne(1);
         //Uart.Printf("Evt key \r");
         //Lcd.Cls(c);

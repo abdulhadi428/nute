@@ -25,8 +25,15 @@ struct VibroChunk_t {
     uint16_t Time_ms;
 } PACKED;
 #define VIBRO_CHUNK_SZ   sizeof(VibroChunk_t)
-// Send commands to vibro with this function
-void Vibro(const VibroChunk_t *PSequence);
+class Vibrator_t {
+private:
+    PwmPin_t Pin;
+    VirtualTimer Tmr;
+public:
+    void Vibrate(const VibroChunk_t *PSequence); // Vibrate with this function
+    void Init();
+};
+extern Vibrator_t Vibro;
 
 // ==== Beep ====
 struct BeepChunk_t {
