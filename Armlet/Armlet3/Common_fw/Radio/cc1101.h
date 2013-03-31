@@ -54,7 +54,6 @@ private:
     // Strobes
     void CReset()      { WriteStrobe(CC_SRES); }
     void EnterTX()     { WriteStrobe(CC_STX);  }
-    void PowerDown()   { WriteStrobe(CC_SPWD); }
     void FlushTxFIFO() { WriteStrobe(CC_SFTX); }
     void GetState()    { WriteStrobe(CC_SNOP); }
     void EnterRX()     { WriteStrobe(CC_SRX);  }
@@ -70,8 +69,8 @@ public:
     // State change
     void Transmit(rPkt_t *pPkt);
     RxResult_t Receive(uint32_t Timeout_ms, rPkt_t *pPkt);
-    void EnterIdle() { WriteStrobe(CC_SIDLE); }
-    void EnterSleep() { }
+    void EnterIdle()  { WriteStrobe(CC_SIDLE); }
+    void Sleep() { /*WriteStrobe(CC_SPWD);*/ }
 };
 
 extern cc1101_t CC;

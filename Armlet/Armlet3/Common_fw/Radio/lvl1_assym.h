@@ -34,10 +34,12 @@ struct rPkt_t {
 #define RNO_ID          0
 // Devices
 #define RBOTTOM_ID      1000
-#define RTOP_ID         1100
+#define RTOP_ID         1099
 #define RDEVICE_CNT     (1+RTOP_ID-RBOTTOM_ID)
 // Concentrators
-#define RCONC_CNT       7
+#define RCONC_BOTTOM_ID 100
+#define RCONC_TOP_ID    104
+#define RCONC_CNT       (1+RCONC_TOP_ID-RCONC_BOTTOM_ID)
 
 #ifdef DEVICE
 #define RNEIGHBOUR_CNT  RCONC_CNT
@@ -59,8 +61,8 @@ public:
         Devs[N].RSSI = pPkt->RSSI;
         Devs[N].LastToID = pPkt->To;
     }
-    void Reset(uint16_t N) { Devs[N].LastToID = RNO_ID; }
-
+    void RegisterNoAnswer(uint16_t N) { Devs[N].LastToID = RNO_ID; }
+    uint16_t GetID(uint16_t N) { return Devs[N].LastToID; }
 };
 
 extern Surround_t Surround;
@@ -68,16 +70,19 @@ extern Surround_t Surround;
 
 // ==== Commands ====
 #define RCMD_PING       11
-
+#define RCMD_NONE       0xFF
 
 // ==== Timings ====
 #define RTIMESLOT_MS    6   // Length of one timeslot
 #define R_TX_TIME_MS    2   // Measured value of transmission length
 #define R_RX_WAIT_MS    (RTIMESLOT_MS - R_TX_TIME_MS)   // How long to wait reply
 
+// Minimum time worth sleeping
+#define RMIN_TIME_TO_SLEEP_MS   12  // Worst time to start
+
 // Time to wait in discovery mode
 #define RDISCOVERY_RX_MS        (RTIMESLOT_MS * 2)
-#define RDISCOVERY_PERIOD_MS    9
+#define RDISCOVERY_PERIOD_MS    504
 
 // ==== Prototypes ====
 void rLvl1_Init();
