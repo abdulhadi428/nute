@@ -54,11 +54,13 @@ void Init() {
     //Radio.Init();
     //SD.Init();
     //KeysInit();
+    Beeper.Init();
+
     //Sound.Init();
     //Sound.Play("alive.wav");
     //Sound.Play("Sylvans.mp3");
     // Radio
     rLvl1_Init();
     // Application init
-    //App.Init();
+    App.Init();
 }

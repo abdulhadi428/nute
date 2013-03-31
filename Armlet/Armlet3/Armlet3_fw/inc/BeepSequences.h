@@ -15,9 +15,7 @@
     uint8_t VolumePercent;
     uint32_t Time_ms;
     uint16_t Freq_Hz;
-};
-
- * Do not exceed BEEP_MAX_CHUNK_COUNT! (9)
+  };
  */
 
 #include "peripheral.h"

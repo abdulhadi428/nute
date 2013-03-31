@@ -57,9 +57,11 @@ static msg_t AppThread(void *arg) {
     RegisterEvtKeys(&EvtLstnrApp);    // Register Key event
 
     while(1) {
-        //chThdSleepMilliseconds(450);
-        chEvtWaitOne(1);
-        Uart.Printf("Evt key \r");
+        chThdSleepMilliseconds(450);
+        Beeper.Beep(BeepBeep);
+
+        //chEvtWaitOne(1);
+        //Uart.Printf("Evt key \r");
         //Lcd.Cls(c);
 //        for(uint8_t y=0; y<128; y+=8) {
 //            chThdSleepMilliseconds(999);

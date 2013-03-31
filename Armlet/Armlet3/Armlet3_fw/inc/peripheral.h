@@ -35,8 +35,15 @@ struct BeepChunk_t {
     uint16_t Freq_Hz;
 } PACKED;
 #define BEEP_CHUNK_SZ   sizeof(BeepChunk_t)
-// Send commands to beep with this function
-void Beep(const BeepChunk_t *PSequence);
+class Beeper_t {
+private:
+    PwmPin_t Pin;
+    VirtualTimer Tmr;
+public:
+    void Beep(const BeepChunk_t *PSequence); // Beep with this function
+    void Init();
+};
+extern Beeper_t Beeper;
 
 // ==== Infrared ====
 enum IRStatus_t {irIdle=0, irTransmitting=1, irReceiving=2};
