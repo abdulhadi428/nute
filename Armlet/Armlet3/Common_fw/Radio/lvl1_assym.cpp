@@ -81,7 +81,7 @@ void rTmrCallback(void *p) {
 // ============================= Device task ===================================
 #ifdef DEVICE
 enum rMode_t {rmAlone, rmInSync} rMode;
-static uint16_t CntrN;   // Number of concentrator to use
+static uint16_t CntrN;   // Number of concentrator to use. Note, Number != ID.
 static rPkt_t pktTxAck, pktRx;
 
 // Calculates how long to wait for our timeslot
@@ -230,16 +230,16 @@ static msg_t rLvl1Thread(void *arg) {
 }
 
 // ================================= Init ======================================
-void rLvl1_Init() {
+void rLvl1_Init(uint16_t ASelfID) {
 #ifdef DBG_PINS
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull, pudNone);
 #endif
+    SelfID = ASelfID;
     // Init radioIC
     CC.Init();
     CC.SetTxPower(Pwr0dBm);
 
 #ifdef CONCENTRATOR
-    SelfID = RCONC_BOTTOM_ID;   // DEBUG
     CurrentN = 0; // Block number to start from
     // Setup rqueue
     for(uint16_t i=0; i<RDEVICE_CNT; i++) {
@@ -255,8 +255,8 @@ void rLvl1_Init() {
     chVTSetI(&rTmr, MS2ST(RTIMESLOT_MS), rTmrCallback, NULL);     // Start timer
     chSysUnlock();
 #else
-    SelfID = RBOTTOM_ID;   // DEBUG
     rMode = rmAlone;
+    // Setup default reply pkt
     pktTxAck.From = SelfID;
     pktTxAck.Cmd = RCMD_PING;
 #endif

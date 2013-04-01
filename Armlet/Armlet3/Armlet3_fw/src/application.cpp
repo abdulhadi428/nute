@@ -59,7 +59,7 @@ static msg_t AppThread(void *arg) {
     while(1) {
         chThdSleepMilliseconds(999);
         //Beeper.Beep(BeepBeep);
-        Vibro.Vibrate(BrrBrr);
+        //Vibro.Vibrate(BrrBrr);
         //chEvtWaitOne(1);
         //Uart.Printf("Evt key \r");
         //Lcd.Cls(c);

@@ -87,6 +87,6 @@ extern Surround_t Surround;
 #define RDISCOVERY_PERIOD_MS    504
 
 // ==== Prototypes ====
-void rLvl1_Init();
+void rLvl1_Init(uint16_t ASelfID);
 
 #endif /* LVL1_ASSYM_H_ */

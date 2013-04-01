@@ -156,9 +156,10 @@ static inline void PinFastOutPP(GPIO_TypeDef *PGpioPort, const uint16_t APinNumb
 
 class PwmPin_t {
 private:
+    uint32_t *PClk;
     TIM_TypeDef* Tim;
-    __IO uint32_t *PCCR;
 public:
+    __IO uint32_t *PCCR;    // Made public to allow DMA
     void SetFreqHz(uint32_t FreqHz);
     void Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, uint16_t TopValue, bool Inverted=false);
     void On(uint16_t Brightness) { *PCCR = Brightness; }

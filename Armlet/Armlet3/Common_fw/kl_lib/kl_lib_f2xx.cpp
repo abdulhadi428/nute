@@ -80,6 +80,11 @@ void PwmPin_t::Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, 
         default: return; break;
     }
 
+    // Clock src
+    if((TimN == 1) or (TimN == 8) or (TimN == 9) or (TimN == 10) or (TimN == 11))
+        PClk = &Clk.APB2FreqHz;
+    else PClk = &Clk.APB1FreqHz;
+
     // Common
     Tim->CR1 = TIM_CR1_CEN; // Enable timer, set clk division to 0, AutoReload not buffered
     Tim->CR2 = 0;
@@ -121,7 +126,7 @@ void PwmPin_t::Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, 
 void PwmPin_t::SetFreqHz(uint32_t FreqHz) {
     uint32_t divider = Tim->ARR * FreqHz;
     if(divider == 0) return;
-    uint32_t FPrescaler = Clk.APB1FreqHz / divider;
+    uint32_t FPrescaler = *PClk / divider;
     if(FPrescaler != 0) FPrescaler--;   // do not decrease in case of high freq
     Tim->PSC = (uint16_t)FPrescaler;
 }

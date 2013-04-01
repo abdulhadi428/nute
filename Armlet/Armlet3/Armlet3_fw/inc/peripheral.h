@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include "kl_lib_f2xx.h"
 
-// ==== Power ====
+// ================================== Power ====================================
 struct PwrStatus_t {
     bool ExternalPwrOn;
     bool IsCharging;
@@ -19,7 +19,7 @@ struct PwrStatus_t {
 } PACKED;
 extern PwrStatus_t PwrStatus;
 
-// ==== Vibro ====
+// ==================================== Vibro ==================================
 struct VibroChunk_t {
     int8_t Intencity;  // 0 means off, 1...100 means intencity, -1 means end
     uint16_t Time_ms;
@@ -27,15 +27,15 @@ struct VibroChunk_t {
 #define VIBRO_CHUNK_SZ   sizeof(VibroChunk_t)
 class Vibrator_t {
 private:
-    PwmPin_t Pin;
-    VirtualTimer Tmr;
+    PwmPin_t IPin;
+    VirtualTimer ITmr;
 public:
     void Vibrate(const VibroChunk_t *PSequence); // Vibrate with this function
     void Init();
 };
 extern Vibrator_t Vibro;
 
-// ==== Beep ====
+// ==================================== Beep ===================================
 struct BeepChunk_t {
     int8_t VolumePercent;   // 0 means silence, 1...100 means volume, -1 means end
     uint16_t Time_ms;
@@ -44,27 +44,30 @@ struct BeepChunk_t {
 #define BEEP_CHUNK_SZ   sizeof(BeepChunk_t)
 class Beeper_t {
 private:
-    PwmPin_t Pin;
-    VirtualTimer Tmr;
+    PwmPin_t IPin;
+    VirtualTimer ITmr;
 public:
     void Beep(const BeepChunk_t *PSequence); // Beep with this function
     void Init();
 };
 extern Beeper_t Beeper;
 
-// ==== Infrared ====
-enum IRStatus_t {irIdle=0, irTransmitting=1, irReceiving=2};
-#define IR_RXBUF_SZ     27
-#define IR_TXBUF_SZ     27
-struct IR_t {
-    IRStatus_t Status;
-    uint8_t RxBuf[IR_RXBUF_SZ];
-    uint32_t RxSize;
-    void Transmit(uint8_t PwrPercent, uint16_t Data);
+// ================================= Pin control ===============================
+#define PIN_GPIO    GPIOD
+#define PIN_NUMBER  14
+class Pin_t {
+private:
+    VirtualTimer ITmr;
+public:
+    void Init() { PinSetupOut(PIN_GPIO, PIN_NUMBER, omPushPull); }
+    void High() { PinSet(PIN_GPIO, PIN_NUMBER); }
+    void Low()  { PinClear(PIN_GPIO, PIN_NUMBER); }
+    void Pulse(uint32_t ms);
 };
-extern IR_t IR;
 
-// ==== Pills ====
+extern Pin_t Pin;
+
+// =================================== Pills ===================================
 #define PILL_COUNT_MAX  8   // max count of simultaneously connected pills
 /* Number bytes in inner buffer. Also used to determine packet size.
  * See struct SbPkt_t in southbridge.h for more info about size.

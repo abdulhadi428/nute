@@ -16,6 +16,7 @@
 #include "kl_sd.h"
 #include "sound.h"
 #include "keys.h"
+#include "infrared.h"
 
 #include "application.h"
 
@@ -56,11 +57,12 @@ void Init() {
     //KeysInit();
     Beeper.Init();
     Vibro.Init();
+    //IR.Init();
     //Sound.Init();
     //Sound.Play("alive.wav");
     //Sound.Play("Sylvans.mp3");
     // Radio
-    rLvl1_Init();
+    rLvl1_Init(RBOTTOM_ID); // FIXME: replace RBOTTOMID with value from SD
     // Application init
     App.Init();
 }
