@@ -12,7 +12,7 @@
 #include "kl_lib_f2xx.h"
 #include "lcd2630.h"
 #include "peripheral.h"
-#include "lvl1_assym.h"
+#include "lvl2.h"
 #include "kl_sd.h"
 #include "sound.h"
 #include "keys.h"
@@ -62,7 +62,8 @@ void Init() {
     //Sound.Play("alive.wav");
     //Sound.Play("Sylvans.mp3");
     // Radio
-    rLvl1_Init(RDEV_BOTTOM_ID); // FIXME: replace RBOTTOMID with value from SD
+    rLevel2.Init();
+    rLevel1.Init(RDEV_BOTTOM_ID); // FIXME: replace RBOTTOMID with value from SD
     // Application init
     App.Init();
 }

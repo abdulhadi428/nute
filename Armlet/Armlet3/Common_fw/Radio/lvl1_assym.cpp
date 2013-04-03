@@ -7,7 +7,6 @@
 
 #include "lvl1_assym.h"
 #include "cc1101.h"
-#include "kl_lib_f2xx.h"
 
 #define DBG_PINS
 
@@ -18,44 +17,11 @@
 #define DBG1_CLR()  PinClear(DBG_GPIO1, DBG_PIN1)
 #endif
 
-uint16_t SelfID;
 VirtualTimer rTmr;
 void rTmrCallback(void *p);
 Thread *PThr;
 Surround_t Surround;
-
-// =============================== Mailboxes ===================================
-rMaiboxes_t rLevel1;
-
-void rMaiboxes_t::IAddPkt(rPkt_t *Pkt) {
-    // Try to allocate IRxBuf slot
-    for(uint16_t i=0; i<R_RX_BUF_SZ; i++) {
-        if(IRxBuf[i].To == RNO_ID) {
-            memcpy(&CmdBuf[i], PCmd, SB_CMD_SZ);    // Copy cmd to cmd buffer
-            chMBPost(&CmdMailbox, (msg_t)&CmdBuf[i], TIME_INFINITE);    // Send cmd pointer
-            chSemSignal(&CmdSem);   // Allow others to spin too
-            return;
-        }
-    }
-    //chMBPost(&IRxMb, (msg_t)&CmdBuf[i], TIME_INFINITE);
-}
-
-uint8_t rMaiboxes_t::FetchRxTimeout(rPkt_t *PPkt, uint32_t ms) {
-    if(ms != TIME_INFINITE) ms = MS2ST(ms);
-    msg_t Rpl=0;
-    if(chMBFetch(&IRxMb, &Rpl, ms) == RDY_OK) {
-        PPkt = (rPkt_t*)Rpl;
-        return OK;
-    }
-    else return FAILURE;
-}
-
-void rMaiboxes_t::Init() {
-    // Init Rx maibox
-    chMBInit(&IRxMb, IRxMsgs, R_RX_BUF_SZ);
-    for(uint16_t i=0; i<R_RX_BUF_SZ; i++) IRxMsgs[i] = 0;
-
-}
+rLevel1_t rLevel1;
 
 // ============================ Concentrator task ==============================
 #ifdef CONCENTRATOR
@@ -114,26 +80,23 @@ void rTmrCallback(void *p) {
 // ============================= Device task ===================================
 #ifdef DEVICE
 enum rMode_t {rmAlone, rmInSync} rMode;
-static uint16_t CntrN;   // Number of concentrator to use. Note, Number != ID.
-static rPkt_t pktTxAck, pktRx;
-static uint8_t RxRetryCounter;
 
 // Calculates how long to wait for our timeslot
-static uint32_t CalcWaitRx_ms(uint16_t RcvdID) {
+uint32_t rLevel1_t::ICalcWaitRx_ms(uint16_t RcvdID) {
     uint16_t TimeslotsToWait;
-    if(SelfID >= RcvdID) TimeslotsToWait = SelfID - RcvdID;
-    else TimeslotsToWait = RDEVICE_CNT - (RcvdID - SelfID);
+    if(ISelfID >= RcvdID) TimeslotsToWait = ISelfID - RcvdID;
+    else TimeslotsToWait = RDEVICE_CNT - (RcvdID - ISelfID);
     // Add some reserve
     if(TimeslotsToWait >= RRX_START_RESERVE) TimeslotsToWait -= RRX_START_RESERVE;
-    Uart.Printf("Self:%u; Rc: %u; TS: %u\r", SelfID, RcvdID, TimeslotsToWait);
+    //Uart.Printf("Self:%u; Rc: %u; TS: %u\r", ISelfID, RcvdID, TimeslotsToWait);
     // Convert timeslots to ms
     return (TimeslotsToWait * RTIMESLOT_MS);
 }
 
-static void SleepIfLongToWait(uint16_t RcvdID) {
+void rLevel1_t::ISleepIfLongToWait(uint16_t RcvdID) {
     // Calculate how long to wait to enter RX
-    uint32_t msToWaitRx = CalcWaitRx_ms(RcvdID);
-    Uart.Printf("ms: %u\r", msToWaitRx);
+    uint32_t msToWaitRx = ICalcWaitRx_ms(RcvdID);
+    //Uart.Printf("ms: %u\r", msToWaitRx);
     // Restart EnterRx timer and enter sleep
     chVTReset(&rTmr);
     if(msToWaitRx > RMIN_TIME_TO_SLEEP_MS) {    // If enough time to sleep
@@ -143,7 +106,7 @@ static void SleepIfLongToWait(uint16_t RcvdID) {
     }
 }
 
-static inline void rDiscovery() {
+void rLevel1_t::IDiscovery() {
     //Uart.Printf("Dsc\r");
     bool SomeoneIsNear = false, Retry = false;
     int8_t BestRssi = -126; // Lowest possible
@@ -188,7 +151,7 @@ static inline void rDiscovery() {
     // Decide which channel to use
     if(SomeoneIsNear == false) rMode = rmAlone; // Silence answers our cries
     else {  // Some concentrator is near
-        Uart.Printf("Dsc: %u\r", CntrN);
+        //Uart.Printf("Dsc: %u\r", CntrN);
         rMode = rmInSync;
         CC.SetChannel(CntrN);
         // Calculate how much time passed since we found concentrator
@@ -196,18 +159,18 @@ static inline void rDiscovery() {
         // Calculate current ID concentrator is speaking with
         uint32_t fID = Surround.GetID(CntrN) + (t / RTIMESLOT_MS);
         if(fID > RDEV_TOP_ID) fID -= RDEVICE_CNT;
-        SleepIfLongToWait(fID); // Sleep if needed
+        ISleepIfLongToWait(fID); // Sleep if needed
     } // if concentrator is near
 }
 
 // Called periodically when concentrator is successfully discovered
-static inline void rInSync() {
+void rLevel1_t::IInSync() {
     RxResult_t RxRslt = CC.Receive(RDISCOVERY_RX_MS, &pktRx);
     if(RxRslt == rrOk) {
-        Uart.Printf("Pkt To=%u; From=%u; Cmd=%u\r", pktRx.To, pktRx.From, pktRx.Cmd);
+        //Uart.Printf("Pkt To=%u; From=%u; Cmd=%u\r", pktRx.To, pktRx.From, pktRx.Cmd);
         RxRetryCounter = 0;     // Something was successfully received, reset counter
         // Check if pkt is ours
-        if(pktRx.To == SelfID) {
+        if(pktRx.To == ISelfID) {
             // Reply with ACK if ReplyQueue is empty
             if(1) {
                 DBG1_SET();
@@ -218,15 +181,16 @@ static inline void rInSync() {
                 //CC.Transmit(&pktTxAck);
             } // if Queue is empty
 
-            // Put pkt in mailbox if Cmd is not Ping
-            if(pktRx.Cmd != RCMD_PING) rLevel1.IAddPkt(&pktRx);
+            // Put received pkt in buffer if Cmd is not Ping
+            //if(pktRx.Cmd != RCMD_PING)
+                IAddPkt(&pktRx);
 
             // Now for long  time there will be no requests for us => perform discovery.
-            rDiscovery();
+            IDiscovery();
         } // if pkt is ours
         else {  // Other's pkt, sleep if needed; seems like sync failure
             if((pktRx.To >= RDEV_BOTTOM_ID) and (pktRx.To <= RDEV_TOP_ID))  // Pkt for other device, not concentrator
-                SleepIfLongToWait(pktRx.To);
+                ISleepIfLongToWait(pktRx.To);
         }
     } // if received ok
     else {  // check if we get lost
@@ -234,16 +198,16 @@ static inline void rInSync() {
     }
 }
 
-static inline void rTask() {
+void rLevel1_t::Task() {
     switch(rMode) {
         case rmAlone:
             CC.Sleep();  // Shutdown CC
             chThdSleepMilliseconds(RDISCOVERY_PERIOD_MS);
-            rDiscovery();
+            IDiscovery();
             break;
 
         case rmInSync:
-            rInSync();
+            IInSync();
             break;
     } // switch
 }
@@ -263,17 +227,20 @@ static WORKING_AREA(warLvl1Thread, 1024);
 static msg_t rLvl1Thread(void *arg) {
     (void)arg;
     chRegSetThreadName("rLvl1");
-    while(1) rTask();
+    while(1) rLevel1.Task();
     return 0;
 }
 
 // ================================= Init ======================================
-void rLvl1_Init(uint16_t ASelfID) {
+void rLevel1_t::Init(uint16_t ASelfID) {
 #ifdef DBG_PINS
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull, pudNone);
 #endif
-    rLevel1.Init();
-    SelfID = ASelfID;
+    // Init Rx
+    chEvtInit(&IEvtSrcRadioRx);
+    IRx.Init(IRxBuf, R_RX_BUF_SZ);
+    // General
+    ISelfID = ASelfID;
     // Init radioIC
     CC.Init();
     CC.SetTxPower(Pwr0dBm);
@@ -296,7 +263,7 @@ void rLvl1_Init(uint16_t ASelfID) {
 #else
     rMode = rmAlone;
     // Setup default reply pkt
-    pktTxAck.From = SelfID;
+    pktTxAck.From = ISelfID;
     pktTxAck.Cmd = RCMD_PING;
 #endif
 

@@ -14,6 +14,7 @@
 #include "BeepSequences.h"
 #include "VibroSequences.h"
 #include "keys.h"
+#include "lvl1_assym.h"
 
 #include "kl_sd.h"
 
@@ -24,7 +25,7 @@ char Str[255];
 static EventListener EvtLstnrApp;
 
 // Prototypes
-#define RegisterEvtKeys(Elp)  chEvtRegister(&EvtSrcKey, Elp, 0)
+//#define RegisterEvtKeys(Elp)    chEvtRegister(&EvtSrcKey, Elp, 0)
 
 // =============================== App Thread ==================================
 static WORKING_AREA(waAppThread, 1024);
@@ -53,15 +54,15 @@ static msg_t AppThread(void *arg) {
 
 //    Color_t c = clBlack;
 
-    // Register
-    RegisterEvtKeys(&EvtLstnrApp);    // Register Key event
+    // Register event listeners
+    chEvtRegister(&EvtSrcKey, &EvtLstnrApp, 0); // Register Key event
 
     while(1) {
         chThdSleepMilliseconds(999);
         //Beeper.Beep(BeepBeep);
         //Vibro.Vibrate(BrrBrr);
-        //chEvtWaitOne(1);
-        //Uart.Printf("Evt key \r");
+//        chEvtWaitOne(ALL_EVENTS);
+//        Uart.Printf("Evt \r");
         //Lcd.Cls(c);
 //        for(uint8_t y=0; y<128; y+=8) {
 //            chThdSleepMilliseconds(999);

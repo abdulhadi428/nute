@@ -17,6 +17,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "main.h"   // To distinct between concentrator and device
+#include "kl_lib_f2xx.h"
 
 // ==== Pkt_t ====
 #define RDATA_CNT       4
@@ -90,26 +91,36 @@ extern Surround_t Surround;
 #define RDISCOVERY_RX_MS        (RTIMESLOT_MS * 2)
 #define RDISCOVERY_PERIOD_MS    504
 
-// ==== Mailboxes ====
-#define R_RX_BUF_SZ             18  // number of packets in buffer
-class rMaiboxes_t {
+// ==== Events ====
+#define R_RX_BUF_SZ             18  // number of packets to buffer
+class rLevel1_t {
 private:
-    Mailbox IRxMb;   // Here will be received packets; fetch them from upper level
-    rPkt_t IRxBuf[R_RX_BUF_SZ];
-    msg_t IRxMsgs[R_RX_BUF_SZ];
-public:
-    void Init();
+    uint16_t ISelfID;
     // Rx
-    uint8_t FetchRxTimeout(rPkt_t *PPkt, uint32_t ms);
-    uint8_t FetchRx(rPkt_t *PPkt) { return FetchRxTimeout(PPkt, TIME_INFINITE); }
-    uint16_t GetRxCount() { int32_t r = chMBGetUsedCountI(&IRxMb); return (r < 0)? 0 : r; }
-    void IAddPkt(rPkt_t *Pkt);   // Inner use
+    EventSource IEvtSrcRadioRx;
+    rPkt_t IRxBuf[R_RX_BUF_SZ];
+    CircBuf_t<rPkt_t> IRx;
+    // Tries to add pkt to buffer. Broadcasts event if success.
+    void IAddPkt(rPkt_t *Pkt) { if(IRx.Put(Pkt) == OK) chEvtBroadcast(&IEvtSrcRadioRx); }
+#ifdef DEVICE
+    rPkt_t pktTxAck, pktRx;
+    uint8_t RxRetryCounter;
+    uint16_t CntrN;   // Number of concentrator to use. Note, Number != ID.
+    inline void IInSync();
+    inline void IDiscovery();
+    uint32_t ICalcWaitRx_ms(uint16_t RcvdID);
+    void ISleepIfLongToWait(uint16_t RcvdID);
+#endif
+public:
+    void Init(uint16_t ASelfID);
+    // Rx
+    uint8_t FetchRxPkt(rPkt_t *PPkt) { return IRx.Get(PPkt); }
+    uint32_t GetRxCount() { return IRx.GetFullSlotsCount(); }
+    void RegisterEvtRx(EventListener *PEvtLstnr, uint8_t EvtID) { chEvtRegister(&IEvtSrcRadioRx, PEvtLstnr, EvtID); }
+    // Inner use
+    inline void Task();
 };
 
-extern rMaiboxes_t rLevel1;
-
-
-// ==== Prototypes ====
-void rLvl1_Init(uint16_t ASelfID);
+extern rLevel1_t rLevel1;
 
 #endif /* LVL1_ASSYM_H_ */
