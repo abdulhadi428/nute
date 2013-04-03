@@ -23,6 +23,7 @@
 struct rPkt_t {
     uint16_t From;
     uint16_t To;
+    //uint16_t PktID; // Need to distinct repeated packets
     uint8_t Cmd;
     uint8_t Data[RDATA_CNT];
     int8_t RSSI;                // Received signal level, RX use only
@@ -33,9 +34,9 @@ struct rPkt_t {
 // ==== Address space ====
 #define RNO_ID          0
 // Devices
-#define RBOTTOM_ID      1000
-#define RTOP_ID         1099
-#define RDEVICE_CNT     ((1+RTOP_ID)-RBOTTOM_ID)
+#define RDEV_BOTTOM_ID  1000
+#define RDEV_TOP_ID     1099
+#define RDEVICE_CNT     ((1+RDEV_TOP_ID)-RDEV_BOTTOM_ID)
 // Concentrators
 #define RCONC_BOTTOM_ID 100
 #define RCONC_TOP_ID    104
@@ -88,6 +89,25 @@ extern Surround_t Surround;
 // Time to wait in discovery mode
 #define RDISCOVERY_RX_MS        (RTIMESLOT_MS * 2)
 #define RDISCOVERY_PERIOD_MS    504
+
+// ==== Mailboxes ====
+#define R_RX_BUF_SZ             18  // number of packets in buffer
+class rMaiboxes_t {
+private:
+    Mailbox IRxMb;   // Here will be received packets; fetch them from upper level
+    rPkt_t IRxBuf[R_RX_BUF_SZ];
+    msg_t IRxMsgs[R_RX_BUF_SZ];
+public:
+    void Init();
+    // Rx
+    uint8_t FetchRxTimeout(rPkt_t *PPkt, uint32_t ms);
+    uint8_t FetchRx(rPkt_t *PPkt) { return FetchRxTimeout(PPkt, TIME_INFINITE); }
+    uint16_t GetRxCount() { int32_t r = chMBGetUsedCountI(&IRxMb); return (r < 0)? 0 : r; }
+    void IAddPkt(rPkt_t *Pkt);   // Inner use
+};
+
+extern rMaiboxes_t rLevel1;
+
 
 // ==== Prototypes ====
 void rLvl1_Init(uint16_t ASelfID);

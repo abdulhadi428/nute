@@ -24,6 +24,39 @@ void rTmrCallback(void *p);
 Thread *PThr;
 Surround_t Surround;
 
+// =============================== Mailboxes ===================================
+rMaiboxes_t rLevel1;
+
+void rMaiboxes_t::IAddPkt(rPkt_t *Pkt) {
+    // Try to allocate IRxBuf slot
+    for(uint16_t i=0; i<R_RX_BUF_SZ; i++) {
+        if(IRxBuf[i].To == RNO_ID) {
+            memcpy(&CmdBuf[i], PCmd, SB_CMD_SZ);    // Copy cmd to cmd buffer
+            chMBPost(&CmdMailbox, (msg_t)&CmdBuf[i], TIME_INFINITE);    // Send cmd pointer
+            chSemSignal(&CmdSem);   // Allow others to spin too
+            return;
+        }
+    }
+    //chMBPost(&IRxMb, (msg_t)&CmdBuf[i], TIME_INFINITE);
+}
+
+uint8_t rMaiboxes_t::FetchRxTimeout(rPkt_t *PPkt, uint32_t ms) {
+    if(ms != TIME_INFINITE) ms = MS2ST(ms);
+    msg_t Rpl=0;
+    if(chMBFetch(&IRxMb, &Rpl, ms) == RDY_OK) {
+        PPkt = (rPkt_t*)Rpl;
+        return OK;
+    }
+    else return FAILURE;
+}
+
+void rMaiboxes_t::Init() {
+    // Init Rx maibox
+    chMBInit(&IRxMb, IRxMsgs, R_RX_BUF_SZ);
+    for(uint16_t i=0; i<R_RX_BUF_SZ; i++) IRxMsgs[i] = 0;
+
+}
+
 // ============================ Concentrator task ==============================
 #ifdef CONCENTRATOR
 // Queue of packets to transmit
@@ -162,7 +195,7 @@ static inline void rDiscovery() {
         uint32_t t = chTimeNow() - fTime;
         // Calculate current ID concentrator is speaking with
         uint32_t fID = Surround.GetID(CntrN) + (t / RTIMESLOT_MS);
-        if(fID > RTOP_ID) fID -= RDEVICE_CNT;
+        if(fID > RDEV_TOP_ID) fID -= RDEVICE_CNT;
         SleepIfLongToWait(fID); // Sleep if needed
     } // if concentrator is near
 }
@@ -172,7 +205,7 @@ static inline void rInSync() {
     RxResult_t RxRslt = CC.Receive(RDISCOVERY_RX_MS, &pktRx);
     if(RxRslt == rrOk) {
         Uart.Printf("Pkt To=%u; From=%u; Cmd=%u\r", pktRx.To, pktRx.From, pktRx.Cmd);
-        RxRetryCounter = 0;       // Something was successfully received, reset counter
+        RxRetryCounter = 0;     // Something was successfully received, reset counter
         // Check if pkt is ours
         if(pktRx.To == SelfID) {
             // Reply with ACK if ReplyQueue is empty
@@ -185,16 +218,15 @@ static inline void rInSync() {
                 //CC.Transmit(&pktTxAck);
             } // if Queue is empty
 
-            // Signal up if Cmd is not Ping
-            if(pktRx.Cmd != RCMD_PING) {
-                // ...
-            }
+            // Put pkt in mailbox if Cmd is not Ping
+            if(pktRx.Cmd != RCMD_PING) rLevel1.IAddPkt(&pktRx);
 
             // Now for long  time there will be no requests for us => perform discovery.
             rDiscovery();
         } // if pkt is ours
         else {  // Other's pkt, sleep if needed; seems like sync failure
-            SleepIfLongToWait(pktRx.To);
+            if((pktRx.To >= RDEV_BOTTOM_ID) and (pktRx.To <= RDEV_TOP_ID))  // Pkt for other device, not concentrator
+                SleepIfLongToWait(pktRx.To);
         }
     } // if received ok
     else {  // check if we get lost
@@ -240,6 +272,7 @@ void rLvl1_Init(uint16_t ASelfID) {
 #ifdef DBG_PINS
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull, pudNone);
 #endif
+    rLevel1.Init();
     SelfID = ASelfID;
     // Init radioIC
     CC.Init();
