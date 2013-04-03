@@ -79,8 +79,11 @@ extern Surround_t Surround;
 
 // Minimum time worth sleeping
 #define RMIN_TIME_TO_SLEEP_MS   12
-// Start RX this-number-of-timeslots earlier than exact value
+// Start RX this-number-of-timeslots earlier than exact number
 #define RRX_START_RESERVE       1
+
+// In sync, try to receive pkt this number of times before returning to alone mode
+#define R_IN_SYNC_RETRY_CNT     4
 
 // Time to wait in discovery mode
 #define RDISCOVERY_RX_MS        (RTIMESLOT_MS * 2)

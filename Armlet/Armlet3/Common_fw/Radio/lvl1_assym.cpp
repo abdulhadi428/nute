@@ -83,6 +83,7 @@ void rTmrCallback(void *p) {
 enum rMode_t {rmAlone, rmInSync} rMode;
 static uint16_t CntrN;   // Number of concentrator to use. Note, Number != ID.
 static rPkt_t pktTxAck, pktRx;
+static uint8_t RxRetryCounter;
 
 // Calculates how long to wait for our timeslot
 static uint32_t CalcWaitRx_ms(uint16_t RcvdID) {
@@ -166,10 +167,12 @@ static inline void rDiscovery() {
     } // if concentrator is near
 }
 
+// Called periodically when concentrator is successfully discovered
 static inline void rInSync() {
     RxResult_t RxRslt = CC.Receive(RDISCOVERY_RX_MS, &pktRx);
     if(RxRslt == rrOk) {
         Uart.Printf("Pkt To=%u; From=%u; Cmd=%u\r", pktRx.To, pktRx.From, pktRx.Cmd);
+        RxRetryCounter = 0;       // Something was successfully received, reset counter
         // Check if pkt is ours
         if(pktRx.To == SelfID) {
             // Reply with ACK if ReplyQueue is empty
@@ -187,13 +190,16 @@ static inline void rInSync() {
                 // ...
             }
 
-            // Now for long  time there will be no requests. Perform discovery.
+            // Now for long  time there will be no requests for us => perform discovery.
             rDiscovery();
         } // if pkt is ours
-        else {  // Other's pkt, sleep if needed
+        else {  // Other's pkt, sleep if needed; seems like sync failure
             SleepIfLongToWait(pktRx.To);
         }
     } // if received ok
+    else {  // check if we get lost
+        if(RxRetryCounter++ > R_IN_SYNC_RETRY_CNT) rMode = rmAlone;
+    }
 }
 
 static inline void rTask() {
