@@ -11,7 +11,7 @@ rLevel2_t rLevel2;
 
 // =========================== Rx dispatch thread ==============================
 static EventListener EvtLstnrRxThd;
-static rPkt_t RxPkt;
+static rPkt_t RxPkt, TxPkt;
 
 static WORKING_AREA(warLvl2RxThread, 128);
 static msg_t rLvl2RxThread(void *arg) {
@@ -26,8 +26,13 @@ static msg_t rLvl2RxThread(void *arg) {
         Uart.Printf("RxEvt: Cnt = %u\r", Cnt);
 
         while(Cnt--) {
-            if(rLevel1.FetchRxPkt(&RxPkt) == OK) {
+            if(rLevel1.GetRxPkt(&RxPkt) == OK) {
                 Uart.Printf(" RSSI = %d\r", RxPkt.RSSI);
+                // Construct TX pkt and send it in reply
+                TxPkt.Cmd++;
+                TxPkt.From = rLevel1.SelfID;
+                TxPkt.To = RxPkt.From;
+                rLevel1.AddPktToTx(&TxPkt);
             }
         }
 

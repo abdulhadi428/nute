@@ -84,8 +84,8 @@ enum rMode_t {rmAlone, rmInSync} rMode;
 // Calculates how long to wait for our timeslot
 uint32_t rLevel1_t::ICalcWaitRx_ms(uint16_t RcvdID) {
     uint16_t TimeslotsToWait;
-    if(ISelfID >= RcvdID) TimeslotsToWait = ISelfID - RcvdID;
-    else TimeslotsToWait = RDEVICE_CNT - (RcvdID - ISelfID);
+    if(SelfID >= RcvdID) TimeslotsToWait = SelfID - RcvdID;
+    else TimeslotsToWait = RDEVICE_CNT - (RcvdID - SelfID);
     // Add some reserve
     if(TimeslotsToWait >= RRX_START_RESERVE) TimeslotsToWait -= RRX_START_RESERVE;
     //Uart.Printf("Self:%u; Rc: %u; TS: %u\r", ISelfID, RcvdID, TimeslotsToWait);
@@ -170,15 +170,19 @@ void rLevel1_t::IInSync() {
         //Uart.Printf("Pkt To=%u; From=%u; Cmd=%u\r", pktRx.To, pktRx.From, pktRx.Cmd);
         RxRetryCounter = 0;     // Something was successfully received, reset counter
         // Check if pkt is ours
-        if(pktRx.To == ISelfID) {
+        if(pktRx.To == SelfID) {
             // Reply with ACK if ReplyQueue is empty
-            if(1) {
+            if(GetTxCount() == 0) {
                 DBG1_SET();
                 CC.Transmit(&pktTxAck);
                 DBG1_CLR();
             }
             else {  // Queue is not empty
-                //CC.Transmit(&pktTxAck);
+                ITx.Get(&pktTx);
+                //Uart.Printf("PktTx To=%u; From=%u; Cmd=%u\r", pktTx.To, pktTx.From, pktTx.Cmd);
+                DBG1_SET();
+                CC.Transmit(&pktTx);
+                DBG1_CLR();
             } // if Queue is empty
 
             // Put received pkt in buffer if Cmd is not Ping
@@ -236,11 +240,13 @@ void rLevel1_t::Init(uint16_t ASelfID) {
 #ifdef DBG_PINS
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull, pudNone);
 #endif
-    // Init Rx
+    // Init Rx & Tx buffers
     chEvtInit(&IEvtSrcRadioRx);
     IRx.Init(IRxBuf, R_RX_BUF_SZ);
-    // General
-    ISelfID = ASelfID;
+    ITx.Init(ITxBuf, R_TX_BUF_SZ);
+
+    // ==== General ====
+    SelfID = ASelfID;
     // Init radioIC
     CC.Init();
     CC.SetTxPower(Pwr0dBm);
@@ -263,7 +269,7 @@ void rLevel1_t::Init(uint16_t ASelfID) {
 #else
     rMode = rmAlone;
     // Setup default reply pkt
-    pktTxAck.From = ISelfID;
+    pktTxAck.From = SelfID;
     pktTxAck.Cmd = RCMD_PING;
 #endif
 

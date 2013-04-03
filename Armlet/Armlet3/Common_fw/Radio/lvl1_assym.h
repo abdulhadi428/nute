@@ -92,18 +92,21 @@ extern Surround_t Surround;
 #define RDISCOVERY_PERIOD_MS    504
 
 // ==== Events ====
-#define R_RX_BUF_SZ             18  // number of packets to buffer
+#define R_RX_BUF_SZ             18  // Size of buffer for Rx pkts
+#define R_TX_BUF_SZ             18  // Size of buffer for Tx pkts
 class rLevel1_t {
 private:
-    uint16_t ISelfID;
-    // Rx
+    // ==== Rx ====
     EventSource IEvtSrcRadioRx;
     rPkt_t IRxBuf[R_RX_BUF_SZ];
     CircBuf_t<rPkt_t> IRx;
     // Tries to add pkt to buffer. Broadcasts event if success.
     void IAddPkt(rPkt_t *Pkt) { if(IRx.Put(Pkt) == OK) chEvtBroadcast(&IEvtSrcRadioRx); }
+    // ==== Tx ====
+    rPkt_t ITxBuf[R_TX_BUF_SZ];
+    CircBuf_t<rPkt_t> ITx;
 #ifdef DEVICE
-    rPkt_t pktTxAck, pktRx;
+    rPkt_t pktTxAck, pktRx, pktTx;
     uint8_t RxRetryCounter;
     uint16_t CntrN;   // Number of concentrator to use. Note, Number != ID.
     inline void IInSync();
@@ -112,11 +115,15 @@ private:
     void ISleepIfLongToWait(uint16_t RcvdID);
 #endif
 public:
+    uint16_t SelfID;
     void Init(uint16_t ASelfID);
     // Rx
-    uint8_t FetchRxPkt(rPkt_t *PPkt) { return IRx.Get(PPkt); }
+    uint8_t GetRxPkt(rPkt_t *PPkt) { return IRx.Get(PPkt); }
     uint32_t GetRxCount() { return IRx.GetFullSlotsCount(); }
     void RegisterEvtRx(EventListener *PEvtLstnr, uint8_t EvtID) { chEvtRegister(&IEvtSrcRadioRx, PEvtLstnr, EvtID); }
+    // Tx
+    uint8_t AddPktToTx(rPkt_t *PPkt) { return ITx.Put(PPkt); }
+    uint32_t GetTxCount() { return ITx.GetFullSlotsCount(); }
     // Inner use
     inline void Task();
 };
