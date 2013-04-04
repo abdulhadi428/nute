@@ -20,7 +20,7 @@
 #include "kl_lib_f2xx.h"
 
 // ==== Pkt_t ====
-#define RDATA_CNT       4
+#define RDATA_CNT       24
 struct rPkt_t {
     uint16_t From;
     uint16_t To;
@@ -113,6 +113,9 @@ private:
     inline void IDiscovery();
     uint32_t ICalcWaitRx_ms(uint16_t RcvdID);
     void ISleepIfLongToWait(uint16_t RcvdID);
+#endif
+#ifdef GATE
+
 #endif
 public:
     uint16_t SelfID;

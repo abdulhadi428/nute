@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Concentrator</name>
+	<name>Gate</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -96,6 +96,10 @@
 		<variable>
 			<name>copy_PARENT</name>
 			<value>$%7BPARENT-2-PROJECT_LOC%7D/Armlet2</value>
+		</variable>
+		<variable>
+			<name>copy_PARENT1</name>
+			<value>$%7BPARENT-1-PROJECT_LOC%7D/Armlet/Armlet3</value>
 		</variable>
 	</variableList>
 </projectDescription>

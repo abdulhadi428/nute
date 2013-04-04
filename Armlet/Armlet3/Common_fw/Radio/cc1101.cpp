@@ -13,6 +13,8 @@ cc1101_t CC;
 static Thread *PWaitingThread = NULL;
 
 void cc1101_t::Init() {
+    Uart.Printf("Gate PktLen=%u\r", RPKT_LEN);
+
     // ==== GPIO ====
     PinSetupOut      (GPIOA, CC_CS,   omPushPull, pudNone);
     PinSetupAlterFunc(GPIOA, CC_SCK,  omPushPull, pudNone, AF5);

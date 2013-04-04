@@ -241,7 +241,7 @@
 			<resource resourceType="PROJECT" workspacePath="/f0test"/>
 		</configuration>
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/Concentrator"/>
+			<resource resourceType="PROJECT" workspacePath="/Gate"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>

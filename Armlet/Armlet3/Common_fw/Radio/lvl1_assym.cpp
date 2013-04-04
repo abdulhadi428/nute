@@ -24,43 +24,43 @@ Surround_t Surround;
 rLevel1_t rLevel1;
 
 // ============================ Concentrator task ==============================
-#ifdef CONCENTRATOR
+#ifdef GATE
 // Queue of packets to transmit
 struct QueueItem_t {
     rPkt_t TxPkt, RxPkt;
 };
 static QueueItem_t rQueue[RDEVICE_CNT];
-uint16_t CurrentN; // N of block to currently speak with. N != ID
+static uint16_t CurrentN; // N of block to currently speak with. N != ID
 
 // Radiotask
-static inline void rTask() {
+void rLevel1_t::Task() {
     chSchGoSleepS(THD_STATE_SUSPENDED); // Will wake up by rTmr
     // Sleep ended, transmit new pkt
     rPkt_t *tx = &rQueue[CurrentN].TxPkt;
-    rPkt_t *rx = &rQueue[CurrentN].RxPkt;
+    //rPkt_t *rx = &rQueue[CurrentN].RxPkt;
     // Send pkt
     DBG1_SET();
     CC.Transmit(tx);
     DBG1_CLR();
     // Pkt transmitted, enter RX
-    RxResult_t RxRslt = CC.Receive(R_RX_WAIT_MS, rx);
-
-    // Process result
-    if(RxRslt == rrOk) {
-        Surround.RegisterPkt(CurrentN, rx);
-        // If something not trivial transmitted or received (not ping), signal reply up
-        if((rx->Cmd != RCMD_PING) or (tx->Cmd != RCMD_PING)) {
-            // ...
-        }
-    } // if ok
-    else {  // No answer
-        Surround.RegisterNoAnswer(CurrentN);
-        // If it was not ping, signal "no answer" up
-        if(tx->Cmd != RCMD_PING) {
-            // ...
-        }
-    }
-    tx->Cmd = RCMD_PING;   // Reset pkt
+//    RxResult_t RxRslt = CC.Receive(R_RX_WAIT_MS, rx);
+//
+//    // Process result
+//    if(RxRslt == rrOk) {
+//        Surround.RegisterPkt(CurrentN, rx);
+//        // If something not trivial transmitted or received (not ping), signal reply up
+//        if((rx->Cmd != RCMD_PING) or (tx->Cmd != RCMD_PING)) {
+//            // ...
+//        }
+//    } // if ok
+//    else {  // No answer
+//        Surround.RegisterNoAnswer(CurrentN);
+//        // If it was not ping, signal "no answer" up
+//        if(tx->Cmd != RCMD_PING) {
+//            // ...
+//        }
+//    }
+//    tx->Cmd = RCMD_PING;   // Reset pkt
 }
 
 // Timer callback
@@ -251,13 +251,13 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     CC.Init();
     CC.SetTxPower(Pwr0dBm);
 
-#ifdef CONCENTRATOR
+#ifdef GATE
     CurrentN = 0; // Block number to start from
     // Setup rqueue
     for(uint16_t i=0; i<RDEVICE_CNT; i++) {
         rQueue[i].TxPkt.Cmd = RCMD_PING;
         rQueue[i].TxPkt.From = SelfID;
-        rQueue[i].TxPkt.To = RBOTTOM_ID+i;
+        rQueue[i].TxPkt.To = RDEV_BOTTOM_ID+i;
     }
     // Get concentrator channel (0...RCONC_CNT-1). Channel is not ID!
     uint8_t SelfChannel = 0;    // DEBUG

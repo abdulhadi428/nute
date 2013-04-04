@@ -8,7 +8,7 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
-#define CONCENTRATOR
+#define GATE
 
 
 #endif /* MAIN_H_ */

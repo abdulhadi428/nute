@@ -45,10 +45,10 @@ int main() {
 
 void Init() {
     Uart.Init(115200);
-    Uart.Printf("Concentrator AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
+    Uart.Printf("Gate AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
     //Lcd.Init();
     //SD.Init();
-    rLvl1_Init();
+    rLevel1.Init(RCONC_BOTTOM_ID);
     // Application init
     App.Init();
 }

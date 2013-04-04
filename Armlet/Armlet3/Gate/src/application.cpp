@@ -46,7 +46,7 @@ static msg_t AppThread(void *arg) {
 
 
     while(1) {
-        //chThdSleepMilliseconds(450);
+        chThdSleepMilliseconds(450);
         //Lcd.Cls(c);
 //        for(uint8_t y=0; y<128; y+=8) {
 //            chThdSleepMilliseconds(999);
