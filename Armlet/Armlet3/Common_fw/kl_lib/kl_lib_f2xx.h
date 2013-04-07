@@ -34,32 +34,6 @@ enum LowHigh_t {Low, High};
 #define DMA_PRIORITY_HIGH       STM32_DMA_CR_PL(0b10)
 #define DMA_PRIORITY_VERYHIGH   STM32_DMA_CR_PL(0b11)
 
-// =========================== Circular buffer =================================
-template <class T>
-class CircBuf_t {
-private:
-    uint32_t IBufSize, IFullSlotsCount;
-    T *IPBuf, *PRead, *PWrite;
-public:
-    uint8_t Get(T *p) {
-        if(IFullSlotsCount == 0) return FAILURE;
-        memcpy(p, PRead, sizeof(T));
-        if(++PRead > (IPBuf + IBufSize - 1)) PRead = IPBuf;     // Circulate buffer
-        IFullSlotsCount--;
-        return OK;
-    }
-    uint8_t Put(T *p) {
-        if(IFullSlotsCount == IBufSize) return FAILURE;
-        memcpy(PWrite, p, sizeof(T));
-        if(++PWrite > (IPBuf + IBufSize - 1)) PWrite = IPBuf;   // Circulate buffer
-        IFullSlotsCount++;
-        return OK;
-    }
-    uint32_t GetFullSlotsCount() { return IFullSlotsCount; }
-    void Reset() { PRead = IPBuf; PWrite = IPBuf; IFullSlotsCount = 0; }
-    void Init(T *PBuf, uint32_t Sz) { IPBuf = PBuf; IBufSize = Sz; Reset(); }
-};
-
 // ============================ Simple delay ===================================
 static inline void DelayLoop(volatile uint32_t ACounter) { while(ACounter--); }
 static inline void Delay_ms(uint32_t Ams) {

@@ -48,7 +48,7 @@ void Init() {
     Uart.Printf("Gate AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
     //Lcd.Init();
     //SD.Init();
-    rLevel1.Init(RCONC_BOTTOM_ID);
+    rLevel1.Init(1);    // FIXME: set correct number here
     // Application init
     App.Init();
 }

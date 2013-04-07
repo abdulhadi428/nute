@@ -25,23 +25,44 @@ rLevel1_t rLevel1;
 
 // ============================ Concentrator task ==============================
 #ifdef GATE
-// Queue of packets to transmit
-struct QueueItem_t {
-    rPkt_t TxPkt, RxPkt;
-};
-static QueueItem_t rQueue[RDEVICE_CNT];
-static uint16_t CurrentN; // N of block to currently speak with. N != ID
+void rLevel1_t::PrepareTxPkt() {
+    memcpy(&PktTx.Data, DataPktTx.Ptr, RDATA_CNT);
+    DataPktTx.Ptr += RDATA_CNT;
+    DataPktTx.Length -= RDATA_CNT;
+    if(DataPktTx.Length > 0) PktTx.Srv = R_DIR_GATE2DEV + R_CMD_DATA + R_NXTSLT;
+    else PktTx.Srv = R_DIR_GATE2DEV + R_CMD_DATA;
+}
+void rLevel1_t::PreparePing() {
+    PktTx.rID = SlotN + RDEV_BOTTOM_ID;
+    PktTx.Srv = R_DIR_GATE2DEV + R_CMD_PING;
+}
 
 // Radiotask
 void rLevel1_t::Task() {
     chSchGoSleepS(THD_STATE_SUSPENDED); // Will wake up by rTmr
     // Sleep ended, transmit new pkt
-    rPkt_t *tx = &rQueue[CurrentN].TxPkt;
-    //rPkt_t *rx = &rQueue[CurrentN].RxPkt;
-    // Send pkt
+    PktTx.SlotN = SlotN;
+    // If not transmitting long pkt, and if there is something in TX queue, try to get new data pkt
+    if(DataPktTx.Length <= 0) ITx.Get(&DataPktTx);
+    if(DataPktTx.Length > 0) {
+        // If first rpkt of long pkt not sent, send it in correct SlotN
+        if(DataPktTx.rID != RNO_ID) {
+            if(SlotN == (DataPktTx.rID - RDEV_BOTTOM_ID)) {
+                PktTx.rID = DataPktTx.rID;
+                DataPktTx.rID = RNO_ID; // Signal that first rpkt was sent
+                PrepareTxPkt();
+            }
+            else PreparePing();  // Incorrect slot, send Ping
+        }
+        // Since first rpkt of long pkt is already sent, send next part ignoring SlotN
+        else PrepareTxPkt();
+    }
+    else PreparePing(); // no long data, send Ping
+
     DBG1_SET();
-    CC.Transmit(tx);
+    CC.Transmit(&PktTx);
     DBG1_CLR();
+
     // Pkt transmitted, enter RX
 //    RxResult_t RxRslt = CC.Receive(R_RX_WAIT_MS, rx);
 //
@@ -66,8 +87,7 @@ void rLevel1_t::Task() {
 // Timer callback
 void rTmrCallback(void *p) {
     // ==== Periodic code here ====
-    CurrentN++;
-    if(CurrentN >= RDEVICE_CNT) CurrentN = 0;
+    rLevel1.IncSlotN();
 
     // Restart the timer, resume thread if needed
     chSysLockFromIsr();
@@ -113,10 +133,10 @@ void rLevel1_t::IDiscovery() {
     systime_t fTime;
     RxResult_t RxRslt;
     // Iterate all channels
-    for(uint16_t i=0; i<RNEIGHBOUR_CNT; i++) {
+    for(uint16_t i=0; i<RGATE_CNT; i++) {
         CC.SetChannel(i);
         do {
-            RxRslt = CC.Receive(RDISCOVERY_RX_MS, &pktRx);
+            RxRslt = CC.Receive(RDISCOVERY_RX_MS, &PktRx);
             switch(RxRslt) {
                 case rrTimeout:
                     //Uart.Printf("TO\r");
@@ -129,20 +149,19 @@ void rLevel1_t::IDiscovery() {
                     break;
                 case rrOk:
                     //Uart.Printf("Ok\r");
-                    // Check if sender is concentrator
-                    if((pktRx.From >= RCONC_BOTTOM_ID) and (pktRx.From <= RCONC_TOP_ID)) {
+                    // Check if rpkt is gate-to-device
+                    if(PktRx.Srv & R_DIR_GATE2DEV) {
                         Retry = false;              // No need to retry
                         //Uart.Printf("N: %u; Rssi: %d\r", i, pktRx.RSSI);
-                        Surround.RegisterPkt(i, &pktRx);
+                        Surround.RegisterPkt(i, &PktRx);
                         SomeoneIsNear = true;
-                        if(pktRx.RSSI > BestRssi) {     // Check if switch to this channel
-                            CntrN = i;                  // Note, number of concentrator != ID of concentrator
-                            pktTxAck.To = pktRx.From;   // Maybe, soon we will reply to this guy...
-                            BestRssi = pktRx.RSSI;
+                        if(PktRx.RSSI > BestRssi) {     // Check if switch to this channel
+                            GateN = i;                  // Note, number of concentrator != ID of concentrator
+                            BestRssi = PktRx.RSSI;
                             fTime = chTimeNow();        // Save current time
                         }
                     }
-                    else Retry = true;  // If not concentrator, try to receive again
+                    else Retry = true;  // If not gate, try to receive again
                     break;
             } // switch
         } while(Retry);
@@ -150,54 +169,68 @@ void rLevel1_t::IDiscovery() {
 
     // Decide which channel to use
     if(SomeoneIsNear == false) rMode = rmAlone; // Silence answers our cries
-    else {  // Some concentrator is near
+    else {  // Some gate is near
         //Uart.Printf("Dsc: %u\r", CntrN);
         rMode = rmInSync;
-        CC.SetChannel(CntrN);
+        CC.SetChannel(GateN);
         // Calculate how much time passed since we found concentrator
         uint32_t t = chTimeNow() - fTime;
-        // Calculate current ID concentrator is speaking with
-        uint32_t fID = Surround.GetID(CntrN) + (t / RTIMESLOT_MS);
+        // Calculate current gate's slot
+        uint32_t fID = Surround.GetID(GateN) + (t / RTIMESLOT_MS);
         if(fID > RDEV_TOP_ID) fID -= RDEVICE_CNT;
         ISleepIfLongToWait(fID); // Sleep if needed
-    } // if concentrator is near
+    } // if gate is near
 }
 
 // Called periodically when concentrator is successfully discovered
 void rLevel1_t::IInSync() {
-    RxResult_t RxRslt = CC.Receive(RDISCOVERY_RX_MS, &pktRx);
+    RxResult_t RxRslt = CC.Receive(RDISCOVERY_RX_MS, &PktRx);
     if(RxRslt == rrOk) {
         //Uart.Printf("Pkt To=%u; From=%u; Cmd=%u\r", pktRx.To, pktRx.From, pktRx.Cmd);
         RxRetryCounter = 0;     // Something was successfully received, reset counter
         // Check if pkt is ours
-        if(pktRx.To == SelfID) {
-            // Reply with ACK if ReplyQueue is empty
-            if(GetTxCount() == 0) {
-                DBG1_SET();
-                CC.Transmit(&pktTxAck);
-                DBG1_CLR();
+        if(PktRx.rID == SelfID) {
+            // ==== Handle received data ====
+            if(PktRx.Srv & R_CMD_DATA) {
+                if(IRx.Put(&PktRx) == OK) { // Put received pkt in buffer if Data
+                    if(PktRx.Srv & R_NXTSLT) IListenNextSlot = true;
+                    else {
+                        IListenNextSlot = false;
+                        chEvtBroadcast(&IEvtSrcRadioRx);    // Pkt received completely
+                    }
+                    PktTx.Srv = R_DIR_DEV2GATE + R_ACK;
+                } // if add is ok
+                else {  // Buffer oveflow
+                    IRx.Reset();                // }
+                    IListenNextSlot = false;    // } Nothing to do if buffer overflow
+                    PktTx.Srv = R_DIR_DEV2GATE; // No ACK
+                } // if put is ok
+            } // if data
+            else PktTx.Srv = R_DIR_DEV2GATE + R_ACK; // Just ping, just ACK
+
+            // ==== Reply ====
+            // Reply with Data if ReplyQueue is not empty
+            if(ITx.Get(&DataPktTx) == OK) {
+                PktTx.Srv += R_CMD_DATA;
+                //...
             }
-            else {  // Queue is not empty
-                ITx.Get(&pktTx);
-                //Uart.Printf("PktTx To=%u; From=%u; Cmd=%u\r", pktTx.To, pktTx.From, pktTx.Cmd);
-                DBG1_SET();
-                CC.Transmit(&pktTx);
-                DBG1_CLR();
-            } // if Queue is empty
+            //Uart.Printf("PktTx To=%u; From=%u; Cmd=%u\r", pktTx.To, pktTx.From, pktTx.Cmd);
+            DBG1_SET();
+            CC.Transmit(&PktTx);
+            DBG1_CLR();
 
-            // Put received pkt in buffer if Cmd is not Ping
-            //if(pktRx.Cmd != RCMD_PING)
-                IAddPkt(&pktRx);
-
-            // Now for long  time there will be no requests for us => perform discovery.
-            IDiscovery();
+            if(!IListenNextSlot) IDiscovery(); // Now for long  time there will be no requests for us => perform discovery.
         } // if pkt is ours
         else {  // Other's pkt, sleep if needed; seems like sync failure
-            if((pktRx.To >= RDEV_BOTTOM_ID) and (pktRx.To <= RDEV_TOP_ID))  // Pkt for other device, not concentrator
-                ISleepIfLongToWait(pktRx.To);
+            if((PktRx.rID >= RDEV_BOTTOM_ID) and (PktRx.rID <= RDEV_TOP_ID))    // rPkt for someone else, seems like sync failure.
+                ISleepIfLongToWait(PktRx.rID);                                  // Otherwise stay listening
         }
     } // if received ok
-    else {  // check if we get lost
+    else {
+        // Reset any ongoing receptions
+        IRx.Reset();
+        IListenNextSlot = false;
+        // Check if we get lost
         if(RxRetryCounter++ > R_IN_SYNC_RETRY_CNT) rMode = rmAlone;
     }
 }
@@ -235,7 +268,7 @@ static msg_t rLvl1Thread(void *arg) {
     return 0;
 }
 
-// ================================= Init ======================================
+// ================================= Common ====================================
 void rLevel1_t::Init(uint16_t ASelfID) {
 #ifdef DBG_PINS
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull, pudNone);
@@ -252,27 +285,27 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     CC.SetTxPower(Pwr0dBm);
 
 #ifdef GATE
-    CurrentN = 0; // Block number to start from
-    // Setup rqueue
-    for(uint16_t i=0; i<RDEVICE_CNT; i++) {
-        rQueue[i].TxPkt.Cmd = RCMD_PING;
-        rQueue[i].TxPkt.From = SelfID;
-        rQueue[i].TxPkt.To = RDEV_BOTTOM_ID+i;
-    }
+    SlotN = 0; // Slot number to start from
     // Get concentrator channel (0...RCONC_CNT-1). Channel is not ID!
-    uint8_t SelfChannel = 0;    // DEBUG
-    CC.SetChannel(SelfChannel);
+    CC.SetChannel(ASelfID);
     // Timer
     chSysLock();
     chVTSetI(&rTmr, MS2ST(RTIMESLOT_MS), rTmrCallback, NULL);     // Start timer
     chSysUnlock();
 #else
     rMode = rmAlone;
-    // Setup default reply pkt
-    pktTxAck.From = SelfID;
-    pktTxAck.Cmd = RCMD_PING;
+    PktTx.rID = SelfID; // Always the same
 #endif
 
     // Init thread. High priority is required to satisfy timings.
     PThr = chThdCreateStatic(warLvl1Thread, sizeof(warLvl1Thread), HIGHPRIO, rLvl1Thread, NULL);
+}
+
+uint8_t rLevel1_t::AddPktToTx(uint8_t rID, uint8_t *Ptr, int32_t Length, uint8_t *PResult) {
+    DataPkt_t DataPkt;
+    DataPkt.rID = rID;
+    DataPkt.Ptr = Ptr;
+    DataPkt.Length = Length;
+    DataPkt.PResult = PResult;
+    return ITx.PutWithTimeout(&DataPkt, TIME_INFINITE);
 }

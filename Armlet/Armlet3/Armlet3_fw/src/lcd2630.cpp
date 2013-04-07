@@ -70,7 +70,7 @@ void Lcd_t::Init() {
 
     Cls(clBlack);
 
-//    PutBitmap(45, 45, 10, 10, (uint16_t*)0x08000000);
+    PutBitmap(45, 45, 10, 10, (uint16_t*)0x08000000);
 //
 //    uint16_t Buf[120];
 //    GetBitmap(45, 45, 10, 10, Buf);

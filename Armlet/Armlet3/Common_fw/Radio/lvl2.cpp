@@ -11,7 +11,7 @@ rLevel2_t rLevel2;
 
 // =========================== Rx dispatch thread ==============================
 static EventListener EvtLstnrRxThd;
-static rPkt_t RxPkt, TxPkt;
+static rPkt_t RxPkt;//, TxPkt;
 
 static WORKING_AREA(warLvl2RxThread, 128);
 static msg_t rLvl2RxThread(void *arg) {
@@ -28,11 +28,13 @@ static msg_t rLvl2RxThread(void *arg) {
         while(Cnt--) {
             if(rLevel1.GetRxPkt(&RxPkt) == OK) {
                 Uart.Printf(" RSSI = %d\r", RxPkt.RSSI);
+#ifdef DEVICE
                 // Construct TX pkt and send it in reply
-                TxPkt.Cmd++;
-                TxPkt.From = rLevel1.SelfID;
-                TxPkt.To = RxPkt.From;
-                rLevel1.AddPktToTx(&TxPkt);
+//                TxPkt.Cmd++;
+//                TxPkt.From = rLevel1.SelfID;
+//                TxPkt.To = RxPkt.From;
+//                rLevel1.AddPktToTx(&TxPkt);
+#endif
             }
         }
 
@@ -43,4 +45,21 @@ static msg_t rLvl2RxThread(void *arg) {
 void rLevel2_t::Init() {
     // Rx rpackets handler
     chThdCreateStatic(warLvl2RxThread, sizeof(warLvl2RxThread), NORMALPRIO, rLvl2RxThread, NULL);
+}
+
+void rLevel2_t::Transmit(uint8_t DevID, uint8_t *Ptr, int32_t Length, uint8_t PResult) {
+//    chSemWait(&AddPktSem); // Wait here if other thread is spinning below
+//    // Now add pkt to queue
+//    rPkt_t Pkt;
+//    Pkt.rID = DevID;
+//    // Slot number will be set by Level1
+//    while(Length > 0) {
+//        memcpy(&Pkt.Data, Ptr, RDATA_CNT);
+//        Ptr += RDATA_CNT;
+//        Length -= RDATA_CNT;
+//        if(Length > 0) Pkt.Srv = R_DIR_GATE2DEV + R_NXTSLT;
+//        else Pkt.Srv = R_DIR_GATE2DEV;
+//        rLevel1.AddPktToTx(&Pkt);
+//    }
+
 }

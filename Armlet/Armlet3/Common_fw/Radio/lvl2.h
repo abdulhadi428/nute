@@ -12,9 +12,10 @@
 
 class rLevel2_t {
 private:
-
+    Semaphore AddPktSem;
 public:
     void Init();
+    void Transmit(uint8_t DevID, uint8_t *Ptr, int32_t Length, uint8_t PResult);
 };
 
 extern rLevel2_t rLevel2;
