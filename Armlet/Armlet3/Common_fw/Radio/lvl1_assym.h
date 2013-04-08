@@ -59,6 +59,8 @@ struct rPkt_t {
 // Slot count
 #define RDYN_SLOT_CNT   0   // Count of dynamic slots
 #define RSLOT_CNT       (RDEVICE_CNT + RDYN_SLOT_CNT) // Total slots count
+#define ID2SLOT(id)     (id - RDEV_BOTTOM_ID)
+#define SLOT2ID(slot)   (slot + RDEV_BOTTOM_ID)
 
 #ifdef DEVICE
 #define RNEIGHBOUR_CNT  RGATE_CNT
@@ -138,8 +140,10 @@ private:
     inline void PrepareAck();
 #endif
 #ifdef GATE
-    uint16_t SlotN;
+    uint8_t SlotN;
+    uint8_t DataPktState;
     inline void PreparePing();
+    inline bool InsideCorrectSlot() { return (SlotN == ID2SLOT(DataPktTx.rID)); }
 #endif
 public:
     uint8_t SelfID;
