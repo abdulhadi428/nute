@@ -71,7 +71,8 @@ void rLevel1_t::Task() {
 
     // Process result
     if(RxRslt == rrOk) {
-        Surround.RegisterPkt(SlotN, &PktRx);
+        // Register answer if pkt received in appropriate slot
+        if(SlotN == (PktRx.rID - RDEV_BOTTOM_ID)) Surround.RegisterPkt(SlotN, &PktRx);
         // If data received, put it to queue
         if(PktRx.Srv & R_CMD_DATA) {
             if(IRx.Put(&PktRx) == OK) chEvtBroadcast(&IEvtSrcRadioRx); // Put received pkt in buffer if Data
@@ -90,7 +91,8 @@ void rLevel1_t::Task() {
         } // if data in progress
     } // if ok
     else {  // No answer
-        Surround.RegisterNoAnswer(CurrentN);
+        // Register no answer if slot is appropriate
+        if(SlotN == (PktTx.rID - RDEV_BOTTOM_ID)) Surround.RegisterNoAnswer(SlotN);
         // If it was not ping, signal "no answer" up
         if(tx->Cmd != RCMD_PING) {
             // ...
