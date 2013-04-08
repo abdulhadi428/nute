@@ -104,12 +104,12 @@ extern Surround_t Surround;
 #define RDISCOVERY_PERIOD_MS    504
 
 // ================================ Level1 =====================================
-// Packet item
+// Data Packet item
 struct DataPkt_t {
     uint8_t rID;
     uint8_t *Ptr;
     int32_t Length;
-    uint8_t *PResult;
+    uint8_t *PState;
 };
 
 #define R_RX_BUF_SZ             36  // Size of buffer for Rx pkts
@@ -121,7 +121,6 @@ private:
     EventSource IEvtSrcRadioRx;
     rPkt_t IRxBuf[R_RX_BUF_SZ];
     CircBuf_t<rPkt_t> IRx;
-    bool IListenNextSlot;
     // ==== Tx ====
     rPkt_t PktTx;
     DataPkt_t DataPktTx;
@@ -130,7 +129,7 @@ private:
     inline void PrepareTxPkt();
 #ifdef DEVICE
     uint8_t RxRetryCounter; // to check if we get lost
-
+    bool IListenNextSlot;
     uint16_t GateN;   // Number of concentrator to use. Note, Number != ID.
     inline void IInSync();
     inline void IDiscovery();
@@ -141,7 +140,6 @@ private:
 #ifdef GATE
     uint16_t SlotN;
     inline void PreparePing();
-
 #endif
 public:
     uint8_t SelfID;
@@ -151,7 +149,7 @@ public:
     uint32_t GetRxCount() { return IRx.GetFullSlotsCount(); }
     void RegisterEvtRx(EventListener *PEvtLstnr, uint8_t EvtID) { chEvtRegister(&IEvtSrcRadioRx, PEvtLstnr, EvtID); }
     // Tx
-    uint8_t AddPktToTx(uint8_t rID, uint8_t *Ptr, int32_t Length, uint8_t *PResult);
+    uint8_t AddPktToTx(uint8_t rID, uint8_t *Ptr, int32_t Length, uint8_t *PState);
     uint32_t GetTxCount() { return ITx.GetFullSlotsCount(); }
     // Inner use
     inline void Task();

@@ -42,14 +42,17 @@ void rLevel1_t::Task() {
     chSchGoSleepS(THD_STATE_SUSPENDED); // Will wake up by rTmr
     // Sleep ended, transmit new pkt
     PktTx.SlotN = SlotN;
-    // If not transmitting long pkt, and if there is something in TX queue, try to get new data pkt
-    if(DataPktTx.Length <= 0) ITx.Get(&DataPktTx);
+    // If not transmitting long pkt already, try to get new data pkt
+    if(DataPktTx.Length <= 0) {
+        if(ITx.Get(&DataPktTx) == OK) *DataPktTx.PState = NEW;
+    }
+    // Length > 0 if new DataPkt obtained, or if already transmitting
     if(DataPktTx.Length > 0) {
         // If first rpkt of long pkt not sent, send it in correct SlotN
-        if(DataPktTx.rID != RNO_ID) {
+        if(*DataPktTx.PState == NEW) {
             if(SlotN == (DataPktTx.rID - RDEV_BOTTOM_ID)) {
                 PktTx.rID = DataPktTx.rID;
-                DataPktTx.rID = RNO_ID; // Signal that first rpkt was sent
+                *DataPktTx.PState = IN_PROGRESS; // Signal that first rpkt was sent
                 PrepareTxPkt();
             }
             else PreparePing();  // Incorrect slot, send Ping
@@ -64,24 +67,36 @@ void rLevel1_t::Task() {
     DBG1_CLR();
 
     // Pkt transmitted, enter RX
-//    RxResult_t RxRslt = CC.Receive(R_RX_WAIT_MS, rx);
-//
-//    // Process result
-//    if(RxRslt == rrOk) {
-//        Surround.RegisterPkt(CurrentN, rx);
-//        // If something not trivial transmitted or received (not ping), signal reply up
-//        if((rx->Cmd != RCMD_PING) or (tx->Cmd != RCMD_PING)) {
-//            // ...
-//        }
-//    } // if ok
-//    else {  // No answer
-//        Surround.RegisterNoAnswer(CurrentN);
-//        // If it was not ping, signal "no answer" up
-//        if(tx->Cmd != RCMD_PING) {
-//            // ...
-//        }
-//    }
-//    tx->Cmd = RCMD_PING;   // Reset pkt
+    RxResult_t RxRslt = CC.Receive(R_RX_WAIT_MS, &PktRx);
+
+    // Process result
+    if(RxRslt == rrOk) {
+        Surround.RegisterPkt(SlotN, &PktRx);
+        // If data received, put it to queue
+        if(PktRx.Srv & R_CMD_DATA) {
+            if(IRx.Put(&PktRx) == OK) chEvtBroadcast(&IEvtSrcRadioRx); // Put received pkt in buffer if Data
+        } // if data
+
+        // Check reply to data containing pkt
+        if(*DataPktTx.PState == IN_PROGRESS) {
+            // Check if ACK
+            if(PktRx.Srv & R_ACK) {
+                if(DataPktTx.Length <= 0) *DataPktTx.PState = OK; // If transmission completed
+            }
+            else {  // No ACK
+                *DataPktTx.PState = FAILURE;    // Regardless - last rpkt or somewhere in middle
+                DataPktTx.Length = -1;          // No more transmission
+            }
+        } // if data in progress
+    } // if ok
+    else {  // No answer
+        Surround.RegisterNoAnswer(CurrentN);
+        // If it was not ping, signal "no answer" up
+        if(tx->Cmd != RCMD_PING) {
+            // ...
+        }
+    }
+    tx->Cmd = RCMD_PING;   // Reset pkt
 }
 
 // Timer callback
@@ -301,11 +316,11 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     PThr = chThdCreateStatic(warLvl1Thread, sizeof(warLvl1Thread), HIGHPRIO, rLvl1Thread, NULL);
 }
 
-uint8_t rLevel1_t::AddPktToTx(uint8_t rID, uint8_t *Ptr, int32_t Length, uint8_t *PResult) {
+uint8_t rLevel1_t::AddPktToTx(uint8_t rID, uint8_t *Ptr, int32_t Length, uint8_t *PState) {
     DataPkt_t DataPkt;
     DataPkt.rID = rID;
     DataPkt.Ptr = Ptr;
     DataPkt.Length = Length;
-    DataPkt.PResult = PResult;
+    DataPkt.PState = PState;
     return ITx.PutWithTimeout(&DataPkt, TIME_INFINITE);
 }

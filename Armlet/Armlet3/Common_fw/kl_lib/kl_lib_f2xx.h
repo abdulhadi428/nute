@@ -21,9 +21,11 @@
 #endif
 
 // Return values
-#define OK          0
-#define FAILURE     1
-#define TIMEOUT     2
+#define OK              0
+#define FAILURE         1
+#define TIMEOUT         2
+#define NEW             3
+#define IN_PROGRESS     4
 
 enum BitOrder_t {boMSB, boLSB};
 enum LowHigh_t {Low, High};
