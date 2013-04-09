@@ -69,11 +69,11 @@ public:
         this->PRead = this->IPBuf;
         this->PWrite = this->IPBuf;
         this->IFullSlotsCount = 0;
-        chBSemReset(&SemAddItem, 1);
+        chBSemReset(&SemAddItem, NOT_TAKEN);
     }
 
     void Init(T *PBuf, uint32_t Sz) {
-        chBSemInit(&SemAddItem, 1);  // Not taken
+        chBSemInit(&SemAddItem, NOT_TAKEN);
         this->IPBuf = PBuf;
         this->IBufSize = Sz;
         Reset();

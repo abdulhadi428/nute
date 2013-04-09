@@ -20,7 +20,7 @@
 #define PWR_MEASURE_EVERY_MS    999
 
 #define ADC_CHNL   10
-#define
+//#define
 
 class Pwr_t {
 private:

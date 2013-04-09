@@ -21,7 +21,7 @@
 #include "kl_buf.h"
 
 // ==== Pkt_t ====
-#define RDATA_CNT       7
+#define RDATA_CNT       4
 struct rPkt_t {
     uint8_t SlotN;      // Number of timeslot
     uint8_t rID;        // Device ID
@@ -46,7 +46,7 @@ struct rPkt_t {
 //#define R_ACKDYN
 //#define R_RPIDDYN
 
-// ==== Address space ====
+// ======= Address space =======
 #define RNO_ID          0   // When device has no ID
 // Devices
 #define RDEV_BOTTOM_ID  10
@@ -88,10 +88,10 @@ public:
 
 extern Surround_t Surround;
 
-// ==== Timings ====
-#define RTIMESLOT_MS    5   // Length of one timeslot
-#define R_TX_TIME_MS    2   // Measured value of transmission length
-#define R_RX_WAIT_MS    (RTIMESLOT_MS - R_TX_TIME_MS)   // How long to wait reply
+// ============================== Timings ======================================
+#define R_TX_WAIT_MS    3   // Measured value of transmission length
+#define R_RX_WAIT_MS    4   // How long to wait reply to start
+#define RTIMESLOT_MS    (R_TX_WAIT_MS + R_RX_WAIT_MS)   // Length of one timeslot
 
 // Minimum time worth sleeping
 #define RMIN_TIME_TO_SLEEP_MS   12
@@ -118,9 +118,9 @@ struct DataPkt_t {
 #define R_TX_BUF_SZ             36  // Size of buffer for Tx pkts
 class rLevel1_t {
 private:
+    EventSource IEvtSrcRadioRx, IEvtSrcRadioTxEnd;
     // ==== Rx ====
     rPkt_t PktRx;
-    EventSource IEvtSrcRadioRx;
     rPkt_t IRxBuf[R_RX_BUF_SZ];
     CircBuf_t<rPkt_t> IRx;
     // ==== Tx ====
@@ -135,8 +135,8 @@ private:
     uint16_t GateN;   // Number of concentrator to use. Note, Number != ID.
     inline void IInSync();
     inline void IDiscovery();
-    uint32_t ICalcWaitRx_ms(uint16_t RcvdID);
-    void ISleepIfLongToWait(uint16_t RcvdID);
+    uint32_t ICalcWaitRx_ms(uint8_t RcvdSlot);
+    void ISleepIfLongToWait(uint8_t RcvdSlot);
     inline void PrepareAck();
 #endif
 #ifdef GATE
@@ -144,6 +144,8 @@ private:
     uint8_t DataPktState;
     inline void PreparePing();
     inline bool InsideCorrectSlot() { return (SlotN == ID2SLOT(DataPktTx.rID)); }
+    inline void IReportTxOk();
+    inline void IReportTxFail();
 #endif
 public:
     uint8_t SelfID;
@@ -151,10 +153,11 @@ public:
     // Rx
     uint8_t GetRxPkt(rPkt_t *PPkt) { return IRx.Get(PPkt); }
     uint32_t GetRxCount() { return IRx.GetFullSlotsCount(); }
-    void RegisterEvtRx(EventListener *PEvtLstnr, uint8_t EvtID) { chEvtRegister(&IEvtSrcRadioRx, PEvtLstnr, EvtID); }
+    void RegisterEvtRx(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegister(&IEvtSrcRadioRx, PEvtLstnr, EvtMask); }
     // Tx
     uint8_t AddPktToTx(uint8_t rID, uint8_t *Ptr, int32_t Length, uint8_t *PState);
     uint32_t GetTxCount() { return ITx.GetFullSlotsCount(); }
+    void RegisterEvtTx(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcRadioTxEnd, PEvtLstnr, EvtMask); }
     // Inner use
     inline void Task();
 #ifdef GATE

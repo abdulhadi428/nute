@@ -27,6 +27,10 @@
 #define NEW             3
 #define IN_PROGRESS     4
 
+// Binary semaphores
+#define NOT_TAKEN       false
+#define TAKEN           true
+
 enum BitOrder_t {boMSB, boLSB};
 enum LowHigh_t {Low, High};
 
@@ -175,7 +179,7 @@ private:
 
 public:
     void Init(GPIO_TypeDef *GPIO, uint16_t PinN, uint8_t Channel) {
-        ADC1->CR1
+        //ADC1->CR1
     }
 };
 

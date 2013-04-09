@@ -31,8 +31,6 @@
 // SPI
 #define CC_SPI      SPI1
 
-enum RxResult_t {rrOk, rrTimeout, rrPktFail};
-
 class cc1101_t {
 private:
     uint8_t IState; // Inner CC state, returned as first byte
@@ -68,7 +66,7 @@ public:
     void SetTxPower(uint8_t APwr) { WriteRegister(CC_PATABLE, APwr); }
     // State change
     void Transmit(rPkt_t *pPkt);
-    RxResult_t Receive(uint32_t Timeout_ms, rPkt_t *pPkt);
+    uint8_t Receive(uint32_t Timeout_ms, rPkt_t *pPkt);
     void EnterIdle()  { WriteStrobe(CC_SIDLE); }
     void Sleep() { WriteStrobe(CC_SPWD); }
 };

@@ -78,7 +78,7 @@ void cc1101_t::Transmit(rPkt_t *pPkt) {
 /*
  * Enter RX mode and wait reception for Timeout_ms.
  */
-RxResult_t cc1101_t::Receive(uint32_t Timeout_ms, rPkt_t *pPkt) {
+uint8_t cc1101_t::Receive(uint32_t Timeout_ms, rPkt_t *pPkt) {
     FlushRxFIFO();
     EnterRX();  // After that, some time will be wasted to recalibrate
     chSysLock();
@@ -88,7 +88,7 @@ RxResult_t cc1101_t::Receive(uint32_t Timeout_ms, rPkt_t *pPkt) {
 
     if(Rslt == RDY_TIMEOUT) {   // Nothing received, timeout occured
         EnterIdle();            // Get out of RX mode
-        return rrTimeout;
+        return TIMEOUT;
     }
     else {  // IRQ occured: something received, or CRC error
         uint8_t b, *p = (uint8_t*)pPkt;
@@ -110,11 +110,11 @@ RxResult_t cc1101_t::Receive(uint32_t Timeout_ms, rPkt_t *pPkt) {
             ReadWriteByte(0);       // LQI
             CsHi();                 // End transmission
             pPkt->RSSI = RSSI_dBm(b);
-            return rrOk;
+            return OK;
         }
         else {  // CRC Error
 
-            return rrPktFail;
+            return FAILURE;
         }
     } // IRQ or Timeout
 }
