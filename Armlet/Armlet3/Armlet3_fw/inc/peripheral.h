@@ -11,14 +11,6 @@
 #include <stdint.h>
 #include "kl_lib_f2xx.h"
 
-// ================================== Power ====================================
-struct PwrStatus_t {
-    bool ExternalPwrOn;
-    bool IsCharging;
-    uint16_t Voltage_mV;
-} PACKED;
-extern PwrStatus_t PwrStatus;
-
 // ==================================== Vibro ==================================
 struct VibroChunk_t {
     int8_t Intencity;  // 0 means off, 1...100 means intencity, -1 means end

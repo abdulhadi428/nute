@@ -169,6 +169,17 @@ public:
     void Off() { *PCCR = 0; }
 };
 
+// ================================= ADC =======================================
+class Adc_t {
+private:
+
+public:
+    void Init(GPIO_TypeDef *GPIO, uint16_t PinN, uint8_t Channel) {
+        ADC1->CR1
+    }
+};
+
+
 // ================================= SPI =======================================
 enum CPHA_t {cphaFirstEdge, cphaSecondEdge};
 enum CPOL_t {cpolIdleLow, cpolIdleHigh};
