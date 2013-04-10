@@ -323,7 +323,7 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     SelfID = ASelfID;
     // Init radioIC
     CC.Init();
-    CC.SetTxPower(Pwr0dBm);
+    CC.SetTxPower(PwrPlus10dBm);
 
 #ifdef GATE
     SlotN = 0; // Slot number to start from

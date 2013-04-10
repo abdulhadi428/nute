@@ -41,8 +41,8 @@
 
 // =================================== Common ==================================
 #define CC_MDMCFG1_CHANSPC_E    0x02    // Exponent of Channel Spacing
-//#define CC_MDMCFG1_VALUE    (0b10100000 + CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=010 => 4bytes
-#define CC_MDMCFG1_VALUE    (0b10000000 + CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=000 => 2bytes
+#define CC_MDMCFG1_VALUE    (0b10100000 + CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=010 => 4bytes
+//#define CC_MDMCFG1_VALUE    (0b10000000 + CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=000 => 2bytes
 //#define CC_MDMCFG1_VALUE    (0b11000010 + CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=100 => 8bytes
 
 #define CC_MCSM0_VALUE      0x18        // Calibrate at IDLE->RX,TX
@@ -164,7 +164,8 @@
 
 #define CC_MDMCFG4_VALUE    0x5B        // }
 #define CC_MDMCFG3_VALUE    0xE5        // } Modem configuration: RF Studio, nothing to do here
-#define CC_MDMCFG2_VALUE    0x12        // Filter, GFSK, no Manchester coding, SYNC_MODE=010 => 16/16 sync word bits
+//#define CC_MDMCFG2_VALUE    0x12        // Filter, GFSK, no Manchester coding, SYNC_MODE=010 => 16/16 sync word bits
+#define CC_MDMCFG2_VALUE    0x13        // Filter, GFSK, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
 #define CC_MDMCFG0_VALUE    0xE5        // Channel spacing mantissa. See exponent at MDMCFG1. RF studio.
 
 #define CC_DEVIATN_VALUE    0x46        // Modem deviation setting: 46 kHz
