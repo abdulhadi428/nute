@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 10/04/2013 14:54:21
+EESchema Schematic File Version 2  date 10/04/2013 23:36:24
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -2282,4 +2282,6 @@ F 3 "" H 2050 1650 60  0000 C CNN
 	1    2050 1650
 	1    0    0    -1  
 $EndComp
+Text Label 1950 9200 0    60   ~ 0
+BAT
 $EndSCHEMATC

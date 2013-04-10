@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 07/04/2013 20:34:41
+EESchema Schematic File Version 2  date 10/04/2013 23:36:24
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -17,7 +17,7 @@ $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "7 apr 2013"
+Date "10 apr 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -1112,17 +1112,6 @@ Text Label 9550 1950 0    60   ~ 0
 CC_MISO
 Text Label 9550 2050 0    60   ~ 0
 CC_MOSI
-$Comp
-L CONN_NOKIA_LCD XL4
-U 1 1 51585455
-P 2050 1650
-F 0 "XL4" V 1750 1850 60  0000 C CNN
-F 1 "CONN_NOKIA_LCD" V 1750 1300 60  0000 C CNN
-F 2 "" H 2050 1650 60  0001 C CNN
-F 3 "" H 2050 1650 60  0001 C CNN
-	1    2050 1650
-	1    0    0    -1  
-$EndComp
 $Comp
 L GND #PWR051
 U 1 1 51585467
@@ -2282,4 +2271,17 @@ F 3 "" H 7100 9050 60  0000 C CNN
 	1    7100 9050
 	1    0    0    -1  
 $EndComp
+$Comp
+L CONN_NOKIA_LCD10 XL?
+U 1 1 5165448E
+P 2050 1650
+F 0 "XL?" V 1750 1850 60  0000 C CNN
+F 1 "CONN_NOKIA_LCD10" V 1750 1300 60  0000 C CNN
+F 2 "" H 2050 1650 60  0000 C CNN
+F 3 "" H 2050 1650 60  0000 C CNN
+	1    2050 1650
+	1    0    0    -1  
+$EndComp
+Text Label 1950 9200 0    60   ~ 0
+BAT
 $EndSCHEMATC
