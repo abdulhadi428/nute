@@ -13,8 +13,8 @@
 // Bitrate
 //#define CC_BITRATE_10K
 //#define CC_BITRATE_38K4
-#define  CC_BITRATE_100K
-//#define  CC_BITRATE_250K
+//#define  CC_BITRATE_100K
+#define  CC_BITRATE_250K
 
 // ============================ Common use values ==============================
 #define CC_TX_FIFO_SIZE     33
@@ -41,9 +41,10 @@
 
 // =================================== Common ==================================
 #define CC_MDMCFG1_CHANSPC_E    0x02    // Exponent of Channel Spacing
-#define CC_MDMCFG1_VALUE    (0b10100000 + CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=010 => 4bytes
-//#define CC_MDMCFG1_VALUE    (0b10000000 + CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=000 => 2bytes
-//#define CC_MDMCFG1_VALUE    (0b11000010 + CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=100 => 8bytes
+#define CC_MDMCFG1_VALUE    (0b10100000 | CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=010 => 4bytes
+//#define CC_MDMCFG1_VALUE    (0b00100000 | CC_MDMCFG1_CHANSPC_E)  // FEC=0, Preamble length=010 => 4bytes
+//#define CC_MDMCFG1_VALUE    (0b10000000 | CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=000 => 2bytes
+//#define CC_MDMCFG1_VALUE    (0b11000000 | CC_MDMCFG1_CHANSPC_E)  // FEC=1, Preamble length=100 => 8bytes
 
 #define CC_MCSM0_VALUE      0x18        // Calibrate at IDLE->RX,TX
 // Clear channel signal
@@ -133,9 +134,9 @@
 
 #define CC_MDMCFG4_VALUE    0x2D        // }
 #define CC_MDMCFG3_VALUE    0x2F        // } Modem configuration: RF Studio, nothing to do here
-//#define CC_MDMCFG2_VALUE    0x13        // Filter, modulation format, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
+#define CC_MDMCFG2_VALUE    0x13        // Filter, modulation format, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
 //#define CC_MDMCFG2_VALUE    0x11        // Filter, modulation format, no Manchester coding, SYNC_MODE=001 => 15/16 sync word bits
-#define CC_MDMCFG2_VALUE    0x14        // Filter, modulation format, no Manchester coding, SYNC_MODE=100
+//#define CC_MDMCFG2_VALUE    0x14        // Filter, modulation format, no Manchester coding, SYNC_MODE=100
 #define CC_MDMCFG0_VALUE    0xE5        // Channel spacing mantissa. See exponent at MDMCFG1. RF studio.
 
 #define CC_DEVIATN_VALUE    0x62        // Modem deviation setting - RF studio, nothing to do here
@@ -164,7 +165,7 @@
 
 #define CC_MDMCFG4_VALUE    0x5B        // }
 #define CC_MDMCFG3_VALUE    0xE5        // } Modem configuration: RF Studio, nothing to do here
-//#define CC_MDMCFG2_VALUE    0x12        // Filter, GFSK, no Manchester coding, SYNC_MODE=010 => 16/16 sync word bits
+//#define CC_MDMCFG2_VALUE    0x11        // Filter, GFSK, no Manchester coding, SYNC_MODE=010 => 16/16 sync word bits
 #define CC_MDMCFG2_VALUE    0x13        // Filter, GFSK, no Manchester coding, SYNC_MODE=011 => 30/32 sync word bits
 #define CC_MDMCFG0_VALUE    0xE5        // Channel spacing mantissa. See exponent at MDMCFG1. RF studio.
 
