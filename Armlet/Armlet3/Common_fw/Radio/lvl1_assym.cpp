@@ -261,7 +261,7 @@ void rLevel1_t::IInSync() {
     }
 }
 
-uint32_t N=0;
+uint32_t N=0, Sec=0;
 
 void rLevel1_t::Task() {
 
@@ -283,7 +283,8 @@ void rLevel1_t::Task() {
 
 // Timer callback
 void rTmrCallback(void *p) {
-    Uart.Printf("%u\r", N);
+    Sec++;
+    Uart.Printf("%u; %u\r\n", Sec, N);
     N=0;
 
     chSysLockFromIsr();

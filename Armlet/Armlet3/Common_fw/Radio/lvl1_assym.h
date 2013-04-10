@@ -21,7 +21,7 @@
 #include "kl_buf.h"
 
 // ==== Pkt_t ====
-#define RDATA_CNT       4
+#define RDATA_CNT       17
 struct rPkt_t {
     uint8_t SlotN;      // Number of timeslot
     uint8_t rID;        // Device ID
@@ -89,8 +89,8 @@ public:
 extern Surround_t Surround;
 
 // ============================== Timings ======================================
-#define R_TX_WAIT_MS    3   // Measured value of transmission length
-#define R_RX_WAIT_MS    4   // How long to wait reply to start
+#define R_TX_WAIT_MS    9   // Measured value of transmission length
+#define R_RX_WAIT_MS    1   // How long to wait reply to start
 #define RTIMESLOT_MS    (R_TX_WAIT_MS + R_RX_WAIT_MS)   // Length of one timeslot
 
 // Minimum time worth sleeping
