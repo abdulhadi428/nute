@@ -18,7 +18,7 @@
 #include "keys.h"
 #include "infrared.h"
 
-#include "application.h"
+extern void armlet_main();
 
 static inline void Init();
 
@@ -42,19 +42,21 @@ int main() {
     // Report problem with clock if any
     if(ClkResult) Uart.Printf("Clock failure\r");
 
-    while(TRUE) {
-        chThdSleepMilliseconds(999);
-        //Uart.Printf("Cl\r");
-    }
+//    while(TRUE) {
+//        chThdSleepMilliseconds(999);
+//        //Uart.Printf("Cl\r");
+//    }
+
+    armlet_main();
 }
 
 void Init() {
     Uart.Init(115200);
     Uart.Printf("Armlet3 AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
-    //Lcd.Init();
+    Lcd.Init();
     //Radio.Init();
-    //SD.Init();
-    //KeysInit();
+    SD.Init();
+    KeysInit();
     Beeper.Init();
     Vibro.Init();
     //IR.Init();
@@ -64,6 +66,4 @@ void Init() {
     // Radio
     rLevel2.Init();
     rLevel1.Init(RDEV_BOTTOM_ID+1); // FIXME: replace RBOTTOMID with value from SD
-    // Application init
-    App.Init();
 }

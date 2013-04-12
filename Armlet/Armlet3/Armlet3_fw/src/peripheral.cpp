@@ -12,7 +12,7 @@
 #include "peripheral.h"
 
 // Variables
-PwrStatus_t PwrStatus;
+//PwrStatus_t PwrStatus;
 Pill_t Pill[PILL_COUNT_MAX];
 
 // ================================== Beep =====================================
