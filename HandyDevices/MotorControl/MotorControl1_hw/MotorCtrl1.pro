@@ -1,13 +1,8 @@
-update=4/10/2013 8:01:13 PM
+update=4/12/2013 5:46:45 PM
 version=1
-last_client=eeschema
+last_client=cvpcb
 [general]
 version=1
-[cvpcb]
-version=1
-NetIExt=net
-[cvpcb/libraries]
-EquName1=devcms
 [pcbnew]
 version=1
 PadDrlX=0
@@ -26,16 +21,12 @@ TxtLar=120
 MSegLar=59
 LastNetListRead=Armlet.net
 [pcbnew/libraries]
-LibDir=D:/libs/Kicad
 LibName1=Common_kl
 LibName2=Connectors_kl
 LibName3=pcb_details
 LibName4=Tittar_kl
-LibName5=Batteries_kl
-LibName6=display_kl
-LibName7=Special
-LibName8=Sensors
-LibName9=Antennas_kl
+LibName5=Power_kl
+LibDir=D:/libs/Kicad
 [eeschema]
 version=1
 LibDir=D:/libs/Kicad
@@ -51,3 +42,8 @@ LibName3=power
 LibName4=Power_kl
 LibName5=st_kl
 LibName6=Tittar_kl
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms

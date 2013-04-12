@@ -51,19 +51,19 @@ static msg_t AppThread(void *arg) {
 //    Color_t c = clBlack;
 
 #define PktSZ   4
-    uint8_t Buf[PktSZ], Rslt = FAILURE;
+    uint8_t Buf[PktSZ], Rslt1 = FAILURE, Rslt2 = FAILURE;
     for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i+2;
 
     // Events
     rLevel1.RegisterEvtTx(&EvtLstnrApp, EVT_RADIO_TX);
 
     while(1) {
-        chThdSleepMilliseconds(702);
-//        Rslt = rLevel1.AddPktToTx(RDEV_BOTTOM_ID, Buf, PktSZ, &Rslt);
-//        Uart.Printf("> %u\r", Rslt);
-//
-//        chEvtWaitOne(EVT_RADIO_TX);
-//        Uart.Printf("Rslt = %u\r", Rslt);
+        chThdSleepMilliseconds(999);
+        Rslt1 = rLevel1.AddPktToTx(RDEV_BOTTOM_ID+1, Buf, PktSZ, &Rslt2);
+        Uart.Printf("> %u\r", Rslt1);
+
+        chEvtWaitOne(EVT_RADIO_TX);
+        Uart.Printf("Rslt = %u\r", Rslt2);
         //Uart.Printf("Evt \r");
 
         //Lcd.Cls(c);

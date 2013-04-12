@@ -80,5 +80,28 @@ public:
     }
 };
 
+// =============================== Rx buf ======================================
+class RxBuf_t {
+    uint32_t IBufSize, IFullSlotsCount;
+    uint8_t *IPBuf, *PRead, *PWrite, *PChunkLength;
+public:
+    // Put
+    void StartNew(uint8_t *p, uint32_t Length);
+    void Append(uint8_t *p, uint32_t Length);
+    void AddLast(uint8_t *p, uint32_t Length);
+    void Cancel();
+    // Get
+    uint8_t GetPkt(uint8_t *p, uint32_t *PLength);
+    // Common
+    void Init(uint8_t *PBuf, uint32_t Sz) {
+        IPBuf = PBuf;
+        IBufSize = Sz;
+        PRead = IPBuf;
+        PWrite = IPBuf;
+        PChunkLength = PWrite;
+        IFullSlotsCount = 0;
+    }
+};
+
 
 #endif /* KL_BUF_H_ */

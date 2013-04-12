@@ -14,18 +14,15 @@
 #include "BeepSequences.h"
 #include "VibroSequences.h"
 #include "keys.h"
+
 #include "lvl1_assym.h"
+#include "evt_mask.h"
 
 #include "kl_sd.h"
 
 App_t App;
 
 char Str[255];
-
-// Event masks
-#define EVT_RADIO_TX    EVENT_MASK(0)
-#define EVT_RADIO_RX    EVENT_MASK(1)
-#define EVT_KEYS        EVENT_MASK(2)
 
 static EventListener EvtLstnrApp;
 
@@ -59,16 +56,14 @@ static msg_t AppThread(void *arg) {
 //    Color_t c = clBlack;
 
     // Register event listeners
-    // Events
-    rLevel1.RegisterEvtTx(&EvtLstnrApp, EVT_RADIO_RX);
+
     //chEvtRegisterMask(&EvtSrcKey, &EvtLstnrApp, EVT_KEYS); // Register Key event
 
     while(1) {
-        chThdSleepMilliseconds(9);
+        chThdSleepMilliseconds(999);
         //Beeper.Beep(BeepBeep);
         //Vibro.Vibrate(BrrBrr);
-        chEvtWaitOne(EVT_RADIO_RX);
-        Uart.Printf("Evt \r");
+        //Uart.Printf("Evt \r");
         //Lcd.Cls(c);
 //        for(uint8_t y=0; y<128; y+=8) {
 //            chThdSleepMilliseconds(999);

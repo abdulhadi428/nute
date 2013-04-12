@@ -9,6 +9,7 @@
 #include <stdarg.h>
 #include "tiny_sprintf.h"
 #include "stm32f0xx_usart.h"
+#include "stm32f0xx_misc.h"
 
 // ============================== Delay ========================================
 Delay_t Delay;
@@ -57,12 +58,26 @@ void CmdUnit_t::IBufWrite(uint8_t AByte) {
 void CmdUnit_t::FlushTx() {
     while(!IDmaIsIdle or (TxIndx != 0)) {
         if(!IDmaIsIdle) {   // wait DMA
-            while(DMA_GetFlagStatus(DMA1_FLAG_TC4) == RESET);
-            DMA_ClearFlag(DMA1_FLAG_TC4);
+            while(DMA_GetFlagStatus(UART_DMA_FLAG_TC) == RESET);
+            DMA_ClearFlag(UART_DMA_FLAG_TC);
             IDmaIsIdle = true;
         }
         if(TxIndx != 0) IStartTx();
     }
+}
+
+void CmdUnit_t::IStartTx(void) {
+    IDmaIsIdle = false;
+    // Start DMA
+    USART_DMACmd(USART1, USART_DMAReq_Tx, DISABLE);
+    DMA_Cmd(UART_DMA_CHNL, DISABLE);
+    UART_DMA_CHNL->CMAR = (uint32_t) PBuf;  // Set memory base address
+    UART_DMA_CHNL->CNDTR = TxIndx;          // Set count to transmit
+    DMA_Cmd(UART_DMA_CHNL, ENABLE);
+    USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+    // Switch to next buf
+    PBuf = (PBuf == TXBuf1)? TXBuf2 : TXBuf1;
+    TxIndx = 0;
 }
 
 // ==== Init & DMA ====
@@ -72,7 +87,7 @@ void CmdUnit_t::Init(uint32_t ABaudrate) {
     IDmaIsIdle = true;
     // ==== Clocks init ====
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);      // UART clock
-    //RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
     // ==== GPIO init ====
     PinSetupAlterFunc(GPIOA, 9, poPushPull, pudNone, AF1);      // TX1
 #ifdef RX_ENABLED
@@ -91,31 +106,35 @@ void CmdUnit_t::Init(uint32_t ABaudrate) {
     USART_InitStructure.USART_Mode = USART_Mode_Tx;
 #endif
     USART_Init(USART1, &USART_InitStructure);
-//    // Remap USART1 TX DMA Ch to DMA Ch4
-//    SYSCFG->CFGR1 |= SYSCFG_CFGR1_USART1TX_DMA_RMP;
-//    // ==== DMA ====
-//    DMA_InitTypeDef DMA_InitStructure;
-//    DMA_DeInit(UART_DMA_CHNL);
-//    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &USART1->TDR;
-//    DMA_InitStructure.DMA_MemoryBaseAddr     = (uint32_t) PBuf;
-//    DMA_InitStructure.DMA_BufferSize         = UART_TXBUF_SIZE;
-//    DMA_InitStructure.DMA_Priority           = DMA_Priority_High;
-//    DMA_InitStructure.DMA_DIR                = DMA_DIR_PeripheralDST;
-//    DMA_InitStructure.DMA_Mode               = DMA_Mode_Normal;
-//    DMA_InitStructure.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
-//    DMA_InitStructure.DMA_MemoryInc          = DMA_MemoryInc_Enable;
-//    DMA_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte;
-//    DMA_InitStructure.DMA_MemoryDataSize     = DMA_MemoryDataSize_Byte;
-//    DMA_InitStructure.DMA_M2M                = DMA_M2M_Disable;
-//    DMA_Init(UART_DMA_CHNL, &DMA_InitStructure);
-//    // Start DMA
-//    USART_DMACmd(USART1, USART_DMAReq_Tx, DISABLE);
-//    DMA_Cmd(UART_DMA_CHNL, DISABLE);
+    // Remap USART1 TX DMA Ch to DMA Ch4
+    //SYSCFG->CFGR1 |= SYSCFG_CFGR1_USART1TX_DMA_RMP;
+    // ==== DMA ====
+    DMA_InitTypeDef DMA_InitStructure;
+    DMA_DeInit(UART_DMA_CHNL);
+    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &USART1->TDR;
+    DMA_InitStructure.DMA_MemoryBaseAddr     = (uint32_t) PBuf;
+    DMA_InitStructure.DMA_BufferSize         = UART_TXBUF_SIZE;
+    DMA_InitStructure.DMA_Priority           = DMA_Priority_High;
+    DMA_InitStructure.DMA_DIR                = DMA_DIR_PeripheralDST;
+    DMA_InitStructure.DMA_Mode               = DMA_Mode_Normal;
+    DMA_InitStructure.DMA_PeripheralInc      = DMA_PeripheralInc_Disable;
+    DMA_InitStructure.DMA_MemoryInc          = DMA_MemoryInc_Enable;
+    DMA_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte;
+    DMA_InitStructure.DMA_MemoryDataSize     = DMA_MemoryDataSize_Byte;
+    DMA_InitStructure.DMA_M2M                = DMA_M2M_Disable;
+    DMA_Init(UART_DMA_CHNL, &DMA_InitStructure);
+    // Enable DMA1 Ch2 Transfer Complete interrupt
+    DMA_ITConfig(UART_DMA_CHNL, DMA_IT_TC, ENABLE);
+
+    // ==== Interrupts ====
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel2_3_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 
 #ifdef RX_ENABLED
     // ==== NVIC ====
-    NVIC_InitTypeDef NVIC_InitStructure;
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);     // Configure the NVIC Preemption Priority Bits
     // Enable the USART Interrupt
     NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
@@ -128,34 +147,14 @@ void CmdUnit_t::Init(uint32_t ABaudrate) {
     USART_Cmd(USART1, ENABLE);
 }
 
-void CmdUnit_t::Task() {
 #ifdef RX_ENABLED
+void CmdUnit_t::Task() {
     if (CmdState == csReady) {
         NewCmdHandler();
         CmdReset();
     }
+}
 #endif
-    if (DMA_GetFlagStatus(DMA1_FLAG_TC4)) { // if transmission completed
-        DMA_ClearFlag(DMA1_FLAG_TC4);
-        // Switch to next buffer if needed
-        if(TxIndx != 0) IStartTx();
-        else IDmaIsIdle = true;
-    }
-}
-
-void CmdUnit_t::IStartTx(void) {
-    IDmaIsIdle = false;
-    // Start DMA
-    USART_DMACmd(USART1, USART_DMAReq_Tx, DISABLE);
-    DMA_Cmd(UART_DMA_CHNL, DISABLE);
-    UART_DMA_CHNL->CMAR = (uint32_t) PBuf;  // Set memory base address
-    UART_DMA_CHNL->CNDTR = TxIndx;          // Set count to transmit
-    DMA_Cmd(UART_DMA_CHNL, ENABLE);
-    USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
-    // Switch to next buf
-    PBuf = (PBuf == TXBuf1)? TXBuf2 : TXBuf1;
-    TxIndx = 0;
-}
 
 // ==== IRQs ====
 #ifdef RX_ENABLED
@@ -190,3 +189,15 @@ void USART1_IRQHandler(void) {
 }
 #endif
 
+void CmdUnit_t::IRQDmaTxHandler() {
+    if(DMA_GetITStatus(DMA1_IT_TC2)) {
+        DMA_ClearITPendingBit(DMA1_IT_GL2); // Clear CH2 IRQ global bit
+        // Switch to next buffer if needed
+        if(TxIndx != 0) IStartTx();
+        else IDmaIsIdle = true;
+    }
+}
+
+void DMA1_Channel2_3_IRQHandler(void) {
+    Uart.IRQDmaTxHandler();
+}

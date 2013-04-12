@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-03-19 BZR 4004)-stable date = 4/10/2013 8:46:44 PM
+Cmp-Mod V01 Created by CvPcb (2013-03-19 BZR 4004)-stable date = 4/12/2013 5:48:57 PM
 
 BeginCmp
 TimeStamp = /5165A57E;
@@ -18,21 +18,21 @@ BeginCmp
 TimeStamp = /51659FA1;
 Reference = C3;
 ValeurCmp = 220n;
-IdModule  = CAP_0603;
+IdModule  = CAP_1206;
 EndCmp
 
 BeginCmp
 TimeStamp = /51659FB0;
 Reference = C4;
 ValeurCmp = 10n;
-IdModule  = CAP_0603;
+IdModule  = CAP_1206;
 EndCmp
 
 BeginCmp
 TimeStamp = /51659F83;
 Reference = C5;
 ValeurCmp = 220n;
-IdModule  = CAP_0603;
+IdModule  = CAP_1206;
 EndCmp
 
 BeginCmp
@@ -45,15 +45,15 @@ EndCmp
 BeginCmp
 TimeStamp = /5165A010;
 Reference = D1;
-ValeurCmp = DIODE;
-IdModule  = ;
+ValeurCmp = 1N4148;
+IdModule  = DIODE_SOD80C;
 EndCmp
 
 BeginCmp
 TimeStamp = /5165A01F;
 Reference = D2;
-ValeurCmp = DIODE;
-IdModule  = ;
+ValeurCmp = 1N4148;
+IdModule  = DIODE_SOD80C;
 EndCmp
 
 BeginCmp
@@ -95,49 +95,49 @@ BeginCmp
 TimeStamp = /5165951A;
 Reference = U1;
 ValeurCmp = L6470;
-IdModule  = ;
+IdModule  = HTSSOP28;
 EndCmp
 
 BeginCmp
 TimeStamp = /5165A651;
 Reference = XL1;
 ValeurCmp = CONN_2;
-IdModule  = ;
+IdModule  = SIL-2;
 EndCmp
 
 BeginCmp
 TimeStamp = /516595E1;
 Reference = XL2;
 ValeurCmp = CONN_5;
-IdModule  = ;
+IdModule  = SIL-5;
 EndCmp
 
 BeginCmp
 TimeStamp = /5165956D;
 Reference = XL3;
 ValeurCmp = CONN_5;
-IdModule  = ;
+IdModule  = SIL-5;
 EndCmp
 
 BeginCmp
 TimeStamp = /51659684;
 Reference = XL4;
 ValeurCmp = CONN_2;
-IdModule  = ;
+IdModule  = CONN_KF128D_2;
 EndCmp
 
 BeginCmp
 TimeStamp = /51659693;
 Reference = XL5;
 ValeurCmp = CONN_2;
-IdModule  = ;
+IdModule  = CONN_KF128D_2;
 EndCmp
 
 BeginCmp
 TimeStamp = /5165A742;
 Reference = XL6;
 ValeurCmp = CONN_2;
-IdModule  = ;
+IdModule  = CONN_KF128D_2;
 EndCmp
 
 EndListe

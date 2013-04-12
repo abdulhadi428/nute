@@ -7,6 +7,8 @@
 
 #include "lvl2.h"
 
+#include "evt_mask.h"
+
 rLevel2_t rLevel2;
 
 // =========================== Rx dispatch thread ==============================
@@ -18,9 +20,10 @@ static msg_t rLvl2RxThread(void *arg) {
     (void)arg;
     chRegSetThreadName("rLvl2Rx");
     // Register RadioRx evt
-    rLevel1.RegisterEvtRx(&EvtLstnrRxThd, 0);
+    rLevel1.RegisterEvtRx(&EvtLstnrRxThd, EVTMASK_RADIO_RX);
+
     while(1) {
-        chEvtWaitOne(1);    // Single event, mask is 0x01
+        chEvtWaitOne(EVTMASK_RADIO_RX);
         // Pkt received, process it
         uint32_t Cnt = rLevel1.GetRxCount();
         Uart.Printf("RxEvt: Cnt = %u\r", Cnt);
@@ -28,12 +31,10 @@ static msg_t rLvl2RxThread(void *arg) {
         while(Cnt--) {
             if(rLevel1.GetRxPkt(&RxPkt) == OK) {
                 Uart.Printf(" RSSI = %d\r", RxPkt.RSSI);
+
+
 #ifdef DEVICE
-                // Construct TX pkt and send it in reply
-//                TxPkt.Cmd++;
-//                TxPkt.From = rLevel1.SelfID;
-//                TxPkt.To = RxPkt.From;
-//                rLevel1.AddPktToTx(&TxPkt);
+
 #endif
             }
         }

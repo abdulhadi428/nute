@@ -132,7 +132,8 @@ void SysTick_Handler(void);
 
 // ============================== UART command =================================
 #define UART_TXBUF_SIZE     45
-#define UART_DMA_CHNL       DMA1_Channel4
+#define UART_DMA_CHNL       DMA1_Channel2
+#define UART_DMA_FLAG_TC    DMA1_FLAG_TC2
 
 //#define RX_ENABLED
 
@@ -159,12 +160,12 @@ public:
     void Printf(const char *S, ...);
     void FlushTx();
     void Init(uint32_t ABaudrate);
-    void Task();
 #ifdef RX_ENABLED
+    void Task();
     void NewCmdHandler();   // Place it where needed
+    void RxIRQHandler();
 #endif
-    // IRQ
-    void IRQHandler();
+    void IRQDmaTxHandler();
 };
 
 // RX IRQ
@@ -173,6 +174,10 @@ extern "C" {
 void USART1_IRQHandler(void);
 }
 #endif
+extern "C" {
+void DMA1_Channel2_3_IRQHandler(void);
+}
+
 
 extern CmdUnit_t Uart;
 

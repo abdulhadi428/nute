@@ -17,14 +17,15 @@
 #define DBG1_CLR()  PinClear(DBG_GPIO1, DBG_PIN1)
 #endif
 
-VirtualTimer rTmr;
-void rTmrCallback(void *p);
 Thread *PThr;
 Surround_t Surround;
 rLevel1_t rLevel1;
 
 // ============================ Concentrator task ==============================
 #ifdef GATE
+VirtualTimer rTmr;
+void rTmrCallback(void *p);
+
 void rLevel1_t::PrepareTxPkt() {
     //Uart.Printf("PTx\r");
     PktTx.rID = DataPktTx.rID;
@@ -32,12 +33,12 @@ void rLevel1_t::PrepareTxPkt() {
     memcpy(&PktTx.Data, DataPktTx.Ptr, RDATA_CNT);
     DataPktTx.Ptr += RDATA_CNT;
     DataPktTx.Length -= RDATA_CNT;
-    if(DataPktTx.Length > 0) PktTx.Srv = R_DIR_GATE2DEV + R_CMD_DATA + R_NXTSLT;
-    else PktTx.Srv = R_DIR_GATE2DEV + R_CMD_DATA;
+    if(DataPktTx.Length > 0) PktTx.Srv = R_DIR_GATE2DEV | R_CMD_DATA | R_NXTSLT;
+    else PktTx.Srv = R_DIR_GATE2DEV | R_CMD_DATA;
 }
 void rLevel1_t::PreparePing() {
     PktTx.rID = SLOT2ID(SlotN);
-    PktTx.Srv = R_DIR_GATE2DEV + R_CMD_PING;
+    PktTx.Srv = R_DIR_GATE2DEV | R_CMD_PING;
 }
 
 void rLevel1_t::IReportTxOk() {
@@ -57,6 +58,7 @@ void rLevel1_t::Task() {
     chSchGoSleepS(THD_STATE_SUSPENDED); // Will wake up by rTmr
 
     // ==== Sleep ended, transmit new pkt ====
+    if(++SlotN >= RSLOT_CNT) SlotN = 0;
     PktTx.SlotN = SlotN;
     // If not transmitting long pkt already, try to get new data pkt
     if(DataPktTx.Length <= 0)
@@ -75,7 +77,7 @@ void rLevel1_t::Task() {
     //Uart.Printf("Rx: %u\r", RxRslt);
     // Process result
     if(RxRslt == OK) {
-        Uart.Printf("Rx\r");
+        Uart.Printf("Rx Slot=%u; ID=%u; Srv=%X\r", SlotN, PktRx.rID, PktRx.Srv);
         // Register answer if pkt received in appropriate slot
         if(InsideCorrectSlot()) Surround.RegisterPkt(SlotN, &PktRx);
         // If data received, put it to queue
@@ -85,9 +87,8 @@ void rLevel1_t::Task() {
 
         // Check reply to data containing pkt
         if(DataPktState == IN_PROGRESS) {
-            // Check if ACK
-            if(PktRx.Srv & R_ACK) {
-                if(DataPktTx.Length <= 0) IReportTxOk();     // If transmission completed
+            if(PktRx.Srv & R_ACK) {                         // Check if ACK
+                if(DataPktTx.Length <= 0) IReportTxOk();    // If transmission completed
                 // Else stay in_progress
             }
             else IReportTxFail();  // No ACK
@@ -103,9 +104,6 @@ void rLevel1_t::Task() {
 
 // Timer callback
 void rTmrCallback(void *p) {
-    // ==== Periodic code here ====
-    rLevel1.IncSlotN();
-
     // Restart the timer, resume thread if needed
     chSysLockFromIsr();
     chVTSetI(&rTmr, MS2ST(RTIMESLOT_MS), rTmrCallback, p);
@@ -135,12 +133,9 @@ void rLevel1_t::ISleepIfLongToWait(uint8_t RcvdSlot) {
     // Calculate how long to wait to enter RX
     uint32_t msToWaitRx = ICalcWaitRx_ms(RcvdSlot);
     //Uart.Printf("ms: %u\r", msToWaitRx);
-    // Restart EnterRx timer and enter sleep
-    chVTReset(&rTmr);
     if(msToWaitRx > RMIN_TIME_TO_SLEEP_MS) {    // If enough time to sleep
-        chVTSet(&rTmr, MS2ST(msToWaitRx), rTmrCallback, NULL);  // Start timer
         CC.Sleep();                             // Shutdown CC
-        chSchGoSleepS(THD_STATE_SUSPENDED);     // Will wake up by rTmr
+        chThdSleepMilliseconds(msToWaitRx);
     }
 }
 
@@ -220,19 +215,19 @@ void rLevel1_t::IInSync() {
                         IListenNextSlot = false;
                         chEvtBroadcast(&IEvtSrcRadioRx);    // Pkt received completely
                     }
-                    PktTx.Srv = R_DIR_DEV2GATE + R_ACK;     // Send back ACK
+                    PktTx.Srv = R_DIR_DEV2GATE | R_ACK;     // Send back ACK
                 } // if add is ok
                 else {  // Buffer oveflow
                     IListenNextSlot = false;                // Nothing to do if buffer overflow
                     PktTx.Srv = R_DIR_DEV2GATE;             // No ACK
                 } // if put is ok
             } // if data
-            else PktTx.Srv = R_DIR_DEV2GATE + R_ACK;        // Just ping, just ACK
+            else PktTx.Srv = R_DIR_DEV2GATE | R_ACK;        // Just ping, just ACK
 
             // ==== Reply ====
             // Reply with Data if TxQueue is not empty
             if(ITx.Get(&DataPktTx) == OK) {
-                PktTx.Srv += R_CMD_DATA;
+                PktTx.Srv |= R_CMD_DATA;
                 // Copy payload data
                 uint32_t DataSz = (DataPktTx.Length > RDATA_CNT)? RDATA_CNT : DataPktTx.Length;
                 memcpy(&PktTx.Data, DataPktTx.Ptr, DataSz);
@@ -241,7 +236,7 @@ void rLevel1_t::IInSync() {
             CC.Transmit(&PktTx);
             DBG1_CLR();
 
-            if(!IListenNextSlot) IDiscovery(); // Now for long  time there will be no requests for us => perform discovery.
+            if(!IListenNextSlot) IDiscovery(); // Now for long there will be no requests for us => perform discovery.
         } // if pkt is ours
         else {  // Not our pkt => sync failure or our slot is occupied. Sleep if needed.
             // if from dev => sync failure, wait next pkt, do not sleep
@@ -261,42 +256,18 @@ void rLevel1_t::IInSync() {
     }
 }
 
-uint32_t N=0, Sec=0;
-
 void rLevel1_t::Task() {
+    switch(rMode) {
+        case rmAlone:
+            CC.Sleep();  // Shutdown CC
+            chThdSleepMilliseconds(RDISCOVERY_PERIOD_MS);
+            IDiscovery();
+            break;
 
-    uint8_t RxRslt = CC.Receive(RDISCOVERY_RX_MS, &PktRx);
-    if(RxRslt == OK) N++;
-
-//    switch(rMode) {
-//        case rmAlone:
-//            CC.Sleep();  // Shutdown CC
-//            chThdSleepMilliseconds(RDISCOVERY_PERIOD_MS);
-//            IDiscovery();
-//            break;
-//
-//        case rmInSync:
-//            IInSync();
-//            break;
-//    } // switch
-}
-
-// Timer callback
-void rTmrCallback(void *p) {
-    Sec++;
-    Uart.Printf("%u; %u\r\n", Sec, N);
-    N=0;
-
-    chSysLockFromIsr();
-    chVTSet(&rTmr, MS2ST(1000), rTmrCallback, p);
-    chSysUnlockFromIsr();
-
-
-    // ==== Periodic code here ====
-    // Resume thread if needed
-//    chSysLockFromIsr();
-//    if(PThr->p_state == THD_STATE_SUSPENDED) chSchReadyI(PThr);
-//    chSysUnlockFromIsr();
+        case rmInSync:
+            IInSync();
+            break;
+    } // switch
 }
 #endif
 
@@ -331,13 +302,10 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     // Get concentrator channel (0...RCONC_CNT-1). Channel is not ID!
     CC.SetChannel(ASelfID);
     // Timer
-    chSysLock();
-    chVTSetI(&rTmr, MS2ST(RTIMESLOT_MS), rTmrCallback, NULL);     // Start timer
-    chSysUnlock();
+    chVTSet(&rTmr, MS2ST(RTIMESLOT_MS), rTmrCallback, NULL);  // Start timer
 #else
     rMode = rmAlone;
     PktTx.rID = SelfID; // Always the same
-    chVTSet(&rTmr, MS2ST(1000), rTmrCallback, NULL);  // Start timer
     CC.SetChannel(1);
 #endif
 

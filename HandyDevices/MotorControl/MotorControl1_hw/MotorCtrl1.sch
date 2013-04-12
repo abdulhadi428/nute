@@ -1,17 +1,18 @@
-EESchema Schematic File Version 2  date 4/10/2013 8:47:22 PM
+EESchema Schematic File Version 2  date 4/12/2013 6:02:38 PM
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
 LIBS:Power_kl
 LIBS:st_kl
 LIBS:Tittar_kl
+LIBS:MotorCtrl1-cache
 EELAYER 27 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "10 apr 2013"
+Date "12 apr 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -303,7 +304,7 @@ L DIODE D1
 U 1 1 5165A010
 P 6750 2050
 F 0 "D1" H 6750 2150 40  0000 C CNN
-F 1 "DIODE" H 6750 1950 40  0000 C CNN
+F 1 "1N4148" H 6750 1950 40  0000 C CNN
 F 2 "" H 6750 2050 60  0000 C CNN
 F 3 "" H 6750 2050 60  0000 C CNN
 	1    6750 2050
@@ -314,7 +315,7 @@ L DIODE D2
 U 1 1 5165A01F
 P 7250 2050
 F 0 "D2" H 7250 2150 40  0000 C CNN
-F 1 "DIODE" H 7250 1950 40  0000 C CNN
+F 1 "1N4148" H 7250 1950 40  0000 C CNN
 F 2 "" H 7250 2050 60  0000 C CNN
 F 3 "" H 7250 2050 60  0000 C CNN
 	1    7250 2050
@@ -547,4 +548,12 @@ $EndComp
 Wire Wire Line
 	8800 3000 8800 3150
 Connection ~ 8350 2800
+Text Label 6350 3650 0    60   ~ 0
+OUT1A
+Text Label 6350 3750 0    60   ~ 0
+OUT2A
+Text Label 6350 3850 0    60   ~ 0
+OUT1B
+Text Label 6350 4550 0    60   ~ 0
+OUT2B
 $EndSCHEMATC

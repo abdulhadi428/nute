@@ -9,6 +9,7 @@
 #define KL_LIB_F0XX_H_
 
 #include "stm32f0xx.h"
+#include "stm32f0xx_dma.h"
 
 extern "C" {
 //void _init(void);   // Need to calm linker
@@ -102,9 +103,10 @@ static inline void PinSetupAlterFunc(GPIO_TypeDef *PGpioPort, const uint16_t APi
     PGpioPort->OSPEEDR &= ~(0b11 << (APinNumber*2)); // clear previous bits
     PGpioPort->OSPEEDR |= (uint32_t)ASpeed << (APinNumber*2);
     // Setup Alternate Function
-    uint32_t n = (APinNumber <= 7)? 0 : 1;
-    PGpioPort->AFR[n] &= ~(0b1111 << (APinNumber*4));
-    PGpioPort->AFR[n] |= (uint32_t)AAlterFunc << (APinNumber*4);
+    uint32_t n = (APinNumber <= 7)? 0 : 1;      // 0 if 0...7, 1 if 8..15
+    uint32_t Shift = 4 * ((APinNumber <= 7)? APinNumber : APinNumber - 8);
+    PGpioPort->AFR[n] &= ~(0b1111 << Shift);
+    PGpioPort->AFR[n] |= (uint32_t)AAlterFunc << Shift;
 }
 
 // ============================ Delay and time =================================
@@ -128,6 +130,56 @@ extern "C" {
 void SysTick_Handler(void);
 }
 
+// ============================== UART command =================================
+#define UART_TXBUF_SIZE     45
+#define UART_DMA_CHNL       DMA1_Channel2
+#define UART_DMA_FLAG_TC    DMA1_FLAG_TC2
+
+//#define RX_ENABLED
+
+#ifdef RX_ENABLED
+#define UART_RXBUF_SIZE     45
+enum CmdState_t {csNone, csInProgress, csReady};
+#endif
+
+class CmdUnit_t {
+private:
+    uint8_t TXBuf1[UART_TXBUF_SIZE], TXBuf2[UART_TXBUF_SIZE];
+    uint8_t *PBuf, TxIndx;
+    bool IDmaIsIdle;
+#ifdef RX_ENABLED
+    CmdState_t CmdState;
+    char RXBuf[UART_RXBUF_SIZE];
+    uint8_t RxIndx;
+    void CmdReset(void) { RxIndx = 0; CmdState = csNone; }
+#endif
+    void IStartTx();
+    void IBufWrite(uint8_t AByte);
+public:
+    char UintToHexChar (uint8_t b) { return ((b<=0x09) ? (b+'0') : (b+'A'-10)); }
+    void Printf(const char *S, ...);
+    void FlushTx();
+    void Init(uint32_t ABaudrate);
+#ifdef RX_ENABLED
+    void Task();
+    void NewCmdHandler();   // Place it where needed
+    void RxIRQHandler();
+#endif
+    void IRQDmaTxHandler();
+};
+
+// RX IRQ
+#ifdef RX_ENABLED
+extern "C" {
+void USART1_IRQHandler(void);
+}
+#endif
+extern "C" {
+void DMA1_Channel2_3_IRQHandler(void);
+}
+
+
+extern CmdUnit_t Uart;
 
 
 #endif /* KL_LIB_F0XX_H_ */
