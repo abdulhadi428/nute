@@ -70,7 +70,7 @@ void Lcd_t::Init() {
 
     Cls(clBlack);
 
-    PutBitmap(45, 45, 10, 10, (uint16_t*)0x08000000);
+//    PutBitmap(45, 45, 10, 10, (uint16_t*)0x08000000);
 //
 //    uint16_t Buf[120];
 //    GetBitmap(45, 45, 10, 10, Buf);
@@ -208,7 +208,7 @@ void Lcd_t::Cls(Color_t Color) {
 }
 
 void Lcd_t::GetBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uint16_t *PBuf) {
-    SetBounds(x0, x0+Width-1, y0, y0+Height-1);
+    SetBounds(x0, x0+Width, y0, y0+Height);
     // Prepare variables
     uint32_t Cnt = Width * Height;
     uint16_t R, G, B;
@@ -229,7 +229,7 @@ void Lcd_t::GetBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uin
 }
 
 void Lcd_t::PutBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uint16_t *PBuf) {
-    SetBounds(x0, x0+Width-1, y0, y0+Height-1);
+    SetBounds(x0, x0+Width, y0, y0+Height);
     // Prepare variables
     uint16_t Clr1, Clr2;
     uint32_t Cnt = Width * Height / 2;      // Two pixels at one time
