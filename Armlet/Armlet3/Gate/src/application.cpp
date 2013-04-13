@@ -8,16 +8,12 @@
 #include "application.h"
 #include "ch.h"
 #include "hal.h"
-
+#include "evt_mask.h"
 #include "kl_sd.h"
 
 #include "lvl1_assym.h"
 
 App_t App;
-
-// Event masks
-#define EVT_RADIO_TX    EVENT_MASK(0)
-#define EVT_RADIO_RX    EVENT_MASK(1)
 
 static EventListener EvtLstnrApp;
 
@@ -29,40 +25,19 @@ static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
 
-    // Open file
-//    FRESULT rslt;
-//    rslt = f_open(&SD.File, "settings.ini", FA_READ+FA_OPEN_EXISTING);
-//    Uart.Printf("OpenFile: %u\r", (uint8_t)rslt);
-//    if(rslt == FR_OK) {
-//        Uart.Printf("Size: %u\r", SD.File.fsize);
-//        uint32_t N=0;
-//        rslt = f_read(&SD.File, Str, 250, (UINT*)&N);
-//        if(rslt == FR_OK) {
-//            Uart.Printf("N: %u; Str: %s\r", N, Str);
-//        }
-//        else Uart.Printf("ReadFile: %u\r", (uint8_t)rslt);
-//        f_close(&SD.File);
-//    }
-//    Uart.Printf("1\r");
-//    uint32_t Count=0;
-//    iniReadUint32("Sound", "Count", "settings.ini", &Count);
-//    Uart.Printf("Cnt: %u\r", Count);
-
-//    Color_t c = clBlack;
-
 #define PktSZ   4
     uint8_t Buf[PktSZ], Rslt1 = FAILURE, Rslt2 = FAILURE;
     for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i+2;
 
     // Events
-    rLevel1.RegisterEvtTx(&EvtLstnrApp, EVT_RADIO_TX);
+    rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
 
     while(1) {
         chThdSleepMilliseconds(999);
         Rslt1 = rLevel1.AddPktToTx(RDEV_BOTTOM_ID+1, Buf, PktSZ, &Rslt2);
         Uart.Printf("> %u\r", Rslt1);
 
-        chEvtWaitOne(EVT_RADIO_TX);
+        chEvtWaitOne(EVTMASK_RADIO_TX);
         Uart.Printf("Rslt = %u\r", Rslt2);
         //Uart.Printf("Evt \r");
 

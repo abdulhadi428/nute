@@ -13,31 +13,36 @@ rLevel2_t rLevel2;
 
 // =========================== Rx dispatch thread ==============================
 static EventListener EvtLstnrRxThd;
-static rPkt_t RxPkt;//, TxPkt;
+
+DataPktPtr_t DataPkt;
+uint8_t RxPktData[180];
 
 static WORKING_AREA(warLvl2RxThread, 128);
 static msg_t rLvl2RxThread(void *arg) {
     (void)arg;
     chRegSetThreadName("rLvl2Rx");
+
+    // Init Rx Pkt
+    DataPkt.Ptr = RxPktData;
+
     // Register RadioRx evt
     rLevel1.RegisterEvtRx(&EvtLstnrRxThd, EVTMASK_RADIO_RX);
 
     while(1) {
         chEvtWaitOne(EVTMASK_RADIO_RX);
         // Pkt received, process it
-        uint32_t Cnt = rLevel1.GetRxCount();
-        Uart.Printf("RxEvt: Cnt = %u\r", Cnt);
+        uint32_t Cnt = rLevel1.GetRxPktCount();
 
         while(Cnt--) {
-            if(rLevel1.GetRxPkt(&RxPkt) == OK) {
-                Uart.Printf(" RSSI = %d\r", RxPkt.RSSI);
-
+            if(rLevel1.GetRxPkt(&DataPkt) == OK) {
+                Uart.Printf("RxEvt: Cnt=%u, Sz=%u\r", Cnt, DataPkt.Length);
+                //Uart.Printf("> %A\r", DataPkt.Ptr, DataPkt.Length);
+            }
+        }
 
 #ifdef DEVICE
 
 #endif
-            }
-        }
 
     } // while 1
     return 0;

@@ -18,7 +18,7 @@
 #endif
 
 Thread *PThr;
-Surround_t Surround;
+//Surround_t Surround;
 rLevel1_t rLevel1;
 
 // ============================ Concentrator task ==============================
@@ -29,12 +29,21 @@ void rTmrCallback(void *p);
 void rLevel1_t::PrepareTxPkt() {
     //Uart.Printf("PTx\r");
     PktTx.rID = DataPktTx.rID;
-    DataPktState = IN_PROGRESS; // Signal that first rpkt was sent
-    memcpy(&PktTx.Data, DataPktTx.Ptr, RDATA_CNT);
-    DataPktTx.Ptr += RDATA_CNT;
-    DataPktTx.Length -= RDATA_CNT;
-    if(DataPktTx.Length > 0) PktTx.Srv = R_DIR_GATE2DEV | R_CMD_DATA | R_NXTSLT;
-    else PktTx.Srv = R_DIR_GATE2DEV | R_CMD_DATA;
+    // Check if last pkt
+    if(DataPktTx.Length <= RLASTPKT_DATASZ) {
+        IDataPktState = LAST;
+        memcpy(&PktTx.Data, DataPktTx.Ptr, DataPktTx.Length);
+        PktTx.Data[RDATA_CNT-1] = DataPktTx.Length; // Set data count in last byte
+        PktTx.Srv = R_DIR_GATE2DEV | R_CMD_DATA;    // Do not listen next slot
+        DataPktTx.Length = 0;
+    }
+    else {
+        IDataPktState = IN_PROGRESS; // Signal that first rpkt was sent
+        memcpy(&PktTx.Data, DataPktTx.Ptr, RDATA_CNT);
+        DataPktTx.Ptr += RDATA_CNT;
+        DataPktTx.Length -= RDATA_CNT;
+        PktTx.Srv = R_DIR_GATE2DEV | R_CMD_DATA | R_NXTSLT; // Listen next slot
+    }
 }
 void rLevel1_t::PreparePing() {
     PktTx.rID = SLOT2ID(SlotN);
@@ -43,13 +52,17 @@ void rLevel1_t::PreparePing() {
 
 void rLevel1_t::IReportTxOk() {
     *DataPktTx.PState = OK;     // Signal success
-    DataPktState = OK;          // No big deal, must be not in_progress/new
+    IDataPktState = OK;          // No big deal, must be not in_progress/new
     chEvtBroadcast(&IEvtSrcRadioTxEnd);
 }
 void rLevel1_t::IReportTxFail() {
     *DataPktTx.PState = FAILURE;    // Regardless - last rpkt or somewhere in middle
-    DataPktState = FAILURE;
-    DataPktTx.Length = -1;          // No more transmission
+    IDataPktState = FAILURE;
+    chEvtBroadcast(&IEvtSrcRadioTxEnd);
+}
+void rLevel1_t::IReportTxBusy() {
+    *DataPktTx.PState = BUSY;       // Regardless - last rpkt or somewhere in middle
+    IDataPktState = FAILURE;
     chEvtBroadcast(&IEvtSrcRadioTxEnd);
 }
 
@@ -61,11 +74,11 @@ void rLevel1_t::Task() {
     if(++SlotN >= RSLOT_CNT) SlotN = 0;
     PktTx.SlotN = SlotN;
     // If not transmitting long pkt already, try to get new data pkt
-    if(DataPktTx.Length <= 0)
-        if(ITx.Get(&DataPktTx) == OK) DataPktState = NEW;   // Will not be transmitted until correct slot
+    if((IDataPktState == OK) or (IDataPktState == FAILURE))
+        if(ITx.Get(&DataPktTx) == OK) IDataPktState = NEW;   // Will not be transmitted until correct slot
 
-    // Transmit data if there is data, and if either first pkt already sent, or it is correct slot
-    if((DataPktTx.Length > 0) and ((DataPktState == IN_PROGRESS) or InsideCorrectSlot())) PrepareTxPkt();
+    // Transmit data if new and in correct slot, or if first pkt is already sent
+    if(((IDataPktState == NEW) and InsideCorrectSlot()) or (IDataPktState == IN_PROGRESS)) PrepareTxPkt();
     else PreparePing();
 
     DBG1_SET();
@@ -79,26 +92,21 @@ void rLevel1_t::Task() {
     if(RxRslt == OK) {
         Uart.Printf("Rx Slot=%u; ID=%u; Srv=%X\r", SlotN, PktRx.rID, PktRx.Srv);
         // Register answer if pkt received in appropriate slot
-        if(InsideCorrectSlot()) Surround.RegisterPkt(SlotN, &PktRx);
+        //if(InsideCorrectSlot()) Surround.RegisterPkt(SlotN, &PktRx);
         // If data received, put it to queue
         if(PktRx.Srv & R_CMD_DATA) {
-            if(IRx.Put(&PktRx) == OK) chEvtBroadcast(&IEvtSrcRadioRx); // Put received pkt in buffer if Data
+            //if(IRx.Put(&PktRx) == OK) chEvtBroadcast(&IEvtSrcRadioRx); // Put received pkt in buffer if Data
         } // if data
 
         // Check reply to data containing pkt
-        if(DataPktState == IN_PROGRESS) {
-            if(PktRx.Srv & R_ACK) {                         // Check if ACK
-                if(DataPktTx.Length <= 0) IReportTxOk();    // If transmission completed
-                // Else stay in_progress
-            }
-            else IReportTxFail();  // No ACK
-        } // if data in progress
+        if((IDataPktState == LAST) and (PktRx.Srv & R_ACK)) IReportTxOk();    // If transmission completed
+        if(((IDataPktState == IN_PROGRESS) or (IDataPktState == LAST)) and !(PktRx.Srv & R_ACK)) IReportTxBusy();
     } // if ok
     else {  // No answer
         // Register no answer if slot is appropriate
-        if(InsideCorrectSlot()) Surround.RegisterNoAnswer(SlotN);
+        //if(InsideCorrectSlot()) Surround.RegisterNoAnswer(SlotN);
         // If data pkt in progress, fail it
-        if(DataPktState == IN_PROGRESS) IReportTxFail();
+        if((IDataPktState == IN_PROGRESS) or (IDataPktState == LAST)) IReportTxFail();
     } // if rx
 }
 
@@ -155,7 +163,7 @@ void rLevel1_t::IDiscovery() {
             switch(RxRslt) {
                 case TIMEOUT:
                     //Uart.Printf("TO\r");
-                    Surround.RegisterNoAnswer(i);
+                    //Surround.RegisterNoAnswer(i);
                     Retry = false;
                     break;
                 case FAILURE:
@@ -168,7 +176,7 @@ void rLevel1_t::IDiscovery() {
                     if(PktRx.Srv & R_DIR_GATE2DEV) {
                         Retry = false;              // No need to retry
                         //Uart.Printf("N: %u; Rssi: %d\r", i, pktRx.RSSI);
-                        Surround.RegisterPkt(i, &PktRx);
+                        //Surround.RegisterPkt(i, &PktRx);
                         SomeoneIsNear = true;
                         if(PktRx.RSSI > BestRssi) {     // Check if switch to this channel
                             GateN = i;                  // Note, number of concentrator != ID of concentrator
@@ -199,6 +207,27 @@ void rLevel1_t::IDiscovery() {
     } // if gate is near
 }
 
+uint8_t rLevel1_t::HandleDataPkt() {
+    if(!IRx.PktInProgress)
+        if(IRx.StartNewPkt() != OK) return FAILURE;
+    // Check if this pkt is last
+    if(!(PktRx.Srv & R_NXTSLT)) {   // No NXT_SLT => last pkt
+        // Get effective length
+        uint32_t Length = PktRx.Data[RDATA_CNT-1];
+        if(IRx.AddData(PktRx.Data, Length) == OK) {
+            IRx.CompletePkt();
+            chEvtBroadcast(&IEvtSrcRadioRx);    // Pkt received completely
+            return OK;
+        }
+        else { // Seems like buffer overflow
+            IRx.CancelPkt();
+            return FAILURE;
+        }
+    }
+    // Not a last pkt
+    else return IRx.AddData(PktRx.Data, RDATA_CNT);
+}
+
 // Called periodically when gate is successfully discovered
 void rLevel1_t::IInSync() {
     uint8_t RxRslt = CC.Receive(RDISCOVERY_RX_MS, &PktRx);
@@ -207,50 +236,39 @@ void rLevel1_t::IInSync() {
         RxRetryCounter = 0;     // Something was successfully received, reset counter
         // Check if pkt is ours
         if(PktRx.rID == SelfID) {
-            // ==== Handle received data ====
             if(PktRx.Srv & R_CMD_DATA) {
-                if(IRx.Put(&PktRx) == OK) { // Put received pkt in buffer if Data
-                    if(PktRx.Srv & R_NXTSLT) IListenNextSlot = true;
-                    else {
-                        IListenNextSlot = false;
-                        chEvtBroadcast(&IEvtSrcRadioRx);    // Pkt received completely
-                    }
-                    PktTx.Srv = R_DIR_DEV2GATE | R_ACK;     // Send back ACK
-                } // if add is ok
-                else {  // Buffer oveflow
-                    IListenNextSlot = false;                // Nothing to do if buffer overflow
-                    PktTx.Srv = R_DIR_DEV2GATE;             // No ACK
-                } // if put is ok
-            } // if data
-            else PktTx.Srv = R_DIR_DEV2GATE | R_ACK;        // Just ping, just ACK
+                if(HandleDataPkt() == OK) PktTx.Srv = R_DIR_DEV2GATE | R_ACK;
+                else PktTx.Srv = R_DIR_DEV2GATE;        // No ACK
+            }
+            else {
+                PktTx.Srv = R_DIR_DEV2GATE | R_ACK;     // Just ping, just ACK
+                if(IRx.PktInProgress) IRx.CancelPkt();  // Ping instead of data
+            }
 
-            // ==== Reply ====
             // Reply with Data if TxQueue is not empty
             if(ITx.Get(&DataPktTx) == OK) {
                 PktTx.Srv |= R_CMD_DATA;
                 // Copy payload data
-                uint32_t DataSz = (DataPktTx.Length > RDATA_CNT)? RDATA_CNT : DataPktTx.Length;
+                uint32_t DataSz = (DataPktTx.Length > RLASTPKT_DATASZ)? RLASTPKT_DATASZ : DataPktTx.Length;
                 memcpy(&PktTx.Data, DataPktTx.Ptr, DataSz);
+                PktTx.Data[RDATA_CNT-1] = DataSz;   // Set data count in last byte
             }
             DBG1_SET();
             CC.Transmit(&PktTx);
             DBG1_CLR();
-
-            if(!IListenNextSlot) IDiscovery(); // Now for long there will be no requests for us => perform discovery.
+            // Enter discovery if no need to listen next slot
+            if(!(PktRx.Srv & R_NXTSLT)) IDiscovery();
         } // if pkt is ours
         else {  // Not our pkt => sync failure or our slot is occupied. Sleep if needed.
             // if from dev => sync failure, wait next pkt, do not sleep
-            // if from gate and wrong slot => sync failure, sleep(slot)
-            // if from gate and correct slot and wrong ID => occupied, sleep(slot)
+            // if from gate and wrong ID and wrong   slot => sync failure, sleep(slot)
+            // if from gate and wrong ID and correct slot => occupied, sleep(slot)
             if(PktRx.Srv & R_DIR_GATE2DEV) ISleepIfLongToWait(PktRx.SlotN);
         }
     } // if received ok
     else {
         // Reset ongoing reception if any
-        if(IListenNextSlot) {
-            IListenNextSlot = false;
-            IRx.Reset();    // Delete what received
-        }
+        if(IRx.PktInProgress) IRx.CancelPkt();
         // Check if we get lost
         if(RxRetryCounter++ > R_IN_SYNC_RETRY_CNT) rMode = rmAlone;
     }
@@ -287,14 +305,15 @@ void rLevel1_t::Init(uint16_t ASelfID) {
 #endif
     // Init Rx & Tx buffers
     chEvtInit(&IEvtSrcRadioRx);
-    IRx.Init(IRxBuf, R_RX_BUF_SZ);
+    IRx.Init(IPtrBuf, RRX_PTRBUF_SZ, IDataBuf, RRX_DATABUF_SZ);
     ITx.Init(ITxBuf, R_TX_BUF_SZ);
 
     // ==== General ====
     SelfID = ASelfID;
+    IDataPktState = FAILURE;
     // Init radioIC
     CC.Init();
-    CC.SetTxPower(PwrPlus10dBm);
+    CC.SetTxPower(PwrMinus6dBm);
 
 #ifdef GATE
     SlotN = 0; // Slot number to start from

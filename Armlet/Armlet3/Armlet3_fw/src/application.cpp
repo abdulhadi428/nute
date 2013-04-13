@@ -24,7 +24,7 @@ App_t App;
 
 char Str[255];
 
-static EventListener EvtLstnrApp;
+//static EventListener EvtLstnrApp;
 
 // Prototypes
 
@@ -55,9 +55,7 @@ static msg_t AppThread(void *arg) {
 
 //    Color_t c = clBlack;
 
-    // Register event listeners
-
-    //chEvtRegisterMask(&EvtSrcKey, &EvtLstnrApp, EVT_KEYS); // Register Key event
+    // Events
 
     while(1) {
         chThdSleepMilliseconds(999);

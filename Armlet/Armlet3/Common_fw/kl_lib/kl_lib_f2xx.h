@@ -24,8 +24,10 @@
 #define OK              0
 #define FAILURE         1
 #define TIMEOUT         2
-#define NEW             3
-#define IN_PROGRESS     4
+#define BUSY            3
+#define NEW             4
+#define IN_PROGRESS     5
+#define LAST            6
 
 // Binary semaphores
 #define NOT_TAKEN       false
