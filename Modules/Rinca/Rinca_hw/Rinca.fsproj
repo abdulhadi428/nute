@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xsi:noNamespaceSchemaLocation="Project.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Version current="1"/>
+	<Format>Project</Format>
+	<Header>
+		<Program name="TopoR" version="5.4"/>
+		<GUID>{00A54C33-74B0-4090-A52A-434E6F554B64}</GUID>
+		<Annotation>Project file</Annotation>
+	</Header>
+	<Document>
+		<LocalLibrary />
+		<Pcb>
+			<File path=".\Rinca.fsx" Folder="-1" isopened="1"/>
+		</Pcb>
+		<ARouteSessions>
+		</ARouteSessions>
+	</Document>
+</Project>
