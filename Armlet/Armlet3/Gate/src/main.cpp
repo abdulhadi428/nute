@@ -12,6 +12,7 @@
 #include "kl_lib_f2xx.h"
 #include "kl_sd.h"
 #include "lvl1_assym.h"
+#include "lvl2.h"
 
 #include "application.h"
 
@@ -39,7 +40,6 @@ int main() {
 
     while(TRUE) {
         chThdSleepMilliseconds(999);
-        //Uart.Printf("Cl\r");
     }
 }
 
@@ -47,6 +47,7 @@ void Init() {
     Uart.Init(115200);
     Uart.Printf("Gate AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
     rLevel1.Init(1);    // FIXME: set correct number here
+    rLevel2.Init();
     // Application init
     App.Init();
 }

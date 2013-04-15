@@ -130,6 +130,7 @@ private:
     DataPktPtr_t IPtrBuf[RRX_PTRBUF_SZ];
     uint8_t IDataBuf[RRX_DATABUF_SZ];
     RxBuf_t IRx;
+    inline uint8_t HandleRxDataPkt();
     // ==== Tx ====
     rPkt_t PktTx;
     DataPkt_t DataPktTx;
@@ -144,7 +145,6 @@ private:
     uint32_t ICalcWaitRx_ms(uint8_t RcvdSlot);
     void ISleepIfLongToWait(uint8_t RcvdSlot);
     inline void PrepareAck();
-    inline uint8_t HandleDataPkt();
 #endif
 #ifdef GATE
     uint8_t SlotN;

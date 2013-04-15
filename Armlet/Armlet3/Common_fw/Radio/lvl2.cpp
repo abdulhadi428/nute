@@ -36,13 +36,9 @@ static msg_t rLvl2RxThread(void *arg) {
         while(Cnt--) {
             if(rLevel1.GetRxPkt(&DataPkt) == OK) {
                 Uart.Printf("RxEvt: Cnt=%u, Sz=%u\r", Cnt, DataPkt.Length);
-                //Uart.Printf("> %A\r", DataPkt.Ptr, DataPkt.Length);
+                Uart.Printf("> %A\r", DataPkt.Ptr, DataPkt.Length);
             }
         }
-
-#ifdef DEVICE
-
-#endif
 
     } // while 1
     return 0;

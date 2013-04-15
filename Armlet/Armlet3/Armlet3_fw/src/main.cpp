@@ -18,7 +18,9 @@
 #include "keys.h"
 #include "infrared.h"
 
-extern void armlet_main();
+#include "application.h"
+
+//extern void armlet_main();
 
 static inline void Init();
 
@@ -42,12 +44,11 @@ int main() {
     // Report problem with clock if any
     if(ClkResult) Uart.Printf("Clock failure\r");
 
-//    while(TRUE) {
-//        chThdSleepMilliseconds(999);
-//        //Uart.Printf("Cl\r");
-//    }
+    while(TRUE) {
+        chThdSleepMilliseconds(999);
+    }
 
-    armlet_main();
+    //armlet_main();
 }
 
 void Init() {
@@ -66,4 +67,5 @@ void Init() {
     // Radio
     rLevel1.Init(RDEV_BOTTOM_ID+1); // FIXME: replace RBOTTOMID with value from SD
     rLevel2.Init();
+    App.Init();
 }

@@ -24,7 +24,7 @@ App_t App;
 
 char Str[255];
 
-//static EventListener EvtLstnrApp;
+static EventListener EvtLstnrApp;
 
 // Prototypes
 
@@ -55,10 +55,21 @@ static msg_t AppThread(void *arg) {
 
 //    Color_t c = clBlack;
 
+#define PktSZ   4
+    uint8_t Buf[PktSZ], Rslt1 = FAILURE, Rslt2 = FAILURE;
+    for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i;
+
     // Events
+    rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
 
     while(1) {
         chThdSleepMilliseconds(999);
+        Rslt1 = rLevel1.AddPktToTx(0, Buf, PktSZ, &Rslt2);
+        Uart.Printf("### %u\r", Rslt1);
+
+        chEvtWaitOne(EVTMASK_RADIO_TX);
+        Uart.Printf("Rslt = %u\r", Rslt2);
+
         //Beeper.Beep(BeepBeep);
         //Vibro.Vibrate(BrrBrr);
         //Uart.Printf("Evt \r");

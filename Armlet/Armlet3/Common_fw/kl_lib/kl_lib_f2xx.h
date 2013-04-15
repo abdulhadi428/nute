@@ -175,16 +175,8 @@ public:
     void Off() { *PCCR = 0; }
 };
 
-// ================================= ADC =======================================
-class Adc_t {
-private:
-
-public:
-    void Init(GPIO_TypeDef *GPIO, uint16_t PinN, uint8_t Channel) {
-        //ADC1->CR1
-    }
-};
-
+// ================================= DEBUG =====================================
+void chDbgPanic(const char *msg1);
 
 // ================================= SPI =======================================
 enum CPHA_t {cphaFirstEdge, cphaSecondEdge};
@@ -243,6 +235,12 @@ private:
 public:
     void Printf(const char *S, ...);
     void FlushTx() { while(!IDmaIsIdle); }  // wait DMA
+    void PrintNow(const char *S) {
+        while(*S != 0) {
+            while(!(UART->SR & USART_SR_TXE));
+            UART->DR = *S++;
+        }
+    }
     void Init(uint32_t ABaudrate);
     void IRQDmaTxHandler();
 };

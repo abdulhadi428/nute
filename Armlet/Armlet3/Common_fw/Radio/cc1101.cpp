@@ -82,7 +82,7 @@ uint8_t cc1101_t::Receive(uint32_t Timeout_ms, rPkt_t *pPkt) {
     chSysLock();
     PWaitingThread = chThdSelf();
     msg_t Rslt = chSchGoSleepTimeoutS(THD_STATE_SUSPENDED, MS2ST(Timeout_ms));
-    chSysUnlock();  // Will be here when IRQ will fire, or timeout occur
+    chSysUnlock();  // Will be here when IRQ will fire, or timeout occur - with appropriate message
 
     if(Rslt == RDY_TIMEOUT) {   // Nothing received, timeout occured
         EnterIdle();            // Get out of RX mode

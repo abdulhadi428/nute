@@ -131,6 +131,12 @@ void PwmPin_t::SetFreqHz(uint32_t FreqHz) {
     Tim->PSC = (uint16_t)FPrescaler;
 }
 
+// ================================= DEBUG =====================================
+void chDbgPanic(const char *msg1) {
+    //Uart.PrintNow(msg1);
+    (void)msg1;
+}
+
 // ============================== UART command =================================
 DbgUart_t Uart;
 static char UartBuf[198];
