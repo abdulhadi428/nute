@@ -17,7 +17,7 @@
 #define DBG1_CLR()  PinClear(DBG_GPIO1, DBG_PIN1)
 #endif
 
-Thread *PThr;
+static Thread *PThr;
 //Surround_t Surround;
 rLevel1_t rLevel1;
 

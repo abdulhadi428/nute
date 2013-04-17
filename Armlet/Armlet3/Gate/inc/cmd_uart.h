@@ -60,7 +60,7 @@ public:
         }
     }
     void Init(uint32_t ABaudrate);
-    void Cmd(uint8_t CmdCode, uint8_t *PData, uint32_t Length) { Printf("#%u,%A\r\n", CmdCode, PData, Length, ';'); }
+    void Cmd(uint8_t CmdCode, uint8_t *PData, uint32_t Length) { Printf("#%X,%A\r\n", CmdCode, PData, Length, 0); }
 
     void IRQDmaTxHandler();
 #if UART_RX_ENABLED

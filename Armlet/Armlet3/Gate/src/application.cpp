@@ -17,7 +17,7 @@
 
 App_t App;
 
-static EventListener EvtLstnrApp;
+//static EventListener EvtLstnrApp;
 
 // Prototypes
 void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length);
@@ -33,7 +33,7 @@ static msg_t AppThread(void *arg) {
 //    for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i+2;
 //
     // Events
-    rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
+    //rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
 
     while(1) {
         chThdSleepMilliseconds(999);
@@ -65,13 +65,26 @@ static msg_t AppThread(void *arg) {
 }
 
 //=========================== Command processing ===============================
+void Ack(uint8_t Result) { Uart.Cmd(0x90, &Result, 1); }
+
 void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
     //Uart.Printf("Rx: %X\r", CmdCode);
-    uint8_t Buf[4];
     switch(CmdCode) {
-        case 0x01:
-            Buf[0] = OK;
-            Uart.Cmd(0x90, Buf, 1);
+        case CMD_PING: Ack(OK); break;
+
+        case CMD_RTX:
+            Ack(OK);    // Reply Ack now
+            // Setup transmission
+            break;
+
+        case CMD_PILL_WRITE:
+            // ...
+            // Reply result
+            Ack(FAILURE);
+            break;
+
+        case CMD_PILL_READ:
+            Ack(FAILURE);
             break;
 
         default: break;

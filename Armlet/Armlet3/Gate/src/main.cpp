@@ -13,6 +13,7 @@
 #include "kl_sd.h"
 #include "lvl1_assym.h"
 #include "lvl2.h"
+#include "pill.h"
 
 #include "application.h"
 
@@ -48,6 +49,7 @@ void Init() {
     Uart.Printf("Gate AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
     //rLevel1.Init(1);    // FIXME: set correct number here
     //rLevel2.Init();
+    PillInit();
     // Application init
     App.Init();
 }
