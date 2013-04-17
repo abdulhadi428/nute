@@ -262,7 +262,7 @@ void VectorC8(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorCC(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorD0(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorD4(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorD8(void) __attribute__((weak, alias("_unhandled_exception")));
+//void VectorD8(void) __attribute__((weak, alias("_unhandled_exception"))); // USART2RX
 void VectorDC(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorE0(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorE4(void) __attribute__((weak, alias("_unhandled_exception")));

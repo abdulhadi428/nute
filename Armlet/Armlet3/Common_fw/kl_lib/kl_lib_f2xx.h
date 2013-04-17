@@ -13,6 +13,7 @@
 #include "hal.h"
 #include "clocking.h"
 #include "string.h"     // for memcpy
+#include "cmd_uart.h"
 
 // =============================== General =====================================
 #define PACKED __attribute__ ((__packed__))
@@ -216,35 +217,5 @@ static inline void SpiSetup(
 static inline void SpiEnable (SPI_TypeDef *Spi) { Spi->CR1 |=  SPI_CR1_SPE; }
 static inline void SpiDisable(SPI_TypeDef *Spi) { Spi->CR1 &= ~SPI_CR1_SPE; }
 
-// ============================== UART command unit ============================
-#define UART_TXBUF_SIZE     900
-#define UART                USART2
-#define UART_GPIO           GPIOD
-#define UART_TX_PIN         5
-#define UART_AF             AF7
-#define UART_DMA            STM32_DMA1_STREAM6
-#define UART_DMA_CHNL       4
-#define UART_RCC_ENABLE()   rccEnableUSART2(FALSE)
-
-class DbgUart_t {
-private:
-    uint8_t TXBuf[UART_TXBUF_SIZE];
-    uint8_t *PWrite, *PRead;
-    uint16_t ICountToSendNext;
-    bool IDmaIsIdle;
-public:
-    void Printf(const char *S, ...);
-    void FlushTx() { while(!IDmaIsIdle); }  // wait DMA
-    void PrintNow(const char *S) {
-        while(*S != 0) {
-            while(!(UART->SR & USART_SR_TXE));
-            UART->DR = *S++;
-        }
-    }
-    void Init(uint32_t ABaudrate);
-    void IRQDmaTxHandler();
-};
-
-extern DbgUart_t Uart;
 
 #endif /* KL_LIB_F2XX_H_ */

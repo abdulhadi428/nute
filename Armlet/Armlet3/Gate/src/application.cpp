@@ -13,11 +13,14 @@
 
 #include "lvl1_assym.h"
 
+#include "cmd_uart.h"
+
 App_t App;
 
 static EventListener EvtLstnrApp;
 
 // Prototypes
+void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length);
 
 // =============================== App Thread ==================================
 static WORKING_AREA(waAppThread, 1024);
@@ -26,19 +29,19 @@ static msg_t AppThread(void *arg) {
     chRegSetThreadName("App");
 
 #define PktSZ   4
-    uint8_t Buf[PktSZ], Rslt1 = FAILURE, Rslt2 = FAILURE;
-    for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i+2;
-
+//    uint8_t Buf[PktSZ], Rslt1 = FAILURE, Rslt2 = FAILURE;
+//    for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i+2;
+//
     // Events
     rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
 
     while(1) {
         chThdSleepMilliseconds(999);
-        Rslt1 = rLevel1.AddPktToTx(RDEV_BOTTOM_ID+1, Buf, PktSZ, &Rslt2);
-        Uart.Printf("> %u\r", Rslt1);
-
-        chEvtWaitOne(EVTMASK_RADIO_TX);
-        Uart.Printf("Rslt = %u\r", Rslt2);
+//        Rslt1 = rLevel1.AddPktToTx(RDEV_BOTTOM_ID+1, Buf, PktSZ, &Rslt2);
+//        Uart.Printf("> %u\r", Rslt1);
+//
+//        chEvtWaitOne(EVTMASK_RADIO_TX);
+//        Uart.Printf("Rslt = %u\r", Rslt2);
         //Uart.Printf("Evt \r");
 
         //Lcd.Cls(c);
@@ -59,6 +62,20 @@ static msg_t AppThread(void *arg) {
 //        }
     }
     return 0;
+}
+
+//=========================== Command processing ===============================
+void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
+    //Uart.Printf("Rx: %X\r", CmdCode);
+    uint8_t Buf[4];
+    switch(CmdCode) {
+        case 0x01:
+            Buf[0] = OK;
+            Uart.Cmd(0x90, Buf, 1);
+            break;
+
+        default: break;
+    }
 }
 
 // =============================== App class ===================================
