@@ -44,3 +44,7 @@ void KeysInit() {
     // Create and start thread
     chThdCreateStatic(waKeysThread, sizeof(waKeysThread), NORMALPRIO, KeysThread, NULL);
 }
+
+void KeysRegisterEvt(EventListener *PEvtLstnr, uint8_t EvtMask) {
+    chEvtRegisterMask(&EvtSrcKey, PEvtLstnr, EvtMask);
+}

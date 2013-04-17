@@ -55,23 +55,32 @@ static msg_t AppThread(void *arg) {
 
 //    Color_t c = clBlack;
 
-#define PktSZ   4
-    uint8_t Buf[PktSZ], Rslt1 = FAILURE, Rslt2 = FAILURE;
-    for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i;
+//#define PktSZ   4
+//    uint8_t Buf[PktSZ], Rslt1 = FAILURE, Rslt2 = FAILURE;
+//    for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i;
 
     // Events
-    rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
+    //rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
+    KeysRegisterEvt(&EvtLstnrApp, EVTMASK_KEYS);
 
     while(1) {
-        chThdSleepMilliseconds(999);
-        Rslt1 = rLevel1.AddPktToTx(0, Buf, PktSZ, &Rslt2);
-        Uart.Printf("### %u\r", Rslt1);
+        //chThdSleepMilliseconds(999);
+//        Rslt1 = rLevel1.AddPktToTx(0, Buf, PktSZ, &Rslt2);
+//        Uart.Printf("### %u\r", Rslt1);
+//
+        chEvtWaitOne(EVTMASK_KEYS);
+//        Uart.Printf("Rslt = %u\r", Rslt2);
 
-        chEvtWaitOne(EVTMASK_RADIO_TX);
-        Uart.Printf("Rslt = %u\r", Rslt2);
-
-        //Beeper.Beep(BeepBeep);
-        //Vibro.Vibrate(BrrBrr);
+        if((KeyStatus[0] == KEY_PRESSED) or (KeyStatus[1] == KEY_PRESSED) or (KeyStatus[2] == KEY_PRESSED)) {
+            Beeper.Beep(BeepBeep);
+        }
+        else if((KeyStatus[3] == KEY_PRESSED) or (KeyStatus[4] == KEY_PRESSED) or (KeyStatus[5] == KEY_PRESSED)) {
+            Vibro.Vibrate(BrrBrr);
+        }
+        else if((KeyStatus[6] == KEY_PRESSED) or (KeyStatus[7] == KEY_PRESSED) or (KeyStatus[8] == KEY_PRESSED)) {
+            Beeper.Beep(ShortBeep);
+            Vibro.Vibrate(ShortBrr);
+        }
         //Uart.Printf("Evt \r");
         //Lcd.Cls(c);
 //        for(uint8_t y=0; y<128; y+=8) {

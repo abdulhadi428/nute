@@ -42,9 +42,9 @@ const uint16_t KeyPin[] = {
 #define KEY_PRESSED     1
 #define KEY_RELEASED    0
 
-extern EventSource EvtSrcKey;
 extern uint8_t KeyStatus[KEYS_CNT];
 
 void KeysInit();
+void KeysRegisterEvt(EventListener *PEvtLstnr, uint8_t EvtMask);
 
 #endif /* KEYS_H_ */

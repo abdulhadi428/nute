@@ -65,7 +65,7 @@ void Init() {
     //Sound.Play("alive.wav");
     //Sound.Play("Sylvans.mp3");
     // Radio
-    rLevel1.Init(RDEV_BOTTOM_ID+1); // FIXME: replace RBOTTOMID with value from SD
-    rLevel2.Init();
+//    rLevel1.Init(RDEV_BOTTOM_ID+1); // FIXME: replace RBOTTOMID with value from SD
+//    rLevel2.Init();
     App.Init();
 }
