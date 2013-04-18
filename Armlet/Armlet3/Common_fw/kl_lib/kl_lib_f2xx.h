@@ -177,7 +177,7 @@ public:
 };
 
 // ================================= DEBUG =====================================
-void chDbgPanic(const char *msg1);
+//void chDbgPanic(const char *msg1);
 
 // ================================= SPI =======================================
 enum CPHA_t {cphaFirstEdge, cphaSecondEdge};
@@ -224,81 +224,26 @@ private:
     GPIO_TypeDef *IPGpio;
     uint16_t ISclPin, ISdaPin;
     void SendStart() { ii2c->CR1 |= I2C_CR1_START; }
-    void IStop()   { ii2c->CR1 |= I2C_CR1_STOP; }
-    void IAck()    { ii2c->CR1 |= I2C_CR1_ACK; }
-    void IEnable() { ii2c->CR1 |= I2C_CR1_PE; }
-    bool RxIsNotEmpty() { return (ii2c->SR1 & I2C_SR1_RXNE); }
+    void IStop()     { ii2c->CR1 |= I2C_CR1_STOP; }
+    void IAck()      { ii2c->CR1 |= I2C_CR1_ACK; }
+    void IEnable()   { ii2c->CR1 |= I2C_CR1_PE; }
+    bool RxIsNotEmpty()  { return (ii2c->SR1 & I2C_SR1_RXNE); }
     void ClearAddrFlag() { (void)ii2c->SR1; (void)ii2c->SR2; }
-    uint8_t IWaitFlagSet(uint16_t *Reg, uint16_t Flags) {
-        uint32_t RetryCnt = 4096;
-        while(RetryCnt--) if(*Reg & Flags) return OK;
-        return TIMEOUT;
-    }
-    uint8_t IBusyWait() {
-        uint8_t RetryCnt = 4;
-        while(RetryCnt--) {
-            if(!(ii2c->SR2 & I2C_SR2_BUSY)) return OK;
-            chThdSleepMilliseconds(1);
-        }
-        Error = true;
-        return TIMEOUT;
-    }
-    //void IClearFlags() { ii2c->s
+    // Addressing
+    void SendAddrWithWrite(uint8_t Addr) { ii2c->DR = (uint8_t)(Addr<<1); }
+    void SendAddrWithRead (uint8_t Addr) { ii2c->DR = ((uint8_t)(Addr<<1)) | 0x01; }
+    void SendData(uint8_t b) { ii2c->DR = b; }
+    // Flags operations
+    uint8_t IBusyWait();
+    uint8_t WaitEv5();
+    uint8_t WaitEv6();
 public:
     bool Error;
-    void Init(I2C_TypeDef *pi2c, GPIO_TypeDef *PGpio, uint16_t SclPin, uint16_t SdaPin) {
-        ii2c = pi2c;
-        IPGpio = PGpio;
-        ISclPin = SclPin;
-        ISdaPin = SdaPin;
-        Deinit();
-        Error = false;
-        // GPIOs
-        PinSetupAlterFunc(PGpio, SclPin, omOpenDrain, pudNone, AF4);
-        PinSetupAlterFunc(PGpio, SdaPin, omOpenDrain, pudNone, AF4);
-        // Clock and reset
-        if      (ii2c == I2C1) { rccEnableI2C1(FALSE); rccResetI2C1(); }
-        else if (ii2c == I2C2) { rccEnableI2C2(FALSE); rccResetI2C2(); }
-        else if (ii2c == I2C3) { rccEnableI2C3(FALSE); rccResetI2C3(); }
-        // Minimum clock is 2 MHz
-        uint32_t ClkMhz = Clk.APB1FreqHz / 1000000;
-        uint16_t tmpreg = ii2c->CR2;
-        tmpreg &= (uint16_t)~I2C_CR2_FREQ;
-        if(ClkMhz < 2)  ClkMhz = 2;
-        if(ClkMhz > 30) ClkMhz = 30;
-        tmpreg |= ClkMhz;
-        ii2c->CR2 = tmpreg;
-        ii2c->CR1 &= (uint16_t)~I2C_CR1_PE; // Disable i2c to setup TRise & CCR
-        ii2c->TRISE = (uint16_t)(((ClkMhz * 300) / 1000) + 1);
-        // 16/9
-        tmpreg = (uint16_t)((Clk.APB1FreqHz / 400000) * 25);
-        if(tmpreg == 0) tmpreg = 1; // minimum allowed value
-        ii2c->CCR = I2C_CCR_FS | I2C_CCR_DUTY | tmpreg;
-        ii2c->CR1 |= I2C_CR1_PE;    // Enable i2c back
-    }
-
-    void Deinit() {
-        if      (ii2c == I2C1) { rccResetI2C1(); rccDisableI2C1(FALSE); }
-        else if (ii2c == I2C2) { rccResetI2C2(); rccDisableI2C2(FALSE); }
-        else if (ii2c == I2C3) { rccResetI2C3(); rccDisableI2C3(FALSE); }
-        // Disable GPIOs
-        PinSetupAnalog(IPGpio, ISclPin);
-        PinSetupAnalog(IPGpio, ISdaPin);
-    }
-
-    uint8_t Cmd(uint8_t Addr, uint8_t *WPtr, uint8_t WLength, uint8_t *RPtr, uint8_t RLength) {
-        if(IBusyWait() != OK) return FAILURE;
-        // Clear flags
-        ii2c->SR1 = 0;
-        while(RxIsNotEmpty()) (void)ii2c->DR;   // Read DR until it empty
-        ClearAddrFlag();
-        // Start transmission
-        SendStart();
-        if(WaitEv5() != 0) return FAILURE;
-
-
-        return OK;
-    }
+    void Init(I2C_TypeDef *pi2c, GPIO_TypeDef *PGpio, uint16_t SclPin, uint16_t SdaPin);
+    void Standby();
+    void Resume();
+    void Reset();
+    uint8_t CmdWriteRead(uint8_t Addr, uint8_t *WPtr, uint8_t WLength, uint8_t *RPtr, uint8_t RLength);
 };
 
 #endif /* KL_LIB_F2XX_H_ */

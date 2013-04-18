@@ -132,7 +132,98 @@ void PwmPin_t::SetFreqHz(uint32_t FreqHz) {
 }
 
 // ================================= DEBUG =====================================
-void chDbgPanic(const char *msg1) {
-    //Uart.PrintNow(msg1);
-    (void)msg1;
+//void chDbgPanic(const char *msg1) {
+//    //Uart.PrintNow(msg1);
+//    (void)msg1;
+//}
+
+// =============================== I2C =========================================
+void i2c_t::Init(I2C_TypeDef *pi2c, GPIO_TypeDef *PGpio, uint16_t SclPin, uint16_t SdaPin) {
+    ii2c = pi2c;
+    IPGpio = PGpio;
+    ISclPin = SclPin;
+    ISdaPin = SdaPin;
+    Standby();
+    Resume();
 }
+
+void i2c_t::Standby() {
+    if      (ii2c == I2C1) { rccResetI2C1(); rccDisableI2C1(FALSE); }
+    else if (ii2c == I2C2) { rccResetI2C2(); rccDisableI2C2(FALSE); }
+    else if (ii2c == I2C3) { rccResetI2C3(); rccDisableI2C3(FALSE); }
+    // Disable GPIOs
+    PinSetupAnalog(IPGpio, ISclPin);
+    PinSetupAnalog(IPGpio, ISdaPin);
+}
+
+void i2c_t::Resume() {
+    Error = false;
+    // GPIOs
+    PinSetupAlterFunc(IPGpio, ISclPin, omOpenDrain, pudNone, AF4);
+    PinSetupAlterFunc(IPGpio, ISdaPin, omOpenDrain, pudNone, AF4);
+    // Clock and reset
+    if      (ii2c == I2C1) { rccEnableI2C1(FALSE); rccResetI2C1(); }
+    else if (ii2c == I2C2) { rccEnableI2C2(FALSE); rccResetI2C2(); }
+    else if (ii2c == I2C3) { rccEnableI2C3(FALSE); rccResetI2C3(); }
+    // Minimum clock is 2 MHz
+    uint32_t ClkMhz = Clk.APB1FreqHz / 1000000;
+    uint16_t tmpreg = ii2c->CR2;
+    tmpreg &= (uint16_t)~I2C_CR2_FREQ;
+    if(ClkMhz < 2)  ClkMhz = 2;
+    if(ClkMhz > 30) ClkMhz = 30;
+    tmpreg |= ClkMhz;
+    ii2c->CR2 = tmpreg;
+    ii2c->CR1 &= (uint16_t)~I2C_CR1_PE; // Disable i2c to setup TRise & CCR
+    ii2c->TRISE = (uint16_t)(((ClkMhz * 300) / 1000) + 1);
+    // 16/9
+    tmpreg = (uint16_t)((Clk.APB1FreqHz / 400000) * 25);
+    if(tmpreg == 0) tmpreg = 1; // minimum allowed value
+    ii2c->CCR = I2C_CCR_FS | I2C_CCR_DUTY | tmpreg;
+    ii2c->CR1 |= I2C_CR1_PE;    // Enable i2c back
+}
+
+void i2c_t::Reset() {
+    Standby();
+    Resume();
+}
+
+uint8_t i2c_t::CmdWriteRead(uint8_t Addr, uint8_t *WPtr, uint8_t WLength, uint8_t *RPtr, uint8_t RLength) {
+    if(IBusyWait() != OK) return FAILURE;
+    // Clear flags
+    ii2c->SR1 = 0;
+    while(RxIsNotEmpty()) (void)ii2c->DR;   // Read DR until it empty
+    ClearAddrFlag();
+    // Start transmission
+    SendStart();
+    if(WaitEv5() != OK) return FAILURE;
+    SendAddrWithWrite(Addr);
+    if(WaitEv6() != OK) return FAILURE;
+
+    return OK;
+}
+
+// Flag operations
+uint8_t i2c_t::IBusyWait() {
+    uint8_t RetryCnt = 4;
+    while(RetryCnt--) {
+        if(!(ii2c->SR2 & I2C_SR2_BUSY)) return OK;
+        chThdSleepMilliseconds(1);
+    }
+    Error = true;
+    return TIMEOUT;
+}
+
+uint8_t i2c_t::WaitEv5() {
+    return FAILURE;
+}
+
+
+
+
+
+
+
+
+
+
+
