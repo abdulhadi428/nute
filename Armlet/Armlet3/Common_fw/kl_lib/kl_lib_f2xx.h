@@ -223,6 +223,7 @@ private:
     I2C_TypeDef *ii2c;
     GPIO_TypeDef *IPGpio;
     uint16_t ISclPin, ISdaPin;
+    uint32_t IBitrateHz;
     void SendStart() { ii2c->CR1 |= I2C_CR1_START; }
     void IStop()     { ii2c->CR1 |= I2C_CR1_STOP; }
     void IAck()      { ii2c->CR1 |= I2C_CR1_ACK; }
@@ -237,9 +238,11 @@ private:
     uint8_t IBusyWait();
     uint8_t WaitEv5();
     uint8_t WaitEv6();
+    uint8_t WaitEv8();
+    uint8_t WaitAck();
 public:
     bool Error;
-    void Init(I2C_TypeDef *pi2c, GPIO_TypeDef *PGpio, uint16_t SclPin, uint16_t SdaPin);
+    void Init(I2C_TypeDef *pi2c, GPIO_TypeDef *PGpio, uint16_t SclPin, uint16_t SdaPin, uint32_t BitrateHz);
     void Standby();
     void Resume();
     void Reset();

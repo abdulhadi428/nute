@@ -132,17 +132,18 @@ void PwmPin_t::SetFreqHz(uint32_t FreqHz) {
 }
 
 // ================================= DEBUG =====================================
-//void chDbgPanic(const char *msg1) {
-//    //Uart.PrintNow(msg1);
-//    (void)msg1;
-//}
+void chDbgPanic(const char *msg1) {
+    //Uart.PrintNow(msg1);
+    (void)msg1;
+}
 
 // =============================== I2C =========================================
-void i2c_t::Init(I2C_TypeDef *pi2c, GPIO_TypeDef *PGpio, uint16_t SclPin, uint16_t SdaPin) {
+void i2c_t::Init(I2C_TypeDef *pi2c, GPIO_TypeDef *PGpio, uint16_t SclPin, uint16_t SdaPin, uint32_t BitrateHz) {
     ii2c = pi2c;
     IPGpio = PGpio;
     ISclPin = SclPin;
     ISdaPin = SdaPin;
+    IBitrateHz = BitrateHz;
     Standby();
     Resume();
 }
@@ -176,9 +177,10 @@ void i2c_t::Resume() {
     ii2c->CR1 &= (uint16_t)~I2C_CR1_PE; // Disable i2c to setup TRise & CCR
     ii2c->TRISE = (uint16_t)(((ClkMhz * 300) / 1000) + 1);
     // 16/9
-    tmpreg = (uint16_t)((Clk.APB1FreqHz / 400000) * 25);
+    tmpreg = (uint16_t)(Clk.APB1FreqHz / (IBitrateHz * 25));
     if(tmpreg == 0) tmpreg = 1; // minimum allowed value
-    ii2c->CCR = I2C_CCR_FS | I2C_CCR_DUTY | tmpreg;
+    tmpreg |= I2C_CCR_FS | I2C_CCR_DUTY;
+    ii2c->CCR = tmpreg;
     ii2c->CR1 |= I2C_CR1_PE;    // Enable i2c back
 }
 
@@ -197,12 +199,18 @@ uint8_t i2c_t::CmdWriteRead(uint8_t Addr, uint8_t *WPtr, uint8_t WLength, uint8_
     SendStart();
     if(WaitEv5() != OK) return FAILURE;
     SendAddrWithWrite(Addr);
-    if(WaitEv6() != OK) return FAILURE;
+
+    if(WaitEv6() != OK) { IStop(); return FAILURE; }
+    //if(WaitEv8() != OK) return FAILURE;
+//    SendData(0xA5);
+//    if(WaitAck() != OK) return FAILURE;
+    IStop();
 
     return OK;
 }
 
-// Flag operations
+// ==== Flag operations ====
+// Busy flag
 uint8_t i2c_t::IBusyWait() {
     uint8_t RetryCnt = 4;
     while(RetryCnt--) {
@@ -213,11 +221,28 @@ uint8_t i2c_t::IBusyWait() {
     return TIMEOUT;
 }
 
+// BUSY, MSL & SB flags
 uint8_t i2c_t::WaitEv5() {
+    uint32_t RetryCnt = 450;
+    while(RetryCnt--) {
+        uint16_t Flag1 = ii2c->SR1;
+        uint16_t Flag2 = ii2c->SR2;
+        if((Flag1 & I2C_SR1_SB) and (Flag2 & (I2C_SR2_MSL | I2C_SR2_BUSY))) return OK;
+    }
+    Error = true;
     return FAILURE;
 }
 
-
+uint8_t i2c_t::WaitEv6() {
+    uint32_t RetryCnt = 45;
+    uint16_t Flag1;
+    do {
+        Flag1 = ii2c->SR1;
+        if(RetryCnt-- == 0) return FAILURE;     // NACK
+    } while(!(Flag1 & I2C_SR1_ADDR));
+    (void)ii2c->SR2;    // Clear address flag
+    return OK;
+}
 
 
 
