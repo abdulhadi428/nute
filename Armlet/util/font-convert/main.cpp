@@ -80,7 +80,6 @@ void doAll(const char* file, const char* charsetFile, const char* charsetFileEnc
         memset(buf_out, 0, 1024);
 
         size_t s = fread(buf_in, 1, 255, ch);
-        printf("rred: %lu\n", s);
     
         char* in_pos = (char*)buf_in;
         char* out_pos = (char*)buf_out;
@@ -100,7 +99,7 @@ void doAll(const char* file, const char* charsetFile, const char* charsetFileEnc
         {
             wcharset.insert(std::make_pair(wbuf_out[i], buf_out[i]));
 
-            printf("%04X -> %02X\n", wbuf_out[i], buf_out[i]);
+            //printf("%04X -> %02X\n", wbuf_out[i], buf_out[i]);
             ++i;
         }
     }
