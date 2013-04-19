@@ -205,25 +205,39 @@ vectors_t _vectors = {
 __attribute__ ((naked))
 #endif
 void _unhandled_exception(void) {
-
-  while (TRUE)
-    ;
+  chDbgPanic("UnhExc");     // KL
+  while (TRUE);
 }
 
-void NMIVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void HardFaultVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void MemManageVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void BusFaultVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void UsageFaultVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector1C(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector20(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector24(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector28(void) __attribute__((weak, alias("_unhandled_exception")));
-void SVCallVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void DebugMonitorVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector34(void) __attribute__((weak, alias("_unhandled_exception")));
-void PendSVVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void SysTickVector(void) __attribute__((weak, alias("_unhandled_exception")));
+// ==== KL ====
+__attribute__ ((naked))
+void _sys_unhandled_exception(void) {
+  chDbgPanic("SysExc");
+  while (TRUE);
+}
+
+void NMIVector(void)       { chDbgPanic("SysExcNMI"); while (TRUE); }
+void HardFaultVector(void) { chDbgPanic("SysExcHFV"); while (TRUE); }
+void MemManageVector(void) { chDbgPanic("SysExcMem"); while (TRUE); }
+void BusFaultVector(void)  { chDbgPanic("SysExcBFV"); while (TRUE); }
+void UsageFaultVector(void){ chDbgPanic("SysExcUFV"); while (TRUE); }
+
+
+// KL
+//void NMIVector(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+//void HardFaultVector(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+//void MemManageVector(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+//void BusFaultVector(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+//void UsageFaultVector(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+void Vector1C(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+void Vector20(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+void Vector24(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+void Vector28(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+void SVCallVector(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+void DebugMonitorVector(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+void Vector34(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+void PendSVVector(void) __attribute__((weak, alias("_sys_unhandled_exception")));
+void SysTickVector(void) __attribute__((weak, alias("_sys_unhandled_exception")));
 void Vector40(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector44(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector48(void) __attribute__((weak, alias("_unhandled_exception")));
@@ -238,7 +252,7 @@ void Vector64(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector6C(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector70(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector74(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector78(void) __attribute__((weak, alias("_unhandled_exception")));
+//void Vector78(void) __attribute__((weak, alias("_unhandled_exception"))); // DMA1 STREAM3
 void Vector7C(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector80(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector84(void) __attribute__((weak, alias("_unhandled_exception")));
@@ -279,7 +293,7 @@ void Vector10C(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector110(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector114(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector118(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector11C(void) __attribute__((weak, alias("_unhandled_exception")));    // TIM7 global, radio timings
+void Vector11C(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector120(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector124(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector128(void) __attribute__((weak, alias("_unhandled_exception")));

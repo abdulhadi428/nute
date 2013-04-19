@@ -12,7 +12,7 @@
 #include "ch.h"
 
 #define EEADDR              0x50    // Standard address start of EEPROM - 0x01010aaa
-#define PILL_START_ADDR     0       // Address of data, common for all
+#define PILL_START_ADDR     0xAA       // Address of data, common for all
 #define PILL_CNT            8       // Number of simultaneously connected pills
 
 // I2C & hardware
@@ -24,8 +24,8 @@
 
 #define PILL_I2C            I2C2
 #define PILL_I2C_BITRATE_HZ 200000
-
-
+#define PILL_DMATX          STM32_DMA1_STREAM7
+#define PILL_DMARX          STM32_DMA1_STREAM3
 
 class Pill_t {
 private:
@@ -34,6 +34,7 @@ private:
 public:
     bool Connected;
     void Init(uint8_t IcAddr);
+    uint8_t CheckIfConnected();
     uint8_t Read(uint8_t *Ptr, uint8_t Length);
     uint8_t Write(uint8_t *Ptr, uint8_t Length);
 };
