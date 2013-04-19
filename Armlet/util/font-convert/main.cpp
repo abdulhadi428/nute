@@ -313,8 +313,11 @@ int main(int argc, char ** argv)
     {
         fprintf(stderr, "format: %s FONTFILE CHARSETFILE CHARSETFILEENCODING FONTSIZE BINFILE_OUT\n\n", argv[0]);
 
-        fprintf(stderr, "\tFONTFILE    - font file, TTF/OTF\n");
-        fprintf(stderr, "\tCHARSETFILE - file, containing all symbols to load from file\n");
+        fprintf(stderr, "\tFONTFILE            - font file, TTF/OTF\n");
+        fprintf(stderr, "\tCHARSETFILE         - file, containing all symbols to load from file\n");
+        fprintf(stderr, "\tCHARSETFILEENCODING - encoding of source file. Understandable by ``iconv'' utility.\n");
+        fprintf(stderr, "\tFONTSIZE            - Size of font, in POINTS. Float. Example: 11.5\n");
+        fprintf(stderr, "\tBINFILE_OUT         - file name for binary output\n");
         return 1;
     }
 
