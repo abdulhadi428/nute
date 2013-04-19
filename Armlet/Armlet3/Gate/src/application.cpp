@@ -78,8 +78,8 @@ void Ack(uint8_t Result) { Uart.Cmd(0x90, &Result, 1); }
 
 static uint8_t IBuf[252];
 void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
-    //Uart.Printf(">%02X; %A\r", CmdCode, PData, Length, ' ');
-    uint8_t b, ILength, Rslt;
+    Uart.Printf(">%02X; %A\r", CmdCode, PData, Length, ' ');
+    uint8_t b, b2, Rslt;
     Rslt = FAILURE;
     switch(CmdCode) {
         case CMD_PING: Ack(OK); break;
@@ -106,16 +106,17 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
             break;
         case CMD_PILL_WRITE:
             b = PData[0];
-            if(b <= 7) Rslt = Pill[b].Write(&PData[1], Length);
+            if(b <= 7) Rslt = Pill[b].Write(&PData[1], Length-1);
             Ack(Rslt);
             break;
         case CMD_PILL_READ:
             b = PData[0];
-            ILength = PData[1];
-            if(ILength <= 250) ILength = 250;
-            if(b <= 7) Rslt = Pill[b].Read(&IBuf[1], ILength);
+            b2 = PData[1];
+            if(b2 > 250) b2 = 250;
+            if(b <= 7) Rslt = Pill[b].Read(&IBuf[1], b2);
             IBuf[0] = Rslt;
-            Uart.Cmd(RPL_PILL_READ, IBuf, (Rslt == OK)? (ILength+1) : 1);
+            if(Rslt == OK) Uart.Cmd(RPL_PILL_READ, IBuf, b2+1);
+            else Uart.Cmd(RPL_PILL_READ, IBuf, 1);
             break;
 
         // ==== Pin ====
