@@ -29,6 +29,7 @@
 #define NEW             4
 #define IN_PROGRESS     5
 #define LAST            6
+#define CMD_ERROR       7
 
 // Binary semaphores
 #define NOT_TAKEN       false

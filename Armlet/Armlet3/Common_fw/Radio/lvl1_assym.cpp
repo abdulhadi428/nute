@@ -355,6 +355,13 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     PThr = chThdCreateStatic(warLvl1Thread, sizeof(warLvl1Thread), HIGHPRIO, rLvl1Thread, NULL);
 }
 
+#ifdef GATE
+void rLevel1_t::SetID(uint16_t ASelfID) {
+    SelfID = ASelfID;
+    CC.SetChannel(ASelfID);
+}
+#endif
+
 uint8_t rLevel1_t::AddPktToTx(uint8_t rID, uint8_t *Ptr, int32_t Length, uint8_t *PState) {
     DataPkt_t DataPkt;
     DataPkt.rID = rID;

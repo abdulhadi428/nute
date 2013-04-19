@@ -55,7 +55,7 @@ struct rPkt_t {
 #define RDEVICE_CNT     ((1+RDEV_TOP_ID)-RDEV_BOTTOM_ID)
 
 // Gates
-#define RGATE_CNT       5
+#define RGATE_CNT       7
 
 // Slot count
 #define RDYN_SLOT_CNT   0   // Count of dynamic slots
@@ -123,6 +123,7 @@ struct DataPkt_t {
 #define R_TX_BUF_SZ             36  // Size of buffer for Tx pkts
 class rLevel1_t {
 private:
+    uint8_t SelfID;
     EventSource IEvtSrcRadioRx, IEvtSrcRadioTxEnd;
     uint8_t IDataPktState;
     // ==== Rx ====
@@ -155,8 +156,10 @@ private:
     inline void IReportTxBusy();
 #endif
 public:
-    uint8_t SelfID;
     void Init(uint16_t ASelfID);
+#ifdef GATE
+    void SetID(uint16_t ASelfID);
+#endif
     // Rx
     uint8_t GetRxPkt(DataPktPtr_t *PPkt) { return IRx.GetPkt(PPkt); }
     uint32_t GetRxPktCount() { return IRx.GetPktCount(); }

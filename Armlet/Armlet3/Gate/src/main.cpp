@@ -47,9 +47,10 @@ int main() {
 void Init() {
     Uart.Init(115200);
     Uart.Printf("Gate AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
-    //rLevel1.Init(1);    // FIXME: set correct number here
+    //rLevel1.Init(0);    // FIXME: set correct number here
     //rLevel2.Init();
     PillInit();
+    Pin.Init();
     // Application init
     App.Init();
 }

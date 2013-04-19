@@ -67,7 +67,7 @@ public:
     // Inner use
     InputQueue iqueue;
     void IProcessByte(uint8_t b);
-    void IResetCmd() { RxState = rsStart; PWrite = CmdData; }
+    void IResetCmd() { RxState = rsStart; PCmdWrite = CmdData; }
 #endif
 };
 
