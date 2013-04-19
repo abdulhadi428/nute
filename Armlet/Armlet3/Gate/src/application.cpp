@@ -14,10 +14,11 @@
 #include "lvl1_assym.h"
 
 #include "cmd_uart.h"
+#include "pill.h"
 
 App_t App;
 
-//static EventListener EvtLstnrApp;
+static EventListener EvtLstnrApp;
 
 // Prototypes
 void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length);
@@ -28,19 +29,27 @@ static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
 
+    uint8_t Buf[7];
+
 #define PktSZ   4
 //    uint8_t Buf[PktSZ], Rslt1 = FAILURE, Rslt2 = FAILURE;
 //    for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i+2;
 //
     // Events
     //rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
+    PillRegisterEvtChange(&EvtLstnrApp, EVTMASK_PILLCHANGE);
 
     while(1) {
         chThdSleepMilliseconds(999);
 //        Rslt1 = rLevel1.AddPktToTx(RDEV_BOTTOM_ID+1, Buf, PktSZ, &Rslt2);
 //        Uart.Printf("> %u\r", Rslt1);
 //
-//        chEvtWaitOne(EVTMASK_RADIO_TX);
+        chEvtWaitOne(EVTMASK_PILLCHANGE);
+        //Uart.Printf("===");
+        if(Pill[0].Connected)
+            if(Pill[0].Read(Buf, 4) == OK)
+                Uart.Printf("%A\r", Buf, 4, ' ');
+
 //        Uart.Printf("Rslt = %u\r", Rslt2);
         //Uart.Printf("Evt \r");
 

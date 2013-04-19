@@ -21,32 +21,30 @@ static msg_t PillThread(void *arg) {
     chRegSetThreadName("Pill");
 
     //uint8_t Rslt;
-    uint8_t Buf[7];
-    Buf[0] = 9;
-    Buf[1] = 0xA5;
-    Pill[0].Write(Buf, 4);
-    Buf[0] = 0;
-    Buf[1] = 0;
+//    uint8_t Buf[7];
+//    Buf[0] = 9;
+//    Buf[1] = 0xA5;
+//    Pill[0].Write(Buf, 4);
+//    Buf[0] = 0;
+//    Buf[1] = 0;
+
+    bool OldState, HasChanged = false;
 
     while(1) {
-        chThdSleepMilliseconds(27);
+        chThdSleepMilliseconds(PILL_SEARCH_INTERVAL_MS);
         // Check if i2c error
         if(i2c.Error) {
             Uart.Printf("Err\r");
             PillReset();
         }
         // Discover if pill status changed
-//        bool OldState, HasChanged = false;
-//        for(uint8_t i=0; i<PILL_CNT; i++) {
-//            OldState = Pill[i].Connected;       // Save current state
-
-        if(Pill[0].Read(Buf, 4) == OK) Uart.Printf("%A\r", Buf, 4, ' ');
-//        Rslt = Pill[0].CheckIfConnected();
-//        if(Rslt == OK) Uart.Printf("Ok\r");
-
-//            if(Pill[i].Connected != OldState) HasChanged = true;
-//        } // for
-//        if(HasChanged) chEvtBroadcast(&IEvtPillChange);
+        HasChanged = false;
+        for(uint8_t i=0; i<PILL_CNT; i++) {
+            OldState = Pill[i].Connected;       // Save current state
+            Pill[i].CheckIfConnected();
+            if(Pill[i].Connected != OldState) HasChanged = true;
+        } // for
+        if(HasChanged) chEvtBroadcast(&IEvtPillChange);
     } // while 1
     return 0;
 }

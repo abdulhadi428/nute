@@ -12,8 +12,10 @@
 #include "ch.h"
 
 #define EEADDR              0x50    // Standard address start of EEPROM - 0x01010aaa
-#define PILL_START_ADDR     0xAA       // Address of data, common for all
+#define PILL_START_ADDR     0x00    // Address of data, common for all
 #define PILL_CNT            8       // Number of simultaneously connected pills
+
+#define PILL_SEARCH_INTERVAL_MS     999
 
 // I2C & hardware
 #define PERIPH_PWR_GPIO     GPIOB

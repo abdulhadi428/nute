@@ -11,5 +11,6 @@
 // Masks for events registering and processing
 #define EVTMASK_RADIO_RX    (1<<0)
 #define EVTMASK_RADIO_TX    (1<<1)
+#define EVTMASK_PILLCHANGE  (1<<4)
 
 #endif /* EVT_MASK_H_ */
