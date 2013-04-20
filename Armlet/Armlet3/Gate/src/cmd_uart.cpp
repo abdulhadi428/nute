@@ -9,7 +9,7 @@
 #include "tiny_sprintf.h"
 
 CmdUart_t Uart;
-static char UartBuf[198];
+static char UartBuf[999];
 
 void CmdUart_t::Printf(const char *format, ...) {
     va_list args;

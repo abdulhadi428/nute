@@ -177,8 +177,8 @@ public:
     void Off() { *PCCR = 0; }
 };
 
-// ================================= DEBUG =====================================
-//void chDbgPanic(const char *msg1);
+// ================================= Random ====================================
+uint32_t Random(uint32_t TopValue);
 
 // ================================= SPI =======================================
 enum CPHA_t {cphaFirstEdge, cphaSecondEdge};

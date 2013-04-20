@@ -137,6 +137,17 @@ void chDbgPanic(const char *msg1) {
     (void)msg1;
 }
 
+// ================================= Random ====================================
+uint32_t Random(uint32_t TopValue) {
+    rccEnableAHB2(RCC_AHB2ENR_RNGEN, FALSE);    // Enable clock
+    RNG->CR |= RNG_CR_RNGEN;                    // Enable generator
+    while(!(RNG->SR & RNG_SR_DRDY));            // Wait until ready
+    uint32_t Rnd = RNG->DR;
+    Rnd = Rnd % (TopValue + 1);
+    rccDisableAHB2(RCC_AHB2ENR_RNGEN, FALSE);   // Stop clock
+    return Rnd;
+}
+
 // =============================== I2C =========================================
 void i2cDmaIrqHandler(void *p, uint32_t flags) {
     chSysLockFromIsr();

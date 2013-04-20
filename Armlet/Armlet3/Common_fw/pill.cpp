@@ -20,14 +20,6 @@ static msg_t PillThread(void *arg) {
     (void)arg;
     chRegSetThreadName("Pill");
 
-    //uint8_t Rslt;
-//    uint8_t Buf[7];
-//    Buf[0] = 9;
-//    Buf[1] = 0xA5;
-//    Pill[0].Write(Buf, 4);
-//    Buf[0] = 0;
-//    Buf[1] = 0;
-
     bool OldState, HasChanged = false;
 
     while(1) {
@@ -108,13 +100,23 @@ uint8_t Pill_t::CheckIfConnected() {
     return Rslt;
 }
 
-// TODO: write by pages
 uint8_t Pill_t::Write(uint8_t *Ptr, uint8_t Length) {
     if(chBSemWaitTimeout(&ISem, TIME_INFINITE) != RDY_OK) return FAILURE;
     uint8_t WordAddress = PILL_START_ADDR;
-    uint8_t Rslt = i2c.CmdWriteWrite(EEADDR+IAddr, &WordAddress, 1, Ptr, Length);
+    uint8_t Rslt = OK;
+    // Write page by page
+    while(Length) {
+        uint8_t ToWriteCnt = (Length > PILL_PAGE_SZ)? PILL_PAGE_SZ : Length;
+        Rslt = i2c.CmdWriteWrite(EEADDR+IAddr, &WordAddress, 1, Ptr, ToWriteCnt);
+        if(Rslt == OK) {
+            chThdSleepMilliseconds(5);   // Allow memory to complete writing
+            Length -= ToWriteCnt;
+            Ptr += ToWriteCnt;
+            WordAddress += ToWriteCnt;
+        }
+        else break;
+    }
     Connected = (Rslt == OK);
-    if(Rslt == OK) chThdSleepMilliseconds(5);   // Allow memory to complete writing
     if(i2c.Error == true) PillReset();
     chBSemSignal(&ISem);
     return Rslt;

@@ -38,7 +38,7 @@ static msg_t AppThread(void *arg) {
     // Events
     //rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
     //PillRegisterEvtChange(&EvtLstnrApp, EVTMASK_PILLCHANGE);
-
+    //uint32_t r;
     while(1) {
         chThdSleepMilliseconds(999);
 //        Rslt1 = rLevel1.AddPktToTx(RDEV_BOTTOM_ID+1, Buf, PktSZ, &Rslt2);
