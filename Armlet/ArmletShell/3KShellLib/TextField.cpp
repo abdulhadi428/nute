@@ -86,13 +86,23 @@ fresult TextField::SetScrollPosition (Position position)
 		result = GENERAL_WARNING;
 		position.Left = _BuffSizeTx.Width - 1;
 	}
+	if (position.Left <0)
+	{
+		result = GENERAL_WARNING;
+		position.Left = 0;
+	}
 
 	if(position.Top >= _BuffSizeTx.Height)
 	{
 		result = GENERAL_WARNING;
 		position.Top = _BuffSizeTx.Height - 1;
 	}
-
+	
+	if (position.Top <0)
+	{
+		result = GENERAL_WARNING;
+		position.Top = 0;
+	}
 	_ScrollPositionTx = position;
 
 	return result;

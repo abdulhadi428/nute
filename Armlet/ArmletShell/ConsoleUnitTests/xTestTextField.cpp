@@ -73,7 +73,7 @@ void xTestTextField::xDrawAndScroll()
 	TextFormat tx;
 	tx.BgColor = 0;
 	tx.FgColor =0;
-	Font fnt;
+	FontDescription fnt;
 	fnt.GlyphSize.Height =8;
 	fnt.GlyphSize.Width =8;
 	fnt.ID =1;
@@ -275,7 +275,7 @@ void xTestTextField::xPlayWithCharSize()
 	TextFormat tx;
 	tx.BgColor = 0;
 	tx.FgColor =0;
-	Font fnt;
+	FontDescription fnt;
 	fnt.GlyphSize.Height = 3;
 	fnt.GlyphSize.Width = 6;
 	fnt.ID =1;
@@ -329,7 +329,7 @@ void xTestTextField::xDrawAreas()
 	TextFormat format;
 	format.BgColor = 0;
 	format.FgColor =0;
-	Font fnt;
+	FontDescription fnt;
 	fnt.GlyphSize.Height =8;
 	fnt.GlyphSize.Width =8;
 	fnt.ID =1;
@@ -527,7 +527,7 @@ void xTestTextField::xColorTest()
 	selformat.BgColor = clGrey;
 	selformat.FgColor =clRed;
 
-	Font fnt;
+	FontDescription fnt;
 	fnt.GlyphSize.Height =8;
 	fnt.GlyphSize.Width =8;
 	fnt.ID =1;

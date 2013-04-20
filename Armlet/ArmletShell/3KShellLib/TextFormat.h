@@ -7,7 +7,7 @@ struct TextFormat
 {
 	Color FgColor;
 	Color BgColor;
-	Font Font;
+	FontDescription Font;
 };
 
 fresult GetTextFormat(int fontId, Color bgColor, Color fgColor, TextFormat* oFormat);

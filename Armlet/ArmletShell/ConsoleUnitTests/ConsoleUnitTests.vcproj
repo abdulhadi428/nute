@@ -173,7 +173,27 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Console.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ConsoleRender.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Launcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PlatformAPI.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TextHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ToStringRenderer.cpp"
 				>
 			</File>
 			<File
@@ -198,6 +218,26 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\Console.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ConsoleRender.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PlatformAPI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TextHelper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ToStringRenderer.h"
+				>
+			</File>
 			<File
 				RelativePath=".\xDimensions.h"
 				>

@@ -3,7 +3,7 @@
 
 
 
-fresult TODO_KELTUR_GetFontById( int fontId, Font* oFont )
+fresult TODO_KELTUR_GetFontById( int fontId, FontDescription* oFont )
 {
 	oFont->GlyphSize.Height =8;
 	oFont->GlyphSize.Width =8;

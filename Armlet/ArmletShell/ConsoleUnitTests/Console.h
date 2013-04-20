@@ -1,53 +1,37 @@
+#pragma once
 
 #include <iostream>
 #include <windows.h>
 using namespace std;
 
-struct colors_t
+class Console
   {
-  HANDLE hstdout;
-  int    initial_colors;
+	  HANDLE hstdout;
+	  int    initial_colors;
+public:
+  Console();
 
-  colors_t()
-    {
-    hstdout        = GetStdHandle( STD_OUTPUT_HANDLE );
-    initial_colors = getcolors();
-    }
+  ~Console();
 
-  ~colors_t()
-    {
-    setcolors( initial_colors );
-    }
+  int getcolors() const;
 
-  int getcolors() const
-    {
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo( hstdout, &csbi );
-    return csbi.wAttributes;
-    }
+  void setcolors( int color );
 
-  void setcolors( int color )
-    {
-    SetConsoleTextAttribute( hstdout, color );
-    }
+  void setfg( int color );
 
-  void setfg( int color )
-    {
-    int current_colors = getcolors();
-    setcolors( (current_colors & 0xF0) | (color & 0x0F) );
-    }
+  void setbg( int color );
 
-  void setbg( int color )
-    {
-    int current_colors = getcolors();
-    setcolors( ((color & 0x0F) << 4) | (current_colors & 0x0F) );
-    }
+  char getcolor(int forground, int background);
 
   int getfg() const { return  getcolors()    & 0x0F; }
   int getbg() const { return (getcolors() >> 4) & 0x0F; }
+
+  void putchar(int x, int y, char charater, char format);
+
+
   };
 
-enum {
+enum ConsoleColor{
   black,
   dark_blue,
   dark_green,
@@ -66,7 +50,9 @@ enum {
   white
   };
 
-/*int main()
+//Example
+/*
+int main()
   {
   colors_t colors;
 
@@ -97,4 +83,6 @@ enum {
     }
 
   return 0;
-  }*/
+  }
+
+  */

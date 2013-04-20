@@ -10,7 +10,7 @@ typedef Int16 Color;
 #define clGrey 4
 
 //Font
-struct Font
+struct FontDescription
 {
 	//Logical Name
 	char* Name;
@@ -20,4 +20,4 @@ struct Font
 	Size GlyphSize;
 };
 
-fresult TODO_KELTUR_GetFontById(int fontId, Font* oFont);
+fresult TODO_KELTUR_GetFontById(int fontId, FontDescription* oFont);
