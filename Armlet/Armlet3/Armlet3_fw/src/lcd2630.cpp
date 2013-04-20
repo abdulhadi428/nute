@@ -232,7 +232,7 @@ void Lcd_t::PutBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uin
     SetBounds(x0, x0+Width, y0, y0+Height);
     // Prepare variables
     uint16_t Clr1, Clr2;
-    uint32_t Cnt = Width * Height / 2;      // Two pixels at one time
+    uint32_t Cnt = (uint32_t)Width * Height / 2;      // Two pixels at one time
     // Write RAM
     WriteByte(0x2C);    // Memory write
     DC_Hi();
