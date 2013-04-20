@@ -44,10 +44,55 @@ void __stdcall my_thread(void* param)
 	DrawTextString(15,75,str,strlen(str),0,0);
 }
 
+#define MAX_TIMERS 30
+typedef struct _TIMER {
+	bool bUsed;
+	int curr;
+	int period;
+	TIMER_PROC* routine;
+} TIMER;
+TIMER gTimers[MAX_TIMERS];
+
 void LowLevelLibMain(void)
 {
+	memset(gTimers,0,sizeof(gTimers));
 	Clear(GREEN);
 	StartThread(my_thread,NULL);
 	StartThread(AppMainThread,NULL);
 	return;
+}
+
+bool RequestTimer(int period, TIMER_PROC routine)
+{
+	if (period < 100)
+		return false;
+	for (int i=0;i<MAX_TIMERS;i++) {
+		if (gTimers[i].bUsed) {
+			continue;
+		}
+		//todo interlocked
+		gTimers[i].bUsed = true;
+		gTimers[i].curr = period;
+		gTimers[i].period = period;
+		gTimers[i].routine = routine;
+		return true;
+	}
+	return false;
+}
+
+void OnElapsed50msec()
+{
+	for (int i=0;i<MAX_TIMERS;i++) {
+		if (!gTimers[i].bUsed) {
+			continue;
+		}
+		gTimers[i].curr -= 50;
+		if (gTimers[i].curr <= 20) {
+			if (gTimers[i].routine()) {
+				gTimers[i].curr += gTimers[i].period;
+			} else {
+				gTimers[i].bUsed = false;
+			}
+		}
+	}
 }

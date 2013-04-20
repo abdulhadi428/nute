@@ -143,7 +143,7 @@ void VisualizerInterface::Render()
 			y,
 			Color::FromArgb(r*16, g*16, b*16)); //TODO LUT
 	}
-
+	OnElapsed50msec();
 }
 
 }

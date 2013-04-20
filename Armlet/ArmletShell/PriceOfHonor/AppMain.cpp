@@ -33,6 +33,21 @@ void __stdcall AppOnButtonHold(int button)
 	return;
 }
 
+int gx=0;
+int gy=0;
+int gc=0x0000;
+bool __stdcall MoveBoxByTimer()
+{
+	DrawRect(gx,gy,30,30,0);
+	gc+=0x111;
+	if (gc>=0x1000) gc=0x0000;
+	gx+=15; gy+=5;
+	if (gx>SCREENX) gx-=SCREENX;
+	if (gy>SCREENY) gy-=SCREENY;
+	DrawRect(gx,gy,30,30,gc);
+	return TRUE;
+}
+
 void __stdcall AppMainThread(void* param)
 {
 	const char* str = "PRICE of HONOR!";
@@ -56,4 +71,5 @@ void __stdcall AppMainThread(void* param)
 	tf.SetText(str,size2,TRUE, NULL);
 	tf.Draw();
 	RegisterButtonHandlers(AppOnButtonClick, AppOnButtonHold);
+	RequestTimer(300, MoveBoxByTimer);
 }

@@ -126,3 +126,20 @@ void Clear(short backColor)
 			DrawPixel(i,j,backColor);
 		}
 }
+
+void DrawRect(int x, int y, int sx, int sy, short color)
+{
+	if (x<=0) return;
+	if (y<=0) return;
+	if (sx<=0) return;
+	if (sy<=0) return;
+	for (int i=0; i<sx; i++)
+		for(int j=0; j<sy; j++)
+		{
+			int px=x+i;
+			int py=y+j;
+			if (px>=SCREENX) return;
+			if (py>=SCREENY) return;
+			DrawPixel(px,py,color);
+		}
+}
