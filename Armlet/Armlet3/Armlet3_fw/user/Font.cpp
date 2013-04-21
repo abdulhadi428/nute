@@ -50,7 +50,7 @@ Font::Font(const char* filename):
 
     UINT rred = 0;
     res = f_read(&fil, &count, 2, &rred);
-    Uart.Printf("Count: %u\n", count);
+//    Uart.Printf("Count: %u\n", count);
     if (res != FR_OK)
     {
         count = 0;
@@ -59,7 +59,7 @@ Font::Font(const char* filename):
 
     rred = 0;
     res = f_read(&fil, &height, 1, &rred);
-    Uart.Printf("Height: %u\n", height);
+//    Uart.Printf("Height: %u\n", height);
 
     symbols = (char*)chHeapAlloc(NULL, count*sizeof(char));
     positions = (DWORD*)chHeapAlloc(NULL, count*sizeof(DWORD));

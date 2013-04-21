@@ -3,29 +3,50 @@
 
 #include "lcd2630.h"
 #include "chthreads.h"
-#include "Font.h"
+#include "Font2.h"
 #include "lcd_addon.h"
 #include "chheap.h"
 
-void mmm()
-{
-    Font f("font.dat");
-    f.drawString(5, 50, 0x0F00, "Hello world!");
-}
+#include "MemFont.h"
 
-// ``user space'' entry point
+static WORKING_AREA(waUserThread, 4096);
+msg_t armlet_main_thd(void*);
+
 void armlet_main()
 {
-    mmm();
-    lcd_putImage(160-32, 20, "1.bmp", 0x0F00, 0x0000);
-    Uart.Printf("sizeof FIL = %d\n", sizeof(FIL));
-
-//    lcd_putImage(160-32, 40, "3.bmp", 0x0F00, 0x0000);
-//    lcd_putImage(160-32, 60, "4.bmp", 0x0F00, 0x0000);
-//    lcd_putImage(160-32, 80, "5.bmp", 0x0F00, 0x0000);
+    chThdCreateStatic(waUserThread, sizeof(waUserThread), NORMALPRIO, armlet_main_thd, NULL);
 
     while (1)
     {
         chThdSleepSeconds(1);
     }
+}
+
+#include "DejaVuSansMono14.txt"
+
+// ``user space'' entry point
+msg_t armlet_main_thd(void*)
+{
+    chThdSleepSeconds(1);
+    Lcd.Cls((Color_t)0x0FFF);
+
+//    Font2 f2("DejaVuSansMono14.dat");
+//    f2.drawString(5, 0, 0x0000, "Hello world!");
+//    f2.drawString(5, 16, 0x0000, "Прекрасный день");
+//    f2.drawString(5, 32, 0x0000, "чтобы умереть!");
+
+    memfont_drawString(largeFont, 5, 0, "Hello world!", 0x0000);
+
+    uint16_t c = 0;
+    while (1)
+    {
+//        Lcd.Cls((Color_t)c);
+        chThdSleepSeconds(1);
+
+        c += 1;
+        if (c >= 0x1000)
+            c = 0;
+    }
+
+    return 0;
 }

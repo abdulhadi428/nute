@@ -110,144 +110,6 @@ void lcd_fillRectXor(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color)
     chHeapFree(sbmp);
 }
 
-static void dumpBitmap(uint8_t w, uint8_t h, uint16_t* bmp)
-{
-    for (uint8_t y = 0; y < h; ++y)
-    {
-        for (uint8_t x = 0; x < w; ++x, ++bmp)
-        {
-            if (*bmp != 0)
-            {
-                Uart.Printf("%03X ", *bmp);
-            }
-            else
-            {
-                Uart.Printf("    ");
-            }
-            chThdSleepMilliseconds(10);
-        }
-        Uart.Printf("\n");
-    }
-    Uart.Printf("\n");
-    Uart.Printf("\n");
-}
-
-/*
-void lcd_putImage(uint8_t x, uint8_t y, const char* imageFile, uint16_t colorFore, uint16_t colorBkg)
-{
-    FIL f;
-    FRESULT res = f_open(&f, imageFile, FA_READ|FA_OPEN_EXISTING);
-    if (res != FR_OK)
-    {
-        return;
-    }
-
-    uint8_t type;
-
-    uint8_t w = 0, h = 0;
-    UINT rred = 0;
-    f_read(&f, &type, 1, &rred);
-    f_read(&f, &w, 1, &rred);
-    f_read(&f, &h, 1, &rred);
-
-    uint16_t bpp = 0;
-    switch(type)
-    {
-    case 'B':
-        bpp = 1;
-        break;
-    case 'C':
-        bpp = 2;
-        break;
-    }
-    if (bpp == 0)
-        return;
-
-    uint16_t rowsize = (uint16_t)w*bpp;
-    uint8_t* row = (uint8_t*)chHeapAlloc(NULL, rowsize);
-    uint16_t* bitmap = (uint16_t*)chHeapAlloc(NULL, lcd_bitmapSize(w, h));
-    if (bitmap != NULL)
-    {
-//        Lcd.GetBitmap(x, y, w, h, bitmap);
-        //dumpBitmap(w, h, bitmap);
-        uint16_t* bmpPtr = bitmap;
-        Uart.Printf("rowsize = %u\n", rowsize);
-        uint8_t a = 0;
-        uint8_t r, g, b;
-
-        for (uint8_t yy = 0; yy < h; ++yy)
-        {
-            res = f_read(&f, row, rowsize, &rred);
-            if (res != FR_OK)
-            {
-                Uart.Printf("Got error on f_read: %d\n", res);
-                --yy;
-                continue;
-            }
-            else
-            {
-                Uart.Printf("Asked for %u, got %u\n", rowsize, rred);
-            }
-
-            if (bpp == 1)
-            {
-                uint8_t* c = row;
-                for (uint8_t xx = 0; xx < w; ++xx, ++c, ++bmpPtr)
-                {
-                    a = (*c) >> 4;
-                    uint8_t c0 = ((*c) & 0x0F);
-//                    uint8_t c1 = 0x0F - c0;
-//                    r = (((colorFore >> 8) & 0x0F) * c0 +
-//                         ((colorBkg  >> 8) & 0x0F) * c1) / 0x0F;
-//                    g = (((colorFore >> 4) & 0x0F) * c0 +
-//                         ((colorBkg  >> 4) & 0x0F) * c1) / 0x0F;
-//                    b = (((colorFore >> 0) & 0x0F) * c0 +
-//                         ((colorBkg  >> 0) & 0x0F) * c1) / 0x0F;
-                    Uart.Printf("%X%X ", a, c0);
-                    chThdSleepMilliseconds(2);
-
-//                    uint8_t una = 0x0F - a;
-//                    uint8_t ra = r * a;
-//                    uint8_t ga = g * a;
-//                    uint8_t ba = b * a;
-//
-//                    *bmpPtr = (((((*bmpPtr >> 8 ) & 0x0F) * una + ra) / 0x0F) << 8)  | // r
-//                              (((((*bmpPtr >> 4) & 0x0F) * una + ga) / 0x0F) << 4) | // g
-//                              (((((*bmpPtr >> 0 ) & 0x0F) * una + ba) / 0x0F) << 0); // b
-                }
-                Uart.Printf("\n");
-            }
-            else
-            {
-                uint16_t* c = (uint16_t*)row;
-                for (uint8_t x = 0; x < w; ++x, ++c, ++bmpPtr)
-                {
-                    a = (*c) >> 12;
-                    r = ((*c) >> 8) & 0x0F;
-                    g = ((*c) >> 4) & 0x0F;
-                    b = ((*c) >> 0) & 0x0F;
-
-                    uint8_t una = 0x0F - a;
-                    uint8_t ra = r * a;
-                    uint8_t ga = g * a;
-                    uint8_t ba = b * a;
-
-                    *bmpPtr = (((((*bmpPtr >> 8 ) & 0x0F) * una + ra) / 0x0F) << 8)  | // r
-                              (((((*bmpPtr >> 4) & 0x0F) * una + ga) / 0x0F) << 4) | // g
-                              (((((*bmpPtr >> 0 ) & 0x0F) * una + ba) / 0x0F) << 0); // b
-                }
-            }
-        }
-
-        chHeapFree(row);
-//        Lcd.PutBitmap(x, y, w, h, bitmap);
-        chHeapFree(bitmap);
-    }
-
-    f_close(&f);
-}
-*/
-
 static void lcd_blendImageBw(FIL* f, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t* bitmap, uint16_t colorFore, uint16_t colorBkg)
 {
     unsigned int rred = 0;
@@ -287,16 +149,15 @@ static void lcd_blendImageBw(FIL* f, uint8_t x, uint8_t y, uint8_t w, uint8_t h,
                           (((((*bmpPtr >> 0 ) & 0x0F) * una + ba) / 0x0F) << 0); // b
 
 
-                Uart.Printf("%X%X ", a, c0);
-                chThdSleepMilliseconds(1);
+//                Uart.Printf("%X%X ", a, c0);
+//                chThdSleepMilliseconds(1);
             }
-            Uart.Printf("\n");
+//            Uart.Printf("\n");
         }
     }
 
     chHeapFree(buf);
 }
-
 
 void lcd_putImage(uint8_t x, uint8_t y, const char* imageFile, uint16_t colorFore, uint16_t colorBkg)
 {
