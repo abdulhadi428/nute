@@ -12,6 +12,7 @@
 typedef const uint8_t* MEMFONT;
 
 uint8_t memfont_getHeight(MEMFONT font);
+uint8_t memfont_getWidth(MEMFONT font);
 void memfont_drawString(MEMFONT font, uint8_t x, uint8_t y, const char* str, uint16_t color);
 
 #endif // MEMFONT__H

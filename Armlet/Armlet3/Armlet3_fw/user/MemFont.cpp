@@ -12,6 +12,18 @@ uint8_t memfont_getHeight(MEMFONT font)
     return *((uint8_t*)font);
 }
 
+uint8_t memfont_getWidth(MEMFONT font)
+{
+    uint16_t* posTable = (uint16_t*)((uint8_t*)font + 1);
+    uint16_t* pos = posTable + ' ';
+    if (*pos == 0xFFFF)
+        return 0;
+
+    uint8_t* glyphStart = (uint8_t*)(posTable + 256);
+    uint8_t* glyph = glyphStart + (*pos);
+    return glyph[3];
+}
+
 uint8_t memfont_drawChar(MEMFONT font, uint8_t x, uint8_t y, uint8_t ch, uint16_t color)
 {
     uint16_t* posTable = (uint16_t*)((uint8_t*)font + 1);
