@@ -24,28 +24,26 @@ void armlet_main()
 
 #include "DejaVuSansMono14.txt"
 
+const uint8_t image1[] = {
+#include "icons/2a_help_01.txt"
+};
+
+const uint8_t image2[] = {
+#include "icons/2k_heart.txt"
+};
+
 // ``user space'' entry point
 msg_t armlet_main_thd(void*)
 {
     chThdSleepSeconds(1);
-    Lcd.Cls((Color_t)0x0FFF);
 
-//    Font2 f2("DejaVuSansMono14.dat");
-//    f2.drawString(5, 0, 0x0000, "Hello world!");
-//    f2.drawString(5, 16, 0x0000, "Прекрасный день");
-//    f2.drawString(5, 32, 0x0000, "чтобы умереть!");
+    lcd_putMemoryImage(10, 10, image1, 0x00F);
 
-    memfont_drawString(largeFont, 5, 0, "Hello world!", 0x0000);
+    lcd_putMemoryImage(50, 10, image2);
 
-    uint16_t c = 0;
     while (1)
     {
-//        Lcd.Cls((Color_t)c);
         chThdSleepSeconds(1);
-
-        c += 1;
-        if (c >= 0x1000)
-            c = 0;
     }
 
     return 0;

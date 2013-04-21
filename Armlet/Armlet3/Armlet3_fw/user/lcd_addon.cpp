@@ -71,7 +71,7 @@ void lcd_putGlyph(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t* glyph, ui
     chHeapFree(bmp);
 }
 
-void lcd_putBitmapXor(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t* pbmp)
+void lcd_putBitmapXor(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint16_t* pbmp)
 {
     uint16_t bmpSize = lcd_bitmapSize(w, h);
     uint16_t* sbmp = (uint16_t*)chHeapAlloc(NULL, bmpSize);
@@ -159,6 +159,65 @@ static void lcd_blendImageBw(FIL* f, uint8_t x, uint8_t y, uint8_t w, uint8_t h,
     chHeapFree(buf);
 }
 
+static void lcd_blendMemoryImageBw(const uint8_t* image, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t* bitmap, uint16_t colorFore, uint16_t colorBkg)
+{
+    unsigned int rred = 0;
+    uint16_t bpr = (uint16_t)w;
+    const uint8_t* buf = image;
+
+    if (buf != NULL && bitmap != NULL)
+    {
+        uint16_t* bmpPtr = bitmap;
+        const uint8_t* imgPtr = buf;
+        uint8_t a, r, g, b;
+        for (uint8_t yy = 0; yy < h; ++yy)
+        {
+            for (uint8_t xx = 0; xx < w; ++xx, ++bmpPtr, ++imgPtr)
+            {
+                a = (*imgPtr) >> 4;
+                uint8_t c0 = ((*imgPtr) & 0x0F);
+                uint8_t c1 = 0x0F - c0;
+                r = (((colorFore >> 8) & 0x0F) * c0 +
+                     ((colorBkg  >> 8) & 0x0F) * c1) / 0x0F;
+                g = (((colorFore >> 4) & 0x0F) * c0 +
+                     ((colorBkg  >> 4) & 0x0F) * c1) / 0x0F;
+                b = (((colorFore >> 0) & 0x0F) * c0 +
+                     ((colorBkg  >> 0) & 0x0F) * c1) / 0x0F;
+                uint8_t una = 0x0F - a;
+                uint8_t ra = r * a;
+                uint8_t ga = g * a;
+                uint8_t ba = b * a;
+
+                *bmpPtr = (((((*bmpPtr >> 8 ) & 0x0F) * una + ra) / 0x0F) << 8)  | // r
+                          (((((*bmpPtr >> 4) & 0x0F) * una + ga) / 0x0F) << 4) | // g
+                          (((((*bmpPtr >> 0 ) & 0x0F) * una + ba) / 0x0F) << 0); // b
+
+
+//                Uart.Printf("%X%X ", a, c0);
+//                chThdSleepMilliseconds(1);
+            }
+//            Uart.Printf("\n");
+        }
+    }
+}
+
+static void lcd_blendMemoryImageColor(const uint16_t* image, uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t* bitmap)
+{
+    uint16_t size = lcd_bitmapSize(w, h) / 2;
+    const uint16_t* source = image;
+    uint16_t* dest = bitmap;
+    for (uint16_t i = 0; i < size; ++i, ++source, ++dest)
+    {
+        uint8_t a = (*source) >> 12;
+        uint8_t una = 0x0F - a;
+
+        *dest = (((((*source) >> 8) & 0x0F) * a + (((*dest) >> 8) & 0x0F) * una) / 0x0F) << 8 |
+                (((((*source) >> 4) & 0x0F) * a + (((*dest) >> 4) & 0x0F) * una) / 0x0F) << 4 |
+                (((((*source) >> 0) & 0x0F) * a + (((*dest) >> 0) & 0x0F) * una) / 0x0F) << 0;
+    }
+}
+
+
 void lcd_putImage(uint8_t x, uint8_t y, const char* imageFile, uint16_t colorFore, uint16_t colorBkg)
 {
     FIL f;
@@ -196,4 +255,33 @@ void lcd_putImage(uint8_t x, uint8_t y, const char* imageFile, uint16_t colorFor
     chHeapFree(bitmap);
 }
 
+void lcd_putMemoryImage(uint8_t x, uint8_t y, const uint8_t* image, uint16_t colorFore, uint16_t colorBkg)
+{
+    uint8_t w = 0, h = 0, type = image[0];
+    //f_read(&f, &type, 1, &rred);
+    //f_read(&f, &w, 1, &rred);
+    //f_read(&f, &h, 1, &rred);
 
+    if (type != 'B' && type != 'C')
+        return;
+    w = image[1];
+    h = image[2];
+
+    uint16_t* bitmap = (uint16_t*)chHeapAlloc(NULL, lcd_bitmapSize(w, h));
+
+    if (bitmap == NULL)
+        return;
+
+    Lcd.GetBitmap(x, y, w, h, bitmap);
+    if (type == 'B')
+    {
+        lcd_blendMemoryImageBw(image+3, x, y, w, h, bitmap, colorFore, colorBkg);
+    }
+    else
+    {
+        lcd_blendMemoryImageColor((const uint16_t*)(image+3), x, y, w, h, bitmap);
+    }
+
+    Lcd.PutBitmap(x, y, w, h, bitmap);
+    chHeapFree(bitmap);
+}
