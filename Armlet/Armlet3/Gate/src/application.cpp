@@ -16,69 +16,46 @@
 #include "cmd_uart.h"
 #include "pill.h"
 
-App_t App;
-
-//static EventListener EvtLstnrApp;
+static EventListener EvtLstnrApp;
+static rPktIDState_t PktState;
+static rPktWithData_t<RRX_PKT_DATA_SZ> SRxPkt;
 
 // Prototypes
 void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length);
 
 // =============================== App Thread ==================================
-static WORKING_AREA(waAppThread, 1024);
+static WORKING_AREA(waAppThread, 128);
 static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
+    // Register Radio evts
+    uint32_t EvtMsk;
+    rLevel1.RegisterEvtRx(&EvtLstnrApp, EVTMASK_RADIO_RX);
+    rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
 
-    //uint8_t Buf[7];
-
-#define PktSZ   4
-//    uint8_t Buf[PktSZ], Rslt1 = FAILURE, Rslt2 = FAILURE;
-//    for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i+2;
-//
-    // Events
-    //rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
-    //PillRegisterEvtChange(&EvtLstnrApp, EVTMASK_PILLCHANGE);
-    //uint32_t r;
     while(1) {
-        chThdSleepMilliseconds(999);
-//        Rslt1 = rLevel1.AddPktToTx(RDEV_BOTTOM_ID+1, Buf, PktSZ, &Rslt2);
-//        Uart.Printf("> %u\r", Rslt1);
-//
-//        chEvtWaitOne(EVTMASK_PILLCHANGE);
-//        //Uart.Printf("===");
-//        if(Pill[0].Connected)
-//            if(Pill[0].Read(Buf, 4) == OK)
-//                Uart.Printf("%A\r", Buf, 4, ' ');
+        EvtMsk = chEvtWaitAny(EVTMASK_RADIO_RX | EVTMASK_RADIO_TX);
+        // Serve event
+        if(EvtMsk & EVTMASK_RADIO_RX) {
+            while(rLevel1.GetReceivedPkt(&SRxPkt) == OK)
+                Uart.Cmd(RPL_RRX, (uint8_t*)&SRxPkt, (sizeof(SRxPkt.rID) + sizeof(SRxPkt.Length) + SRxPkt.Length));   // SBuf[1] contains length
+        } // if evtmsk
 
-//        Uart.Printf("Rslt = %u\r", Rslt2);
-        //Uart.Printf("Evt \r");
-
-        //Lcd.Cls(c);
-//        for(uint8_t y=0; y<128; y+=8) {
-//            chThdSleepMilliseconds(999);
-//            //Lcd.Printf(0, y, clBlue, c, "YA=%u", y);
-//            //Beep(BeepBeep);
-//
-//        }
-//        c = (c == clBlack)? clWhite : clBlack;
-
-//        Lcd.Cls(c);
-//        switch(c) {
-//            case clRed: c = clGreen; break;
-//            case clGreen: c = clBlue; break;
-//            case clBlue: c = clRed; break;
-//            default: c = clRed; break;
-//        }
-    }
+        if(EvtMsk & EVTMASK_RADIO_TX) {
+            while(rLevel1.GetTransmittedState(&PktState) == OK) {
+                Uart.Cmd(RPL_RTX, (uint8_t*)&PktState, sizeof(rPktIDState_t));
+            }
+        }
+    } // while 1
     return 0;
 }
 
 //=========================== Command processing ===============================
 void Ack(uint8_t Result) { Uart.Cmd(0x90, &Result, 1); }
 
-static uint8_t IBuf[252];
+static uint8_t SBuf[252];
 void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
-    Uart.Printf(">%02X; %A\r", CmdCode, PData, Length, ' ');
+    //Uart.Printf(">%02X; %A\r", CmdCode, PData, Length, ' ');
     uint8_t b, b2, Rslt;
     Rslt = FAILURE;
     switch(CmdCode) {
@@ -94,8 +71,11 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
             else Ack(CMD_ERROR);
             break;
         case CMD_RTX:
-            Ack(OK);    // Reply Ack now
-            // Setup transmission
+            b = PData[0];   // Armlet ID
+            if((b >= RDEV_BOTTOM_ID) and (b <= RDEV_TOP_ID)) {
+                Rslt = rLevel1.AddPktToTx(b, &PData[1], (Length-1));
+            } // if addr ok
+            Ack(Rslt);    // Reply Ack now
             break;
 
         // ==== Pills ====
@@ -110,13 +90,13 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
             Ack(Rslt);
             break;
         case CMD_PILL_READ:
-            b = PData[0];
-            b2 = PData[1];
-            if(b2 > 250) b2 = 250;
-            if(b <= 7) Rslt = Pill[b].Read(&IBuf[1], b2);
-            IBuf[0] = Rslt;
-            if(Rslt == OK) Uart.Cmd(RPL_PILL_READ, IBuf, b2+1);
-            else Uart.Cmd(RPL_PILL_READ, IBuf, 1);
+            b = PData[0];           // Pill address
+            b2 = PData[1];          // Data size to read
+            if(b2 > 250) b2 = 250;  // Check data size
+            if(b <= 7) Rslt = Pill[b].Read(&SBuf[1], b2);
+            SBuf[0] = Rslt;
+            if(Rslt == OK) Uart.Cmd(RPL_PILL_READ, SBuf, b2+1);
+            else Uart.Cmd(RPL_PILL_READ, SBuf, 1);
             break;
 
         // ==== Pin ====
@@ -133,19 +113,17 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
         default:
             Ack(CMD_ERROR);
             break;
-    }
+    } // switch
 }
 
-// =============================== App class ===================================
-void App_t::Init() {
+// =============================== App init ====================================
+void AppInit() {
     chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, AppThread, NULL);
 }
 
 // ================================= Pin control ===============================
 Pin_t Pin;
-void PinTmrCallback(void *p) {
-    Pin.Low();
-}
+void PinTmrCallback(void *p) { Pin.Low(); }
 
 void Pin_t::Pulse(uint32_t ms) {
     chVTReset(&ITmr);

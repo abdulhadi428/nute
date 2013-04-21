@@ -12,7 +12,6 @@
 #include "kl_lib_f2xx.h"
 #include "kl_sd.h"
 #include "lvl1_assym.h"
-#include "lvl2.h"
 #include "pill.h"
 
 #include "application.h"
@@ -47,10 +46,9 @@ int main() {
 void Init() {
     Uart.Init(115200);
     Uart.Printf("Gate AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
-    //rLevel1.Init(0);    // FIXME: set correct number here
-    //rLevel2.Init();
+    rLevel1.Init(0);    // Default gate number is 0
     PillInit();
     Pin.Init();
     // Application init
-    App.Init();
+    AppInit();
 }

@@ -8,7 +8,7 @@
 #include "lvl1_assym.h"
 #include "cc1101.h"
 
-#define DBG_PINS
+//#define DBG_PINS
 
 #ifdef DBG_PINS
 #define DBG_GPIO1   GPIOD
@@ -26,58 +26,54 @@ rLevel1_t rLevel1;
 VirtualTimer rTmr;
 void rTmrCallback(void *p);
 
-void rLevel1_t::PrepareTxPkt() {
+// Prepare either rpkt with data, or rpkt just to ping
+void rLevel1_t::PrepareDataPkt() {
     //Uart.Printf("PTx\r");
-    PktTx.rID = DataPktTx.rID;
+    PktTx.rID = IHdr.rID;
     // Check if last pkt
-    if(DataPktTx.Length <= RLASTPKT_DATASZ) {
-        IDataPktState = LAST;
-        memcpy(&PktTx.Data, DataPktTx.Ptr, DataPktTx.Length);
-        PktTx.Data[RDATA_CNT-1] = DataPktTx.Length; // Set data count in last byte
+    if(IHdr.Length <= RLASTPKT_DATASZ) {
+        IHdr.State = LAST;
+        ITxBuf.Get(PktTx.Data, IHdr.Length);        // Put data to pkt
+        PktTx.Data[RDATA_CNT-1] = IHdr.Length;      // Set data count in last byte
         PktTx.Srv = R_DIR_GATE2DEV | R_CMD_DATA;    // Do not listen next slot
-        DataPktTx.Length = 0;
+        IHdr.Length = 0;
     }
     else {
-        IDataPktState = IN_PROGRESS; // Signal that first rpkt was sent
-        memcpy(&PktTx.Data, DataPktTx.Ptr, RDATA_CNT);
-        DataPktTx.Ptr += RDATA_CNT;
-        DataPktTx.Length -= RDATA_CNT;
+        IHdr.State = IN_PROGRESS;                   // Signal that first rpkt was sent
+        ITxBuf.Get(PktTx.Data, RDATA_CNT);          // Put data to pkt
         PktTx.Srv = R_DIR_GATE2DEV | R_CMD_DATA | R_NXTSLT; // Listen next slot
+        IHdr.Length -= RDATA_CNT;
     }
+    Uart.Printf("%A\r", (uint8_t*)&PktTx, RPKT_LEN, ' ');
 }
-void rLevel1_t::PreparePing() {
+void rLevel1_t::PreparePingPkt() {
     PktTx.rID = SLOT2ID(SlotN);
     PktTx.Srv = R_DIR_GATE2DEV | R_CMD_PING;
 }
 
-void rLevel1_t::IReportTxOk() {
-    *DataPktTx.PState = OK;     // Signal success
-    IDataPktState = OK;          // No big deal, must be not in_progress/new
-    chEvtBroadcast(&IEvtSrcRadioTxEnd);
-}
-void rLevel1_t::IReportTxFail() {
-    *DataPktTx.PState = FAILURE;    // Regardless - last rpkt or somewhere in middle
-    IDataPktState = FAILURE;
-    chEvtBroadcast(&IEvtSrcRadioTxEnd);
-}
-void rLevel1_t::IReportTxBusy() {
-    *DataPktTx.PState = BUSY;       // Regardless - last rpkt or somewhere in middle
-    IDataPktState = FAILURE;
+// Report about data pkt transmission result
+void rLevel1_t::ICompleteTx(uint8_t AState) {
+    // Flush remaining data
+    if(IHdr.Length) ITxBuf.Flush(IHdr.Length);
+    IHdr.State = AState;
+    ITransmitted.Put((rPktIDState_t*)&IHdr);    // Put in state queue
     chEvtBroadcast(&IEvtSrcRadioTxEnd);
 }
 
-// Just one pkt at a time
+// Handler of received rPkt. Just one rPkt at a time allowed.
 uint8_t rLevel1_t::HandleRxDataPkt() {
-    if(IRx.StartNewPkt() != OK) return FAILURE;
-    // Get effective length
-    uint32_t Length = PktRx.Data[RDATA_CNT-1];
-    if(IRx.AddData(PktRx.Data, Length) == OK) {
-        IRx.CompletePkt();
+    rPktHeader_t FHdr;
+    FHdr.rID = PktRx.rID;
+    // Get effective length from last byte
+    FHdr.Length = PktRx.Data[RDATA_CNT-1];
+    if(IRxBuf.PutStart(&FHdr) != OK) return FAILURE;
+    if(IRxBuf.PutChunk(PktRx.Data, FHdr.Length) == OK) {
+        IRxBuf.PutComplete();
         chEvtBroadcast(&IEvtSrcRadioRx);    // Pkt received completely
         return OK;
     }
     else { // Seems like buffer overflow
-        IRx.CancelPkt();
+        IRxBuf.PutCancel();
         return FAILURE;
     }
 }
@@ -92,16 +88,14 @@ void rLevel1_t::Task() {
     if(++SlotN >= RSLOT_CNT) SlotN = 0;
     PktTx.SlotN = SlotN;
     // If not transmitting long pkt already, try to get new data pkt
-    if((IDataPktState == OK) or (IDataPktState == FAILURE))
-        if(ITx.Get(&DataPktTx) == OK) IDataPktState = NEW;   // Will not be transmitted until correct slot
+    if((IHdr.State == OK) or (IHdr.State == FAILURE) or (IHdr.State == BUSY))
+        if(ITxBuf.Get((uint8_t*)&IHdr, sizeof(rPktHeader_t)) == OK) IHdr.State = NEW;   // Will not be transmitted until correct slot
 
     // Transmit data if new and in correct slot, or if first pkt is already sent
-    if(((IDataPktState == NEW) and InsideCorrectSlot()) or (IDataPktState == IN_PROGRESS)) PrepareTxPkt();
-    else PreparePing();
+    if(((IHdr.State == NEW) and InsideCorrectSlot()) or (IHdr.State == IN_PROGRESS)) PrepareDataPkt();
+    else PreparePingPkt();
 
-    DBG1_SET();
     CC.Transmit(&PktTx);
-    DBG1_CLR();
 
     // ==== Pkt transmitted, enter RX ====
     uint8_t RxRslt = CC.Receive(R_RX_WAIT_MS, &PktRx);
@@ -109,20 +103,15 @@ void rLevel1_t::Task() {
     // Process result
     if(RxRslt == OK) {
         Uart.Printf("Rx Slot=%u; ID=%u; Srv=%X\r", SlotN, PktRx.rID, PktRx.Srv);
-        // Register answer if pkt received in appropriate slot
-        //if(InsideCorrectSlot()) Surround.RegisterPkt(SlotN, &PktRx);
         // If data received, put it to queue
         if(PktRx.Srv & R_CMD_DATA) HandleRxDataPkt();
-
         // Check reply to data containing pkt
-        if((IDataPktState == LAST) and (PktRx.Srv & R_ACK)) IReportTxOk();    // If transmission completed
-        if(((IDataPktState == IN_PROGRESS) or (IDataPktState == LAST)) and !(PktRx.Srv & R_ACK)) IReportTxBusy();
+        if((IHdr.State == LAST) and (PktRx.Srv & R_ACK)) ICompleteTx(OK);    // If transmission completed
+        if(((IHdr.State == IN_PROGRESS) or (IHdr.State == LAST)) and !(PktRx.Srv & R_ACK)) ICompleteTx(BUSY);
     } // if ok
     else {  // No answer
-        // Register no answer if slot is appropriate
-        //if(InsideCorrectSlot()) Surround.RegisterNoAnswer(SlotN);
         // If data pkt in progress, fail it
-        if((IDataPktState == IN_PROGRESS) or (IDataPktState == LAST)) IReportTxFail();
+        if((IHdr.State == IN_PROGRESS) or (IHdr.State == LAST)) ICompleteTx(FAILURE);
     } // if rx
 }
 
@@ -329,20 +318,21 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     // Init Rx & Tx buffers
     chEvtInit(&IEvtSrcRadioRx);
     chEvtInit(&IEvtSrcRadioTxEnd);
-    IRx.Init(IPtrBuf, RRX_PTRBUF_SZ, IDataBuf, RRX_DATABUF_SZ);
-    ITx.Init(ITxBuf, R_TX_BUF_SZ);
+    IRxBuf.Init();          // Buffer of received pkts
+    ITxBuf.Init();          // Buffer of pkts to transmit
+    ITransmitted.Init();    // Buffer of transmitted pkt headers
 
-    // ==== General ====
-    SelfID = ASelfID;
-    IDataPktState = FAILURE;
     // Init radioIC
     CC.Init();
     CC.SetTxPower(PwrMinus6dBm);
 
+    SelfID = ASelfID;
+    IHdr.State = FAILURE;
+
 #ifdef GATE
     SlotN = 0; // Slot number to start from
-    // Get gate channel (0...RCONC_CNT-1). Channel is not ID!
     CC.SetChannel(ASelfID);
+//    ITxState.Init(ITxStateBuf, RTX_BUF_SZ);
     // Timeslot Timer
     chVTSet(&rTmr, MS2ST(RTIMESLOT_MS), rTmrCallback, NULL);  // Start timer
 #else
@@ -350,7 +340,6 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     PktTx.rID = SelfID; // Always the same
     CC.SetChannel(1);
 #endif
-
     // Init thread. High priority is required to satisfy timings.
     PThr = chThdCreateStatic(warLvl1Thread, sizeof(warLvl1Thread), HIGHPRIO, rLvl1Thread, NULL);
 }
@@ -362,11 +351,14 @@ void rLevel1_t::SetID(uint16_t ASelfID) {
 }
 #endif
 
-uint8_t rLevel1_t::AddPktToTx(uint8_t rID, uint8_t *Ptr, int32_t Length, uint8_t *PState) {
-    DataPkt_t DataPkt;
-    DataPkt.rID = rID;
-    DataPkt.Ptr = Ptr;
-    DataPkt.Length = Length;
-    DataPkt.PState = PState;
-    return ITx.PutWithTimeout(&DataPkt, TIME_INFINITE);
+uint8_t rLevel1_t::AddPktToTx(uint8_t rID, uint8_t *Ptr, uint32_t Length) {
+    rPktHeader_t Hdr;
+    Hdr.rID = rID;
+    Hdr.Length = Length;
+    if(ITxBuf.GetEmptyCount() >= (sizeof(rPktHeader_t) + Length)) {
+        ITxBuf.Put((uint8_t*)&Hdr, sizeof(rPktHeader_t));
+        ITxBuf.Put(Ptr, Length);
+        return OK;
+    }
+    else return FAILURE;
 }

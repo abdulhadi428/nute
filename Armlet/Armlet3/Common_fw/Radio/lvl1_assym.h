@@ -21,7 +21,7 @@
 #include "kl_buf.h"
 
 // ============================== Pkt_t ========================================
-#define RDATA_CNT       17
+#define RDATA_CNT       17  // Payload data size in single pkt
 #define RLASTPKT_DATASZ (RDATA_CNT-1)
 struct rPkt_t {
     uint8_t SlotN;      // Number of timeslot
@@ -85,59 +85,53 @@ struct rPkt_t {
 // Time to wait in discovery mode
 #define RDISCOVERY_RX_MS        (RTIMESLOT_MS * 2)
 #define RDISCOVERY_PERIOD_MS    702
-// ==== Surround ====
-struct Neighbour_t {
-    uint16_t ID;
-    int8_t RSSI;
-};
-
-// ================================ Surround ===================================
-//class Surround_t {
-//private:
-//    Neighbour_t Devs[RNEIGHBOUR_CNT];
-//public:
-//    void RegisterPkt(uint16_t N, rPkt_t *pPkt) {
-//        Devs[N].ID = pPkt->rID;
-//        Devs[N].RSSI = pPkt->RSSI;
-//    }
-//    void RegisterNoAnswer(uint16_t N) { Devs[N].ID = RNO_ID; }
-//    uint16_t GetID(uint16_t N) { return Devs[N].ID; }
-//};
-//
-//extern Surround_t Surround;
 
 // ================================ Level1 =====================================
-// Data Packet item
-struct DataPkt_t {
+struct rPktIDState_t {
     uint8_t rID;
-    uint8_t *Ptr;
-    int32_t Length;
-    uint8_t *PState;
-};
+    uint8_t State;
+} __attribute__ ((__packed__));
 
-// Data rx buffers
-#define RRX_PTRBUF_SZ   11
-#define RRX_DATABUF_SZ  360
+struct rPktHeader_t : public rPktIDState_t {
+    uint8_t Length;
+} __attribute__ ((__packed__));
 
-#define R_RX_BUF_SZ             36  // Size of buffer for Rx pkts
-#define R_TX_BUF_SZ             36  // Size of buffer for Tx pkts
+template <uint32_t Sz>
+struct rPktWithData_t {
+    uint8_t rID;
+    uint8_t Length;
+    uint8_t Data[Sz];
+} __attribute__ ((__packed__));
+
+// Buffers
+#ifdef DEVICE
+
+#endif
+#ifdef GATE
+#define RRX_PKT_CNT     100     // Count of received pkts
+#define RRX_PKT_DATA_SZ RDATA_CNT
+#define RRX_BUF_SZ      ((sizeof(rPktHeader_t) + RRX_PKT_DATA_SZ) * RRX_PKT_CNT)
+
+#define RTX_PKT_CNT     100     // Size of buffer of pkts to transmit
+#define RTX_PKT_DATA_SZ 180     // Size of data in a single data pkt
+//#define RTX_BUF_SZ      ((1 + 1 + RTX_PKT_DATA_SZ) * RTX_PKT_CNT)
+#define RTX_BUF_SZ      36
+#endif
+
 class rLevel1_t {
 private:
     uint8_t SelfID;
     EventSource IEvtSrcRadioRx, IEvtSrcRadioTxEnd;
-    uint8_t IDataPktState;
     // ==== Rx ====
     rPkt_t PktRx;
-    DataPktPtr_t IPtrBuf[RRX_PTRBUF_SZ];
-    uint8_t IDataBuf[RRX_DATABUF_SZ];
-    RxBuf_t IRx;
+    BufChunkPut_t<rPktHeader_t, RRX_BUF_SZ> IRxBuf;
     inline uint8_t HandleRxDataPkt();
     // ==== Tx ====
-    rPkt_t PktTx;
-    DataPkt_t DataPktTx;
-    DataPkt_t ITxBuf[R_TX_BUF_SZ];
-    CircBufSemaphored_t<DataPkt_t> ITx;
-    inline void PrepareTxPkt();
+    rPkt_t PktTx;       // Local rPkt to transmit
+    rPktHeader_t IHdr;
+    CircBufNumber_t<uint8_t, RTX_BUF_SZ> ITxBuf;  // Buffer containing pkts to transmit
+
+    inline void PrepareDataPkt();
 #ifdef DEVICE
     uint8_t RxRetryCounter; // to check if we get lost
     uint16_t GateN;   // Number of concentrator to use. Note, Number != ID.
@@ -149,11 +143,10 @@ private:
 #endif
 #ifdef GATE
     uint8_t SlotN;
-    inline void PreparePing();
-    inline bool InsideCorrectSlot() { return (SlotN == ID2SLOT(DataPktTx.rID)); }
-    inline void IReportTxOk();
-    inline void IReportTxFail();
-    inline void IReportTxBusy();
+    inline void PreparePingPkt();
+    inline bool InsideCorrectSlot() { return (SlotN == ID2SLOT(IHdr.rID)); }
+    CircBuf_t<rPktIDState_t, RTX_PKT_CNT> ITransmitted;
+    inline void ICompleteTx(uint8_t AState);
 #endif
 public:
     void Init(uint16_t ASelfID);
@@ -161,12 +154,11 @@ public:
     void SetID(uint16_t ASelfID);
 #endif
     // Rx
-    uint8_t GetRxPkt(DataPktPtr_t *PPkt) { return IRx.GetPkt(PPkt); }
-    uint32_t GetRxPktCount() { return IRx.GetPktCount(); }
+    uint8_t GetReceivedPkt(rPktWithData_t<RRX_PKT_DATA_SZ> *PPkt) { return IRxBuf.GetWholePkt((uint8_t*)PPkt); }
     void RegisterEvtRx(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcRadioRx, PEvtLstnr, EvtMask); }
     // Tx
-    uint8_t AddPktToTx(uint8_t rID, uint8_t *Ptr, int32_t Length, uint8_t *PState);
-    uint32_t GetTxCount() { return ITx.GetFullCount(); }
+    uint8_t AddPktToTx(uint8_t rID, uint8_t *Ptr, uint32_t Length);
+    uint8_t GetTransmittedState(rPktIDState_t *PState) { return ITransmitted.Get(PState); }
     void RegisterEvtTx(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcRadioTxEnd, PEvtLstnr, EvtMask); }
     // Inner use
     inline void Task();

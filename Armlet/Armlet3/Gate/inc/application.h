@@ -10,7 +10,7 @@
 
 #include "kl_lib_f2xx.h"
 
-// Uart Command Codes
+// Uart Command Codes. See https://docs.google.com/document/d/1pGQf9CrQ016ObS0w7PhPLAy92MRPhdBriICflt1YGXA/edit
 #define CMD_PING            0x01
 #define CMD_SET_GATE_NUM    0x10
 #define CMD_RTX             0x11
@@ -19,9 +19,9 @@
 #define CMD_PILL_READ       0x32
 #define CMD_PIN             0x40
 
-#define RPL_ACK             0x90
-#define RPL_RTX             0xA1
-#define RPL_RRX             0xA4
+#define RPL_ACK             0x90    // Acknowledge
+#define RPL_RTX             0xA1    // TX completed
+#define RPL_RRX             0xA4    // RX completed
 #define RPL_PILL_READ       0xC2
 
 // ================================= Pin control ===============================
@@ -39,13 +39,7 @@ public:
 
 extern Pin_t Pin;
 
-class App_t {
-private:
+void AppInit();
 
-public:
-    void Init();
-};
-
-extern App_t App;
 
 #endif /* APPLICATION_H_ */

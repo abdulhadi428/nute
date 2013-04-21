@@ -13,37 +13,47 @@
 #include "kl_lib_f2xx.h"
 
 // =========================== Circular buffer =================================
-template <typename T>
+template <typename T, uint32_t Sz>
 class CircBuf_t {
 protected:
-    uint32_t IBufSize, IFullSlotsCount;
-    T *IPBuf, *PRead, *PWrite;
+    uint32_t IFullSlotsCount;
+    T IBuf[Sz], *PRead, *PWrite;
 public:
     uint8_t Get(T *p) {
         if(IFullSlotsCount == 0) return FAILURE;
         memcpy(p, PRead, sizeof(T));
-        if(++PRead > (IPBuf + IBufSize - 1)) PRead = IPBuf;     // Circulate buffer
+        if(++PRead > (IBuf + Sz - 1)) PRead = IBuf;     // Circulate buffer
         IFullSlotsCount--;
         return OK;
     }
 
     uint8_t Put(T *p) {
-        if(IFullSlotsCount == IBufSize) return FAILURE;
+        if(IFullSlotsCount >= Sz) return FAILURE;
         chSysLock();
         memcpy(PWrite, p, sizeof(T));
-        if(++PWrite > (IPBuf + IBufSize - 1)) PWrite = IPBuf;   // Circulate buffer
+        if(++PWrite > (IBuf + Sz - 1)) PWrite = IBuf;   // Circulate buffer
         IFullSlotsCount++;
         chSysUnlock();
         return OK;
     }
-    inline uint32_t GetEmptyCount() { return IBufSize-IFullSlotsCount; }
-    inline uint32_t GetFullCount() { return IFullSlotsCount; }
-    void Reset() { PRead = IPBuf; PWrite = IPBuf; IFullSlotsCount = 0; }
-    void Init(T *PBuf, uint32_t Sz) { IPBuf = PBuf; IBufSize = Sz; Reset(); }
+    inline uint32_t GetEmptyCount() { return Sz-IFullSlotsCount; }
+    inline uint32_t GetFullCount()  { return IFullSlotsCount; }
+    void Flush(uint32_t ALength) {
+        if(ALength > IFullSlotsCount) ALength = IFullSlotsCount;
+        IFullSlotsCount -= ALength;
+        uint32_t PartSz = (IBuf + Sz) - PRead;
+        if(ALength >= PartSz) {
+            ALength -= PartSz;
+            PRead = IBuf + ALength;
+        }
+        else PRead += ALength;
+    }
+    void Init() { PRead = IBuf; PWrite = IBuf; IFullSlotsCount = 0; }
     // Friendship
-    friend class RxBuf_t;
+    friend class ChunkBuf_t;
 };
 
+/*
 template <typename T>
 class CircBufSemaphored_t : public CircBuf_t<T> {
 private:
@@ -81,103 +91,113 @@ public:
         Reset();
     }
 };
+*/
 
 // Buffer for simple types, like uint8_t etc.
-template <typename T>
-class CircBufNumber_t : public CircBuf_t<T> {
+template <typename T, uint32_t Sz>
+class CircBufNumber_t : public CircBuf_t<T, Sz> {
 public:
-    void Get(T *p, uint32_t *PLength) {
-        if(*PLength > this->IFullSlotsCount) *PLength = this->IFullSlotsCount;
-        uint32_t Length = *PLength;                     // How much data to read
-        this->IFullSlotsCount -= Length;                // 'Length' slots will be freed
-        uint32_t PartSz = (this->IPBuf + this->IBufSize) - this->PRead;  // Data from PRead to right bound
-        if(Length > PartSz) {
-            memcpy(p, this->PRead, PartSz);
-            this->PRead = this->IPBuf;     // Start from beginning
-            p += PartSz;
-            Length -= PartSz;
+    uint8_t Get(T *p, uint32_t ALength) {
+        uint8_t Rslt = FAILURE;
+        chSysLock();
+        if(this->IFullSlotsCount >= ALength) {  // if enough data
+            this->IFullSlotsCount -= ALength;   // 'Length' slots will be freed
+            uint32_t PartSz = (this->IBuf + Sz) - this->PRead;  // Data from PRead to right bound
+            if(ALength > PartSz) {
+                memcpy(p, this->PRead, PartSz);
+                this->PRead = this->IBuf;     // Start from beginning
+                p += PartSz;
+                ALength -= PartSz;
+            }
+            memcpy(p, this->PRead, ALength);
+            this->PRead += ALength;
+            if(this->PRead >= (this->IBuf + Sz)) this->PRead = this->IBuf;   // Circulate pointer
+            Rslt = OK;
         }
-        memcpy(p, this->PRead, Length);
-        this->PRead += Length;
-        if(this->PRead > (this->IPBuf + this->IBufSize - 1)) this->PRead = this->IPBuf;   // Circulate pointer
+        chSysUnlock();
+        return Rslt;
     }
 
     uint8_t Put(T *p, uint32_t Length) {
-        if(this->GetEmptyCount() < Length) return FAILURE;    // Buffer overflow
-        this->IFullSlotsCount += Length;                      // 'Length' slots will be occupied
-        uint32_t PartSz = (this->IPBuf + this->IBufSize) - this->PWrite;  // Data from PWrite to right bound
-        if(Length > PartSz) {
-            memcpy(this->PWrite, p, PartSz);
-            this->PWrite = this->IPBuf;     // Start from beginning
-            p += PartSz;
-            Length -= PartSz;
+        uint8_t Rslt = FAILURE;
+        chSysLock();
+        if(this->GetEmptyCount() >= Length) {    // check if Buffer overflow
+            this->IFullSlotsCount += Length;                      // 'Length' slots will be occupied
+            uint32_t PartSz = (this->IBuf + Sz) - this->PWrite;  // Data from PWrite to right bound
+            if(Length > PartSz) {
+                memcpy(this->PWrite, p, PartSz);
+                this->PWrite = this->IBuf;     // Start from beginning
+                p += PartSz;
+                Length -= PartSz;
+            }
+            memcpy(this->PWrite, p, Length);
+            this->PWrite += Length;
+            if(this->PWrite >= (this->IBuf + Sz)) this->PWrite = this->IBuf; // Circulate pointer
+            Rslt = OK;
         }
-        memcpy(this->PWrite, p, Length);
-        this->PWrite += Length;
-        if(this->PWrite > (this->IPBuf + this->IBufSize - 1)) this->PWrite = this->IPBuf; // Circulate pointer
-        return OK;
-    }
-};
-
-// =============================== Rx buf ======================================
-struct DataPktPtr_t {
-    uint8_t *Ptr;
-    uint32_t Length;
-};
-
-class RxBuf_t {
-private:
-    CircBufNumber_t<uint8_t> IData; // Data buffer
-    CircBuf_t<DataPktPtr_t> IPtrs;  // Pointers buffer
-    DataPktPtr_t IPkt;
-public:
-    // Put
-    uint8_t StartNewPkt() {
-        if(PktInProgress) CancelPkt();          // Cancel unfinished pkt
-        // Check if empty slots available
-        if(!IPtrs.GetEmptyCount()) return FAILURE; // No room for pointer
-        if(!IData.GetEmptyCount()) return FAILURE; // No room for data
-        PktInProgress = true;
-        // Setup current pkt
-        IPkt.Length = 0;
-        IPkt.Ptr = IData.PWrite;
-        return OK;
-    }
-    uint8_t AddData(uint8_t *p, uint32_t Length) {
-        if(!PktInProgress or (IData.GetEmptyCount() < Length)) return FAILURE;
-        IData.Put(p, Length);
-        IPkt.Length += Length;
-        return OK;
-    }
-    void CompletePkt() {
-        PktInProgress = false;
-        IPtrs.Put(&IPkt);
-    }
-    void CancelPkt() {
-        PktInProgress = false;
-        // Restore data buf
-        IData.PWrite = IPkt.Ptr;
-        IData.IFullSlotsCount -= IPkt.Length;
-    }
-    // Get
-    uint32_t GetPktCount() { return IPtrs.GetFullCount(); }
-    uint8_t GetPkt(DataPktPtr_t *p) {
-        DataPktPtr_t TmpPkt;
-        uint8_t Rslt = IPtrs.Get(&TmpPkt);
-        if(Rslt == OK) {
-            p->Length = TmpPkt.Length;
-            IData.Get(p->Ptr, &p->Length);
-        }
+        chSysUnlock();
         return Rslt;
     }
-    // Common
-    bool PktInProgress;
-    void Init(DataPktPtr_t *PPtrBuf, uint32_t PtrBufSz, uint8_t *PDataBuf, uint32_t DataBufSz) {
-        PktInProgress = false;
-        IPtrs.Init(PPtrBuf, PtrBufSz);
-        IData.Init(PDataBuf, DataBufSz);
-    }
 };
 
+// =============================== Chunk buf ===================================
+// Allows to add data chunk by chunk, and to get it all. And vice versa.
+template <typename T, uint32_t Sz>
+class BufChunkPut_t {
+private:
+    CircBufNumber_t<uint8_t, Sz> ICircBuf; // Data buffer
+    T IHeader;
+public:
+    // ==== Put ====
+    uint8_t PutStart(T *PHeader) {
+        if(InProgress) PutCancel();              // Cancel unfinished pkt
+        // Check if empty slots available
+//        if(!IData.GetEmptyCount()) return FAILURE;  // No room for data
+        InProgress = true;
+        // Setup current pkt
+//        IPkt.Length = 0;
+//        IPkt.Ptr = IData.PWrite;
+        return OK;
+    }
+    uint8_t PutChunk(uint8_t *p, uint32_t Length) {
+//        if(!PutInProgress or (IData.GetEmptyCount() < Length)) return FAILURE;
+//        IData.Put(p, Length);
+//        IPkt.Length += Length;
+        return OK;
+    }
+    void PutComplete() {
+//        PutInProgress = false;
+//        IPtrs.Put(&IPkt);
+    }
+    void PutCancel() {
+//        PutInProgress = false;
+//        // Restore data buf
+//        IData.PWrite = IPkt.Ptr;
+//        IData.IFullSlotsCount -= IPkt.Length;
+    }
+    // ==== Get ====
+    void GetComplete() {}
+    void GetCancel() {}
+
+    uint8_t GetWholePkt(uint8_t *Ptr, uint32_t ALength) { return FAILURE; }
+
+    // ==== Common ====
+    uint8_t GetWholePkt(uint8_t *p) {
+//        DataPktPtr_t TmpPkt;
+//        uint8_t Rslt = IPtrs.Get(&TmpPkt);
+//        if(Rslt == OK) {
+//            p->Length = TmpPkt.Length;
+//            IData.Get(p->Ptr, &p->Length);
+//        }
+//        return Rslt;
+        return FAILURE;
+    }
+    // Common
+    bool InProgress;
+    void Init() {
+        InProgress = false;
+        ICircBuf.Init();
+    }
+};
 
 #endif /* KL_BUF_H_ */
