@@ -110,6 +110,13 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
             Ack(Rslt);
             break;
 
+        case 0xF0:
+            b2 = PData[0];
+            for(b=0; b<b2; b++) {
+                Uart.Cmd(0xF1, &b, 1);
+            }
+            break;
+
         default:
             Ack(CMD_ERROR);
             break;

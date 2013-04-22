@@ -9,40 +9,40 @@
 #include "tiny_sprintf.h"
 
 CmdUart_t Uart;
-static char UartBuf[999];
+static char UartBuf[UART_TXBUF_SIZE];
 
 void CmdUart_t::Printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
     uint32_t Cnt = tiny_vsprintf(UartBuf, format, args);
     va_end(args);
-    if(Cnt > UART_TXBUF_SIZE) Cnt = UART_TXBUF_SIZE;    // Shrink too long string
+    TRIM_VALUE(Cnt, UART_TXBUF_SIZE);    // Shrink too long string
 
+    // Put data to buffer
+    uint8_t *p = (uint8_t*)UartBuf;
+    //while(GetEmptySlots() < Cnt);
+    if(GetEmptySlots() < Cnt) return;
+    IFullSlotsCount += Cnt;
+    uint32_t PartSz = (TXBuf + UART_TXBUF_SIZE) - PWrite;  // Data from PWrite to right bound
+    if(Cnt > PartSz) {
+        memcpy(PWrite, p, PartSz);
+        PWrite = TXBuf;     // Start from beginning
+        p += PartSz;
+        Cnt -= PartSz;
+    }
+    memcpy(PWrite, p, Cnt);
+    PWrite += Cnt;
+    if(PWrite >= (TXBuf + UART_TXBUF_SIZE)) PWrite = TXBuf; // Circulate pointer
+
+    // Start transmission if Idle
     if(IDmaIsIdle) {
-        memcpy(TXBuf, UartBuf, Cnt);// Place string to buffer from beginning
-        PWrite = TXBuf + Cnt;       // Prepare pointer for next time
-        PRead = TXBuf + Cnt;        // Prepare pointer for next time
-        ICountToSendNext = 0;       // Reset next-time counter
-        // Start DMA
         IDmaIsIdle = false;
-        dmaStreamSetMemory0(UART_DMA, TXBuf);
-        dmaStreamSetTransactionSize(UART_DMA, Cnt);
+        dmaStreamSetMemory0(UART_DMA, PRead);
+        PartSz = (TXBuf + UART_TXBUF_SIZE) - PRead;
+        ITransSize = (IFullSlotsCount > PartSz)? PartSz : IFullSlotsCount;
+        dmaStreamSetTransactionSize(UART_DMA, ITransSize);
         dmaStreamEnable(UART_DMA);
     }
-    else {
-        ICountToSendNext += Cnt;
-        uint32_t BytesFree = UART_TXBUF_SIZE - (PWrite - TXBuf);
-        if(Cnt < BytesFree) {   // Message fits in buffer, no splitting needed
-            memcpy(PWrite, UartBuf, Cnt);
-            PWrite += Cnt;
-        }
-        else { // Cnt >= BytesFree
-            memcpy(PWrite, UartBuf, BytesFree);
-            uint32_t Remainder = Cnt - BytesFree;
-            if(Remainder) memcpy(TXBuf, &UartBuf[BytesFree], Remainder);
-            PWrite = TXBuf + Remainder;
-        }
-    } // if not idle
 }
 
 
@@ -63,7 +63,7 @@ static inline bool TryConvertToDigit(uint8_t b, uint8_t *p) {
 static inline bool IsDelimiter(uint8_t b) { return (b == ','); }
 static inline bool IsEnd(uint8_t b) { return (b == '\r') or (b == '\n'); }
 
-static WORKING_AREA(waUartRxThread, 128);
+static WORKING_AREA(waUartRxThread, 256);
 static msg_t UartRxThread(void *arg) {
     (void)arg;
     chRegSetThreadName("UartRx");
@@ -134,6 +134,7 @@ void CmdUart_t::Init(uint32_t ABaudrate) {
     PRead = TXBuf;
     ICountToSendNext = 0;
     IDmaIsIdle = true;
+    IFullSlotsCount = 0;
     PinSetupAlterFunc(UART_GPIO, UART_TX_PIN, omPushPull, pudNone, UART_AF);
 
     // ==== USART configuration ====
@@ -181,21 +182,16 @@ void CmdUart_t::Init(uint32_t ABaudrate) {
 // ==== IRQs ====
 void CmdUart_t::IRQDmaTxHandler() {
     dmaStreamDisable(UART_DMA);    // Registers may be changed only when stream is disabled
-    if(ICountToSendNext == 0) IDmaIsIdle = true;
+    IFullSlotsCount -= ITransSize;
+    PRead += ITransSize;
+    if(PRead >= (TXBuf + UART_TXBUF_SIZE)) PRead = TXBuf; // Circulate pointer
+
+    if(IFullSlotsCount == 0) IDmaIsIdle = true; // Nothing left to send
     else {  // There is something to transmit more
         dmaStreamSetMemory0(UART_DMA, PRead);
-        // Handle pointer
-        uint32_t BytesLeft = UART_TXBUF_SIZE - (PRead - TXBuf);
-        if(ICountToSendNext < BytesLeft) {  // Data fits in buffer without split
-            dmaStreamSetTransactionSize(UART_DMA, ICountToSendNext);
-            PRead += ICountToSendNext;
-            ICountToSendNext = 0;
-        }
-        else {  // Some portion of data placed in the beginning
-            dmaStreamSetTransactionSize(UART_DMA, BytesLeft);
-            PRead = TXBuf;  // Set pointer to beginning
-            ICountToSendNext -= BytesLeft;
-        }
+        uint32_t PartSz = (TXBuf + UART_TXBUF_SIZE) - PRead;
+        ITransSize = (IFullSlotsCount > PartSz)? PartSz : IFullSlotsCount;
+        dmaStreamSetTransactionSize(UART_DMA, ITransSize);
         dmaStreamEnable(UART_DMA);    // Restart DMA
     }
 }

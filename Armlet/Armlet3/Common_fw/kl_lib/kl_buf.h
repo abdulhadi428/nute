@@ -39,7 +39,7 @@ public:
     inline uint32_t GetEmptyCount() { return Sz-IFullSlotsCount; }
     inline uint32_t GetFullCount()  { return IFullSlotsCount; }
     void Flush(uint32_t ALength) {
-        if(ALength > IFullSlotsCount) ALength = IFullSlotsCount;
+        TRIM_VALUE(ALength, IFullSlotsCount);
         IFullSlotsCount -= ALength;
         uint32_t PartSz = (IBuf + Sz) - PRead;
         if(ALength >= PartSz) {
@@ -50,7 +50,7 @@ public:
     }
     void Init() { PRead = IBuf; PWrite = IBuf; IFullSlotsCount = 0; }
     // Friendship
-    friend class ChunkBuf_t;
+    //friend class BufChunkPut_t;
 };
 
 /*
@@ -142,31 +142,35 @@ public:
 
 // =============================== Chunk buf ===================================
 // Allows to add data chunk by chunk, and to get it all. And vice versa.
-template <typename T, uint32_t Sz>
+/*template <typename T, uint32_t PktCnt, uint32_t PktDataSz>
 class BufChunkPut_t {
 private:
-    CircBufNumber_t<uint8_t, Sz> ICircBuf; // Data buffer
-    T IHeader;
+    CircBuf_t<T, PktCnt> IHdrs;
+    CircBufNumber_t<uint8_t, (PktCnt * PktDataSz)> IData; // Data buffer
+    T IHdr;
 public:
     // ==== Put ====
     uint8_t PutStart(T *PHeader) {
-        if(InProgress) PutCancel();              // Cancel unfinished pkt
+        if(InProgress) PutCancel();     // Cancel unfinished pkt
         // Check if empty slots available
-//        if(!IData.GetEmptyCount()) return FAILURE;  // No room for data
-        InProgress = true;
-        // Setup current pkt
-//        IPkt.Length = 0;
-//        IPkt.Ptr = IData.PWrite;
-        return OK;
+        if(IHdrs.GetEmptyCount() == 0) return FAILURE;  // No room for header
+            IPHdr = (T*)ICircBuf.PWrite;  // Save pointer to write length in there later
+            InProgress = true;
+            PHeader->Length = 0;
+            PHeader->State = NEW;
+            Rslt = ICircBuf.Put((uint8_t*)PHeader, sizeof(T));
+        }
+        return Rslt;
     }
     uint8_t PutChunk(uint8_t *p, uint32_t Length) {
-//        if(!PutInProgress or (IData.GetEmptyCount() < Length)) return FAILURE;
-//        IData.Put(p, Length);
-//        IPkt.Length += Length;
+        if(!InProgress or (ICircBuf.GetEmptyCount() < Length)) return FAILURE;
+        ICircBuf.Put(p, Length);
+        IPHdr->Length += Length;
         return OK;
     }
     void PutComplete() {
-//        PutInProgress = false;
+        InProgress = false;
+
 //        IPtrs.Put(&IPkt);
     }
     void PutCancel() {
@@ -197,7 +201,8 @@ public:
     void Init() {
         InProgress = false;
         ICircBuf.Init();
+        IPHdr = (T*)ICircBuf.PWrite;
     }
 };
-
+*/
 #endif /* KL_BUF_H_ */

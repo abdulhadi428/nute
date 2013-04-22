@@ -236,7 +236,7 @@ extern "C" {
 #endif
 #if CH_DBG_ENABLED
   extern const char *dbg_panic_msg;
-  void chDbgPanic(const char *msg1, const char *msg2);
+  void chDbgPanic(const char *msg);
 #endif
 #ifdef __cplusplus
 }

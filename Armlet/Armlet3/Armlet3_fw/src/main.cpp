@@ -12,11 +12,11 @@
 #include "kl_lib_f2xx.h"
 #include "lcd2630.h"
 #include "peripheral.h"
-#include "lvl2.h"
 #include "kl_sd.h"
 #include "sound.h"
 #include "keys.h"
 #include "infrared.h"
+#include "lvl1_assym.h"
 
 #include "application.h"
 
@@ -55,7 +55,6 @@ void Init() {
     Uart.Init(115200);
     Uart.Printf("Armlet3 AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
     Lcd.Init();
-    //Radio.Init();
     SD.Init();
     KeysInit();
     Beeper.Init();
@@ -65,7 +64,6 @@ void Init() {
     //Sound.Play("alive.wav");
     //Sound.Play("Sylvans.mp3");
     // Radio
-//    rLevel1.Init(RDEV_BOTTOM_ID+1); // FIXME: replace RBOTTOMID with value from SD
-//    rLevel2.Init();
+    rLevel1.Init(RDEV_BOTTOM_ID+1); // FIXME: replace RBOTTOMID with value from SD
     App.Init();
 }

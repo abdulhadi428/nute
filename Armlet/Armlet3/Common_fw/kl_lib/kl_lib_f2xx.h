@@ -38,6 +38,9 @@
 enum BitOrder_t {boMSB, boLSB};
 enum LowHigh_t {Low, High};
 
+// Simple pseudofunctions
+#define TRIM_VALUE(v, Max)  { if(v > Max) v = Max; }
+
 // DMA
 #define DMA_PRIORITY_LOW        STM32_DMA_CR_PL(0b00)
 #define DMA_PRIORITY_MEDIUM     STM32_DMA_CR_PL(0b01)

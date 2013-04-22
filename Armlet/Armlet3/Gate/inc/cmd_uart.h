@@ -44,6 +44,9 @@ private:
     uint8_t *PWrite, *PRead;
     uint16_t ICountToSendNext;
     bool IDmaIsIdle;
+    uint32_t IFullSlotsCount, ITransSize;
+
+    uint32_t GetEmptySlots() { return UART_TXBUF_SIZE - IFullSlotsCount; }
 #if UART_RX_ENABLED
     RcvState_t RxState;
     uint8_t IRxBuf[UART_RXBUF_SZ];
