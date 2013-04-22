@@ -160,12 +160,6 @@ void i2cDmaIrqHandler(void *p, uint32_t flags) {
     chSysUnlockFromIsr();
 }
 
-void i2cDmaRXIrqHandler(void *p, uint32_t flags) {
-    chSysLockFromIsr();
-    Uart.Printf("===R===");
-    chSysUnlockFromIsr();
-}
-
 void i2c_t::Init(
         I2C_TypeDef *pi2c,
         GPIO_TypeDef *PGpio,
@@ -191,7 +185,7 @@ void i2c_t::Init(
 
     // Setup Dma TX
     PDmaTx = APDmaTx;
-    dmaStreamAllocate(PDmaTx, 1, i2cDmaIrqHandler, this);
+    dmaStreamAllocate(PDmaTx, IRQ_PRIO_MEDIUM, i2cDmaIrqHandler, this);
     dmaStreamSetPeripheral(PDmaTx, &ii2c->DR);
     dmaStreamSetMode      (PDmaTx,
             STM32_DMA_CR_CHSEL(DmaChnl) |
@@ -205,7 +199,7 @@ void i2c_t::Init(
 
     // Setup Dma RX
     PDmaRx = APDmaRx;
-    dmaStreamAllocate(PDmaRx, 1, i2cDmaIrqHandler, this);
+    dmaStreamAllocate(PDmaRx, IRQ_PRIO_MEDIUM, i2cDmaIrqHandler, this);
     //dmaStreamAllocate(PDmaRx, 1, i2cDmaRXIrqHandler, NULL);
     dmaStreamSetPeripheral(PDmaRx, &ii2c->DR);
     dmaStreamSetMode      (PDmaRx,
@@ -280,9 +274,9 @@ uint8_t i2c_t::CmdWriteRead(uint8_t Addr,
         if(WaitEv8() != OK) return FAILURE;
         dmaStreamSetMemory0(PDmaTx, WPtr);
         dmaStreamSetTransactionSize(PDmaTx, WLength);
-        chSysLock();
         PRequestingThread = chThdSelf();
         dmaStreamEnable(PDmaTx);
+        chSysLock();
         chSchGoSleepS(THD_STATE_SUSPENDED); // Sleep until end
         chSysUnlock();
         dmaStreamDisable(PDmaTx);
@@ -305,16 +299,16 @@ uint8_t i2c_t::CmdWriteRead(uint8_t Addr,
             return OK;
         }
         else {  // more than 1 byte, use DMA
-            chSysLock();
             AckEnable();
             dmaStreamSetMemory0(PDmaRx, RPtr);
             dmaStreamSetTransactionSize(PDmaRx, RLength);
             DmaLastTransferSet(); // Inform DMA that this is last transfer => do not ACK last byte
             PRequestingThread = chThdSelf();
             dmaStreamEnable(PDmaRx);
+            chSysLock();
             chSchGoSleepS(THD_STATE_SUSPENDED); // Sleep until end
-            dmaStreamDisable(PDmaRx);
             chSysUnlock();
+            dmaStreamDisable(PDmaRx);
         } // if lng==1
     } // if != 0
     SendStop();
@@ -339,9 +333,9 @@ uint8_t i2c_t::CmdWriteWrite(uint8_t Addr,
         if(WaitEv8() != OK) return FAILURE;
         dmaStreamSetMemory0(PDmaTx, WPtr1);
         dmaStreamSetTransactionSize(PDmaTx, WLength1);
-        chSysLock();
-        dmaStreamEnable(PDmaTx);
         PRequestingThread = chThdSelf();
+        dmaStreamEnable(PDmaTx);
+        chSysLock();
         chSchGoSleepS(THD_STATE_SUSPENDED); // Sleep until end
         chSysUnlock();
         dmaStreamDisable(PDmaTx);
@@ -350,9 +344,9 @@ uint8_t i2c_t::CmdWriteWrite(uint8_t Addr,
         if(WaitEv8() != OK) return FAILURE;
         dmaStreamSetMemory0(PDmaTx, WPtr2);
         dmaStreamSetTransactionSize(PDmaTx, WLength2);
-        chSysLock();
-        dmaStreamEnable(PDmaTx);
         PRequestingThread = chThdSelf();
+        dmaStreamEnable(PDmaTx);
+        chSysLock();
         chSchGoSleepS(THD_STATE_SUSPENDED); // Sleep until end
         chSysUnlock();
         dmaStreamDisable(PDmaTx);

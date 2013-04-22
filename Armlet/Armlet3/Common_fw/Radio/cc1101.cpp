@@ -40,7 +40,7 @@ void cc1101_t::Init() {
     EXTI->RTSR &= ~GPIO0_IRQ_MASK;      // Rising trigger disabled
     EXTI->FTSR |=  GPIO0_IRQ_MASK;      // Falling trigger enabled
     EXTI->PR    =  GPIO0_IRQ_MASK;      // Clean irq flag
-    nvicEnableVector(EXTI4_IRQn, CORTEX_PRIORITY_MASK(STM32_EXT_EXTI4_IRQ_PRIORITY));
+    nvicEnableVector(EXTI4_IRQn, CORTEX_PRIORITY_MASK(IRQ_PRIO_HIGH));
 }
 
 // ========================== TX, RX, freq and power ===========================

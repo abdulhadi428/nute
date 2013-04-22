@@ -41,6 +41,7 @@ enum RcvState_t {rsStart, rsCmdCode1, rsCmdCode2, rsData1, rsData2};
 class CmdUart_t {
 private:
     uint8_t TXBuf[UART_TXBUF_SIZE];
+    char SprintfBuf[UART_TXBUF_SIZE];
     uint8_t *PWrite, *PRead;
     bool IDmaIsIdle;
     uint32_t IFullSlotsCount, ITransSize;

@@ -41,6 +41,12 @@ enum LowHigh_t {Low, High};
 // Simple pseudofunctions
 #define TRIM_VALUE(v, Max)  { if(v > Max) v = Max; }
 
+// IRQ priorities
+#define IRQ_PRIO_LOW            15  // Minimum
+#define IRQ_PRIO_MEDIUM         9
+#define IRQ_PRIO_HIGH           7
+#define IRQ_PRIO_VERYHIGH       4 // Higher than systick
+
 // DMA
 #define DMA_PRIORITY_LOW        STM32_DMA_CR_PL(0b00)
 #define DMA_PRIORITY_MEDIUM     STM32_DMA_CR_PL(0b01)

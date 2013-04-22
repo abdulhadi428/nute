@@ -9,17 +9,15 @@
 #include "tiny_sprintf.h"
 
 CmdUart_t Uart;
-static char UartBuf[306];
 
 void CmdUart_t::Printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
-    uint32_t Cnt = tiny_vsprintf(UartBuf, format, args);
+    uint32_t Cnt = tiny_vsprintf(SprintfBuf, UART_TXBUF_SIZE, format, args);
     va_end(args);
-    TRIM_VALUE(Cnt, UART_TXBUF_SIZE);    // Shrink too long string
 
     // Put data to buffer
-    uint8_t *p = (uint8_t*)UartBuf;
+    uint8_t *p = (uint8_t*)SprintfBuf;
     IFullSlotsCount += Cnt;
     uint32_t PartSz = (TXBuf + UART_TXBUF_SIZE) - PWrite;  // Data from PWrite to right bound
     if(Cnt > PartSz) {
@@ -143,14 +141,14 @@ void CmdUart_t::Init(uint32_t ABaudrate) {
             USART_CR1_TE            // Transmitter enable
             | USART_CR1_RE          // Receiver enable
             | USART_CR1_RXNEIE;     // RX Irq enable
-    UART_RX_IRQ_ENABLE();
+    UART_RX_IRQ_ENABLE();           // Enable irq vector
 #else
     UART->CR1 = USART_CR1_TE;     // Transmitter enabled
 #endif
 
     // ==== DMA ====
     // Here only unchanged parameters of the DMA are configured.
-    dmaStreamAllocate     (UART_DMA, 1, CmdUartTxIrq, NULL);
+    dmaStreamAllocate     (UART_DMA, IRQ_PRIO_MEDIUM, CmdUartTxIrq, NULL);
     dmaStreamSetPeripheral(UART_DMA, &UART->DR);
     dmaStreamSetMode      (UART_DMA,
             STM32_DMA_CR_CHSEL(UART_DMA_CHNL) |

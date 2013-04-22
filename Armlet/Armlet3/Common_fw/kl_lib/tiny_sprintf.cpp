@@ -36,13 +36,15 @@ char *put_uint(char *p,
     return p;
 }
 
-int tiny_vsprintf(char *buf, const char *format, va_list args) {
+int tiny_vsprintf(char *buf, int32_t BufSz, const char *format, va_list args) {
+    BufSz--;    // leave last byte for '\0'
     const char *f = format;
     char *p = buf;
     char c;
     while ((c = *f++) != 0) {
         if (c != '%') {
             *p++ = c;
+            if(--BufSz <= 0) break;
             continue;
         }
 
@@ -51,7 +53,7 @@ int tiny_vsprintf(char *buf, const char *format, va_list args) {
         // instead of ' ' as a filler.
         int width = 0;
         bool zero_padded = false;
-        while (true) {
+        while(true) {
             c = *f++;
             if (c < '0' || c > '9') break;
             if (width == 0 && c == '0') zero_padded = true;
@@ -61,10 +63,15 @@ int tiny_vsprintf(char *buf, const char *format, va_list args) {
 
         if((c == 's') or (c == 'S')) {
             char *s = va_arg(args, char*);
-            while (*s != 0)
+            while (*s != 0) {
                 *p++ = *s++;
+                if(--BufSz <= 0) break;
+            }
         }
-        else if (c == 'c') *p++ = va_arg(args, int);
+        else if (c == 'c') {
+            *p++ = va_arg(args, int);
+            if(--BufSz <= 0) break;
+        }
         else if (c == 'X') {
             unsigned int n = va_arg(args, unsigned int);
             p = put_uint(p, n, 16, width, zero_padded);
@@ -95,13 +102,13 @@ int tiny_vsprintf(char *buf, const char *format, va_list args) {
     return p-buf;
 }
 
-int tiny_sprintf(char *buf, const char *format, ...) {
-    va_list args;
-    va_start(args, format);
-    int result = tiny_vsprintf(buf, format, args);
-    va_end(args);
-    return result;
-}
+//int tiny_sprintf(char *buf, const char *format, ...) {
+//    va_list args;
+//    va_start(args, format);
+//    int result = tiny_vsprintf(buf, format, args);
+//    va_end(args);
+//    return result;
+//}
 
 
 #ifdef TESTING
