@@ -9,7 +9,7 @@
 #include "tiny_sprintf.h"
 
 CmdUart_t Uart;
-static char UartBuf[UART_TXBUF_SIZE];
+static char UartBuf[306];
 
 void CmdUart_t::Printf(const char *format, ...) {
     va_list args;
@@ -20,8 +20,6 @@ void CmdUart_t::Printf(const char *format, ...) {
 
     // Put data to buffer
     uint8_t *p = (uint8_t*)UartBuf;
-    //while(GetEmptySlots() < Cnt);
-    if(GetEmptySlots() < Cnt) return;
     IFullSlotsCount += Cnt;
     uint32_t PartSz = (TXBuf + UART_TXBUF_SIZE) - PWrite;  // Data from PWrite to right bound
     if(Cnt > PartSz) {
@@ -45,7 +43,6 @@ void CmdUart_t::Printf(const char *format, ...) {
     }
 }
 
-
 // ================================= Thread ====================================
 #if UART_RX_ENABLED
 
@@ -67,7 +64,6 @@ static WORKING_AREA(waUartRxThread, 256);
 static msg_t UartRxThread(void *arg) {
     (void)arg;
     chRegSetThreadName("UartRx");
-
     msg_t Msg;
     while(1) {
         // Fetch byte from queue
@@ -132,7 +128,6 @@ void CmdUartTxIrq(void *p, uint32_t flags) { Uart.IRQDmaTxHandler(); }
 void CmdUart_t::Init(uint32_t ABaudrate) {
     PWrite = TXBuf;
     PRead = TXBuf;
-    ICountToSendNext = 0;
     IDmaIsIdle = true;
     IFullSlotsCount = 0;
     PinSetupAlterFunc(UART_GPIO, UART_TX_PIN, omPushPull, pudNone, UART_AF);
@@ -177,7 +172,6 @@ void CmdUart_t::Init(uint32_t ABaudrate) {
 #endif
     UART->CR1 |= USART_CR1_UE;       // Enable USART
 }
-
 
 // ==== IRQs ====
 void CmdUart_t::IRQDmaTxHandler() {

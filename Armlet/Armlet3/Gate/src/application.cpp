@@ -114,6 +114,9 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
             b2 = PData[0];
             for(b=0; b<b2; b++) {
                 Uart.Cmd(0xF1, &b, 1);
+                Uart.Cmd(0xF1, &b, 1);
+                Uart.Cmd(0xF1, &b, 1);
+                chThdSleepMilliseconds(21);
             }
             break;
 

@@ -77,7 +77,6 @@ void rLevel1_t::Task() {
     chSysLock();
     chSchGoSleepS(THD_STATE_SUSPENDED); // Will wake up by rTmr
     chSysUnlock();
-
     // ==== Sleep ended, transmit new pkt ====
     if(++SlotN >= RSLOT_CNT) SlotN = 0;
     PktTx.SlotN = SlotN;
@@ -328,11 +327,9 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     IRxBuf.Init();          // Buffer of received pkts
     ITxBuf.Init();          // Buffer of pkts to transmit
     ITransmitted.Init();    // Buffer of transmitted pkt headers
-
     // Init radioIC
     CC.Init();
     CC.SetTxPower(PwrMinus6dBm);
-
     SelfID = ASelfID;
     IHdr.State = FAILURE;
 
