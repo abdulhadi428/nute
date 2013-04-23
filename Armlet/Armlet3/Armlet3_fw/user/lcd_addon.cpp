@@ -79,13 +79,14 @@ void lcd_putBitmapXor(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint16_t
         return;
     Lcd.GetBitmap(x, y, w, h, (uint16_t*)sbmp);
 
-    uint16_t sq = (uint16_t)w*(uint16_t)h;
-    uint16_t* sPtr = sbmp;
-    uint16_t* tPtr = pbmp;
-    for (uint16_t i = 0; i < sq; ++i, ++sPtr, ++tPtr)
-    {
-        *sPtr ^= *tPtr;
-    }
+    // KL
+//    uint16_t sq = (uint16_t)w*(uint16_t)h;
+//    uint16_t* sPtr = sbmp;
+//    uint16_t* tPtr = pbmp;
+//    for (uint16_t i = 0; i < sq; ++i, ++sPtr, ++tPtr)
+//    {
+//        *sPtr ^= *tPtr;
+//    }
 
     Lcd.PutBitmap(x, y, w, h, sbmp);
     chHeapFree(sbmp);

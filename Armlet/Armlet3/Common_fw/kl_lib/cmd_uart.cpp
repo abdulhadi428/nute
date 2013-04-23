@@ -123,6 +123,7 @@ void CmdUart_t::IProcessByte(uint8_t b) {
 extern "C" {
 void CmdUartTxIrq(void *p, uint32_t flags) { Uart.IRQDmaTxHandler(); }
 }
+
 void CmdUart_t::Init(uint32_t ABaudrate) {
     PWrite = TXBuf;
     PRead = TXBuf;

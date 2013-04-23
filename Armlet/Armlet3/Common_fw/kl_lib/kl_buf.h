@@ -29,11 +29,9 @@ public:
 
     uint8_t Put(T *p) {
         if(IFullSlotsCount >= Sz) return FAILURE;
-        chSysLock();
         memcpy(PWrite, p, sizeof(T));
         if(++PWrite > (IBuf + Sz - 1)) PWrite = IBuf;   // Circulate buffer
         IFullSlotsCount++;
-        chSysUnlock();
         return OK;
     }
     inline uint32_t GetEmptyCount() { return Sz-IFullSlotsCount; }
@@ -99,7 +97,6 @@ class CircBufNumber_t : public CircBuf_t<T, Sz> {
 public:
     uint8_t Get(T *p, uint32_t ALength) {
         uint8_t Rslt = FAILURE;
-        chSysLock();
         if(this->IFullSlotsCount >= ALength) {  // if enough data
             this->IFullSlotsCount -= ALength;   // 'Length' slots will be freed
             uint32_t PartSz = (this->IBuf + Sz) - this->PRead;  // Data from PRead to right bound
@@ -114,13 +111,11 @@ public:
             if(this->PRead >= (this->IBuf + Sz)) this->PRead = this->IBuf;   // Circulate pointer
             Rslt = OK;
         }
-        chSysUnlock();
         return Rslt;
     }
 
     uint8_t Put(T *p, uint32_t Length) {
         uint8_t Rslt = FAILURE;
-        chSysLock();
         if(this->GetEmptyCount() >= Length) {    // check if Buffer overflow
             this->IFullSlotsCount += Length;                      // 'Length' slots will be occupied
             uint32_t PartSz = (this->IBuf + Sz) - this->PWrite;  // Data from PWrite to right bound
@@ -135,7 +130,6 @@ public:
             if(this->PWrite >= (this->IBuf + Sz)) this->PWrite = this->IBuf; // Circulate pointer
             Rslt = OK;
         }
-        chSysUnlock();
         return Rslt;
     }
 };

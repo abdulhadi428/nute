@@ -41,11 +41,7 @@ struct rPkt_t {
 #define R_CMD_DATA      0x1000
 
 #define R_NXTSLT        0x0800  // Listen next slot
-//#define R_RPIDTX
-///#define R_RPIDRX
 #define R_ACK           0x0010
-//#define R_ACKDYN
-//#define R_RPIDDYN
 
 // =========================== Address space ===================================
 // Devices
@@ -60,12 +56,6 @@ struct rPkt_t {
 #define RSLOT_CNT       RDEVICE_CNT // Total slots count
 #define ID2SLOT(id)     (id - RDEV_BOTTOM_ID)
 #define SLOT2ID(slot)   (slot + RDEV_BOTTOM_ID)
-
-#ifdef DEVICE
-#define RNEIGHBOUR_CNT  RGATE_CNT
-#else
-#define RNEIGHBOUR_CNT  RDEVICE_CNT
-#endif
 
 // ============================== Timings ======================================
 #define R_TX_WAIT_MS    3   // Measured value of transmission length
@@ -124,22 +114,21 @@ private:
     uint8_t SelfID;
     EventSource IEvtSrcRadioRx, IEvtSrcRadioTxEnd;
     // ==== Rx ====
-    rPkt_t PktRx;
+    rPkt_t PktRx;       // Local rPkt to receive
     rPktWithData_t<RRX_PKT_DATA_SZ> PktRxData;
     CircBuf_t<rPktWithData_t<RRX_PKT_DATA_SZ>, RRX_PKT_CNT> IRxBuf;
     inline uint8_t HandleRxDataPkt();
     // ==== Tx ====
     rPkt_t PktTx;       // Local rPkt to transmit
-    rPktHeader_t IHdr;
+    rPktHeader_t ITxHdr;
     CircBufNumber_t<uint8_t, RTX_BUF_SZ> ITxBuf;  // Buffer containing pkts to transmit
     CircBuf_t<rPktIDState_t, RTX_PKT_CNT> ITransmitted;
     inline void ICompleteTx(uint8_t AState);
-
     inline void PrepareDataPkt();
 #ifdef DEVICE
     uint8_t RxPktState, *PRxData;
     uint8_t RxRetryCounter; // to check if we get lost
-    uint16_t GateN;   // Number of concentrator to use. Note, Number != ID.
+    uint16_t GateN;   // Number of gate to use. Note, Number != ID.
     inline void IInSync();
     inline void IDiscovery();
     uint32_t ICalcWaitRx_ms(uint8_t RcvdSlot);
@@ -152,7 +141,7 @@ private:
 #ifdef GATE
     uint8_t SlotN;
     inline void PreparePingPkt();
-    inline bool InsideCorrectSlot() { return (SlotN == ID2SLOT(IHdr.rID)); }
+    inline bool InsideCorrectSlot() { return (SlotN == ID2SLOT(ITxHdr.rID)); }
 #endif
 public:
     void Init(uint16_t ASelfID);

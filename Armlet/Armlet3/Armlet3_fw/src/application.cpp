@@ -22,9 +22,8 @@
 
 App_t App;
 
-char Str[255];
-
 static EventListener EvtLstnrApp;
+static rPktWithData_t<RRX_PKT_DATA_SZ> SRxPkt;
 
 // Prototypes
 
@@ -60,27 +59,36 @@ static msg_t AppThread(void *arg) {
 //    for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i;
 
     // Events
-    //rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
+    uint32_t EvtMsk;
     KeysRegisterEvt(&EvtLstnrApp, EVTMASK_KEYS);
+    rLevel1.RegisterEvtRx(&EvtLstnrApp, EVTMASK_RADIO_RX);
 
     while(1) {
         //chThdSleepMilliseconds(999);
 //        Rslt1 = rLevel1.AddPktToTx(0, Buf, PktSZ, &Rslt2);
 //        Uart.Printf("### %u\r", Rslt1);
-//
-        chEvtWaitOne(EVTMASK_KEYS);
-//        Uart.Printf("Rslt = %u\r", Rslt2);
 
-        if((KeyStatus[0] == KEY_PRESSED) or (KeyStatus[1] == KEY_PRESSED) or (KeyStatus[2] == KEY_PRESSED)) {
-            Beeper.Beep(BeepBeep);
+        EvtMsk = chEvtWaitAny(EVTMASK_RADIO_RX | EVTMASK_KEYS);
+
+        if(EvtMsk &EVTMASK_KEYS) {
+            if((KeyStatus[0] == KEY_PRESSED) or (KeyStatus[1] == KEY_PRESSED) or (KeyStatus[2] == KEY_PRESSED)) {
+                Beeper.Beep(BeepBeep);
+            }
+            else if((KeyStatus[3] == KEY_PRESSED) or (KeyStatus[4] == KEY_PRESSED) or (KeyStatus[5] == KEY_PRESSED)) {
+                Vibro.Vibrate(BrrBrr);
+            }
+            else if((KeyStatus[6] == KEY_PRESSED) or (KeyStatus[7] == KEY_PRESSED) or (KeyStatus[8] == KEY_PRESSED)) {
+                Beeper.Beep(ShortBeep);
+                Vibro.Vibrate(ShortBrr);
+            }
         }
-        else if((KeyStatus[3] == KEY_PRESSED) or (KeyStatus[4] == KEY_PRESSED) or (KeyStatus[5] == KEY_PRESSED)) {
-            Vibro.Vibrate(BrrBrr);
-        }
-        else if((KeyStatus[6] == KEY_PRESSED) or (KeyStatus[7] == KEY_PRESSED) or (KeyStatus[8] == KEY_PRESSED)) {
-            Beeper.Beep(ShortBeep);
-            Vibro.Vibrate(ShortBrr);
-        }
+
+        if(EvtMsk & EVTMASK_RADIO_RX) {
+            while(rLevel1.GetReceivedPkt(&SRxPkt) == OK) {
+                rLevel1.AddPktToTx(0, SRxPkt.Data, SRxPkt.Length);
+            }
+        } // if evtmsk
+
         //Uart.Printf("Evt \r");
         //Lcd.Cls(c);
 //        for(uint8_t y=0; y<128; y+=8) {
