@@ -22,7 +22,7 @@
 
 App_t App;
 
-static EventListener EvtLstnrApp;
+static EventListener EvtLstnrAppRadioRx, EvtListenerAppKeys;
 static rPktWithData_t<RRX_PKT_DATA_SZ> SRxPkt;
 
 // Prototypes
@@ -60,8 +60,8 @@ static msg_t AppThread(void *arg) {
 
     // Events
     uint32_t EvtMsk;
-    KeysRegisterEvt(&EvtLstnrApp, EVTMASK_KEYS);
-    rLevel1.RegisterEvtRx(&EvtLstnrApp, EVTMASK_RADIO_RX);
+    KeysRegisterEvt(&EvtListenerAppKeys, EVTMASK_KEYS);
+    rLevel1.RegisterEvtRx(&EvtLstnrAppRadioRx, EVTMASK_RADIO_RX);
 
     while(1) {
         //chThdSleepMilliseconds(999);

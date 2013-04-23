@@ -16,7 +16,7 @@
 #include "cmd_uart.h"
 #include "pill.h"
 
-static EventListener EvtLstnrApp;
+static EventListener EvtLstnrAppRadioRx, EvtLstnrAppRadioTx;
 static rPktIDState_t PktState;
 static rPktWithData_t<RRX_PKT_DATA_SZ> SRxPkt;
 
@@ -30,15 +30,15 @@ static msg_t AppThread(void *arg) {
     chRegSetThreadName("App");
     // Register Radio evts
     uint32_t EvtMsk;
-    rLevel1.RegisterEvtRx(&EvtLstnrApp, EVTMASK_RADIO_RX);
-    rLevel1.RegisterEvtTx(&EvtLstnrApp, EVTMASK_RADIO_TX);
+    rLevel1.RegisterEvtRx(&EvtLstnrAppRadioRx, EVTMASK_RADIO_RX);
+    rLevel1.RegisterEvtTx(&EvtLstnrAppRadioTx, EVTMASK_RADIO_TX);
 
     while(1) {
         EvtMsk = chEvtWaitAny(EVTMASK_RADIO_RX | EVTMASK_RADIO_TX);
         // Serve event
         if(EvtMsk & EVTMASK_RADIO_RX) {
             while(rLevel1.GetReceivedPkt(&SRxPkt) == OK)
-                Uart.Cmd(RPL_RRX, (uint8_t*)&SRxPkt, (sizeof(SRxPkt.rID) + sizeof(SRxPkt.Length) + SRxPkt.Length));   // SBuf[1] contains length
+                Uart.Cmd(RPL_RRX, (uint8_t*)&SRxPkt, (sizeof(SRxPkt.rID) + sizeof(SRxPkt.Length) + SRxPkt.Length));
         } // if evtmsk
 
         if(EvtMsk & EVTMASK_RADIO_TX) {

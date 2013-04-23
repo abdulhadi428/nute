@@ -17,6 +17,7 @@
 #include "keys.h"
 #include "infrared.h"
 #include "lvl1_assym.h"
+#include "cmd_uart.h"
 
 #include "application.h"
 

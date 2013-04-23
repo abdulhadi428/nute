@@ -62,15 +62,11 @@ void rLevel1_t::PreparePingPkt() {
 
 // Handler of received rPkt. Just one rPkt at a time allowed.
 uint8_t rLevel1_t::HandleRxDataPkt() {
-    Uart.Printf(" 1 ");
     PktRxData.rID = PktRx.rID;
     // Get effective length from last byte
     PktRxData.Length = PktRx.Data[RDATA_CNT-1];
-    Uart.Printf("L=%u ", PktRxData.Length);
     memcpy(PktRxData.Data, PktRx.Data, PktRxData.Length);
-    Uart.Printf(" 2 ");
     uint8_t Rslt = IRxBuf.Put(&PktRxData);
-    Uart.Printf(" 3 ");
     if(Rslt == OK) chEvtBroadcast(&IEvtSrcRadioRx);    // Pkt received completely
     return Rslt;
 }
@@ -84,9 +80,9 @@ void rLevel1_t::Task() {
     if(++SlotN >= RSLOT_CNT) SlotN = 0;
     PktTx.SlotN = SlotN;
     // If not transmitting long pkt already, try to get new data pkt
-    if((ITxHdr.State == OK) or (ITxHdr.State == FAILURE) or (ITxHdr.State == BUSY))
+    if((ITxHdr.State == OK) or (ITxHdr.State == FAILURE) or (ITxHdr.State == BUSY)) {
         if(ITxBuf.Get((uint8_t*)&ITxHdr, sizeof(rPktHeader_t)) == OK) ITxHdr.State = NEW;   // Will not be transmitted until correct slot
-
+    }
     // Transmit data if new and in correct slot, or if first pkt is already sent
     if(((ITxHdr.State == NEW) and InsideCorrectSlot()) or (ITxHdr.State == IN_PROGRESS)) PrepareDataPkt();
     else PreparePingPkt();
@@ -98,7 +94,7 @@ void rLevel1_t::Task() {
     //Uart.Printf("Rx: %u\r", RxRslt);
     // Process result
     if(RxRslt == OK) {
-        Uart.Printf("Rx Slot=%u; ID=%u; Srv=%X\r", SlotN, PktRx.rID, PktRx.Srv);
+        //Uart.Printf("Rx Slot=%u; ID=%u; Srv=%X\r", SlotN, PktRx.rID, PktRx.Srv);
         // If data received, put it to queue
         if(PktRx.Srv & R_CMD_DATA) HandleRxDataPkt();
         // Check reply to data containing pkt
@@ -360,10 +356,10 @@ void rLevel1_t::SetID(uint16_t ASelfID) {
 #endif
 
 uint8_t rLevel1_t::AddPktToTx(uint8_t rID, uint8_t *Ptr, uint32_t Length) {
+    TRIM_VALUE(Length, RTX_PKT_DATA_SZ);
     if(ITxBuf.GetEmptyCount() >= (sizeof(rPktHeader_t) + Length)) {
         rPktHeader_t Hdr;
         Hdr.rID = rID;
-        TRIM_VALUE(Length, RTX_PKT_DATA_SZ);
         Hdr.Length = Length;
         chSysLock();
         ITxBuf.Put((uint8_t*)&Hdr, sizeof(rPktHeader_t));   // Put header
