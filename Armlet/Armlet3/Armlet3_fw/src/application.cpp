@@ -85,6 +85,7 @@ static msg_t AppThread(void *arg) {
 
         if(EvtMsk & EVTMASK_RADIO_RX) {
             while(rLevel1.GetReceivedPkt(&SRxPkt) == OK) {
+                Uart.Printf("%A\r", SRxPkt.Data, SRxPkt.Length, ' ');
                 rLevel1.AddPktToTx(0, SRxPkt.Data, SRxPkt.Length);
             }
         } // if evtmsk

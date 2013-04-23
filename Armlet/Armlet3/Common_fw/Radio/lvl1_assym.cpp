@@ -65,6 +65,7 @@ uint8_t rLevel1_t::HandleRxDataPkt() {
     PktRxData.rID = PktRx.rID;
     // Get effective length from last byte
     PktRxData.Length = PktRx.Data[RDATA_CNT-1];
+    TRIM_VALUE(PktRxData.Length, (RDATA_CNT-1));
     memcpy(PktRxData.Data, PktRx.Data, PktRxData.Length);
     uint8_t Rslt = IRxBuf.Put(&PktRxData);
     if(Rslt == OK) chEvtBroadcast(&IEvtSrcRadioRx);    // Pkt received completely
