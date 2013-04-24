@@ -41,6 +41,11 @@ enum LowHigh_t {Low, High};
 // Simple pseudofunctions
 #define TRIM_VALUE(v, Max)  { if(v > Max) v = Max; }
 
+#define ANY_OF_2(a, b1, b2)             (((a)==(b1)) or ((a)==(b2)))
+#define ANY_OF_3(a, b1, b2, b3)         (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)))
+#define ANY_OF_4(a, b1, b2, b3, b4)     (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)) or ((a)==(b4)))
+#define ANY_OF_5(a, b1, b2, b3, b4, b5) (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)) or ((a)==(b4)) or ((a)==(b5)))
+
 // IRQ priorities
 #define IRQ_PRIO_LOW            15  // Minimum
 #define IRQ_PRIO_MEDIUM         9
@@ -193,13 +198,25 @@ uint32_t Random(uint32_t TopValue);
 enum TmrTrigInput_t {tiITR0=0x00, tiITR1=0x10, tiITR2=0x20, tiITR3=0x30, tiTIED=0x40, tiTI1FP1=0x50, tiTI2FP2=0x60, tiETRF=0x70};
 enum TmrMasterMode_t {mmReset=0x00, mmEnable=0x10, mmUpdate=0x20, mmComparePulse=0x30, mmCompare1=0x40, mmCompare2=0x50, mmCompare3=0x60, mmCompare4=0x70};
 enum TmrSlaveMode_t {smDisable=0, smEncoder1=1, smEncoder2=2, smEncoder3=3, smReset=4, smGated=5, smTrigger=6, smExternal=7};
+enum Inverted_t {invNotInverted, invInverted};
 
 class Timer_t {
 private:
     TIM_TypeDef* ITmr;
+    uint32_t *PClk;
 public:
-    Timer_t(TIM_TypeDef* Tmr): ITmr(Tmr) {}
+    Timer_t(TIM_TypeDef* Tmr): ITmr(Tmr), PClk(NULL), PCCR(NULL) {}
+    __IO uint32_t *PCCR;    // Made public to allow DMA
+    // Common
+    void Init();
+    void Deinit();
+    inline void Enable()  { ITmr->CR1 |=  TIM_CR1_CEN; }
+    inline void Disable() { ITmr->CR1 &= ~TIM_CR1_CEN; }
+    inline void SetUpdateFrequency(uint32_t FreqHz) { SetTopValue(*PClk / FreqHz); }
     inline void SetTopValue(uint16_t Value) { ITmr->ARR = Value; }
+    inline uint16_t GetTopValue() { return ITmr->ARR; }
+    inline void SetupPrescaler(uint32_t PrescaledFreqHz) { ITmr->PSC = (*PClk / PrescaledFreqHz) - 1; }
+    // Master/Slave
     inline void SetTriggerInput(TmrTrigInput_t TrgInput) {
         uint16_t tmp = ITmr->SMCR;
         tmp &= ~TIM_SMCR_TS;   // Clear bits
@@ -218,11 +235,12 @@ public:
         tmp |= (uint16_t)SlaveMode;
         ITmr->SMCR = tmp;
     }
+    // DMA, Irq, Evt
     inline void DmaOnTriggerEnable() { ITmr->DIER |= TIM_DIER_TDE; }
-    inline void Enable()  { ITmr->CR1 |=  TIM_CR1_CEN; }
-    inline void Disable() { ITmr->CR1 &= ~TIM_CR1_CEN; }
+    inline void GenerateUpdateEvt()  { ITmr->EGR = TIM_EGR_UG; }
     // PWM
-    void PwmInit(GPIO_TypeDef *GPIO, uint16_t N);
+    void PwmInit(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted);
+    void PwmSet(uint16_t Value) { *PCCR = Value; }
 };
 
 // ================================= SPI =======================================

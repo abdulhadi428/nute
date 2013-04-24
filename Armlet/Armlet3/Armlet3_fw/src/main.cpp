@@ -47,6 +47,7 @@ int main() {
 
     while(TRUE) {
         chThdSleepMilliseconds(999);
+        IR.TransmitWord(0x0011, 100);
     }
 
     //armlet_main();

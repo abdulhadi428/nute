@@ -25,16 +25,16 @@
 #define IR_BIT_CNT          14
 
 #define IR_CARRIER_TMR      TIM3
-#define IR_CARRIER_TMR_N    3
 #define IR_CARRIER_CHNL     2
+#define IR_CARRIER_GPIO     GPIOC
+#define IR_CARRIER_PIN      7
 
 #define IR_CARRIER_TRG_IN   tiITR2  // Slave using TIM5 as input (ITR2)
 
 #define IR_MODULATION_TMR   TIM5
-#define IR_MODULATION_TMR_RCC_EN()  rccEnableTIM5(FALSE)
 
-#define IR_TX_DMA_STR   STM32_DMA2_STREAM0  // }
-#define IR_TX_DMA_CHNL  6                   // } TIM1 trig
+#define IR_TX_DMA_STREAM    STM32_DMA1_STREAM4  // }
+#define IR_TX_DMA_CHNL      5                   // } TIM3 trig
 
 
 // Delays, uS
@@ -47,8 +47,7 @@
 
 class Infrared_t {
 private:
-    //PwmPin_t Carrier;
-    uint16_t Buf[4+1 + IR_BIT_CNT*(2+1) + 1];    // Buffer of power values: header + all one's + 1 delay after
+    uint16_t TxPwrBuf[4+1 + IR_BIT_CNT*(2+1) + 1];    // Buffer of power values: header + all one's + 1 delay after
     uint32_t MaxPower;
     Timer_t Carrier, Modulator;
 public:
@@ -58,7 +57,9 @@ public:
         IsBusy(false) { }
     bool IsBusy;
     void Init();
-    void TransmitWord(uint16_t wData, uint8_t PwrPercent);
+    uint8_t TransmitWord(uint16_t wData, uint8_t PwrPercent);
+    // Inner use
+    void IStopModulator() { Modulator.Disable(); }
 };
 
 extern Infrared_t IR;
