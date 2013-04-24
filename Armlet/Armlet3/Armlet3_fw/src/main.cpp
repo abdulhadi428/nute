@@ -60,7 +60,7 @@ void Init() {
     KeysInit();
     Beeper.Init();
     Vibro.Init();
-    //IR.Init();
+    IR.Init();
     //Sound.Init();
     //Sound.Play("alive.wav");
     //Sound.Play("Sylvans.mp3");

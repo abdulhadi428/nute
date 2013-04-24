@@ -189,6 +189,42 @@ public:
 // ================================= Random ====================================
 uint32_t Random(uint32_t TopValue);
 
+// ================================= Timers ====================================
+enum TmrTrigInput_t {tiITR0=0x00, tiITR1=0x10, tiITR2=0x20, tiITR3=0x30, tiTIED=0x40, tiTI1FP1=0x50, tiTI2FP2=0x60, tiETRF=0x70};
+enum TmrMasterMode_t {mmReset=0x00, mmEnable=0x10, mmUpdate=0x20, mmComparePulse=0x30, mmCompare1=0x40, mmCompare2=0x50, mmCompare3=0x60, mmCompare4=0x70};
+enum TmrSlaveMode_t {smDisable=0, smEncoder1=1, smEncoder2=2, smEncoder3=3, smReset=4, smGated=5, smTrigger=6, smExternal=7};
+
+class Timer_t {
+private:
+    TIM_TypeDef* ITmr;
+public:
+    Timer_t(TIM_TypeDef* Tmr): ITmr(Tmr) {}
+    inline void SetTopValue(uint16_t Value) { ITmr->ARR = Value; }
+    inline void SetTriggerInput(TmrTrigInput_t TrgInput) {
+        uint16_t tmp = ITmr->SMCR;
+        tmp &= ~TIM_SMCR_TS;   // Clear bits
+        tmp |= (uint16_t)TrgInput;
+        ITmr->SMCR = tmp;
+    }
+    inline void MasterModeSelect(TmrMasterMode_t MasterMode) {
+        uint16_t tmp = ITmr->CR2;
+        tmp &= ~TIM_CR2_MMS;
+        tmp |= (uint16_t)MasterMode;
+        ITmr->CR2 = tmp;
+    }
+    inline void SlaveModeSelect(TmrSlaveMode_t SlaveMode) {
+        uint16_t tmp = ITmr->SMCR;
+        tmp &= ~TIM_SMCR_SMS;
+        tmp |= (uint16_t)SlaveMode;
+        ITmr->SMCR = tmp;
+    }
+    inline void DmaOnTriggerEnable() { ITmr->DIER |= TIM_DIER_TDE; }
+    inline void Enable()  { ITmr->CR1 |=  TIM_CR1_CEN; }
+    inline void Disable() { ITmr->CR1 &= ~TIM_CR1_CEN; }
+    // PWM
+    void PwmInit(GPIO_TypeDef *GPIO, uint16_t N);
+};
+
 // ================================= SPI =======================================
 enum CPHA_t {cphaFirstEdge, cphaSecondEdge};
 enum CPOL_t {cpolIdleLow, cpolIdleHigh};
