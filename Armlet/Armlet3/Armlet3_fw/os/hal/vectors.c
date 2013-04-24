@@ -247,7 +247,7 @@ void Vector8C(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector90(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector94(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector98(void) __attribute__((weak, alias("_unhandled_exception")));
-void Vector9C(void) __attribute__((weak, alias("_unhandled_exception")));
+//void Vector9C(void) __attribute__((weak, alias("_unhandled_exception"))); // EXTI9_5: for infrared
 void VectorA0(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorA4(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorA8(void) __attribute__((weak, alias("_unhandled_exception")));

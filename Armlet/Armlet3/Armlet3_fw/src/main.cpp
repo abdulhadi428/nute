@@ -47,7 +47,7 @@ int main() {
 
     while(TRUE) {
         chThdSleepMilliseconds(999);
-        IR.TransmitWord(0x0011, 100);
+        //IR.TransmitWord(0x0011, 100);
     }
 
     //armlet_main();
@@ -61,7 +61,8 @@ void Init() {
     KeysInit();
     Beeper.Init();
     Vibro.Init();
-    IR.Init();
+    IR.TxInit();
+    IR.RxInit();
     //Sound.Init();
     //Sound.Play("alive.wav");
     //Sound.Play("Sylvans.mp3");

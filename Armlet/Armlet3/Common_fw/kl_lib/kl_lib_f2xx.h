@@ -36,7 +36,8 @@
 #define TAKEN           true
 
 enum BitOrder_t {boMSB, boLSB};
-enum LowHigh_t {Low, High};
+enum LowHigh_t  {Low, High};
+enum RiseFall_t {Rising, Falling};
 
 // Simple pseudofunctions
 #define TRIM_VALUE(v, Max)  { if(v > Max) v = Max; }
@@ -216,6 +217,8 @@ public:
     inline void SetTopValue(uint16_t Value) { ITmr->ARR = Value; }
     inline uint16_t GetTopValue() { return ITmr->ARR; }
     inline void SetupPrescaler(uint32_t PrescaledFreqHz) { ITmr->PSC = (*PClk / PrescaledFreqHz) - 1; }
+    inline void SetCounter(uint16_t Value) { ITmr->CNT = Value; }
+    inline uint16_t GetCounter() { return ITmr->CNT; }
     // Master/Slave
     inline void SetTriggerInput(TmrTrigInput_t TrgInput) {
         uint16_t tmp = ITmr->SMCR;

@@ -9,8 +9,18 @@
 
 Infrared_t IR;
 
-// Wrapper for IRQ
+// ============================= Interrupts ====================================
 extern "C" {
+CH_IRQ_HANDLER(EXTI9_5_IRQHandler) {
+    CH_IRQ_PROLOGUE();
+    chSysLockFromIsr();
+    EXTI->PR = (1 << 5);  // Clean irq flag
+    IR.IRxEdgeIrq();
+    chSysUnlockFromIsr();
+    CH_IRQ_EPILOGUE();
+}
+
+// Wrapper for Tx Completed IRQ
 void IrTxcIrq(void *p, uint32_t flags) {
     dmaStreamDisable(IR_TX_DMA_STREAM);
     IR.IStopModulator(); // Stop master timer
@@ -18,7 +28,41 @@ void IrTxcIrq(void *p, uint32_t flags) {
 }
 } // "C"
 
-void Infrared_t::Init() {
+void Infrared_t::IRxEdgeIrq() {
+    if(IWaitingEdge == Falling) { // Falling edge received, start measure
+        RxTimer.SetCounter(0);
+        RxIrqWaitRising();
+        IWaitingEdge = Rising;
+    }
+    else {  // Rising edge received, stop timer
+        int32_t t = RxTimer.GetCounter();
+        RxIrqWaitFalling();
+        IWaitingEdge = Falling;
+        // Put time to queue if it is long enough
+        if(t > IR_BOTTOM_BOUND_US) chMBPostI(&imailbox, t);
+    }
+}
+
+// =============================== Implementation ==============================
+static WORKING_AREA(waIRRxThread, 128);
+static msg_t IRRxThread(void *arg) {
+    (void)arg;
+    chRegSetThreadName("IRRx");
+    while(1) IR.IRxTask();
+    return 0;
+}
+
+void Infrared_t::IRxTask() {
+    // Fetch byte from queue
+    msg_t Msg;
+    if(chMBFetch(&imailbox, &Msg, TIME_INFINITE) == RDY_OK) {
+        //uint16_t t = (uint16_t)Msg;
+        Uart.Printf("%d\r", Msg);
+    } // if msg
+}
+
+
+void Infrared_t::TxInit() {
     // ==== Carrier timer ====
     Carrier.Init();
     Carrier.Enable();
@@ -50,7 +94,6 @@ void Infrared_t::Init() {
     dmaStreamAllocate     (IR_TX_DMA_STREAM, IRQ_PRIO_LOW, IrTxcIrq, NULL);
     dmaStreamSetPeripheral(IR_TX_DMA_STREAM, Carrier.PCCR);
     dmaStreamSetMemory0   (IR_TX_DMA_STREAM, TxPwrBuf);
-//    //dmaStreamSetPeripheral(IR_TX_DMA_STR, &TIM1->CCR1);
     dmaStreamSetMode      (IR_TX_DMA_STREAM,
             STM32_DMA_CR_CHSEL(IR_TX_DMA_CHNL)
             | DMA_PRIORITY_MEDIUM
@@ -64,6 +107,34 @@ void Infrared_t::Init() {
 
     // ==== Variables ====
     IsBusy = false;
+}
+
+void Infrared_t::RxInit() {
+    // GPIO
+    PinSetupOut(IR_RX_PWR_GPIO, IR_RX_PWR_PIN, omPushPull); // }
+    PinSet(IR_RX_PWR_GPIO, IR_RX_PWR_PIN);                  // } Power
+    PinSetupIn(IR_RX_IN_GPIO, IR_RX_IN_PIN, pudNone);       // Input
+    // ==== Timer ====
+    RxTimer.Init();
+    RxTimer.Enable();
+    RxTimer.SetTopValue(0xFFFF);        // Maximum
+    RxTimer.SetupPrescaler(1000000);    // Input Freq: 1 MHz => one tick = 1 uS
+    //RxTimer.Disable();
+    // ==== Input queue ====
+    chMBInit(&imailbox, IRxBuf, IR_RXBUF_SZ);
+    // ==== Receiving thread ====
+    chThdCreateStatic(waIRRxThread, sizeof(waIRRxThread), NORMALPRIO, IRRxThread, NULL);
+
+    // ==== IRQ ==== PC5
+    rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, FALSE); // Enable sys cfg controller
+    SYSCFG->EXTICR[1] &= 0xFFFFFF0F;    // EXTI5 is connected to PortC
+    SYSCFG->EXTICR[1] |= 0x00000020;    // EXTI5 is connected to PortC
+    // Configure EXTI line
+    EXTI->IMR  |=  IR_IRQ_MASK;         // Interrupt mode enabled
+    EXTI->EMR  &= ~IR_IRQ_MASK;         // Event mode disabled
+    RxIrqWaitFalling();
+    EXTI->PR    =  IR_IRQ_MASK;         // Clean irq flag
+    nvicEnableVector(EXTI9_5_IRQn, CORTEX_PRIORITY_MASK(IRQ_PRIO_HIGH));
 }
 
 uint8_t Infrared_t::TransmitWord(uint16_t wData, uint8_t PwrPercent) {
