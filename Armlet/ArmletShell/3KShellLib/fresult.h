@@ -1,6 +1,7 @@
 #pragma once
+#include "project.h"
 
-typedef int fresult;
+typedef sbyte_t fresult;
 
 // 0 - ok
 // +value - warning

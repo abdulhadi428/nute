@@ -2,62 +2,7 @@
 #include "TextHelper.h"
 #include "PlatformAPI.h"
 #include "fresult.h"
-#include <string.h>
-
-int InStr(const char* string, const char* pattern, int startIndex)
-{
-	int index = startIndex;
-	int matchIndex=0;
-	bool found = 0;
-	int result = -1;
-	int matchStart = 0;
-
-	while (string[index] != NULL)
-	{
-		matchIndex=0;
-		matchStart = index;
-		while (string[index] == pattern[matchIndex])
-		{
-			//continue loooking to next char;
-			matchIndex ++;
-			index ++;
-
-			//if gone till end, then we found the match
-			if (pattern[matchIndex] == NULL)
-			{
-				found = true;
-				break;
-			}
-		}
-		
-		if (found==true)
-		{
-			result = matchStart;
-			break;
-		}
-		index++;
-	}
-
-	return result;
-}
-
-int Length(const char* string)
-{
-	//play safe
-	if (string==NULL)
-		return 0;
-
-	return strlen(string);
-}
-
-//returns:
-// 0 - equal
-// >0 bigger
-// <0 lesser
-int StringEquals(const char* src, const char* cmp)
-{
-	return !strcmp(src,cmp);
-}
+#include "strlib.h"
 
 char* StringAdd(const char* src, const char* add)
 {
@@ -115,6 +60,7 @@ char* AllocStringBuffer(Size size, bool zeroTerminate )
 	return buff;
 }
 
+
 fresult FillStringBuffer( char* buff, Size size, char padChar )
 {
 	if (IsEmpty(size))
@@ -129,6 +75,7 @@ fresult FillStringBuffer( char* buff, Size size, char padChar )
 
 	return SUCCESS;
 }
+
 
 //WARNING: may partially fill the buff and then fail on miltiline
 fresult SetTextInBuff(const char* string, Position pos, char* buff, Size buffSize)
@@ -289,7 +236,8 @@ fresult AllocSquareBuffFromString( const char* string, char** poResult, Size* po
 	int lineBreakIndex = InStr(string, "\n", stringIndex);
 	//if it's 1-line
 	int lastLineStart = 0;
-	int stringLength = Length(string);
+
+	uword_t stringLength = Length(string);
 
 	//scan line by line, line is delimited by \n
 	while (lineBreakIndex !=-1)
@@ -379,23 +327,4 @@ fresult getFormatBuffer( char* buff, Size size, char defaultFormat )
 	return FillStringBuffer(buff, size, defaultFormat);
 }
 
-//Copies copyLength chars from src string to dest string at destIndex
-fresult StrCopy( char* dest, int destIndex, const char* src, int copyLength )
-{
-	for (int i = 0;i < copyLength; i++ )	
-	{
-		dest[destIndex+i] = src[i];
-	}
 
-	return SUCCESS;
-}
-
-fresult StrPad(char* dest, int destIndex, const char patten, int length)
-{
-	for (int i = 0;i < length; i++ )	
-	{
-		dest[destIndex+i] = patten;
-	}
-
-	return SUCCESS;
-}

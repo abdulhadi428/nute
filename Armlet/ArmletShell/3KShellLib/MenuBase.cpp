@@ -19,6 +19,7 @@ fresult MenuBase::SelectItem( ubyte_t index )
 			return fres;
 		}
 	}
+	
 
 	//select new
 	menuItem = GetItem(index);
@@ -30,8 +31,10 @@ fresult MenuBase::SelectItem( ubyte_t index )
 	if (fres != SUCCESS)
 	{
 		return fres;
+		
 	}
 	_SelectedIndex = index;
+	
 
 	return SUCCESS;
 }

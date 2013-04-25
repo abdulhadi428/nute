@@ -30,5 +30,7 @@ public:
 	char* GetScreen();
 	char* GetFormatScreen();
 
+	virtual fresult DrawRect( Position pospx, Size sizepx, Color color );
+
 
 };

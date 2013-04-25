@@ -1,13 +1,13 @@
 #include "strlib.h"
 #include "fresult.h"
 
-int InStr(const char* string, const char* pattern, int startIndex)
+sword_t InStr(const char* string, const char* pattern, uword_t startIndex)
 {
-	int index = startIndex;
-	int matchIndex=0;
+	uword_t index = startIndex;
+	uword_t matchIndex=0;
 	bool found = 0;
-	int result = -1;
-	int matchStart = 0;
+	sword_t result = -1;
+	uword_t matchStart = 0;
 
 	while (string[index] != NULL)
 	{
@@ -38,20 +38,23 @@ int InStr(const char* string, const char* pattern, int startIndex)
 	return result;
 }
 
-int Length(const char* string)
+uword_t Length(const char* string)
 {
 	//play safe
 	if (string==NULL)
 		return 0;
 
-	return strlen(string);
+	uword_t i=0;
+	while (string[i++] != 0);
+	i--;
+	return i;
 }
 
 //returns:
 // 0 - equal
 // >0 bigger
 // <0 lesser
-int StringEquals(const char* src, const char* cmp)
+sbyte_t StringEquals(const char* src, const char* cmp)
 {
 	uword_t index =0;
 
@@ -79,9 +82,9 @@ int StringEquals(const char* src, const char* cmp)
 
 
 //Copies copyLength chars from src string to dest string at destIndex
-fresult StrCopy( char* dest, int destIndex, const char* src, int copyLength )
+fresult StrCopy( char* dest, uword_t destIndex, const char* src, uword_t copyLength )
 {
-	for (int i = 0;i < copyLength; i++ )	
+	for (uword_t i = 0;i < copyLength; i++ )	
 	{
 		dest[destIndex+i] = src[i];
 	}
@@ -89,9 +92,9 @@ fresult StrCopy( char* dest, int destIndex, const char* src, int copyLength )
 	return SUCCESS;
 }
 
-fresult StrPad(char* dest, int destIndex, const char patten, int length)
+fresult StrPad(char* dest, uword_t destIndex, const char patten, uword_t length)
 {
-	for (int i = 0;i < length; i++ )	
+	for (uword_t i = 0;i < length; i++ )	
 	{
 		dest[destIndex+i] = patten;
 	}

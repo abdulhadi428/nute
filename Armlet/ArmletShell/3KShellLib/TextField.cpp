@@ -3,37 +3,40 @@
 #include "Dimensions.h"
 #include "IntegrationWithKeltur.h"
 #include "ScrollableControlBase.h"
+#include "strlib.h"
 
 
 
-int TextField::GetBuffIndex( Position pos )
+uword_t TextField::GetBuffIndex( Position pos )
 {
-	if (pos.Top*_BuffSizeTx.Width+pos.Left < _BuffSizeTx.Height*_BuffSizeTx.Width)
+	if (pos.Top*_textBuffSizeTx.Width+pos.Left < _textBuffSizeTx.Height*_textBuffSizeTx.Width)
 	{
-		return pos.Top*_BuffSizeTx.Width+pos.Left;
+		return pos.Top*_textBuffSizeTx.Width+pos.Left;
 	}
 	else
 	{
 		return -1;
 	}
-	
+}
+
+fresult TextField::PutCharToBuff( Position pos, char charToPut)
+{
+	uword_t index = GetBuffIndex(pos);
+	if (index ==-1)
+	{
+		return GENERAL_ERROR;
+	}
+
+	if (! ((pos.Left < _textBuffSizeTx.Width) && (pos.Top < _textBuffSizeTx.Height)))
+	{
+		return GENERAL_ERROR;
+	}
+
+	_textBuff[index] = charToPut;
+	return SUCCESS;
 }
 
 #pragma region getters
-const char* TextField::GetText()
-{
-	return _readOnlyText;
-};
-
-Size TextField::GetTextSize()
-{
-	return _BuffSizeTx;
-};
-
-bool TextField::GetReadOnly()
-{
-	return true;
-}
 
 TextFormat* TextField::GetTextFormat()
 {
@@ -45,18 +48,154 @@ TextFormat* TextField::GetTextFormat()
 
 void TextField::SetTextFormat( TextFormat* format )
 {
-	_Format = *format;
+	if (format!=NULL)
+		_Format = *format;
+}
+
+
+fresult TextField::AppendText(const char* text)
+{
+	fresult fres = SUCCESS;
+	ubyte_t wrapLimit;
+	ubyte_t wrapBacktrack;
+	//calculate wrap
+
+	ubyte_t lineLengthToDrawTx = _Size.Width / _Format.Font.GlyphSize.Width;
+	if (lineLengthToDrawTx <1)
+	{
+		return GENERAL_ERROR;
+	}
+
+	//that may exceed the buff - then we'll need to wrap to buff width, not the size width
+	if (_textBuffSizeTx.Width < lineLengthToDrawTx || !_WordWrap)
+	{
+		wrapLimit = _textBuffSizeTx.Width;
+		//obviously - not backtrack
+		wrapBacktrack = 0;
+	}
+	else
+	{
+		//word wrap in effect
+		wrapLimit = lineLengthToDrawTx;
+		//backtrack up to half of control width
+		wrapBacktrack = lineLengthToDrawTx /2;
+	}
+
+	Position buffWritePosition;
+	buffWritePosition.data = _textBuffCarretPositionTx.data;
+	if (! (buffWritePosition.Left*buffWritePosition.Top < _buffLength))
+	{
+		return GENERAL_ERROR;
+	}
+
+	uword_t strReadIndex=0;
+	uword_t buffLength = _textBuffSizeTx.Height*_textBuffSizeTx.Width;
+
+	while (text[strReadIndex]!=0)
+	{
+		//read ahead to next word end
+		ubyte_t readAheadIndex =0;
+		for (readAheadIndex = 0; readAheadIndex+buffWritePosition.Left < wrapLimit;readAheadIndex++)
+		{
+			if (text[strReadIndex+readAheadIndex] ==0 ||
+				text[strReadIndex+readAheadIndex] == ' ' ||
+				text[strReadIndex+readAheadIndex] == '\n')
+			{
+				break;
+			}
+		}
+
+		//word limit at readAheadIndex chars from current position. 
+		//Decide whether to wrap
+		if (buffWritePosition.Left + readAheadIndex > wrapLimit)
+		{
+			//next word border exceeds wrap limit
+			//decide to wrap
+			if (readAheadIndex < wrapBacktrack)
+			{
+				//Wrapping to next line
+				//move caret to next line
+				buffWritePosition.Top++;
+				buffWritePosition.Left=0;
+				//strReadIndex remains the same
+				continue;
+			}
+		} 
+
+		//copy found word to existing line
+		ubyte_t i =0; 
+		do
+		{
+			if (text[strReadIndex] != 0)
+			{
+				if (text[strReadIndex]!='\n')
+				{
+					//put the char to buff and move left in buff and in text
+					fres = PutCharToBuff(buffWritePosition, text[strReadIndex]);
+					if (fres!=SUCCESS)
+						return fres;	
+					strReadIndex++;
+					//we touched the wrap limit tightly
+					if (buffWritePosition.Left == wrapLimit-1)
+					{
+						//moving to next line
+						buffWritePosition.Top ++;
+						buffWritePosition.Left=0;
+						//if next is space or \n - skip it
+						if (text[strReadIndex] !=0 && (text[strReadIndex] ==' ' || text[strReadIndex]=='\n'))
+						{
+							strReadIndex++;
+						}
+						else
+						{
+							buffWritePosition.Left=0;
+						}
+					}
+					else
+					{
+						buffWritePosition.Left++;
+					}
+					
+				}
+				else
+				{
+					//move line down and move text left
+					strReadIndex++;
+					buffWritePosition.Top++;
+					buffWritePosition.Left=0;
+				}
+			}
+			i++;
+		} while (i< readAheadIndex);
+		
+	}
+
+	//adjust caret pos
+	_textBuffCarretPositionTx.data = buffWritePosition.data;
+
+	return SUCCESS;
 }
 
 
 //Setting the text;
-fresult TextField::SetText( const char* text, Size textSize, bool readOnly, TextFormat* pFormat )
+fresult TextField::SetText(const char* text )
 {
-	_readOnlyText = text;
-	if (pFormat)
-		_Format = *pFormat;
-	_BuffSizeTx = textSize;
-	//TODO: format
+	//clean up
+	fresult fres;
+	fres = StrPad(_textBuff,0,0,_buffLength);
+	if (fres!=SUCCESS)
+	{
+		return fres;
+	}
+
+	//append to 0,0
+	_textBuffCarretPositionTx.data =0;
+	fres = AppendText(text);
+	if (fres!=SUCCESS)
+	{
+		return fres;
+	}
+	_ScrollPositionTx.data =0;
 
 	return SUCCESS;
 }
@@ -66,7 +205,7 @@ Position TextField::GetScrollPosition()
 	return _ScrollPositionTx;
 }
 
-//Setting the scroll window position intelligently (try find best fit if it will go off TextSize limits)
+//Setting the scroll window position ubyte_telligently (try find best fit if it will go off TextSize limits)
 //	returns:
 //	SUCCESS: 
 //	    - if position fits well
@@ -81,10 +220,10 @@ fresult TextField::SetScrollPosition (Position position)
 	//or column is visible
 	fresult result = SUCCESS;
 
-	if(position.Left >= _BuffSizeTx.Width)
+	if(position.Left >= _textBuffSizeTx.Width)
 	{
 		result = GENERAL_WARNING;
-		position.Left = _BuffSizeTx.Width - 1;
+		position.Left = _textBuffSizeTx.Width - 1;
 	}
 	if (position.Left <0)
 	{
@@ -92,10 +231,10 @@ fresult TextField::SetScrollPosition (Position position)
 		position.Left = 0;
 	}
 
-	if(position.Top >= _BuffSizeTx.Height)
+	if(position.Top >= _textBuffSizeTx.Height)
 	{
 		result = GENERAL_WARNING;
-		position.Top = _BuffSizeTx.Height - 1;
+		position.Top = _textBuffSizeTx.Height - 1;
 	}
 	
 	if (position.Top <0)
@@ -110,7 +249,7 @@ fresult TextField::SetScrollPosition (Position position)
 
 
 //Initialization;
-fresult TextField::Init(Size size, Position position, IRender* renderer )
+fresult TextField::Init(Size size, Position position, char* buff, Size buffSize, IRender* renderer )
 {
 	fresult fres;
 	fres = BaseInit(size, position, renderer);
@@ -136,31 +275,37 @@ fresult TextField::Init(Size size, Position position, IRender* renderer )
 	SetSize(size);
 
 	_Position = position;
-
-	_readOnlyText = NULL;
 	_render = renderer;
+
+	_textBuff = buff;
+	_textBuffSizeTx = buffSize;
+	_buffLength = buffSize.Height*buffSize.Width;
+
+	_WordWrap = false;
+
+	_textBuffCarretPositionTx.data =0;
 
 	return TRUE;
 };
 
 //Logic
 
-//Gets Line staring at specified point. 
-//it returns pointer to the original buff, so it MUST be treated as const
+//Gets Line staring at specified poubyte_t. 
+//it returns poubyte_ter to the original buff, so it MUST be treated as const
 //NOTE:
 //If required length exceeds textSize.Width - returns GENERAL_WARNING and length is set to actual length
 //If required pos.Top is outside textSize.Height - returns GENERAL_WARNING and oLine is NULL, and length is 0;
-fresult TextField::GetLineAtXY( Position pos, int* ioLength, char** oLine )
+fresult TextField::GetLineAtXY( Position pos, ubyte_t* ioLength, char** oLine )
 {
 	fresult fres = SUCCESS;
 	
-	if (!(pos.Left < _BuffSizeTx.Width))
+	if (!(pos.Left < _textBuffSizeTx.Width))
 	{
 		return GENERAL_ERROR;
 	}
 
 	//If requested pos.Top is outside _textSize.Height
-	if (!(pos.Top < _BuffSizeTx.Height))
+	if (!(pos.Top < _textBuffSizeTx.Height))
 	{
 		*oLine = NULL;
 		(*ioLength) = 0;
@@ -168,21 +313,21 @@ fresult TextField::GetLineAtXY( Position pos, int* ioLength, char** oLine )
 	}
 
 	//check whether we exceed textSize
-	if ((pos.Left + *ioLength) > _BuffSizeTx.Width)
+	if ((pos.Left + *ioLength) > _textBuffSizeTx.Width)
 	{
-		(*ioLength) = _BuffSizeTx.Width - pos.Left;
+		(*ioLength) = _textBuffSizeTx.Width - pos.Left;
 		fres = GENERAL_WARNING;
 	}
 
-	int indexInText = GetBuffIndex(pos);
-	if (indexInText < 0)
+	sword_t indexubyte_text = GetBuffIndex(pos);
+	if (indexubyte_text < 0)
 	{
 		//out of bounds
 		return GENERAL_ERROR;
 	}
 	
-	//Get pointer to line in readonly text
-	*oLine = (char*)&_readOnlyText[indexInText];
+	//Get poubyte_ter to line in readonly text
+	*oLine = (char*)&_textBuff[indexubyte_text];
 
 	return fres;
 }
@@ -223,15 +368,15 @@ fresult TextField::DrawArea(Position pos, Size size )
 		drawSizePx.Width = _Size.Width;
 	}
 
-	int writeIndex=0;
+	ubyte_t writeIndex=0;
 
 	char* lineGot=NULL;
 
-	int lineLengthToDrawTx = drawSizePx.Width / _Format.Font.GlyphSize.Width;
+	ubyte_t lineLengthToDrawTx = drawSizePx.Width / _Format.Font.GlyphSize.Width;
 	//we may request length that exceeds the buff, so we will need to draw partially
-	int lastReadLineLength = drawSizePx.Width / _Format.Font.GlyphSize.Width;
+	ubyte_t lastReadLineLength = drawSizePx.Width / _Format.Font.GlyphSize.Width;
 
-	int visibleHeightTx = drawSizePx.Height / _Format.Font.GlyphSize.Height;
+	ubyte_t visibleHeightTx = drawSizePx.Height / _Format.Font.GlyphSize.Height;
 
 	Position readBufPosTx;
 
@@ -240,7 +385,7 @@ fresult TextField::DrawArea(Position pos, Size size )
 	readBufPosTx.Left = _ScrollPositionTx.Left + (drawPositionPx.Left- _Position.Left ) / _Format.Font.GlyphSize.Width;
 
 	
-	for (int lineIndex= 0; lineIndex < visibleHeightTx; lineIndex++ )
+	for (ubyte_t lineIndex= 0; lineIndex < visibleHeightTx; lineIndex++ )
 	{
 		lineLengthToDrawTx = drawSizePx.Width / _Format.Font.GlyphSize.Width;
 

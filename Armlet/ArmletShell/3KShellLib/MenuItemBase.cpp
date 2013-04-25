@@ -27,3 +27,13 @@ fresult MenuItemBase::Draw()
 {
 	return _underLyningControl->Draw();
 }
+
+bool MenuItemBase::OnAccelerator( uword_t button )
+{
+	if (button==keyBinding)
+	{
+		Click();
+		return TRUE;
+	}
+	return FALSE;
+}

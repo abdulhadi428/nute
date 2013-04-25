@@ -1,5 +1,6 @@
 #include "ToStringRenderer.h"
 #include "TextHelper.h"
+#include "strlib.h"
 #include "PlatformAPI.h"
 
 fresult ToStringRenderer::DrawString( Position pospx, const char* str, int length, TextFormat* format)
@@ -106,4 +107,10 @@ char ToStringRenderer::GetFormatRepresenterChar( TextFormat* format )
 	}
 
 	return '*';
+}
+
+fresult ToStringRenderer::DrawRect( Position pospx, Size sizepx, Color color )
+{
+	//TODO: implement
+	return GENERAL_ERROR;
 }

@@ -8,7 +8,7 @@ class xTestTextField
 {
 	ToStringRenderer* _renderer;
 
-	fresult CreateTextField( char* string, Size size, Position position, TextFormat* format, TextField** opTextField, char** oBuff);
+	fresult CreateTextField( char* str, Size size, Position position, TextFormat* format, bool_t wrap, TextField** opTextField, Size buffSize);
 	void xTestTextField::xDrawAndScroll(TextFormat* format);
 public:
 	fresult Init();

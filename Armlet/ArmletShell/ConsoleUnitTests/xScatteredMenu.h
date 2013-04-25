@@ -7,9 +7,9 @@
 
 class xScatteredMenu
 {
-	fresult CreateTextMenu( Position* positions, char** texts, ubyte_t count, Size itemSize, TextFormat* format, TextFormat* selFormat, ScatteredMenu* oMnu );
-	fresult CreateDefaultMenu(ScatteredMenu* mnu);
-	fresult CreateTextField( char* string, Size size, Position position, TextFormat* format, TextField** opTextField, char** oBuff);
+	fresult CreateTextField( char* str, Size size, Position position, TextFormat* format, TextField** opTextField, Size buffSize);
+	fresult CreateTextMenu( Position* positions, char** texts, ubyte_t count, Size itemSize, TextFormat* format, TextFormat* selFormat, ScatteredMenu** oMnu );
+	fresult CreateDefaultMenu(ScatteredMenu** mnu);
 	ToStringRenderer* _renderer;
 
 public:

@@ -15,10 +15,6 @@ typedef unsigned int udword_t, UInt32;
 typedef union _gpoint_t {
 	UInt16 data;
 	struct {
-		UInt8 x;
-		UInt8 y;
-	};
-	struct {
 		UInt8 Top;
 		UInt8 Left;
 	};

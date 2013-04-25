@@ -15,7 +15,7 @@ Setting Size:
 
 Setting ScrollPosition
  1. Set scroll position by SetScrollPosition
- 2. Setting scroll Position is intelligent. So setting position so, that it (according to size) move out of Text - will set the Topmost (and Leftmost) possible coordinates
+ 2. Setting scroll Position is ubyte_telligent. So setting position so, that it (according to size) move out of Text - will set the Topmost (and Leftmost) possible coordinates
 
 */
 #include "project.h"
@@ -34,44 +34,55 @@ class TextField : public ScrollableControlBase
 
 private:
 	
-	Size _BuffSizeTx;
+	Size _textBuffSizeTx;
+	uword_t _buffLength;
+	char* _textBuff;
+	Position _textBuffCarretPositionTx;
 
-	bool _readOnly;
-	const char* _readOnlyText;
-	char* _peadOnlyText;
 	TextFormat _Format;
-
+	
+	bool_t _WordWrap;
 	Position _ScrollPositionTx;
-
 
 	//Gets linear index in lines Buff by x,y
 	//doesn't check bounds
-	int GetBuffIndex(Position pos);
+	uword_t GetBuffIndex(Position pos);
+	
+	fresult PutCharToBuff( Position pos, char charToPut);
 
-	//Gets Line staring at specified point. 
-	//it returns pointer to the original buff, so it MUST be treated as const
+	//Gets Line staring at specified poubyte_t. 
+	//it returns poubyte_ter to the original buff, so it MUST be treated as const
 	//NOTE:
 	//If required length exceeds textSize.Width - returns GENERAL_WARNING and length is set to actual length
-	fresult TextField::GetLineAtXY( Position pos, int* ioLength, char** oLine);
+	fresult TextField::GetLineAtXY( Position pos, ubyte_t* ioLength, char** oLine);
 
 public:
 	
 
 	//getters
-	const char* GetText();
-	bool GetReadOnly();
-
-	Size GetTextSize();
 	TextFormat* GetTextFormat();
 
+	bool_t GetWordWrap()
+	{
+		return _WordWrap;
+	}
+
 	//Setters
+
+	void SetWordWrap(bool_t wordWrap)
+	{
+		_WordWrap = wordWrap;
+	};
 
 	void SetTextFormat(TextFormat* format);
 
 	//Setting the text;
-	fresult SetText(const char* text, Size textSize, bool readOnly,TextFormat* pFormat);
+	fresult SetText(const char* text);
 
-	//Setting the scroll window position intelligently (try find best fit if it will go off TextSize limits)
+	//append the text to current carret
+	fresult TextField::AppendText(const char* text);
+
+	//Setting the scroll window position ubyte_telligently (try find best fit if it will go off TextSize limits)
 	// returns:
 	//  SUCCESS: 
 	//       - if position fits well
@@ -81,7 +92,7 @@ public:
 	fresult virtual SetScrollPosition (Position position);
 
 	//Initialization;
-	fresult Init(Size size, Position position, IRender* renderer);
+	fresult Init(Size size, Position position, char* buff, Size buffSize, IRender* renderer);
 
 	//Logic
 	

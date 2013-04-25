@@ -3,6 +3,7 @@
 #include "TextHelper.h"
 #include <iostream>
 #include "PlatformAPI.h"
+#include "strlib.h"
 
 void xTestStringHelpers::doTests()
 {

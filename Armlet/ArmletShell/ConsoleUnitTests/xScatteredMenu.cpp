@@ -5,43 +5,48 @@
 #include "ToStringRenderer.h"
 #include "IMenuItem.h"
 #include "TextMenuItem.h"
+#include "strlib.h"
 
 
-fresult xScatteredMenu::CreateTextField( char* string, Size size, Position position, TextFormat* format, TextField** opTextField, char** oBuff)
+fresult xScatteredMenu::CreateTextField( char* str, Size size, Position position, TextFormat* format, TextField** opTextField, Size buffSize)
 {
 	fresult fres = SUCCESS;
 	TextField* tf = new TextField();
 	*opTextField = tf;
 
-	Size textSize;
+	char* buff = new char[buffSize.Height*buffSize.Width];
 
-	//create buff
-	fres = AllocSquareBuffFromString(string, oBuff, &textSize, '\0');
-	if (fres != SUCCESS)
+	tf->Init(size, position, buff, buffSize, (IRender*)_renderer);
+	tf->SetWordWrap(FALSE);
+	tf->SetTextFormat(format);
+	fres = tf->SetText(str);
+	if (fres!=SUCCESS)
 	{
-		return GENERAL_ERROR;
+		return fres;
 	}
-
-	tf->Init(size, position, (IRender*)_renderer);
-	tf->SetText(*oBuff, textSize, true, format);
 
 	return SUCCESS;
 }
 
-fresult xScatteredMenu::CreateTextMenu( Position* positions, char** texts, ubyte_t count, Size itemSize, TextFormat* format, TextFormat* selFormat, ScatteredMenu* oMnu )
+fresult xScatteredMenu::CreateTextMenu( Position* positions, char** texts, ubyte_t count, Size itemSize, TextFormat* format, TextFormat* selFormat, ScatteredMenu** oMnu )
 {
 	IMenuItem** items = new IMenuItem*[count];
-	oMnu = new ScatteredMenu();
+	(*oMnu) = new ScatteredMenu();
 	fresult fres;
 
-	for (int i =0; i< count; i++)
+	for (ubyte_t i =0; i< count; i++)
 	{
 		TextMenuItem* item = new TextMenuItem();
 		items[i] = item;
 
 		TextField* tx;
-		char* buff;
-		fres = CreateTextField(texts[i], itemSize, positions[i], format, &tx, &buff);
+		
+		sword_t len = Length(texts[i]);
+		Size buffSizeTx;
+		buffSizeTx.Height =1;
+		buffSizeTx.Width = (ubyte_t)len;
+
+		fres = CreateTextField(texts[i], itemSize, positions[i], format, &tx, buffSizeTx);
 		if (fres!=SUCCESS)
 		{
 			return fres;
@@ -55,7 +60,7 @@ fresult xScatteredMenu::CreateTextMenu( Position* positions, char** texts, ubyte
 	}
 
 	//init menu
-	fres = oMnu->Init(items,count);
+	fres = (*oMnu)->Init(items,count);
 	if (fres != SUCCESS)
 	{
 		return fres;
@@ -63,21 +68,36 @@ fresult xScatteredMenu::CreateTextMenu( Position* positions, char** texts, ubyte
 	return SUCCESS;
 }
 
-fresult xScatteredMenu::CreateDefaultMenu(ScatteredMenu* mnu)
+fresult xScatteredMenu::CreateDefaultMenu(ScatteredMenu** mnu)
 {
 	fresult fres;
 	char* screen=NULL;
 	char* formatscreen=NULL;
 
+	TextFormat format;
+	fres = GetTextFormat(DEFAULT_FONT, clBlack, clWhite, &format);
+	if (fres != SUCCESS)
+	{
+		return fres;
+	}
+	TextFormat selformat;
+	fres = GetTextFormat(DEFAULT_FONT, clGrey, clRed, &selformat);
+	if (fres != SUCCESS)
+	{
+		return fres;
+	}
+	ubyte_t fontWidth = format.Font.GlyphSize.Width;
+	ubyte_t fontHeight = format.Font.GlyphSize.Height;
+
 	Position poss[4];
-	poss[0].Top  =0;
-	poss[0].Left =0;
-	poss[1].Top  =2;
-	poss[1].Left =0;
-	poss[2].Top  =0;
-	poss[2].Left =4;
-	poss[3].Top  =2;
-	poss[3].Left =4;
+	poss[0].Top  =0*fontHeight;
+	poss[0].Left =0*fontWidth;
+	poss[1].Top  =2*fontHeight;
+	poss[1].Left =0*fontWidth;
+	poss[2].Top  =0*fontHeight;
+	poss[2].Left =4*fontWidth;
+	poss[3].Top  =2*fontHeight;
+	poss[3].Left =4*fontWidth;
 
 	char* items[4];
 	items[0] = "a";
@@ -85,26 +105,11 @@ fresult xScatteredMenu::CreateDefaultMenu(ScatteredMenu* mnu)
 	items[2] = "c";
 	items[3] = "d";
 
-	TextFormat format;
-	fres = GetTextFormat(DEFAULT_FONT, clWhite, clBlack, &format);
-	if (fres != SUCCESS)
-	{
-		return fres;
-	}
 	Size size;
-	size.Height = 1*format.Font.GlyphSize.Height;
-	size.Width = 1*format.Font.GlyphSize.Width;
+	size.Height = 1*fontHeight;
+	size.Width = 1*fontWidth;
 
-	TextFormat selformat;
-	fres = GetTextFormat(DEFAULT_FONT, clWhite, clBlack, &selformat);
-	if (fres != SUCCESS)
-	{
-		return fres;
-	}
-
-	ScatteredMenu oMnu;
-
-	fres = CreateTextMenu(poss, items, 4, size, &format, &selformat, &oMnu);
+	fres = CreateTextMenu(poss, items, 4, size, &format, &selformat, mnu);
 
 	return fres;
 }
@@ -139,20 +144,41 @@ fresult xScatteredMenu::Init()
 
 }
 
-
-
 void xScatteredMenu::xLoopThroughtItems()
 {
+	fresult fres;
+	ScatteredMenu* mnu =NULL;
+	char* screen = NULL;
+	char* formatScreen = NULL;
+	char* formatScreenTest = NULL;
+	char* test = NULL;
 
-
-	char* test;
-	char* testFormat;
-
-	testFormat = "~$$$$\n$$$$$\n$$$$$";
-	test = "a$$$$\n$$$$$\n$$$$$";
-
+	fres = CreateDefaultMenu(&mnu);
+	if (fres != SUCCESS)
+		throw "Can't create basic menu";
+	
 	_renderer->Cls();
 
+	test = "a$$$c\n$$$$$\nb$$$d";
+	fres = mnu->Draw();
+	if (fres != SUCCESS)
+		throw "Can't draw basic menu";
+	
+	screen = _renderer->GetScreen();
+	if (!StringEquals(screen, test))
+		throw  "Can't draw basic menu. Screen differs.";
+	
+	formatScreenTest = "~$$$~\n$$$$$\n~$$$~";
+	formatScreen = _renderer->GetFormatScreen();
+	if (!StringEquals(formatScreen, formatScreenTest))
+		throw  "Can't draw basic menu. Format screen differs.";
+
+
+	mnu->SelectItem(1);
+	formatScreenTest = "~$$$~\n$$$$$\n!$$$~";
+	formatScreen = _renderer->GetFormatScreen();
+	if (!StringEquals(formatScreen, formatScreenTest))
+		throw  "Can't select item 2 in menu. Format screen differs.";
 
 }
 

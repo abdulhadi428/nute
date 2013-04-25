@@ -10,10 +10,35 @@ protected:
 	IMenuItem** _Items;
 	ubyte_t _ItemsCount;
 
-	ubyte_t _SelectedIndex;
+	sbyte_t _SelectedIndex;
 
 	bool_t _MustHaveSelected;
 
+	fresult MenuBaseInit(IMenuItem** items, ubyte_t itemsCount)
+	{
+		_MustHaveSelected = FALSE;
+		_SelectedIndex = -1;
+		if (items == NULL)
+		{
+			return GENERAL_ERROR;;
+		}
+		_Items = items;
+
+		if (itemsCount <=0)
+		{
+			return GENERAL_ERROR;
+		}
+		_ItemsCount = itemsCount;
+
+		if (GetMustHaveSelected())
+		{
+			_Items[0]->Select();
+		}
+
+		return SUCCESS;
+	}
+
+public:
 	virtual ubyte_t  GetSelectedItemIndex() 
 	{
 		return _SelectedIndex;
@@ -31,8 +56,23 @@ protected:
 		}
 	};
 
-	virtual bool_t  OnKey( ubyte_t key ) 
+	virtual bool_t OnKey( uword_t key ) 
 	{
+		bool_t itemClicked;
+		for (int i=0; i<_ItemsCount; i++)
+		{
+			itemClicked = _Items[i]->OnAccelerator(key);
+			if (itemClicked == TRUE)
+			{
+				break;
+			}
+		}
+		
+		if (itemClicked)
+		{
+			return TRUE;
+		}
+
 		return FALSE;
 	};
 
@@ -53,27 +93,5 @@ protected:
 	{
 		return _MustHaveSelected;
 	};
-
-	fresult MenuBaseInit(IMenuItem** items, ubyte_t itemsCount)
-	{
-		if (items == NULL)
-		{
-			return GENERAL_ERROR;;
-		}
-		_Items = items;
-		
-		if (itemsCount <=0)
-		{
-			return GENERAL_ERROR;
-		}
-		_ItemsCount = itemsCount;
-
-		if (GetMustHaveSelected())
-		{
-			_Items[0]->Select();
-		}
-
-		return SUCCESS;
-	}
 
 };

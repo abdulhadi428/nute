@@ -13,4 +13,6 @@ public:
 	fresult virtual Deselect() =0;
 
 	fresult virtual Click() =0;
+
+	bool virtual OnAccelerator(uword_t button)=0;
 };

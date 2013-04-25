@@ -9,4 +9,5 @@ class IRender
 public:
 	
 	virtual fresult DrawString(Position pospx, const char* str, int length, TextFormat* format)=0;
+	virtual fresult DrawRect(Position pospx, Size sizepx, Color color) =0;
 };

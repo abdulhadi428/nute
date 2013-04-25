@@ -1,25 +1,25 @@
 #include "xTestTextField.h"
 #include "TextHelper.h"
+#include "strlib.h"
 #include <iostream>
 
 
-fresult xTestTextField::CreateTextField( char* string, Size size, Position position, TextFormat* format, TextField** opTextField, char** oBuff)
+fresult xTestTextField::CreateTextField( char* str, Size size, Position position, TextFormat* format, bool_t wrap, TextField** opTextField, Size buffSize)
 {
 	fresult fres = SUCCESS;
 	TextField* tf = new TextField();
 	*opTextField = tf;
 
-	Size textSize;
+	char* buff = new char[buffSize.Height*buffSize.Width];
 
-	//create buff
-	fres = AllocSquareBuffFromString(string, oBuff, &textSize, '\0');
-	if (fres != SUCCESS)
+	tf->Init(size, position, buff, buffSize, (IRender*)_renderer);
+	tf->SetWordWrap(wrap);
+	tf->SetTextFormat(format);
+	fres = tf->SetText(str);
+	if (fres!=SUCCESS)
 	{
-		return GENERAL_ERROR;
+		return fres;
 	}
-
-	tf->Init(size, position, (IRender*)_renderer);
-	tf->SetText(*oBuff, textSize, true, format);
 
 	return SUCCESS;
 }
@@ -60,7 +60,7 @@ void xTestTextField::doTests()
 	}
 	catch (char* err)
 	{
-		std::cout <<"xTestTextField FAILED: " << testName <<": "<< err;
+		std::cout <<"xTestTextField FAILED: " << testName <<": "<< err <<"\n";
 	}
 }
 
@@ -90,7 +90,7 @@ void xTestTextField::xDrawAndScroll(TextFormat* format)
 	fresult fres;
 	char* screen=NULL;
 	TextField* tf=NULL;
-	char* oBuff=NULL;
+	Size buffSizeTx;
 	Size size;
 	Position pos;
 	char* content;
@@ -99,21 +99,21 @@ void xTestTextField::xDrawAndScroll(TextFormat* format)
 	
 	//////////////////////////////////////////////////////////////////////////
 	tf=NULL;
-	oBuff=NULL;
 	size.Height =3*format->Font.GlyphSize.Height;
 	size.Width =5*format->Font.GlyphSize.Width;
+	buffSizeTx.Height =3;
+	buffSizeTx.Width =5;
+
 	pos.Left =0;
 	pos.Top =0;
 	content = "aaaaa\nbbbbb\nccccc";
 	test =    "aaaaa\nbbbbb\nccccc";
 
-	fres = CreateTextField(content, size, pos, format, &tf, &oBuff);
+	fres = CreateTextField(content, size, pos, format, FALSE, &tf, buffSizeTx);
 	if (fres!=SUCCESS)
 		throw "Can't create TextField 3x5 aaaaa.";
 	if (tf==NULL)
 		throw "Can't create TextField 3x5 aaaaa. TextField is NULL";
-	if (oBuff==NULL)
-		throw "Can't create TextField 3x5 aaaaa. oBuff is NULL";
 	fres = tf->Draw();
 	if (fres!=SUCCESS)
 		throw "Error drawing TextField 3x5 aaaaa.";
@@ -123,27 +123,25 @@ void xTestTextField::xDrawAndScroll(TextFormat* format)
 	if (!StringEquals(screen, test))
 		throw "Error drawing TextField 3x5 aaaaa. Wrong screen content.";
 	delete screen;
-	delete oBuff;
 	delete tf;
 
 	//////////////////////////////////////////////////////////////////////////
 	tf=NULL;
-	oBuff=NULL;
 	size.Height =3*format->Font.GlyphSize.Height;
 	size.Width =5*format->Font.GlyphSize.Width;
 	pos.Left =0;
 	pos.Top =0;
 	content = "aaaaaeee\nbbbbb\nccee";
 	test = "aaaaa\nbbbbb\nccee$";
+	buffSizeTx.Height =3;
+	buffSizeTx.Width =8;
 
 	_renderer->Cls();
-	fres = CreateTextField(content, size, pos, format, &tf, &oBuff);
+	fres = CreateTextField(content, size, pos, format,FALSE, &tf, buffSizeTx);
 	if (fres!=SUCCESS)
 		throw "Can't create 3x5 TextField with 3x(8,5,4) text.";
 	if (tf==NULL)
 		throw "Can't create 3x5 TextField with 3x(8,5,4) text. TextField is NULL";
-	if (oBuff==NULL)
-		throw "Can't create 3x5 TextField with 3x(8,5,4) text. oBuff is NULL";
 	fres = tf->Draw();
 	if (fres!=SUCCESS)
 		throw "Error drawing 3x5 TextField with 3x(8,5,4) text.";
@@ -256,7 +254,6 @@ void xTestTextField::xDrawAndScroll(TextFormat* format)
 		throw "Error drawing 3x5 TextField with 3x(8-7) text scrolled to 0,8. Wrong screen content.";
 
 	delete screen;
-	delete oBuff;
 	delete tf;
 }
 
@@ -266,7 +263,7 @@ void xTestTextField::xPlayWithCharSize()
 	fresult fres;
 	char* screen=NULL;
 	TextField* tf=NULL;
-	char* oBuff=NULL;
+	Size buffSizeTx;
 	Size size;
 	Position pos;
 	char* content;
@@ -284,21 +281,20 @@ void xTestTextField::xPlayWithCharSize()
 
 	//////////////////////////////////////////////////////////////////////////
 	tf=NULL;
-	oBuff=NULL;
 	size.Height =3*fnt.GlyphSize.Height;
 	size.Width =5*fnt.GlyphSize.Width;
+	buffSizeTx.Height =3;
+	buffSizeTx.Width =5;
 	pos.Left =0;
 	pos.Top =0;
 	content = "aaaaa\nbbbbb\nccccc";
 	test =    "aaaaa\nbbbbb\nccccc";
 
-	fres = CreateTextField(content, size, pos, &tx, &tf, &oBuff);
+	fres = CreateTextField(content, size, pos, &tx,FALSE, &tf, buffSizeTx);
 	if (fres!=SUCCESS)
 		throw "Can't create TextField 3x5 aaaaa.";
 	if (tf==NULL)
 		throw "Can't create TextField 3x5 aaaaa. TextField is NULL";
-	if (oBuff==NULL)
-		throw "Can't create TextField 3x5 aaaaa. oBuff is NULL";
 	fres = tf->Draw();
 	if (fres!=SUCCESS)
 		throw "Error drawing TextField 3x5 aaaaa.";
@@ -308,7 +304,6 @@ void xTestTextField::xPlayWithCharSize()
 	if (!StringEquals(screen, test))
 		throw "Error drawing TextField 3x5 aaaaa. Wrong screen content.";
 	delete screen;
-	delete oBuff;
 	delete tf;
 
 	xDrawAndScroll(&tx);
@@ -320,11 +315,11 @@ void xTestTextField::xDrawAreas()
 	fresult fres;
 	char* screen=NULL;
 	TextField* tf=NULL;
-	char* oBuff=NULL;
 	Size size;
 	Position pos;
 	char* content;
 	char* test;
+	Size buffSizeTx;
 	
 	TextFormat format;
 	format.BgColor = 0;
@@ -337,22 +332,24 @@ void xTestTextField::xDrawAreas()
 	format.Font = fnt;
 	Position drawPos;
 	Size drawSize;
+	buffSizeTx.Height =3;
+	buffSizeTx.Width =8;
+
 	
 	//////////////////////////////////////////////////////////////////////////
 	size.Height =3*fnt.GlyphSize.Height;
 	size.Width =5*fnt.GlyphSize.Width;
+
 	pos.Left =0;
 	pos.Top =0;
 	content = "aaaaaeee\nbbbbb\nccee";
 
 	_renderer->Cls();
-	fres = CreateTextField(content, size, pos, &format, &tf, &oBuff);
+	fres = CreateTextField(content, size, pos, &format, FALSE,&tf, buffSizeTx);
 	if (fres!=SUCCESS)
 		throw "Can't create 3x5 TextField with 3x(8,5,4) text.";
 	if (tf==NULL)
 		throw "Can't create 3x5 TextField with 3x(8,5,4) text. TextField is NULL";
-	if (oBuff==NULL)
-		throw "Can't create 3x5 TextField with 3x(8,5,4) text. oBuff is NULL";
 	
 	//////////////////////////////////////////////////////////////////////////
 	_renderer->Cls();
@@ -513,7 +510,7 @@ void xTestTextField::xColorTest()
 	char* screen=NULL;
 	char* formatscreen=NULL;
 	TextField* tf=NULL;
-	char* oBuff=NULL;
+	Size buffSizeTx;
 	Size size;
 	Position pos;
 	char* content;
@@ -534,6 +531,8 @@ void xTestTextField::xColorTest()
 	fnt.Name = "Kreyls" ;
 	format.Font = fnt;
 	selformat.Font = fnt;
+	buffSizeTx.Height =3;
+	buffSizeTx.Width =5;
 
 	//////////////////////////////////////////////////////////////////////////
 	size.Height =1*fnt.GlyphSize.Height;
@@ -545,13 +544,11 @@ void xTestTextField::xColorTest()
 	test = "a$$$$\n$$$$$\n$$$$$";
 
 	_renderer->Cls();
-	fres = CreateTextField(content, size, pos, &format, &tf, &oBuff);
+	fres = CreateTextField(content, size, pos, &format,FALSE, &tf, buffSizeTx);
 	if (fres!=SUCCESS)
 		throw "Can't create 1x1 TextField with 'a' text.";
 	if (tf==NULL)
 		throw "Can't create 1x1 TextField with 'a' text. TextField is NULL";
-	if (oBuff==NULL)
-		throw "Can't create 1x1 TextField with 'a' text. oBuff is NULL";
 
 	fres = tf->Draw();
 

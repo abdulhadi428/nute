@@ -7,3 +7,9 @@ fresult GraphicRenderer::DrawString( Position pospx, const char* str, int length
 
 	return SUCCESS;
 }
+
+fresult GraphicRenderer::DrawRect( Position pospx, Size sizepx, Color color )
+{
+	DrawRect_kel(pospx.Left, pospx.Top, sizepx.Width, sizepx.Height, color);
+	return SUCCESS;
+}

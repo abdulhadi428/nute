@@ -38,14 +38,14 @@ int gy=0;
 int gc=0x0000;
 bool __stdcall MoveBoxByTimer()
 {
-	DrawRect(gx,gy,30,30,0);
+	DrawRect_kel(gx,gy,30,30,0);
 	gc+=0x111;
 	if (gc>=0x1000) gc=0x0000;
 	gx+=15; gy+=5;
 	if (gx>SCREENX) gx-=SCREENX;
 	if (gy>SCREENY) gy-=SCREENY;
-	DrawRect(gx,gy,30,30,gc);
-	return TRUE;
+	DrawRect_kel(gx,gy,30,30,gc);
+	return false;
 }
 
 void __stdcall AppMainThread(void* param)
@@ -57,8 +57,10 @@ void __stdcall AppMainThread(void* param)
 	Size size,size2;	
 
 	Clear(0);
+	char buff[56];
+	size2.Height = 7; size2.Width = 8;
 	InitPositionAndSize(10,10,80,80, &pos, &size);
-	tf.Init(size, pos, &rend);
+	tf.Init(size, pos, buff, size2, &rend);
 	str = 
 		"Статус: "
 		"Хиты: 12"
@@ -67,8 +69,8 @@ void __stdcall AppMainThread(void* param)
 		"В отсеке"
 		"взрыв,  "
 		"радиация";
-	size2.Height = 7; size2.Width = 8;
-	tf.SetText(str,size2,TRUE, NULL);
+
+	tf.SetText(str);
 	tf.Draw();
 	RegisterButtonHandlers(AppOnButtonClick, AppOnButtonHold);
 	RequestTimer(300, MoveBoxByTimer);
