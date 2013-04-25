@@ -35,7 +35,7 @@
 #define IR_TX_DMA_STREAM    STM32_DMA1_STREAM4  // }
 #define IR_TX_DMA_CHNL      5                   // } TIM3 trig
 
-// Receive section
+// Receive section, Level0
 #define IR_RX_PWR_GPIO      GPIOC
 #define IR_RX_PWR_PIN       6
 #define IR_RX_IN_GPIO       GPIOC
@@ -44,23 +44,33 @@
 #define IR_IRQ_MASK         ((uint32_t)0x20)    // Line 5
 #define IR_RXBUF_SZ         180 // 18o received bits
 
+// Rx Level1
+//#define IR_MAX_PKT_SZ       5
+
 // Delays, uS
-#define IR_TICK_US      600 // Protocol smallest time unit, us
+#define IR_TICK_US          600 // Protocol smallest time unit, us
 /* Header = 4 * IR_TICK_US
  * Space  = 1 * IR_TICK_US
  * Zero   = 1 * IR_TICK_US
  * One    = 2 * IR_TICK_US
  */
-// Rx time interval bounds
-#define IR_BOTTOM_BOUND_US  550
-//#define IR_TOP_BOUND_MS
 
+// Timings
+#define IR_HEADER_US        2400
+#define IR_ZERO_US          600
+#define IR_ONE_US           1200
+#define IR_DEVIATION_US     50
+#define IR_BOTTOM_BOUND_US  (IR_ZERO_US - IR_DEVIATION_US)
+#define IR_TIMEOUT_MS       2
+
+enum PieceType_t {ptHeader, ptZero, ptOne, ptError};
 
 class Infrared_t {
 private:
     uint16_t TxPwrBuf[4+1 + IR_BIT_CNT*(2+1) + 1];    // Buffer of power values: header + all one's + 1 delay after
     uint32_t MaxPower;
     Timer_t Carrier, Modulator, RxTimer;
+    // Rx Level0
     RiseFall_t IWaitingEdge;
     inline void RxIrqWaitFalling() {
         EXTI->RTSR &= ~IR_IRQ_MASK; // Rising trigger disabled
@@ -72,11 +82,19 @@ private:
     }
     msg_t IRxBuf[IR_RXBUF_SZ];
     Mailbox imailbox;
+    // Rx Level1
+    uint16_t IRxW;
+    uint8_t IBitCnt;
+    bool IReceivingData;
+    uint32_t IBitDelay;
+    inline void IStartPkt();
+    inline void IAppend(uint8_t Bit) { IRxW <<= 1; IRxW |= Bit; IBitCnt++; }
 public:
     Infrared_t():
         MaxPower(0),
         Carrier(IR_CARRIER_TMR), Modulator(IR_MODULATION_TMR), RxTimer(IR_RX_TIMER),
         IWaitingEdge(Falling),
+        IRxW(0), IBitCnt(0), IReceivingData(false), IBitDelay(TIME_INFINITE),
         IsBusy(false) { }
     bool IsBusy;
     void TxInit();

@@ -48,17 +48,46 @@ static WORKING_AREA(waIRRxThread, 128);
 static msg_t IRRxThread(void *arg) {
     (void)arg;
     chRegSetThreadName("IRRx");
-    while(1) IR.IRxTask();
+    IR.IRxTask();
     return 0;
 }
 
+inline PieceType_t ProcessInterval(uint16_t Duration) {
+    if     (IS_LIKE(Duration, IR_HEADER_US, IR_DEVIATION_US)) return ptHeader;
+    else if(IS_LIKE(Duration, IR_ZERO_US,   IR_DEVIATION_US)) return ptZero;
+    else if(IS_LIKE(Duration, IR_ONE_US,    IR_DEVIATION_US)) return ptOne;
+    else return ptError;
+}
+
+void Infrared_t::IStartPkt() {
+    IRxW = 0;
+    IBitCnt = 0;
+    IReceivingData = true;
+    IBitDelay = IR_TIMEOUT_MS;
+}
+
 void Infrared_t::IRxTask() {
-    // Fetch byte from queue
     msg_t Msg;
-    if(chMBFetch(&imailbox, &Msg, TIME_INFINITE) == RDY_OK) {
-        //uint16_t t = (uint16_t)Msg;
-        Uart.Printf("%d\r", Msg);
-    } // if msg
+    while(1) {
+        // Fetch byte from queue
+        if(chMBFetch(&imailbox, &Msg, IBitDelay) == RDY_OK) {
+            //Uart.Printf("%d\r", Msg);
+            PieceType_t Piece = ProcessInterval(Msg);
+            switch(Piece) {
+                case ptHeader: IStartPkt(); break;
+                case ptOne: if(IReceivingData) IAppend(1);
+                    else
+                    break;
+                case ptZero:   IAppend(0);  break;
+            } // switch
+            // Check if Rx completed
+            if(IBitCnt == 14) {
+                Uart.Printf("%02X\r", IRxW);
+                IReceivingData = false;
+                IBitDelay = TIME_INFINITE;
+            } // if completed
+        } // if msg
+    } // while 1
 }
 
 
@@ -154,7 +183,7 @@ uint8_t Infrared_t::TransmitWord(uint16_t wData, uint8_t PwrPercent) {
     for(uint8_t i=0; i<IR_BIT_CNT; i++) {
         *p++ = 0;                       // Off = Space
         *p++ = Pwr;                     // '0' is single ON
-        if(wData & 0x2000) *p++ = Pwr;  // '1' is double ON
+        if(wData & 0x8000) *p++ = Pwr;  // '1' is double ON
         wData <<= 1;
     }
     *p++ = 0;                           // Off - finishing delay

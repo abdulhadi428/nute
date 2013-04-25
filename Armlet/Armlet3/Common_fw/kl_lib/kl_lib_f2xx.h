@@ -41,6 +41,7 @@ enum RiseFall_t {Rising, Falling};
 
 // Simple pseudofunctions
 #define TRIM_VALUE(v, Max)  { if(v > Max) v = Max; }
+#define IS_LIKE(v, precise, deviation)  (((precise - deviation) < v) and (v < (precise + deviation)))
 
 #define ANY_OF_2(a, b1, b2)             (((a)==(b1)) or ((a)==(b2)))
 #define ANY_OF_3(a, b1, b2, b3)         (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)))
