@@ -111,6 +111,11 @@ static msg_t AppThread(void *arg) {
     return 0;
 }
 
+// IR
+void IRCmdCallback(uint16_t CmdWord) {
+    Uart.Printf("%02X\r", CmdWord);
+}
+
 // =============================== App class ===================================
 void App_t::Init() {
     chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, AppThread, NULL);

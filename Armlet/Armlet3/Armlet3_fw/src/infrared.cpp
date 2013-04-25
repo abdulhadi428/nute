@@ -52,13 +52,6 @@ static msg_t IRRxThread(void *arg) {
     return 0;
 }
 
-inline PieceType_t ProcessInterval(uint16_t Duration) {
-    if     (IS_LIKE(Duration, IR_HEADER_US, IR_DEVIATION_US)) return ptHeader;
-    else if(IS_LIKE(Duration, IR_ZERO_US,   IR_DEVIATION_US)) return ptZero;
-    else if(IS_LIKE(Duration, IR_ONE_US,    IR_DEVIATION_US)) return ptOne;
-    else return ptError;
-}
-
 void Infrared_t::IStartPkt() {
     IRxW = 0;
     IBitCnt = 0;
@@ -75,21 +68,24 @@ void Infrared_t::IRxTask() {
             PieceType_t Piece = ProcessInterval(Msg);
             switch(Piece) {
                 case ptHeader: IStartPkt(); break;
-                case ptOne: if(IReceivingData) IAppend(1);
-                    else
+                case ptOne:
+                    if(IReceivingData) IAppend(1);
+                    else ICancelPkt();
                     break;
-                case ptZero:   IAppend(0);  break;
+                case ptZero:
+                    if(IReceivingData) IAppend(0);
+                    else ICancelPkt();
+                    break;
+                default: ICancelPkt(); break;
             } // switch
             // Check if Rx completed
             if(IBitCnt == 14) {
-                Uart.Printf("%02X\r", IRxW);
-                IReceivingData = false;
-                IBitDelay = TIME_INFINITE;
+                ICancelPkt();
+                IRCmdCallback(IRxW);
             } // if completed
         } // if msg
     } // while 1
 }
-
 
 void Infrared_t::TxInit() {
     // ==== Carrier timer ====

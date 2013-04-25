@@ -88,7 +88,14 @@ private:
     bool IReceivingData;
     uint32_t IBitDelay;
     inline void IStartPkt();
+    inline void ICancelPkt() { IReceivingData = false; IBitDelay = TIME_INFINITE; IBitCnt = 0; }
     inline void IAppend(uint8_t Bit) { IRxW <<= 1; IRxW |= Bit; IBitCnt++; }
+    inline PieceType_t ProcessInterval(uint16_t Duration) {
+        if     (IS_LIKE(Duration, IR_HEADER_US, IR_DEVIATION_US)) return ptHeader;
+        else if(IS_LIKE(Duration, IR_ZERO_US,   IR_DEVIATION_US)) return ptZero;
+        else if(IS_LIKE(Duration, IR_ONE_US,    IR_DEVIATION_US)) return ptOne;
+        else return ptError;
+    }
 public:
     Infrared_t():
         MaxPower(0),
@@ -108,5 +115,7 @@ public:
 };
 
 extern Infrared_t IR;
+
+extern void IRCmdCallback(uint16_t CmdWord);
 
 #endif /* INFRARED_H_ */
