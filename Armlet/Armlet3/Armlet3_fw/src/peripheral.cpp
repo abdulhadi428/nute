@@ -13,7 +13,6 @@
 
 // Variables
 //PwrStatus_t PwrStatus;
-Pill_t Pill[PILL_COUNT_MAX];
 
 // ================================== Beep =====================================
 #define BEEP_TOP_VALUE   270 // 100% volume means on/off ratio 1/1

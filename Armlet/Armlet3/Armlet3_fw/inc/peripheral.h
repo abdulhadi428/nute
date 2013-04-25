@@ -59,22 +59,4 @@ public:
 
 extern Pin_t Pin;
 
-// =================================== Pills ===================================
-#define PILL_COUNT_MAX  8   // max count of simultaneously connected pills
-/* Number bytes in inner buffer. Also used to determine packet size.
- * See struct SbPkt_t in southbridge.h for more info about size.
- * Do not set large numbers; this will slow down communication between S & N bridges.
- */
-#define PILL_BUF_SZ     4
-
-enum PillStatus_t {psIdle=0, psBusy=1, psNotConnected=2, psError=3};
-struct Pill_t {
-    PillStatus_t Status;
-    uint8_t Address;
-    uint8_t Data[PILL_BUF_SZ];
-    void Read(uint16_t MemAddress, uint32_t DataSize);  // Data will be placed in PReadBuf
-    void Write(uint16_t MemAddress, uint32_t DataSize, uint8_t *PData);
-};
-extern Pill_t Pill[PILL_COUNT_MAX];
-
 #endif /* PERIPHERAL_H_ */
