@@ -152,7 +152,8 @@ uint8_t Clk_t::SetupPLLDividers(uint8_t InputDiv_M, uint16_t Multi_N, PllSysDiv_
 
 // Setup Flash latency depending on CPU freq and voltage. Page 54 of ref manual.
 uint8_t Clk_t::SetupFlashLatency(uint8_t AHBClk_MHz, uint16_t Voltage_mV) {
-    uint32_t tmp = FLASH_ACR_PRFTEN |FLASH_ACR_ICEN |FLASH_ACR_DCEN;
+    // Disabling the prefetch buffer avoids extra Flash access that consumes 20 mA for 128-bit line fetching.
+    uint32_t tmp = FLASH_ACR_ICEN | FLASH_ACR_DCEN;     // Enable instruction & data prefetch by ART, disable ordinal prefetch
     if((2700 < Voltage_mV) and (Voltage_mV <= 3600)) {
         if     (AHBClk_MHz <= 30) tmp |= FLASH_ACR_LATENCY_0WS;
         else if(AHBClk_MHz <= 60) tmp |= FLASH_ACR_LATENCY_1WS;

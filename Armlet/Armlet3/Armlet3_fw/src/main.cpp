@@ -18,6 +18,7 @@
 #include "infrared.h"
 #include "lvl1_assym.h"
 #include "cmd_uart.h"
+#include "power.h"
 
 #include "application.h"
 
@@ -36,6 +37,8 @@ int main() {
     Clk.SetupBusDividers(ahbDiv4, apbDiv1, apbDiv1);
     if((ClkResult = Clk.SwitchToPLL()) == 0) Clk.HSIDisable();
     Clk.UpdateFreqValues();
+
+    Delay_ms(1800);
 
     // ==== Init OS ====
     halInit();
@@ -63,6 +66,7 @@ void Init() {
     Vibro.Init();
     IR.TxInit();
     IR.RxInit();
+    Power.Init();
     //Sound.Init();
     //Sound.Play("alive.wav");
     //Sound.Play("Sylvans.mp3");

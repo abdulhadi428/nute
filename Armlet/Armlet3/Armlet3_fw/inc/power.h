@@ -17,21 +17,27 @@
 #define PWR_BATTERY_PIN     0
 #define PWR_BATTERY_GPIO    GPIOC
 
-#define PWR_MEASURE_EVERY_MS    999
+#define PWR_MEASUREMENT_INTERVAL_MS    999
 
-#define ADC_CHNL   10
-//#define
+// Adc
+#define ADC_CHNL    10
+// Constants
+#define BAT_0_PERCENT_MV    3650
+#define BAT_100_PERCENT_MV  4140
+#define ADC_VREF_MV         3300
 
 class Pwr_t {
 private:
-
+    EventSource IEvtSrcPwrChange;
 public:
+    void Task();
     bool ExternalPwrOn() { return  PinIsSet(PWR_EXTERNAL_GPIO, PWR_EXTERNAL_PIN); }
     bool IsCharging()    { return !PinIsSet(PWR_CHARGING_GPIO, PWR_CHARGING_PIN); }
     uint16_t Voltage_mV;
     uint8_t RemainingPercent;
-    EventSource EvtSrcPwrChange;
+    void RegisterEvtChange(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcPwrChange, PEvtLstnr, EvtMask); }
     void Init();
+    void EnterStandby();
 };
 extern Pwr_t Power;
 
