@@ -93,6 +93,8 @@ void __stdcall AppMainThread(void* param)
 	*/
 	RegisterButtonHandlers(AppOnButtonClick, AppOnButtonHold);
 
+	//extern const unsigned short ArrowDownOrangeBitmap[];
+	//DrawBitmap_kel(0,0,24,24,(short*)ArrowDownOrangeBitmap);
 
 	fresult fres;
 	fres = UI.Init();
@@ -103,7 +105,7 @@ void __stdcall AppMainThread(void* param)
 	}
 	else
 	{
-		fres = UI.Draw();
+		//fres = UI.Draw();
 		if (fres!=SUCCESS)
 		{
 			char* err = "Failed to draw UI";

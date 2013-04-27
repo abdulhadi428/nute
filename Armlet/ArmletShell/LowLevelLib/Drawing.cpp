@@ -141,8 +141,8 @@ void DrawRect_kel(int x, int y, int sx, int sy, short color)
 
 void DrawBitmap_kel(int x, int y, int sx, int sy, short* bitmap)
 {
-	if (x<=0) return;
-	if (y<=0) return;
+	if (x<0) return;
+	if (y<0) return;
 	if (sx<=0) return;
 	if (sy<=0) return;
 	int k=0;

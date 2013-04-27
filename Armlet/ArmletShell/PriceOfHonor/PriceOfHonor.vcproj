@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="PriceOfHonor"
 	ProjectGUID="{ED6F4CE0-7FB0-4686-8904-5D1C34CC3ECE}"
 	RootNamespace="PriceOfHonor"
@@ -163,6 +163,10 @@
 			</File>
 			<File
 				RelativePath=".\MedWounds.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestIcon.cpp"
 				>
 			</File>
 			<File
