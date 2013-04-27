@@ -1,0 +1,8 @@
+C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateConsole\bin\Debug\HonorSerialportGateConsole.exe.config
+C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateConsole\bin\Debug\HonorSerialportGateConsole.exe
+C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateConsole\bin\Debug\HonorSerialportGateConsole.pdb
+C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateConsole\obj\Debug\HonorSerialportGateConsole.exe
+C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateConsole\obj\Debug\HonorSerialportGateConsole.pdb
+C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateConsole\bin\Debug\HonorSerialportGateDaemon.dll
+C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateConsole\bin\Debug\HonorSerialportGateDaemon.pdb
+C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateConsole\obj\Debug\HonorSerialportGateConsole.csprojResolveAssemblyReference.cache
