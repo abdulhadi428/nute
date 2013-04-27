@@ -33,6 +33,16 @@ void OnButtonHold(int button, int seconds)
 		Show_Glyphs(2,0,16,16,2,2);
 		return;
 	}
+	if (button==BUTTON_B) {
+		Clear(BLUE);
+		Show_Glyphs(2,0,16,16,2,1);
+		return;
+	}
+	if (button==BUTTON_C) {
+		Clear(BLUE);
+		Show_Glyphs(1,0,8,8,1,1);
+		return;
+	}
 	if (gClickButtonHandler)
 		(*gClickButtonHandler)(button);
 }

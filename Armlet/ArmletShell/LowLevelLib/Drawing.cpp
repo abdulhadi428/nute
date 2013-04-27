@@ -18,14 +18,8 @@ void DrawPixel(int x, int y, short c)
 void DrawGlyphPoint(
 	int gx, int gy,
 	int x, int y, int cx,int cy, int scaleFactor, int fillFactor,
-	bool b)
+	short color, short backColor)
 {
-	short color1;
-	if (b) {
-		color1 = 0x0F00;
-	} else {
-		color1 = 0x0FFF;
-	}
 	if ((cx < gx*scaleFactor)||(cy<gy*scaleFactor))
 	{
 		return;
@@ -35,9 +29,8 @@ void DrawGlyphPoint(
 	for (int i=0;i<scaleFactor;i++)
 		for(int j=0;j<scaleFactor;j++)
 		{
-			short color = color1;
 			if ((i>fillFactor)||(j>fillFactor)) {
-				color = 0x0000;
+				color = backColor;
 			}
 			DrawPixel(
 				x + scaleFactor*gx + i,
@@ -47,7 +40,8 @@ void DrawGlyphPoint(
 }
 
 void DrawGlyph(int x, int y, unsigned char index,
-	int cx,int cy, int scaleFactor, int fillFactor)
+	int cx,int cy, int scaleFactor, int fillFactor,
+	short foreColor, short backColor)
 {
     for (int vert = 0; vert < 6; vert++)
     {
@@ -57,9 +51,9 @@ void DrawGlyph(int x, int y, unsigned char index,
             int mask = 1 << i;
             if ((vertValue & mask) != 0)
             {
-				DrawGlyphPoint(vert,i,x,y,cx,cy,scaleFactor,fillFactor,true);
+				DrawGlyphPoint(vert,i,x,y,cx,cy,scaleFactor,fillFactor,foreColor,backColor);
 			} else {
-				DrawGlyphPoint(vert,i,x,y,cx,cy,scaleFactor,fillFactor,false);
+				DrawGlyphPoint(vert,i,x,y,cx,cy,scaleFactor,fillFactor,backColor,backColor);
 			}
         }
     }
@@ -86,7 +80,8 @@ void Show_Glyphs(int dx, int dy, int cx,int cy,
 		fillFactor=scaleFactor;
 	for (int index=0; index<256; index++) {
 		DrawGlyph(x+dx,y+dy,index,
-			cx-dx,cy-dy,scaleFactor,fillFactor);
+			cx-dx,cy-dy,scaleFactor,fillFactor,
+			0x0F00,0x0FFF);
 		x += cx;
 		if (x>(SCREENX-cx)) {
 			x=0;
@@ -98,7 +93,7 @@ void Show_Glyphs(int dx, int dy, int cx,int cy,
 	}
 }
 
-void DrawTextString(char x0, char y0, const char* string, int sz, short foreColor, short backColor)
+void DrawTextString(int x0, int y0, const char* string, int sz, short foreColor, short backColor)
 {
 	int x = x0;
 	int y = y0;
@@ -109,7 +104,7 @@ void DrawTextString(char x0, char y0, const char* string, int sz, short foreColo
 	}
 	for(int i=0;i<sz;i++) {
 		DrawGlyph(x,y,string[i],
-			cx,cy,1,1);
+			cx,cy,1,1,foreColor,backColor);
 		x += cx;
 		if (x>(SCREENX-cx)) {
 			return;
@@ -142,4 +137,30 @@ void DrawRect_kel(int x, int y, int sx, int sy, short color)
 			if (py>=SCREENY) return;
 			DrawPixel(px,py,color);
 		}
+}
+
+void DrawBitmap_kel(int x, int y, int sx, int sy, short* bitmap)
+{
+	if (x<=0) return;
+	if (y<=0) return;
+	if (sx<=0) return;
+	if (sy<=0) return;
+	int k=0;
+	for(int j=0; j<sy; j++)
+	{
+		for (int i=0; i<sx; i++)
+		{
+			int px=x+i;
+			int py=y+j;
+			if (px>=SCREENX) return;
+			if (py>=SCREENY) return;
+			DrawPixel(px,py,bitmap[k++]);
+		}
+	}
+}
+
+void DrawBitmapRect_kel(int x, int y, int sx, int sy, short* bitmap, int dx, int dy, int sdx, int sdy)
+{
+	//TODO HACK - need to implement
+	DrawBitmap_kel(x,y,sx,sy,bitmap);
 }
