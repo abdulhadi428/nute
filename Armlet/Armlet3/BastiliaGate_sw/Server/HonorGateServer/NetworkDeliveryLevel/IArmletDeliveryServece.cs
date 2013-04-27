@@ -14,7 +14,7 @@ namespace HonorGateServer.NetworkDeliveryLevel
         byte new_blood { get; set; }
     }
 
-    interface IArmletDeliveryServece
+    public interface IArmletDeliveryServece
     {
         void DeliverToSingleArmlet(byte armlet_id, byte[] nonce_id, byte[] payload);   //For any MSG_* commands
         void DeliverToAllArmlets(byte[] nonce_id, byte[] payload);                    //For MSG_ROOM_HIT usage only
