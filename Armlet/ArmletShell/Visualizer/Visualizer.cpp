@@ -16,3 +16,10 @@ int main(array<System::String ^> ^args)
 	Application::Run(gcnew MainForm());
 	return 0;
 }
+
+/*
+Due to initialization of global object in libraries
+entry pint is:
+int __clrcall mainCRTStartupStrArray(cli::array<class System::String ^ >^)
+?mainCRTStartupStrArray@@$$FYMHP$01AP$AAVString@System@@@Z
+*/
