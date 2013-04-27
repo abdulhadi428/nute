@@ -9,3 +9,4 @@ void DrawTextString(char x, char y, const char* string, int sz, short foreColor,
 void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER HoldButtonHandler);
 void DrawRect_kel(int x, int y, int sx, int sy, short color);
 bool RequestTimer(int period, TIMER_PROC routine);
+void DrawPixel(int x, int y, short c);
