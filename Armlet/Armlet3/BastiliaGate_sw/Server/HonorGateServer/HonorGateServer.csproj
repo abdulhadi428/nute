@@ -57,7 +57,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="NetworkDeliveryLevel\ArmletDeliveryService.cs" />
+    <Compile Include="NetworkDeliveryLevel\GateConnectionPool.cs" />
+    <Compile Include="NetworkDeliveryLevel\GateDeliveryService.cs" />
     <Compile Include="NetworkDeliveryLevel\IArmletDeliveryServece.cs" />
+    <Compile Include="NetworkDeliveryLevel\IGateDeliveryService.cs" />
     <Compile Include="WCFServices\GateWcfService.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

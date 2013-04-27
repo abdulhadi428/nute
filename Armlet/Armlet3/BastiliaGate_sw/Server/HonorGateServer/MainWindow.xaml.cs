@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ServiceModel;
 using HonorGateServer.NetworkDeliveryLevel;
+using HonorGateServer.WCFServices;
 
 
 namespace HonorGateServer
@@ -23,15 +24,31 @@ namespace HonorGateServer
     /// </summary>
     public partial class MainWindow : Window
     {
+        internal static ServiceHost myServiceHost = null; 
         private NetworkDeliveryLevel.ArmletDeliveryService armletDelivery;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            var service = new GateWcfService();
-            armletDelivery = new ArmletDeliveryService(service);
+            if (myServiceHost != null)
+            {
+                myServiceHost.Close();
+            }
 
+            myServiceHost = new ServiceHost(typeof(GateWcfService));
+            myServiceHost.Open();
+
+
+            
+
+            //armletDelivery = new ArmletDeliveryService();
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            GateConnectionPool.GateConnections.FirstOrDefault(g => g.Key == 1).Value.CallbackObject.SetGateId(22);
         }
     }
 }

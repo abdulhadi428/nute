@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HonorGateServer.WCFServices;
 
 namespace HonorGateServer.NetworkDeliveryLevel
 {
@@ -12,23 +13,21 @@ namespace HonorGateServer.NetworkDeliveryLevel
         public ArmletDeliveryService(GateWcfService service)
         {
             _service = service;
-
-
-
         }
-        public void DeliverToSingleArmlet(int armlet_ID, int nonce_id, string payload)
+
+
+        public void DeliverToSingleArmlet(byte armlet_id, byte[] nonce_id, byte[] payload)
         {
             throw new NotImplementedException();
         }
 
-        public event ArmletPayloadTransferedHandler PayloadTransferedToArmlet;
-        public event ArmletPayloadTaskCompletedHandler PayloadTaskCompletedByArmlet;
-
-        public void DeliverToAllArmlets(int nonce_id, string payload)
+        public void DeliverToAllArmlets(byte[] nonce_id, byte[] payload)
         {
             throw new NotImplementedException();
         }
 
-        public event ArmletsPayloadTranferedHandler SomeArmletsConfirmedDelivery;
+        public event Action<byte, byte[]> TXCompleted;
+        public event Action<PlayerStatusUpdate[]> ArmletsStatusUpdate;
+        public event Action<byte, byte[]> ArmletSendsData;
     }
 }

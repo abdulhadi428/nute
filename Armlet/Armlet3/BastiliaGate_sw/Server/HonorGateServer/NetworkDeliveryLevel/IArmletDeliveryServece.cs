@@ -6,18 +6,22 @@ using System.Threading.Tasks;
 
 namespace HonorGateServer.NetworkDeliveryLevel
 {
-    public delegate void ArmletPayloadTransferedHandler(int nonce_id);
-    public delegate void ArmletPayloadTaskCompletedHandler (int nonce_id);
 
-    public delegate void ArmletsPayloadTranferedHandler(int[] armlets_ids, int nonce_id);
+    public class PlayerStatusUpdate
+    {
+        byte armlet_id { get; set; }
+        byte new_room { get; set; }
+        byte new_blood { get; set; }
+    }
 
     interface IArmletDeliveryServece
     {
-        void DeliverToSingleArmlet(int armlet_ID, int nonce_id, string payload);   //For any MSG_* commands
-        event ArmletPayloadTransferedHandler PayloadTransferedToArmlet;
-        event ArmletPayloadTaskCompletedHandler PayloadTaskCompletedByArmlet;
+        void DeliverToSingleArmlet(byte armlet_id, byte[] nonce_id, byte[] payload);   //For any MSG_* commands
+        void DeliverToAllArmlets(byte[] nonce_id, byte[] payload);                    //For MSG_ROOM_HIT usage only
 
-        void DeliverToAllArmlets(int nonce_id, string payload);                    //For MSG_ROOM_HIT usage only
-        event ArmletsPayloadTranferedHandler SomeArmletsConfirmedDelivery;
+        event Action<byte, byte[]> TXCompleted;                             // byte armlet_id, byte[] nonce_id
+        event Action<PlayerStatusUpdate[]> ArmletsStatusUpdate;             // Array of player/armlet status changes
+        event Action<byte, byte[]> ArmletSendsData;                         // byte armlet_id, byte[] payload
+
     }
 }

@@ -4,6 +4,7 @@
         Title="MainWindow" Height="350" Width="525">
     <Grid>
         <TextBox x:Name="LogView" HorizontalAlignment="Left" Height="214" Margin="31,42,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="439"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="86,280,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
 
     </Grid>
 </Window>

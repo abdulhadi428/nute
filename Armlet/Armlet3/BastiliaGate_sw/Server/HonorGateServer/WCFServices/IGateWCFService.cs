@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.Text;
+﻿using System.ServiceModel;
 
-namespace HonorGateServer
+namespace HonorGateServer.WCFServices
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "IGateWCFService" in both code and config file together.
-    [ServiceContract]
+    [ServiceContract(SessionMode = SessionMode.Required,
+                 CallbackContract = typeof(IGateWCFServiceCallback))]
     public interface IGateWCFService
     {
         [OperationContract]
-        string DoWork(string value);
+        int RegisterGate (int preferedGateId);
+    }
+
+
+    public interface IGateWCFServiceCallback
+    {
+        [OperationContract]
+        void SetGateId(int newGateId);
     }
 }
