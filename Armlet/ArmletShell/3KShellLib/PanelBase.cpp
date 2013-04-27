@@ -1,8 +1,8 @@
 #pragma once
-#include "Panel.h"
+#include "PanelBase.h"
 #include "Dimensions.h"
 
-fresult Panel::SetControls(IControl** controls, ubyte_t count )
+fresult PanelBase::SetControls(IControl** controls, ubyte_t count )
 {
 	bool_t isInRect;
 
@@ -18,7 +18,7 @@ fresult Panel::SetControls(IControl** controls, ubyte_t count )
 	return SUCCESS;
 }
 
-fresult Panel::BaseInit( Size size, Position position, IRender* renderer, IControl** controls, ubyte_t controlsCount )
+fresult PanelBase::BaseInit( Size size, Position position, IRender* renderer, IControl** controls, ubyte_t controlsCount )
 {
 	fresult fres;
 	fres = ControlBase::BaseInit(size, position, renderer);
@@ -43,7 +43,7 @@ fresult Panel::BaseInit( Size size, Position position, IRender* renderer, IContr
 }
 
 //Draw child controls areas
-fresult Panel::DrawArea( Position pos, Size size )
+fresult PanelBase::DrawArea( Position pos, Size size )
 {
 	Position ctrlPos;
 	Size ctrlSize;
