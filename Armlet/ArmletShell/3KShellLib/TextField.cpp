@@ -107,7 +107,7 @@ fresult TextField::AppendText(const char* text)
 
 		//word limit at readAheadIndex chars from current position. 
 		//Decide whether to wrap
-		if (buffWritePosition.Left + readAheadIndex > wrapLimit)
+		if (buffWritePosition.Left + readAheadIndex >= wrapLimit)
 		{
 			//next word border exceeds wrap limit
 			//decide to wrap

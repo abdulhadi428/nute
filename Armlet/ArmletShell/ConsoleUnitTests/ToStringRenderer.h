@@ -16,10 +16,11 @@ class ToStringRenderer : public IRender
 {
 	FormatStub* _representors;
 	int _representorsCount;
-	Size _sizetx;
 	char GetFormatRepresenterChar(TextFormat* format);
 
 public:
+	Size _sizetx;
+
 	char* _buff;
 	char* _formatBuff;
 

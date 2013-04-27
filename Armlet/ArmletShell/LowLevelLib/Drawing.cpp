@@ -127,7 +127,7 @@ void Clear(short backColor)
 		}
 }
 
-void DrawRect(int x, int y, int sx, int sy, short color)
+void DrawRect_kel(int x, int y, int sx, int sy, short color)
 {
 	if (x<=0) return;
 	if (y<=0) return;

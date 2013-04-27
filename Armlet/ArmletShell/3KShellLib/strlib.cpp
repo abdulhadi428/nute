@@ -51,12 +51,14 @@ uword_t Length(const char* string)
 }
 
 //returns:
-// 0 - equal
-// >0 bigger
-// <0 lesser
-sbyte_t StringEquals(const char* src, const char* cmp)
+bool_t StringEquals( const char* src, const char* cmp )
 {
 	uword_t index =0;
+
+	if (src == NULL || cmp == NULL)
+	{
+		return FALSE;
+	}
 
 	while (src[index]!=0)
 	{
@@ -66,17 +68,17 @@ sbyte_t StringEquals(const char* src, const char* cmp)
 		}
 		else
 		{
-			return 0;
+			return FALSE;
 		}
 	}
 
 	if(src[index] == cmp[index])
 	{
-		return 1;
+		return TRUE;
 	}
 	else
 	{
-		return 0;
+		return FALSE;
 	}
 }
 

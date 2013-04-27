@@ -11,7 +11,7 @@ sword_t InStr(const char* string, const char* pattern, uword_t startIndex);
 uword_t Length(const char* string);
 
 // checks if strings are equal (note: NULL=NULL)
-sbyte_t StringEquals(const char* src, const char* cmp);
+bool_t StringEquals(const char* src, const char* cmp);
 //adds add string to src. returns newly allocated string
 char* StringAdd(const char* src, const char* add);
 

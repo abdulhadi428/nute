@@ -55,6 +55,9 @@ void xTestTextField::doTests()
 
 		testName = "xColorTest";
 		xColorTest();
+
+		testName = "xWrapTest";
+		xWrapTest();
 		
 		std::cout << "xTestTextField tests passed.\n";
 	}
@@ -597,6 +600,90 @@ void xTestTextField::xColorTest()
 	
 }
 
+void xTestTextField::xWrapTest()
+{
+
+	fresult fres;
+	char* screen=NULL;
+	TextField* tf=NULL;
+	Size size;
+	Position pos;
+	char* content;
+	char* test;
+	Size buffSizeTx;
+
+	TextFormat format;
+	format.BgColor = 0;
+	format.FgColor =0;
+	FontDescription fnt;
+	fnt.GlyphSize.Height =8;
+	fnt.GlyphSize.Width =8;
+	fnt.ID =1;
+	fnt.Name = "Kreyls" ;
+	format.Font = fnt;
+	buffSizeTx.Height =6;
+	buffSizeTx.Width =8;
+
+
+	//////////////////////////////////////////////////////////////////////////
+	size.Height =3*fnt.GlyphSize.Height;
+	size.Width =8*fnt.GlyphSize.Width;
+
+	_renderer->_sizetx.Height =3;
+	_renderer->_sizetx.Width = 8;
+
+	pos.Left =0;
+	pos.Top =0;
+	content = "aa bb cc\ndd ee ff\nhh jj kk";
+	test = "aa bb cc\ndd ee ff\nhh jj kk";
+	_renderer->Cls();
+	fres = CreateTextField(content, size, pos, &format, FALSE,&tf, buffSizeTx);
+
+	if (fres!=SUCCESS)
+		throw "Can't create 3*8 TextField.";
+	if (tf==NULL)
+		throw "Can't create 3*8 TextField.";
+
+	tf->SetText(content);
+	fres = tf->Draw();
+
+	if (fres!=SUCCESS)
+		throw "Error drawing 3x8 TextField with simple text without wraps.";
+	screen = _renderer->GetScreen();
+	if (screen == NULL)
+		throw "Error drawing 3x8 TextField with simple text without wraps. Can't get screen.";
+
+	if (!StringEquals(screen, test))
+		throw "Error drawing 3x8 TextField with simple text without wraps. Wrong screen content.";
+
+
+	//////////////////////////////////////////
+	_renderer->Cls();
+	size.Height =3*fnt.GlyphSize.Height;
+	size.Width =7*fnt.GlyphSize.Width;
+	_renderer->_sizetx.Height =3;
+	_renderer->_sizetx.Width = 7;
+
+	tf->SetSize(size);
+
+	content = "aa bb cc\ndd ee ff\nhh jj kk";
+	test = "aa bb $\ncc$$$$$\ndd ee $";
+	tf->SetWordWrap(TRUE);
+
+	tf->SetText(content);
+	if (fres!=SUCCESS)
+		throw "Error setting text to 3x7 TextField with simple text with wraps.";
+
+	fres = tf->Draw();
+	if (fres!=SUCCESS)
+		throw "Error drawing text to 3x7 TextField with simple text with wraps.";
+
+	screen = _renderer->GetScreen();
+	if (!StringEquals(screen, test))
+		throw "Error drawing 3x7 TextField with simple text with wraps. Wrong screen content.";
+
+
+}
 
 
 

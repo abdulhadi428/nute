@@ -21,5 +21,7 @@ public:
 	void xDrawAreas();
 
 	void xColorTest();
+
+	void xWrapTest();
 };
 
