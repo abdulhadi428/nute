@@ -162,6 +162,12 @@ void Infrared_t::RxInit() {
     nvicEnableVector(EXTI9_5_IRQn, CORTEX_PRIORITY_MASK(IRQ_PRIO_HIGH));
 }
 
+void Infrared_t::Shutdown() {
+    PinSetupAnalog(IR_RX_PWR_GPIO,  IR_RX_PWR_PIN);
+    PinSetupAnalog(IR_RX_IN_GPIO,   IR_RX_IN_PIN);
+    PinSetupAnalog(IR_CARRIER_GPIO, IR_CARRIER_PIN);
+}
+
 uint8_t Infrared_t::TransmitWord(uint16_t wData, uint8_t PwrPercent) {
 //    Uart.Printf("T\r");
     if(IsBusy) return BUSY;

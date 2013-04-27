@@ -137,6 +137,7 @@ private:
     inline void IStartRx();
     inline uint8_t IAppendRx(uint8_t ALength);
     inline void IEndRx(uint8_t ARslt);
+    BinarySemaphore bsemShutdown;
 #endif
 #ifdef GATE
     uint8_t SlotN;
@@ -145,6 +146,9 @@ private:
 #endif
 public:
     void Init(uint16_t ASelfID);
+#ifdef DEVICE
+    void Shutdown();
+#endif
 #ifdef GATE
     void SetID(uint16_t ASelfID);
 #endif

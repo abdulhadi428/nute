@@ -11,7 +11,7 @@
 
 Clk_t Clk;
 
-// ==== Inner use ====
+// =================================== Clk =====================================
 uint8_t Clk_t::HSEEnable() {
     RCC->CR |= RCC_CR_HSEON;    // Enable HSE
     // Wait until ready
@@ -43,6 +43,11 @@ uint8_t Clk_t::PLLEnable() {
         StartUpCounter++;
     } while(StartUpCounter < HSE_STARTUP_TIMEOUT);
     return 1; // Timeout
+}
+
+void Clk_t::LSIEnable() {
+    RCC->CSR |= RCC_CSR_LSION;
+    while ((RCC->CSR & RCC_CSR_LSIRDY) == 0);
 }
 
 void Clk_t::UpdateFreqValues() {

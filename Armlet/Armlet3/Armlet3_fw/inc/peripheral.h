@@ -24,6 +24,7 @@ private:
 public:
     void Vibrate(const VibroChunk_t *PSequence); // Vibrate with this function
     void Init();
+    void Shutdown();
 };
 extern Vibrator_t Vibro;
 
@@ -41,6 +42,7 @@ private:
 public:
     void Beep(const BeepChunk_t *PSequence); // Beep with this function
     void Init();
+    void Shutdown();
 };
 extern Beeper_t Beeper;
 

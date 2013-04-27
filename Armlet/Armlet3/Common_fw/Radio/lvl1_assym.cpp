@@ -293,6 +293,7 @@ void rLevel1_t::IInSync() {
 }
 
 void rLevel1_t::Task() {
+    chBSemWait(&bsemShutdown);
     switch(rMode) {
         case rmAlone:
             CC.Sleep();  // Shutdown CC
@@ -304,6 +305,12 @@ void rLevel1_t::Task() {
             IInSync();
             break;
     } // switch
+    chBSemSignal(&bsemShutdown);
+}
+
+void rLevel1_t::Shutdown() {
+    chBSemWait(&bsemShutdown);
+    CC.Sleep();  // Shutdown CC
 }
 #endif
 
@@ -339,6 +346,7 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     // Timeslot Timer
     chVTSet(&rTmr, MS2ST(RTIMESLOT_MS), rTmrCallback, NULL);  // Start timer
 #else
+    chBSemInit(&bsemShutdown, NOT_TAKEN);
     SelfID = ASelfID;
     rMode = rmAlone;
     PktTx.rID = SelfID; // Always the same

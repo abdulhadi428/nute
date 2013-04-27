@@ -106,7 +106,7 @@ public:
     bool IsBusy;
     void TxInit();
     void RxInit();
-    void RxDeInit();
+    void Shutdown();
     uint8_t TransmitWord(uint16_t wData, uint8_t PwrPercent);
     // Inner use
     void IStopModulator() { Modulator.Disable(); }

@@ -32,8 +32,9 @@
  * 0...3        Lowest...Highest.
  */
 
+// HAL driver system settings
 //#define STM32_VOS                           STM32_VOS_HIGH
-//#define STM32_PVD_ENABLE                    FALSE
+#define STM32_PVD_ENABLE                    FALSE
 //#define STM32_PLS                           STM32_PLS_LEV0
 
 /*

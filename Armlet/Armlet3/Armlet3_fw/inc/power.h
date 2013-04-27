@@ -41,5 +41,6 @@ public:
 };
 extern Pwr_t Power;
 
+void ShutdownPeriphery();
 
 #endif /* POWER_H_ */

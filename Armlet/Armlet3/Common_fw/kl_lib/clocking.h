@@ -59,13 +59,15 @@ public:
     uint32_t APB1FreqHz;    // PCLK1: APB1 Bus clock; 30 MHz max
     uint32_t APB2FreqHz;    // PCLK2: APB2 Bus clock; 60 MHz max
     uint32_t UsbSdioFreqHz; // Clock is intended to be 48 MHz
-    // SysClk switching
+    // Clk switching
     uint8_t SwitchToHSI();
     uint8_t SwitchToHSE();
     uint8_t SwitchToPLL();
     void HSEDisable() { RCC->CR &= ~RCC_CR_HSEON; }
     void HSIDisable() { RCC->CR &= ~RCC_CR_HSION; }
     void PLLDisable() { RCC->CR &= ~RCC_CR_PLLON; }
+    void LSIEnable();
+    // Dividers
     void SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div);
     uint8_t SetupPLLDividers(uint8_t InputDiv_M, uint16_t Multi_N, PllSysDiv_P_t SysDiv_P, uint8_t UsbDiv_Q);
     void UpdateFreqValues();

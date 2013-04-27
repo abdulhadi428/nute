@@ -22,6 +22,9 @@ extern SDCDriver SDCD1;
 #error "MMC_SPI or SDC driver must be specified"
 #endif
 
+// KL
+#undef HAL_USE_RTC
+
 #if HAL_USE_RTC
 #include "chrtclib.h"
 extern RTCDriver RTCD1;

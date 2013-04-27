@@ -41,6 +41,10 @@ void Beeper_t::Beep(const BeepChunk_t *PSequence) {
     chVTSet(&ITmr, MS2ST(PSequence->Time_ms), BeeperTmrCallback, (void*)(PSequence+1));
 }
 
+void Beeper_t::Shutdown() {
+    PinSetupAnalog(GPIOD, 12);
+}
+
 // ================================== Vibro ====================================
 #define VIBRO_TOP_VALUE   207
 Vibrator_t Vibro;
@@ -66,6 +70,10 @@ void Vibrator_t::Vibrate(const VibroChunk_t *PSequence) {
     IPin.On(Intencity);
     // Start timer
     chVTSet(&ITmr, MS2ST(PSequence->Time_ms), VibroTmrCallback, (void*)(PSequence+1));
+}
+
+void Vibrator_t::Shutdown() {
+    PinSetupAnalog(GPIOE, 14);
 }
 
 // ================================= Pin control ===============================

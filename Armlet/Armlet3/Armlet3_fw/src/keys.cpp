@@ -48,3 +48,7 @@ void KeysInit() {
 void KeysRegisterEvt(EventListener *PEvtLstnr, uint8_t EvtMask) {
     chEvtRegisterMask(&EvtSrcKey, PEvtLstnr, EvtMask);
 }
+
+void KeysShutdown() {
+    for(uint8_t i=0; i<KEYS_CNT; i++) PinSetupAnalog(KEY_GPIO, KeyPin[i]);
+}

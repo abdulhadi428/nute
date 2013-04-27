@@ -37,8 +37,7 @@ int main() {
     Clk.SetupBusDividers(ahbDiv4, apbDiv1, apbDiv1);
     if((ClkResult = Clk.SwitchToPLL()) == 0) Clk.HSIDisable();
     Clk.UpdateFreqValues();
-
-    Delay_ms(1800);
+    Clk.LSIEnable();        // To allow RTC to run
 
     // ==== Init OS ====
     halInit();
@@ -48,9 +47,12 @@ int main() {
     // Report problem with clock if any
     if(ClkResult) Uart.Printf("Clock failure\r");
 
+    chThdSleepSeconds(3);
+
     while(TRUE) {
         chThdSleepMilliseconds(999);
-        //IR.TransmitWord(0x0044, 100);
+        ShutdownPeriphery();
+        Power.EnterStandby();
     }
 
     //armlet_main();
@@ -59,7 +61,7 @@ int main() {
 void Init() {
     Uart.Init(115200);
     Uart.Printf("Armlet3 AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
-//    Lcd.Init();
+    //    Lcd.Init();
 //    SD.Init();
     KeysInit();
     Beeper.Init();
@@ -69,7 +71,6 @@ void Init() {
     Power.Init();
     //Sound.Init();
     //Sound.Play("alive.wav");
-    //Sound.Play("Sylvans.mp3");
     // Radio
     rLevel1.Init(RDEV_BOTTOM_ID+1); // FIXME: replace RBOTTOMID with value from SD
     App.Init();

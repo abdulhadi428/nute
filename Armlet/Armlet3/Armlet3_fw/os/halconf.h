@@ -109,8 +109,11 @@
 /**
  * @brief   Enables the RTC subsystem.
  */
+#define STM32_RTCCLK        32000       // KL: Low speed internal clock, not adjustable
+#define STM32_RTCSEL        STM32_RTCSEL_LSI
+
 #if !defined(HAL_USE_RTC) || defined(__DOXYGEN__)
-#define HAL_USE_RTC                 FALSE
+#define HAL_USE_RTC                 TRUE            // ========= KL =========
 #endif
 
 /**
