@@ -1,19 +1,12 @@
 #pragma once
-#include "ControlBase.h"
-#include "project.h"
 
-class Panel : public ControlBase
+#include "PanelBase.h"
+
+class Panel : public PanelBase
 {
-protected:
-
-	IControl** _Controls;
-	ubyte_t _ControlsCount;
-
-	//Initialization;
-	fresult BaseInit(Size size, Position position, IRender* renderer, IControl** controls, ubyte_t controlsCount);
-	
-	fresult SetControls( IControl** controls, ubyte_t count );
-
-	fresult virtual DrawArea( Position pos, Size size );
-
+public:
+	fresult Init(Size size, Position position, IRender* renderer, IControl** controls, ubyte_t controlsCount)
+	{
+		return BaseInit(size, position, renderer, controls, controlsCount);
+	}
 };

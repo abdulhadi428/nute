@@ -285,7 +285,7 @@ fresult TextField::Init(Size size, Position position, char* buff, Size buffSize,
 
 	_textBuffCarretPositionTx.data =0;
 
-	return TRUE;
+	return SUCCESS;
 };
 
 //Logic

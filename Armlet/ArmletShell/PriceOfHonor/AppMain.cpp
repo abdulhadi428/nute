@@ -3,13 +3,18 @@
 #include "AppMain.h"
 #include "TextField.h"
 #include "GraphicRenderer.h"
+#include "UserInterface.h"
 
-TextField tf;
+/*TextField tf;
 GraphicRenderer rend;
+*/
+
+UserInterface UI;
+
 
 void __stdcall AppOnButtonClick(int button)
 {
-	if (button == BUTTON_Y) {
+/*	if (button == BUTTON_Y) {
 		Position pos = tf.GetScrollPosition();
 		pos.Top++;
 		tf.SetScrollPosition(pos);
@@ -25,6 +30,7 @@ void __stdcall AppOnButtonClick(int button)
 		Clear(0);
 		tf.Draw();
 	}
+*/
 	return;
 }
 
@@ -50,7 +56,7 @@ bool __stdcall MoveBoxByTimer()
 
 void __stdcall AppMainThread(void* param)
 {
-	const char* str = "PRICE of HONOR!";
+	/*const char* str = "PRICE of HONOR!";
 	DrawTextString(10,10,str,strlen(str),0,0);
 
 	Position pos;
@@ -72,6 +78,27 @@ void __stdcall AppMainThread(void* param)
 
 	tf.SetText(str);
 	tf.Draw();
-	RegisterButtonHandlers(AppOnButtonClick, AppOnButtonHold);
+	
 	RequestTimer(300, MoveBoxByTimer);
+	*/
+	RegisterButtonHandlers(AppOnButtonClick, AppOnButtonHold);
+
+
+	fresult fres;
+	fres = UI.Init();
+	if (fres!=SUCCESS)
+	{
+		char* err = "Failed to init UI";
+		DrawTextString(10,10,err,strlen(err),0,0);
+	}
+	else
+	{
+		fres = UI.Draw();
+		if (fres!=SUCCESS)
+		{
+			char* err = "Failed to draw UI";
+			DrawTextString(10,10,err,strlen(err),0,0);
+		}
+	}
+	
 }

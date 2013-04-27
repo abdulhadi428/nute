@@ -149,6 +149,14 @@
 				RelativePath=".\AppMain.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\UIDesigner.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UserInterface.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -157,6 +165,14 @@
 			>
 			<File
 				RelativePath=".\AppMain.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UIDesigner.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UserInterface.h"
 				>
 			</File>
 		</Filter>

@@ -165,7 +165,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Panel.cpp"
+				RelativePath=".\PanelBase.cpp"
 				>
 			</File>
 			<File
@@ -248,6 +248,10 @@
 			</File>
 			<File
 				RelativePath=".\Panel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PanelBase.h"
 				>
 			</File>
 			<File
