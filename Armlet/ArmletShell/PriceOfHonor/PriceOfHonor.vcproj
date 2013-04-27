@@ -150,6 +150,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ConstStrings.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Med.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MedCures.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MedWounds.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UI.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\UIDesigner.cpp"
 				>
 			</File>
@@ -165,6 +185,34 @@
 			>
 			<File
 				RelativePath=".\AppMain.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Med.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedBody.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedCures.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedTemp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedWounds.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Temp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TZ.h"
 				>
 			</File>
 			<File
