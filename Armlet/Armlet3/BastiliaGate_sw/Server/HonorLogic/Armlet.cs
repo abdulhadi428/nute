@@ -46,6 +46,11 @@ namespace HonorLogic
             SendCommand(MessageId.MSG_SET_PLAYER_REGENERATION, selectedValue);
         }
 
+        public void SetLockList(byte[] lockList)
+        {
+            SendCommand(MessageId.MSG_UPDATE_LOCK_LIST, lockList);
+        }
+
         public byte Id { get; private set; }
         public byte Room { get; private set; }
         public byte BloodLevel { get; private set; }
