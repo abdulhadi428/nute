@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.datacontract.org/2004/07/NetworkLevel.WCFServices" />
+  <xs:element name="RegisterGate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="preferedGateId" type="xs:unsignedByte" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="RegisterGateResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="RegisterGateResult" type="xs:unsignedByte" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TXCompleted">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="armlet_id" type="xs:unsignedByte" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ArmlteStatusUpdate">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/NetworkLevel.WCFServices" minOccurs="0" name="updates" nillable="true" type="q1:ArrayOfPlayerUpdate" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ArmletSendsData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="armlet_id" type="xs:unsignedByte" />
+        <xs:element minOccurs="0" name="payload" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PillConnectionStatus">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="isConnectionResultData" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PillWriteCompleted">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="writingResultData" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PillDataRead">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="readingResultData" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PinSet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pinSetResultData" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SendToArmlet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="armlet_id" type="xs:unsignedByte" />
+        <xs:element minOccurs="0" name="payload" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CheckIfPillConnected">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pillConnectedData" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SendPillWrite">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pillWriteData" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SendPillRead">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="pillReadData" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="SendPinSignal">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="sendPinSignalData" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

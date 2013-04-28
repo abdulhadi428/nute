@@ -4,12 +4,11 @@
     {
         Ping = 0x01,
         SetGateNum = 0x10,
-
-        InitiatePinSignal = 0x40,
-
+        
         GetPillStatus = 0x30,
         WriteDataToPill = 0x31,
-        ReadDataFromPill = 0x32
+        ReadDataFromPill = 0x32,
+        InitiatePinSignal = 0x40,
     }
 
     public class ServerToGateCommand : Command

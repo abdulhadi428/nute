@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/NetworkLevel.WCFServices" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/NetworkLevel.WCFServices" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="ArrayOfPlayerUpdate">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PlayerUpdate" nillable="true" type="tns:PlayerUpdate" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPlayerUpdate" nillable="true" type="tns:ArrayOfPlayerUpdate" />
+  <xs:complexType name="PlayerUpdate">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ArmletID" type="xs:unsignedByte" />
+      <xs:element minOccurs="0" name="NewBlood" type="xs:unsignedByte" />
+      <xs:element minOccurs="0" name="NewRoom" type="xs:unsignedByte" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PlayerUpdate" nillable="true" type="tns:PlayerUpdate" />
+</xs:schema>

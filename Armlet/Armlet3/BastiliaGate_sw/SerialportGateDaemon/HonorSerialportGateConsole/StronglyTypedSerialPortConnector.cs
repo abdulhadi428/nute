@@ -15,7 +15,7 @@ namespace HonorSerialportGateConsole
     {
         
         private static SerialPort port;
-        private static bool _continue;
+        private static bool _isReading = true;
         private static Queue inputQueue ;
         private static Queue outputQueue; 
 
@@ -37,7 +37,7 @@ namespace HonorSerialportGateConsole
                 };
         }
 
-        private bool CheckingConnectivity = false;
+       
         public int SearchForPortAndConnect()
         {
             var ports = System.IO.Ports.SerialPort.GetPortNames();
@@ -49,7 +49,7 @@ namespace HonorSerialportGateConsole
             
             port.WriteTimeout = 10000;
             port.Open();
-            _continue = true;
+            _isReading = true;
             readThread.Start();
             
             port.ErrorReceived += PortErrorReceived;
@@ -59,7 +59,7 @@ namespace HonorSerialportGateConsole
             
 
 
-            CheckingConnectivity = true;
+           
             SendCommandToGate(new ServerToGateCommand(ServerToGateCommands.Ping, new byte[] { }));
             
             return 0;
@@ -67,7 +67,7 @@ namespace HonorSerialportGateConsole
 
         public static void SerialPortRead()
         {
-            while (_continue)
+            while (_isReading)
             {
                 try
                 {
@@ -78,8 +78,6 @@ namespace HonorSerialportGateConsole
                 catch (TimeoutException) { }
             }
         }
-       
-
 
         public bool IsConnected { get; private set; }
 

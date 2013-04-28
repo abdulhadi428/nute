@@ -3,9 +3,13 @@
     public  enum GateToServerCommands: byte
     {
         Ack = 0x90,
-        PillReadResult = 0xC2,
-     
+        GateNumberSet = 0x0A,
 
+        PillConnectedStatus = 0xC0,
+        PillWriteResult = 0xC1,
+        PillReadResult = 0xC2,
+
+        PinSignalSet = 0xD0
     }
 
     public class GateToServerCommand
