@@ -1,6 +1,0 @@
-C:\Users\Mike\Documents\Visual Studio 2012\Projects\Armlet3\BastiliaGate_sw\Server\NetworkLevel\obj\Debug\NetworkLevel.csprojResolveAssemblyReference.cache
-C:\Users\Mike\Documents\Visual Studio 2012\Projects\Armlet3\BastiliaGate_sw\Server\NetworkLevel\bin\Debug\NetworkLevel.dll.config
-C:\Users\Mike\Documents\Visual Studio 2012\Projects\Armlet3\BastiliaGate_sw\Server\NetworkLevel\bin\Debug\NetworkLevel.dll
-C:\Users\Mike\Documents\Visual Studio 2012\Projects\Armlet3\BastiliaGate_sw\Server\NetworkLevel\bin\Debug\NetworkLevel.pdb
-C:\Users\Mike\Documents\Visual Studio 2012\Projects\Armlet3\BastiliaGate_sw\Server\NetworkLevel\obj\Debug\NetworkLevel.dll
-C:\Users\Mike\Documents\Visual Studio 2012\Projects\Armlet3\BastiliaGate_sw\Server\NetworkLevel\obj\Debug\NetworkLevel.pdb
