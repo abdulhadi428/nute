@@ -8,4 +8,4 @@
 #pragma unmanaged
 #include "DownInterface.h"
 #pragma managed
-#include "VisualizerInterface.h"
+#include "FormHelper.h"
