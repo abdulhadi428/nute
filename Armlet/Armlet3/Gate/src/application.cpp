@@ -56,58 +56,60 @@ void Ack(uint8_t Result) { Uart.Cmd(0x90, &Result, 1); }
 static uint8_t SBuf[252];
 void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
     //Uart.Printf(">%02X; %A\r", CmdCode, PData, Length, ' ');
-    uint8_t b, b2, Rslt;
-    Rslt = FAILURE;
+    uint8_t b, b2;
     switch(CmdCode) {
         case CMD_PING: Ack(OK); break;
 
         // ==== Radio ====
         case CMD_SET_GATE_NUM:
-            b = PData[0];   // Gate number
-            if(b < RGATE_CNT) {
-                rLevel1.SetID(b);
-                Ack(OK);
+            SBuf[0] = PData[0];   // Gate number
+            if(SBuf[0] < RGATE_CNT) {
+                rLevel1.SetID(SBuf[0]);
+                SBuf[1] = OK;
             }
-            else Ack(CMD_ERROR);
+            else SBuf[1] = FAILURE;
+            Uart.Cmd(RPL_SET_GATE_NUM, SBuf, 2);
             break;
         case CMD_RTX:
             b = PData[0];   // Armlet ID
             if((b >= RDEV_BOTTOM_ID) and (b <= RDEV_TOP_ID)) {
-                Rslt = rLevel1.AddPktToTx(b, &PData[1], (Length-1));
+                rLevel1.AddPktToTx(b, &PData[1], (Length-1));
             } // if addr ok
-            Ack(Rslt);    // Reply Ack now
             break;
 
         // ==== Pills ====
         case CMD_PILL_STATE:
-            b = PData[0];
-            if(b <= 7) Rslt = Pill[b].CheckIfConnected();
-            Ack(Rslt);
+            b = PData[0];   // Pill address
+            if(b <= 7) SBuf[1] = Pill[b].CheckIfConnected();
+            SBuf[0] = b;
+            Uart.Cmd(RPL_PILL_STATE, SBuf, 2);
             break;
         case CMD_PILL_WRITE:
             b = PData[0];
-            if(b <= 7) Rslt = Pill[b].Write(&PData[1], Length-1);
-            Ack(Rslt);
+            if(b <= 7) SBuf[1] = Pill[b].Write(&PData[1], Length-1);
+            SBuf[0] = b;
+            Uart.Cmd(RPL_PILL_WRITE, SBuf, 2);
             break;
         case CMD_PILL_READ:
             b = PData[0];           // Pill address
             b2 = PData[1];          // Data size to read
             if(b2 > 250) b2 = 250;  // Check data size
-            if(b <= 7) Rslt = Pill[b].Read(&SBuf[1], b2);
-            SBuf[0] = Rslt;
-            if(Rslt == OK) Uart.Cmd(RPL_PILL_READ, SBuf, b2+1);
-            else Uart.Cmd(RPL_PILL_READ, SBuf, 1);
+            if(b <= 7) SBuf[1] = Pill[b].Read(&SBuf[2], b2);
+            SBuf[0] = b;
+            if(SBuf[1] == OK) Uart.Cmd(RPL_PILL_READ, SBuf, b2+2);
+            else Uart.Cmd(RPL_PILL_READ, SBuf, 2);
             break;
 
         // ==== Pin ====
         case CMD_PIN:
-            Rslt = OK;
+            SBuf[0] = PData[0];     // Pin ID
+            SBuf[1] = OK;
             b = PData[1];
             if     (b == 0x00) Pin.Low();
             else if(b == 0x01) Pin.High();
             else if(b == 0x02) Pin.Pulse(((uint32_t)PData[2]) * 100);
-            else Rslt = CMD_ERROR;
-            Ack(Rslt);
+            else SBuf[1] = CMD_ERROR;
+            Uart.Cmd(RPL_SET_GATE_NUM, SBuf, 2);
             break;
 
         case 0xF0:

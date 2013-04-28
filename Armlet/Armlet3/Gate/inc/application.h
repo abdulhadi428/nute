@@ -20,9 +20,13 @@
 #define CMD_PIN             0x40
 
 #define RPL_ACK             0x90    // Acknowledge
+#define RPL_SET_GATE_NUM    0xA0
 #define RPL_RTX             0xA1    // TX completed
 #define RPL_RRX             0xA4    // RX completed
+#define RPL_PILL_STATE      0xC0
+#define RPL_PILL_WRITE      0xC1
 #define RPL_PILL_READ       0xC2
+#define RPL_PIN             0xD0
 
 // ================================= Pin control ===============================
 #define PIN_GPIO    GPIOD

@@ -53,8 +53,8 @@ void sd_t::Init() {
 #include <stdlib.h>
 
 #define INI_BUF_SIZE    512
-char IBuf[INI_BUF_SIZE];
-char FBuf[64];
+static char IBuf[INI_BUF_SIZE];
+static char FBuf[64];
 
 // ==== Inner use ====
 static char* skipleading(char *S) {
