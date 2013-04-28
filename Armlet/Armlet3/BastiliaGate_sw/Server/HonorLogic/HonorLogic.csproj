@@ -43,7 +43,7 @@
     <Compile Include="GateModel.cs" />
     <Compile Include="GlobalModel.cs" />
     <Compile Include="MessageId.cs" />
-    <Compile Include="PillType.cs" />
+    <Compile Include="Pills.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

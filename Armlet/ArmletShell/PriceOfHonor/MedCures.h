@@ -3,6 +3,9 @@
 	#error _MED_
 #endif
 
+// When this list updated, update server list 
+// /Armlet/Armlet3/BastiliaGate_sw/Server/HonorLogic/Pills.cs
+
 //CURE ids:
 typedef enum _CURE_ID {
 	UnknownCure = -1,

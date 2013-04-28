@@ -21,11 +21,6 @@ namespace HonorLogic
 
             _service.PillConnectedStatus += (id, status) => SetPilStatus(status[0] == 0);
             _service.PillDataRead +=(id, data) => IfMe(id, () => RaisePillDataArrived(data));
-
-            PillTypes = new[]
-                {
-                    new PillType(1, "Test")
-                };
         }
 
         private void RaisePillDataArrived(byte[] arg3)
@@ -101,7 +96,10 @@ namespace HonorLogic
             }
         }
 
-        public IEnumerable<IPillType> PillTypes { get; private set; }
+        public IEnumerable<IPillType> PillTypes
+        {
+            get { return Pills.List; }
+        }
 
         public void WritePill(int p, int charges)
         {
