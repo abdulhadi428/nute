@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ServiceModel;
-using HonorGateServer.NetworkDeliveryLevel;
+﻿using System.ServiceModel;
+using NetworkLevel.NetworkDeliveryLevel;
 
-namespace HonorGateServer.WCFServices
+namespace NetworkLevel.WCFServices
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "IwcfService" in both code and config file together.
     

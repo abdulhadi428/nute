@@ -13,8 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ServiceModel;
-using HonorGateServer.NetworkDeliveryLevel;
-using HonorGateServer.WCFServices;
+using NetworkLevel.NetworkDeliveryLevel;
 
 
 namespace HonorGateServer
@@ -30,8 +29,8 @@ namespace HonorGateServer
         public MainWindow()
         {
             InitializeComponent();
-            //var armletDelivery = NetworkDelivery.ArmletDeliveryInstance;
-            //var gateDelivery = NetworkDelivery.GateDeliveryInstance;
+            var armletDelivery = NetworkDelivery.ArmletDeliveryInstance;
+            var gateDelivery = NetworkDelivery.GateDeliveryInstance;
 
 
 

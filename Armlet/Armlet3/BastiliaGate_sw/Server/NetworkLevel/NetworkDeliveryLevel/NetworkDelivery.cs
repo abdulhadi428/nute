@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
-using HonorGateServer.WCFServices;
+﻿using System.ServiceModel;
+using NetworkLevel.WCFServices;
 
-namespace HonorGateServer.NetworkDeliveryLevel
+namespace NetworkLevel.NetworkDeliveryLevel
 {
     public static class  NetworkDelivery
     {

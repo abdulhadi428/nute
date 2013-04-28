@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using HonorGateServer.NetworkDeliveryLevel;
+using NetworkLevel.NetworkDeliveryLevel;
 using PillInterfaces;
 
 namespace ServerGUI.Models

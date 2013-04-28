@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using HonorGateServer.NetworkDeliveryLevel;
 using HonorUtils;
+using NetworkLevel.NetworkDeliveryLevel;
 using PillInterfaces;
 
 namespace HonorLogic
