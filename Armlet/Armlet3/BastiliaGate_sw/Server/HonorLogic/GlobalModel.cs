@@ -95,7 +95,7 @@ namespace HonorLogic
         public void SendPayload(byte id, byte[] payload)
         {
             var nonce = Interlocked.Add(ref _lastNonce, 1);
-            _armletService.DeliverToSingleArmlet(id, (short) (nonce & 0xFFFF), payload);
+            _armletService.DeliverToSingleArmlet(id, payload);
         }
     }
 }

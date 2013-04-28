@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using NetworkLevel.WCFServices;
 
 namespace NetworkLevel.NetworkDeliveryLevel
@@ -28,6 +29,17 @@ namespace NetworkLevel.NetworkDeliveryLevel
         }
 
         public event Action<byte, byte[]> TXCompleted;
+        public Task<ArmletDeliveryStatus> DeliverToSingleArmlet(byte armlet_id, byte[] payload)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeliverToAllArmlets(byte broadcast_id, byte[] payload)
+        {
+            throw new NotImplementedException();
+        }
+
+        public event Action<byte, byte> BroadcastTXCompleted;
         public event Action<PlayerStatusUpdate[]> ArmletsStatusUpdate;
         public event Action<byte, byte[]> ArmletSendsData;
     }

@@ -11,6 +11,18 @@ namespace NetworkLevel.WCFServices
     public class GateWcfService : IGateWCFService
     {
         private int _sessionGateId = -1;
+
+        private void Channel_Closed(object sender, System.EventArgs e)
+        {
+            GateConnectionPool.GateConnections.Remove(_sessionGateId);
+
+        }
+
+        private void Channel_Faulted(object sender, System.EventArgs e)
+        {
+            GateConnectionPool.GateConnections.Remove(_sessionGateId);
+        }
+
         public GateWcfService()
         {
             OperationContext.Current.Channel.Closed +=Channel_Closed;
@@ -41,16 +53,39 @@ namespace NetworkLevel.WCFServices
             return newIdForGate;
         }
 
-
-        private void Channel_Closed(object sender, System.EventArgs e)
+        public void TXCompleted(byte armlet_id)
         {
-            GateConnectionPool.GateConnections.Remove(_sessionGateId);
-           
+            throw new System.NotImplementedException();
         }
 
-        private void Channel_Faulted(object sender, System.EventArgs e)
+        public void ArmlteStatusUpdate(PlayerUpdate[] updates)
         {
-            GateConnectionPool.GateConnections.Remove(_sessionGateId);
+            throw new System.NotImplementedException();
+        }
+
+        public void ArmletSendsData(byte armlet_id, byte[] payload)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void PillConnectionStatus(byte[] isConnectionResultData)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void PillWriteCompleted(byte[] writingResultData)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void PillDataRead(byte[] readingResultData)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void PinSet(byte[] pinSetResultData)
+        {
+            throw new System.NotImplementedException();
         }
 
 
