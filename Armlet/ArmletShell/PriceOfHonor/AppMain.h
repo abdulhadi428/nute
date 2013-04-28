@@ -1,5 +1,6 @@
 #pragma once
 
+using namespace LowLevel;
 extern THREAD_PROC AppMainThread;
 
 //extern APP_TASK AppTasks[];
