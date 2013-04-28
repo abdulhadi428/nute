@@ -28,8 +28,34 @@ namespace ServerGUI
         }
 
         private void ArmletGridUI_OnLoaded(object sender, RoutedEventArgs e)
+        {   
+            Model.ArmletListUpdated += () => Dispatcher.BeginInvoke(new Action(UpdateArmlets));
+            UpdateArmlets();
+        }
+
+        private void UpdateArmlets()
         {
             ArmletGrid.ItemsSource = Model.GetArmlets();
+        }
+
+        private void UpdateName_OnClick(object sender, RoutedEventArgs e)
+        {
+            CurrentArmlet.SetName(NameTextBox.Text);
+        }
+
+        private IArmletInfo CurrentArmlet
+        {
+            get { return ArmletGrid.CurrentItem as IArmletInfo; }
+        }
+
+        private void SendMessage_Click(object sender, RoutedEventArgs e)
+        {
+            CurrentArmlet.SendMessage(MessageTextBox.Text);
+        }
+
+        private void UpdateRegeneration_Click(object sender, RoutedEventArgs e)
+        {
+            CurrentArmlet.SetRegeneration((byte)RegenLevelComboBox.SelectedValue);
         }
     }
 }

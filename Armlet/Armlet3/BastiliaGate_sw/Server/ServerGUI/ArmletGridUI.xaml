@@ -6,6 +6,30 @@
              mc:Ignorable="d" 
              d:DesignHeight="451.128" d:DesignWidth="542.481"  Loaded="ArmletGridUI_OnLoaded">
     <DockPanel LastChildFill="True">
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
+            <GroupBox Header="Установка имени" >
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="NameTextBox" MinWidth="200"></TextBox>
+                    <Button x:Name="UpdateName" Click="UpdateName_OnClick">Установить</Button>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Отсылка сообщения" >
+                <StackPanel Orientation="Vertical">
+                    <TextBox x:Name="MessageTextBox" MinWidth="200" MinHeight="50"></TextBox>
+                    <Button x:Name="SendMessage" MaxWidth="100" Click="SendMessage_Click">Отослать</Button>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Установка уровня регенерации" >
+                <StackPanel Orientation="Horizontal">
+                    <ComboBox x:Name="RegenLevelComboBox" IsEditable="False">
+                        <ComboBoxItem>1</ComboBoxItem>
+                        <ComboBoxItem IsSelected="True"> 2</ComboBoxItem>
+                        <ComboBoxItem>3</ComboBoxItem>
+                    </ComboBox>
+                    <Button x:Name="UpdateRegeneration" Click="UpdateRegeneration_Click">Установить</Button>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
         <DataGrid x:Name="ArmletGrid"  >
             </DataGrid>
 

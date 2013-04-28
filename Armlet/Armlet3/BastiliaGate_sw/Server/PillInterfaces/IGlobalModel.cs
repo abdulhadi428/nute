@@ -9,5 +9,6 @@ namespace PillInterfaces
     public interface IGlobalModel
     {
         IEnumerable<IArmletInfo> GetArmlets();
+        event Action ArmletListUpdated;
     }
 }

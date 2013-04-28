@@ -35,13 +35,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GateModel.cs" />
+    <Compile Include="GlobalModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HonorGateServer\HonorGateServer.csproj">
-      <Project>{87E1983E-BCD5-475A-A655-27DF5D835BA1}</Project>
-      <Name>HonorGateServer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\HonorUtils\HonorUtils.csproj">
       <Project>{D27F31A5-FB20-4327-9AFF-359709179C8C}</Project>
       <Name>HonorUtils</Name>
