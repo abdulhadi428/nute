@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,12 +34,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -47,17 +44,23 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ArmletGridUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GateUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="ArmletGridUI.xaml.cs">
+      <DependentUpon>ArmletGridUI.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GateUI.xaml.cs">
       <DependentUpon>GateUI.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\GateModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -82,14 +85,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HonorGateServer\HonorGateServer.csproj">
-      <Project>{87e1983e-bcd5-475a-a655-27df5d835ba1}</Project>
-      <Name>HonorGateServer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\HonorUtils\HonorUtils.csproj">
-      <Project>{d27f31a5-fb20-4327-9aff-359709179c8c}</Project>
-      <Name>HonorUtils</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PillInterfaces\PillInterfaces.csproj">
       <Project>{a6e64bdb-f06e-42bd-b108-4d3aca7289eb}</Project>
       <Name>PillInterfaces</Name>

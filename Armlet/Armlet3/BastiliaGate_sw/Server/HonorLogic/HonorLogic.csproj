@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A6E64BDB-F06E-42BD-B108-4D3ACA7289EB}</ProjectGuid>
+    <ProjectGuid>{01C28F4B-A6C4-4C84-A756-E1DBD83A1F13}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PillInterfaces</RootNamespace>
-    <AssemblyName>PillInterfaces</AssemblyName>
+    <RootNamespace>HonorLogic</RootNamespace>
+    <AssemblyName>HonorLogic</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,11 +34,26 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IArmletInfo.cs" />
-    <Compile Include="IGateModel.cs" />
-    <Compile Include="IGlobalModel.cs" />
-    <Compile Include="IPillType.cs" />
+    <Compile Include="GateModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HonorGateServer\HonorGateServer.csproj">
+      <Project>{87E1983E-BCD5-475A-A655-27DF5D835BA1}</Project>
+      <Name>HonorGateServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HonorUtils\HonorUtils.csproj">
+      <Project>{D27F31A5-FB20-4327-9AFF-359709179C8C}</Project>
+      <Name>HonorUtils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetworkLevel\NetworkLevel.csproj">
+      <Project>{587B1363-2141-4F46-B985-49CBC2879908}</Project>
+      <Name>NetworkLevel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PillInterfaces\PillInterfaces.csproj">
+      <Project>{A6E64BDB-F06E-42BD-B108-4D3ACA7289EB}</Project>
+      <Name>PillInterfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

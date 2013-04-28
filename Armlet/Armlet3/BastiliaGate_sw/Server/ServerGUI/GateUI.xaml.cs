@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows;
 using PillInterfaces;
-using ServerGUI.Models;
 
 namespace ServerGUI
 {
@@ -11,7 +10,7 @@ namespace ServerGUI
     /// </summary>
     public partial class GateUI
     {
-        public GateModel Model { get; set; }
+        public IGateModel Model { get; set; }
 
 
         public GateUI()
@@ -29,7 +28,8 @@ namespace ServerGUI
             int charges;
             if (!int.TryParse(ChargesTextBox.Text, out charges))
             {
-                MessageBox.Show("Заряды должны быть числом!");return;
+                MessageBox.Show("Заряды должны быть числом!");
+                return;
             }
             if (charges < 0 || charges > 1000)
             {
