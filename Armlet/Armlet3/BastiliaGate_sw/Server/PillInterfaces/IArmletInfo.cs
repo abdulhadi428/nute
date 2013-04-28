@@ -10,5 +10,6 @@
         byte Room { get; }
         byte BloodLevel { get; }
         string Name { get; }
+        void SetLockList(byte[] lockList);
     }
 }

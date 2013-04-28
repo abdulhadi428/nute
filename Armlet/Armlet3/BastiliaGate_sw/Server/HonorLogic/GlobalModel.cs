@@ -6,7 +6,7 @@ using PillInterfaces;
 
 namespace HonorLogic
 {
-    class GlobalModel : IGlobalModel
+    public class GlobalModel : IGlobalModel
     {
         public GlobalModel(IArmletDeliveryServece armletService, IGateDeliveryService gateService)
         {

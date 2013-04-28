@@ -1,24 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using PillInterfaces;
 
 namespace ServerGUI
 {
-    /// <summary>
-    /// Interaction logic for ArmletGridUI.xaml
-    /// </summary>
-    public partial class ArmletGridUI : UserControl
+    public partial class ArmletGridUI
     {
         public IGlobalModel Model { get; set; }
 
@@ -56,6 +44,18 @@ namespace ServerGUI
         private void UpdateRegeneration_Click(object sender, RoutedEventArgs e)
         {
             CurrentArmlet.SetRegeneration((byte)RegenLevelComboBox.SelectedValue);
+        }
+
+        private void UpdateLockList_OnClick(object sender, RoutedEventArgs e)
+        {
+            var list = (from object child in LockGrid.Children
+                        select child as CheckBox
+                        into checkBox 
+                        where checkBox != null && checkBox.IsChecked == true 
+                        select (byte) checkBox.Tag)
+                .ToArray();
+
+            CurrentArmlet.SetLockList(list);
         }
     }
 }

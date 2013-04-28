@@ -101,9 +101,21 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HonorLogic\HonorLogic.csproj">
+      <Project>{01C28F4B-A6C4-4C84-A756-E1DBD83A1F13}</Project>
+      <Name>HonorLogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NetworkLevel\NetworkLevel.csproj">
       <Project>{587b1363-2141-4f46-b985-49cbc2879908}</Project>
       <Name>NetworkLevel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PillInterfaces\PillInterfaces.csproj">
+      <Project>{A6E64BDB-F06E-42BD-B108-4D3ACA7289EB}</Project>
+      <Name>PillInterfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServerGUI\ServerGUI.csproj">
+      <Project>{24AA499C-9635-464A-8493-CAA08C6F6B01}</Project>
+      <Name>ServerGUI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

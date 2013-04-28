@@ -30,6 +30,10 @@ namespace ServerGUI
 
         private void GateTabControl_OnLoaded(object sender, RoutedEventArgs e)
         {
+            if (Model == null)
+            {
+                return;
+            }
             Model.NewGateOnline += (obj) => Dispatcher.BeginInvoke(new Action<byte>(Model_NewGateOnline));
         }
 

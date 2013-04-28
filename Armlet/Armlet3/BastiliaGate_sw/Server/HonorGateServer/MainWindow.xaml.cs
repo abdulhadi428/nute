@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ServiceModel;
+using HonorLogic;
 using NetworkLevel.NetworkDeliveryLevel;
 
 
@@ -37,6 +38,12 @@ namespace HonorGateServer
 
         }
 
-        
+
+        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var globalModel = new GlobalModel(NetworkDelivery.ArmletDeliveryInstance, NetworkDelivery.GateDeliveryInstance);
+            ArmletUI.Model = globalModel;
+            GateUI.Model = globalModel;
+        }
     }
 }

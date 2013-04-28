@@ -29,6 +29,24 @@
                     <Button x:Name="UpdateRegeneration" Click="UpdateRegeneration_Click">Установить</Button>
                 </StackPanel>
             </GroupBox>
+            <GroupBox Header="Установка замков" >
+                <StackPanel Orientation="Vertical">
+                    <UniformGrid Columns="3" x:Name="LockGrid">
+                        <CheckBox Tag="1">1</CheckBox>
+                        <CheckBox Tag="2">2</CheckBox>
+                        <CheckBox Tag="3">3</CheckBox>
+                        <CheckBox Tag="4">4</CheckBox>
+                        <CheckBox Tag="5">5</CheckBox>
+                        <CheckBox Tag="6">6</CheckBox>
+                        <CheckBox Tag="7">7</CheckBox>
+                        <CheckBox Tag="8">8</CheckBox>
+                        <CheckBox Tag="9">9</CheckBox>
+                        <CheckBox Tag="10">10</CheckBox>
+                    </UniformGrid>
+                    
+                    <Button x:Name="UpdateLockList" Click="UpdateLockList_OnClick">Установить</Button>
+                </StackPanel>
+            </GroupBox>
         </StackPanel>
         <DataGrid x:Name="ArmletGrid"  >
             </DataGrid>
