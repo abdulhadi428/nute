@@ -7,7 +7,7 @@ namespace PillInterfaces
     {
         bool PillOnline { get; }
         bool Online { get; }
-        IEnumerable<IPillType> PillTypes { get; set; }
+        IEnumerable<IPillType> PillTypes { get; }
         event Action PillOnlineChanged;
         event Action GateOnlineChanged;
         event Action<byte[]> PillDataArrived;
