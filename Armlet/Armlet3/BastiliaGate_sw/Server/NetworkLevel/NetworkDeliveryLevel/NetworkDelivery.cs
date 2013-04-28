@@ -5,10 +5,10 @@ namespace NetworkLevel.NetworkDeliveryLevel
 {
     public static class  NetworkDelivery
     {
-        internal static ServiceHost myServiceHost = null; 
+        private static readonly ServiceHost myServiceHost = null; 
 
-        public static IGateDeliveryService GateDeliveryInstance = new GateDeliveryService();
-        public static IArmletDeliveryServece ArmletDeliveryInstance = new ArmletDeliveryService();
+        public static readonly IGateDeliveryService GateDeliveryInstance = new GateDeliveryService();
+        public static readonly IArmletDeliveryServece ArmletDeliveryInstance = new ArmletDeliveryService();
         
         static NetworkDelivery()
         {
