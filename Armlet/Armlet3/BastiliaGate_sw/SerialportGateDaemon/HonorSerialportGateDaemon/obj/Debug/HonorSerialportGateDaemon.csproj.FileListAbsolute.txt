@@ -1,5 +1,0 @@
-C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateDaemon\bin\Debug\HonorSerialportGateDaemon.dll.config
-C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateDaemon\bin\Debug\HonorSerialportGateDaemon.dll
-C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateDaemon\bin\Debug\HonorSerialportGateDaemon.pdb
-C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateDaemon\obj\Debug\HonorSerialportGateDaemon.dll
-C:\Users\Mike\Documents\Visual Studio 2012\Projects\HonorSerialportGateDaemon\HonorSerialportGateDaemon\obj\Debug\HonorSerialportGateDaemon.pdb
