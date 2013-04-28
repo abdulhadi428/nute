@@ -19,15 +19,22 @@ namespace HonorLogic
             _service.GateDisConnected += id => IfMe(id, () => SetOnline(true));
             _service.GateDisConnected += id => IfMe(id, () => SetOnline(false));
 
-            _service.PillConnectedStatus += (id, status) => IfMe(id, () => SetPillStatus(status));
-            _service.PillDataRead +=(id, status, data) => IfMe(id, () => RaisePillDataArrived(status, data));
+            _service.PillConnectedStatus += (id, status) => SetPilStatus(status[0] == 0);
+            _service.PillDataRead +=(id, data) => IfMe(id, () => RaisePillDataArrived(data));
         }
 
-        private void RaisePillDataArrived(bool status, byte[] arg3)
+        private void RaisePillDataArrived(byte[] arg3)
         {
+            var address = arg3[0];
+            var status = arg3[1] == 0;
+            if (address != 0)
+            {
+                return;
+            }
+
             if (!status)
             {
-                SetPillStatus(false);
+                SetPilStatus(false); // Error read, let's think offline
                 return;
             }
             if (PillDataArrived != null)
@@ -38,7 +45,7 @@ namespace HonorLogic
 
         private readonly object _syncRoot = new object();
 
-        private void SetPillStatus(bool status)
+        private void SetPilStatus(bool status)
         {
             lock (_syncRoot)
             {

@@ -17,6 +17,10 @@ namespace ServerGUI
 
         private void ArmletGridUI_OnLoaded(object sender, RoutedEventArgs e)
         {   
+            if (Model == null)
+            {
+                return;
+            }
             Model.ArmletListUpdated += () => Dispatcher.BeginInvoke(new Action(UpdateArmlets));
             UpdateArmlets();
         }
