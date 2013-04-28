@@ -11,7 +11,7 @@ using HonorSerialportGateDaemon;
 
 namespace HonorSerialportGateConsole
 {
-    class StronglyTypedSerialPortConnector : IStronglyTypedSerialPortConnector
+    public class StronglyTypedSerialPortConnector : IStronglyTypedSerialPortConnector
     {
         
         private static SerialPort port;

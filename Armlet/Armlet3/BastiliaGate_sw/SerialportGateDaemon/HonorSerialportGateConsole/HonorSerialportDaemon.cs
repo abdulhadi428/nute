@@ -14,23 +14,25 @@ using HonorSerialportGateDaemon;
 
 namespace HonorSerialportGateConsole
 {
-    class HonorSerialportDaemon
+    public class HonorSerialportDaemon
     {
-        public static StronglyTypedSerialPortConnector TypedSerialPort;
+        public  StronglyTypedSerialPortConnector TypedSerialPort;
+        private Thread sendThread;
 
-        private static Queue queue1 = new Queue();
-        public static Queue inputMessageQueue;
-        private static Queue queue2 = new Queue();
-        public static Queue outputMessageQueue;
+        private  Queue queue1 = new Queue();
+        public  Queue inputMessageQueue;
+        private  Queue queue2 = new Queue();
+        public  Queue outputMessageQueue;
 
-        private Thread sendThread = new Thread(SendToServer);
-        private static bool _sending = true;
+        
+        private  bool _sending = true;
 
         private System.Timers.Timer UpdateLogTimer;
 
         public HonorSerialportDaemon()
         {
             InitiateLog();
+            sendThread = new Thread(SendToServer);
            // WCFClient.Client = new GateWCFServiceClient();
 
 
@@ -81,7 +83,7 @@ namespace HonorSerialportGateConsole
             return 0;
         }
 
-        private static void SendToServer()
+        public  void SendToServer()
         {
             while (true)
             {
