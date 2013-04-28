@@ -168,6 +168,14 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\ArmletApi.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Common.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Constants.h"
 				>
 			</File>
@@ -177,6 +185,10 @@
 			</File>
 			<File
 				RelativePath=".\Internal.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PlatformDependentSizes.h"
 				>
 			</File>
 			<File

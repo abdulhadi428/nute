@@ -47,7 +47,7 @@ private:
 
 	//Gets linear index in lines Buff by x,y
 	//doesn't check bounds
-	uword_t GetBuffIndex(Position pos);
+	sword_t GetBuffIndex(Position pos);
 	
 	fresult PutCharToBuff( Position pos, char charToPut);
 
@@ -55,7 +55,7 @@ private:
 	//it returns poubyte_ter to the original buff, so it MUST be treated as const
 	//NOTE:
 	//If required length exceeds textSize.Width - returns GENERAL_WARNING and length is set to actual length
-	fresult TextField::GetLineAtXY( Position pos, ubyte_t* ioLength, char** oLine);
+	fresult GetLineAtXY( Position pos, ubyte_t* ioLength, char** oLine);
 
 public:
 	
@@ -84,7 +84,7 @@ public:
 	fresult SetText(const char* text);
 
 	//append the text to current caret pos
-	fresult TextField::AppendText(const char* text);
+	fresult AppendText(const char* text);
 
 	//Setting the scroll window position ubyte_telligently (try find best fit if it will go off TextSize limits)
 	// returns:

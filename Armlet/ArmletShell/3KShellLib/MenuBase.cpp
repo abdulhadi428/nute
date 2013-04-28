@@ -43,8 +43,8 @@ fresult MenuBase::SelectNext()
 {
 	fresult fres;
 	// looping logic
-	int newSelIndex = _SelectedIndex +1;
-	if (newSelIndex = _ItemsCount)
+	ubyte_t newSelIndex = _SelectedIndex +1;
+	if (newSelIndex == _ItemsCount)
 	{
 		newSelIndex =0;
 	}
@@ -57,8 +57,8 @@ fresult MenuBase::SelectPrevious()
 {
 	fresult fres;
 	// looping logic
-	int newSelIndex = _SelectedIndex -1;
-	if (newSelIndex = -1)
+	ubyte_t newSelIndex = _SelectedIndex -1;
+	if (newSelIndex == -1)
 	{
 		newSelIndex =0;
 	}

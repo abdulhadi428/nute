@@ -7,7 +7,7 @@
 
 
 
-uword_t TextField::GetBuffIndex( Position pos )
+sword_t TextField::GetBuffIndex( Position pos )
 {
 	if (pos.Top*_textBuffSizeTx.Width+pos.Left < _textBuffSizeTx.Height*_textBuffSizeTx.Width)
 	{
@@ -94,7 +94,6 @@ fresult TextField::AppendText(const char* text)
 	}
 
 	uword_t strReadIndex=0;
-	uword_t buffLength = _textBuffSizeTx.Height*_textBuffSizeTx.Width;
 
 	while (text[strReadIndex]!=0)
 	{
@@ -398,8 +397,6 @@ fresult TextField::DrawArea(Position pos, Size size )
 	char* lineGot=NULL;
 
 	ubyte_t lineLengthToDrawTx = drawSizePx.Width / _Format.Font.GlyphSize.Width;
-	//we may request length that exceeds the buff, so we will need to draw partially
-	ubyte_t lastReadLineLength = drawSizePx.Width / _Format.Font.GlyphSize.Width;
 
 	ubyte_t visibleHeightTx = drawSizePx.Height / _Format.Font.GlyphSize.Height;
 

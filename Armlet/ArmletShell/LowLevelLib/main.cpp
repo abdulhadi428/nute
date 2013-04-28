@@ -1,5 +1,6 @@
 #include "Internal.h"
 #include "AppMain.h"
+#include "ArmletApi.h"
 
 BUTTON_HANDLER* gClickButtonHandler = NULL;
 BUTTON_HANDLER* gHoldButtonHandler = NULL;

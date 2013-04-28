@@ -58,7 +58,7 @@ public:
 
 	virtual bool_t ProcessButton( ButtonState key ) 
 	{
-		bool_t itemClicked;
+		bool_t itemClicked = FALSE;
 		for (int i=0; i<_ItemsCount; i++)
 		{
 			itemClicked = _Items[i]->CheckAccelerator(key);

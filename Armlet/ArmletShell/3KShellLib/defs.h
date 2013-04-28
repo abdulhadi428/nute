@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable:4201)
 
 #define NULL 0
 #define TRUE 1
