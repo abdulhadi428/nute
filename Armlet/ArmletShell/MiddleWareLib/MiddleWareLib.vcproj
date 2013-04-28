@@ -40,10 +40,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="..\LowLevelLib"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				WarningLevel="3"
+				WarningLevel="4"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -101,6 +102,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\LowLevelLib"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -143,6 +145,22 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath=".\Buttons.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Drawing.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\KreylFont.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MiddleWareLibMain.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -151,6 +169,10 @@
 			>
 			<File
 				RelativePath=".\MiddleInterface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ServerProtocol.h"
 				>
 			</File>
 		</Filter>
