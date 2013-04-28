@@ -13,11 +13,16 @@ namespace HonorGateServer.NetworkDeliveryLevel
         public ArmletDeliveryService(GateWcfService service)
         {
             _service = service;
+            
         }
 
 
         public void DeliverToSingleArmlet(byte armlet_id, byte[] nonce_id, byte[] payload)
         {
+            foreach (var gateConnection in GateConnectionPool.GateConnections)
+            {
+                //gateConnection.Value.CallbackObject.
+            }
             throw new NotImplementedException();
         }
 

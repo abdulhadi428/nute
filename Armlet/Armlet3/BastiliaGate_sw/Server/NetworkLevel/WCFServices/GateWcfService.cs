@@ -46,6 +46,7 @@ namespace HonorGateServer.WCFServices
         private void Channel_Closed(object sender, System.EventArgs e)
         {
             GateConnectionPool.GateConnections.Remove(_sessionGateId);
+           
         }
 
         private void Channel_Faulted(object sender, System.EventArgs e)
