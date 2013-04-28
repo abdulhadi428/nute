@@ -7,8 +7,8 @@ namespace NetworkLevel.NetworkDeliveryLevel
     {
         internal static ServiceHost myServiceHost = null; 
 
-        public static IGateDeliveryService GateDeliveryInstance;
-        public static IArmletDeliveryServece ArmletDeliveryInstance;
+        public static IGateDeliveryService GateDeliveryInstance = new GateDeliveryService();
+        public static IArmletDeliveryServece ArmletDeliveryInstance = new ArmletDeliveryService();
         
         static NetworkDelivery()
         {
