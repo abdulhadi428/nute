@@ -11,15 +11,17 @@ namespace ArmletApi {
 	//syscalls: shells calls kernel
 	//callback: shell provides callback to kernel via some syscall
 
-	void InitializeShell();												//initialization callout
+	bool InitializeShell();												//initialization callout
+	void CriticalError(char* error);									//critical error callout
+	void Log(char* log);											//internal realization
 
 	//ARMLET
+	unsigned char GetBatteryLevel();									//syscall returns 0-100%
 	void DrawPixel(int x, int y, unsigned short c);						//syscal draws a pixel
 	void DrawArea(int x, int y, unsigned short *const pc, int len,
 					int sx, int sy);									//syscall draws an area of pixels
 	void DoVibro(int msecs);											//syscall performs vibration for duration
 
-	#define UNKNOWN_ID	255
 	void OnButtonPress(int button_id);									//callout for  button
 	void OnButtonRelease(int button_id);								//callout for button
 	void OnPillConnect(int cure_id, int charges);						//callout cure/pill
@@ -39,10 +41,10 @@ namespace ArmletApi {
 	typedef char MUTEX[MUTEX_SIZE];										//OS-dependent mutext storage
 	typedef char FILE[FILE_SIZE];										//OS-dependent file storage
 
-	bool OpenFile(FILE* file, char* filename, bool bCreate);			//syscall opens/create file
-	int ReadFile(FILE* file, unsigned char* buf, int len);				//syscall returns length read
-	int WriteFile(FILE* file, unsigned char* buf, int len);				//syscall returns length written
-	int AppendFile(FILE* file, unsigned char* buf, int len);			//syscall return length written
+	bool OpenFile(FILE* file, char* filename, bool bCreate);	//syscall opens/create file
+	int ReadFile(FILE* file, char* buf, int len);				//syscall returns length read
+	int WriteFile(FILE* file, char* buf, int len);				//syscall returns length written
+	int AppendFile(FILE* file, char* buf, int len);			//syscall return length written
 
 	typedef void (__stdcall THREAD_PROC)(void* param);					//thread start routine callback
 	typedef bool (__stdcall TIMER_PROC)(int elapsed);					//timer routine callback,

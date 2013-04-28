@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="LowLevelLib"
 	ProjectGUID="{07438366-E76F-4799-A2EA-234EE8A925D1}"
 	RootNamespace="LowLevelLib"
@@ -40,11 +40,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\PriceOfHonor"
+				AdditionalIncludeDirectories="..\MiddleWareLib"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				WarningLevel="3"
+				WarningLevel="4"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -102,7 +102,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\PriceOfHonor"
+				AdditionalIncludeDirectories="..\MiddleWareLib"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -146,19 +146,31 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\Drawing.cpp"
+				RelativePath=".\ArmletEmulation.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\KreylFont.cpp"
+				RelativePath=".\CppHelper.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\main.cpp"
+				RelativePath=".\DownInterface.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Thread.cpp"
+				RelativePath=".\LogHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LowLevelLibMain.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OsEmulation.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ServerEmulation.cpp"
 				>
 			</File>
 		</Filter>
@@ -176,27 +188,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Constants.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DownInterface.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Internal.h"
+				RelativePath=".\Helper.h"
 				>
 			</File>
 			<File
 				RelativePath=".\PlatformDependentSizes.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Types.h"
-				>
-			</File>
-			<File
-				RelativePath=".\UpInterface.h"
 				>
 			</File>
 		</Filter>

@@ -13,6 +13,9 @@
 	#define SCREENX 160
 	#define SCREENY 128
 
+	//IDS
+	#define UNKNOWN_ID	255
+
 	//BUTTONS
 	#define NO_BUTTON	-1
 
