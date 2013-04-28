@@ -19,6 +19,7 @@ namespace HonorLogic
         public void SetName(string text)
         {
             Name = text;
+            _model.SavePersistent("Armlet", Id, Name);
             SendCommand(MessageId.MSG_SET_PLAYER_NAME, text);
         }
 

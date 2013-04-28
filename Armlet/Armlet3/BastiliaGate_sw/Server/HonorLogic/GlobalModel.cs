@@ -1,20 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using NetworkLevel.NetworkDeliveryLevel;
+using Newtonsoft.Json;
 using PillInterfaces;
 
 namespace HonorLogic
 {
     public class GlobalModel : IGlobalModel
     {
+        private readonly Dictionary<byte, AStoredData> _savedData;
         public GlobalModel(IArmletDeliveryServece armletService, IGateDeliveryService gateService)
         {
             _armletService = armletService;
             _gateService = gateService;
+
+            _savedData =
+                JsonConvert.DeserializeObject<List<AStoredData>>(GetPersistFileInfo().OpenText().ReadToEnd())
+                           .ToDictionary(a => a.Id);
+            
             
             _armletService.ArmletsStatusUpdate +=ArmletServiceArmletsStatusUpdate;
             _gateService.GateConnected += _gateService_GateConnected;
+
+
         }
 
         void _gateService_GateConnected(byte obj)
@@ -47,7 +58,12 @@ namespace HonorLogic
 
         private Armlet CreateArmlet(byte armletId)
         {
-            return new Armlet(armletId, this);
+            var armlet = new Armlet(armletId, this);
+            if (_savedData.ContainsKey(armletId))
+            {
+                armlet.SetName(_savedData[armletId].Name);
+            }
+            return armlet;
         }
 
         private readonly object _syncRoot = new object();
@@ -90,12 +106,39 @@ namespace HonorLogic
             if (handler != null) handler();
         }
 
-        private int _lastNonce = 1;
-
         public void SendPayload(byte id, byte[] payload)
         {
-            var nonce = Interlocked.Add(ref _lastNonce, 1);
             _armletService.DeliverToSingleArmlet(id, payload);
         }
+
+        private readonly object _saveRoot = new object();
+
+        public void SavePersistent()
+        {
+            Task.Factory.StartNew(() =>
+                {
+                    lock (_saveRoot)
+                    {
+                        var pairs = _armlets.Select(a => new AStoredData{Id = a.Value.Id, Name =a.Value.Name}).ToList();
+                        var serializer = new JsonSerializer();
+                        using (var writer = GetPersistFileInfo().CreateText())
+                        {
+                            serializer.Serialize(writer, pairs);
+                        }
+                    }
+                });
+        }
+
+        private static FileInfo GetPersistFileInfo()
+        {
+            return new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+        }
+    }
+
+    [Serializable]
+    public struct AStoredData
+    {
+        public byte Id { get; set; }
+        public string Name { get; set; }
     }
 }
