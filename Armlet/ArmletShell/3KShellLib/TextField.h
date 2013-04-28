@@ -43,6 +43,7 @@ private:
 	
 	bool_t _WordWrap;
 	Position _ScrollPositionTx;
+	ubyte_t _lastUsedLine;
 
 	//Gets linear index in lines Buff by x,y
 	//doesn't check bounds
@@ -76,10 +77,13 @@ public:
 
 	void SetTextFormat(TextFormat* format);
 
+	//clears the data
+	fresult Clear();
+	
 	//Setting the text;
 	fresult SetText(const char* text);
 
-	//append the text to current carret
+	//append the text to current caret pos
 	fresult TextField::AppendText(const char* text);
 
 	//Setting the scroll window position ubyte_telligently (try find best fit if it will go off TextSize limits)
@@ -100,5 +104,9 @@ public:
 	fresult virtual DrawArea(Position pos, Size size);
 
 	Position virtual GetScrollPosition();
+
+	fresult virtual ScrollUp();
+
+	fresult virtual ScrollDown();
 
 };

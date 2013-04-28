@@ -141,7 +141,7 @@ void VisualizerInterface::Render()
 		Bmp->SetPixel(
 			x,
 			y,
-			Color::FromArgb(r*16, g*16, b*16)); //TODO LUT
+			Color::FromArgb(0, r*16, g*16, b*16)); //TODO LUT
 	}
 	OnElapsed50msec();
 }

@@ -10,6 +10,7 @@
 #include "xTestTextField.h"
 #include "xDimensions.h"
 #include "xScatteredMenu.h"
+#include "xImage.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -45,6 +46,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	MenuTests.Init();
 	MenuTests.doTests();
 
+	xImage ImageTests;
+	ImageTests.doTests();
   	_getch();
 
 	PMY_CALLBACK pf = &CallbackImplementation;

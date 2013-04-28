@@ -15,7 +15,7 @@ protected:
 	ubyte_t _ZOrder;
 	IRender* _render;
 
-	fresult BaseInit( Size size, Position position, IRender* render)
+	fresult virtual BaseInit( Size size, Position position, IRender* render)
 	{
 		_Size = size;
 		_Position = position;

@@ -11,4 +11,6 @@ public:
 
 	virtual fresult DrawRect( Position pospx, Size sizepx, Color color );
 
+	virtual fresult DrawBitmap( Position pospx, Size sizepx, uword_t const*const bitmap, Size bitmapSize, Position bitmapReadPos );
+
 };

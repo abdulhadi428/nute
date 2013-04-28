@@ -19,21 +19,58 @@ fresult MenuItemBase::Deselect()
 
 fresult MenuItemBase::Click()
 {
+	fresult fres;
+	if (_OnClickHandler != NULL)
+	{
+		fres = _OnClickHandler->OnClick(this);
+		return fres;
+	}
 	return SUCCESS;
 }
 
 
 fresult MenuItemBase::Draw()
 {
-	return _underLyningControl->Draw();
+	if (_underLyningControl !=NULL)
+	{
+		return _underLyningControl->Draw();
+	}
+	else
+	{
+		return SUCCESS;
+	}
 }
 
-bool MenuItemBase::OnAccelerator( uword_t button )
+bool_t MenuItemBase::CheckAccelerator(ButtonState button)
 {
-	if (button==keyBinding)
+	if (button==_Accelerator || button==_Accelerator2)
 	{
 		Click();
 		return TRUE;
 	}
 	return FALSE;
+}
+
+fresult MenuItemBase::MenuItemBaseInit( IControl* _control, IMenuHandler* handler, ButtonState accelerator )
+{
+	_underLyningControl = _control;
+	if (handler!=NULL)
+	{
+		_OnClickHandler = handler;
+	}
+	else
+	{
+		_OnClickHandler = NULL;
+	}
+
+	_Accelerator = accelerator;
+
+
+	return SUCCESS;
+}
+
+fresult MenuItemBase::SetSecondAccelarator( ButtonState button )
+{
+	_Accelerator2 = button;
+	return SUCCESS;
 }

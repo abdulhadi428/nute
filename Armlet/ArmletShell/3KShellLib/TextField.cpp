@@ -32,6 +32,11 @@ fresult TextField::PutCharToBuff( Position pos, char charToPut)
 		return GENERAL_ERROR;
 	}
 
+	if (pos.Top > _lastUsedLine)
+	{
+		_lastUsedLine = pos.Top;
+	}
+
 	_textBuff[index] = charToPut;
 	return SUCCESS;
 }
@@ -133,7 +138,10 @@ fresult TextField::AppendText(const char* text)
 					//put the char to buff and move left in buff and in text
 					fres = PutCharToBuff(buffWritePosition, text[strReadIndex]);
 					if (fres!=SUCCESS)
-						return fres;	
+					{
+						//Just clip!
+						return SUCCESS;	
+					}
 					strReadIndex++;
 					//we touched the wrap limit tightly
 					if (buffWritePosition.Left == wrapLimit-1)
@@ -176,9 +184,7 @@ fresult TextField::AppendText(const char* text)
 	return SUCCESS;
 }
 
-
-//Setting the text;
-fresult TextField::SetText(const char* text )
+fresult TextField::Clear()
 {
 	//clean up
 	fresult fres;
@@ -187,15 +193,28 @@ fresult TextField::SetText(const char* text )
 	{
 		return fres;
 	}
+	_ScrollPositionTx.data =0;
+	_textBuffCarretPositionTx.data =0;
+
+	return SUCCESS;
+}
+
+//Setting the text;
+fresult TextField::SetText(const char* text )
+{
+	fresult fres;
+	fres= Clear();
+	if (fres!=SUCCESS)
+	{
+		return fres;
+	}
 
 	//append to 0,0
-	_textBuffCarretPositionTx.data =0;
 	fres = AppendText(text);
 	if (fres!=SUCCESS)
 	{
 		return fres;
 	}
-	_ScrollPositionTx.data =0;
 
 	return SUCCESS;
 }
@@ -237,6 +256,12 @@ fresult TextField::SetScrollPosition (Position position)
 		position.Top = _textBuffSizeTx.Height - 1;
 	}
 	
+	if (position.Top > _lastUsedLine)
+	{
+		result = GENERAL_WARNING;
+		position.Top = _lastUsedLine;
+	}
+
 	if (position.Top <0)
 	{
 		result = GENERAL_WARNING;
@@ -319,15 +344,15 @@ fresult TextField::GetLineAtXY( Position pos, ubyte_t* ioLength, char** oLine )
 		fres = GENERAL_WARNING;
 	}
 
-	sword_t indexubyte_text = GetBuffIndex(pos);
-	if (indexubyte_text < 0)
+	sword_t indexInText = GetBuffIndex(pos);
+	if (indexInText < 0)
 	{
 		//out of bounds
 		return GENERAL_ERROR;
 	}
 	
-	//Get poubyte_ter to line in readonly text
-	*oLine = (char*)&_textBuff[indexubyte_text];
+	//Get pointer to line in readonly text
+	*oLine = (char*)&_textBuff[indexInText];
 
 	return fres;
 }
@@ -384,6 +409,8 @@ fresult TextField::DrawArea(Position pos, Size size )
 	readBufPosTx.Top = _ScrollPositionTx.Top + (drawPositionPx.Top - _Position.Top) / _Format.Font.GlyphSize.Height;
 	readBufPosTx.Left = _ScrollPositionTx.Left + (drawPositionPx.Left- _Position.Left ) / _Format.Font.GlyphSize.Width;
 
+	//draw background
+	_render->DrawRect(drawPositionPx, drawSizePx, _Format.BgColor);
 	
 	for (ubyte_t lineIndex= 0; lineIndex < visibleHeightTx; lineIndex++ )
 	{
@@ -412,6 +439,25 @@ fresult TextField::DrawArea(Position pos, Size size )
 	}
 
 	return SUCCESS;
+}
+
+fresult TextField::ScrollUp()
+{
+	Position pos;
+	pos.data = _ScrollPositionTx.data;
+	if (pos.Top!=0)
+	{
+		pos.Top--;
+	}
+	return SetScrollPosition(pos);
+}
+
+fresult TextField::ScrollDown()
+{
+	Position pos;
+	pos.data = _ScrollPositionTx.data;
+	pos.Top++;
+	return SetScrollPosition(pos);
 }
 
 

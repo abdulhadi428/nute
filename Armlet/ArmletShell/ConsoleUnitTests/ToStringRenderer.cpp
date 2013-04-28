@@ -114,3 +114,8 @@ fresult ToStringRenderer::DrawRect( Position pospx, Size sizepx, Color color )
 	//TODO: implement
 	return GENERAL_ERROR;
 }
+
+fresult ToStringRenderer::DrawBitmap( Position pospx, Size sizepx, uword_t const*const bitmap, Size bitmapSize, Position bitmapReadPos )
+{
+	return GENERAL_ERROR;
+}

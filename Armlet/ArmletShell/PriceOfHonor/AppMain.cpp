@@ -5,6 +5,7 @@
 #include "GraphicRenderer.h"
 #include "Med.h"
 #include "UserInterface.h"
+#include "MenuDelegate.h"
 
 /*TextField tf;
 GraphicRenderer rend;
@@ -32,11 +33,13 @@ void __stdcall AppOnButtonClick(int button)
 		tf.Draw();
 	}
 */
+	UI._SystemOnButtonClick(button);
 	return;
 }
 
 void __stdcall AppOnButtonHold(int button)
 {
+	UI._SystemOnButtonClick(BUTTON_HOLD_OFFSET+button);
 	return;
 }
 
@@ -97,6 +100,7 @@ void __stdcall AppMainThread(void* param)
 	//DrawBitmap_kel(0,0,24,24,(short*)ArrowDownOrangeBitmap);
 
 	fresult fres;
+	InitMenuHandlerDelegates(&UI);
 	fres = UI.Init();
 	if (fres!=SUCCESS)
 	{
@@ -105,7 +109,7 @@ void __stdcall AppMainThread(void* param)
 	}
 	else
 	{
-		//fres = UI.Draw();
+		fres = UI.Draw();
 		if (fres!=SUCCESS)
 		{
 			char* err = "Failed to draw UI";

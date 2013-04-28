@@ -1,7 +1,7 @@
 #pragma once
 
 #include "project.h"
-#include "IControl.h"
+typedef sword_t ButtonState;
 
 class IMenuItem
 {
@@ -14,5 +14,5 @@ public:
 
 	fresult virtual Click() =0;
 
-	bool virtual OnAccelerator(uword_t button)=0;
+	bool_t virtual CheckAccelerator(ButtonState button)=0;
 };

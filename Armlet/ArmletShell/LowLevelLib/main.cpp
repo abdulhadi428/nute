@@ -12,7 +12,7 @@ void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER Hol
 
 void OnButtonClick(int button)
 {
-	if (button == BUTTON_R) {
+	/*if (button == BUTTON_R) {
 		Clear(0x0009);
 		return;
 	}
@@ -21,14 +21,14 @@ void OnButtonClick(int button)
 		char* str = "HELLO , world!";
 		DrawTextString(30,42,str,strlen(str),0,0);
 		return;
-	}
+	}*/
 	if (gClickButtonHandler)
 		(*gClickButtonHandler)(button);
 }
 
 void OnButtonHold(int button, int seconds)
 {
-	if (button==BUTTON_A) {
+	/*if (button==BUTTON_A) {
 		Clear(BLUE);
 		Show_Glyphs(2,0,16,16,2,2);
 		return;
@@ -42,16 +42,16 @@ void OnButtonHold(int button, int seconds)
 		Clear(BLUE);
 		Show_Glyphs(1,0,8,8,1,1);
 		return;
-	}
-	if (gClickButtonHandler)
-		(*gClickButtonHandler)(button);
+	}*/
+	if (gHoldButtonHandler)
+		(*gHoldButtonHandler)(button);
 }
 
 void __stdcall my_thread(void* param)
 {
 	char* str = "THREAD was started";
-	DrawTextString(60,15,str,strlen(str),0,0);
-	DrawTextString(15,75,str,strlen(str),0,0);
+	//DrawTextString(60,15,str,strlen(str),0,0);
+	//DrawTextString(15,75,str,strlen(str),0,0);
 }
 
 #define MAX_TIMERS 30

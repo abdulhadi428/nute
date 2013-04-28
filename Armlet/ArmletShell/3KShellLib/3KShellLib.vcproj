@@ -153,11 +153,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Image.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\IntegrationWithKeltur.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\MenuBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuItem.cpp"
 				>
 			</File>
 			<File
@@ -182,10 +190,6 @@
 			</File>
 			<File
 				RelativePath=".\TextFormat.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TextMenuItem.cpp"
 				>
 			</File>
 		</Filter>
@@ -219,7 +223,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Image.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IMenu.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IMenuHandler.h"
 				>
 			</File>
 			<File
@@ -240,6 +252,10 @@
 			</File>
 			<File
 				RelativePath=".\MenuBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuItem.h"
 				>
 			</File>
 			<File
@@ -280,10 +296,6 @@
 			</File>
 			<File
 				RelativePath=".\TextFormat.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TextMenuItem.h"
 				>
 			</File>
 		</Filter>

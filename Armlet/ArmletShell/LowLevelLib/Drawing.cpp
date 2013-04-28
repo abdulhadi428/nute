@@ -124,8 +124,8 @@ void Clear(short backColor)
 
 void DrawRect_kel(int x, int y, int sx, int sy, short color)
 {
-	if (x<=0) return;
-	if (y<=0) return;
+	if (x<0) return;
+	if (y<0) return;
 	if (sx<=0) return;
 	if (sy<=0) return;
 	for (int i=0; i<sx; i++)

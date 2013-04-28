@@ -4,7 +4,7 @@
 #include "TextHelper.h"
 #include "ToStringRenderer.h"
 #include "IMenuItem.h"
-#include "TextMenuItem.h"
+#include "MenuItem.h"
 #include "strlib.h"
 
 
@@ -36,7 +36,7 @@ fresult xScatteredMenu::CreateTextMenu( Position* positions, char** texts, ubyte
 
 	for (ubyte_t i =0; i< count; i++)
 	{
-		TextMenuItem* item = new TextMenuItem();
+		MenuItem* item = new MenuItem();
 		items[i] = item;
 
 		TextField* tx;
@@ -52,7 +52,7 @@ fresult xScatteredMenu::CreateTextMenu( Position* positions, char** texts, ubyte
 			return fres;
 		}
 
-		fres = item->Init(tx,selFormat);
+		fres = item->Init(tx,selFormat, NULL, tx, NULL, 0);
 		if (fres!=SUCCESS)
 		{
 			return fres;

@@ -2,6 +2,8 @@
 
 #include "project.h"
 #include "IMenuItem.h"
+#include "IMenuHandler.h"
+#include "IControl.h"
 
 class MenuItemBase : public  IMenuItem
 {
@@ -9,14 +11,11 @@ protected:
 	IControl* _underLyningControl;
 	bool_t _IsSelected;
 
-	PMY_CALLBACK _OnClick;
-	int keyBinding;
+	IMenuHandler* _OnClickHandler;
+	ButtonState _Accelerator;
+	ButtonState _Accelerator2;
 
-	fresult TextMenuItemBaseInit(IControl* _control)
-	{
-		_underLyningControl = _control;
-		return SUCCESS;
-	}
+	fresult MenuItemBaseInit(IControl* _control, IMenuHandler* handler, ButtonState accelerator);
 
 public:
 
@@ -25,7 +24,7 @@ public:
 	fresult virtual Select();
 	fresult virtual Deselect();
 	fresult virtual Click();
+	fresult virtual SetSecondAccelarator(ButtonState button);
 
-	virtual bool OnAccelerator( uword_t button );
-
+	bool_t virtual CheckAccelerator(ButtonState button);
 };

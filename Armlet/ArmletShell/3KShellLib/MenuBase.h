@@ -56,12 +56,12 @@ public:
 		}
 	};
 
-	virtual bool_t OnKey( uword_t key ) 
+	virtual bool_t ProcessButton( ButtonState key ) 
 	{
 		bool_t itemClicked;
 		for (int i=0; i<_ItemsCount; i++)
 		{
-			itemClicked = _Items[i]->OnAccelerator(key);
+			itemClicked = _Items[i]->CheckAccelerator(key);
 			if (itemClicked == TRUE)
 			{
 				break;
