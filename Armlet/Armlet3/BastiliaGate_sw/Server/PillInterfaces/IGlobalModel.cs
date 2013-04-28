@@ -10,5 +10,7 @@ namespace PillInterfaces
     {
         IEnumerable<IArmletInfo> GetArmlets();
         event Action ArmletListUpdated;
+        event Action<byte> NewGateOnline;
+        IGateModel GetGateModel(byte gateId);
     }
 }

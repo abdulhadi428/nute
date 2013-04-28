@@ -48,12 +48,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="GateTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GateUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="ArmletGridUI.xaml.cs">
       <DependentUpon>ArmletGridUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GateTabControl.xaml.cs">
+      <DependentUpon>GateTabControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="GateUI.xaml.cs">
       <DependentUpon>GateUI.xaml</DependentUpon>

@@ -5,9 +5,9 @@ namespace NetworkLevel.NetworkDeliveryLevel
 
     public class PlayerStatusUpdate
     {
-        byte armlet_id { get; set; }
-        byte new_room { get; set; }
-        byte new_blood { get; set; }
+        public byte armlet_id { get; set; }
+        public byte new_room { get; set; }
+        public byte new_blood { get; set; }
     }
 
     public interface IArmletDeliveryServece
