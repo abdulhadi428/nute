@@ -7,16 +7,22 @@ using PillInterfaces;
 
 namespace HonorLogic
 {
-    public class Armlet : IArmletInfo
+    class Armlet : IArmletInfo
     {
-        public Armlet(byte armletId, IArmletDeliveryServece service)
+        private readonly GlobalModel _model;
+
+        private const byte MESSAGE_SET_PLAYER_NAME = 3;
+
+        public Armlet(byte armletId, GlobalModel model)
         {
-            throw new NotImplementedException();
+            _model = model;
+            Id = armletId;
         }
 
         public void SetName(string text)
         {
-            throw new NotImplementedException();
+            var payload = new[] {MESSAGE_SET_PLAYER_NAME}.Concat(Encoding.GetEncoding(1251).GetBytes(text)).ToArray();
+            _model.SendPayload(Id, payload);
         }
 
         public void SendMessage(string text)

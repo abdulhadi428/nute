@@ -12,7 +12,7 @@ namespace NetworkLevel.NetworkDeliveryLevel
 
     public interface IArmletDeliveryServece
     {
-        void DeliverToSingleArmlet(byte armlet_id, byte[] nonce_id, byte[] payload);   //For any MSG_* commands
+        void DeliverToSingleArmlet(byte armlet_id, short nonce_id, byte[] payload);   //For any MSG_* commands
         void DeliverToAllArmlets(byte[] nonce_id, byte[] payload);                    //For MSG_ROOM_HIT usage only
 
         event Action<byte, byte[]> TXCompleted;                             // byte armlet_id, byte[] nonce_id
