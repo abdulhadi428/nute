@@ -34,6 +34,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GateNotConnectedException.cs" />
     <Compile Include="IArmletInfo.cs" />
     <Compile Include="IGateModel.cs" />
     <Compile Include="IGlobalModel.cs" />

@@ -38,6 +38,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Armlet.cs" />
+    <Compile Include="ArmletList.cs" />
+    <Compile Include="ArmletStorage.cs" />
     <Compile Include="GateModel.cs" />
     <Compile Include="GlobalModel.cs" />
     <Compile Include="MessageId.cs" />

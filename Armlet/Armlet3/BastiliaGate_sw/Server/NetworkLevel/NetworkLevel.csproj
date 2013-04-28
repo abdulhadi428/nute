@@ -53,6 +53,12 @@
     <Compile Include="WCFServices\GateWcfService.cs" />
     <Compile Include="WCFServices\IGateWCFService.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PillInterfaces\PillInterfaces.csproj">
+      <Project>{A6E64BDB-F06E-42BD-B108-4D3ACA7289EB}</Project>
+      <Name>PillInterfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
