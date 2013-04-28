@@ -33,36 +33,57 @@ namespace HonorSerialportGateConsole
                     DataBits = settings.DataBits,
                     Handshake = settings.Handshake,
                     Parity = settings.Parity,
-                    StopBits = settings.StopBits
+                    StopBits = settings.StopBits,
+                    WriteTimeout = 10000
                 };
+            port.ErrorReceived += PortErrorReceived;
         }
 
        
-        public int SearchForPortAndConnect()
+        public void SearchForPortAndConnect()
         {
-            var ports = System.IO.Ports.SerialPort.GetPortNames();
-            if (ports.Count() == 0)
+            var portNames = SerialPort.GetPortNames();
+            if (!portNames.Any(TryOpenPort))
             {
-                return -5;                       //TODO: Make an audible enum to fire "No port found" exception
+                throw new Exception(string.Format("Tried {0} port(s). None answered.", portNames.Length));
             }
-            port.PortName = ports[0];            //TODO: Search all available COM ports in case of multiple Ports present in the system
             
-            port.WriteTimeout = 10000;
-            port.Open();
             _isReading = true;
             readThread.Start();
             
-            port.ErrorReceived += PortErrorReceived;
-           
-
-            if (!port.IsOpen) { return -1; }     //TODO MAKE ERROR Enum
-            
-
-
+            if (!port.IsOpen)
+            {
+                throw new Exception("Couldn't open port");
+            }     //TODO MAKE ERROR Enum
            
             SendCommandToGate(new ServerToGateCommand(ServerToGateCommands.Ping, new byte[] { }));
-            
-            return 0;
+        }
+
+        private static bool TryOpenPort(string portName)
+        {
+            try
+            {
+                port.PortName = portName;
+                port.Open();
+                port.WriteLine("#01");
+                port.ReadTimeout = 1000;
+                var answer = port.ReadLine().Trim().Replace(",", "");
+                if (answer != "#9000")
+                {
+                    port.Close();
+                    return false;
+                }
+                port.ReadTimeout = 0;
+                return true;
+            }
+            catch (Exception)
+            {
+                if (port.IsOpen)
+                {
+                    port.Close();
+                }
+                return false;
+            }
         }
 
         public static void SerialPortRead()

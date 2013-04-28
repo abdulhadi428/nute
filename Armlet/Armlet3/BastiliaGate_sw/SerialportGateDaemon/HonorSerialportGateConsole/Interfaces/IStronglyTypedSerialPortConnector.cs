@@ -5,7 +5,7 @@ namespace HonorSerialportGateConsole.Interfaces
 {
     public interface IStronglyTypedSerialPortConnector
     {
-        int SearchForPortAndConnect();
+        void SearchForPortAndConnect();
         bool IsConnected { get; }
 
         int SendCommandToArmlet(ServerToArmletCommand armletCommand);
