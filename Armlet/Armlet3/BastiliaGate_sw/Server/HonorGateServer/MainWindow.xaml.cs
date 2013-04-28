@@ -30,7 +30,7 @@ namespace HonorGateServer
         public MainWindow()
         {
             InitializeComponent();
-            NetworkDelivery.ArmletDeliveryInstance.
+            
            
 
            

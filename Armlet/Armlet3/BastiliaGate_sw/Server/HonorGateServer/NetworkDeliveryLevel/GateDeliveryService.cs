@@ -27,7 +27,7 @@ namespace HonorGateServer.NetworkDeliveryLevel
             throw new NotImplementedException();
         }
 
-        public event Action<bool, byte[]> PillDataRead;
+        public event Action<byte, bool, byte[]> PillDataRead;
         public void SendPinSignal(byte gate_id, byte[] data)
         {
             throw new NotImplementedException();

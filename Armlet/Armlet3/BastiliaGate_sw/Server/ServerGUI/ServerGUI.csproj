@@ -4,20 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{87E1983E-BCD5-475A-A655-27DF5D835BA1}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <ProjectGuid>{24AA499C-9635-464A-8493-CAA08C6F6B01}</ProjectGuid>
+    <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HonorGateServer</RootNamespace>
-    <AssemblyName>HonorGateServer</AssemblyName>
+    <RootNamespace>ServerGUI</RootNamespace>
+    <AssemblyName>ServerGUI</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -27,7 +24,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -38,8 +34,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -53,32 +47,17 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="NetworkDeliveryLevel\ArmletDeliveryService.cs" />
-    <Compile Include="NetworkDeliveryLevel\GateConnectionPool.cs" />
-    <Compile Include="NetworkDeliveryLevel\GateDeliveryService.cs" />
-    <Compile Include="NetworkDeliveryLevel\IArmletDeliveryServece.cs" />
-    <Compile Include="NetworkDeliveryLevel\IGateDeliveryService.cs" />
-    <Compile Include="NetworkDeliveryLevel\NetworkDelivery.cs" />
-    <Compile Include="WCFServices\GateWcfService.cs" />
-    <Page Include="MainWindow.xaml">
+    <Page Include="GateUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WCFServices\IGateWCFService.cs" />
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="GateUI.xaml.cs">
+      <DependentUpon>GateUI.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\GateModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -103,10 +82,18 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
+    <ProjectReference Include="..\HonorGateServer\HonorGateServer.csproj">
+      <Project>{87e1983e-bcd5-475a-a655-27df5d835ba1}</Project>
+      <Name>HonorGateServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HonorUtils\HonorUtils.csproj">
+      <Project>{d27f31a5-fb20-4327-9aff-359709179c8c}</Project>
+      <Name>HonorUtils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PillInterfaces\PillInterfaces.csproj">
+      <Project>{a6e64bdb-f06e-42bd-b108-4d3aca7289eb}</Project>
+      <Name>PillInterfaces</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
