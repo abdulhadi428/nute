@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NetworkLevel.NetworkDeliveryLevel;
@@ -10,9 +9,7 @@ namespace HonorLogic
     class Armlet : IArmletInfo
     {
         private readonly GlobalModel _model;
-
-        private const byte MESSAGE_SET_PLAYER_NAME = 3;
-
+        
         public Armlet(byte armletId, GlobalModel model)
         {
             _model = model;
@@ -21,23 +18,43 @@ namespace HonorLogic
 
         public void SetName(string text)
         {
-            var payload = new[] {MESSAGE_SET_PLAYER_NAME}.Concat(Encoding.GetEncoding(1251).GetBytes(text)).ToArray();
-            _model.SendPayload(Id, payload);
+            Name = text;
+            SendCommand(MessageId.MSG_SET_PLAYER_NAME, text);
+        }
+
+        private void SendCommand(MessageId messageId, string text)
+        {
+            if (text.Length > 140)
+            {
+                throw new ArgumentOutOfRangeException("text");
+            }
+            SendCommand(messageId, Encoding.GetEncoding(1251).GetBytes(text));
+        }
+
+        private void SendCommand(MessageId messageId, params byte[] data)
+        {
+            _model.SendPayload(Id, new[] {(byte) messageId}.Concat(data).ToArray());
         }
 
         public void SendMessage(string text)
         {
-            throw new NotImplementedException();
+            SendCommand(MessageId.MSG_SHOW_MESSAGE, text);
         }
 
         public void SetRegeneration(byte selectedValue)
         {
-            throw new NotImplementedException();
+            SendCommand(MessageId.MSG_SET_PLAYER_REGENERATION, selectedValue);
         }
 
-        public int Id { get; private set; }
-        public int Room { get; set; }
-        public int BloodLevel { get; set; }
+        public byte Id { get; private set; }
+        public byte Room { get; private set; }
+        public byte BloodLevel { get; private set; }
         public string Name { get; private set; }
+
+        public void Update(PlayerStatusUpdate playerStatusUpdate)
+        {
+            BloodLevel = playerStatusUpdate.new_blood;
+            Room = playerStatusUpdate.new_room;
+        }
     }
 }

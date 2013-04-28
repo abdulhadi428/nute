@@ -36,8 +36,7 @@ namespace HonorLogic
                         _armlets.Add(armletId, CreateArmlet(armletId));
                     }
                     var armlet = _armlets[armletId];
-                    armlet.BloodLevel = playerStatusUpdate.new_blood;
-                    armlet.Room = playerStatusUpdate.new_room;
+                    armlet.Update(playerStatusUpdate);
                 }
             }
             if (raiseListUpdated)
@@ -48,7 +47,7 @@ namespace HonorLogic
 
         private Armlet CreateArmlet(byte armletId)
         {
-            return new Armlet(armletId, _armletService);
+            return new Armlet(armletId, this);
         }
 
         private readonly object _syncRoot = new object();

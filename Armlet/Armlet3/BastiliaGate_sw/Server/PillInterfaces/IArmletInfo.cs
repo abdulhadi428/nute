@@ -6,9 +6,9 @@
         void SendMessage(string text);
         void SetRegeneration(byte selectedValue);
 
-        int Id { get; }
-        int Room { get; }
-        int BloodLevel { get; }
+        byte Id { get; }
+        byte Room { get; }
+        byte BloodLevel { get; }
         string Name { get; }
     }
 }
