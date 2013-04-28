@@ -58,10 +58,10 @@ namespace HonorLogic
         public byte BloodLevel { get; private set; }
         public string Name { get; private set; }
 
-        public void Update(PlayerStatusUpdate playerStatusUpdate)
+        public void Update(NetworkLevel.WCFServices.PlayerUpdate playerStatusUpdate)
         {
-            BloodLevel = playerStatusUpdate.new_blood;
-            Room = playerStatusUpdate.new_room;
+            BloodLevel = playerStatusUpdate.NewBlood;
+            Room = playerStatusUpdate.NewRoom;
         }
     }
 }

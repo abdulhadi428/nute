@@ -6,41 +6,41 @@ namespace NetworkLevel.NetworkDeliveryLevel
 {
     class ArmletDeliveryService : IArmletDeliveryServece
     {
-        private GateWcfService _service;
-        public ArmletDeliveryService(GateWcfService service)
-        {
-            _service = service;
-            
-        }
+        
 
-
-        public void DeliverToSingleArmlet(byte armlet_id, byte[] nonce_id, byte[] payload)
-        {
-            foreach (var gateConnection in GateConnectionPool.GateConnections)
-            {
-                //gateConnection.Value.CallbackObject.
-            }
-            throw new NotImplementedException();
-        }
-
-        public void DeliverToAllArmlets(byte[] nonce_id, byte[] payload)
-        {
-            throw new NotImplementedException();
-        }
-
-        public event Action<byte, byte[]> TXCompleted;
+        
         public Task<ArmletDeliveryStatus> DeliverToSingleArmlet(byte armlet_id, byte[] payload)
         {
+            //Хитрая логика отправки всем
             throw new NotImplementedException();
         }
 
         public void DeliverToAllArmlets(byte broadcast_id, byte[] payload)
         {
+            //Хитрая логика отправки всем
             throw new NotImplementedException();
         }
 
         public event Action<byte, byte> BroadcastTXCompleted;
-        public event Action<PlayerStatusUpdate[]> ArmletsStatusUpdate;
+        public event Action<WCFServices.PlayerUpdate[]> ArmletsStatusUpdate;
         public event Action<byte, byte[]> ArmletSendsData;
+
+        internal void onTxCompleted(byte gate_id, byte armlet_id)
+        {
+            //Хитрая логика обработки Комлитов
+            throw new NotImplementedException();
+        }
+        internal void onArmletStatusUpdate(PlayerUpdate[] updates)
+        {
+            var ArmletsStatusUpdateHandler = ArmletsStatusUpdate;
+            if (ArmletsStatusUpdateHandler != null) ArmletsStatusUpdateHandler(updates);
+
+        }
+        internal void onArmletSendsData(byte armlet_id, byte[] payload)
+        {
+            var ArmletSendsDataHandler = ArmletSendsData;
+            if (ArmletSendsDataHandler != null) ArmletSendsDataHandler(armlet_id, payload);
+        }
+
     }
 }

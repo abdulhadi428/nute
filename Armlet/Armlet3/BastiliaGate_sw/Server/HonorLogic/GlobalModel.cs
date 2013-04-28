@@ -33,14 +33,14 @@ namespace HonorLogic
             OnNewGateOnline(obj);
         }
 
-        private void ArmletServiceArmletsStatusUpdate(PlayerStatusUpdate[] obj)
+        private void ArmletServiceArmletsStatusUpdate(NetworkLevel.WCFServices.PlayerUpdate[] obj)
         {
             var raiseListUpdated = false;
             lock (_syncRoot)
             {
                 foreach (var playerStatusUpdate in obj)
                 {
-                    byte armletId = playerStatusUpdate.armlet_id;
+                    byte armletId = playerStatusUpdate.ArmletID;
                     if (!_armlets.ContainsKey(armletId))
                     {
                         raiseListUpdated = true;

@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.ServiceModel;
 using NetworkLevel.NetworkDeliveryLevel;
 
 namespace NetworkLevel.WCFServices
@@ -10,32 +11,39 @@ namespace NetworkLevel.WCFServices
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession)]
     public class GateWcfService : IGateWCFService
     {
-        private int _sessionGateId = -1;
-
-        private void Channel_Closed(object sender, System.EventArgs e)
-        {
-            GateConnectionPool.GateConnections.Remove(_sessionGateId);
-
-        }
-
-        private void Channel_Faulted(object sender, System.EventArgs e)
-        {
-            GateConnectionPool.GateConnections.Remove(_sessionGateId);
-        }
-
+        private bool _gateIsConnectedWithId = false;
+        private byte _sessionGateId;
+        private GateDeliveryService _gateDeliveryService;
+        private ArmletDeliveryService _armletDeliveryService;
+        
         public GateWcfService()
         {
-            OperationContext.Current.Channel.Closed +=Channel_Closed;
-            OperationContext.Current.Channel.Faulted +=Channel_Faulted;
+            _gateDeliveryService = (GateDeliveryService) NetworkDelivery.GateDeliveryInstance;
+            _armletDeliveryService = (ArmletDeliveryService) NetworkDelivery.ArmletDeliveryInstance;
+
+            OperationContext.Current.Channel.Closed += (sender, args) =>
+                {
+                    GateConnectionPool.GateConnections.Remove(_sessionGateId);
+                    _gateDeliveryService.onGateDisconnected(_sessionGateId);
+                    _gateIsConnectedWithId = false;
+                };
+
+            OperationContext.Current.Channel.Faulted += (sender, args) =>
+                {
+                    GateConnectionPool.GateConnections.Remove(_sessionGateId);
+                    _gateDeliveryService.onGateDisconnected(_sessionGateId);
+                    _gateIsConnectedWithId = false;
+                };
         }
 
-        public int RegisterGate(int preferedGateId)
+        public byte RegisterGate(byte preferedGateId)
         {
-            if ( _sessionGateId > 0)  // Duplicate RegisterGate call, an Id is allredy given - just return old Id value
+            if ( _gateIsConnectedWithId )  // Duplicate RegisterGate call, an Id is allredy given - just return old Id value
             {
                 return _sessionGateId;
             }
-            int newIdForGate = preferedGateId;
+
+            byte newIdForGate = preferedGateId;
             if (GateConnectionPool.GateConnections.ContainsKey(newIdForGate))
             {
                 newIdForGate = 1;
@@ -44,48 +52,47 @@ namespace NetworkLevel.WCFServices
                     newIdForGate++;
                 }
             }
-            
-            GateConnectionPool.GateConnections.Add(newIdForGate, new GateInstance()
-                    {CallbackObject = OperationContext.Current.GetCallbackChannel<IGateWCFServiceCallback>(), GateId = newIdForGate}
-                    );
 
             _sessionGateId = newIdForGate;
+            GateConnectionPool.GateConnections.Add(newIdForGate, OperationContext.Current.GetCallbackChannel<IGateWCFServiceCallback>());
+            _gateIsConnectedWithId = true;
+            _gateDeliveryService.onGateConnection(newIdForGate);
             return newIdForGate;
         }
 
         public void TXCompleted(byte armlet_id)
         {
-            throw new System.NotImplementedException();
+            _armletDeliveryService.onTxCompleted(_sessionGateId, armlet_id);
         }
 
         public void ArmlteStatusUpdate(PlayerUpdate[] updates)
         {
-            throw new System.NotImplementedException();
+            _armletDeliveryService.onArmletStatusUpdate(updates);
         }
 
         public void ArmletSendsData(byte armlet_id, byte[] payload)
         {
-            throw new System.NotImplementedException();
+            _armletDeliveryService.onArmletSendsData(armlet_id, payload);
         }
 
         public void PillConnectionStatus(byte[] isConnectionResultData)
         {
-            throw new System.NotImplementedException();
+            _gateDeliveryService.onPillConnectedStatus(_sessionGateId, isConnectionResultData);
         }
 
         public void PillWriteCompleted(byte[] writingResultData)
         {
-            throw new System.NotImplementedException();
+            _gateDeliveryService.onPillWriteCompleted(_sessionGateId, writingResultData);
         }
 
         public void PillDataRead(byte[] readingResultData)
         {
-            throw new System.NotImplementedException();
+            _gateDeliveryService.onPillDataRead(_sessionGateId, readingResultData);
         }
 
         public void PinSet(byte[] pinSetResultData)
         {
-            throw new System.NotImplementedException();
+            _gateDeliveryService.onPinSet(_sessionGateId, pinSetResultData);
         }
 
 

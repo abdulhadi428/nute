@@ -17,7 +17,7 @@ namespace NetworkLevel.WCFServices
     public interface IGateWCFService
     {
         [OperationContract]
-        int RegisterGate (int preferedGateId);
+        byte RegisterGate (byte preferedGateId);
 
         [OperationContract(IsOneWay = true)]
         void TXCompleted(byte armlet_id);
