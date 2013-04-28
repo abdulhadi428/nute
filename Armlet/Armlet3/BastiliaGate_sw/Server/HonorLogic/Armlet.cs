@@ -10,8 +10,9 @@ namespace HonorLogic
     {
         private readonly GlobalModel _model;
         
-        public Armlet(byte armletId, GlobalModel model)
+        public Armlet(byte armletId, GlobalModel model, string name)
         {
+            Name = name ?? ("Браслет " + armletId);
             _model = model;
             Id = armletId;
         }

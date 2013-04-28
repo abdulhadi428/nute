@@ -58,11 +58,8 @@ namespace HonorLogic
 
         private Armlet CreateArmlet(byte armletId)
         {
-            var armlet = new Armlet(armletId, this);
-            if (_savedData.ContainsKey(armletId))
-            {
-                armlet.SetName(_savedData[armletId].Name);
-            }
+            string name = _savedData.ContainsKey(armletId) ? _savedData[armletId].Name : null;
+            var armlet = new Armlet(armletId, this, name);
             return armlet;
         }
 
