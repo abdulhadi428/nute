@@ -86,19 +86,40 @@ namespace HonorLogic
 
         public void ActivatePin()
         {
-            _service.SendPinSignal(_gateId, new byte[] {0, 0x02, 10});
+            try
+            {
+                _service.SendPinSignal(_gateId, new byte[] {0, 0x02, 10});
+            }
+            catch (GateNotConnectedException)
+            {
+                SetOnline(false);
+            }
         }
 
         public IEnumerable<IPillType> PillTypes { get; set; }
 
         public void WritePill(int p, int charges)
         {
-            _service.SendPillWhite(_gateId, Utils.ToByteArray(p, charges));
+            try
+            {
+                _service.SendPillWhite(_gateId, Utils.ToByteArray(p, charges));
+            }
+            catch (GateNotConnectedException)
+            {
+                SetOnline(false);
+            }
         }
 
         public void RefreshPillStatus()
         {
-            _service.CheckIfPillConnected(_gateId, new byte[] {});
+            try
+            {
+                _service.CheckIfPillConnected(_gateId, new byte[] {});
+            }
+            catch (GateNotConnectedException)
+            {
+                SetOnline(false);
+            }
         }
     }
 }

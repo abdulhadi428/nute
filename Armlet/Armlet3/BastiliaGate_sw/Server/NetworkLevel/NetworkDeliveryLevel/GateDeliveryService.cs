@@ -1,5 +1,6 @@
 ﻿using System;
 using NetworkLevel.WCFServices;
+using PillInterfaces;
 
 namespace NetworkLevel.NetworkDeliveryLevel
 {
@@ -10,7 +11,7 @@ namespace NetworkLevel.NetworkDeliveryLevel
             IGateWCFServiceCallback callbackChannel;
             if (!GateConnectionPool.GateConnections.TryGetValue(gate_id, out callbackChannel))
             {
-                throw new Exception("Gate with id " + gate_id + " is not connected");
+                throw new GateNotConnectedException(gate_id);
             }
            callbackChannel.CheckIfPillConnected(data);
         }
@@ -20,7 +21,7 @@ namespace NetworkLevel.NetworkDeliveryLevel
             IGateWCFServiceCallback callbackChannel;
             if (!GateConnectionPool.GateConnections.TryGetValue(gate_id, out callbackChannel))
             {
-                throw new Exception("Gate with id " + gate_id + " is not connected");
+                throw new GateNotConnectedException(gate_id);
             }
             callbackChannel.SendPillWrite(data);
         }
@@ -30,7 +31,7 @@ namespace NetworkLevel.NetworkDeliveryLevel
             IGateWCFServiceCallback callbackChannel;
             if (!GateConnectionPool.GateConnections.TryGetValue(gate_id, out callbackChannel))
             {
-                throw new Exception("Gate with id " + gate_id + " is not connected");
+                throw new GateNotConnectedException(gate_id);
             }
             callbackChannel.SendPillRead(data);
         }
