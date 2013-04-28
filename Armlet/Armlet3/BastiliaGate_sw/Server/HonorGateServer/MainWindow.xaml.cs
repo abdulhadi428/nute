@@ -13,9 +13,15 @@ namespace HonorGateServer
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
+            Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             var globalModel = new GlobalModel(NetworkDelivery.ArmletDeliveryInstance, NetworkDelivery.GateDeliveryInstance);
             ArmletUI.Model = globalModel;
             GateUI.Model = globalModel;
+        }
+
+        void Current_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show(e.Exception.Message);
         }
     }
 }

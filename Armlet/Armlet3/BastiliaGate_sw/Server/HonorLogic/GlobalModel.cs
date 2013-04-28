@@ -17,15 +17,36 @@ namespace HonorLogic
             _armletService = armletService;
             _gateService = gateService;
 
-            _savedData =
-                JsonConvert.DeserializeObject<List<AStoredData>>(GetPersistFileInfo().OpenText().ReadToEnd())
-                           .ToDictionary(a => a.Id);
-            
-            
+            string readJson = ReadJson();
+            if (readJson != null)
+            {
+                _savedData =
+                    JsonConvert.DeserializeObject<List<AStoredData>>(readJson)
+                               .ToDictionary(a => a.Id);
+            }
+            else
+            {
+                _savedData = new Dictionary<byte, AStoredData>();
+            }
+
+
             _armletService.ArmletsStatusUpdate +=ArmletServiceArmletsStatusUpdate;
             _gateService.GateConnected += _gateService_GateConnected;
 
 
+        }
+
+        private static string ReadJson()
+        {
+            try
+            {
+                return GetPersistFileInfo().OpenText().ReadToEnd();
+            }
+            catch
+            {
+                return null;
+            }
+            
         }
 
         void _gateService_GateConnected(byte obj)
@@ -128,7 +149,7 @@ namespace HonorLogic
 
         private static FileInfo GetPersistFileInfo()
         {
-            return new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+            return new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\armlet.json");
         }
     }
 
