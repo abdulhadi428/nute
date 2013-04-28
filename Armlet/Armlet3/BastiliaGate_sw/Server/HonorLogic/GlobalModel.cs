@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using NetworkLevel.NetworkDeliveryLevel;
+using NetworkLevel.WCFServices;
 using Newtonsoft.Json;
 using PillInterfaces;
 
@@ -17,7 +18,7 @@ namespace HonorLogic
             _armletService = armletService;
             _gateService = gateService;
 
-            string readJson = ReadJson();
+            var readJson = ReadJson();
             if (readJson != null)
             {
                 _savedData =
@@ -54,23 +55,76 @@ namespace HonorLogic
             OnNewGateOnline(obj);
         }
 
-        private void ArmletServiceArmletsStatusUpdate(NetworkLevel.WCFServices.PlayerUpdate[] obj)
+        private readonly ArmletList _armletList = new ArmletList();
+
+        private class ArmletList
         {
-            var raiseListUpdated = false;
-            lock (_syncRoot)
+            private readonly Dictionary<int, Armlet> _armlets = new Dictionary<int, Armlet>();
+            private readonly object _syncRoot = new object();
+
+            private bool IsRegistered(byte armletId)
             {
-                foreach (var playerStatusUpdate in obj)
+                return _armlets.ContainsKey(armletId);
+            }
+
+            public bool CreateIfNeeded(byte armletId, Func<byte, Armlet> creator)
+            {
+                lock (_syncRoot)
                 {
-                    byte armletId = playerStatusUpdate.ArmletID;
-                    if (!_armlets.ContainsKey(armletId))
+                    if (IsRegistered(armletId))
                     {
-                        raiseListUpdated = true;
-                        _armlets.Add(armletId, CreateArmlet(armletId));
+                        return false;
                     }
-                    var armlet = _armlets[armletId];
-                    armlet.Update(playerStatusUpdate);
+                    _armlets.Add(armletId, creator(armletId));
+                    return true;
                 }
             }
+
+            public void UpdateArmlet(byte armletId, PlayerUpdate playerStatusUpdate)
+            {
+                var armlet = _armlets[armletId];
+                armlet.Update(playerStatusUpdate);
+            }
+
+            public IEnumerable<IArmletInfo> Get()
+            {
+                lock (_syncRoot)
+                {
+                    return _armlets.Values;
+                }
+            }
+
+            public List<AStoredData> GetDataToStore()
+            {
+                lock (_syncRoot)
+                {
+                    return _armlets.Select(a => new AStoredData { Id = a.Value.Id, Name = a.Value.Name }).ToList();
+                }
+            }
+
+            public void Remove(byte id)
+            {
+                lock (_syncRoot)
+                {
+                    if (_armlets.ContainsKey(id))
+                    {
+                        _armlets.Remove(id);
+                    }
+                }
+            }
+        }
+
+        private void ArmletServiceArmletsStatusUpdate(PlayerUpdate[] obj)
+        {
+            var raiseListUpdated = false;
+
+            foreach (var playerStatusUpdate in obj)
+            {
+                byte armletId = playerStatusUpdate.ArmletID;
+                raiseListUpdated = _armletList.CreateIfNeeded(armletId, CreateArmlet);
+                _armletList.UpdateArmlet(armletId, playerStatusUpdate);
+            }
+
             if (raiseListUpdated)
             {
                 OnArmletListUpdated();
@@ -83,15 +137,13 @@ namespace HonorLogic
             var armlet = new Armlet(armletId, this, name);
             return armlet;
         }
-
-        private readonly object _syncRoot = new object();
-        private readonly Dictionary<int, Armlet> _armlets = new Dictionary<int, Armlet>();
+        
         private readonly IArmletDeliveryServece _armletService;
         private readonly IGateDeliveryService _gateService;
 
         public IEnumerable<IArmletInfo> GetArmlets()
         {
-            return _armlets.Values;
+            return _armletList.Get();
         }
 
         public event Action ArmletListUpdated;
@@ -126,7 +178,16 @@ namespace HonorLogic
 
         public void SendPayload(byte id, byte[] payload)
         {
-            _armletService.DeliverToSingleArmlet(id, payload);
+            var task = _armletService.DeliverToSingleArmlet(id, payload);
+            task.ContinueWith(result =>
+                {
+                    var value = result.Result;
+                    if (value != ArmletDeliveryStatus.SuccessDeliver)
+                    {
+                        _armletList.Remove(id);
+                        OnArmletListUpdated();
+                    }
+                });
         }
 
         private readonly object _saveRoot = new object();
@@ -135,10 +196,10 @@ namespace HonorLogic
         {
             Task.Factory.StartNew(() =>
                 {
+                    var pairs = _armletList.GetDataToStore();
+                    var serializer = new JsonSerializer();
                     lock (_saveRoot)
                     {
-                        var pairs = _armlets.Select(a => new AStoredData{Id = a.Value.Id, Name =a.Value.Name}).ToList();
-                        var serializer = new JsonSerializer();
                         using (var writer = GetPersistFileInfo().CreateText())
                         {
                             serializer.Serialize(writer, pairs);
