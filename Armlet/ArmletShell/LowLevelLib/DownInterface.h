@@ -7,7 +7,7 @@ namespace LowLevel {
 	typedef void (__stdcall INT_STR_ROUTINE)(int n, char const*const str);
 
 	void LowLevelLibMain(void);
-	void Register__CALLBACKs(
+	void RegisterCallbacks(
 		VOID_ROUTINE* pVibro, 
 		VOID_ROUTINE* pDecreasePillCharges,
 		INT_STR_ROUTINE* pInvokeLog,
