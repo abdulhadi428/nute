@@ -38,6 +38,7 @@ namespace ArmletApi {
 	//радиопротокол реализует логику высокого уровня общения с сервером, траспортный уровень не здесь 
 	void CALLOUT OnRadioPacket(unsigned char* packet, int len);			//callout for radio transport
 	void SYSCALL SendRadioPacket(unsigned char* packet, int len);		//syscall for radio transport
+	short SYSCALL GetArmletId();
 
 	//OS
 	typedef char MUTEX[MUTEX_SIZE];										//OS-dependent mutext storage
