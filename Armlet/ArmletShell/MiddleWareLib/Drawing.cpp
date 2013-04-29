@@ -83,7 +83,7 @@ void Show_Glyphs(int dx, int dy, int cx,int cy,
 
 namespace ArmletShell {
 
-	//Video device - FUTURE:
+	//Video device - __FUTURE:
 	//Simulated video memory - 160x128x16xARGB
 	//LUT
 	//Scrolling

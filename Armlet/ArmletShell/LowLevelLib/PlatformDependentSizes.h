@@ -1,22 +1,23 @@
 #pragma once
 
-#ifdef _MBCS
+#ifdef _MSC_VER
 	#define PFD_SIZES
 	#define MUTEX_SIZE sizeof(void*)
 	#define FILE_SIZE sizeof(void*)
-	#define SYSCALL	__cdecl
-	#define CALLOUT	__cdecl
-	#define NOCALL  __cdecl
-	#define FUTURE	__cdecl
-	#define CALLBACK __cdecl
+	#define __SYSCALL __cdecl
+	#define __CALLOUT __cdecl
+	#define __NOCALL __cdecl
+	#define __FUTURE __cdecl
+	#define __CALLBACK __cdecl
 #endif
 
-#ifndef _MBCS
-	#define NOCALL
-	#define CALLOUT
-	#define SYSCALL
-	#define FUTURE
-	#define CALLBACK
+#ifndef _MSC_VER
+#error here
+	#define __NOCALL
+	#define __CALLOUT
+	#define __SYSCALL
+	#define __FUTURE
+	#define __CALLBACK
 #endif
 
 //TODO KREYL - add CHIBI OS sizes

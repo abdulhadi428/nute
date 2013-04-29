@@ -7,8 +7,6 @@
 
 namespace Helper {
 
-	typedef void (__stdcall INT_STR_ROUTINE)(int n, char* str);
-	extern INT_STR_ROUTINE* pfnLog;
 	void __cdecl LowLog(char* fmt,...)
 	{
 		char buf[4096];

@@ -32,7 +32,7 @@ namespace LowLevel {
 
 namespace ArmletApi {
 
-	void SendRadioPacket(unsigned char* packet, int len) {
+	void __SYSCALL SendRadioPacket(unsigned char* packet, int len) {
 		; //TODO implement
 	}
 

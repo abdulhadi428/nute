@@ -30,8 +30,8 @@ namespace ArmletApi {
 
 	//SPECIAL PLATFORM DEPENDENT
 #ifdef _MBCS
-	//visualizer only syscall
-	void SetCureName(int cure_id, char* name)
+	//visualizer only __SYSCALL
+	void __SYSCALL SetCureName(int cure_id, char* name)
 	{
 		LowLevel::SetCureName(cure_id, name);
 	}

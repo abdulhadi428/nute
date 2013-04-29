@@ -14,33 +14,38 @@ void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER Hol
 
 namespace ArmletApi {
 	
-	bool InitializeShell() {
+	bool __CALLOUT InitializeShell() {
 		Clear(RED);
 		//StartThread(my_thread,NULL);
 		StartThread(AppMainThread,NULL);
 		return true; //TODO
 	}
 
-	void CriticalError(char* error)
+	void __CALLOUT CriticalError(char* error)
 	{
 		//TODO
 	}
 
-	//callout for  button
-	void OnButtonPress(int button_id)
+	void __NOCALL  Log(char* fmt, ...)
+	{
+		//TODO
+	}
+
+	//__CALLOUT for  button
+	void __CALLOUT OnButtonPress(int button_id)
 	{
 		; //TODO
 	}
 
-	//callout for button
-	void OnButtonRelease(int button_id)
+	//__CALLOUT for button
+	void __CALLOUT OnButtonRelease(int button_id)
 	{
 		if (gClickButtonHandler)
 			(*gClickButtonHandler)((ubyte_t)button_id);
 	}
 
-	//callout cure/pill
-	void OnPillConnect(int cure_id, int charges)
+	//__CALLOUT cure/pill
+	void __CALLOUT OnPillConnect(int cure_id, int charges)
 	{
 		//Log("Cure %d was connected, charges %d",cure_id, charges);
 		Log("Cure was connected, with charges");
@@ -56,8 +61,8 @@ namespace ArmletApi {
 		}
 	}
 
-	//callout for radio transport
-	void OnRadioPacket(unsigned char* packet, int len)
+	//__CALLOUT for radio transport
+	void __CALLOUT OnRadioPacket(unsigned char* packet, int len)
 	{
 		; //TODO
 	}

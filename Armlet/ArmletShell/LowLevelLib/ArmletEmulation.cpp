@@ -54,15 +54,15 @@ namespace LowLevel {
 
 namespace ArmletApi {
 
-	//syscall returns 0-100%
-	unsigned char GetBatteryLevel()
+	//__SYSCALL returns 0-100%
+	unsigned char __SYSCALL GetBatteryLevel()
 	{
 		return (unsigned char)(GetRunningTime() / 100);
 		return 100; //TODO
 	}
 
 	//draws a pixel
-	void DrawPixel(int x, int y, unsigned short c)
+	void __SYSCALL DrawPixel(int x, int y, unsigned short c)
 	{
 		if (x<0) return;
 		if (y<0) return;
@@ -72,7 +72,7 @@ namespace ArmletApi {
 	}
 
 	//draws an area of pixels
-	void DrawArea(int x, int y, unsigned short *const pc, int len,
+	void __SYSCALL DrawArea(int x, int y, unsigned short *const pc, int len,
 					int sx, int sy)
 	{
 		if (x<0) return;
@@ -95,14 +95,14 @@ namespace ArmletApi {
 	}
 
 	//performs vibration for duration
-	void DoVibro(int msecs)
+	void __SYSCALL DoVibro(int msecs)
 	{
 		UNREFERENCED_PARAMETER(msecs);
 		LowLevel::Vibro();
 	}
 
 	//writes cure to pill
-	bool WritePill(int cure_id, int charges)
+	bool __SYSCALL WritePill(int cure_id, int charges)
 	{
 		LowLog("Cure %d was written %d charges", cure_id, charges);
 		LowLevel::DecreasePillCharges();
@@ -110,7 +110,7 @@ namespace ArmletApi {
 	}
 
 	//returns lustra id (UNKNOWN_ID=none)
-	unsigned char GetLustraId()
+	unsigned char __SYSCALL GetLustraId()
 	{
 		if (bLustraInRange)
 			return LastLustraId;
@@ -118,19 +118,19 @@ namespace ArmletApi {
 	}
 
 	//return lock id (UNKNOWN_ID=none)
-	unsigned char GetLockId()
+	unsigned char __FUTURE GetLockId()
 	{
 		return CurrentLockId;
 	}
 
 	//request lock to open
-	bool OpenLock()
+	bool __FUTURE OpenLock()
 	{
 		return true;
 	}
 
 	//request lock to show access denied
-	bool DenyLock()
+	bool __FUTURE DenyLock()
 	{
 		return true;
 	}

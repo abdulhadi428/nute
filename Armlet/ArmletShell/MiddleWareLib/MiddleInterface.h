@@ -1,6 +1,6 @@
 #pragma once
 
-typedef void (__stdcall BUTTON_HANDLER)(ubyte_t button);
+typedef void (__CALLBACK BUTTON_HANDLER)(ubyte_t button);
 void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER HoldButtonHandler);
 
 extern BUTTON_HANDLER* gClickButtonHandler;
@@ -84,7 +84,7 @@ void OnButtonHold(int button, int seconds)
 		(*gClickButtonHandler)(button);
 }
 
-void __stdcall my_thread(void* param)
+void __CALLBACK my_thread(void* param)
 {
 	char* str = "THREAD was started";
 	DrawTextString(60,15,str,strlen(str),0,0);

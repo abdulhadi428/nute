@@ -429,7 +429,7 @@ VERTIGO				//"Головокружение"
 }
 #endif
 
-void __stdcall OnUseAnesthetics()
+void __CALLBACK OnUseAnesthetics()
 {
 	//PainLevel -= 1;
 /*
@@ -449,60 +449,60 @@ void __stdcall OnUseAnesthetics()
 */
 }
 
-void __stdcall OnTickAnesthetics()
+void __CALLBACK OnTickAnesthetics()
 {
 }
-void __stdcall OnUseAntispasmodic()
+void __CALLBACK OnUseAntispasmodic()
 {
 }
-void __stdcall OnTickAntispasmodic()
+void __CALLBACK OnTickAntispasmodic()
 {
 }
-void __stdcall OnUsePyretic()
+void __CALLBACK OnUsePyretic()
 {
 }
-void __stdcall OnTickPyretic()
+void __CALLBACK OnTickPyretic()
 {
 }
-void __stdcall OnUseAspirator()
+void __CALLBACK OnUseAspirator()
 {
 }
-void __stdcall OnTickAspirator()
+void __CALLBACK OnTickAspirator()
 {
 }
-void __stdcall OnUseCoagulationFactor()
+void __CALLBACK OnUseCoagulationFactor()
 {
 }
-void __stdcall OnTickCoagulationFactor()
+void __CALLBACK OnTickCoagulationFactor()
 {
 }
-void __stdcall OnUseSyntheticBlood()
+void __CALLBACK OnUseSyntheticBlood()
 {
 }
-void __stdcall OnTickSyntheticBlood()
+void __CALLBACK OnTickSyntheticBlood()
 {
 }
-void __stdcall OnUseLeatherette()
+void __CALLBACK OnUseLeatherette()
 {
 }
-void __stdcall OnTickLeatherette()
+void __CALLBACK OnTickLeatherette()
 {
 }
-void __stdcall OnUseMyorelaxant()
+void __CALLBACK OnUseMyorelaxant()
 {
 }
-void __stdcall OnTickMyorelaxant()
+void __CALLBACK OnTickMyorelaxant()
 {
 }
-void __stdcall OnUseVisceraNanoPack()
+void __CALLBACK OnUseVisceraNanoPack()
 {
 }
-void __stdcall OnTickVisceraNanoPack()
+void __CALLBACK OnTickVisceraNanoPack()
 {
 }
-void __stdcall OnUseRespiratoryNanoPack()
+void __CALLBACK OnUseRespiratoryNanoPack()
 {
 }
-void __stdcall OnTickRespiratoryNanoPack()
+void __CALLBACK OnTickRespiratoryNanoPack()
 {
 }

@@ -9,31 +9,31 @@
 namespace ArmletApi {
 
 	//opens/create file
-	bool OpenFile(FILE* file, char* filename, bool bCreate)
+	bool __SYSCALL OpenFile(FILE* file, char* filename, bool bCreate)
 	{
 		//TODO
 		return true;
 	}
 
-	//syscall returns length read
-	int ReadFile(FILE* file, char* buf, int len)
+	//__SYSCALL returns length read
+	int __SYSCALL ReadFile(FILE* file, char* buf, int len)
 	{
 		return 0;
 	}
 
-	//syscall returns length written
-	int WriteFile(FILE* file, char* buf, int len)
+	//__SYSCALL returns length written
+	int __SYSCALL WriteFile(FILE* file, char* buf, int len)
 	{
 		return len;
 	}
 
-	//syscall return length written
-	int AppendFile(FILE* file, char* buf, int len)
+	//__SYSCALL return length written
+	int __SYSCALL AppendFile(FILE* file, char* buf, int len)
 	{
 		return 0;
 	}
 
-	bool StartThread(THREAD_PROC* startProc, void* param)
+	bool __SYSCALL StartThread(THREAD_PROC* startProc, void* param)
 	{
 		//TODO
 		DWORD dwTid;
@@ -41,31 +41,31 @@ namespace ArmletApi {
 		return true;
 	}
 
-	//syscall, period in msecs
-	bool RequestTimer(TIMER_PROC* timerProc, int period)
+	//__SYSCALL, period in msecs
+	bool __SYSCALL RequestTimer(TIMER_PROC* timerProc, int period)
 	{
-		//timer routine callback,
+		//timer routine __CALLBACK,
 		//	returns false to stop
 		//	returns true for next period
 		return true;
 	}
 
-	void Sleep(int msces)
+	void __SYSCALL Sleep(int msces)
 	{
 	}
 
 	//should not fail
-	void InitMutex(MUTEX* mutex)
+	void __SYSCALL InitMutex(MUTEX* mutex)
 	{
 	}
 
 	//acquires mutex
-	void AcquireMutex(MUTEX* mutex)
+	void __SYSCALL AcquireMutex(MUTEX* mutex)
 	{
 	}
 
 	//releases mutex
-	void ReleaseMutex(MUTEX* mutex)
+	void __SYSCALL ReleaseMutex(MUTEX* mutex)
 	{
 	}
 

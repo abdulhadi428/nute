@@ -7,7 +7,7 @@ namespace LowLevel {
 	INT_STR_ROUTINE* InvokeLog = 0;
 	INT_STR_ROUTINE* SetCureName = 0;
 
-	void RegisterCallbacks(
+	void Register__CALLBACKs(
 		VOID_ROUTINE* pVibro, 
 		VOID_ROUTINE* pDecreasePillCharges,
 		INT_STR_ROUTINE* pInvokeLog,
