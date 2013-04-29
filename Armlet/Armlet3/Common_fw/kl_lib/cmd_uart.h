@@ -17,9 +17,9 @@
 
 
 // Set to true if RX needed
-#ifdef GATE
+//#ifdef GATE
 #define UART_RX_ENABLED     TRUE
-#endif
+//#endif
 
 // UART
 #define UART_TXBUF_SIZE     900

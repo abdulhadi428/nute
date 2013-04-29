@@ -122,6 +122,49 @@ void IRCmdCallback(uint16_t CmdWord) {
     Uart.Printf("%02X\r", CmdWord);
 }
 
+static DIR dir;
+FILINFO FileInfo;
+//=========================== Command processing ===============================
+void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
+    uint8_t b;
+    FRESULT res;
+    switch(CmdCode) {
+        case 0x01:
+            b = OK;
+            Uart.Cmd(0x90, &b, 1);
+            break;
+
+        case 0x50: // Dir
+            res = f_opendir(&dir, NULL);
+            if (res == FR_OK) {
+                for (;;) {
+                    res = f_readdir(&dir, &FileInfo);                   /* Read a directory item */
+                    if (res != FR_OK || FileInfo.fname[0] == 0) break;  /* Break on error or end of dir */
+                    if (FileInfo.fname[0] == '.') continue;             /* Ignore dot entry */
+                    Uart.Printf("%S\r", FileInfo.fname);
+                }
+            }
+            break;
+
+        case 0x51:  // GetID
+            Uart.Printf("ID=%u\r", rLevel1.GetID());
+            break;
+
+        case 0x52:  // SetID
+            b = PData[0];
+            if(OpenFile(&SD.File, "settings.ini", true)) {
+                f_printf(&SD.File, "[Radio]\r\nID=%u\r\n", b);
+                f_close(&SD.File);
+                Uart.Printf("Written\r");
+            }
+            rLevel1.SetID(b);
+            Uart.Printf("New ID=%u\r", rLevel1.GetID());
+            break;
+
+        default: break;
+    } // switch
+}
+
 // =============================== App class ===================================
 void App_t::Init() {
     chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, AppThread, NULL);

@@ -148,6 +148,8 @@ public:
     void Init(uint16_t ASelfID);
 #ifdef DEVICE
     void Shutdown();
+    void SetID(uint8_t ASelfID) { SelfID = ASelfID; PktTx.rID = SelfID; }
+    uint8_t GetID() { return SelfID; }
 #endif
 #ifdef GATE
     void SetID(uint16_t ASelfID);

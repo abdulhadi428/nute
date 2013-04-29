@@ -58,7 +58,7 @@ static inline bool TryConvertToDigit(uint8_t b, uint8_t *p) {
 static inline bool IsDelimiter(uint8_t b) { return (b == ','); }
 static inline bool IsEnd(uint8_t b) { return (b == '\r') or (b == '\n'); }
 
-static WORKING_AREA(waUartRxThread, 256);
+static WORKING_AREA(waUartRxThread, 512);
 static msg_t UartRxThread(void *arg) {
     (void)arg;
     chRegSetThreadName("UartRx");
