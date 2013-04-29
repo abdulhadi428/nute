@@ -7,13 +7,14 @@ namespace ArmletShell {
 	#include "Common.h"			//from LowLevelLib
 
 #define _NAMESPACE_PROTECT_
-	#include "Types.h"			//common types
-	#include "Colors.h"			//common colors
-	#include "Fonts.h"			//common fonts
-	#include "Drawings.h"		//common graphic output
-	#include "Dimensions.h"		//common graphic calcs
-	#include "strlib.h"			//common strings
-	#include "Buttons.h"		//common button input
+	#include "Types.h"				//common types
+	#include "Colors.h"				//common colors
+	#include "Fonts.h"				//common fonts
+	#include "Drawings.h"			//common graphic output
+	#include "Dimensions.h"			//common graphic calculations
+	#include "strlib.h"				//common strings
+	#include "Buttons.h"			//common button input
+	#include "Images.h"	//common images storage
 #undef _NAMESPACE_PROTECT_
 
 }
