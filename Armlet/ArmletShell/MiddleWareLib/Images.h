@@ -11,8 +11,6 @@ struct BitmapImage
 	Color* Bitmap;
 };
 
-typedef ubyte_t ImageId;
-
 class ImagesRepository
 {
 	BitmapImage* _images;
@@ -20,5 +18,5 @@ class ImagesRepository
 public:
 	fresult Init(BitmapImage* images, uword_t imagesCount);
 
-	fresult GetImageById(ImageId id);
+	BitmapImage* GetImageById(ubyte_t id);
 };

@@ -11,11 +11,11 @@ fresult ImagesRepository::Init( BitmapImage* images, uword_t imagesCount )
 	return SUCCESS;
 }
 
-fresult ImagesRepository::GetImageById( ImageId id )
+BitmapImage* ImagesRepository::GetImageById(ubyte_t id )
 {
-	if (ImageId < _imagesCount)
+	if (id < _imagesCount)
 	{
-		return _images[ImageId];
+		return &_images[id];
 	}
 }
 }
