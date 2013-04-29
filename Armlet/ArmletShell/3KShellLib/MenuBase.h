@@ -1,7 +1,7 @@
 #pragma once
-
-#include "project.h"
 #include "IMenu.h"
+
+namespace ThreeKShell {
 
 class MenuBase : public IMenu
 {
@@ -95,3 +95,5 @@ public:
 	};
 
 };
+
+}

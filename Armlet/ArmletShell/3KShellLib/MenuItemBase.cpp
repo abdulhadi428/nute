@@ -1,4 +1,7 @@
+#include "ArmletShell.h"
 #include "MenuItemBase.h"
+
+namespace ThreeKShell {
 
 bool_t MenuItemBase::IsSelected()
 {
@@ -73,4 +76,6 @@ fresult MenuItemBase::SetSecondAccelarator( ButtonState button )
 {
 	_Accelerator2 = button;
 	return SUCCESS;
+}
+
 }

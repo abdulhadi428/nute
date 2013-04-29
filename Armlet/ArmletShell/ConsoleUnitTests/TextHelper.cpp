@@ -1,8 +1,7 @@
 
 #include "TextHelper.h"
 #include "PlatformAPI.h"
-#include "fresult.h"
-#include "strlib.h"
+#include "ArmletShell.h"
 
 char* StringAdd(const char* src, const char* add)
 {

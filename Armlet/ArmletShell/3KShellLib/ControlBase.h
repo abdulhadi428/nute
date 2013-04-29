@@ -1,10 +1,10 @@
 #pragma once 
-
-#include "project.h"
 #include "IControl.h"
+#include "IRender.h"
+
+namespace ThreeKShell {
 
 //Base class for any control
-
 class ControlBase : public IControl
 {
 
@@ -42,7 +42,7 @@ public:
 		return _ZOrder;
 	}
 
-	char virtual GetVisible()
+	bool_t virtual GetVisible()
 	{
 		return _bVisible;
 	}
@@ -76,3 +76,5 @@ public:
 	}
 
 };
+
+}

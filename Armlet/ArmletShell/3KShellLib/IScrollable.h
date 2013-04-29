@@ -1,6 +1,6 @@
 #pragma once
 
-#include "project.h"
+namespace ThreeKShell {
 
 class IScrollable
 {
@@ -17,6 +17,6 @@ public:
 	fresult virtual	ScrollDown () =0;
 
 	Position virtual GetScrollPosition() =0;
-
-
 };
+
+}

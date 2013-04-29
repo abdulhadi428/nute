@@ -6,7 +6,7 @@
 using namespace Visualizer;
 
 [STAThreadAttribute]
-int main(array<System::String ^> ^args)
+int __clrcall main(array<System::String ^> ^args)
 {
 	// Enabling Windows XP visual effects before any controls are created
 	Application::EnableVisualStyles();

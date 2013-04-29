@@ -1,14 +1,16 @@
 #pragma once
-
-#include "project.h"
+#include "GraphicRenderer.h"
 #include "TextField.h"
+#include "Image.h"
+#include "MenuItem.h"
 #include "Panel.h"
 #include "ScatteredMenu.h"
-#include "MenuItem.h"
-#include "GraphicRenderer.h"
-#include "Image.h"
-#include "MenuDelegate.h"
+using namespace ThreeKShell;
 #include "Form.h"
+#include "Icons.h"
+//#include "MenuDelegate.h"
+//#include "project.h"
+
 
 #define BUTTON_HOLD_OFFSET 256
 
@@ -329,7 +331,7 @@ public:
 	fresult virtual OnWoundMnuRightLeg(IMenuItem* sender)=0;
 	fresult virtual OnWoundMnuOk(IMenuItem* sender);
 
-	void _SystemOnButtonClick(int button);
+	void _SystemOnButtonClick(uword_t button);
 	void OnNetworkData();
 
 };

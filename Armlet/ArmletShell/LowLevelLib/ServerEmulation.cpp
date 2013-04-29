@@ -1,7 +1,7 @@
 #include "DownInterface.h"
 #include "ArmletApi.h"
 
-namespace ArmletApi {
+namespace LowLevel {
 
 	void SetPlayerName(char const*const name)
 	{

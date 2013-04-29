@@ -1,7 +1,7 @@
 #pragma once
-
-#include "project.h"
 #include "IMenuItem.h"
+
+namespace ThreeKShell {
 
 class IMenu
 {
@@ -21,3 +21,5 @@ public:
 
 	virtual fresult  Draw()=0;
 };
+
+}

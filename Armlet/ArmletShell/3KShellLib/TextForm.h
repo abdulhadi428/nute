@@ -1,4 +1,5 @@
 #pragma once
+
 //TextForm is a container of Controls.
 // it draws (renders) it's TextField on the screen
 // Usage:
@@ -11,11 +12,9 @@
 //160*128
 //20*16
 
-
-
 #include "TextField.h"
-#include "fresult.h"
-#include "IRender.h"
+
+namespace ThreeKShell {
 
 #define HEIGHT  16	
 #define WIDTH  20
@@ -49,3 +48,5 @@ public:
 	//Logic
 	
 };
+
+}

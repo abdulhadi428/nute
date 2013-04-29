@@ -40,12 +40,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\3KShellLib;..\MiddleWareLib"
+				AdditionalIncludeDirectories="..\LowLevelLib;..\MiddleWareLib;..\3KShellLib;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				WarningLevel="4"
 				DebugInformationFormat="4"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -102,11 +103,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\3KShellLib;..\MiddleWareLib"
+				AdditionalIncludeDirectories="..\LowLevelLib;..\MiddleWareLib;..\3KShellLib;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -229,10 +231,6 @@
 			</File>
 			<File
 				RelativePath=".\MenuDelegate.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Temp.h"
 				>
 			</File>
 			<File

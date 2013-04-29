@@ -40,12 +40,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\LowLevelLib"
+				AdditionalIncludeDirectories="..\LowLevelLib;..\PriceOfHonor"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				WarningLevel="4"
 				DebugInformationFormat="4"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -102,11 +103,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\LowLevelLib"
+				AdditionalIncludeDirectories="..\LowLevelLib;..\PriceOfHonor"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -150,7 +152,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Dimensions.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Drawing.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Fonts.cpp"
 				>
 			</File>
 			<File
@@ -161,6 +171,10 @@
 				RelativePath=".\MiddleWareLibMain.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\strlib.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -168,11 +182,43 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\ArmletShell.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Buttons.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Colors.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Dimensions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Drawings.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Fonts.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MiddleInterface.h"
 				>
 			</File>
 			<File
 				RelativePath=".\ServerProtocol.h"
+				>
+			</File>
+			<File
+				RelativePath=".\strlib.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Types.h"
 				>
 			</File>
 		</Filter>

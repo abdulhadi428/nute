@@ -1,5 +1,7 @@
+#include "ArmletShell.h"
 #include "Image.h"
-#include "Dimensions.h"
+
+namespace ThreeKShell {
 
 fresult Image::DrawArea( Position pos, Size size )
 {
@@ -18,3 +20,5 @@ fresult Image::DrawArea( Position pos, Size size )
 	
 	return SUCCESS;
 };
+
+}

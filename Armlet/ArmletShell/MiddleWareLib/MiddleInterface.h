@@ -1,5 +1,12 @@
 #pragma once
 
+typedef void (__stdcall BUTTON_HANDLER)(ubyte_t button);
+void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER HoldButtonHandler);
+
+extern BUTTON_HANDLER* gClickButtonHandler;
+extern BUTTON_HANDLER* gHoldButtonHandler;
+
+//TODO KQUEUE
 
 //draw pixel alpha channel support in MiddleWare
 
@@ -38,14 +45,6 @@ void OnElapsed50msec()
 			}
 		}
 	}
-}
-
-void LowLevelLibMain(void)
-{
-	Clear(GREEN);
-	StartThread(my_thread,NULL);
-	StartThread(AppMainThread,NULL);
-	return;
 }
 
 void OnButtonClick(int button)
@@ -101,32 +100,10 @@ typedef struct _TIMER {
 } TIMER;
 TIMER gTimers[MAX_TIMERS];
 
-
-BUTTON_HANDLER* gClickButtonHandler = NULL;
-BUTTON_HANDLER* gHoldButtonHandler = NULL;
-
-void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER HoldButtonHandler)
-{
-	gClickButtonHandler = ClickButtonHandler;
-	gHoldButtonHandler = HoldButtonHandler;
-}
-*/
-
-/*
-typedef void (__stdcall BUTTON_HANDLER)(int button);
-extern const unsigned char Font_6x8_Data[256][6];
-
 void Show_Glyphs(int dx, int dy, int cx,int cy, 
 	int scaleFactor, int fillFactor);
-*/
 
-//COLORS
-#define _TRANSPARENT	0xF000
-#define BLACK			0x0000
-#define	RED				0x0F00
-#define GREEN			0x00F0
-#define BLUE			0x000F
-#define WHITE			0x0FFF
+*/
 
 /*
 1) Мы с Кривдой пишем UI и бизнес-логику как черный ящик.
@@ -134,18 +111,6 @@ void Show_Glyphs(int dx, int dy, int cx,int cy,
 Нить №1 - собирает входящие события (нажатия кнопок, втыкание пилюль, пакеты от гейта).
 Нить №2 - Вычерпывает события и производит выходные действия (отрисовывает изменения, шлет пакеты концентратору, открывает замки).
 Нить №3 - Рабочий цикл: считать файл с SD, выполнить логику (шаг автомата медицины, проверку доступа к замку, обработка входящих пакетов), записать файл на SD, послать входящие события для отрисовки.
-*/
-
-/*
-void StartThread(THREAD_PROC routine, void* param);
-void Clear(short backColor);
-void DrawTextString(int x, int y, const char* string, int sz, short foreColor, short backColor);
-void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER HoldButtonHandler);
-void DrawRect_kel(int x, int y, int sx, int sy, short color);
-void DrawBitmap_kel(int x, int y, int sx, int sy, short* bitmap);
-void DrawBitmapRect_kel(int x, int y, int sx, int sy, short* bitmap, int dx, int dy, int sdx, int sdy);
-bool RequestTimer(int period, TIMER_PROC routine);
-void DrawPixel(int x, int y, short c);
 */
 
 //		static array<Int64>^ ButtonTicks;
@@ -203,16 +168,6 @@ void FormHelper::OnButtonRelease(int button)
 		if (button==BUTTON_R) return "R";
 		return "?";
 	}
-
-void FormHelper::OnPillConnect(int cure_id, int charges)
-{
-	Log(String::Format("Cure {0} was connected, charges {1}",cure_id, charges));
-	mainForm->DecreasePillCharges();
-	mainForm->Vibro();
-	mainForm->SetCureName(1,"Спазмолитик");
-	mainForm->SetCureName(9,"Абсорбент");
-	mainForm->SetCureName(12,"Нанохирург");
-}
 
 void FormHelper::HalfSecondTick()
 {

@@ -4,7 +4,7 @@ namespace LowLevel {
 	#include "Common.h"
 
 	typedef void (__stdcall VOID_ROUTINE)();
-	typedef void (__stdcall INT_STR_ROUTINE)(int n, char* str);
+	typedef void (__stdcall INT_STR_ROUTINE)(int n, char const*const str);
 
 	void LowLevelLibMain(void);
 	void RegisterCallbacks(

@@ -1,9 +1,5 @@
 //По облегчению начальное действие не выполняется. (G4).
 
-
-
-
-
 //User interface:
 //MainScreen
 //	ABC
@@ -12,9 +8,6 @@
 //MainHelpScreen
 //...
 //...
-
-
-typedef unsigned char uint8_t;
 
 uint8_t armlet_id; //braslet igroka
 //gate_id

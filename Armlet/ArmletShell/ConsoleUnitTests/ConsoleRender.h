@@ -1,9 +1,9 @@
 #pragma once
 
+#include "ArmletShell.h"
 #include "IRender.h"
 #include "Console.h"
-#include "project.h"
-#include "TextFormat.h"
+using namespace ThreeKShell;
 
 class ConsoleRender : IRender
 {

@@ -1,7 +1,6 @@
 #pragma once
-
-#include "IMenuHandler.h"
 #include "UIDesigner.h"
+#include "IMenuHandler.h"
 
 typedef enum _ON_MNU {
 	Empty,
@@ -28,7 +27,6 @@ typedef enum _ON_MNU {
 	Last
 } MenuHandlers;
 
-class UIDesigner;
 class MenuDelegate : public IMenuHandler
 {
 	UIDesigner* _ui;

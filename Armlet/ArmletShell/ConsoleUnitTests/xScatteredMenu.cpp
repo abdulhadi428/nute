@@ -5,7 +5,9 @@
 #include "ToStringRenderer.h"
 #include "IMenuItem.h"
 #include "MenuItem.h"
-#include "strlib.h"
+#include "ArmletShell.h"
+#include "defs.h"
+using namespace ThreeKShell;
 
 
 fresult xScatteredMenu::CreateTextField( char* str, Size size, Position position, TextFormat* format, TextField** opTextField, Size buffSize)

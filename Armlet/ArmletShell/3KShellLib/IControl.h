@@ -1,10 +1,12 @@
 #pragma once
+
+namespace ThreeKShell {
+
 /* Text Field:
 IControl interface
 */
-#include "project.h"
-#include "IRender.h"
 
+//#include "IRender.h"
 
 class IControl
 {
@@ -35,3 +37,5 @@ public:
 	//renders control partially to screen
 	fresult virtual DrawArea(Position pos, Size size)=0;
 };
+
+}

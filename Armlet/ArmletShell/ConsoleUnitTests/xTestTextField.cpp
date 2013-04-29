@@ -1,7 +1,9 @@
 #include "xTestTextField.h"
 #include "TextHelper.h"
-#include "strlib.h"
+#include "ArmletShell.h"
+#include "defs.h"
 #include <iostream>
+using namespace ArmletShell;
 
 
 fresult xTestTextField::CreateTextField( char* str, Size size, Position position, TextFormat* format, bool_t wrap, TextField** opTextField, Size buffSize)

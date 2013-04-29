@@ -1,7 +1,8 @@
 #pragma once
-
 #include "ControlBase.h"
 #include "IScrollable.h"
+
+namespace ThreeKShell {
 
 class ScrollableControlBase : public ControlBase, public IScrollable
 {
@@ -36,6 +37,9 @@ public:
 	fresult virtual ScrollDown() 
 	{
 		_ScrollPosition.Top++;
-		return SetScrollPosition(_ScrollPosition);	}
+		return SetScrollPosition(_ScrollPosition);	
+	}
 
 };
+
+}

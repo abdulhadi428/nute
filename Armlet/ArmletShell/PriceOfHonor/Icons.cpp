@@ -2,6 +2,7 @@
 //1. MemFont.{h,cpp}
 //2. lcd_addon.{h,cpp}
 //3. DejaVuSansMono14.txt
+#include "ArmletShell.h"
 #include "Icons.h"
 
 //Help, 8bpp
@@ -212,7 +213,7 @@ const unsigned char icon_arrow_down[] =
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 0x00, 0x00, 0x00 };
 
-fresult GetImageById( ubyte_t Id, unsigned short ** oBitmap, Size* oBitmapSize )
+fresult GetImageById( ubyte_t imageId, unsigned short ** oBitmap, Size* oBitmapSize )
 {
 	*oBitmap = (unsigned short*)ArrowDownOrangeBitmap;
 	(*oBitmapSize).Height = ArrowDownOrangeHeight;

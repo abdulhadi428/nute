@@ -1,6 +1,7 @@
 #pragma once
 #include "ControlBase.h"
-#include "project.h"
+
+namespace ThreeKShell {
 
 class PanelBase : public ControlBase
 {
@@ -17,3 +18,5 @@ protected:
 	fresult virtual DrawArea( Position pos, Size size );
 
 };
+
+}

@@ -1,4 +1,7 @@
+#include "ArmletShell.h"
 #include "MenuBase.h"
+
+namespace ThreeKShell {
 
 fresult MenuBase::SelectItem( ubyte_t index )
 {
@@ -80,4 +83,6 @@ fresult MenuBase::Draw()
 	}
 
 	return SUCCESS;
+}
+
 }

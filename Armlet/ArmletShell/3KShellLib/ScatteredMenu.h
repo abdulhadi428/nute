@@ -1,7 +1,7 @@
 #pragma once
-
-#include "project.h"
 #include "MenuBase.h"
+
+namespace ThreeKShell {
 
 class ScatteredMenu : public MenuBase
 {
@@ -23,3 +23,5 @@ public:
 	}
 
 };
+
+}

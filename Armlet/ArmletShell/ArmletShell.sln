@@ -4,6 +4,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Visualizer", "Visualizer\Visualizer.vcproj", "{8C2B185A-472D-4052-B94D-65F0C0BF2DE3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{07438366-E76F-4799-A2EA-234EE8A925D1} = {07438366-E76F-4799-A2EA-234EE8A925D1}
+		{7CEC398E-5A29-4BD1-B54C-C4BC8023EC72} = {7CEC398E-5A29-4BD1-B54C-C4BC8023EC72}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LowLevelLib", "LowLevelLib\LowLevelLib.vcproj", "{07438366-E76F-4799-A2EA-234EE8A925D1}"
@@ -16,6 +17,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleUnitTests", "ConsoleUnitTests\ConsoleUnitTests.vcproj", "{9C8C8172-27A6-4078-8558-D26B1DF16947}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2421FB2A-10E8-421F-B832-57CCEE7FD08D} = {2421FB2A-10E8-421F-B832-57CCEE7FD08D}
+		{7CEC398E-5A29-4BD1-B54C-C4BC8023EC72} = {7CEC398E-5A29-4BD1-B54C-C4BC8023EC72}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PriceOfHonor", "PriceOfHonor\PriceOfHonor.vcproj", "{ED6F4CE0-7FB0-4686-8904-5D1C34CC3ECE}"

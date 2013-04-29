@@ -1,11 +1,7 @@
-#include "project.h"
+#include "ArmletShell.h"
 #include "TextField.h"
-#include "Dimensions.h"
-#include "IntegrationWithKeltur.h"
-#include "ScrollableControlBase.h"
-#include "strlib.h"
 
-
+namespace ThreeKShell {
 
 sword_t TextField::GetBuffIndex( Position pos )
 {
@@ -290,7 +286,7 @@ fresult TextField::Init(Size size, Position position, char* buff, Size buffSize,
 	_Format.BgColor = DEFAULT_BACKGROUND;
 	_Format.FgColor = DEFAULT_FOREGROUND;
 	//Get Default font
-	fres = TODO_KELTUR_GetFontById(DEFAULT_FONT, &(_Format.Font));
+	fres = GetFontById(DEFAULT_FONT, &(_Format.Font));
 	if (fres != SUCCESS)
 	{
 		return fres;
@@ -392,7 +388,7 @@ fresult TextField::DrawArea(Position pos, Size size )
 		drawSizePx.Width = _Size.Width;
 	}
 
-	ubyte_t writeIndex=0;
+	//ubyte_t writeIndex=0;
 
 	char* lineGot=NULL;
 
@@ -457,9 +453,4 @@ fresult TextField::ScrollDown()
 	return SetScrollPosition(pos);
 }
 
-
-
-
-
-
-
+}

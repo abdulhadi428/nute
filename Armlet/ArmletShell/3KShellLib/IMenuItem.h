@@ -1,6 +1,7 @@
 #pragma once
 
-#include "project.h"
+namespace ThreeKShell {
+
 typedef sword_t ButtonState;
 
 class IMenuItem
@@ -16,3 +17,5 @@ public:
 
 	bool_t virtual CheckAccelerator(ButtonState button)=0;
 };
+
+}

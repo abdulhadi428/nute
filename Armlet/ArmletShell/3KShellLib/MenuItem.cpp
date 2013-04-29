@@ -1,4 +1,7 @@
+#include "ArmletShell.h"
 #include "MenuItem.h"
+
+namespace ThreeKShell {
 
 fresult MenuItem::Select()
 {
@@ -66,4 +69,6 @@ fresult MenuItem::Init( TextField* tf, TextFormat* selFormat, Image* img, IContr
 	}
 
 	return SUCCESS;
+}
+
 }

@@ -1,17 +1,17 @@
-#pragma once
-
-#include "project.h"
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ArmletShell.h"
+#endif
 
 /*
 	returns 0 if both dimensions of size1 does not exceed size2
-	 -1 - if width exceeds
-	 -2 - if height exceeds
+	 WIDTH_EXCEEDS - if width exceeds
+	 HEIGHT_EXCEEDS - if height exceeds
 */
-int SizeIsSmaller(Size size1, Size size2);
+fresult SizeIsSmaller(Size size1, Size size2);
 
-int IsEmpty(Size size);
+bool_t IsEmpty(Size size);
 
-int IsPositionInsideSize(Size size, Position position);
+bool_t IsPositionInsideSize(Size size, Position position);
 
 bool_t IsRectInsideRect(Position testPos, Size testSize, Position checkedPosition, Size checkedSize);
 

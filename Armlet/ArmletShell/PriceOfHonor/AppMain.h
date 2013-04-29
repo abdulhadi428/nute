@@ -1,7 +1,6 @@
 #pragma once
 
-using namespace LowLevel;
-extern THREAD_PROC AppMainThread;
+extern ArmletApi::THREAD_PROC AppMainThread;
 
 //extern APP_TASK AppTasks[];
 //BOOL InitializeLogic();

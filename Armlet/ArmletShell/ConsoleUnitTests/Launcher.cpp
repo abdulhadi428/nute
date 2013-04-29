@@ -12,7 +12,7 @@
 #include "xScatteredMenu.h"
 #include "xImage.h"
 
-int _tmain(int argc, _TCHAR* argv[])
+int __cdecl _tmain(int argc, _TCHAR* argv[])
 {
 /*
 	//TextField fields[2];

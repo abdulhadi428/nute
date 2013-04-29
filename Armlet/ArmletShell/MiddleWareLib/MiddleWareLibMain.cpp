@@ -1,8 +1,23 @@
 #include "ArmletApi.h"
+#include "ArmletShell.h"
+#include "MiddleInterface.h"
+#include "AppMain.h"
+
+//TODO TO BUTTONS and to app
+BUTTON_HANDLER* gClickButtonHandler = NULL;
+BUTTON_HANDLER* gHoldButtonHandler = NULL;
+void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER HoldButtonHandler)
+{
+	gClickButtonHandler = ClickButtonHandler;
+	gHoldButtonHandler = HoldButtonHandler;
+}
 
 namespace ArmletApi {
 	
 	bool InitializeShell() {
+		Clear(RED);
+		//StartThread(my_thread,NULL);
+		StartThread(AppMainThread,NULL);
 		return true; //TODO
 	}
 
@@ -20,18 +35,20 @@ namespace ArmletApi {
 	//callout for button
 	void OnButtonRelease(int button_id)
 	{
-		; //TODO
+		if (gClickButtonHandler)
+			(*gClickButtonHandler)((ubyte_t)button_id);
 	}
 
 	//callout cure/pill
 	void OnPillConnect(int cure_id, int charges)
 	{
-		//LowLevel::Log("Cure %d was connected, charges %d",cure_id, charges);
+		//Log("Cure %d was connected, charges %d",cure_id, charges);
+		Log("Cure was connected, with charges");
 		WritePill(cure_id, charges-1);
-		//LowLevel::Vibro();
-		//LowLevel::SetCureName(1,"Спазмолитик");
-		//LowLevel::SetCureName(9,"Абсорбент");
-		//LowLevel::SetCureName(12,"Нанохирург");
+		DoVibro(500);
+		ArmletApi::SetCureName(1,"Спазмолитик");
+		ArmletApi::SetCureName(9,"Абсорбент");
+		ArmletApi::SetCureName(12,"Нанохирург");
 		if (charges == 0) {
 			; //TODO
 		} else {
@@ -44,6 +61,9 @@ namespace ArmletApi {
 	{
 		; //TODO
 	}
+} //namespace
+
+namespace LowLevel {
 
 #ifdef _MBCS
 	//internal emulation (time)

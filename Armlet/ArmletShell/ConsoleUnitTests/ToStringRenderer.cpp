@@ -1,9 +1,10 @@
 #include "ToStringRenderer.h"
 #include "TextHelper.h"
-#include "strlib.h"
 #include "PlatformAPI.h"
+#include "ArmletShell.h"
+#include "defs.h"
 
-fresult ToStringRenderer::DrawString( Position pospx, const char* str, int length, TextFormat* format)
+fresult ToStringRenderer::DrawString( Position pospx, const char* str, uword_t length, TextFormat* format)
 {
 	fresult fres;
 	char* tempString = _allocBytesTest(length+1);

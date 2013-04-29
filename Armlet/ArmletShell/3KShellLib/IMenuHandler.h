@@ -1,10 +1,12 @@
 #pragma once
-
-#include "project.h"
 #include "IMenuItem.h"
+
+namespace ThreeKShell {
 
 class IMenuHandler
 {
 public:
 	fresult virtual	OnClick(IMenuItem* sender)=0;
 };
+
+}

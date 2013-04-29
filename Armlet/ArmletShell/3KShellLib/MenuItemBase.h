@@ -1,9 +1,9 @@
 #pragma once
-
-#include "project.h"
 #include "IMenuItem.h"
 #include "IMenuHandler.h"
 #include "IControl.h"
+
+namespace ThreeKShell {
 
 class MenuItemBase : public  IMenuItem
 {
@@ -28,3 +28,5 @@ public:
 
 	bool_t virtual CheckAccelerator(ButtonState button);
 };
+
+}

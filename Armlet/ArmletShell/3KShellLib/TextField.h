@@ -18,16 +18,14 @@ Setting ScrollPosition
  2. Setting scroll Position is ubyte_telligent. So setting position so, that it (according to size) move out of Text - will set the Topmost (and Leftmost) possible coordinates
 
 */
-#include "project.h"
-#include "IRender.h"
-#include "TextFormat.h"
+
 #include "ScrollableControlBase.h"
 
+namespace ThreeKShell {
 
 #define DEFAULT_BACKGROUND 5
 #define DEFAULT_FOREGROUND 10
-#define DEFAULT_FONT 0
-
+#define DEFAULT_FONT 1
 
 class TextField : public ScrollableControlBase
 {
@@ -110,3 +108,5 @@ public:
 	fresult virtual ScrollDown();
 
 };
+
+}

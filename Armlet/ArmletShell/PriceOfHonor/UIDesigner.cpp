@@ -1,6 +1,8 @@
+#include "ArmletShell.h"
 #include "UIDesigner.h"
-#include "Constants.h"
-#include "Icons.h"
+#include "MenuDelegate.h"
+//#include "Constants.h"
+//#include "Icons.h"
 
 //W160H128
 
@@ -21,7 +23,7 @@ fresult UIDesigner::InitStatusBar()
 
 	fresult fres;
 
-	fres = TODO_KELTUR_GetFontById(1, &(_txtUserNameFormat.Font));
+	fres = GetFontById(1, &(_txtUserNameFormat.Font));
 	if (fres != SUCCESS)
 		return fres;
 	_txtUserNameFormat.BgColor = BLACK;
@@ -41,7 +43,7 @@ fresult UIDesigner::InitStatusBar()
 	controlBuffSizeTx.Width=BATTERYSTATUS_BUFF_WIDTH;
 	controlBuffSizeTx.Height=BATTERYSTATUS_BUFF_HEIGHT;
 
-	fres = TODO_KELTUR_GetFontById(1, &(_txtBatteryStatusFormat.Font));
+	fres = GetFontById(1, &(_txtBatteryStatusFormat.Font));
 	if (fres != SUCCESS)
 		return fres;
 	_txtBatteryStatusFormat.BgColor = BLACK;
@@ -215,7 +217,7 @@ fresult UIDesigner::InitMainForm()
 	controlBuffSizeTx.Width=STATUS_BUFF_WIDTH;
 	controlBuffSizeTx.Height=STATUS_BUFF_HEIGHT;
 
-	fres = TODO_KELTUR_GetFontById(1, &(_txtStatusFormat.Font));
+	fres = GetFontById(1, &(_txtStatusFormat.Font));
 	if (fres != SUCCESS)
 		return fres;
 	_txtStatusFormat.BgColor = WHITE;
@@ -286,7 +288,7 @@ fresult UIDesigner::InitMsgBoxForm()
 	controlBuffSizeTx.Width=MSGBOX_TITLE_BUFF_WIDTH;
 
 	
-	fres = TODO_KELTUR_GetFontById(1, &(_txtMessageBoxTitleFormat.Font));
+	fres = GetFontById(1, &(_txtMessageBoxTitleFormat.Font));
 	if (fres != SUCCESS)
 		return fres;
 	_txtMessageBoxTitleFormat.BgColor = BLUE;
@@ -307,7 +309,7 @@ fresult UIDesigner::InitMsgBoxForm()
 	controlBuffSizeTx.Width=MSGBOX_CONTENT_BUFF_WIDTH;
 
 
-	fres = TODO_KELTUR_GetFontById(1, &(_txtMessageBoxContentFormat.Font));
+	fres = GetFontById(1, &(_txtMessageBoxContentFormat.Font));
 	if (fres != SUCCESS)
 		return fres;
 	_txtMessageBoxContentFormat.BgColor = WHITE;
@@ -411,7 +413,7 @@ fresult UIDesigner::Init()
 	return SUCCESS;
 }
 
-void UIDesigner::_SystemOnButtonClick( int button )
+void UIDesigner::_SystemOnButtonClick(uword_t button )
 {
 	if (_currentForm !=NULL)
 	{
@@ -634,13 +636,13 @@ fresult UIDesigner::InitWoundFormMenu()
 	controlBuffSizeTx.Height=WOUND_MNU_TEXT_BUFF_HIEGHT;
 	controlBuffSizeTx.Width=WOUND_MNU_TEXT_BUFF_WIDTH;
 
-	fres = TODO_KELTUR_GetFontById(1, &(_mnuWoundFormMenuFormat.Font));
+	fres = GetFontById(1, &(_mnuWoundFormMenuFormat.Font));
 	if (fres != SUCCESS)
 		return fres;
 	_mnuWoundFormMenuFormat.BgColor = GREEN;
 	_mnuWoundFormMenuFormat.FgColor = RED;
 
-	fres = TODO_KELTUR_GetFontById(1, &(_mnuWoundFormMenuFormatSelected.Font));
+	fres = GetFontById(1, &(_mnuWoundFormMenuFormatSelected.Font));
 	if (fres != SUCCESS)
 		return fres;
 	_mnuWoundFormMenuFormatSelected.BgColor = RED;
@@ -755,7 +757,7 @@ fresult UIDesigner::InitWoundForm()
 	controlBuffSizeTx.Height=WOUND_FORM_TITLE_TEXT_BUFF_HIEGHT;
 	controlBuffSizeTx.Width=WOUND_FORM_TITLE_TEXT_BUFF_WIDTH;
 
-	fres = TODO_KELTUR_GetFontById(1, &(_txtWoundFormTitleFormat.Font));
+	fres = GetFontById(1, &(_txtWoundFormTitleFormat.Font));
 	if (fres != SUCCESS)
 		return fres;
 	_txtWoundFormTitleFormat.BgColor = GREEN;
@@ -775,7 +777,7 @@ fresult UIDesigner::InitWoundForm()
 	controlBuffSizeTx.Width=WOUND_RESULT_TEXT_BUFF_WIDTH;
 
 
-	fres = TODO_KELTUR_GetFontById(1, &(_txtWoundResultFormat.Font));
+	fres = GetFontById(1, &(_txtWoundResultFormat.Font));
 	if (fres != SUCCESS)
 		return fres;
 	_txtWoundResultFormat.BgColor = WHITE;

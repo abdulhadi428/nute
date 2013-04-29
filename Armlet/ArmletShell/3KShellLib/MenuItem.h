@@ -1,11 +1,10 @@
 #pragma once
-
-#include "project.h"
 #include "MenuItemBase.h"
-#include "TextField.h"
 #include "Image.h"
-#include "Panel.h"
+#include "TextField.h"
 #include "IMenuHandler.h"
+
+namespace ThreeKShell {
 
 class MenuItem : public MenuItemBase
 {
@@ -29,3 +28,4 @@ public:
 
 };
 
+}

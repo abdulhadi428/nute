@@ -1,3 +1,4 @@
+#include "ArmletShell.h"
 #include "MenuDelegate.h"
 
 fresult MenuDelegate::OnClick( IMenuItem* sender )

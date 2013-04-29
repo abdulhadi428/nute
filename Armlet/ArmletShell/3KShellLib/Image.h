@@ -1,7 +1,7 @@
 #pragma once
-
-#include "project.h"
 #include "ScrollableControlBase.h"
+
+namespace ThreeKShell {
 
 class Image : public ScrollableControlBase
 {
@@ -26,3 +26,5 @@ public:
 	}
 
 };
+
+}

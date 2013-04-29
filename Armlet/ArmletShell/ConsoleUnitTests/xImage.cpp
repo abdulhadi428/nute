@@ -1,6 +1,7 @@
 #include "xImage.h"
 #include "Image.h"
 #include <iostream>
+using namespace ThreeKShell;
 
 void xImage::doTests()
 {

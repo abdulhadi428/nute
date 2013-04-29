@@ -1,6 +1,7 @@
 #pragma once
-
 #include "PanelBase.h"
+
+namespace ThreeKShell {
 
 class Panel : public PanelBase
 {
@@ -10,3 +11,5 @@ public:
 		return BaseInit(size, position, renderer, controls, controlsCount);
 	}
 };
+
+}

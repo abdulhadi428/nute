@@ -1,4 +1,4 @@
-
+#include "ArmletShell.h"
 #include "TextForm.h"
 
 //TextForm is a container of Controls.
@@ -13,8 +13,7 @@
 //160*128
 //20*16
 
-
-
+namespace ThreeKShell {
 
 //Registers controls on the form, reorders them in the display ZOrder
 fresult TextForm::RegisterControls()
@@ -61,6 +60,8 @@ fresult TextForm::Init(TextField* textFields, int controlsCount, Size* size, IRe
 	result = RegisterControls();
 	
 	return result;
+}
+
 }
 
 	

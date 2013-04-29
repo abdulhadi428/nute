@@ -1,11 +1,13 @@
-#include <string.h>
-#include "UpInterface.h"
-#include "AppMain.h"
-#include "TextField.h"
-#include "GraphicRenderer.h"
-#include "Med.h"
+#include "ArmletShell.h"
 #include "UserInterface.h"
 #include "MenuDelegate.h"
+#include "MiddleInterface.h"
+//#include <string.h>
+//#include "UpInterface.h"
+//#include "AppMain.h"
+//#include "TextField.h"
+//#include "GraphicRenderer.h"
+//#include "Med.h"
 
 /*TextField tf;
 GraphicRenderer rend;
@@ -14,7 +16,7 @@ GraphicRenderer rend;
 UserInterface UI;
 
 
-void __stdcall AppOnButtonClick(int button)
+void __stdcall AppOnButtonClick(ubyte_t button)
 {
 /*	if (button == BUTTON_Y) {
 		Position pos = tf.GetScrollPosition();
@@ -37,24 +39,24 @@ void __stdcall AppOnButtonClick(int button)
 	return;
 }
 
-void __stdcall AppOnButtonHold(int button)
+void __stdcall AppOnButtonHold(ubyte_t button)
 {
 	UI._SystemOnButtonClick(BUTTON_HOLD_OFFSET+button);
 	return;
 }
 
-int gx=0;
-int gy=0;
-int gc=0x0000;
+uword_t gx=0;
+uword_t gy=0;
+Color gc=0x0000;
 bool __stdcall MoveBoxByTimer()
 {
-	DrawRect_kel(gx,gy,30,30,0);
+	DrawRect(gx,gy,30,30,0);
 	gc+=0x111;
 	if (gc>=0x1000) gc=0x0000;
 	gx+=15; gy+=5;
 	if (gx>SCREENX) gx-=SCREENX;
 	if (gy>SCREENY) gy-=SCREENY;
-	DrawRect_kel(gx,gy,30,30,gc);
+	DrawRect(gx,gy,30,30,gc);
 	return false;
 }
 
@@ -105,7 +107,7 @@ void __stdcall AppMainThread(void* param)
 	if (fres!=SUCCESS)
 	{
 		char* err = "Failed to init UI";
-		DrawTextString(10,10,err,strlen(err),0,0);
+		DrawTextString(10,10,err,Length(err),0,0);
 	}
 	else
 	{
@@ -113,7 +115,7 @@ void __stdcall AppMainThread(void* param)
 		if (fres!=SUCCESS)
 		{
 			char* err = "Failed to draw UI";
-			DrawTextString(10,10,err,strlen(err),0,0);
+			DrawTextString(10,10,err,Length(err),0,0);
 		}
 	}
 	

@@ -1,7 +1,6 @@
 #include "xDimensions.h"
 #include <iostream>
-#include "Dimensions.h"
-
+#include "ArmletShell.h"
 
 void xDimensions::doTests()
 {

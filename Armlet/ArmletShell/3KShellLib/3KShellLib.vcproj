@@ -40,12 +40,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\MiddleWareLib;..\PriceOfHonor"
+				AdditionalIncludeDirectories="..\LowLevelLib;..\MiddleWareLib;..\PriceOfHonor"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				WarningLevel="4"
 				DebugInformationFormat="4"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -102,11 +103,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\MiddleWareLib;..\PriceOfHonor"
+				AdditionalIncludeDirectories="..\LowLevelLib;..\MiddleWareLib;..\PriceOfHonor"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -146,19 +148,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\Dimensions.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\GraphicRenderer.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Image.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\IntegrationWithKeltur.cpp"
 				>
 			</File>
 			<File
@@ -178,19 +172,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\strlib.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\TextField.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\TextForm.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TextFormat.cpp"
 				>
 			</File>
 		</Filter>
@@ -201,18 +187,6 @@
 			>
 			<File
 				RelativePath=".\ControlBase.h"
-				>
-			</File>
-			<File
-				RelativePath=".\defs.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Dimensions.h"
-				>
-			</File>
-			<File
-				RelativePath=".\fresult.h"
 				>
 			</File>
 			<File
@@ -237,10 +211,6 @@
 			</File>
 			<File
 				RelativePath=".\IMenuItem.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IntegrationWithKeltur.h"
 				>
 			</File>
 			<File
@@ -272,10 +242,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\project.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ScatteredMenu.h"
 				>
 			</File>
@@ -284,19 +250,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\strlib.h"
-				>
-			</File>
-			<File
 				RelativePath=".\TextField.h"
 				>
 			</File>
 			<File
 				RelativePath=".\TextForm.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TextFormat.h"
 				>
 			</File>
 		</Filter>

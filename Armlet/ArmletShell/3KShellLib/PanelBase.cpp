@@ -1,6 +1,7 @@
-#pragma once
+#include "ArmletShell.h"
 #include "PanelBase.h"
-#include "Dimensions.h"
+
+namespace ThreeKShell {
 
 fresult PanelBase::SetControls(IControl** controls, ubyte_t count )
 {
@@ -63,7 +64,7 @@ fresult PanelBase::DrawArea( Position pos, Size size )
 		ctrlSize = control->GetSize();
 		//has intersection?
 		hasIntersection = GetRectClipping(pos,size, ctrlPos, ctrlSize, &ctrlDrawPos, &ctrlDrawSize);
-		if (hasIntersection = TRUE)
+		if (hasIntersection == TRUE)
 		{
 			fres = control->DrawArea(ctrlDrawPos,ctrlDrawSize);
 			if(fres != SUCCESS)
@@ -75,6 +76,8 @@ fresult PanelBase::DrawArea( Position pos, Size size )
 	}
 
 	return SUCCESS;
+}
+
 }
 
 

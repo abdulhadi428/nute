@@ -1,20 +1,7 @@
-#if 0
-#include "DownInterface.h"
+#include "ArmletShell.h"
 #include "ArmletApi.h"
 
-namespace LowLevel {
-
-//Simulated video memory - 160x128x16xARGB
-short VideoMemory[160*128];
-
-//Video device
-//LUT
-//Scrolling
-//char HScroll;
-//char VScroll;
-//void InitDrawing();
-
-
+using namespace ArmletApi;
 
 void DrawGlyphPoint(
 	int gx, int gy,
@@ -46,7 +33,7 @@ void DrawGlyph(int x, int y, unsigned char index,
 {
     for (int vert = 0; vert < 6; vert++)
     {
-        int vertValue = Font_6x8_Data[index][vert];
+		int vertValue = /*ArmletShell::Fonts::*/Font_6x8_Data[index][vert];
         for (int i = 0; i < 8; i++)
         {
             int mask = 1 << i;
@@ -94,78 +81,80 @@ void Show_Glyphs(int dx, int dy, int cx,int cy,
 	}
 }
 
-void DrawTextString(int x0, int y0, const char* string, int sz, short foreColor, short backColor)
-{
-	int x = x0;
-	int y = y0;
-	int cx = 6;
-	int cy = 8;
-	if (y>(SCREENY-cy)) {
-		return;
+namespace ArmletShell {
+
+	//Video device - FUTURE:
+	//Simulated video memory - 160x128x16xARGB
+	//LUT
+	//Scrolling
+	//char HScroll;
+	//char VScroll;
+
+	void Clear(Color backColor)
+	{
+		for (int i=0; i<SCREENX; i++)
+			for(int j=0; j<SCREENY; j++)
+			{
+				DrawPixel(i,j,backColor);
+			}
 	}
-	for(int i=0;i<sz;i++) {
-		DrawGlyph(x,y,string[i],
-			cx,cy,1,1,foreColor,backColor);
-		x += cx;
-		if (x>(SCREENX-cx)) {
+
+	void DrawTextString(uword_t x0, uword_t y0, 
+						const char* string, uword_t sz, Color foreColor, Color backColor)
+	{
+		uword_t x = x0;
+		uword_t y = y0;
+		uword_t cx = 6;
+		uword_t cy = 8;
+		if (y+cy > SCREENY) {
 			return;
 		}
+		for(uword_t i=0; i<sz; i++) {
+			DrawGlyph(x,y,string[i],
+				cx,cy,1,1,foreColor,backColor);
+			x += cx;
+			if (x+cx > SCREENX-cx) {
+				return;
+			}
+		}
+		return;
 	}
-	return;
-}
 
-void Clear(short backColor)
-{
-	for (int i=0; i<SCREENX; i++)
-		for(int j=0; j<SCREENY; j++)
-		{
-			DrawPixel(i,j,backColor);
-		}
-}
-
-void DrawRect_kel(int x, int y, int sx, int sy, short color)
-{
-	if (x<=0) return;
-	if (y<=0) return;
-	if (sx<=0) return;
-	if (sy<=0) return;
-	for (int i=0; i<sx; i++)
-		for(int j=0; j<sy; j++)
-		{
-			int px=x+i;
-			int py=y+j;
-			if (px>=SCREENX) return;
-			if (py>=SCREENY) return;
-			DrawPixel(px,py,color);
-		}
-}
-
-void DrawBitmap_kel(int x, int y, int sx, int sy, short* bitmap)
-{
-	if (x<0) return;
-	if (y<0) return;
-	if (sx<=0) return;
-	if (sy<=0) return;
-	int k=0;
-	for(int j=0; j<sy; j++)
+	void DrawRect(uword_t x, uword_t y, uword_t sx, uword_t sy, Color color)
 	{
-		for (int i=0; i<sx; i++)
+		for (uword_t i=0; i<sx; i++)
+			for(uword_t j=0; j<sy; j++)
+			{
+				uword_t px=x+i;
+				uword_t py=y+j;
+				if (px >= SCREENX) break;
+				if (py >= SCREENY) return;
+				DrawPixel(px,py,color);
+			}
+	}
+
+	void DrawBitmap(uword_t x, uword_t y, uword_t sx, uword_t sy, Color* bitmap)
+	{
+		uword_t k=0;
+		for(uword_t j=0; j<sy; j++)
 		{
-			int px=x+i;
-			int py=y+j;
-			if (px>=SCREENX) return;
-			if (py>=SCREENY) return;
-			DrawPixel(px,py,bitmap[k++]);
+			for (uword_t i=0; i<sx; i++)
+			{
+				uword_t px=x+i;
+				uword_t py=y+j;
+				if (px >= SCREENX) break;
+				if (py >= SCREENY) return;
+				DrawPixel(px,py,bitmap[k++]);
+			}
 		}
 	}
-}
 
-void DrawBitmapRect_kel(int x, int y, int sx, int sy, short* bitmap, int dx, int dy, int sdx, int sdy)
-{
-	//TODO HACK - need to implement
-	DrawBitmap_kel(x,y,sx,sy,bitmap);
-}
+	void DrawBitmapRect(
+			uword_t x, uword_t y, uword_t sx, uword_t sy, Color* bitmap,
+			uword_t dx, uword_t dy, uword_t sdx, uword_t sdy)
+	{
+		//TODO HACK - need to implement
+		DrawBitmap(x,y,sx,sy,bitmap);
+	}
 
-}
-
-#endif
+} //namespace
