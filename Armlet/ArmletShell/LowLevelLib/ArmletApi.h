@@ -15,7 +15,7 @@ namespace ArmletApi {
 	bool CALLOUT InitializeShell();										//initialization callout (kernel calls shell)
 	void CALLOUT CriticalError(char* error);							//critical error callout (kernel calls shell to display aka "bsod"
 	void NOCALL  Log(char* fmt, ...);									//internal realization, wrote result to log.txt via sprintf
-	void SYSCALL sprintf(buf,fmt,....);									//syscall sprintf support
+	int SYSCALL snprintf(char* buf, int bufSz, char* fmt, ....);									//syscall sprintf support
 
 	//ARMLET
 	unsigned char SYSCALL GetBatteryLevel();							//syscall returns 0-100%
@@ -38,7 +38,7 @@ namespace ArmletApi {
 	//радиопротокол реализует логику высокого уровня общения с сервером, траспортный уровень не здесь 
 	void CALLOUT OnRadioPacket(unsigned char* packet, int len);			//callout for radio transport
 	void SYSCALL SendRadioPacket(unsigned char* packet, int len);		//syscall for radio transport
-	short SYSCALL GetArmletId();
+	unsigned short SYSCALL GetArmletId();
 
 	//OS
 	typedef char MUTEX[MUTEX_SIZE];										//OS-dependent mutext storage
