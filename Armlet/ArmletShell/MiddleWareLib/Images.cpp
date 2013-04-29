@@ -1,7 +1,5 @@
 #include "ArmletShell.h"
 
-
-
 namespace ArmletShell {
 
 
