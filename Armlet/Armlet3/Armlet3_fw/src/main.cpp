@@ -19,10 +19,11 @@
 #include "lvl1_assym.h"
 #include "cmd_uart.h"
 #include "power.h"
+#include "pill.h"
+
+#include "ff.h"
 
 #include "application.h"
-
-//extern void armlet_main();
 
 static inline void Init();
 
@@ -50,24 +51,63 @@ int main() {
     while(TRUE) {
         chThdSleepMilliseconds(999);
     }
-
-    //armlet_main();
 }
+
+FILE TestFile;
+char Buf[255];
 
 void Init() {
     Uart.Init(115200);
-    Uart.Printf("Armlet3 AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
-    Lcd.Init();
+    Uart.Printf("Armlet3\r");
     SD.Init();
+    // Read config
+    uint32_t ID=0;
+    iniReadUint32("Radio", "ID", "settings.ini", &ID);
+    Uart.Printf("ID=%u\r", ID);
+
+    bool r = OpenFile(&TestFile, "try.txt", true);
+    Uart.Printf("r=%u\r", r);
+    if(r) {
+        for(uint8_t i=0; i<18; i++) Buf[i] = i+'A';
+
+        uint32_t L;
+//        L = WriteFile(&TestFile, Buf, 18);
+//        Uart.Printf("LW=%u\r", L);
+        L = AppendFile(&TestFile, Buf, 18);
+        Uart.Printf("LW=%u\r", L);
+
+        for(uint8_t i=0; i<18; i++) Buf[i] = 0;
+
+        f_lseek(&TestFile, 0);  // move to beginning
+
+        L = ReadFile(&TestFile, Buf, 250);
+        Uart.Printf("LR=%u\r", L);
+        Uart.Printf("R=%S\r", Buf);
+        f_close(&TestFile);
+    }
+
+
+//    FRESULT rslt;
+//    rslt = f_open(&SD.File, "try.txt", FA_READ+FA_OPEN_EXISTING);
+//        if (rslt != FR_OK) {
+//            Uart.Printf(AFileName);
+//            if (rslt == FR_NO_FILE) Uart.Printf(": file not found\r");
+//            else Uart.Printf(": openFile error: %u", rslt);
+//            return FAILURE;
+//        }
+
+
+    Lcd.Init();
     KeysInit();
     Beeper.Init();
     Vibro.Init();
     IR.TxInit();
     IR.RxInit();
     Power.Init();
+    PillInit();
     //Sound.Init();
     //Sound.Play("alive.wav");
     // Radio
-    rLevel1.Init(RDEV_BOTTOM_ID+1); // FIXME: replace RBOTTOMID with value from SD
+    rLevel1.Init(ID);
     App.Init();
 }

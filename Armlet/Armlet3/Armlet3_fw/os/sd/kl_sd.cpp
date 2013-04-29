@@ -48,54 +48,95 @@ void sd_t::Init() {
     IsReady = TRUE;
 }
 
+// ============================= File operations ===============================
+// Try to open. In case of failure, create new file if bCreate is true, otherwise return error.
+bool OpenFile(FILE* file, const char* filename, bool bCreate) {
+    FRESULT Rslt;
+    Rslt = f_open(file, filename, FA_OPEN_EXISTING | FA_READ | FA_WRITE);
+    if(Rslt == FR_OK) return true;
+    else {                  // File does not exist
+        if(bCreate) {       // Create file if needed
+            Rslt = f_open(file, filename, FA_CREATE_NEW | FA_READ | FA_WRITE);
+            return (Rslt == FR_OK);
+        }
+        else return false;  // No need to create, return failure
+    }
+}
+
+// returns length read
+int ReadFile(FILE* file, char* buf, int len) {
+    f_lseek(file, 0);   // move to beginning
+    UINT FLen=0;
+    f_read(file, buf, len, &FLen);
+    return FLen;
+}
+
+// returns length written, rewrites file from beginning
+int WriteFile (FILE* file, char* buf, int len) {
+    f_lseek(file, 0);   // move to beginning
+    UINT FLen=0;
+    f_write(file, buf, len, &FLen);
+    return FLen;
+}
+
+// return length written, appends to end of file
+int AppendFile(FILE* file, char* buf, int len) {
+    if(file == NULL) return 0;
+    f_lseek(file, f_size(file));
+    UINT FLen=0;
+    f_write(file, buf, len, &FLen);
+    return FLen;
+}
+
 // ========================== ini files operations =============================
 #ifdef USE_INI_FILES
 #include <stdlib.h>
 
 #define INI_BUF_SIZE    512
-char IBuf[INI_BUF_SIZE];
-char FBuf[64];
+static char IBuf[INI_BUF_SIZE];
+static char FBuf[64];
 
 // ==== Inner use ====
-static char* skipleading(char *S) {
+static inline char* skipleading(char *S) {
     while (*S != '\0' && *S <= ' ') S++;
     return (char*)S;
 }
-static char* skiptrailing(char *S, const char *base) {
+static inline char* skiptrailing(char *S, const char *base) {
     while ((S > base) && (*(S-1) <= ' ')) S--;
     return (char*)S;
 }
-static char* striptrailing(char *S) {
+static inline char* striptrailing(char *S) {
     char *ptr = skiptrailing(strchr(S, '\0'), S);
     *ptr='\0';
     return (char*)S;
 }
 
 // ======================== Implementation =====================================
-bool iniReadString(const char *ASection, const char *AKey, const char *AFileName, char *AOutput, uint32_t AMaxLen) {
+uint8_t iniReadString(const char *ASection, const char *AKey, const char *AFileName, char *POutput, uint32_t AMaxLen) {
     FRESULT rslt;
     // Open file
     rslt = f_open(&SD.File, AFileName, FA_READ+FA_OPEN_EXISTING);
-    if (rslt != FR_OK) {
+    if(rslt != FR_OK) {
         Uart.Printf(AFileName);
         if (rslt == FR_NO_FILE) Uart.Printf(": file not found\r");
         else Uart.Printf(": openFile error: %u", rslt);
-        return false;
+        return FAILURE;
     }
     // Check if zero file
-    if (SD.File.fsize == 0) {
+    if(SD.File.fsize == 0) {
         f_close(&SD.File);
         Uart.Printf("Empty file\r");
-        return false;
+        return FAILURE;
     }
-
+    //Uart.Printf("%S\r", FBuf);
     // Move through file one line at a time until a section is matched or EOF.
     char *StartP, *EndP;
     uint32_t len = strlen(ASection);
     do {
         if (!f_gets(IBuf, INI_BUF_SIZE, &SD.File)) {
+            Uart.Printf("Section Read Err\r");
             f_close(&SD.File);
-            return false;
+            return FAILURE;
         }
         StartP = skipleading(IBuf);
         EndP = strchr(StartP, ']');
@@ -105,8 +146,9 @@ bool iniReadString(const char *ASection, const char *AKey, const char *AFileName
     len = strlen(AKey);
     do {
         if (!f_gets(IBuf, INI_BUF_SIZE, &SD.File) or *(StartP = skipleading(IBuf)) == '[') {
+            Uart.Printf("Key Read Err\r");
             f_close(&SD.File);
-            return false;
+            return FAILURE;
         }
         StartP = skipleading(IBuf);
         EndP = strchr(StartP, '='); /* Parse out the equal sign */
@@ -125,24 +167,24 @@ bool iniReadString(const char *ASection, const char *AKey, const char *AFileName
     } // for
     *EndP = '\0';   // Terminate at a comment
     striptrailing(StartP);
-    strcpy(AOutput, StartP);
+    strcpy(POutput, StartP);
     f_close(&SD.File);
-    return &AOutput[EndP-StartP-2]; // Pointer to last '\0'
+    return OK;
 }
 
-bool iniReadInt32 (const char *ASection, const char *AKey, const char *AFileName, int32_t *AOutput) {
-    if (iniReadString(ASection, AKey, AFileName, FBuf, 64)) {
-        *AOutput = strtol(FBuf, NULL, 10);
-        return true;
+uint8_t iniReadInt32(const char *ASection, const char *AKey, const char *AFileName, int32_t *POutput) {
+    if(iniReadString(ASection, AKey, AFileName, FBuf, 64) == OK) {
+        *POutput = strtol(FBuf, NULL, 10);
+        return OK;
     }
-    else return false;
+    else return FAILURE;
 }
-bool iniReadUint32(const char *ASection, const char *AKey, const char *AFileName, uint32_t *AOutput) {
-    if (iniReadString(ASection, AKey, AFileName, FBuf, 64)) {
-        *AOutput = strtol(FBuf, NULL, 10);
-        return true;
+uint8_t iniReadUint32(const char *ASection, const char *AKey, const char *AFileName, uint32_t *POutput) {
+    if(iniReadString(ASection, AKey, AFileName, FBuf, 64) == OK) {
+        *POutput = strtol(FBuf, NULL, 10);
+        return OK;
     }
-    else return false;
+    else return FAILURE;
 }
 
 #endif

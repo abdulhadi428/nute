@@ -6,8 +6,8 @@ Sound_t Sound;
 FIL IFile;
 
 #define BUF_SZ  4096
-uint8_t Buf[BUF_SZ], *PBuf;
-UINT BufSz=0;
+static uint8_t Buf[BUF_SZ], *PBuf;
+static UINT BufSz=0;
 
 static void StopNow();
 static void WriteTrailingZeroes();

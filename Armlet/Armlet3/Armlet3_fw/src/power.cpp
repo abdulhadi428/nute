@@ -92,7 +92,7 @@ void Pwr_t::Task() {
         if(tmp < 0) tmp = 0;
         if(tmp > 100) tmp = 100;
         Power.RemainingPercent = (uint8_t)tmp;
-        Uart.Printf("Adc=%u; U=%u; %=%u\r", v, Power.Voltage_mV, Power.RemainingPercent);
+        //Uart.Printf("Adc=%u; U=%u; %=%u\r", v, Power.Voltage_mV, Power.RemainingPercent);
     }
 }
 

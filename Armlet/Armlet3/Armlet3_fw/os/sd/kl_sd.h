@@ -26,6 +26,15 @@ public:
 
 extern sd_t SD;
 
+// ============================= File operations ===============================
+// return false in case of failure, true in case of success
+#define FILE    FIL
+bool OpenFile (FILE* file, const char* filename, bool bCreate); //syscall opens/create file
+int ReadFile  (FILE* file, char* buf, int len);                 //syscall returns length read
+int WriteFile (FILE* file, char* buf, int len);                 //syscall returns length written
+int AppendFile(FILE* file, char* buf, int len);                 //syscall return length written
+
+
 // =========================== ini file operations =============================
 /*
  * ini file has the following structure:
@@ -46,9 +55,9 @@ extern sd_t SD;
 #define USE_INI_FILES
 
 #ifdef USE_INI_FILES
-bool iniReadString(const char *ASection, const char *AKey, const char *AFileName, char *AOutput, uint32_t AMaxLen);
-bool iniReadInt32 (const char *ASection, const char *AKey, const char *AFileName, int32_t *AOutput);
-bool iniReadUint32(const char *ASection, const char *AKey, const char *AFileName, uint32_t *AOutput);
+uint8_t iniReadString(const char *ASection, const char *AKey, const char *AFileName, char *AOutput, uint32_t AMaxLen);
+uint8_t iniReadInt32 (const char *ASection, const char *AKey, const char *AFileName, int32_t *AOutput);
+uint8_t iniReadUint32(const char *ASection, const char *AKey, const char *AFileName, uint32_t *AOutput);
 #endif
 
 

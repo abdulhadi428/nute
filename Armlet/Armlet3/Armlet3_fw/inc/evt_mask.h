@@ -12,6 +12,7 @@
 #define EVTMASK_RADIO_TX    EVENT_MASK(0)
 #define EVTMASK_RADIO_RX    EVENT_MASK(1)
 #define EVTMASK_KEYS        EVENT_MASK(2)
+#define EVTMASK_PILL        EVENT_MASK(3)
 
 
 #endif /* EVT_MASK_H_ */

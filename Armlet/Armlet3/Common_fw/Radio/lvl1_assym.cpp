@@ -336,8 +336,8 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     ITransmitted.Init();            // Buffer of transmitted pkt headers
     // Init radioIC
     CC.Init();
-    //CC.SetTxPower(PwrPlus10dBm);
-    CC.SetTxPower(PwrMinus6dBm);
+    CC.SetTxPower(PwrPlus10dBm);
+    //CC.SetTxPower(PwrMinus6dBm);
     // Variables
     ITxHdr.State = FAILURE;
 #ifdef GATE

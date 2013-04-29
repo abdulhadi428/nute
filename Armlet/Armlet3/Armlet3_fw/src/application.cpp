@@ -14,6 +14,7 @@
 #include "BeepSequences.h"
 #include "VibroSequences.h"
 #include "keys.h"
+#include "pill.h"
 
 #include "lvl1_assym.h"
 #include "evt_mask.h"
@@ -22,7 +23,7 @@
 
 App_t App;
 
-static EventListener EvtLstnrAppRadioRx, EvtListenerAppKeys;
+static EventListener EvtLstnrRadioRx, EvtListenerKeys, EvtListenerPill;
 static rPktWithData_t<RRX_PKT_DATA_SZ> SRxPkt;
 
 // Prototypes
@@ -60,15 +61,16 @@ static msg_t AppThread(void *arg) {
 
     // Events
     uint32_t EvtMsk;
-    KeysRegisterEvt(&EvtListenerAppKeys, EVTMASK_KEYS);
-    rLevel1.RegisterEvtRx(&EvtLstnrAppRadioRx, EVTMASK_RADIO_RX);
+    KeysRegisterEvt(&EvtListenerKeys, EVTMASK_KEYS);
+    rLevel1.RegisterEvtRx(&EvtLstnrRadioRx, EVTMASK_RADIO_RX);
+    PillRegisterEvtChange(&EvtListenerPill, EVTMASK_PILL);
 
     while(1) {
         //chThdSleepMilliseconds(999);
 //        Rslt1 = rLevel1.AddPktToTx(0, Buf, PktSZ, &Rslt2);
 //        Uart.Printf("### %u\r", Rslt1);
 
-        EvtMsk = chEvtWaitAny(EVTMASK_RADIO_RX | EVTMASK_KEYS);
+        EvtMsk = chEvtWaitAny(EVTMASK_RADIO_RX | EVTMASK_KEYS | EVTMASK_PILL);
 
         if(EvtMsk &EVTMASK_KEYS) {
             if((KeyStatus[0] == KEY_PRESSED) or (KeyStatus[1] == KEY_PRESSED) or (KeyStatus[2] == KEY_PRESSED)) {
@@ -89,6 +91,10 @@ static msg_t AppThread(void *arg) {
                 rLevel1.AddPktToTx(0, SRxPkt.Data, SRxPkt.Length);
             }
         } // if evtmsk
+
+        if(EvtMsk & EVTMASK_PILL) {
+            Beeper.Beep(ShortBeep);
+        }
 
         //Uart.Printf("Evt \r");
         //Lcd.Cls(c);
