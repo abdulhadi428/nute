@@ -12,18 +12,13 @@
         PinSignalSet = 0xD0
     }
 
-    public class GateToServerCommand
+    public class GateToServerCommand :Command
     {
         public GateToServerCommand(GateToServerCommands commandId, byte[] data)
         {
-            CommandInit = byte.Parse("#");
-            CommandCode = commandId;
+            CommandCodeByte  = (byte) commandId;
             Data = data;
-            CommandTerminator = new byte[] {byte.Parse("\r"), byte.Parse("\n")};
         }
-        public byte CommandInit { get; private set; }                       //Should be '#'
-        public GateToServerCommands CommandCode { get; private set; }     //One of ServerToGateCommands enum
-        public byte[] Data { get; private set; }                            //Data payload (0-252 bytes)
-        public byte[] CommandTerminator { get; private set; }               //Should be '\r\n'
+       
     }
 }

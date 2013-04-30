@@ -14,6 +14,7 @@ namespace HonorSerialportGateConsole
 {
     class Program
     {
+
         static int Main(string[] args)
         {
             var daemon = new HonorSerialportDaemon();

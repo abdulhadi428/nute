@@ -60,9 +60,9 @@ namespace NetworkLevel.WCFServices
             return newIdForGate;
         }
 
-        public void TXCompleted(byte armlet_id)
+        public void TXCompleted(byte[] armlet_id_and_result)
         {
-            _armletDeliveryService.onTxCompleted(_sessionGateId, armlet_id);
+            _armletDeliveryService.onTxCompleted(_sessionGateId, armlet_id_and_result);
         }
 
         public void ArmlteStatusUpdate(PlayerUpdate[] updates)

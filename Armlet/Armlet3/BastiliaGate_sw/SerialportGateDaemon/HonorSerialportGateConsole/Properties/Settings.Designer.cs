@@ -37,25 +37,25 @@ namespace HonorSerialportGateConsole.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("COM3")]
-        public string ComPortName {
-            get {
-                return ((string)(this["ComPortName"]));
-            }
-            set {
-                this["ComPortName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.39")]
+        [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
         public string WCFIPAddress {
             get {
                 return ((string)(this["WCFIPAddress"]));
             }
             set {
                 this["WCFIPAddress"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public string PreferedGateId {
+            get {
+                return ((string)(this["PreferedGateId"]));
+            }
+            set {
+                this["PreferedGateId"] = value;
             }
         }
     }

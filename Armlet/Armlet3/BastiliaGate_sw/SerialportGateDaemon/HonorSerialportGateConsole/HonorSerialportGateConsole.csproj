@@ -56,7 +56,6 @@
     <Compile Include="Interfaces\GateToServerCommand.cs" />
     <Compile Include="Interfaces\ServerToGateCommand.cs" />
     <Compile Include="Interfaces\ServerToArmletCommand.cs" />
-    <Compile Include="Interfaces\IStronglyTypedSerialPortConnector.cs" />
     <Compile Include="LogClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Timers;
@@ -31,10 +32,18 @@ namespace HonorSerialportGateConsole
 
         public HonorSerialportDaemon()
         {
+            inputMessageQueue = Queue.Synchronized(queue1);
+            outputMessageQueue = Queue.Synchronized(queue2);
+
             InitiateLog();
             sendThread = new Thread(SendToServer);
-           // WCFClient.Client = new GateWCFServiceClient();
-
+            InstanceContext instanceContext = new InstanceContext(new WCFCallbackHandler(this));
+            
+            string WcfSericeIp = Settings.Default.WCFIPAddress;
+            WCFClient.Client = new GateWCFServiceClient(instanceContext, "NetTcpBindingEndpoint",
+                                                        "net.tcp://" + WcfSericeIp + ":8765/GateWcfService");
+            byte serverProvidedGateId = WCFClient.Client.RegisterGate(Byte.Parse(Settings.Default.PreferedGateId));
+            inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new byte[]{serverProvidedGateId}));
 
         }
 
@@ -64,9 +73,6 @@ namespace HonorSerialportGateConsole
        
         public int RunMailCycle()
         {
-            inputMessageQueue = Queue.Synchronized(queue1);
-            outputMessageQueue = Queue.Synchronized(queue2);
-
             TypedSerialPort = new StronglyTypedSerialPortConnector(
                 inputMessageQueue, outputMessageQueue,
                 new SerialPortSettings()
@@ -98,10 +104,66 @@ namespace HonorSerialportGateConsole
                                 Command.HexStringToByteArray(Command.SanitiseStringFromComas(outputCommandString));
                             if (Enum.IsDefined(typeof (GateToServerCommands), outputBytes[0]))
                             {
+                                byte commandByte = outputBytes[0];
+                                byte[] payload = new byte[outputBytes.Length-1];
+                                outputBytes.CopyTo(payload, 1);
+
+                                switch (commandByte)
+                                {
+                                    case (byte) GateToServerCommands.Ack:
+                                        continue;
+                                    case (byte) GateToServerCommands.GateNumberSet:
+                                        continue;
+                                    case (byte) GateToServerCommands.PillConnectedStatus:
+                                        WCFClient.Client.PillConnectionStatusAsync(payload);
+                                        break;
+                                    case (byte) GateToServerCommands.PillReadResult:
+                                        WCFClient.Client.PillDataReadAsync(payload);
+                                        break;
+                                    case (byte) GateToServerCommands.PillWriteResult:
+                                        WCFClient.Client.PillWriteCompletedAsync(payload);
+                                        break;
+                                    case (byte) GateToServerCommands.PinSignalSet:
+                                        WCFClient.Client.PinSetAsync(payload);
+                                        break;
+                                }
+
                                 LogClass.Write("Should send from gate to server this: " + outputCommandString);
                             }
                             if (Enum.IsDefined(typeof (ArmletToServerCommands), outputBytes[0]))
                             {
+                                byte commandByte = outputBytes[0];
+                                byte[] payload = new byte[outputBytes.Length - 1];
+                                outputBytes.CopyTo(payload, 1);
+
+                                switch (commandByte)
+                                {
+                                    case (byte) ArmletToServerCommands.TXCompleted:
+                                        WCFClient.Client.TXCompletedAsync(payload);
+                                        break;
+                                    case (byte) ArmletToServerCommands.RXCompleted:
+                                        byte armlet_id = outputBytes[1];
+                                        byte data_count = outputBytes[2];
+                                        if (data_count >= 2)
+                                        {
+                                            WCFClient.Client.ArmlteStatusUpdateAsync(new PlayerUpdate[]
+                                                {
+                                                    new PlayerUpdate()
+                                                        {
+                                                            ArmletID = armlet_id,
+                                                            NewRoom = outputBytes[3],
+                                                            NewBlood = outputBytes[4]
+                                                        }
+                                                });
+                                        }
+                                        if (data_count > 2)
+                                        {
+                                            byte[] rxDataPaylod = new byte[data_count - 2];
+                                            outputBytes.CopyTo(rxDataPaylod, 5);
+                                            WCFClient.Client.ArmletSendsData(armlet_id, rxDataPaylod);
+                                        }
+                                        break;
+                                }
                                 LogClass.Write("Should send from armlet to server this: " + outputCommandString);
                             }
                         }

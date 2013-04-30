@@ -20,7 +20,7 @@ namespace NetworkLevel.WCFServices
         byte RegisterGate (byte preferedGateId);
 
         [OperationContract(IsOneWay = true)]
-        void TXCompleted(byte armlet_id);
+        void TXCompleted(byte[] armlet_id_and_result);
 
         [OperationContract(IsOneWay = true)]
         void ArmlteStatusUpdate(PlayerUpdate[] updates);

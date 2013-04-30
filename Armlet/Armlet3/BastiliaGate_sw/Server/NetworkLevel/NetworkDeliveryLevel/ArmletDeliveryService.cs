@@ -25,7 +25,7 @@ namespace NetworkLevel.NetworkDeliveryLevel
         public event Action<WCFServices.PlayerUpdate[]> ArmletsStatusUpdate;
         public event Action<byte, byte[]> ArmletSendsData;
 
-        internal void onTxCompleted(byte gate_id, byte armlet_id)
+        internal void onTxCompleted(byte gate_id, byte[] armlet_id_and_result)
         {
             //Хитрая логика обработки Комлитов
             throw new NotImplementedException();

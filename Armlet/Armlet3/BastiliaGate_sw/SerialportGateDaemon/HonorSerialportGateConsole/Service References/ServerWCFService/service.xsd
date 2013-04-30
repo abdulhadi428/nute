@@ -18,7 +18,7 @@
   <xs:element name="TXCompleted">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="armlet_id" type="xs:unsignedByte" />
+        <xs:element minOccurs="0" name="armlet_id_and_result" nillable="true" type="xs:base64Binary" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
