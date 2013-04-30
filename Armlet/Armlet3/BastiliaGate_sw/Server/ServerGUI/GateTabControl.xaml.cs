@@ -11,7 +11,7 @@ namespace ServerGUI
     /// </summary>
     public partial class GateTabControl
     {
-        public IGlobalModel Model { get; set; }
+        public IGlobalModel Model { private get; set; }
 
         private readonly List<byte> _gates = new List<byte>();
         public GateTabControl()
@@ -25,7 +25,7 @@ namespace ServerGUI
             {
                 return;
             }
-            Model.NewGateOnline += obj => Dispatcher.BeginInvoke(new Action<byte>(Model_NewGateOnline), obj);
+            Model.NewGateOnline += obj => Dispatcher.BeginInvoke(new Action(() => Model_NewGateOnline(obj)));
         }
 
         private readonly object _syncRoot = new object();

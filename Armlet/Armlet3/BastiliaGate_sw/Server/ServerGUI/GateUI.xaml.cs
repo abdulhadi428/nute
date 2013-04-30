@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using PillInterfaces;
@@ -10,7 +11,7 @@ namespace ServerGUI
     /// </summary>
     public partial class GateUI
     {
-        public IGateModel Model { get; set; }
+        public IGateModel Model { private get; set; }
 
 
         public GateUI()
@@ -42,7 +43,7 @@ namespace ServerGUI
         private void GateUI_OnLoaded(object sender, RoutedEventArgs e)
         {
             Model.PillOnlineChanged += () => Dispatcher.BeginInvoke(new Action(UpdatePillOnline));
-            Model.PillDataArrived += obj => Dispatcher.BeginInvoke(new Action<byte[]>(UpdatePillDataArrived), obj);
+            Model.PillDataArrived += obj => Dispatcher.BeginInvoke(new Action(() => UpdatePillDataArrived(obj)));
             Model.GateOnlineChanged += () => Dispatcher.BeginInvoke(new Action(UpdateGateOnline));
 
             UpdatePillOnline();
@@ -60,7 +61,7 @@ namespace ServerGUI
             PillGroupBox.IsEnabled = Model.PillOnline;
         }
 
-        private void UpdatePillDataArrived(byte[] obj)
+        private void UpdatePillDataArrived(IEnumerable<byte> obj)
         {
             PillContentBox.Text = string.Join(" ", obj.Select(b => b.ToString("X2")));
         }
