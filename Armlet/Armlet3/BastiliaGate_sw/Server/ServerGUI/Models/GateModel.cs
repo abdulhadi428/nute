@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +17,7 @@ namespace ServerGUI.Models
             _service = service;
             _gateId = gateId;
             
-            _service.GateDisConnected += id => IfMe(id, () => SetOnline(true));
+            _service.GateConnected += id => IfMe(id, () => SetOnline(true));
             _service.GateDisConnected += id => IfMe(id, () => SetOnline(false));
 
             _service.PillConnectedStatus += (id, status) => IfMe(id, () => SetPillStatus(status));
