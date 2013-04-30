@@ -1,28 +1,29 @@
 BLUE / GREEN / GREY / ORANGE / RED
 
 // Icon Buttons:
-A = 	Help
-B = 	Scroll Up
-C = 	Scroll Down
-L = 	Previous Panel		Arrow3 Left	BLUE
-X = 	Wound			Burn		ORANGE
-Y = 	KnockOut		Target		ORANGE
+A = 	Help			Question	?
+B = 	Scroll Up		Arrow2		BLUE+GREY
+C = 	Scroll Down		Arrow2		BLUE+GREY
+L = 	Previous Panel		Arrow3 Left	BLUE+GREY
+X = 	Wound			Burn		RED+ORANGE
+Y = 	KnockOut		Target		RED+ORANGE
 Z =
-R = 	Next Panel		Arrow3 Right	BLUE
+R = 	Next Panel		Arrow3 Right	BLUE+GREY
 
-	Previous Message	Arrow3 Up	BLUE
-	Next Message		Arrow3 Down	BLUE
+	Previous Message	Arrow3 Up	BLUE+GREY
+	Next Message		Arrow3 Down	BLUE+GREY
 	Back			Back		BLUE
-	Cancel			Cancel		RED
+	Cancel			Cancel		RED+ORANGE
 	Ok			Ok		GREEN
-	Delete			Trash		RED
+	Delete			Trash		RED+ORANGE
 
 // Caption Icon (Messages and Textboxes):
 	Med Feelings		Stats 3		?
 	Med Need To Act		Heart		?
 	Cure			Health		GREEN
-	Explosion		?		RED
-	Wound Response		Burn		RED
-	KnockOut Response	Target		RED
+	Explosion		?		RED+ORANGE
+	Wound Response		Burn		RED+ORANGE
+	KnockOut Response	Target		RED+ORANGE
 	Message From Server	Mail		?
+	Warning			Warning		?
 	
