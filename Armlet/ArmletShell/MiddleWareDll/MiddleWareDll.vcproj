@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="3KShellLib"
-	ProjectGUID="{2421FB2A-10E8-421F-B832-57CCEE7FD08D}"
-	RootNamespace="3KShellLib"
+	Name="MiddleWareDll"
+	ProjectGUID="{7CEC398E-5A29-4BD1-B54C-C4BC8023EC72}"
+	RootNamespace="MiddleWareLib"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -19,8 +19,9 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			CharacterSet="2"
+			DeleteExtensionsOnClean="*.htm;*.obj;*.ilk;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;$(TargetPath)"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -40,7 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\ShellApi;..\MiddleWareLib;..\PriceOfHonor"
+				AdditionalIncludeDirectories="..\ShellApi"
+				PreprocessorDefinitions="_ARMLET_"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -56,12 +58,20 @@
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
+				CommandLine=""
 			/>
 			<Tool
-				Name="VCLibrarianTool"
+				Name="VCLinkerTool"
+				AdditionalDependencies="$(OutDir)\Visualizer.lib"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames=""
+				ModuleDefinitionFile="MiddleWareDll.def"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -73,6 +83,9 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -80,8 +93,9 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			CharacterSet="2"
+			DeleteExtensionsOnClean="*.htm;*.obj;*.ilk;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;$(TargetPath)"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -103,7 +117,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\ShellApi;..\MiddleWareLib;..\PriceOfHonor"
+				AdditionalIncludeDirectories="..\ShellApi"
+				PreprocessorDefinitions="_ARMLET_"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -120,10 +135,16 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
+				Name="VCLinkerTool"
+				AdditionalDependencies="$(OutDir)\Visualizer.lib"
+				IgnoreAllDefaultLibraries="false"
+				ModuleDefinitionFile="MiddleWareDll.def"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -135,6 +156,9 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -142,128 +166,14 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+		<File
+			RelativePath=".\main.cpp"
 			>
-			<File
-				RelativePath=".\GraphicRenderer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Image.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MenuBase.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MenuItem.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\MenuItemBase.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PanelBase.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TextField.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TextForm.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+		</File>
+		<File
+			RelativePath=".\MiddleWareDll.def"
 			>
-			<File
-				RelativePath=".\ControlBase.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GraphicRenderer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IControl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Image.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IMenu.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IMenuHandler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IMenuItem.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IRender.h"
-				>
-			</File>
-			<File
-				RelativePath=".\IScrollable.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MenuBase.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MenuItem.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MenuItemBase.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Panel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PanelBase.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ScatteredMenu.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ScrollableControlBase.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TextField.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TextForm.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
-		</Filter>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

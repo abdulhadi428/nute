@@ -16,9 +16,8 @@ namespace ArmletApi {
 	
 	bool __CALLOUT InitializeShell() {
 		Clear(RED);
-		AppMainThread(NULL);
 		//StartThread(my_thread,NULL);
-		//StartThread(AppMainThread,NULL);
+		StartThread(AppMainThread,NULL);
 		return true; //TODO
 	}
 
@@ -51,7 +50,7 @@ namespace ArmletApi {
 		//Log("Cure %d was connected, charges %d",cure_id, charges);
 		Log("Cure was connected, with charges");
 		WritePill(cure_id, charges-1);
-		DoVibroAndBeep(500);
+		DoVibro(500);
 		ArmletApi::SetCureName(1,"Спазмолитик");
 		ArmletApi::SetCureName(9,"Абсорбент");
 		ArmletApi::SetCureName(12,"Нанохирург");
@@ -67,10 +66,13 @@ namespace ArmletApi {
 	{
 		; //TODO
 	}
+} //namespace
 
-#ifdef _MSC_VER
-	//internal emulation
-	void __CALLOUT NextMedTick()
+namespace LowLevel {
+
+#ifdef _MBCS
+	//internal emulation (time)
+	void NextMedTick()
 	{
 		//TODO
 	}

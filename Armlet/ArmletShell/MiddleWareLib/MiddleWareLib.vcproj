@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="MiddleWareLib"
-	ProjectGUID="{7CEC398E-5A29-4BD1-B54C-C4BC8023EC72}"
+	ProjectGUID="{EAE728F3-D446-4B2F-9576-5EFC29977454}"
 	RootNamespace="MiddleWareLib"
 	TargetFrameworkVersion="196613"
 	>
@@ -40,7 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\LowLevelLib;..\PriceOfHonor"
+				AdditionalIncludeDirectories="..\ShellApi;..\PriceOfHonor"
+				PreprocessorDefinitions="_ARMLET_"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -103,7 +104,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\LowLevelLib;..\PriceOfHonor"
+				AdditionalIncludeDirectories="..\ShellApi;..\PriceOfHonor"
+				PreprocessorDefinitions="_ARMLET_"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"

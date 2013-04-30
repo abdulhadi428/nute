@@ -1,6 +1,6 @@
 #pragma once
 
-typedef void (__CALLBACK BUTTON_HANDLER)(ubyte_t button);
+typedef void (BUTTON_HANDLER)(ubyte_t button);
 void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER HoldButtonHandler);
 
 extern BUTTON_HANDLER* gClickButtonHandler;
