@@ -17,7 +17,7 @@ GraphicRenderer rend;
 UserInterface UI;
 
 
-void __CALLBACK AppOnButtonClick(ubyte_t button)
+void AppOnButtonClick(ubyte_t button)
 {
 /*	if (button == BUTTON_Y) {
 		Position pos = tf.GetScrollPosition();
@@ -40,7 +40,7 @@ void __CALLBACK AppOnButtonClick(ubyte_t button)
 	return;
 }
 
-void __CALLBACK AppOnButtonHold(ubyte_t button)
+void AppOnButtonHold(ubyte_t button)
 {
 	UI._SystemOnButtonClick(BUTTON_HOLD_OFFSET+button);
 	return;
@@ -49,7 +49,7 @@ void __CALLBACK AppOnButtonHold(ubyte_t button)
 uword_t gx=0;
 uword_t gy=0;
 Color gc=0x0000;
-bool __CALLBACK MoveBoxByTimer()
+bool MoveBoxByTimer()
 {
 	DrawRect(gx,gy,30,30,0);
 	gc+=0x111;
@@ -61,7 +61,7 @@ bool __CALLBACK MoveBoxByTimer()
 	return false;
 }
 
-void __CALLBACK AppMainThread(void* param)
+void AppMainThread(void* param)
 {
 	/*const char* str = "PRICE of HONOR!";
 	DrawTextString(10,10,str,strlen(str),0,0);

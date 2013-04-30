@@ -25,7 +25,7 @@ typedef enum _CURE_ID {
 	Absorber,				//"Абсорбент"			мед. отсек
 	PlasterNanoPack,		//"Наногипс"			мед. отсек
 	NanoExoFrame,			//"Наноэкзоскелет"		1-2 эксперимент. образца
-	MagicCure				//"Волшебная таблетка"	мастерский
+	MagicCure,				//"Волшебная таблетка"	мастерский
 	MaxCureId
 } CURE_ID;
 

@@ -2,148 +2,148 @@
 #include "Med.h"
 
 namespace price_of_honor {
-void __CALLBACK OnStartLeftArmShotNoWound() {}
-void __CALLBACK OnTickLeftArmShotNoWound() {}
-void __CALLBACK OnStartLeftArmShotLight() {}
-void __CALLBACK OnTickLeftArmShotLight() {}
-void __CALLBACK OnStartLeftArmShotMedium() {}
-void __CALLBACK OnTickLeftArmShotMedium() {}
-void __CALLBACK OnStartLeftArmShotSerious() {}
-void __CALLBACK OnTickLeftArmShotSerious() {}
-void __CALLBACK OnStartLeftArmShotInsidious() {}
-void __CALLBACK OnTickLeftArmShotInsidious() {}
-void __CALLBACK OnStartLeftArmShotCritical() {}
-void __CALLBACK OnTickLeftArmShotCritical() {}
+void OnStartLeftArmShotNoWound() {}
+void OnTickLeftArmShotNoWound() {}
+void OnStartLeftArmShotLight() {}
+void OnTickLeftArmShotLight() {}
+void OnStartLeftArmShotMedium() {}
+void OnTickLeftArmShotMedium() {}
+void OnStartLeftArmShotSerious() {}
+void OnTickLeftArmShotSerious() {}
+void OnStartLeftArmShotInsidious() {}
+void OnTickLeftArmShotInsidious() {}
+void OnStartLeftArmShotCritical() {}
+void OnTickLeftArmShotCritical() {}
 
-void __CALLBACK OnStartRightArmShotNoWound() {}
-void __CALLBACK OnTickRightArmShotNoWound() {}
-void __CALLBACK OnStartRightArmShotLight() {}
-void __CALLBACK OnTickRightArmShotLight() {}
-void __CALLBACK OnStartRightArmShotMedium() {}
-void __CALLBACK OnTickRightArmShotMedium() {}
-void __CALLBACK OnStartRightArmShotSerious() {}
-void __CALLBACK OnTickRightArmShotSerious() {}
-void __CALLBACK OnStartRightArmShotInsidious() {}
-void __CALLBACK OnTickRightArmShotInsidious() {}
-void __CALLBACK OnStartRightArmShotCritical() {}
-void __CALLBACK OnTickRightArmShotCritical() {}
+void OnStartRightArmShotNoWound() {}
+void OnTickRightArmShotNoWound() {}
+void OnStartRightArmShotLight() {}
+void OnTickRightArmShotLight() {}
+void OnStartRightArmShotMedium() {}
+void OnTickRightArmShotMedium() {}
+void OnStartRightArmShotSerious() {}
+void OnTickRightArmShotSerious() {}
+void OnStartRightArmShotInsidious() {}
+void OnTickRightArmShotInsidious() {}
+void OnStartRightArmShotCritical() {}
+void OnTickRightArmShotCritical() {}
 
-void __CALLBACK OnStartLeftLegShotNoWound() {}
-void __CALLBACK OnTickLeftLegShotNoWound() {}
-void __CALLBACK OnStartLeftLegShotLight() {}
-void __CALLBACK OnTickLeftLegShotLight() {}
-void __CALLBACK OnStartLeftLegShotMedium() {}
-void __CALLBACK OnTickLeftLegShotMedium() {}
-void __CALLBACK OnStartLeftLegShotSerious() {}
-void __CALLBACK OnTickLeftLegShotSerious() {}
-void __CALLBACK OnStartLeftLegShotInsidious() {}
-void __CALLBACK OnTickLeftLegShotInsidious() {}
-void __CALLBACK OnStartLeftLegShotCritical() {}
-void __CALLBACK OnTickLeftLegShotCritical() {}
+void OnStartLeftLegShotNoWound() {}
+void OnTickLeftLegShotNoWound() {}
+void OnStartLeftLegShotLight() {}
+void OnTickLeftLegShotLight() {}
+void OnStartLeftLegShotMedium() {}
+void OnTickLeftLegShotMedium() {}
+void OnStartLeftLegShotSerious() {}
+void OnTickLeftLegShotSerious() {}
+void OnStartLeftLegShotInsidious() {}
+void OnTickLeftLegShotInsidious() {}
+void OnStartLeftLegShotCritical() {}
+void OnTickLeftLegShotCritical() {}
 
-void __CALLBACK OnStartRightLegShotNoWound() {}
-void __CALLBACK OnTickRightLegShotNoWound() {}
-void __CALLBACK OnStartRightLegShotLight() {}
-void __CALLBACK OnTickRightLegShotLight() {}
-void __CALLBACK OnStartRightLegShotMedium() {}
-void __CALLBACK OnTickRightLegShotMedium() {}
-void __CALLBACK OnStartRightLegShotSerious() {}
-void __CALLBACK OnTickRightLegShotSerious() {}
-void __CALLBACK OnStartRightLegShotInsidious() {}
-void __CALLBACK OnTickRightLegShotInsidious() {}
-void __CALLBACK OnStartRightLegShotCritical() {}
-void __CALLBACK OnTickRightLegShotCritical() {}
+void OnStartRightLegShotNoWound() {}
+void OnTickRightLegShotNoWound() {}
+void OnStartRightLegShotLight() {}
+void OnTickRightLegShotLight() {}
+void OnStartRightLegShotMedium() {}
+void OnTickRightLegShotMedium() {}
+void OnStartRightLegShotSerious() {}
+void OnTickRightLegShotSerious() {}
+void OnStartRightLegShotInsidious() {}
+void OnTickRightLegShotInsidious() {}
+void OnStartRightLegShotCritical() {}
+void OnTickRightLegShotCritical() {}
 
-void __CALLBACK OnStartChestShotNoWound() {}
-void __CALLBACK OnTickChestShotNoWound() {}
-void __CALLBACK OnStartChestShotLight() {}
-void __CALLBACK OnTickChestShotLight() {}
-void __CALLBACK OnStartChestShotMedium() {}
-void __CALLBACK OnTickChestShotMedium() {}
-void __CALLBACK OnStartChestShotSerious() {}
-void __CALLBACK OnTickChestShotSerious() {}
-void __CALLBACK OnStartChestShotInsidious() {}
-void __CALLBACK OnTickChestShotInsidious() {}
-void __CALLBACK OnStartChestShotCritical() {}
-void __CALLBACK OnTickChestShotCritical() {}
+void OnStartChestShotNoWound() {}
+void OnTickChestShotNoWound() {}
+void OnStartChestShotLight() {}
+void OnTickChestShotLight() {}
+void OnStartChestShotMedium() {}
+void OnTickChestShotMedium() {}
+void OnStartChestShotSerious() {}
+void OnTickChestShotSerious() {}
+void OnStartChestShotInsidious() {}
+void OnTickChestShotInsidious() {}
+void OnStartChestShotCritical() {}
+void OnTickChestShotCritical() {}
 
-void __CALLBACK OnStartAbdomenShotNoWound() {}
-void __CALLBACK OnTickAbdomenShotNoWound() {}
-void __CALLBACK OnStartAbdomenShotLight() {}
-void __CALLBACK OnTickAbdomenShotLight() {}
-void __CALLBACK OnStartAbdomenShotMedium() {}
-void __CALLBACK OnTickAbdomenShotMedium() {}
-void __CALLBACK OnStartAbdomenShotSerious() {}
-void __CALLBACK OnTickAbdomenShotSerious() {}
-void __CALLBACK OnStartAbdomenShotInsidious() {}
-void __CALLBACK OnTickAbdomenShotInsidious() {}
-void __CALLBACK OnStartAbdomenShotCritical() {}
-void __CALLBACK OnTickAbdomenShotCritical() {}
+void OnStartAbdomenShotNoWound() {}
+void OnTickAbdomenShotNoWound() {}
+void OnStartAbdomenShotLight() {}
+void OnTickAbdomenShotLight() {}
+void OnStartAbdomenShotMedium() {}
+void OnTickAbdomenShotMedium() {}
+void OnStartAbdomenShotSerious() {}
+void OnTickAbdomenShotSerious() {}
+void OnStartAbdomenShotInsidious() {}
+void OnTickAbdomenShotInsidious() {}
+void OnStartAbdomenShotCritical() {}
+void OnTickAbdomenShotCritical() {}
 
-void __CALLBACK OnStartHeadShotNoWound() {}
-void __CALLBACK OnTickHeadShotNoWound() {}
-void __CALLBACK OnStartHeadShotLight() {}
-void __CALLBACK OnTickHeadShotLight() {}
-void __CALLBACK OnStartHeadShotMedium() {}
-void __CALLBACK OnTickHeadShotMedium() {}
-void __CALLBACK OnStartHeadShotSerious() {}
-void __CALLBACK OnTickHeadShotSerious() {}
-void __CALLBACK OnStartHeadShotInsidious() {}
-void __CALLBACK OnTickHeadShotInsidious() {}
-void __CALLBACK OnStartHeadShotCritical() {}
-void __CALLBACK OnTickHeadShotCritical() {}
+void OnStartHeadShotNoWound() {}
+void OnTickHeadShotNoWound() {}
+void OnStartHeadShotLight() {}
+void OnTickHeadShotLight() {}
+void OnStartHeadShotMedium() {}
+void OnTickHeadShotMedium() {}
+void OnStartHeadShotSerious() {}
+void OnTickHeadShotSerious() {}
+void OnStartHeadShotInsidious() {}
+void OnTickHeadShotInsidious() {}
+void OnStartHeadShotCritical() {}
+void OnTickHeadShotCritical() {}
 
-void __CALLBACK OnStartKnockOutNoWound() {}
-void __CALLBACK OnTickKnockOutNoWound() {}
-void __CALLBACK OnStartKnockOutLight() {}
-void __CALLBACK OnTickKnockOutLight() {}
-void __CALLBACK OnStartKnockOutMedium() {}
-void __CALLBACK OnTickKnockOutMedium() {}
-void __CALLBACK OnStartKnockOutSerious() {}
-void __CALLBACK OnTickKnockOutSerious() {}
-void __CALLBACK OnStartKnockOutInsidious() {}
-void __CALLBACK OnTickKnockOutInsidious() {}
-void __CALLBACK OnStartKnockOutCritical() {}
-void __CALLBACK OnTickKnockOutCritical() {}
+void OnStartKnockOutNoWound() {}
+void OnTickKnockOutNoWound() {}
+void OnStartKnockOutLight() {}
+void OnTickKnockOutLight() {}
+void OnStartKnockOutMedium() {}
+void OnTickKnockOutMedium() {}
+void OnStartKnockOutSerious() {}
+void OnTickKnockOutSerious() {}
+void OnStartKnockOutInsidious() {}
+void OnTickKnockOutInsidious() {}
+void OnStartKnockOutCritical() {}
+void OnTickKnockOutCritical() {}
 
-void __CALLBACK OnStartExplosionBlastNoWound() {}
-void __CALLBACK OnTickExplosionBlastNoWound() {}
-void __CALLBACK OnStartExplosionBlastLight() {}
-void __CALLBACK OnTickExplosionBlastLight() {}
-void __CALLBACK OnStartExplosionBlastMedium() {}
-void __CALLBACK OnTickExplosionBlastMedium() {}
-void __CALLBACK OnStartExplosionBlastSerious() {}
-void __CALLBACK OnTickExplosionBlastSerious() {}
-void __CALLBACK OnStartExplosionBlastInsidious() {}
-void __CALLBACK OnTickExplosionBlastInsidious() {}
-void __CALLBACK OnStartExplosionBlastCritical() {}
-void __CALLBACK OnTickExplosionBlastCritical() {}
+void OnStartExplosionBlastNoWound() {}
+void OnTickExplosionBlastNoWound() {}
+void OnStartExplosionBlastLight() {}
+void OnTickExplosionBlastLight() {}
+void OnStartExplosionBlastMedium() {}
+void OnTickExplosionBlastMedium() {}
+void OnStartExplosionBlastSerious() {}
+void OnTickExplosionBlastSerious() {}
+void OnStartExplosionBlastInsidious() {}
+void OnTickExplosionBlastInsidious() {}
+void OnStartExplosionBlastCritical() {}
+void OnTickExplosionBlastCritical() {}
 
-void __CALLBACK OnStartExplosionScorchNoWound() {}
-void __CALLBACK OnTickExplosionScorchNoWound() {}
-void __CALLBACK OnStartExplosionScorchLight() {}
-void __CALLBACK OnTickExplosionScorchLight() {}
-void __CALLBACK OnStartExplosionScorchMedium() {}
-void __CALLBACK OnTickExplosionScorchMedium() {}
-void __CALLBACK OnStartExplosionScorchSerious() {}
-void __CALLBACK OnTickExplosionScorchSerious() {}
-void __CALLBACK OnStartExplosionScorchInsidious() {}
-void __CALLBACK OnTickExplosionScorchInsidious() {}
-void __CALLBACK OnStartExplosionScorchCritical() {}
-void __CALLBACK OnTickExplosionScorchCritical() {}
+void OnStartExplosionScorchNoWound() {}
+void OnTickExplosionScorchNoWound() {}
+void OnStartExplosionScorchLight() {}
+void OnTickExplosionScorchLight() {}
+void OnStartExplosionScorchMedium() {}
+void OnTickExplosionScorchMedium() {}
+void OnStartExplosionScorchSerious() {}
+void OnTickExplosionScorchSerious() {}
+void OnStartExplosionScorchInsidious() {}
+void OnTickExplosionScorchInsidious() {}
+void OnStartExplosionScorchCritical() {}
+void OnTickExplosionScorchCritical() {}
 
-void __CALLBACK OnStartExplosionRadiationNoWound() {}
-void __CALLBACK OnTickExplosionRadiationNoWound() {}
-void __CALLBACK OnStartExplosionRadiationLight() {}
-void __CALLBACK OnTickExplosionRadiationLight() {}
-void __CALLBACK OnStartExplosionRadiationMedium() {}
-void __CALLBACK OnTickExplosionRadiationMedium() {}
-void __CALLBACK OnStartExplosionRadiationSerious() {}
-void __CALLBACK OnTickExplosionRadiationSerious() {}
-void __CALLBACK OnStartExplosionRadiationInsidious() {}
-void __CALLBACK OnTickExplosionRadiationInsidious() {}
-void __CALLBACK OnStartExplosionRadiationCritical() {}
-void __CALLBACK OnTickExplosionRadiationCritical() {}
+void OnStartExplosionRadiationNoWound() {}
+void OnTickExplosionRadiationNoWound() {}
+void OnStartExplosionRadiationLight() {}
+void OnTickExplosionRadiationLight() {}
+void OnStartExplosionRadiationMedium() {}
+void OnTickExplosionRadiationMedium() {}
+void OnStartExplosionRadiationSerious() {}
+void OnTickExplosionRadiationSerious() {}
+void OnStartExplosionRadiationInsidious() {}
+void OnTickExplosionRadiationInsidious() {}
+void OnStartExplosionRadiationCritical() {}
+void OnTickExplosionRadiationCritical() {}
 
 WOUND Wounds[MaxType][MaxSeverity] = 
 {

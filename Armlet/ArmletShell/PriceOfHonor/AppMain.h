@@ -1,6 +1,6 @@
 #pragma once
 
-extern ArmletApi::THREAD_PROC AppMainThread;
+void AppMainThread(void* param);
 
 //extern APP_TASK AppTasks[];
 //BOOL InitializeLogic();

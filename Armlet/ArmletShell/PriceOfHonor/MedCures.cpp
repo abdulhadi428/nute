@@ -96,6 +96,54 @@ const CureStrings_t CureStrings[MaxCureId] =
 		"",
 		"",
 		""
+	},
+	{
+		RespiratoryNanoPack,
+		"ѕак дыхательных нанохирургов",
+		"Ћечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
+	},
+	{
+		RespiratoryNanoPack,
+		"ѕак дыхательных нанохирургов",
+		"Ћечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
+	},
+	{
+		RespiratoryNanoPack,
+		"ѕак дыхательных нанохирургов",
+		"Ћечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
+	},
+	{
+		RespiratoryNanoPack,
+		"ѕак дыхательных нанохирургов",
+		"Ћечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
+	},
+	{
+		RespiratoryNanoPack,
+		"ѕак дыхательных нанохирургов",
+		"Ћечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
+	},
+	{
+		RespiratoryNanoPack,
+		"ѕак дыхательных нанохирургов",
+		"Ћечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
 	}
 };
 COMPILE_TIME_CHECK(sizeof(CureStrings)/sizeof(CureStrings_t)==MaxCureId);
@@ -429,7 +477,7 @@ VERTIGO				//"√оловокружение"
 }
 #endif
 
-void __CALLBACK OnUseAnesthetics()
+void OnUseAnesthetics()
 {
 	//PainLevel -= 1;
 /*
@@ -449,60 +497,60 @@ void __CALLBACK OnUseAnesthetics()
 */
 }
 
-void __CALLBACK OnTickAnesthetics()
+void OnTickAnesthetics()
 {
 }
-void __CALLBACK OnUseAntispasmodic()
+void OnUseAntispasmodic()
 {
 }
-void __CALLBACK OnTickAntispasmodic()
+void OnTickAntispasmodic()
 {
 }
-void __CALLBACK OnUsePyretic()
+void OnUsePyretic()
 {
 }
-void __CALLBACK OnTickPyretic()
+void OnTickPyretic()
 {
 }
-void __CALLBACK OnUseAspirator()
+void OnUseAspirator()
 {
 }
-void __CALLBACK OnTickAspirator()
+void OnTickAspirator()
 {
 }
-void __CALLBACK OnUseCoagulationFactor()
+void OnUseCoagulationFactor()
 {
 }
-void __CALLBACK OnTickCoagulationFactor()
+void OnTickCoagulationFactor()
 {
 }
-void __CALLBACK OnUseSyntheticBlood()
+void OnUseSyntheticBlood()
 {
 }
-void __CALLBACK OnTickSyntheticBlood()
+void OnTickSyntheticBlood()
 {
 }
-void __CALLBACK OnUseLeatherette()
+void OnUseLeatherette()
 {
 }
-void __CALLBACK OnTickLeatherette()
+void OnTickLeatherette()
 {
 }
-void __CALLBACK OnUseMyorelaxant()
+void OnUseMyorelaxant()
 {
 }
-void __CALLBACK OnTickMyorelaxant()
+void OnTickMyorelaxant()
 {
 }
-void __CALLBACK OnUseVisceraNanoPack()
+void OnUseVisceraNanoPack()
 {
 }
-void __CALLBACK OnTickVisceraNanoPack()
+void OnTickVisceraNanoPack()
 {
 }
-void __CALLBACK OnUseRespiratoryNanoPack()
+void OnUseRespiratoryNanoPack()
 {
 }
-void __CALLBACK OnTickRespiratoryNanoPack()
+void OnTickRespiratoryNanoPack()
 {
 }
