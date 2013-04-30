@@ -23,18 +23,7 @@ namespace ArmletApi {
 	void Log(char* log)
 	{		
 		WriteFile(&LogFile, log, strlen(log));
-#ifdef _MBCS
 		LowLog("ARMLET: %s", log);
-#endif
 	}
 
-	//SPECIAL PLATFORM DEPENDENT
-#ifdef _MBCS
-	//visualizer only __SYSCALL
-	void __SYSCALL SetCureName(int cure_id, char* name)
-	{
-		LowLevel::SetCureName(cure_id, name);
-	}
-#endif
-
-}
+} //namespace

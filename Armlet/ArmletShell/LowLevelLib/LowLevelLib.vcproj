@@ -40,7 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\MiddleWareLib"
+				AdditionalIncludeDirectories="..\ShellApi"
+				PreprocessorDefinitions="_PC_VISUALIZER_"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -103,7 +104,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\MiddleWareLib"
+				AdditionalIncludeDirectories="..\ShellApi"
+				PreprocessorDefinitions="_PC_VISUALIZER_"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -182,31 +184,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\ArmletApi.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Colors.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Common.h"
-				>
-			</File>
-			<File
 				RelativePath=".\DownInterface.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Fonts.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Helper.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PlatformDependentSizes.h"
 				>
 			</File>
 		</Filter>

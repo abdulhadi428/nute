@@ -41,7 +41,7 @@ namespace LowLevel {
 
 	//SPECIAL
 	//input
-	void NextMedTick();												//internal emulation (time)
+	void NextMedTick();												//internal emulation
 	//output
 	extern INT_STR_ROUTINE* SetCureName;							//internal emulation
 

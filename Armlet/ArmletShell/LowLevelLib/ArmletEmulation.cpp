@@ -50,6 +50,12 @@ namespace LowLevel {
 		CurrentLockId = (unsigned char)lock_id;
 	}
 
+	//SPECIAL PLATFORM DEPENDENT
+	void NextMedTick()
+	{
+		ArmletApi::NextMedTick();
+	}
+
 } //namespace
 
 namespace ArmletApi {
@@ -57,8 +63,9 @@ namespace ArmletApi {
 	//__SYSCALL returns 0-100%
 	unsigned char __SYSCALL GetBatteryLevel()
 	{
-		return (unsigned char)(GetRunningTime() / 100);
-		return 100; //TODO
+		unsigned char p = (unsigned char)(GetRunningTime() / 100);
+		if (p>100) p = 100;
+		return p;
 	}
 
 	//draws a pixel
@@ -95,7 +102,7 @@ namespace ArmletApi {
 	}
 
 	//performs vibration for duration
-	void __SYSCALL DoVibro(int msecs)
+	void __SYSCALL DoVibroAndBeep(int msecs)
 	{
 		UNREFERENCED_PARAMETER(msecs);
 		LowLevel::Vibro();
@@ -134,5 +141,13 @@ namespace ArmletApi {
 	{
 		return true;
 	}
+
+	//SPECIAL PLATFORM DEPENDENT
+#ifdef _MSC_VER
+	void __SYSCALL SetCureName(int cure_id, char* name)
+	{
+		LowLevel::SetCureName(cure_id, name);
+	}
+#endif
 
 } //namespace

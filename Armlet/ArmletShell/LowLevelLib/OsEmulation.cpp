@@ -33,13 +33,13 @@ namespace ArmletApi {
 		return 0;
 	}
 
-	bool __SYSCALL StartThread(THREAD_PROC* startProc, void* param)
-	{
-		//TODO
-		DWORD dwTid;
-		CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)startProc, param, 0, &dwTid);
-		return true;
-	}
+	//bool __FUTURE StartThread(THREAD_PROC* startProc, void* param)
+	//{
+	//	return false;
+	//	//TODO
+	//	//DWORD dwTid;
+	//	//CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)startProc, param, 0, &dwTid);
+	//}
 
 	//__SYSCALL, period in msecs
 	bool __SYSCALL RequestTimer(TIMER_PROC* timerProc, int period)
@@ -50,23 +50,23 @@ namespace ArmletApi {
 		return true;
 	}
 
-	void __SYSCALL Sleep(int msces)
-	{
-	}
+	//void __FUTURE Sleep(int msces)
+	//{
+	//}
 
 	//should not fail
-	void __SYSCALL InitMutex(MUTEX* mutex)
-	{
-	}
+	//void __FUTURE InitMutex(MUTEX* mutex)
+	//{
+	//}
 
 	//acquires mutex
-	void __SYSCALL AcquireMutex(MUTEX* mutex)
-	{
-	}
+	//void __FUTURE AcquireMutex(MUTEX* mutex)
+	//{
+	//}
 
 	//releases mutex
-	void __SYSCALL ReleaseMutex(MUTEX* mutex)
-	{
-	}
+	//void __FUTURE ReleaseMutex(MUTEX* mutex)
+	//{
+	//}
 
 } //namespace
