@@ -64,7 +64,7 @@ void Infrared_t::IRxTask() {
     while(1) {
         // Fetch byte from queue
         if(chMBFetch(&imailbox, &Msg, IBitDelay) == RDY_OK) {
-            //Uart.Printf("%d\r", Msg);
+            //Uart.Printf("%u\r", Msg);
             PieceType_t Piece = ProcessInterval(Msg);
             switch(Piece) {
                 case ptHeader: IStartPkt(); break;
@@ -81,7 +81,8 @@ void Infrared_t::IRxTask() {
             // Check if Rx completed
             if(IBitCnt == 14) {
                 ICancelPkt();
-                IRCmdCallback(IRxW);
+                RxWord = IRxW << 2;
+                chEvtBroadcast(&IEvtSrcIrRx);
             } // if completed
         } // if msg
     } // while 1
@@ -135,6 +136,7 @@ void Infrared_t::TxInit() {
 }
 
 void Infrared_t::RxInit() {
+    chEvtInit(&IEvtSrcIrRx);
     // GPIO
     PinSetupOut(IR_RX_PWR_GPIO, IR_RX_PWR_PIN, omPushPull); // }
     PinSet(IR_RX_PWR_GPIO, IR_RX_PWR_PIN);                  // } Power

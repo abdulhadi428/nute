@@ -33,9 +33,9 @@ namespace ArmletApi {
 	unsigned char __FUTURE GetLockId();									//UNKNOWN_ID	__SYSCALL return lock id (UNKNOWN_ID=none)
 	bool __FUTURE OpenLock();											//TRUE			__SYSCALL should request lock to open
 	bool __FUTURE DenyLock();											//TRUE			__SYSCALL should request lock to show access denied
-	
+
 	//SERVER
-	//радиопротокол реализует логику высокого уровня общения с сервером, траспортный уровень не здесь 
+	//радиопротокол реализует логику высокого уровня общения с сервером, траспортный уровень не здесь
 	void __CALLOUT OnRadioPacket(unsigned char* packet, int len);		//__CALLOUT for radio transport
 	void __SYSCALL SendRadioPacket(unsigned char* packet, int len);		//__SYSCALL for radio transport
 	unsigned short __SYSCALL GetArmletId();
@@ -44,10 +44,10 @@ namespace ArmletApi {
 	typedef char MUTEX[MUTEX_SIZE];										//OS-dependent mutext storage
 	typedef char FILE[FILE_SIZE];										//OS-dependent file storage
 
-	bool __SYSCALL OpenFile(FILE* file, char* filename, bool bCreate);	//__SYSCALL opens/create file
-	int __SYSCALL ReadFile(FILE* file, char* buf, int len);				//__SYSCALL returns length read
-	int __SYSCALL WriteFile(FILE* file, char* buf, int len);			//__SYSCALL returns length written
-	int __SYSCALL AppendFile(FILE* file, char* buf, int len);			//__SYSCALL return length written
+	bool __SYSCALL OpenFile (FILE* file, const char* filename, bool bCreate);   //__SYSCALL opens/create file
+	int __SYSCALL ReadFile  (FILE* file, char* buf, int len);				    //__SYSCALL returns length read
+	int __SYSCALL WriteFile (FILE* file, char* buf, int len);			        //__SYSCALL returns length written
+	int __SYSCALL AppendFile(FILE* file, char* buf, int len);			        //__SYSCALL return length written
 
 	typedef void (__CALLBACK THREAD_PROC)(void* param);					//thread start routine __CALLBACK
 	typedef bool (__CALLBACK TIMER_PROC)(int elapsed);					//timer routine __CALLBACK,

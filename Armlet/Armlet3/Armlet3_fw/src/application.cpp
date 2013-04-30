@@ -15,15 +15,17 @@
 #include "VibroSequences.h"
 #include "keys.h"
 #include "pill.h"
+#include "infrared.h"
 
 #include "lvl1_assym.h"
 #include "evt_mask.h"
-
 #include "kl_sd.h"
+
+#include "ArmletApi.h"
 
 App_t App;
 
-static EventListener EvtLstnrRadioRx, EvtListenerKeys, EvtListenerPill;
+static EventListener EvtLstnrRadioRx, EvtListenerKeys, EvtListenerPill, EvtListenerIR;
 static rPktWithData_t<RRX_PKT_DATA_SZ> SRxPkt;
 
 // Prototypes
@@ -33,44 +35,21 @@ static WORKING_AREA(waAppThread, 1024);
 static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
-
-    // Open file
-//    FRESULT rslt;
-//    rslt = f_open(&SD.File, "settings.ini", FA_READ+FA_OPEN_EXISTING);
-//    Uart.Printf("OpenFile: %u\r", (uint8_t)rslt);
-//    if(rslt == FR_OK) {
-//        Uart.Printf("Size: %u\r", SD.File.fsize);
-//        uint32_t N=0;
-//        rslt = f_read(&SD.File, Str, 250, (UINT*)&N);
-//        if(rslt == FR_OK) {
-//            Uart.Printf("N: %u; Str: %s\r", N, Str);
-//        }
-//        else Uart.Printf("ReadFile: %u\r", (uint8_t)rslt);
-//        f_close(&SD.File);
-//    }
-//    Uart.Printf("1\r");
-//    uint32_t Count=0;
-//    iniReadUint32("Sound", "Count", "settings.ini", &Count);
-//    Uart.Printf("Cnt: %u\r", Count);
-
-//    Color_t c = clBlack;
-
-//#define PktSZ   4
-//    uint8_t Buf[PktSZ], Rslt1 = FAILURE, Rslt2 = FAILURE;
-//    for(uint8_t i=0; i<PktSZ; i++) Buf[i] = i;
+    uint16_t w;
 
     // Events
     uint32_t EvtMsk;
     KeysRegisterEvt(&EvtListenerKeys, EVTMASK_KEYS);
     rLevel1.RegisterEvtRx(&EvtLstnrRadioRx, EVTMASK_RADIO_RX);
     PillRegisterEvtChange(&EvtListenerPill, EVTMASK_PILL);
+    IR.RegisterEvt(&EvtListenerIR, EVTMASK_IR);
 
     while(1) {
         //chThdSleepMilliseconds(999);
 //        Rslt1 = rLevel1.AddPktToTx(0, Buf, PktSZ, &Rslt2);
 //        Uart.Printf("### %u\r", Rslt1);
 
-        EvtMsk = chEvtWaitAny(EVTMASK_RADIO_RX | EVTMASK_KEYS | EVTMASK_PILL);
+        EvtMsk = chEvtWaitAny(EVTMASK_RADIO_RX | EVTMASK_KEYS | EVTMASK_PILL | EVTMASK_IR);
 
         if(EvtMsk &EVTMASK_KEYS) {
             if((KeyStatus[0] == KEY_PRESSED) or (KeyStatus[1] == KEY_PRESSED) or (KeyStatus[2] == KEY_PRESSED)) {
@@ -96,30 +75,14 @@ static msg_t AppThread(void *arg) {
             Beeper.Beep(ShortBeep);
         }
 
-        //Uart.Printf("Evt \r");
-        //Lcd.Cls(c);
-//        for(uint8_t y=0; y<128; y+=8) {
-//            chThdSleepMilliseconds(999);
-//            //Lcd.Printf(0, y, clBlue, c, "YA=%u", y);
-//            //Beep(BeepBeep);
-//
-//        }
-//        c = (c == clBlack)? clWhite : clBlack;
-
-//        Lcd.Cls(c);
-//        switch(c) {
-//            case clRed: c = clGreen; break;
-//            case clGreen: c = clBlue; break;
-//            case clBlue: c = clRed; break;
-//            default: c = clRed; break;
-//        }
-    }
+        if(EvtMsk & EVTMASK_IR) {
+            w = IR.RxWord;
+            w >>= 8;
+            Uart.Printf("IR ID=%u\r", w);
+            Beeper.Beep(ShortBeep);
+        }
+    } // while 1
     return 0;
-}
-
-// IR
-void IRCmdCallback(uint16_t CmdWord) {
-    Uart.Printf("%02X\r", CmdWord);
 }
 
 static DIR dir;
@@ -152,7 +115,8 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
 
         case 0x52:  // SetID
             b = PData[0];
-            if(OpenFile(&SD.File, "settings.ini", true)) {
+            res = f_open(&SD.File, "settings.ini", FA_CREATE_ALWAYS | FA_WRITE);
+            if(res == FR_OK) {
                 f_printf(&SD.File, "[Radio]\r\nID=%u\r\n", b);
                 f_close(&SD.File);
                 Uart.Printf("Written\r");
@@ -167,5 +131,54 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
 
 // =============================== App class ===================================
 void App_t::Init() {
+    // Init shell
+    ArmletApi::InitializeShell();
+
     chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, AppThread, NULL);
 }
+
+bool ArmletApi::InitializeShell() { return false; }
+
+// ============================= File operations ===============================
+using namespace ArmletApi;
+// return false in case of failure, true in case of success
+// Try to open. In case of failure, create new file if bCreate is true, otherwise return error.
+bool OpenFile(FILE* file, const char* filename, bool bCreate) {
+    FRESULT Rslt;
+    Rslt = f_open((FIL*)file, filename, FA_OPEN_EXISTING | FA_READ | FA_WRITE);
+    if(Rslt == FR_OK) return true;
+    else {                  // File does not exist
+        if(bCreate) {       // Create file if needed
+            Rslt = f_open((FIL*)file, filename, FA_CREATE_NEW | FA_READ | FA_WRITE);
+            return (Rslt == FR_OK);
+        }
+        else return false;  // No need to create, return failure
+    }
+}
+/*
+// returns length read
+int ReadFile(FILE* file, char* buf, int len) {
+    f_lseek(file, 0);   // move to beginning
+    UINT FLen=0;
+    f_read(file, buf, len, &FLen);
+    return FLen;
+}
+
+// returns length written, rewrites file from beginning
+int WriteFile (FILE* file, char* buf, int len) {
+    f_lseek(file, 0);   // move to beginning
+    UINT FLen=0;
+    f_write(file, buf, len, &FLen);
+    return FLen;
+}
+
+// return length written, appends to end of file
+int AppendFile(FILE* file, char* buf, int len) {
+    if(file == NULL) return 0;
+    f_lseek(file, f_size(file));
+    UINT FLen=0;
+    f_write(file, buf, len, &FLen);
+    return FLen;
+}
+*/
+

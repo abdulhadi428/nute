@@ -48,45 +48,6 @@ void sd_t::Init() {
     IsReady = TRUE;
 }
 
-// ============================= File operations ===============================
-// Try to open. In case of failure, create new file if bCreate is true, otherwise return error.
-bool OpenFile(FILE* file, const char* filename, bool bCreate) {
-    FRESULT Rslt;
-    Rslt = f_open(file, filename, FA_OPEN_EXISTING | FA_READ | FA_WRITE);
-    if(Rslt == FR_OK) return true;
-    else {                  // File does not exist
-        if(bCreate) {       // Create file if needed
-            Rslt = f_open(file, filename, FA_CREATE_NEW | FA_READ | FA_WRITE);
-            return (Rslt == FR_OK);
-        }
-        else return false;  // No need to create, return failure
-    }
-}
-
-// returns length read
-int ReadFile(FILE* file, char* buf, int len) {
-    f_lseek(file, 0);   // move to beginning
-    UINT FLen=0;
-    f_read(file, buf, len, &FLen);
-    return FLen;
-}
-
-// returns length written, rewrites file from beginning
-int WriteFile (FILE* file, char* buf, int len) {
-    f_lseek(file, 0);   // move to beginning
-    UINT FLen=0;
-    f_write(file, buf, len, &FLen);
-    return FLen;
-}
-
-// return length written, appends to end of file
-int AppendFile(FILE* file, char* buf, int len) {
-    if(file == NULL) return 0;
-    f_lseek(file, f_size(file));
-    UINT FLen=0;
-    f_write(file, buf, len, &FLen);
-    return FLen;
-}
 
 // ========================== ini files operations =============================
 #ifdef USE_INI_FILES

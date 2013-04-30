@@ -101,6 +101,21 @@
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Common_fw/pill.cpp</locationURI>
 		</link>
+		<link>
+			<name>Honor/LowLevelLib/ArmletApi.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/LowLevelLib/ArmletApi.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/LowLevelLib/Common.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/LowLevelLib/Common.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/LowLevelLib/PlatformDependentSizes.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/LowLevelLib/PlatformDependentSizes.h</locationURI>
+		</link>
 	</linkedResources>
 	<variableList>
 		<variable>

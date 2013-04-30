@@ -53,9 +53,6 @@ int main() {
     }
 }
 
-FILE TestFile;
-char Buf[255];
-
 void Init() {
     Uart.Init(115200);
     Uart.Printf("Armlet3\r");
@@ -64,38 +61,6 @@ void Init() {
     uint32_t ID=0;
     iniReadUint32("Radio", "ID", "settings.ini", &ID);
     Uart.Printf("ID=%u\r", ID);
-
-//    bool r = OpenFile(&TestFile, "try.txt", true);
-//    Uart.Printf("r=%u\r", r);
-//    if(r) {
-//        for(uint8_t i=0; i<18; i++) Buf[i] = i+'A';
-//
-//        uint32_t L;
-////        L = WriteFile(&TestFile, Buf, 18);
-////        Uart.Printf("LW=%u\r", L);
-//        L = AppendFile(&TestFile, Buf, 18);
-//        Uart.Printf("LW=%u\r", L);
-//
-//        for(uint8_t i=0; i<18; i++) Buf[i] = 0;
-//
-//        f_lseek(&TestFile, 0);  // move to beginning
-//
-//        L = ReadFile(&TestFile, Buf, 250);
-//        Uart.Printf("LR=%u\r", L);
-//        Uart.Printf("R=%S\r", Buf);
-//        f_close(&TestFile);
-//    }
-
-
-//    FRESULT rslt;
-//    rslt = f_open(&SD.File, "try.txt", FA_READ+FA_OPEN_EXISTING);
-//        if (rslt != FR_OK) {
-//            Uart.Printf(AFileName);
-//            if (rslt == FR_NO_FILE) Uart.Printf(": file not found\r");
-//            else Uart.Printf(": openFile error: %u", rslt);
-//            return FAILURE;
-//        }
-
 
     Lcd.Init();
     KeysInit();

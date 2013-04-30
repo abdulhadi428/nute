@@ -12,7 +12,14 @@
 #endif
 
 #ifndef _MSC_VER
-#error here
+    #include "ch.h"
+    #include "kl_sd.h"
+
+    #define PFD_SIZES
+
+    #define MUTEX_SIZE  sizeof(Mutex)
+    #define FILE_SIZE   sizeof(FIL)
+
 	#define __NOCALL
 	#define __CALLOUT
 	#define __SYSCALL

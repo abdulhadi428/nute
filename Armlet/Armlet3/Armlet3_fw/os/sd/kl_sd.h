@@ -26,15 +26,6 @@ public:
 
 extern sd_t SD;
 
-// ============================= File operations ===============================
-// return false in case of failure, true in case of success
-#define FILE    FIL
-bool OpenFile (FILE* file, const char* filename, bool bCreate); //syscall opens/create file
-int ReadFile  (FILE* file, char* buf, int len);                 //syscall returns length read
-int WriteFile (FILE* file, char* buf, int len);                 //syscall returns length written
-int AppendFile(FILE* file, char* buf, int len);                 //syscall return length written
-
-
 // =========================== ini file operations =============================
 /*
  * ini file has the following structure:

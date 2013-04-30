@@ -59,7 +59,7 @@
 #define IR_HEADER_US        2400
 #define IR_ZERO_US          600
 #define IR_ONE_US           1200
-#define IR_DEVIATION_US     50
+#define IR_DEVIATION_US     150
 #define IR_BOTTOM_BOUND_US  (IR_ZERO_US - IR_DEVIATION_US)
 #define IR_TIMEOUT_MS       2
 
@@ -83,6 +83,7 @@ private:
     msg_t IRxBuf[IR_RXBUF_SZ];
     Mailbox imailbox;
     // Rx Level1
+    EventSource IEvtSrcIrRx;
     uint16_t IRxW;
     uint8_t IBitCnt;
     bool IReceivingData;
@@ -102,12 +103,14 @@ public:
         Carrier(IR_CARRIER_TMR), Modulator(IR_MODULATION_TMR), RxTimer(IR_RX_TIMER),
         IWaitingEdge(Falling),
         IRxW(0), IBitCnt(0), IReceivingData(false), IBitDelay(TIME_INFINITE),
-        IsBusy(false) { }
+        IsBusy(false), RxWord(0) { }
     bool IsBusy;
+    uint16_t RxWord;
     void TxInit();
     void RxInit();
     void Shutdown();
     uint8_t TransmitWord(uint16_t wData, uint8_t PwrPercent);
+    void RegisterEvt(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcIrRx, PEvtLstnr, EvtMask); }
     // Inner use
     void IStopModulator() { Modulator.Disable(); }
     void IRxEdgeIrq();
@@ -115,7 +118,5 @@ public:
 };
 
 extern Infrared_t IR;
-
-extern void IRCmdCallback(uint16_t CmdWord);
 
 #endif /* INFRARED_H_ */
