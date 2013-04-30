@@ -42,7 +42,7 @@ namespace ServerGUI
         private void GateUI_OnLoaded(object sender, RoutedEventArgs e)
         {
             Model.PillOnlineChanged += () => Dispatcher.BeginInvoke(new Action(UpdatePillOnline));
-            Model.PillDataArrived += obj => Dispatcher.BeginInvoke(new Action<byte[]>(UpdatePillDataArrived));
+            Model.PillDataArrived += obj => Dispatcher.BeginInvoke(new Action<byte[]>(UpdatePillDataArrived), obj);
             Model.GateOnlineChanged += () => Dispatcher.BeginInvoke(new Action(UpdateGateOnline));
 
             UpdatePillOnline();

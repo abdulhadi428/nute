@@ -29,9 +29,9 @@ namespace HonorLogic
             }
         }
 
-        public void UpdateArmlet(byte armletId, PlayerUpdate playerStatusUpdate)
+        public void UpdateArmlet(PlayerUpdate playerStatusUpdate)
         {
-            var armlet = _armlets[armletId];
+            var armlet = _armlets[playerStatusUpdate.ArmletID];
             armlet.Update(playerStatusUpdate);
         }
 

@@ -30,9 +30,12 @@ namespace HonorLogic
 
             foreach (var playerStatusUpdate in obj)
             {
-                byte armletId = playerStatusUpdate.ArmletID;
-                raiseListUpdated = _armletList.CreateIfNeeded(armletId, CreateArmlet);
-                _armletList.UpdateArmlet(armletId, playerStatusUpdate);
+                var created = _armletList.CreateIfNeeded(playerStatusUpdate.ArmletID, CreateArmlet);
+                if (created)
+                {
+                    raiseListUpdated = true;
+                }
+                _armletList.UpdateArmlet(playerStatusUpdate);
             }
 
             if (raiseListUpdated)

@@ -38,16 +38,35 @@ namespace HonorSerialportGateConsole
             InitiateLog();
             sendThread = new Thread(SendToServer);
             InstanceContext instanceContext = new InstanceContext(new WCFCallbackHandler(this));
+
+            byte serverProvidedGateId;
+            try
+            {
+                
+                WCFClient.Client = new GateWCFServiceClient(instanceContext, "NetTcpBindingEndpoint",
+                                                        RemoteAddress);
+                serverProvidedGateId = WCFClient.Client.RegisterGate(Byte.Parse(Settings.Default.PreferedGateId));
+            }
+            catch (EndpointNotFoundException)
+            {
+                throw new Exception("Не возможно подсоединится к серверу: " + RemoteAddress);
+            }
             
-            string WcfSericeIp = Settings.Default.WCFIPAddress;
-            WCFClient.Client = new GateWCFServiceClient(instanceContext, "NetTcpBindingEndpoint",
-                                                        "net.tcp://" + WcfSericeIp + ":8765/GateWcfService");
-            byte serverProvidedGateId = WCFClient.Client.RegisterGate(Byte.Parse(Settings.Default.PreferedGateId));
+            
             inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new byte[]{serverProvidedGateId}));
 
         }
 
-   #region InitLog
+        private static string RemoteAddress
+        {
+            get
+            {
+                string WcfSericeIp = Settings.Default.WCFIPAddress;
+                return "net.tcp://" + WcfSericeIp + ":8765/GateWcfService";
+            }
+        }
+
+        #region InitLog
         private void InitiateLog()
         {
             LogClass.SetVerbosity(Settings.Default.LogIsVerbose);
@@ -95,6 +114,7 @@ namespace HonorSerialportGateConsole
             {
                 while (_sending)
                 {
+                    
                     lock (outputMessageQueue.SyncRoot)
                     {
                         while (outputMessageQueue.Count > 0)
@@ -105,8 +125,9 @@ namespace HonorSerialportGateConsole
                             if (Enum.IsDefined(typeof (GateToServerCommands), outputBytes[0]))
                             {
                                 byte commandByte = outputBytes[0];
-                                byte[] payload = new byte[outputBytes.Length-1];
-                                outputBytes.CopyTo(payload, 1);
+                                //byte[] payload = new byte[outputBytes.Length-1];
+                                //outputBytes.CopyTo(payload, 1);
+                                var payload = outputBytes.Skip(1).ToArray();
 
                                 switch (commandByte)
                                 {
