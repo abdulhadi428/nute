@@ -16,6 +16,8 @@ namespace ArmletApi {
 	
 	bool __CALLOUT InitializeShell() {
 		Clear(RED);
+		GetBatteryLevel();
+		SetScreenBrightness(100);
 		AppMainThread(NULL);
 		//StartThread(my_thread,NULL);
 		//StartThread(AppMainThread,NULL);

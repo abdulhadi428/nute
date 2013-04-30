@@ -9,7 +9,7 @@
 namespace ArmletApi {
 
 	//opens/create file
-	bool __SYSCALL OpenFile(FILE* file, char* filename, bool bCreate)
+	bool __SYSCALL OpenFile(FILE* file, const char* filename, bool bCreate)
 	{
 		//TODO
 		return true;

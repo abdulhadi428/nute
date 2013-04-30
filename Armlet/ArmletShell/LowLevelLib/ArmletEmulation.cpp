@@ -68,6 +68,11 @@ namespace ArmletApi {
 		return p;
 	}
 
+	void __SYSCALL SetScreenBrightness(unsigned char percent)
+	{
+		return; //TODO
+	}
+
 	//draws a pixel
 	void __SYSCALL DrawPixel(int x, int y, unsigned short c)
 	{
