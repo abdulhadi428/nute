@@ -13,10 +13,19 @@ namespace HonorLogic
         private readonly ArmletList _armletList = new ArmletList();
         private readonly IArmletDeliveryServece _armletService;
         private readonly IGateDeliveryService _gateService;
+        private readonly Lazy<GateModel>[] _gates;
 
         
         public GlobalModel(IArmletDeliveryServece armletService, IGateDeliveryService gateService)
         {
+            _gates = new Lazy<GateModel>[byte.MaxValue + 1];
+            for (var gateIndex = 0; gateIndex <= byte.MaxValue; gateIndex++)
+            {
+                var index = (byte) gateIndex; //To prevent closure problems. C# 5.0 will fix it
+                _gates[gateIndex] = new Lazy<GateModel>(() => new GateModel(gateService, index));
+            }
+
+
             _armletService = armletService;
             _gateService = gateService;
 
@@ -63,19 +72,11 @@ namespace HonorLogic
             if (handler != null) handler(obj);
         }
 
-        private readonly object _gateRoot = new object();
-        private readonly Dictionary<byte, GateModel>  _gates = new Dictionary<byte, GateModel>();
+       
 
         public IGateModel GetGateModel(byte gateId)
         {
-            lock (_gateRoot)
-            {
-                if (!_gates.ContainsKey(gateId))
-                {
-                    _gates.Add(gateId, new GateModel(_gateService, gateId));
-                }
-                return _gates[gateId];
-            }
+            return _gates[gateId].Value;
         }
 
         private void OnArmletListUpdated()
