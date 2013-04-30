@@ -17,6 +17,7 @@
 #include "pill.h"
 #include "infrared.h"
 #include "power.h"
+#include "tiny_sprintf.h"
 
 #include "lvl1_assym.h"
 #include "evt_mask.h"
@@ -203,11 +204,27 @@ unsigned char ArmletApi::GetLustraId() {
     return b;
 }
 
+int snprintf(char* buf, int bufSz, char* fmt,...) {
+    va_list args;
+    va_start(args, fmt);
+    uint32_t Cnt = tiny_vsprintf(buf, bufSz, fmt, args);
+    va_end(args);
+    return Cnt;
+}
+
 unsigned char ArmletApi::GetBatteryLevel() { return Power.RemainingPercent; }
 
+// Display
 void ArmletApi::DrawPixel(int x, int y, unsigned short c) {
-
+    Lcd.PutBitmap(x, y, 1, 1, &c);
 }
+void ArmletApi::DrawArea(int x, int y, unsigned short *const pc, int len, int sx, int sy) {
+    Lcd.PutBitmap(x, y, sx, sy, pc);
+}
+void ArmletApi::SetScreenBrightness(uint8_t Percent) {
+    Lcd.Brightness(Percent);
+}
+
 
 void ArmletApi::DoVibroAndBeep(int msecs) {
     Vibro.Vibrate(msecs);

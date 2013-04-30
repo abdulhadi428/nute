@@ -19,6 +19,7 @@ namespace ArmletApi {
 
 	//ARMLET
 	unsigned char __SYSCALL GetBatteryLevel();							//__SYSCALL returns 0-100%
+	void __SYSCALL SetScreenBrightness(uint8_t Percent);
 	void __SYSCALL DrawPixel(int x, int y, unsigned short c);			//syscal draws a pixel
 	void __SYSCALL DrawArea(int x, int y, unsigned short *const pc, int len,
 					int sx, int sy);									//__SYSCALL draws an area of pixels

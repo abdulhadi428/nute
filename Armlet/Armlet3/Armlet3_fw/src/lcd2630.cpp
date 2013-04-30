@@ -60,8 +60,8 @@ void Lcd_t::Init() {
     WriteCmd(0x13);         // Normal Display Mode ON
 
     //WriteCmd(0x3A, 0x06);    // Pixel format: VIPF=0(undef), IFPF=18 bit per pixel
-    //WriteCmd(0x3A, 0x05);    // Pixel format: VIPF=0(undef), IFPF=16 bit per pixel
-    WriteCmd(0x3A, 0x03);   // Pixel format: VIPF=0(undef), IFPF=12 bit per pixel
+    WriteCmd(0x3A, 0x05);    // Pixel format: VIPF=0(undef), IFPF=16 bit per pixel
+    //WriteCmd(0x3A, 0x03);   // Pixel format: VIPF=0(undef), IFPF=12 bit per pixel
 
     WriteCmd(0x29);         // Display on
     WriteCmd(0x20);         // Inv off
@@ -228,9 +228,29 @@ void Lcd_t::GetBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uin
     DC_Lo();
 }
 
+
+#define LCD_16BIT
 void Lcd_t::PutBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uint16_t *PBuf) {
     SetBounds(x0, x0+Width, y0, y0+Height);
     // Prepare variables
+#ifdef LCD_16BIT
+    uint16_t Clr;
+    uint32_t Cnt = (uint32_t)Width * Height;    // One pixel at one time
+    // Write RAM
+    WriteByte(0x2C);    // Memory write
+    DC_Hi();
+    for(uint32_t i=0; i<Cnt; i++) {
+        Clr = *PBuf++;
+        uint16_t R = (Clr >> 8) & 0x000F;
+        uint16_t G = (Clr >> 4) & 0x000F;
+        uint16_t B = (Clr     ) & 0x000F;
+        R = (R << 4) | (G >> 1);
+        G = (G << 7) | (B << 1);
+        WriteByte(R & 0x0F);   // RRRR0-GGG
+        WriteByte(G & 0x0F);   // G00-BBBB0
+    }
+    DC_Lo();
+#else
     uint16_t Clr1, Clr2;
     uint32_t Cnt = (uint32_t)Width * Height / 2;      // Two pixels at one time
     // Write RAM
@@ -244,4 +264,5 @@ void Lcd_t::PutBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uin
         WriteByte(Clr2 & 0x0FF); // GGGG-BBBB
     }
     DC_Lo();
+#endif
 }
