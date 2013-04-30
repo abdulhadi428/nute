@@ -9,7 +9,7 @@
 //CURE ids:
 typedef enum _CURE_ID {
 	UnknownCure = -1,
-	Anesthetics = 0,		//"Общее обезболивающее"
+	Analgetic = 0,			//"Общее обезболивающее - Анальгетик" 
 	Antispasmodic,			//"Спазмолитик"
 	Pyretic,				//"Жаропонижающее"
 	Aspirator,				//"Аспиратор"
@@ -17,8 +17,15 @@ typedef enum _CURE_ID {
 	SyntheticBlood,			//"Искусственная кровь"
 	Leatherette,			//"Искусственная кожа"
 	Myorelaxant,			//"Миорелаксант"
-	VisceraNanoPack,		//"Пак нанохирургов для внутренних органов"
+	VisceraNanoPack,		//"Пак нанохирургов для внутренних органов" => "Нанопак стволовых клеток"
 	RespiratoryNanoPack,	//"Пак дыхательных нанохирургов"
+//more
+	Anesthetics,			//"Местный наркоз"		?
+	Antibiotic,				//"Антибиотик"			мед. отсек
+	Absorber,				//"Абсорбент"			мед. отсек
+	PlasterNanoPack,		//"Наногипс"			мед. отсек
+	NanoExoFrame,			//"Наноэкзоскелет"		1-2 эксперимент. образца
+	MagicCure				//"Волшебная таблетка"	мастерский
 	MaxCureId
 } CURE_ID;
 
