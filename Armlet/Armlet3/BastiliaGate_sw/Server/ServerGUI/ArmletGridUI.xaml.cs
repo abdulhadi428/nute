@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,16 +42,32 @@ namespace ServerGUI
 
         private void SendMessage_Click(object sender, RoutedEventArgs e)
         {
+        if (CurrentArmlet == null) //FIXME Disable button when nothing selected
+              {
+                MessageBox.Show("Выберите браслет!");
+                return;
+              }
             CurrentArmlet.SendMessage(MessageTextBox.Text);
         }
 
         private void UpdateRegeneration_Click(object sender, RoutedEventArgs e)
         {
+                if (CurrentArmlet == null) //FIXME Disable button when nothing selected
+              {
+                MessageBox.Show("Выберите браслет!");
+                return;
+              }
             CurrentArmlet.SetRegeneration((byte)RegenLevelComboBox.SelectedValue);
         }
 
         private void UpdateLockList_OnClick(object sender, RoutedEventArgs e)
         {
+                if (CurrentArmlet == null) //FIXME Disable button when nothing selected
+              {
+                MessageBox.Show("Выберите браслет!");
+                return;
+              }
+              
             var list = (from object child in LockGrid.Children
                         select child as CheckBox
                         into checkBox 
