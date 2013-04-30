@@ -19,15 +19,16 @@
 Beeper_t Beeper;
 // Timer callback
 void BeeperTmrCallback(void *p) {
-    Beeper.Beep((const BeepChunk_t*)p);
+    Beeper.BeepI((const BeepChunk_t*)p);
 }
 
 void Beeper_t::Init() {
     IPin.Init(GPIOD, 12, 4, 1, BEEP_TOP_VALUE);
 }
 
-void Beeper_t::Beep(const BeepChunk_t *PSequence) {
-    chVTReset(&ITmr);
+void Beeper_t::BeepI(const BeepChunk_t *PSequence) {
+    // Reset timer
+    if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);
     // Process chunk
     int8_t Volume = PSequence->VolumePercent;
     if((Volume < 0) or (PSequence->Time_ms == 0)) {    // Nothing to play
@@ -38,7 +39,7 @@ void Beeper_t::Beep(const BeepChunk_t *PSequence) {
     IPin.SetFreqHz(PSequence->Freq_Hz);
     IPin.On(Volume);
     // Start timer
-    chVTSet(&ITmr, MS2ST(PSequence->Time_ms), BeeperTmrCallback, (void*)(PSequence+1));
+    chVTSetI(&ITmr, MS2ST(PSequence->Time_ms), BeeperTmrCallback, (void*)(PSequence+1));
 }
 
 void Beeper_t::Shutdown() {

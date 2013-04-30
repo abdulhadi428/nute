@@ -40,7 +40,13 @@ private:
     PwmPin_t IPin;
     VirtualTimer ITmr;
 public:
-    void Beep(const BeepChunk_t *PSequence); // Beep with this function
+    void BeepI(const BeepChunk_t *PSequence);
+    void Beep(const BeepChunk_t *PSequence) {   // Beep with this function
+        chSysLock();
+        BeepI(PSequence);
+        chSysUnlock();
+    }
+    //void Beep(
     void Init();
     void Shutdown();
 };

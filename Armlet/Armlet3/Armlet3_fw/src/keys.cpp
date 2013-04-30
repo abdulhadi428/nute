@@ -9,7 +9,7 @@
 #include "ch.h"
 
 EventSource EvtSrcKey;
-uint8_t KeyStatus[KEYS_CNT];
+KeyStatus_t KeyStatus[KEYS_CNT];
 
 // ==== Keys Thread ====
 static WORKING_AREA(waKeysThread, 128);
@@ -17,22 +17,24 @@ static msg_t KeysThread(void *arg) {
     (void)arg;
     chRegSetThreadName("Keys");
 
-    uint8_t i, CurrentStatus;
-    bool HasChanged;
+    uint8_t i;
+    KeyState_t Now;
+    bool FHasChanged;
     while(1) {
         chThdSleepMilliseconds(KEYS_POLL_PERIOD_MS);
         // Check keys
-        HasChanged = false;
+        FHasChanged = false;
         for(i=0; i<KEYS_CNT; i++) {
-            CurrentStatus = PinIsSet(KEY_GPIO, KeyPin[i])? KEY_RELEASED : KEY_PRESSED;
-            if(KeyStatus[i] != CurrentStatus) {
-                KeyStatus[i] = CurrentStatus;
+            Now = PinIsSet(KEY_GPIO, KeyPin[i])? ksReleased : ksPressed;
+            if(KeyStatus[i].State != Now) {
+                KeyStatus[i].State = Now;
+                KeyStatus[i].HasChanged = true;
 //                Uart.Printf("Key %u\r", i);
-                HasChanged = true;
+                FHasChanged = true;
             }
         } // for
 
-        if(HasChanged) chEvtBroadcast(&EvtSrcKey);
+        if(FHasChanged) chEvtBroadcast(&EvtSrcKey);
     }
     return 0;
 }

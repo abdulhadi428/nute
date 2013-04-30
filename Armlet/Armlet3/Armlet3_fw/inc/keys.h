@@ -40,11 +40,16 @@ const uint16_t KeyPin[] = {
 
 #define KEYS_CNT    9
 #define KEYS_POLL_PERIOD_MS     72
-// Key status
-#define KEY_PRESSED     1
-#define KEY_RELEASED    0
 
-extern uint8_t KeyStatus[KEYS_CNT];
+// Key status
+enum KeyState_t {ksReleased, ksPressed};
+
+struct KeyStatus_t {
+    KeyState_t State;
+    bool HasChanged;
+};
+
+extern KeyStatus_t KeyStatus[KEYS_CNT];
 
 void KeysInit();
 void KeysRegisterEvt(EventListener *PEvtLstnr, uint8_t EvtMask);
