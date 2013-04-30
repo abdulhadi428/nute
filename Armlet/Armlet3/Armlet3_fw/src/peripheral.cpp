@@ -42,6 +42,17 @@ void Beeper_t::BeepI(const BeepChunk_t *PSequence) {
     chVTSetI(&ITmr, MS2ST(PSequence->Time_ms), BeeperTmrCallback, (void*)(PSequence+1));
 }
 
+void BeeperTmrCallbackStop(void *p) {
+    Beeper.IPin.Off();
+}
+
+void Beeper_t::Beep(uint32_t ms) {
+    chVTReset(&ITmr);
+    IPin.SetFreqHz(2000);
+    IPin.On(100);
+    chVTSet(&ITmr, MS2ST(ms), BeeperTmrCallbackStop, NULL);
+}
+
 void Beeper_t::Shutdown() {
     PinSetupAnalog(GPIOD, 12);
 }
@@ -71,6 +82,15 @@ void Vibrator_t::Vibrate(const VibroChunk_t *PSequence) {
     IPin.On(Intencity);
     // Start timer
     chVTSet(&ITmr, MS2ST(PSequence->Time_ms), VibroTmrCallback, (void*)(PSequence+1));
+}
+
+void VibroTmrCallbackStop(void *p) {
+    Vibro.IPin.Off();
+}
+void Vibrator_t::Vibrate(uint32_t ms) {
+    chVTReset(&ITmr);
+    IPin.On(100);
+    chVTSet(&ITmr, MS2ST(ms), VibroTmrCallbackStop, NULL);
 }
 
 void Vibrator_t::Shutdown() {

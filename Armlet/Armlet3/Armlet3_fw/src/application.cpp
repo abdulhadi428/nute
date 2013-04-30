@@ -16,6 +16,7 @@
 #include "keys.h"
 #include "pill.h"
 #include "infrared.h"
+#include "power.h"
 
 #include "lvl1_assym.h"
 #include "evt_mask.h"
@@ -196,34 +197,43 @@ void ArmletApi::OnPillConnect(int cure_id, int charges) {
 }
 
 // ================================== API ======================================
-unsigned char GetLustraId() {
+unsigned char ArmletApi::GetLustraId() {
     uint8_t b = LustraID;
     LustraID = UNKNOWN_ID;  // Reset ID
     return b;
 }
 
+unsigned char ArmletApi::GetBatteryLevel() { return Power.RemainingPercent; }
+
+void ArmletApi::DrawPixel(int x, int y, unsigned short c) {
+
+}
+
+void ArmletApi::DoVibroAndBeep(int msecs) {
+    Vibro.Vibrate(msecs);
+    Beeper.Beep(msecs);
+}
+
 // Pill
-bool WritePill(int cure_id, int charges) {
+bool ArmletApi::WritePill(int cure_id, int charges) {
     if(!Pill[0].Connected) return false;
     Med.CureID = cure_id;
     Med.Charges = charges;
     return (Pill[0].Write((uint8_t*)&Med, sizeof(Med_t)) == OK);
 }
 
-
-
 // Radio
-void SendRadioPacket(unsigned char* packet, int len) {
+void ArmletApi::SendRadioPacket(unsigned char* packet, int len) {
     rLevel1.AddPktToTx(0, packet, len);
 }
-unsigned short GetArmletId() { return rLevel1.GetID(); }
+unsigned short ArmletApi::GetArmletId() { return rLevel1.GetID(); }
 
 // Timer
 static void AppTmrCallback(void *p) {
     chEvtBroadcast(&IEvtSrcTmr);
     chVTSetI(&STmr, MS2ST(STmrData.Period), AppTmrCallback, NULL);
 }
-bool RequestTimer(TIMER_PROC* timerProc, int period) {
+bool ArmletApi::RequestTimer(TIMER_PROC* timerProc, int period) {
     if(STmrData.Busy) return false;
     STmrData.Busy = true;
     STmrData.Proc = timerProc; // Save Callback
@@ -234,15 +244,15 @@ bool RequestTimer(TIMER_PROC* timerProc, int period) {
     return true;
 }
 
-int GetUpTime() { return chTimeNow(); }
-void Sleep(int msces) { chThdSleepMilliseconds(msces); }
+int ArmletApi::GetUpTime() { return chTimeNow(); }
+void ArmletApi::Sleep(int msces) { chThdSleepMilliseconds(msces); }
 
-unsigned int GetRandom(unsigned int max) { return Random(max); }
+unsigned int ArmletApi::GetRandom(unsigned int max) { return Random(max); }
 
 // ============================= File operations ===============================
 // return false in case of failure, true in case of success
 // Try to open. In case of failure, create new file if bCreate is true, otherwise return error.
-bool OpenFile(FILE* file, const char* filename, bool bCreate) {
+bool ArmletApi::OpenFile(FILE* file, const char* filename, bool bCreate) {
     FRESULT Rslt;
     Rslt = f_open((FIL*)file, filename, FA_OPEN_EXISTING | FA_READ | FA_WRITE);
     if(Rslt == FR_OK) return true;
@@ -256,7 +266,7 @@ bool OpenFile(FILE* file, const char* filename, bool bCreate) {
 }
 
 // returns length read
-int ReadFile(FILE* file, char* buf, int len) {
+int ArmletApi::ReadFile(FILE* file, char* buf, int len) {
     f_lseek((FIL*)file, 0);   // move to beginning
     UINT FLen=0;
     f_read((FIL*)file, buf, len, &FLen);
@@ -264,7 +274,7 @@ int ReadFile(FILE* file, char* buf, int len) {
 }
 
 // returns length written, rewrites file from beginning
-int WriteFile (FILE* file, char* buf, int len) {
+int ArmletApi::WriteFile (FILE* file, char* buf, int len) {
     f_lseek((FIL*)file, 0);   // move to beginning
     UINT FLen=0;
     f_write((FIL*)file, buf, len, &FLen);
@@ -272,7 +282,7 @@ int WriteFile (FILE* file, char* buf, int len) {
 }
 
 // return length written, appends to end of file
-int AppendFile(FILE* file, char* buf, int len) {
+int ArmletApi::AppendFile(FILE* file, char* buf, int len) {
     if(file == NULL) return 0;
     f_lseek((FIL*)file, f_size((FIL*)file));
     UINT FLen=0;

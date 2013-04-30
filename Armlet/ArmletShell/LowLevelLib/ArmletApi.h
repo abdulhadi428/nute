@@ -22,7 +22,7 @@ namespace ArmletApi {
 	void __SYSCALL DrawPixel(int x, int y, unsigned short c);			//syscal draws a pixel
 	void __SYSCALL DrawArea(int x, int y, unsigned short *const pc, int len,
 					int sx, int sy);									//__SYSCALL draws an area of pixels
-	void __SYSCALL DoVibro(int msecs);									//__SYSCALL performs vibration for duration
+	void __SYSCALL DoVibroAndBeep(int msecs);									//__SYSCALL performs vibration for duration
 
 	void __CALLOUT OnButtonPress(int button_id);						//__CALLOUT for  button
 	void __CALLOUT OnButtonRelease(int button_id);						//__CALLOUT for button

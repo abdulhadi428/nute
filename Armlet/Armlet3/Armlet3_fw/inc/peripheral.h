@@ -19,12 +19,14 @@ struct VibroChunk_t {
 #define VIBRO_CHUNK_SZ   sizeof(VibroChunk_t)
 class Vibrator_t {
 private:
-    PwmPin_t IPin;
     VirtualTimer ITmr;
 public:
     void Vibrate(const VibroChunk_t *PSequence); // Vibrate with this function
+    void Vibrate(uint32_t ms);
     void Init();
     void Shutdown();
+    // Inner use
+    PwmPin_t IPin;
 };
 extern Vibrator_t Vibro;
 
@@ -37,7 +39,6 @@ struct BeepChunk_t {
 #define BEEP_CHUNK_SZ   sizeof(BeepChunk_t)
 class Beeper_t {
 private:
-    PwmPin_t IPin;
     VirtualTimer ITmr;
 public:
     void BeepI(const BeepChunk_t *PSequence);
@@ -46,9 +47,11 @@ public:
         BeepI(PSequence);
         chSysUnlock();
     }
-    //void Beep(
+    void Beep(uint32_t ms);
     void Init();
     void Shutdown();
+    // Inner use
+    PwmPin_t IPin;
 };
 extern Beeper_t Beeper;
 
