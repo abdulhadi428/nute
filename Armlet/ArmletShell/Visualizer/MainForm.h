@@ -337,7 +337,7 @@ namespace Visualizer {
 			this->buttonA->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
 			this->buttonA->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9));
 			this->buttonA->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->buttonA->Location = System::Drawing::Point(19, 51);
+			this->buttonA->Location = System::Drawing::Point(41, 37);
 			this->buttonA->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->buttonA->Name = L"buttonA";
 			this->buttonA->Size = System::Drawing::Size(60, 26);
@@ -356,7 +356,7 @@ namespace Visualizer {
 			this->buttonB->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
 			this->buttonB->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9));
 			this->buttonB->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->buttonB->Location = System::Drawing::Point(19, 86);
+			this->buttonB->Location = System::Drawing::Point(41, 72);
 			this->buttonB->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->buttonB->Name = L"buttonB";
 			this->buttonB->Size = System::Drawing::Size(60, 26);
@@ -375,7 +375,7 @@ namespace Visualizer {
 			this->buttonC->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
 			this->buttonC->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9));
 			this->buttonC->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->buttonC->Location = System::Drawing::Point(19, 118);
+			this->buttonC->Location = System::Drawing::Point(41, 104);
 			this->buttonC->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->buttonC->Name = L"buttonC";
 			this->buttonC->Size = System::Drawing::Size(60, 26);
@@ -394,7 +394,7 @@ namespace Visualizer {
 			this->buttonX->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
 			this->buttonX->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9));
 			this->buttonX->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->buttonX->Location = System::Drawing::Point(308, 64);
+			this->buttonX->Location = System::Drawing::Point(291, 64);
 			this->buttonX->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->buttonX->Name = L"buttonX";
 			this->buttonX->Size = System::Drawing::Size(70, 26);
@@ -413,7 +413,7 @@ namespace Visualizer {
 			this->buttonY->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
 			this->buttonY->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9));
 			this->buttonY->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->buttonY->Location = System::Drawing::Point(308, 101);
+			this->buttonY->Location = System::Drawing::Point(291, 101);
 			this->buttonY->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->buttonY->Name = L"buttonY";
 			this->buttonY->Size = System::Drawing::Size(70, 26);
@@ -432,7 +432,7 @@ namespace Visualizer {
 			this->buttonZ->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
 			this->buttonZ->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9));
 			this->buttonZ->ForeColor = System::Drawing::SystemColors::WindowText;
-			this->buttonZ->Location = System::Drawing::Point(308, 135);
+			this->buttonZ->Location = System::Drawing::Point(291, 135);
 			this->buttonZ->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->buttonZ->Name = L"buttonZ";
 			this->buttonZ->Size = System::Drawing::Size(70, 26);
