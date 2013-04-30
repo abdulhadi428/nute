@@ -36,13 +36,13 @@ void AppOnButtonClick(ubyte_t button)
 		tf.Draw();
 	}
 */
-	UI._SystemOnButtonClick(button);
+	//UI._SystemOnButtonClick(button);
 	return;
 }
 
 void AppOnButtonHold(ubyte_t button)
 {
-	UI._SystemOnButtonClick(BUTTON_HOLD_OFFSET+button);
+	//UI._SystemOnButtonClick(BUTTON_HOLD_OFFSET+button);
 	return;
 }
 
@@ -67,14 +67,14 @@ void AppMainThread(void* param)
 	DrawTextString(10,10,str,strlen(str),0,0);
 
 	Position pos;
-	Size size,size2;	
+	Size size,size2;
 
 	Clear(0);
 	char buff[56];
 	size2.Height = 7; size2.Width = 8;
 	InitPositionAndSize(10,10,80,80, &pos, &size);
 	tf.Init(size, pos, buff, size2, &rend);
-	str = 
+	str =
 		"Статус: "
 		"Хиты: 12"
 		"Отсек №4"
@@ -85,7 +85,7 @@ void AppMainThread(void* param)
 
 	tf.SetText(str);
 	tf.Draw();
-	
+
 	RequestTimer(300, MoveBoxByTimer);
 
 	if (
@@ -120,5 +120,5 @@ void AppMainThread(void* param)
 			DrawTextString(10,10,err,Length(err),0,0);
 		}
 	}
-	
+
 }

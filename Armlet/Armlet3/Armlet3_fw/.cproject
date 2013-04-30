@@ -78,9 +78,10 @@
 									<listOptionValue builtIn="false" value="../os/hal/include"/>
 									<listOptionValue builtIn="false" value="../os/hal/platforms"/>
 									<listOptionValue builtIn="false" value="../../Common_fw"/>
-									<listOptionValue builtIn="false" value="../Honor"/>
-									<listOptionValue builtIn="false" value="../Honor/LowLevelLib"/>
-									<listOptionValue builtIn="false" value="../../../ArmletShell/LowLevelLib"/>
+									<listOptionValue builtIn="false" value="../../../ArmletShell/ShellApi"/>
+									<listOptionValue builtIn="false" value="../../../ArmletShell/3KShellLib"/>
+									<listOptionValue builtIn="false" value="../../../ArmletShell/MiddleWareLib"/>
+									<listOptionValue builtIn="false" value="../../../ArmletShell/PriceOfHonor"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.packstruct.656188834" name="Pack structures (-fpack-struct)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.packstruct" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.shortenums.1113447329" name="Short enumerations (-fshort-enums)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.shortenums" value="false" valueType="boolean"/>
@@ -95,7 +96,7 @@
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.c.linker.debug.239810353" name="ARM Yagarto Windows GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.c.linker.debug"/>
 							<tool command="arm-none-eabi-g++" id="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.linker.debug.1285891753" name="ARM Yagarto Windows GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.windows.elf.cpp.linker.debug">
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.scriptfile.1214536228" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.scriptfile" value="..\os\hal\STM32F205xE.ld" valueType="string"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostart.726486028" name="Do not use standard start files (-nostartfiles)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostart" value="true" valueType="boolean"/>
+								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostart.726486028" name="Do not use standard start files (-nostartfiles)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostart" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nodeflibs.145078896" name="Do not use default libraries (-nodefaultlibs)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nodeflibs" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.strip.876540653" name="Omit all symbol information (-s)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.strip" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostdlibs.342109716" name="No startup or default libs (-nostdlib)" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.link.option.nostdlibs" value="false" valueType="boolean"/>

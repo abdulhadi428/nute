@@ -181,6 +181,7 @@ void App_t::Init() {
 }
 
 // Dummy
+#if 0
 bool ArmletApi::InitializeShell() { return false; }
 
 void ArmletApi::OnButtonPress(int button_id) {
@@ -197,7 +198,7 @@ void ArmletApi::OnRadioPacket(unsigned char* packet, int len) {
 void ArmletApi::OnPillConnect(int cure_id, int charges) {
     Uart.Printf("Pill %d, %d\r", Med.CureID, Med.Charges);
 }
-
+#endif
 // ================================== API ======================================
 unsigned char ArmletApi::GetLustraId() {
     uint8_t b = LustraID;

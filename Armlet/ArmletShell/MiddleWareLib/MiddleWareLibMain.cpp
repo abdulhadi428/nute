@@ -13,7 +13,7 @@ void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER Hol
 }
 
 namespace ArmletApi {
-	
+
 	bool __CALLOUT InitializeShell() {
 		Clear(RED);
 		GetBatteryLevel();
@@ -54,9 +54,9 @@ namespace ArmletApi {
 		Log("Cure was connected, with charges");
 		WritePill(cure_id, charges-1);
 		DoVibroAndBeep(500);
-		ArmletApi::SetCureName(1,"Спазмолитик");
-		ArmletApi::SetCureName(9,"Абсорбент");
-		ArmletApi::SetCureName(12,"Нанохирург");
+//		ArmletApi::SetCureName(1,"Спазмолитик");
+//		ArmletApi::SetCureName(9,"Абсорбент");
+//		ArmletApi::SetCureName(12,"Нанохирург");
 		if (charges == 0) {
 			; //TODO
 		} else {
