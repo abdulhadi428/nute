@@ -188,10 +188,28 @@ __attribute__ ((always_inline)) static inline void SetBounds(uint8_t xStart, uin
     DC_Lo();
 }
 
+#define LCD_16BIT
+
 void Lcd_t::Cls(Color_t Color) {
     SetBounds(0, LCD_W, 0, LCD_H);
     // Prepare variables
     uint16_t Clr = (uint16_t)Color;
+#ifdef LCD_16BIT
+    uint32_t Cnt = LCD_W * LCD_H;
+    uint16_t R = (Clr >> 8) & 0x000F;
+    uint16_t G = (Clr >> 4) & 0x000F;
+    uint16_t B = (Clr     ) & 0x000F;
+    R = (R << 4) | (G >> 1);
+    G = (G << 7) | (B << 1);
+    // Write RAM
+    WriteByte(0x2C);    // Memory write
+    DC_Hi();
+    for(uint32_t i=0; i<Cnt; i++) {
+        WriteByte(R);
+        WriteByte(G);
+    }
+    DC_Lo();
+#else
     uint32_t Cnt = LCD_W * LCD_H / 2;       // Two pixels at one time
     uint8_t b1 = (uint8_t)(Clr >> 4);       // RRRR-GGGG
     uint8_t b2 = (uint8_t)(((Clr & 0x00F) << 4) | (Clr >> 8));  // BBBB-RRRR
@@ -205,6 +223,7 @@ void Lcd_t::Cls(Color_t Color) {
         WriteByte(b3);
     }
     DC_Lo();
+#endif
 }
 
 void Lcd_t::GetBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uint16_t *PBuf) {
@@ -228,8 +247,6 @@ void Lcd_t::GetBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uin
     DC_Lo();
 }
 
-
-#define LCD_16BIT
 void Lcd_t::PutBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uint16_t *PBuf) {
     SetBounds(x0, x0+Width, y0, y0+Height);
     // Prepare variables

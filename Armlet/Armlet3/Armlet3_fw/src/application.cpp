@@ -185,6 +185,7 @@ bool ArmletApi::InitializeShell() { return false; }
 
 void ArmletApi::OnButtonPress(int button_id) {
     Uart.Printf("Btn Press %u\r", button_id);
+    DoVibroAndBeep(54);
 }
 void ArmletApi::OnButtonRelease(int button_id) {
     Uart.Printf("Btn Rlz %u\r", button_id);
