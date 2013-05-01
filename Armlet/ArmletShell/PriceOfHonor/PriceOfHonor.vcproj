@@ -228,6 +228,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MedTypes.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MedWounds.h"
 				>
 			</File>
