@@ -37,13 +37,13 @@ void AppOnButtonClick(ubyte_t button)
 		tf.Draw();
 	}
 */
-	//UI._SystemOnButtonClick(button);
+	UI._SystemOnButtonClick(button);
 	return;
 }
 
 void AppOnButtonHold(ubyte_t button)
 {
-	//UI._SystemOnButtonClick(BUTTON_HOLD_OFFSET+button);
+	UI._SystemOnButtonClick(BUTTON_HOLD_OFFSET+button);
 	return;
 }
 

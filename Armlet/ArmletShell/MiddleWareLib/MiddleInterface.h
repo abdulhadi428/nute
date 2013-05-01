@@ -6,47 +6,9 @@ void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER Hol
 extern BUTTON_HANDLER* gClickButtonHandler;
 extern BUTTON_HANDLER* gHoldButtonHandler;
 
-//TODO KQUEUE
-
 //draw pixel alpha channel support in MiddleWare
 
 /*
-
-bool RequestTimer(int period, TIMER_PROC routine)
-{
-	if (period < 100)
-		return false;
-	for (int i=0;i<MAX_TIMERS;i++) {
-		if (gTimers[i].bUsed) {
-			continue;
-		}
-		//todo interlocked
-		gTimers[i].bUsed = true;
-		gTimers[i].curr = period;
-		gTimers[i].period = period;
-		gTimers[i].routine = routine;
-		return true;
-	}
-	return false;
-}
-
-void OnElapsed50msec()
-{
-	for (int i=0;i<MAX_TIMERS;i++) {
-		if (!gTimers[i].bUsed) {
-			continue;
-		}
-		gTimers[i].curr -= 50;
-		if (gTimers[i].curr <= 20) {
-			if (gTimers[i].routine()) {
-				gTimers[i].curr += gTimers[i].period;
-			} else {
-				gTimers[i].bUsed = false;
-			}
-		}
-	}
-}
-
 void OnButtonClick(int button)
 {
 	if (button == BUTTON_R) {
@@ -90,15 +52,6 @@ void __CALLBACK my_thread(void* param)
 	DrawTextString(60,15,str,strlen(str),0,0);
 	DrawTextString(15,75,str,strlen(str),0,0);
 }
-
-#define MAX_TIMERS 30
-typedef struct _TIMER {
-	bool bUsed;
-	int curr;
-	int period;
-	TIMER_PROC* routine;
-} TIMER;
-TIMER gTimers[MAX_TIMERS];
 
 void Show_Glyphs(int dx, int dy, int cx,int cy, 
 	int scaleFactor, int fillFactor);

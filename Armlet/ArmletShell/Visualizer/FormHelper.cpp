@@ -31,6 +31,7 @@ namespace Visualizer {
 				y,
 				Color::FromArgb(0, r*16, g*16, b*16));
 		}
+		LowLevel::CheckTimers();
 	}
 
 	void FormHelper::SetPlayerName(String^ name)

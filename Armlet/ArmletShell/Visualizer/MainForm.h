@@ -1,5 +1,9 @@
 #pragma once
 #include "stdafx.h"
+#pragma unmanaged
+#include "DownInterface.h"
+#pragma managed
+#include "FormHelper.h"
 #pragma warning(disable:4100)
 
 namespace Visualizer {

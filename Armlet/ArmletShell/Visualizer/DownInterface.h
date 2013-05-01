@@ -27,10 +27,6 @@ namespace LowLevel {
 	extern VOID_ROUTINE* DecreasePillCharges;						//ARMLET emulation	WritePill
 	extern VOID_ROUTINE* Vibro;										//ARMLET emulation	DoVibro
 
-	//LOG EMULATION
-	extern INT_STR_ROUTINE* InvokeLog;								//LOG emulation special processing
-																	//	of "log.txt"											
-
 	//SERVER EMULATION
 	// OnRadioPacket / SendRadioPacket
 	void SetPlayerName(char const*const name);						//SERVER emulation
@@ -39,10 +35,14 @@ namespace LowLevel {
 	void SendMessage(char const*const msg);							//SERVER emulation
 	void Explosion(int room_id);									//SERVER emulation
 
+	//LOG EMULATION
+	extern INT_STR_ROUTINE* InvokeLog;								//LOG emulation special processing
+																	//	of "log.txt"											
 	//SPECIAL
 	//input
-	void NextMedTick();												//internal emulation
+	void NextMedTick();												//for medicine emulation
+	void CheckTimers();												//for timers emulation
 	//output
-	extern INT_STR_ROUTINE* SetCureName;							//internal emulation
+	extern INT_STR_ROUTINE* SetCureName;							//for medicine emulation
 
 } //namespace

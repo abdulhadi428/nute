@@ -2,6 +2,8 @@
 #include "UserInterface.h"
 #include "Images.h"
 
+#pragma warning(disable:4100)
+
 fresult UserInterface::Init()
 {
 	fresult fres;

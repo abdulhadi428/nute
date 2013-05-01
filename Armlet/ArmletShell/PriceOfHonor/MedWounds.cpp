@@ -1,6 +1,6 @@
 #include "ArmletShell.h"
 #include "Med.h"
-#if 0
+
 namespace price_of_honor {
 void OnStartLeftArmShotNoWound() {}
 void OnTickLeftArmShotNoWound() {}
@@ -145,7 +145,7 @@ void OnTickExplosionRadiationInsidious() {}
 void OnStartExplosionRadiationCritical() {}
 void OnTickExplosionRadiationCritical() {}
 
-WOUND Wounds[MaxType][MaxSeverity] =
+const WOUND_DESC WoundsDescs[MaxType][MaxSeverity] = 
 {
 	{//LeftArmShot
 		{
@@ -445,8 +445,7 @@ WOUND Wounds[MaxType][MaxSeverity] =
 		},
 	}
 };
-
-COMPILE_TIME_CHECK(sizeof(Wounds)/sizeof(WOUND)==MaxType*MaxSeverity);
+COMPILE_TIME_CHECK(sizeof(WoundDescs)/sizeof(WOUND_DESC)==MaxType*MaxSeverity);
 
 //TODO DBG
 bool CheckWounds()
@@ -454,8 +453,8 @@ bool CheckWounds()
 	for (int i=0; i<MaxType; i++)
 	for (int j=0; j<MaxSeverity; j++)
 	{
-			if (Wounds[i][j].type != i)	goto out;
-			if (Wounds[i][j].severity != j)	goto out;
+			if (WoundDescs[i][j].type != i)	goto out;
+			if (WoundDescs[i][j].severity != j)	goto out;
 	}
 	return true;
 out:
@@ -463,7 +462,7 @@ out:
 }
 
 }//namespace
-#endif
+
 #if 0
 void OnLimbMediumBeg(short limb_id)
 {

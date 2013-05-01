@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\LowLevelLib;..\ShellApi"
-				PreprocessorDefinitions="WIN32;_DEBUG"
+				PreprocessorDefinitions="WIN32;_DEBUG;_PC_VISUALIZER_"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
@@ -63,6 +63,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="$(NoInherit)"
 				LinkIncremental="2"
+				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
@@ -118,7 +119,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\LowLevelLib;..\ShellApi"
-				PreprocessorDefinitions="WIN32;NDEBUG"
+				PreprocessorDefinitions="WIN32;NDEBUG;_PC_VISUALIZER_"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
@@ -138,6 +139,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="$(NoInherit)"
 				LinkIncremental="1"
+				ModuleDefinitionFile=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				EntryPointSymbol="?mainCRTStartupStrArray@@$$FYMHP$01AP$AAVString@System@@@Z"
@@ -200,11 +202,27 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\ArmletApi.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\AssemblyInfo.cpp"
 				>
 			</File>
 			<File
+				RelativePath=".\DownInterface.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FormHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Helper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OsEmulation.cpp"
 				>
 			</File>
 			<File
@@ -238,7 +256,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\DownInterface.h"
+				>
+			</File>
+			<File
 				RelativePath=".\FormHelper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Helper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LowLevel.h"
 				>
 			</File>
 			<File

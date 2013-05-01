@@ -43,11 +43,11 @@ public:
 	static WOUND_TYPE const id = UnknownWound;
 	static WOUND_SEVERITY const type = NoWound;
 	//static members as inline getters
-	static inline char const*const CureName(void);					//cure name
-	static inline char const*const CurePurpose(void);				//cure purpose description
-	static inline char const*const CureEffect(void);				//cure healing effect description
-	static inline char const*const CureContraindications(void);		//cure contraindications description
-	static inline char const*const CureSideEffects(void);			//cure side effects description
+	static inline const char* CureName(void);					//cure name
+	static inline const char* CurePurpose(void);				//cure purpose description
+	static inline const char* CureEffect(void);				//cure healing effect description
+	static inline const char* CureContraindications(void);		//cure contraindications description
+	static inline const char* CureSideEffects(void);			//cure side effects description
 	//methods
 	virtual void OnUse(void) const {};								//cure effect on first use
 	virtual void OnTick(void) const {};								//cure effect on each tick
@@ -59,16 +59,16 @@ public:
 	virtual OnUse();
 }*/
 
-typedef struct _WOUND {
+typedef struct _WOUND_DESC {
 	unsigned short type;			//wound subtype
 	unsigned short severity;		//wound severity
-	char* message;
+	const char* message;
 	char intial_blood_loss;
 	char tick_blood_loss;
-} WOUND;
+} WOUND_DESC;
 
 #define DEF_WOUND(x,y)	x,y
 	//OnStart##x##y,OnTick##x##y		//helper
-extern WOUND Wounds[MaxType][MaxSeverity];
+extern const WOUND_DESC WoundDescs[MaxType][MaxSeverity];
 
 extern bool CheckWounds();

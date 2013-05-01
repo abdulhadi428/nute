@@ -1,8 +1,9 @@
 #include "ArmletShell.h"
 #include "Med.h"
-#if 0
+
 namespace price_of_honor {
 
+/*
 typedef struct _CureStrings_t {
 	CURE_ID const id;					//cure id
 	char const*const Name;				//cure name
@@ -13,6 +14,10 @@ typedef struct _CureStrings_t {
 } CureStrings_t;
 
 const CureStrings_t CureStrings[MaxCureId] =
+*/
+
+const CURE_DESC CureDescs[MaxCureId] = 
+
 {
 	{
 		Anesthetics,
@@ -146,7 +151,7 @@ const CureStrings_t CureStrings[MaxCureId] =
 		""
 	}
 };
-COMPILE_TIME_CHECK(sizeof(CureStrings)/sizeof(CureStrings_t)==MaxCureId);
+COMPILE_TIME_CHECK(sizeof(CureDescs)/sizeof(CURE_DESC)==MaxCureId);
 
 #define NEW_CURE(x)	\
 	class x##Cure_t : public Cure_t { \
@@ -169,7 +174,7 @@ NEW_CURE(Myorelaxant);
 NEW_CURE(VisceraNanoPack);
 NEW_CURE(RespiratoryNanoPack);
 
-Cure_t const*const Cures[MaxCureId] = {
+const Cure_t* Cures[MaxCureId] = {
 	CURE_PTR(Anesthetics),
 	CURE_PTR(Antispasmodic),
 	CURE_PTR(Pyretic),
@@ -184,9 +189,9 @@ Cure_t const*const Cures[MaxCureId] = {
 COMPILE_TIME_CHECK(sizeof(Cures)/sizeof(Cure_t)==MaxCureId);
 
 #define CURE_STATIC_MEMBER_AS_INLINE_GETTER(x) \
-	inline char const*const Cure_t::Cure##x(void) \
+	inline const char* Cure_t::Cure##x(void) \
 	{ \
-		return CureStrings[Cure_t::id].x; \
+		return CureDesc[Cure_t::id].x; \
 	}
 
 CURE_STATIC_MEMBER_AS_INLINE_GETTER(Name);
@@ -195,7 +200,7 @@ CURE_STATIC_MEMBER_AS_INLINE_GETTER(Effect);
 CURE_STATIC_MEMBER_AS_INLINE_GETTER(Contraindications);
 CURE_STATIC_MEMBER_AS_INLINE_GETTER(SideEffects);
 
-inline Cure_t const*const GetCureById(CURE_ID id)
+inline const Cure_t* GetCureById(CURE_ID id)
 {
 	return Cures[id];
 }
@@ -555,4 +560,3 @@ void OnTickRespiratoryNanoPack()
 {
 }
 
-#endif

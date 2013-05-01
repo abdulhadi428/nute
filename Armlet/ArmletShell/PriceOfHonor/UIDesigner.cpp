@@ -6,6 +6,8 @@
 //#include "Constants.h"
 //#include "Icons.h"
 
+#pragma warning(disable:4100)
+
 //W160H128
 
 fresult UIDesigner::InitStatusBar()
