@@ -95,7 +95,7 @@ const CURE_DESC CureDescs[MaxCureId] =
 		""
 	},
 	{
-		RespiratoryNanoPack,
+		Anesthetics,
 		"ѕак дыхательных нанохирургов",
 		"Ћечение ударных повреждений и огнестрельных ранений груди",
 		"",
@@ -103,7 +103,7 @@ const CURE_DESC CureDescs[MaxCureId] =
 		""
 	},
 	{
-		RespiratoryNanoPack,
+		Antibiotic,
 		"ѕак дыхательных нанохирургов",
 		"Ћечение ударных повреждений и огнестрельных ранений груди",
 		"",
@@ -111,7 +111,7 @@ const CURE_DESC CureDescs[MaxCureId] =
 		""
 	},
 	{
-		RespiratoryNanoPack,
+		Absorber,
 		"ѕак дыхательных нанохирургов",
 		"Ћечение ударных повреждений и огнестрельных ранений груди",
 		"",
@@ -119,7 +119,7 @@ const CURE_DESC CureDescs[MaxCureId] =
 		""
 	},
 	{
-		RespiratoryNanoPack,
+		PlasterNanoPack,
 		"ѕак дыхательных нанохирургов",
 		"Ћечение ударных повреждений и огнестрельных ранений груди",
 		"",
@@ -127,7 +127,7 @@ const CURE_DESC CureDescs[MaxCureId] =
 		""
 	},
 	{
-		RespiratoryNanoPack,
+		NanoExoFrame,
 		"ѕак дыхательных нанохирургов",
 		"Ћечение ударных повреждений и огнестрельных ранений груди",
 		"",
@@ -135,15 +135,7 @@ const CURE_DESC CureDescs[MaxCureId] =
 		""
 	},
 	{
-		RespiratoryNanoPack,
-		"ѕак дыхательных нанохирургов",
-		"Ћечение ударных повреждений и огнестрельных ранений груди",
-		"",
-		"",
-		""
-	},
-	{
-		RespiratoryNanoPack,
+		MagicCure,
 		"ѕак дыхательных нанохирургов",
 		"Ћечение ударных повреждений и огнестрельных ранений груди",
 		"",
@@ -163,7 +155,7 @@ COMPILE_TIME_CHECK(sizeof(CureDescs)/sizeof(CURE_DESC)==MaxCureId);
 	x##Cure_t const x##Cure
 #define CURE_PTR(x)	&x##Cure
 
-NEW_CURE(Anesthetics);
+NEW_CURE(Analgetic);
 NEW_CURE(Antispasmodic);
 NEW_CURE(Pyretic);
 NEW_CURE(Aspirator);
@@ -172,10 +164,10 @@ NEW_CURE(SyntheticBlood);
 NEW_CURE(Leatherette);
 NEW_CURE(Myorelaxant);
 NEW_CURE(VisceraNanoPack);
-NEW_CURE(RespiratoryNanoPack);
+NEW_CURE(Anesthetics);
 
 const Cure_t* Cures[MaxCureId] = {
-	CURE_PTR(Anesthetics),
+	CURE_PTR(Analgetic),
 	CURE_PTR(Antispasmodic),
 	CURE_PTR(Pyretic),
 	CURE_PTR(Aspirator),
@@ -184,7 +176,7 @@ const Cure_t* Cures[MaxCureId] = {
 	CURE_PTR(Leatherette),
 	CURE_PTR(Myorelaxant),
 	CURE_PTR(VisceraNanoPack),
-	CURE_PTR(RespiratoryNanoPack)
+	CURE_PTR(Anesthetics)
 };
 COMPILE_TIME_CHECK(sizeof(Cures)/sizeof(Cure_t)==MaxCureId);
 
@@ -384,9 +376,9 @@ void VisceraNanoPackCure_t::OnTick(void) const
 {
 }
 
-void RespiratoryNanoPackCure_t::OnUse(void) const
+/*void RespiratoryNanoPackCure_t::OnUse(void) const
 {
-	/*
+
 	Ќеобходим дл€ лечени€ ударных повреждений и огнестрела груди высоких категорий.
 
 	"ѕоднимает ударное повреждение или огнестрел груди на 1 категорию за 20 минут до полного излечени€.
@@ -405,12 +397,12 @@ void RespiratoryNanoPackCure_t::OnUse(void) const
 Ќе применимо к раненным в позе боксера.
 ” всех пациентов с веро€тностью судорог, вызывает приступ немедленно и переводит ранение в следующую категорию.
 "
+}
 */
-}
 
-void RespiratoryNanoPackCure_t::OnTick(void) const
+/*void RespiratoryNanoPackCure_t::OnTick(void) const
 {
-}
+}*/
 
 }//namespace
 
