@@ -12,25 +12,25 @@ COMPILE_TIME_CHECK(sizeof(RandomSelect)/sizeof(DAMAGE_SEVERITY)==10);
 
 const char* ExplosionDesc[MaxExplosionEffect][MaxDamageSeverity] = {
 	{//BlastWave
-		"", //Graze
-		"", //Light
-		"", //Insidious
-		"",	//Serious
-		""	//Critical
+		"волна царапина", //Graze
+		"волна неопасная", //Light
+		"волна коварная", //Insidious
+		"волна опасная",	//Serious
+		"волна смерть"	//Critical
 	},
 	{//FireCloud
-		"", //Graze
-		"", //Light
-		"", //Insidious
-		"",	//Serious
-		""	//Critical
+		"ожог 1", //Graze
+		"ожог 2", //Light
+		"ожог коварный", //Insidious
+		"волдырь 1",	//Serious
+		"волдырь 2"	//Critical
 	},
 	{//Radiation
-		"", //Graze
-		"", //Light
-		"", //Insidious
-		"",	//Serious
-		""	//Critical
+		"Ты сшышишь сильный грохот. На твоей одежде появились светящиеся пятна, которые вкоре потухли.",		//Graze
+		"Ты сшышишь сильный грохот. На твоей одежде появились светящиеся пятна, которые вкоре потухли.",		//Light
+		"Ты сшышишь сильный грохот. На твоей одежде появились светящиеся пятна, которые вкоре пропали.",		//Insidious
+		"Ты сшышишь сильный грохот. На твоей одежде появились светящиеся пятна, которые долго не пропадали.",	//Serious
+		"Ты сшышишь сильный грохот. На твоей одежде появились светящиеся пятна, которые долго не пропадали."	//Critical
 	}
 };
 COMPILE_TIME_CHECK(sizeof(ExplosionDesc)/sizeof(char*)==MaxDamageSeverity*MaxExplosionEffect);
