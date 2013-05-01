@@ -14,7 +14,7 @@ public:
 	
 	virtual void SetMustHaveSelected( bool_t mustHaveSelected ) 
 	{
-		
+		_MustHaveSelected = mustHaveSelected;
 	}
 
 	virtual fresult Draw() 

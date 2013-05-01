@@ -135,6 +135,18 @@ fresult TextField::AppendText(const char* text)
 					if (fres!=SUCCESS)
 					{
 						//Just clip!
+						_textBuffCarretPositionTx.Left = buffWritePosition.Left;
+						_textBuffCarretPositionTx.Top = buffWritePosition.Top;
+						if (buffWritePosition.Left >= _textBuffSizeTx.Width)
+						{
+							_textBuffCarretPositionTx.Left = _textBuffSizeTx.Width-1;
+						}
+
+						if (buffWritePosition.Top >= _textBuffSizeTx.Height)
+						{
+							_textBuffCarretPositionTx.Top = _textBuffSizeTx.Height-1;
+							_textBuffCarretPositionTx.Left = _textBuffSizeTx.Width-1;
+						}
 						return SUCCESS;	
 					}
 					strReadIndex++;
@@ -283,10 +295,10 @@ fresult TextField::Init(Size size, Position position, char* buff, Size buffSize,
 
 	
 	//Defaulting:
-	_Format.BgColor = DEFAULT_BACKGROUND;
-	_Format.FgColor = DEFAULT_FOREGROUND;
+	_Format.BgColor = ThreeK_DEFAULT_TEXTFIELD_BACKGROUND;
+	_Format.FgColor = ThreeK_DEFAULT_TEXTFIELD_FOREGROUND;
 	//Get Default font
-	fres = GetFontById(DEFAULT_FONT, &(_Format.Font));
+	fres = GetFontById(ThreeK_DEFAULT_TEXTFIELD_FONT, &(_Format.Font));
 	if (fres != SUCCESS)
 	{
 		return fres;

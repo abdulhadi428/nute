@@ -33,5 +33,23 @@ namespace ArmletShell {
 		return SUCCESS;
 	}
 
+	fresult FormatsRepository::Init( TextFormat* formats, sbyte_t formatsCount )
+	{
+		_formats = formats;
+		_formatsCount = formatsCount;
+		
+		return SUCCESS;
+	}
+
+	TextFormat* FormatsRepository::GetFormatById( sbyte_t id )
+	{
+		if (id < 0 || id >= _formatsCount)
+		{
+			return NULL;
+		}
+		return &_formats[id];
+	}
 } //namespace
+
+
 

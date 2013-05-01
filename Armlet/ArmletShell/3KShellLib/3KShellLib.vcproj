@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="3KShellLib"
 	ProjectGUID="{2421FB2A-10E8-421F-B832-57CCEE7FD08D}"
 	RootNamespace="3KShellLib"
@@ -44,7 +44,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				WarningLevel="4"
+				WarningLevel="3"
 				DebugInformationFormat="4"
 				CallingConvention="2"
 			/>

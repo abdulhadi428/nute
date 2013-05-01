@@ -3,6 +3,7 @@
 #include "MenuDelegate.h"
 #include "MiddleInterface.h"
 #include "Images.h"
+#include "ColorSchema.h"
 //#include <string.h>
 //#include "UpInterface.h"
 //#include "AppMain.h"
@@ -105,6 +106,7 @@ void AppMainThread(void* param)
 	fresult fres;
 	InitMenuHandlerDelegates(&UI);
 	InitImages();
+	InitColorSchema();
 	fres = UI.Init();
 	if (fres!=SUCCESS)
 	{

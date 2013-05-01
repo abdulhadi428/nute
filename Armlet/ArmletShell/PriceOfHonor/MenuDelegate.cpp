@@ -33,6 +33,9 @@ fresult MenuDelegate::OnClick( IMenuItem* sender )
 	case OnMainMnuCycleRightHandler:
 		fres = _ui->OnMainMnuCycleRight(sender);
 		break;
+	case OnMainMnuShowLogsHandler:
+		fres = _ui->OnMainMnuShowLogs(sender);
+		break;
 	case OnMsgBoxMnuOkHandler:		 
 		fres = _ui->OnMsgBoxMnuOk(sender);
 		break;
@@ -69,6 +72,25 @@ fresult MenuDelegate::OnClick( IMenuItem* sender )
 	case OnWoundMnuOkHandler:
 		fres = _ui->OnWoundMnuOk(sender);
 		break;
+	case OnLogFormMnuScrollUpHandler:
+		fres = _ui->OnLogFormMnuScrollUp(sender);
+		break;
+	case OnLogFormMnuScrollDownHandler:
+		fres = _ui->OnLogFormMnuScrollDown(sender);
+		break;
+	case OnLogFormMnuPrevHandler:
+		fres = _ui->OnLogFormMnuPrev(sender);
+		break;
+	case OnLogFormMnuNextHandler:
+		fres = _ui->OnLogFormMnuNext(sender);
+		break;
+	case OnLogFormMnuBackHandler:
+		fres = _ui->OnLogFormMnuBack(sender);
+		break;
+	case OnLogFormMnuCleanLogHandler:
+		fres = _ui->OnLogFormMnuCleanLog(sender);
+		break;
+
 	default:
 		fres = GENERAL_ERROR;
 	}
@@ -94,6 +116,7 @@ fresult MenuDelegate::Init(MenuHandlers handler, UIDesigner* ui)
 		case OnMainMnuKnockoutHandler:
 		case OnMainMnuOpenLockHandler:
 		case OnMainMnuCycleRightHandler:
+		case OnMainMnuShowLogsHandler:
 		case OnMsgBoxMnuOkHandler:		 
 		case OnMsgBoxMnuScrollUpHandler:
 		case OnMsgBoxMnuScrollDownHandler:
@@ -106,7 +129,12 @@ fresult MenuDelegate::Init(MenuHandlers handler, UIDesigner* ui)
 		case OnWoundMnuLeftLegHandler:
 		case OnWoundMnuRightLegHandler:
 		case OnWoundMnuOkHandler:
-
+		case OnLogFormMnuScrollUpHandler:
+		case OnLogFormMnuScrollDownHandler:
+		case OnLogFormMnuPrevHandler:
+		case OnLogFormMnuNextHandler:
+		case OnLogFormMnuBackHandler:
+		case OnLogFormMnuCleanLogHandler:
 			_handler =handler;
 			fres = SUCCESS;
 			break;

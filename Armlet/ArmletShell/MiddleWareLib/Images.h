@@ -16,7 +16,7 @@ class ImagesRepository
 	BitmapImage* _images;
 	uword_t _imagesCount;
 public:
-	fresult Init(BitmapImage* images, uword_t imagesCount);
+	fresult Init(BitmapImage* images, sword_t imagesCount);
 
-	BitmapImage* GetImageById(ubyte_t id);
+	BitmapImage* GetImageById(sword_t id);
 };

@@ -73,17 +73,15 @@ fresult xScatteredMenu::CreateTextMenu( Position* positions, char** texts, ubyte
 fresult xScatteredMenu::CreateDefaultMenu(ScatteredMenu** mnu)
 {
 	fresult fres;
-	char* screen=NULL;
-	char* formatscreen=NULL;
 
 	TextFormat format;
-	fres = GetTextFormat(DEFAULT_FONT, clBlack, clWhite, &format);
+	fres = GetTextFormat(1, clBlack, clWhite, &format);
 	if (fres != SUCCESS)
 	{
 		return fres;
 	}
 	TextFormat selformat;
-	fres = GetTextFormat(DEFAULT_FONT, clGrey, clRed, &selformat);
+	fres = GetTextFormat(1, clGrey, clRed, &selformat);
 	if (fres != SUCCESS)
 	{
 		return fres;

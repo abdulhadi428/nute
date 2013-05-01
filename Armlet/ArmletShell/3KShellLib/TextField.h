@@ -23,9 +23,9 @@ Setting ScrollPosition
 
 namespace ThreeKShell {
 
-#define DEFAULT_BACKGROUND 5
-#define DEFAULT_FOREGROUND 10
-#define DEFAULT_FONT 1
+#define ThreeK_DEFAULT_TEXTFIELD_BACKGROUND 5
+#define ThreeK_DEFAULT_TEXTFIELD_FOREGROUND 10
+#define ThreeK_DEFAULT_TEXTFIELD_FONT 1
 
 class TextField : public ScrollableControlBase
 {

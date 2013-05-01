@@ -12,6 +12,7 @@ typedef enum _ON_MNU {
 	OnMainMnuKnockoutHandler,
 	OnMainMnuOpenLockHandler,
 	OnMainMnuCycleRightHandler,
+	OnMainMnuShowLogsHandler,
 	OnMsgBoxMnuOkHandler,		 
 	OnMsgBoxMnuScrollUpHandler,
 	OnMsgBoxMnuScrollDownHandler,
@@ -24,6 +25,12 @@ typedef enum _ON_MNU {
 	OnWoundMnuLeftLegHandler,
 	OnWoundMnuRightLegHandler,
 	OnWoundMnuOkHandler,
+	OnLogFormMnuScrollUpHandler,
+	OnLogFormMnuScrollDownHandler,
+	OnLogFormMnuPrevHandler,
+	OnLogFormMnuNextHandler,
+	OnLogFormMnuBackHandler,
+	OnLogFormMnuCleanLogHandler,
 	Last
 } MenuHandlers;
 

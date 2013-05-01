@@ -1,6 +1,6 @@
 #include "ArmletShell.h"
 #include "UserInterface.h"
-//#include "Icons.h"
+#include "Images.h"
 
 fresult UserInterface::Init()
 {
@@ -14,11 +14,15 @@ fresult UserInterface::Init()
 	if (fres!= SUCCESS)
 		return fres;
 
-	fres = txtBatteryStatus.SetText("99%\nr10");
+	fres = txtBatteryStatus.SetText("99%");
 	if (fres!= SUCCESS)
 		return fres;
 
-	fres = txtStatus.SetText("О войне. О том, как вы поднимитесь в последнюю атаку. О том, как вы умрете, но не сдадитесь. О том, как вы станете героями ради своей страны.\n"
+	fres = txtRoomId.SetText("r13");
+	if (fres!= SUCCESS)
+		return fres;
+
+	fres = txtMainLog.SetText("О войне. О том, как вы поднимитесь в последнюю атаку. О том, как вы умрете, но не сдадитесь. О том, как вы станете героями ради своей страны.\n"
 		"О чести. О высоких идеалах, о любви к своей стране, о крепкой дружбе и верности товарищу.\n"
 		"О моменте, когда со смертью ты останешься один на один.\n"
 		"О моменте, когда ты заплатишь сполна.");
@@ -31,23 +35,21 @@ fresult UserInterface::Init()
 
 fresult UserInterface::OnMainMnuHelp(IMenuItem* sender)
 {
-	txtStatus.SetText("OnMainMnuHelp");
 	return SUCCESS;
 }
 
 fresult UserInterface::OnMainMnuScrollUp(IMenuItem* sender)
 {
-	return txtStatus.ScrollUp();
+	return txtMainLog.ScrollUp();
 }
 
 fresult	UserInterface::OnMainMnuScrollDown(IMenuItem* sender)
 {
-	return txtStatus.ScrollDown();
+	return txtMainLog.ScrollDown();
 }
 
 fresult UserInterface::OnMainMnuCycleLeft(IMenuItem* sender)
 {
-	txtStatus.SetText("OnMainMnuCycleLeft");
 	return SUCCESS;
 }
 
@@ -58,7 +60,6 @@ fresult UserInterface::OnMainMnuShot(IMenuItem* sender)
 
 fresult UserInterface::OnMainMnuKnockout(IMenuItem* sender)
 {
-	txtStatus.SetText("OnMainMnuKnockout");
 	return SUCCESS;
 }
 
@@ -71,19 +72,18 @@ fresult UserInterface::OnMainMnuOpenLock(IMenuItem* sender)
 		"Хер там! У этого замка такая защщита, что можно голову сломать пополам. А может быть просто в браслете сломалось NFC? Блин! Замки то по ИК работают, а оно не заимплементено!"
 		"Хер там! У этого замка такая защщита, что можно голову сломать пополам. А может быть просто в браслете сломалось NFC? Блин! Замки то по ИК работают, а оно не заимплементено!"
 		"Хер там! У этого замка такая защщита, что можно голову сломать пополам. А может быть просто в браслете сломалось NFC? Блин! Замки то по ИК работают, а оно не заимплементено!"
-		, ORANGE_ARROW_DOWN);
+		, BlueInfo2);
 	return SUCCESS;
 }
 
 fresult UserInterface::OnMainMnuCycleRight(IMenuItem* sender)
 {
-	txtStatus.SetText("OnMainMnuCycleRight");
 	return SUCCESS;
 }
 
 fresult UserInterface::OnButtonPressed( ButtonState button )
 {
-	txtStatus.SetText("Menu not bound!");
+	txtMainLog.SetText("Menu not bound!");
 	return SUCCESS;
 }
 

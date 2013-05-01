@@ -24,6 +24,15 @@ typedef struct _TextFormat
 fresult GetFontById(ubyte_t fontId, FontDescription* oFont );
 fresult GetTextFormat(ubyte_t fontId, Color bgColor, Color fgColor, TextFormat* oFormat);
 
+class FormatsRepository
+{
+	TextFormat* _formats;
+	sbyte_t _formatsCount;
+public:
+	fresult Init( TextFormat* formats, sbyte_t formatsCount );
+	TextFormat* GetFormatById(sbyte_t id);
+};
+
 //namespace Fonts {
 //	extern const ubyte_t Font_6x8_Data[256][6];
 //} //namespace
