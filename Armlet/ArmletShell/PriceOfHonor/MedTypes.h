@@ -1,3 +1,5 @@
+#pragma once
+
 typedef enum _EXPLOSION_EFFECT {
 	BlastWave = 0,
 	FireCloud = 1,

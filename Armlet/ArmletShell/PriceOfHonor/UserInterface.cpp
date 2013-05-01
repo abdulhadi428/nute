@@ -2,6 +2,7 @@
 #include "UserInterface.h"
 #include "Images.h"
 #include "ArmletApi.h"
+#include "MedTypes.h"
 
 #pragma warning(disable:4100)
 
@@ -11,27 +12,6 @@ fresult UserInterface::Init()
 	fres = UIDesigner::Init();
 	if (fres!= SUCCESS)
 		return fres;
-
-	//Setting texts
-	fres = txtUserName.SetText("Вася\nХуйкин");
-	if (fres!= SUCCESS)
-		return fres;
-
-	fres = txtBatteryStatus.SetText("99%");
-	if (fres!= SUCCESS)
-		return fres;
-
-	fres = txtRoomId.SetText("r13");
-	if (fres!= SUCCESS)
-		return fres;
-
-	fres = txtMainLog.SetText("О войне. О том, как вы поднимитесь в последнюю атаку. О том, как вы умрете, но не сдадитесь. О том, как вы станете героями ради своей страны.\n"
-		"О чести. О высоких идеалах, о любви к своей стране, о крепкой дружбе и верности товарищу.\n"
-		"О моменте, когда со смертью ты останешься один на один.\n"
-		"О моменте, когда ты заплатишь сполна.");
-	if (fres!= SUCCESS)
-		return fres;
-
 
 	return SUCCESS;
 }
@@ -163,7 +143,7 @@ void UserInterface::SetBatteryLevel( ubyte_t batteryLevel )
 	char sBatteryLevel[4];
 	sBatteryLevel[3] = 0;
 
-	int ret = ArmletApi::snprintf(sBatteryLevel, 4, "%d\%", batteryLevel);
+	int ret = ArmletApi::snprintf(sBatteryLevel, 4, "%d", batteryLevel);
 	
 	txtBatteryStatus.SetText(sBatteryLevel);
 	
@@ -197,7 +177,17 @@ void UserInterface::OnExplosion( sword_t room )
 {
 	if (room==_roomId)
 	{
-		int explosionType = ArmletApi::GetRandom(2);
+	
+		int ExplosionType = ArmletApi::GetRandom(3);
+		int DamageSeverity =  RandomSelectPerTenPercent[ArmletApi::GetRandom(10)];
+		const char *msg =  ExplosionDesc[ExplosionType][DamageSeverity];
 
+		MessageBoxShow("В отсеке взрыв!", msg, BlueHealth);
+
+		//AppendLog(MED_LOG, )
+		//AppendLog(EVENT_LOG, "В отсеке произошел взрыв!")
+		//AppendLog(SYMPTOM_LOG, "В отсеке произошел взрыв!")
+
+		//call med!
 	}
 }
