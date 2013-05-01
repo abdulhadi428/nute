@@ -1,4 +1,3 @@
-
 typedef enum _EXPLOSION_EFFECT {
 	BlastWave = 0,
 	FireCloud = 1,
@@ -18,4 +17,5 @@ typedef enum _DAMAGE_SEVERITY {
 	MaxDamageSeverity = 5
 } DAMAGE_SEVERITY;
 
+extern const DAMAGE_SEVERITY	RandomSelect[10];
 extern const char* ExplosionDesc[MaxExplosionEffect][MaxDamageSeverity];

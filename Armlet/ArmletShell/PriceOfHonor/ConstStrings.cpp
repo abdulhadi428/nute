@@ -1,6 +1,15 @@
 #include "ArmletShell.h"
 #include "MedTypes.h"
 
+const DAMAGE_SEVERITY RandomSelect[10] =
+{ //for random number from 0..9
+	Graze, Graze, Graze, Graze,		//40% царапина
+	Light, Light, Light,			//30% неопасное
+	Insidious, Insidious,			//20% коварное
+	Serious							//10% опасное
+};
+COMPILE_TIME_CHECK(sizeof(RandomSelect)/sizeof(DAMAGE_SEVERITY)==10);
+
 const char* ExplosionDesc[MaxExplosionEffect][MaxDamageSeverity] = {
 	{//BlastWave
 		"", //Graze
