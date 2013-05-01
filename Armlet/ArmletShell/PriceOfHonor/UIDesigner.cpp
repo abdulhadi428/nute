@@ -420,7 +420,7 @@ fresult UIDesigner::Init()
 	_frmLogForm.Menu = &_mnuLogFormMenu;
 	_frmLogForm.BackgroundForm = NULL;
 
-	_currentForm = NULL;
+	currentForm = NULL;
 
 	fres = ShowForm(&_frmMainForm);
 	if (fres != SUCCESS)
@@ -431,9 +431,9 @@ fresult UIDesigner::Init()
 
 void UIDesigner::_SystemOnButtonClick(uword_t button )
 {
-	if (_currentForm !=NULL)
+	if (currentForm !=NULL)
 	{
-		bool_t menuItemFound = _currentForm->Menu->ProcessButton(button);
+		bool_t menuItemFound = currentForm->Menu->ProcessButton(button);
 		if (!menuItemFound)
 		{
 			OnButtonPressed(button);
@@ -460,19 +460,19 @@ fresult UIDesigner::Draw()
 	size.Width = SCREENX;
 	_renderer.DrawRect(pos, size, DEFAULT_BACKGROUND);
 
-	if (_currentForm!=NULL)
+	if (currentForm!=NULL)
 	{
 		//draw status
-		if (_currentForm->FormPanel != NULL)
+		if (currentForm->FormPanel != NULL)
 		{
-			fres = _currentForm->FormPanel->Draw();
+			fres = currentForm->FormPanel->Draw();
 			if (fres!=SUCCESS)
 				return fres;
 		}
 
-		if (_currentForm->Menu != NULL)
+		if (currentForm->Menu != NULL)
 		{
-			fres = _currentForm->Menu->Draw();
+			fres = currentForm->Menu->Draw();
 			if (fres!=SUCCESS)
 				return fres;
 		}
@@ -503,6 +503,7 @@ fresult UIDesigner::OnMsgBoxMnuScrollDown( IMenuItem* sender )
 
 fresult UIDesigner::MessageBoxShow( const char* caption, const char* text, ubyte_t pictureId )
 {
+	
 	fresult fres;
 	fres = _txtMessageBoxTitle.SetText(caption);
 	if (fres !=SUCCESS)
@@ -521,9 +522,16 @@ fresult UIDesigner::MessageBoxShow( const char* caption, const char* text, ubyte
 		}
 	}
 
-	fres = ShowForm(&_frmMsgBox);
-	if (fres !=SUCCESS)
-		return fres;
+	if (currentForm != &_frmMsgBox)
+	{
+		fres = ShowForm(&_frmMsgBox);
+		if (fres !=SUCCESS)
+			return fres;
+	}
+	else
+	{
+		Draw();
+	}
 
 	return SUCCESS;
 }
@@ -1043,16 +1051,16 @@ fresult UIDesigner::InitLogForm()
 
 fresult UIDesigner::ShowForm( Form* form )
 {
-	form->BackgroundForm = _currentForm;
-	_currentForm = form;
+	form->BackgroundForm = currentForm;
+	currentForm = form;
 	Draw();
 	return SUCCESS;
 }
 
 fresult UIDesigner::CloseForm()
 {
-	Form* curForm = _currentForm;
-	_currentForm = _currentForm->BackgroundForm;
+	Form* curForm = currentForm;
+	currentForm = currentForm->BackgroundForm;
 	curForm ->BackgroundForm = NULL;
 	Draw();
 	return SUCCESS;

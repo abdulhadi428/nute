@@ -124,3 +124,33 @@ void AppMainThread(void* param)
 	}
 
 }
+
+void _OnPillConnected( sword_t cure_id, sword_t charges )
+{
+	UI.OnPillConnected(cure_id, charges);
+}
+
+void _SetPlayerName( char* name )
+{
+	UI.SetPlayerName(name);
+}
+
+void _SetBatteryLevel( ubyte_t batLevel)
+{
+	UI.SetBatteryLevel(batLevel);
+}
+
+void _SetRoom( sword_t roomId )
+{
+	UI.SetRoom(roomId);
+}
+
+void _OnExplosion( sword_t room )
+{
+
+}
+
+void _OnExplosion( uword_t room )
+{
+	
+}

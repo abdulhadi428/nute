@@ -405,12 +405,14 @@ private:
 
 		////////////////////////////////////////////////////////
 
-	Form* _currentForm;
+	
 	
 	//Called if corresponding menuItem is not found
 	fresult virtual OnButtonPressed(ButtonState button);
 
 protected:
+	Form* currentForm;
+
 	Form _frmMainForm;
 	//_pnlStatusBar;
 		TextField txtUserName;

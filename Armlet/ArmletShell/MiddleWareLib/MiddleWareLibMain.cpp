@@ -93,6 +93,10 @@ namespace ArmletApi {
 		} else {
 			; //TODO
 		}
+
+		
+		//UI CALL:
+		_OnPillConnected(cure_id, charges);
 	}
 
 	//__CALLOUT for radio transport

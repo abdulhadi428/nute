@@ -1,6 +1,7 @@
 #include "ArmletShell.h"
 #include "UserInterface.h"
 #include "Images.h"
+#include "ArmletApi.h"
 
 #pragma warning(disable:4100)
 
@@ -127,4 +128,76 @@ fresult UserInterface::OnWoundMnuLeftLeg( IMenuItem* sender )
 fresult UserInterface::OnWoundMnuRightLeg( IMenuItem* sender )
 {
 	return txtWoundResult.AppendText("На правую ногу просто не наступить! Жуткая боль!\n");
+}
+
+
+void UserInterface::OnPillConnected( sword_t cure_id, sword_t charges )
+{
+	//Check if there are charges
+	if (charges==0)
+	{
+		MessageBoxShow("Не удалось!", "Емкость с препаратом пуста!", BlueWarning);
+	}
+	else
+	{
+		MessageBoxShow("Препарат применен!", "Инъекция препарата прошла успешно.", BlueHealth);
+	}
+
+	ArmletApi::WritePill(cure_id, charges-1);
+
+	//Call medicine
+}
+
+void UserInterface::SetPlayerName( char* name )
+{
+	txtUserName.SetText(name);
+
+	if (currentForm == &_frmMainForm)
+	{
+		Draw();
+	}
+}
+
+void UserInterface::SetBatteryLevel( ubyte_t batteryLevel )
+{
+	char sBatteryLevel[4];
+	sBatteryLevel[3] = 0;
+
+	int ret = ArmletApi::snprintf(sBatteryLevel, 4, "%d\%", batteryLevel);
+	
+	txtBatteryStatus.SetText(sBatteryLevel);
+	
+	if (currentForm == &_frmMainForm)
+	{
+		Draw();
+	}
+}
+
+void UserInterface::SetRoom( sword_t room )
+{
+	_roomId = room;
+
+	char sRoom[4];
+	sRoom[3] = 0;
+
+	if (room >= 0) 
+		ArmletApi::snprintf(sRoom, 4, "r%d", room);
+	else
+		ArmletApi::snprintf(sRoom, 4, "%d", room);
+
+	txtBatteryStatus.SetText(sRoom);
+
+	if (currentForm == &_frmMainForm)
+	{
+		Draw();
+	}
+}
+
+void UserInterface::OnExplosion( sword_t room )
+{
+	if (room==_roomId)
+	{
+		int explosionType = ArmletApi::GetRandom(2);
+
+	}
 }

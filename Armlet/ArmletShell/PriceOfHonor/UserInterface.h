@@ -3,9 +3,21 @@
 
 class UserInterface : public UIDesigner
 {
+
+	uword_t _armletId;
+	sword_t _roomId;
+
 public: 
 	fresult Init();
 
+	void OnPillConnected(sword_t cure_id, sword_t charges);
+	void SetPlayerName(char* name);
+	void SetRoom(sword_t room);
+	void SetBatteryLevel(ubyte_t batteryLevel);
+	void OnExplosion(sword_t room);
+
+
+	#pragma	region Hanldlers
 	fresult virtual OnMainMnuHelp(IMenuItem* sender);
 	fresult virtual OnMainMnuScrollUp(IMenuItem* sender);
 	fresult	virtual OnMainMnuScrollDown(IMenuItem* sender);
@@ -25,6 +37,6 @@ public:
 	fresult virtual OnWoundMnuBack( IMenuItem* sender );
 	fresult virtual OnWoundMnuLeftLeg( IMenuItem* sender );
 	fresult virtual OnWoundMnuRightLeg( IMenuItem* sender );
-
+#pragma	endregion
 
 };
