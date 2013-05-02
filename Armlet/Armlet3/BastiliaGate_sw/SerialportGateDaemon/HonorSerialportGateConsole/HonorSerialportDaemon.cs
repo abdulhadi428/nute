@@ -55,6 +55,9 @@ namespace HonorSerialportGateConsole
             
             inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new byte[]{serverProvidedGateId}));
 
+            ((ICommunicationObject)WCFClient.Client).Faulted += HonorSerialportDaemon_Faulted;
+            ((ICommunicationObject)WCFClient.Client).Closed += HonorSerialportDaemon_Closed;
+
         }
 
         private static string RemoteAddress
@@ -66,7 +69,23 @@ namespace HonorSerialportGateConsole
             }
         }
 
-        #region InitLog
+
+        void HonorSerialportDaemon_Closed(object sender, EventArgs e)
+        {
+            NetworkProblemHandler();
+        }
+
+        void HonorSerialportDaemon_Faulted(object sender, EventArgs e)
+        {
+            NetworkProblemHandler();
+        }
+
+        void NetworkProblemHandler()
+        {
+            throw new Exception("Network disconnecting. Killing client");
+        }
+
+   #region InitLog
         private void InitiateLog()
         {
             LogClass.SetVerbosity(Settings.Default.LogIsVerbose);
@@ -110,6 +129,7 @@ namespace HonorSerialportGateConsole
 
         public  void SendToServer()
         {
+            List<PlayerUpdate> updates = new List<PlayerUpdate>();
             while (true)
             {
                 while (_sending)
@@ -128,6 +148,9 @@ namespace HonorSerialportGateConsole
                                 //byte[] payload = new byte[outputBytes.Length-1];
                                 //outputBytes.CopyTo(payload, 1);
                                 var payload = outputBytes.Skip(1).ToArray();
+                                byte[] payload = new byte[outputBytes.Length-1];
+                                Buffer.BlockCopy(outputBytes, 1, payload, 0, payload.Length);
+                               // outputBytes.CopyTo(payload, 1);
 
                                 switch (commandByte)
                                 {
@@ -155,7 +178,8 @@ namespace HonorSerialportGateConsole
                             {
                                 byte commandByte = outputBytes[0];
                                 byte[] payload = new byte[outputBytes.Length - 1];
-                                outputBytes.CopyTo(payload, 1);
+                                Buffer.BlockCopy(outputBytes, 1, payload, 0, payload.Length);
+                                //outputBytes.CopyTo(payload, 1);
 
                                 switch (commandByte)
                                 {
@@ -167,20 +191,19 @@ namespace HonorSerialportGateConsole
                                         byte data_count = outputBytes[2];
                                         if (data_count >= 2)
                                         {
-                                            WCFClient.Client.ArmlteStatusUpdateAsync(new PlayerUpdate[]
-                                                {
-                                                    new PlayerUpdate()
-                                                        {
-                                                            ArmletID = armlet_id,
-                                                            NewRoom = outputBytes[3],
-                                                            NewBlood = outputBytes[4]
-                                                        }
-                                                });
+                                            updates.Add(
+                                                new PlayerUpdate()
+                                                    {
+                                                        ArmletID = armlet_id,
+                                                        NewRoom = outputBytes[3],
+                                                        NewBlood = outputBytes[4]
+                                                    });
                                         }
                                         if (data_count > 2)
                                         {
                                             byte[] rxDataPaylod = new byte[data_count - 2];
-                                            outputBytes.CopyTo(rxDataPaylod, 5);
+                                            Buffer.BlockCopy(outputBytes, 5, rxDataPaylod, 0, rxDataPaylod.Length);
+                                            //outputBytes.CopyTo(rxDataPaylod, 5);
                                             WCFClient.Client.ArmletSendsData(armlet_id, rxDataPaylod);
                                         }
                                         break;
@@ -188,6 +211,15 @@ namespace HonorSerialportGateConsole
                                 LogClass.Write("Should send from armlet to server this: " + outputCommandString);
                             }
                         }
+                        if (updates.Count != 0)
+                        {
+                            LogClass.Write("Presence data of " + updates.Count + " players is send.");
+                            WCFClient.Client.ArmlteStatusUpdateAsync(updates.ToArray());
+                            updates.Clear();
+                        }
+
+
+
                     }
                     Thread.Sleep(300); //Отправляем каждые 300 секунду.
                 }

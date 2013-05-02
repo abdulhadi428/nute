@@ -1,4 +1,4 @@
- using System;
+﻿ using System;
 using System.Collections.Generic;
 using HonorUtils;
 using NetworkLevel.NetworkDeliveryLevel;
@@ -13,6 +13,7 @@ namespace HonorLogic
 
         public GateModel(IGateDeliveryService service, byte gateId)
         {
+
             _service = service;
             _gateId = gateId;
             
@@ -119,7 +120,7 @@ namespace HonorLogic
         {
             try
             {
-                _service.CheckIfPillConnected(_gateId, new byte[] {});
+                _service.CheckIfPillConnected(_gateId, new byte[] {0});
             }
             catch (GateNotConnectedException)
             {
