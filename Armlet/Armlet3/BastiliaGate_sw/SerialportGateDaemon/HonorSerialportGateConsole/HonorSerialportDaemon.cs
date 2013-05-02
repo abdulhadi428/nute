@@ -26,7 +26,9 @@ namespace HonorSerialportGateConsole
         public  Queue outputMessageQueue;
 
         
-        private  bool _sending = true;
+        private  bool _sending = false;
+        private InstanceContext instanceContext;
+        private byte serverProvidedGateId;
 
         private System.Timers.Timer UpdateLogTimer;
 
@@ -37,28 +39,39 @@ namespace HonorSerialportGateConsole
 
             InitiateLog();
             sendThread = new Thread(SendToServer);
-            InstanceContext instanceContext = new InstanceContext(new WCFCallbackHandler(this));
+            instanceContext = new InstanceContext(new WCFCallbackHandler(this));
 
-            byte serverProvidedGateId;
+            serverProvidedGateId = Byte.Parse(Settings.Default.PreferedGateId);
+            LogClass.Write("Trying to obtain connection with gate # " + Settings.Default.PreferedGateId);
             try
             {
                 
                 WCFClient.Client = new GateWCFServiceClient(instanceContext, "NetTcpBindingEndpoint",
                                                         RemoteAddress);
                 serverProvidedGateId = WCFClient.Client.RegisterGate(Byte.Parse(Settings.Default.PreferedGateId));
+                LogClass.Write("Connection to server successfully established. This is now Gate № " + serverProvidedGateId);
+                Console.Title = "Gate # " + serverProvidedGateId + "Console";
+                inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new byte[] { serverProvidedGateId }));
+                ((ICommunicationObject)WCFClient.Client).Faulted += HonorSerialportDaemon_Faulted;
+                ((ICommunicationObject)WCFClient.Client).Closed += HonorSerialportDaemon_Closed;
+                _sending = true;
             }
             catch (EndpointNotFoundException)
             {
-                throw new Exception("Не возможно подсоединится к серверу: " + RemoteAddress);
+                _sending = false;
+                WCFClient.Client = null;
+                LogClass.Write("Невозможно подсоединится к серверу: " + RemoteAddress);
+                LogClass.Write("Я тут еще раз попробую подключиться, а вы там, пожалуйста, проверьте, что у сервер работает и у меня указан правильный адрес :)");
+                LogClass.Write("");
+                while (!RetryConnection())
+                {
+                    LogClass.Write("Timeout is 5 seconds...");
+                    Thread.Sleep(5000);
+                }
+                _sending = true;
             }
-            
-            
-            inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new byte[]{serverProvidedGateId}));
-
-            ((ICommunicationObject)WCFClient.Client).Faulted += HonorSerialportDaemon_Faulted;
-            ((ICommunicationObject)WCFClient.Client).Closed += HonorSerialportDaemon_Closed;
-
         }
+
 
         private static string RemoteAddress
         {
@@ -82,7 +95,39 @@ namespace HonorSerialportGateConsole
 
         void NetworkProblemHandler()
         {
-            throw new Exception("Network disconnecting. Killing client");
+            LogClass.Write("Server connection error! Stopping sending events from COM port to server :(");
+            _sending = false;
+            WCFClient.Client = null;
+            while (!RetryConnection())
+            {
+                LogClass.Write("Timeout is 5 seconds...");
+                Thread.Sleep(5000);
+            }
+            _sending = true;
+        }
+
+        bool RetryConnection()
+        {
+            LogClass.Write("Now retring to restore connection as Gate # " + serverProvidedGateId);
+
+            try
+            {
+                WCFClient.Client = new GateWCFServiceClient(instanceContext, "NetTcpBindingEndpoint",
+                                                        RemoteAddress);
+                serverProvidedGateId = WCFClient.Client.RegisterGate(serverProvidedGateId);
+            }
+            catch (EndpointNotFoundException)
+            {
+                LogClass.Write("Can't connect to server... Retrying indefinitly...");
+                return false;
+            }
+
+            LogClass.Write("Connection to server successfully established. This is now Gate № " + serverProvidedGateId);
+            Console.Title = "Gate # " + serverProvidedGateId + "Console";
+            inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new byte[] { serverProvidedGateId }));
+            ((ICommunicationObject)WCFClient.Client).Faulted += HonorSerialportDaemon_Faulted;
+            ((ICommunicationObject)WCFClient.Client).Closed += HonorSerialportDaemon_Closed;
+            return true;
         }
 
    #region InitLog
@@ -121,7 +166,7 @@ namespace HonorSerialportGateConsole
                     Handshake = Handshake.None,
                     StopBits = StopBits.One
                 });
-            TypedSerialPort.SearchForPortAndConnect();
+            //TypedSerialPort.SearchForPortAndConnect();
 
             sendThread.Start();
             return 0;
@@ -139,87 +184,98 @@ namespace HonorSerialportGateConsole
                     {
                         while (outputMessageQueue.Count > 0)
                         {
-                            var outputCommandString = (string) outputMessageQueue.Dequeue();
-                            var outputBytes =
-                                Command.HexStringToByteArray(Command.SanitiseStringFromComas(outputCommandString));
-                            if (Enum.IsDefined(typeof (GateToServerCommands), outputBytes[0]))
+                            try
                             {
-                                byte commandByte = outputBytes[0];
-                                //byte[] payload = new byte[outputBytes.Length-1];
-                                //outputBytes.CopyTo(payload, 1);
-                                var payload = outputBytes.Skip(1).ToArray();
-                                byte[] payload = new byte[outputBytes.Length-1];
-                                Buffer.BlockCopy(outputBytes, 1, payload, 0, payload.Length);
-                               // outputBytes.CopyTo(payload, 1);
-
-                                switch (commandByte)
+                                var outputCommandString = (string) outputMessageQueue.Peek();
+                                var outputBytes =
+                                    Command.HexStringToByteArray(Command.SanitiseStringFromComas(outputCommandString));
+                                if (Enum.IsDefined(typeof (GateToServerCommands), outputBytes[0]))
                                 {
-                                    case (byte) GateToServerCommands.Ack:
-                                        continue;
-                                    case (byte) GateToServerCommands.GateNumberSet:
-                                        continue;
-                                    case (byte) GateToServerCommands.PillConnectedStatus:
-                                        WCFClient.Client.PillConnectionStatusAsync(payload);
-                                        break;
-                                    case (byte) GateToServerCommands.PillReadResult:
-                                        WCFClient.Client.PillDataReadAsync(payload);
-                                        break;
-                                    case (byte) GateToServerCommands.PillWriteResult:
-                                        WCFClient.Client.PillWriteCompletedAsync(payload);
-                                        break;
-                                    case (byte) GateToServerCommands.PinSignalSet:
-                                        WCFClient.Client.PinSetAsync(payload);
-                                        break;
-                                }
+                                    byte commandByte = outputBytes[0];
+                                    //byte[] payload = new byte[outputBytes.Length-1];
+                                    //outputBytes.CopyTo(payload, 1);
+                                    // var payload = outputBytes.Skip(1).ToArray();
+                                    byte[] payload = new byte[outputBytes.Length - 1];
+                                    Buffer.BlockCopy(outputBytes, 1, payload, 0, payload.Length);
+                                    // outputBytes.CopyTo(payload, 1);
 
-                                LogClass.Write("Should send from gate to server this: " + outputCommandString);
+                                    switch (commandByte)
+                                    {
+                                        case (byte) GateToServerCommands.Ack:
+                                            continue;
+                                        case (byte) GateToServerCommands.GateNumberSet:
+                                            continue;
+                                        case (byte) GateToServerCommands.PillConnectedStatus:
+                                            WCFClient.Client.PillConnectionStatus(payload);
+                                            break;
+                                        case (byte) GateToServerCommands.PillReadResult:
+                                            WCFClient.Client.PillDataRead(payload);
+                                            break;
+                                        case (byte) GateToServerCommands.PillWriteResult:
+                                            WCFClient.Client.PillWriteCompleted(payload);
+                                            break;
+                                        case (byte) GateToServerCommands.PinSignalSet:
+                                            WCFClient.Client.PinSet(payload);
+                                            break;
+                                    }
+                                    LogClass.Write("Should send from gate to server this: " + outputCommandString);
+                                }
+                                if (Enum.IsDefined(typeof (ArmletToServerCommands), outputBytes[0]))
+                                {
+                                    byte commandByte = outputBytes[0];
+                                    byte[] payload = new byte[outputBytes.Length - 1];
+                                    Buffer.BlockCopy(outputBytes, 1, payload, 0, payload.Length);
+                                    //outputBytes.CopyTo(payload, 1);
+
+                                    switch (commandByte)
+                                    {
+                                        case (byte) ArmletToServerCommands.TXCompleted:
+                                            WCFClient.Client.TXCompleted(payload);
+                                            break;
+                                        case (byte) ArmletToServerCommands.RXCompleted:
+                                            byte armlet_id = outputBytes[1];
+                                            byte data_count = outputBytes[2];
+                                            if (data_count >= 2)
+                                            {
+                                                updates.Add(
+                                                    new PlayerUpdate()
+                                                        {
+                                                            ArmletID = armlet_id,
+                                                            NewRoom = outputBytes[3],
+                                                            NewBlood = outputBytes[4]
+                                                        });
+                                            }
+                                            if (data_count > 2)
+                                            {
+                                                byte[] rxDataPaylod = new byte[data_count - 2];
+                                                Buffer.BlockCopy(outputBytes, 5, rxDataPaylod, 0, rxDataPaylod.Length);
+                                                //outputBytes.CopyTo(rxDataPaylod, 5);
+                                                WCFClient.Client.ArmletSendsData(armlet_id, rxDataPaylod);
+                                            }
+                                            break;
+                                    }
+                                    LogClass.Write("Should send from armlet to server this: " + outputCommandString);
+                                }
+                                outputMessageQueue.Dequeue();
                             }
-                            if (Enum.IsDefined(typeof (ArmletToServerCommands), outputBytes[0]))
+                            catch (Exception e)
                             {
-                                byte commandByte = outputBytes[0];
-                                byte[] payload = new byte[outputBytes.Length - 1];
-                                Buffer.BlockCopy(outputBytes, 1, payload, 0, payload.Length);
-                                //outputBytes.CopyTo(payload, 1);
-
-                                switch (commandByte)
-                                {
-                                    case (byte) ArmletToServerCommands.TXCompleted:
-                                        WCFClient.Client.TXCompletedAsync(payload);
-                                        break;
-                                    case (byte) ArmletToServerCommands.RXCompleted:
-                                        byte armlet_id = outputBytes[1];
-                                        byte data_count = outputBytes[2];
-                                        if (data_count >= 2)
-                                        {
-                                            updates.Add(
-                                                new PlayerUpdate()
-                                                    {
-                                                        ArmletID = armlet_id,
-                                                        NewRoom = outputBytes[3],
-                                                        NewBlood = outputBytes[4]
-                                                    });
-                                        }
-                                        if (data_count > 2)
-                                        {
-                                            byte[] rxDataPaylod = new byte[data_count - 2];
-                                            Buffer.BlockCopy(outputBytes, 5, rxDataPaylod, 0, rxDataPaylod.Length);
-                                            //outputBytes.CopyTo(rxDataPaylod, 5);
-                                            WCFClient.Client.ArmletSendsData(armlet_id, rxDataPaylod);
-                                        }
-                                        break;
-                                }
-                                LogClass.Write("Should send from armlet to server this: " + outputCommandString);
+                                NetworkProblemHandler();
                             }
                         }
                         if (updates.Count != 0)
                         {
-                            LogClass.Write("Presence data of " + updates.Count + " players is send.");
-                            WCFClient.Client.ArmlteStatusUpdateAsync(updates.ToArray());
-                            updates.Clear();
+                            try
+                            {
+                                WCFClient.Client.ArmlteStatusUpdate(updates.ToArray());
+                                LogClass.Write("Presence data of " + updates.Count + " players is send.");
+                                updates.Clear();
+                            }
+                            catch (Exception e)
+                            {
+                                NetworkProblemHandler();
+                            }
                         }
-
-
-
                     }
                     Thread.Sleep(300); //Отправляем каждые 300 секунду.
                 }
@@ -227,7 +283,5 @@ namespace HonorSerialportGateConsole
             }
         
         }
-
-
     }
 }
