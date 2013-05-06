@@ -27,12 +27,11 @@
 #endif
 
 #ifndef _MSC_VER
-#include "ff.h"
 
 #define PFD_SIZES
 
     #define MUTEX_SIZE 1
-    #define FILE_SIZE   sizeof(FIL)
+    #define FILE_SIZE   558 //sizeof(FIL)
 
 	#define __NOCALL
 	#define __CALLOUT
@@ -42,4 +41,3 @@
 
 #endif
 
-//TODO KREYL - add CHIBI OS sizes

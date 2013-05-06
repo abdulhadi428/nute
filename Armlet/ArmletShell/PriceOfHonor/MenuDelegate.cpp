@@ -9,29 +9,17 @@ fresult MenuDelegate::OnClick( IMenuItem* sender )
 	case Empty:
 		fres = SUCCESS;
 		break;
-	case OnMainMnuHelpHandler:
-		fres = _ui->OnMainMnuHelp(sender);
-		break;
 	case OnMainMnuScrollUpHandler:
 		fres = _ui->OnMainMnuScrollUp(sender);
 		break;
 	case OnMainMnuScrollDownHandler:
 		fres = _ui->OnMainMnuScrollDown(sender);
 		break;
-	case OnMainMnuCycleLeftHandler:
-		fres = _ui->OnMainMnuCycleLeft(sender);
-		break;
 	case OnMainMnuShotHandler:
 		fres = _ui->OnMainMnuShot(sender);
 		break;
 	case OnMainMnuKnockoutHandler:
 		fres = _ui->OnMainMnuKnockout(sender);
-		break;
-	case OnMainMnuOpenLockHandler:
-		fres = _ui->OnMainMnuOpenLock(sender);
-		break;
-	case OnMainMnuCycleRightHandler:
-		fres = _ui->OnMainMnuCycleRight(sender);
 		break;
 	case OnMainMnuShowLogsHandler:
 		fres = _ui->OnMainMnuShowLogs(sender);
@@ -108,14 +96,10 @@ fresult MenuDelegate::Init(MenuHandlers handler, UIDesigner* ui)
 	switch (handler)
 	{
 		case Empty:
-		case OnMainMnuHelpHandler:
 		case OnMainMnuScrollUpHandler:
 		case OnMainMnuScrollDownHandler:
-		case OnMainMnuCycleLeftHandler:
 		case OnMainMnuShotHandler:
 		case OnMainMnuKnockoutHandler:
-		case OnMainMnuOpenLockHandler:
-		case OnMainMnuCycleRightHandler:
 		case OnMainMnuShowLogsHandler:
 		case OnMsgBoxMnuOkHandler:		 
 		case OnMsgBoxMnuScrollUpHandler:

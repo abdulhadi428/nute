@@ -1,14 +1,21 @@
 #pragma once
 
+#define FIRMWARE_VERSION "0.7"
+
 void AppMainThread(void* param);
 
+
 void _OnPillConnected(sword_t cure_id, sword_t charges);
-void _SetPlayerName(char* name);
-void _SetBatteryLevel(ubyte_t batLevel);
-void _SetRoom(uword_t room);
+void _OnSetPlayerName(char* name);
+void _OnExplosion(sword_t roomId);
+void _OnServerMessage(char* msg);
+void _OnSetRegenerationRate(sword_t regenRate);
 
-void _OnExplosion(uword_t room);
 
+//callbacks
+bool __CALLBACK _QueryLustraTimerCallback(int elapsed);
+bool __CALLBACK _MedicineTimerTickCallback(int elapsed);
+bool __CALLBACK _QueryBatteryStatusTimerCallback(int elapsed);
 
 
 //extern APP_TASK AppTasks[];

@@ -3,60 +3,16 @@
 	#error _MED_
 #endif
 
-// When this list updated, update server list 
-// /Armlet/Armlet3/BastiliaGate_sw/Server/HonorLogic/Pills.cs
-
-//CURE ids:
-typedef enum _CURE_ID {
-	UnknownCure = -1,
-	Analgetic = 0,			//"Общее обезболивающее - Анальгетик" 
-	Antispasmodic = 1,		//"Спазмолитик"
-	Pyretic = 2,			//"Жаропонижающее"
-	Aspirator =3,			//"Аспиратор"
-	CoagulationFactor =4,	//"Фактор свертываемости крови"
-	SyntheticBlood =5,		//"Искусственная кровь"
-	Leatherette =6,			//"Искусственная кожа"
-	Myorelaxant =7,			//"Миорелаксант"
-	VisceraNanoPack =8,		//"Пак нанохирургов для внутренних органов" => "Нанопак стволовых клеток"
-//	RespiratoryNanoPack,	//"Пак дыхательных нанохирургов"
-//more
-	Anesthetics =9,			//"Местный наркоз"		?
-	Antibiotic =10,			//"Антибиотик"			мед. отсек
-	Absorber =11,			//"Абсорбент"			мед. отсек
-	PlasterNanoPack =12,	//"Наногипс"			мед. отсек
-	NanoExoFrame =13,		//"Наноэкзоскелет"		1-2 эксперимент. образца
-	MagicCure =14,			//"Волшебная таблетка"	мастерский
-	MaxCureId = 15
-} CURE_ID;
-
-class Cure_t {
-public:
-	//static members
-	static CURE_ID const id = UnknownCure;
-	//static members as inline getters
-	static inline const char* CureName(void);					//cure name
-	static inline const char* CurePurpose(void);				//cure purpose description
-	static inline const char* CureEffect(void);				//cure healing effect description
-	static inline const char* CureContraindications(void);		//cure contraindications description
-	static inline const char* CureSideEffects(void);			//cure side effects description
-	//methods
-	virtual void OnUse(void) const {};								//cure effect on first use
-	virtual void OnTick(void) const {};								//cure effect on each tick
-	virtual ~Cure_t(void) {return;}									//empty virtual destructor is required
-};
-
-extern inline const Cure_t* GetCureById(CURE_ID id);
-//DBG only
-extern bool CheckCures();
-
-typedef struct _CURE_DESC {
-	//CURE_ID const id;					//cure id
-	const int id;
+typedef struct _CURE_DESC {					
+	CURE_ID id;						//cure id
 	const char* Name;				//cure name
-	const char* Purpose;			//cure purpose description
-	const char* Effect;			//cure effect description
-	const char* Contraindications;	//cure contraindications description
-	const char* SideEffects;		//cure side effects description
+//	const char* Purpose;			//cure purpose description
+	const char* Effect;				//cure effect description
+//	const char* Contraindications;	//cure contraindications description
+//	const char* SideEffects;		//cure side effects description
 } CURE_DESC;
 
-extern const CURE_DESC CureDesc[MaxCureId];
+extern const char* CureNames[];
+extern CURE_DESC CureDescs[MaxCureId];
+
+void InitCureDescs();

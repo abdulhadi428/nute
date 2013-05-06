@@ -1,9 +1,14 @@
-//included in both namespaces
-//#pragma once
+#pragma once
 
 	//SCREEN
 	#define SCREENX 160
 	#define SCREENY 128
+
+	//APP_STATE in each datagram
+	#define APP_STATE_LEN	5
+
+	//medicine tick duration, 1min//5 secs
+	#define MED_TICK_TIME 60*1000
 
 	//IDS
 	#define UNKNOWN_ID	255

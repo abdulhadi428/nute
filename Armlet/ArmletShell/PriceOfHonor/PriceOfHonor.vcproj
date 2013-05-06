@@ -158,10 +158,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ConstStrings.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Images.cpp"
 				>
 			</File>
@@ -170,7 +166,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\med_krvd.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MedBody.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MedCures.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MedSymptoms.cpp"
 				>
 			</File>
 			<File
@@ -224,7 +232,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MedTemp.h"
+				RelativePath=".\MedSymptoms.h"
 				>
 			</File>
 			<File

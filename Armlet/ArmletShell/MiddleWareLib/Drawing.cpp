@@ -113,7 +113,7 @@ namespace ArmletShell {
 			DrawGlyph(x,y,string[i],
 				cx,cy,1,1,foreColor,backColor);
 			x += cx;
-			if (x+cx > SCREENX-cx) {
+			if (x+cx > SCREENX) {
 				return;
 			}
 		}

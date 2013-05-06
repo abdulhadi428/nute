@@ -1,23 +1,62 @@
 #include "ArmletShell.h"
 #include "Med.h"
 
-namespace price_of_honor {
+namespace medicine {
+
+	const char* CureNames[] = {
+		"Общее обезболивающее",			//common
+		"Спазмолитик",					//common
+		"Жаропонижающее",				//common
+		"Аспиратор",					//common
+		"Коагулятор",					//common
+		"Искусственная кровь",			//med
+		"Искусственная кожа",			//med
+		"Миорелаксант",					//med
+		"Нанопак стволовых клеток",		//med
+		"Местный наркоз",				//med
+		"Антибиотик",					//common
+		"Абсорбент",					//med
+		"Наногипс",						//med
+		"Наноэкзоскелет",				//med
+		"Панацея"						//MG
+	};
+
+	const char* CureEffects[] = {
+		"Тебе сделали укол... Кончик языка немеет.",
+		"Тебе сделали укол... Ты чувствуешь мгновенное облегчение.",
+		"Тебе сделали укол... Чувствуешь прохладу.",
+		"Дышать стало сильно легче...",
+		"Тебе сделали укол... Дыхание участилось.",
+		"Тебе сделали укол... Ты чувствуешь сильный жар.",
+		"Приятно холодящая тонкая пыль оседает на твоих ранах пленкой...",
+		"Тебе сделали укол... Все тело расслабляется.",
+		"Тебе сделали укол... Тебя словно колят иголками изнутри.",
+		"Тебе сделали укол... Место укола совсем не чувствуется.",
+		"Ты выпил таблетку...",
+		"Ты жуешь невкусную массу, пахнущую резиной...",
+		"Тебе сделали укол... пара капель пасты быстро затвердела и отвалилась.",
+		"---",
+		"Тебе сделали укол...Ты моргнул и почувствовал, что родился заново."
+	};
+
+	COMPILE_TIME_CHECK(sizeof(CureNames)/sizeof(char*)==MaxCureId);
+	COMPILE_TIME_CHECK(sizeof(CureEffects)/sizeof(char*)==MaxCureId);
+
+	CURE_DESC CureDescs[MaxCureId];
+
+	void InitCureDescs()
+	{
+		for (int i=0;i<MaxCureId;i++) {
+			CureDescs[i].id = (CURE_ID)i;
+			CureDescs[i].Name = CureNames[i];
+			CureDescs[i].Effect = CureEffects[i];
+		}
+	}	
+
+} //namespace
 
 /*
-typedef struct _CureStrings_t {
-	CURE_ID const id;					//cure id
-	char const*const Name;				//cure name
-	char const*const Purpose;			//cure purpose description
-	char const*const Effect;			//cure effect description
-	char const*const Contraindications;	//cure contraindications description
-	char const*const SideEffects;		//cure side effects description
-} CureStrings_t;
-
-const CureStrings_t CureStrings[MaxCureId] =
-*/
-
 const CURE_DESC CureDescs[MaxCureId] = 
-
 {
 	{
 		Anesthetics,
@@ -144,411 +183,5 @@ const CURE_DESC CureDescs[MaxCureId] =
 	}
 };
 COMPILE_TIME_CHECK(sizeof(CureDescs)/sizeof(CURE_DESC)==MaxCureId);
-
-#define NEW_CURE(x)	\
-	class x##Cure_t : public Cure_t { \
-	public: \
-		static CURE_ID const id = x; \
-		virtual void OnUse(void) const; \
-		virtual void OnTick(void) const; \
-	}; \
-	x##Cure_t const x##Cure
-#define CURE_PTR(x)	&x##Cure
-
-NEW_CURE(Analgetic);
-NEW_CURE(Antispasmodic);
-NEW_CURE(Pyretic);
-NEW_CURE(Aspirator);
-NEW_CURE(CoagulationFactor);
-NEW_CURE(SyntheticBlood);
-NEW_CURE(Leatherette);
-NEW_CURE(Myorelaxant);
-NEW_CURE(VisceraNanoPack);
-NEW_CURE(Anesthetics);
-
-const Cure_t* Cures[MaxCureId] = {
-	CURE_PTR(Analgetic),
-	CURE_PTR(Antispasmodic),
-	CURE_PTR(Pyretic),
-	CURE_PTR(Aspirator),
-	CURE_PTR(CoagulationFactor),
-	CURE_PTR(SyntheticBlood),
-	CURE_PTR(Leatherette),
-	CURE_PTR(Myorelaxant),
-	CURE_PTR(VisceraNanoPack),
-	CURE_PTR(Anesthetics)
-};
-COMPILE_TIME_CHECK(sizeof(Cures)/sizeof(Cure_t)==MaxCureId);
-
-#define CURE_STATIC_MEMBER_AS_INLINE_GETTER(x) \
-	inline const char* Cure_t::Cure##x(void) \
-	{ \
-		return CureDesc[Cure_t::id].x; \
-	}
-
-CURE_STATIC_MEMBER_AS_INLINE_GETTER(Name);
-CURE_STATIC_MEMBER_AS_INLINE_GETTER(Purpose);
-CURE_STATIC_MEMBER_AS_INLINE_GETTER(Effect);
-CURE_STATIC_MEMBER_AS_INLINE_GETTER(Contraindications);
-CURE_STATIC_MEMBER_AS_INLINE_GETTER(SideEffects);
-
-inline const Cure_t* GetCureById(CURE_ID id)
-{
-	return Cures[id];
-}
-
-//TODO DBG
-bool CheckCures()
-{
-	for (int i=0; i<MaxCureId; i++)
-	{
-		Cure_t const*const obj = GetCureById((CURE_ID)i);
-		if (obj->id != i) goto out;
-	}
-	return true;
-out:
-	return false;
-}
-
-void AnestheticsCure_t::OnUse(void) const
-{
-//	Снижение болевых ощущений.
-
-	//CureDuration = 20
-	//Reduce PAIN_LEVEL 1
-/*
-"У пациентов с коварными ранениями головы,
-коварным ударным ранением и коварными побоями
-вызывает сильнейшую мучительную мигрень и галлюцинации.
-Уровень боли 2 (не снимается обезболиванием)."
-*/
-}
-
-void AnestheticsCure_t::OnTick(void) const
-{
-}
-
-void AntispasmodicCure_t::OnUse(void) const
-{
-//	Подавление дрожи конечностей, предотвращение кашля, рвоты и судорог.
-
-	//CureDuration = ?
-	//Reg 1: "Подавляет озноб и дрожь, предотвращает кашель, судороги и рвоту.
-//				Восстанавливает мелкую моторику, ""разгибает"" из позы боксера."
-	//Reg 2: "Подавляет озноб и дрожь, предотвращает кашель, судороги и рвоту, частично восстанавливает мелкую моторику."
-	//Reg 3: "Подавляет озноб и дрожь, предотвращает кашель судороги и рвоту"
-/*
-Головная боль, уровень боли: 1
-*/
-}
-
-void AntispasmodicCure_t::OnTick(void) const
-{
-}
-
-void PyreticCure_t::OnUse(void) const
-{
-//	Понижение жара, прояснение сознания.
-
-	//Сбивает жар, проясняет сознание, улучшает восприятие.
-/*
-"У пациентов с коварными ожогами и коварным радиационным поражением вызывает ощущение сильного холода в животе.
-Кашель. У пациентов с кашлем усиливает и учащает приступы, вызывает хрипы при дыхании.
-"
-*/
-}
-
-void PyreticCure_t::OnTick(void) const
-{
-}
-
-void AspiratorCure_t::OnUse(void) const
-{
-//	Обеспечение дыхания при тяжелых категориях ранений.
-
-	//Обеспечивает дыхание пациенту в течение 10 минут.
-/*
-Сильный хрип при вдохе и выдохе, эпизодические приступы кашля.
-*/
-}
-
-void AspiratorCure_t::OnTick(void) const
-{
-}
-
-void CoagulationFactorCure_t::OnUse(void) const
-{
-//	Остановление кровопотери
-
-//	Reg 1: Далее: прекращение кровотечения
-	//Reg 2: "Немедленно: +5 ед. крови Далее: прекращение кровотечения"
-	//Reg 3: "Немедленно: +10 ед. крови Далее: + 1 ед. крови в минуту"
-/*
-"У пациентов с коварными ранениями живота и груди повышает уровень боли на 1.
-При применении на ожогах и радиационном поражении переводит ранение в следующую категорию (действует 1 раз на ранение).
-"
-*/
-}
-
-void CoagulationFactorCure_t::OnTick(void) const
-{
-}
-
-void SyntheticBloodCure_t::OnUse(void) const
-{
-	//Восстановление запаса крови
-
-	//Reg 1: "Немедленно: +10 ед. крови
-	//Reg 2: "	"Немедленно: +20 ед. крови
-	//Reg 3: "	"Немедленно: +30 ед. крови
-/*
-Огнестрельные ранения переходят в предыдущую категорию (действует 1 раз на ранение).
-"	Жажда (раненному нужен доступ к питью), жар.
-*/
-}
-
-void SyntheticBloodCure_t::OnTick(void) const
-{
-}
-
-void LeatheretteCure_t::OnUse(void) const
-{
-	//Лечение ожогов
-
-	//Reg 1: "Понижает уровень боли на 1 + 5 ед. крови"
-	//Reg 2: 	"Понижает уровень боли на 1 + 10 ед. крови"
-	//Reg 3: 	"Понижает уровень боли на 1 + 10 ед. крови Ожог переходит в предыдущую категорию (действует 1 раз на ранение)"
-/*
-Не применяется к пациентам в позе боксера.
-*/
-}
-
-void LeatheretteCure_t::OnTick(void) const
-{
-}
-
-void MyorelaxantCure_t::OnUse(void) const
-{
-	//Прекращение судорог, расслабление позы боксера тяжелых ожоговых больных.
-
-	//Пациент "разгибается" из позы боксера, судороги и дрожь прекращаются.
-/*
-"Потеря крови 5 ед.
-Нельзя применять к раненным с рвотой (переводит ранение в категорию смертельного).
-Нельзя применять к раненным с огнестрелом груди (переводит ранение в категорию смертельного).
-При использовании меньше чем через 10 минут после спазмолитика переводит любое ранение в следующую категорию."
-*/
-}
-
-void MyorelaxantCure_t::OnTick(void) const
-{
-}
-
-void VisceraNanoPackCure_t::OnUse(void) const
-{
-	//"Необходим для лечения ожогов и радиации категории 2 и выше.
-	//Также используется при высоких категориях огнестрела в живот."
-/*
-Reg1:
-"Поднимает радиационный или обычный ожог на 1 категорию за 20 минут до полного излечения.
-Прекращает кровопотерю при огнестрельных ранениях."
-
-Reg2:
-"Поднимает радиационный или обычный ожог на 1 категорию за 15 минут до полного излечения.
-Понижает уровень боли на 1.
-Прекращает кровопотерю при огнестрельных ранениях."
-
-Reg3:
-"Поднимает радиационный или обычный ожог на 1 категорию за 10 минут до полного излечения.
-Прекращает кровопотерю при огнестрельных ранениях.
-Понижает уровень боли на 1
-+ 3 ед. крови в минуту до полного восстановления.
-"
-
-"Ощущение тепла и зуда во всем теле, сильная жажда (раненному нужен доступ к питью).
-Не применимо к раненным в позе боксера.
-У всех пациентов с вероятностью судорог, вызывает приступ немедленно и переводит ранение в следующую категорию.
-"
-*/
-}
-
-void VisceraNanoPackCure_t::OnTick(void) const
-{
-}
-
-/*void RespiratoryNanoPackCure_t::OnUse(void) const
-{
-
-	Необходим для лечения ударных повреждений и огнестрела груди высоких категорий.
-
-	"Поднимает ударное повреждение или огнестрел груди на 1 категорию за 20 минут до полного излечения.
-	Прекращает хрип и кашель при 1 и 2 категориях ранений."
-
-	"Поднимает ударное повреждение или огнестрел груди на 1 категорию за 15 минут до полного излечения.
-	Понижает уровень боли на 1.
-	Прекращает хрип и кашель при 1 и 2 категориях ранений."
-
-	"Поднимает ударное повреждение или огнестрел груди на 1 категорию за 10 минут до полного излечения.
-	Прекращает хрип и кашель при 1 и 2 категориях ранений.
-	Понижает уровень боли на 1
-	+ 3 ед. крови в минуту до полного восстановления.
-
-"Ощущение тепла и зуда во всем теле, сильная жажда (раненному нужен доступ к питью).
-Не применимо к раненным в позе боксера.
-У всех пациентов с вероятностью судорог, вызывает приступ немедленно и переводит ранение в следующую категорию.
-"
 }
 */
-
-/*void RespiratoryNanoPackCure_t::OnTick(void) const
-{
-}*/
-
-}//namespace
-
-#if 0
-Пак нанохирургов для внутренних органов.	"Необходим для лечения ожогов и радиации категории 2 и выше.
-Также используется при высоких категориях огнестрела в живот."	"Поднимает радиационный или обычный ожог на 1 категорию за 20 минут до полного излечения.
-Прекращает кровопотерю при огнестрельных ранениях."	"Поднимает радиационный или обычный ожог на 1 категорию за 15 минут до полного излечения.
-Понижает уровень боли на 1.
-Прекращает кровопотерю при огнестрельных ранениях."	"Поднимает радиационный или обычный ожог на 1 категорию за 10 минут до полного излечения.
-Прекращает кровопотерю при огнестрельных ранениях.
-Понижает уровень боли на 1
-+ 3 ед. крови в минуту до полного восстановления.
-"	"Ощущение тепла и зуда во всем теле, сильная жажда (раненному нужен доступ к питью).
-Не применимо к раненным в позе боксера.
-У всех пациентов с вероятностью судорог, вызывает приступ немедленно и переводит ранение в следующую категорию.
-"
-Пак дыхательных нанохирургов	Необходим для лечения ударных повреждений и огнестрела груди высоких категорий.	"Поднимает ударное повреждение или огнестрел груди на 1 категорию за 20 минут до полного излечения.
-Прекращает хрип и кашель при 1 и 2 категориях ранений."	"Поднимает ударное повреждение или огнестрел груди на 1 категорию за 15 минут до полного излечения.
-Понижает уровень боли на 1.
-Прекращает хрип и кашель при 1 и 2 категориях ранений."	"Поднимает ударное повреждение или огнестрел груди на 1 категорию за 10 минут до полного излечения.
-Прекращает хрип и кашель при 1 и 2 категориях ранений.
-Понижает уровень боли на 1
-+ 3 ед. крови в минуту до полного восстановления.
-"	"Ощущение тепла и зуда во всем теле, сильная жажда (раненному нужен доступ к питью).
-Не применимо к раненным в позе боксера.
-У всех пациентов с вероятностью судорог, вызывает приступ немедленно и переводит ранение в следующую категорию.
-"
-
-//Anesthetics_CureEffect
-//Anesthetics_SideEffect
-
-/*
-CURES:
-name, function, action (3 per regeneration level), side effects
-
-""
-
-Понижает уровень боли на 1
-Понижает уровень боли на 1
-Понижает уровень боли на 1
-"У пациентов с коварными ранениями головы, коварным ударным ранением и коварными
-побоями вызывает сильнейшую мучительную мигрень и галлюцинации.
-Уровень боли 2 (не снимается обезболиванием)."
-Очень
-*/
-
-/*
-FEELING FACTORS:
-(aka SYMPTOMS:
-	name, brief description, description for patient
-PAIN		(1-3)
-SPECIFIC_PAIN (1-3)	//"Режущая боль, дергающая боль, мигрень"
-COUGH		(1-2)	//"Слабый/Сильный" "Кашель"
-CONVULTION	(1-2)	//"Слабые/Сильные" "Судороги"
-WHEEZE		(1-2)	//"Слабый/Сильный" "Хрип"
-FEVER		(1)		//"Жар"
-UNCONSCIOUS (1)		//"Без сознания"
-DELIRIUM	(1)		//"Бред"
-CONFUSION	(1)		//"Сознание спутано"
-VISUAL HALLUTINATIONS "Зрительные галлюцинации"
-DISRUPTED PERCEPTION "Восприятие нарушено"
-nausea				//"тошнота"
-retching			//"рвота"
-cannot breathe		//"Больной не может дышать"
-Impaired fine motor skills //"Мелкая моторика нарушена"
-BOXER_POSE			//"Поза боксера"
-VERTIGO				//"Головокружение"
-*/
-}
-#endif
-
-void OnUseAnesthetics()
-{
-	//PainLevel -= 1;
-/*
-	if (
-		(Body.Wounds[HEAD_SHOT]==Insidious)||
-		(Body.Wounds[KNOCKOUT]==Insidious)
-		)
-	{
-		//SPECIFIC_PAIN[мигрень]
-	}
-*/
-
-	//Head
-/*
-"У пациентов с коварными ранениями головы, коварным ударным ранением и коварными побоями вызывает сильнейшую мучительную мигрень и галлюцинации.
-Уровень боли 2 (не снимается обезболиванием)."
-*/
-}
-
-void OnTickAnesthetics()
-{
-}
-void OnUseAntispasmodic()
-{
-}
-void OnTickAntispasmodic()
-{
-}
-void OnUsePyretic()
-{
-}
-void OnTickPyretic()
-{
-}
-void OnUseAspirator()
-{
-}
-void OnTickAspirator()
-{
-}
-void OnUseCoagulationFactor()
-{
-}
-void OnTickCoagulationFactor()
-{
-}
-void OnUseSyntheticBlood()
-{
-}
-void OnTickSyntheticBlood()
-{
-}
-void OnUseLeatherette()
-{
-}
-void OnTickLeatherette()
-{
-}
-void OnUseMyorelaxant()
-{
-}
-void OnTickMyorelaxant()
-{
-}
-void OnUseVisceraNanoPack()
-{
-}
-void OnTickVisceraNanoPack()
-{
-}
-void OnUseRespiratoryNanoPack()
-{
-}
-void OnTickRespiratoryNanoPack()
-{
-}
-

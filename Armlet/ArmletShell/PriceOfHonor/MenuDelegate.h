@@ -4,14 +4,10 @@
 
 typedef enum _ON_MNU {
 	Empty,
-	OnMainMnuHelpHandler,
 	OnMainMnuScrollUpHandler,
 	OnMainMnuScrollDownHandler,
-	OnMainMnuCycleLeftHandler,
 	OnMainMnuShotHandler,
 	OnMainMnuKnockoutHandler,
-	OnMainMnuOpenLockHandler,
-	OnMainMnuCycleRightHandler,
 	OnMainMnuShowLogsHandler,
 	OnMsgBoxMnuOkHandler,		 
 	OnMsgBoxMnuScrollUpHandler,

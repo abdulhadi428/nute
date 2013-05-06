@@ -1,32 +1,48 @@
 #include "stdafx.h"
 #include "LowLevel.h"
 
-//#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <windows.h>
-#include <string.h>
 #include <list>
-#include "stdio.h"
-#include "stdarg.h"	//va_...
+#include "time.h"	//time
 
 typedef struct _TIMER {
 	int current;
 	int period;
 	ArmletApi::TIMER_PROC* routine;
 } TIMER;
-std::list<TIMER*> *gTimerList;
+std::list<TIMER*> gTimerList;
 
 namespace ArmletApi {
 
-	int  __SYSCALL GetUpTime()
-	{
-		return (int)Helper::GetUptime();
-	}
-
+	static bool bsrand = false;
 	unsigned int __SYSCALL GetRandom(unsigned int max)
 	{
-		//return (int)Helper::GetUptime();
-		//unsigned int GetRandom(unsigned int max)
-		return Helper::GetRandom(max);
+		if (!bsrand) {
+			srand((unsigned int)time(NULL));
+			bsrand = true;
+		}
+		if (max < 0) return 0;
+		int rnd = rand() % max;
+		if (rnd<0) {
+			rnd = 0;
+		}
+		if (rnd >= max) {
+			rnd = max - 1;
+		}
+		return rnd;
+	}
+
+	int  __SYSCALL GetUpTime()
+	{
+		//HAVE UPTIME BUG IN EMULATION!!!
+		static time_t startTime = 0; 
+		if (startTime == 0) {
+			startTime = time(NULL);
+			return 0;
+		}
+		long uptime = (long)( time(NULL) - startTime );
+		return (int)uptime;
 	}
 
 	int __SYSCALL snprintf(char* buf, int bufSz, char* fmt,...)
@@ -39,14 +55,12 @@ namespace ArmletApi {
 	//opens/create file
 	bool __SYSCALL OpenFile(FILE* file, const char* filename, bool bCreate)
 	{
-/*
 		COMPILE_TIME_CHECK(sizeof(FILE)==sizeof(HANDLE));
 		HANDLE hFile = CreateFile(filename, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, 
 			NULL, bCreate ? OPEN_ALWAYS : OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (hFile == INVALID_HANDLE_VALUE)
 			return false;
 		memcpy(file, &hFile, 4);
-*/
 		return true;
 	}
 
@@ -108,12 +122,12 @@ namespace ArmletApi {
 		if (period < 100)
 			return false;
 
-//		TIMER* newTimer = new TIMER;
-//		newTimer->current = 0;
-//		newTimer->period = period;
-//		newTimer->routine = timerProc;
+		TIMER* newTimer = new TIMER;
+		newTimer->current = 0;
+		newTimer->period = period;
+		newTimer->routine = timerProc;
 
-		//gTimerList->push_back( newTimer);
+		gTimerList.push_back( newTimer );
 		return true;
 	}
 
@@ -144,28 +158,24 @@ namespace LowLevel {
 	void CheckTimers()
 	{
 		//50 msecs were elasped
-		//std::list<TIMER*>::iterator itr;
-		
-		/*
-		for(itr = gTimerList->begin(); itr != gTimerList->end();)
+		std::list<TIMER*>::iterator itr;
+
+		for(itr = gTimerList.begin(); itr != gTimerList.end();)
 		{
 			TIMER* curr = *itr;
 			curr->current += 50;
 			if ( curr->current >= curr->period )	{
 				if (curr->routine(curr->period)) {
 					curr->current -= curr->period;
-					//gTimers[i].curr += gTimers[i].period;
-					;
 				}
 				else {
 					delete curr;
-					itr=gTimerList->erase(itr);
+					itr=gTimerList.erase(itr);
 				}
 			}
 			else
 				++itr;
 		}
-		*/
 	}
 
 } //namespace

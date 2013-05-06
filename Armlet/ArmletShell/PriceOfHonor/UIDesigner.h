@@ -11,58 +11,80 @@ using namespace ThreeKShell;
 //#include "project.h"
 
 
-#define BUTTON_HOLD_OFFSET 256
-
-#define BUTTON_HOLD_A	BUTTON_HOLD_OFFSET  + BUTTON_A
-#define BUTTON_HOLD_B	BUTTON_HOLD_OFFSET	+ BUTTON_B
-#define BUTTON_HOLD_C	BUTTON_HOLD_OFFSET	+ BUTTON_C
-						
-#define BUTTON_HOLD_X	BUTTON_HOLD_OFFSET	+ BUTTON_X
-#define BUTTON_HOLD_Y	BUTTON_HOLD_OFFSET	+ BUTTON_Y
-#define BUTTON_HOLD_Z	BUTTON_HOLD_OFFSET  + BUTTON_Z
-						
-#define BUTTON_HOLD_L	BUTTON_HOLD_OFFSET	+ BUTTON_L
-#define BUTTON_HOLD_E	BUTTON_HOLD_OFFSET	+ BUTTON_E
-#define BUTTON_HOLD_R	BUTTON_HOLD_OFFSET	+ BUTTON_R
-						
+					
 #define MENU_IMAGE_WIDTH 24
 #define MENU_IMAGE_HEIGHT 24
+#define MENU_VERICAL_GAP 8
+
+#define MENU_ITEM_LEFTSIDE_TOP_OFFSET 8
+#define MENU_ITEM_RIGHTSIDE_TOP_OFFSET 30
+
+#define MENU_ITEM_A_TOP MENU_ITEM_LEFTSIDE_TOP_OFFSET
+#define	MENU_ITEM_A_LEFT 1
+#define MENU_ITEM_B_TOP MENU_ITEM_A_TOP + MENU_IMAGE_HEIGHT+MENU_VERICAL_GAP
+#define	MENU_ITEM_B_LEFT 1
+#define MENU_ITEM_C_TOP MENU_ITEM_B_TOP + MENU_IMAGE_HEIGHT+MENU_VERICAL_GAP
+#define	MENU_ITEM_C_LEFT 1
+#define MENU_ITEM_L_TOP MENU_ITEM_C_TOP + MENU_IMAGE_HEIGHT+MENU_VERICAL_GAP
+#define	MENU_ITEM_L_LEFT MENU_IMAGE_WIDTH +4
+
+#define MENU_ITEM_X_TOP MENU_ITEM_RIGHTSIDE_TOP_OFFSET
+#define	MENU_ITEM_X_LEFT SCREENX - MENU_IMAGE_WIDTH-1
+#define MENU_ITEM_Y_TOP MENU_ITEM_X_TOP + MENU_IMAGE_HEIGHT+MENU_VERICAL_GAP
+#define	MENU_ITEM_Y_LEFT SCREENX - MENU_IMAGE_WIDTH-1
+#define MENU_ITEM_Z_TOP MENU_ITEM_Y_TOP + MENU_IMAGE_HEIGHT+MENU_VERICAL_GAP
+#define	MENU_ITEM_Z_LEFT SCREENX - MENU_IMAGE_WIDTH-1
+#define MENU_ITEM_R_TOP MENU_ITEM_C_TOP + MENU_IMAGE_HEIGHT+MENU_VERICAL_GAP
+#define	MENU_ITEM_R_LEFT SCREENX - MENU_IMAGE_WIDTH*2-4
 
 #define BATTERYSTATUS_TOP_PX 0
-#define BATTERYSTATUS_LEFT_PX SCREENX - MENU_IMAGE_WIDTH - BATTERYSTATUS_WIDTH_PX +4
-#define BATTERYSTATUS_WIDTH_PX 24
+#define BATTERYSTATUS_LEFT_PX USERNAME_LEFT_PX + USERNAME_WIDTH_PX
+#define BATTERYSTATUS_WIDTH_PX 18
 #define BATTERYSTATUS_HEIGHT_PX 8
 
 #define BATTERYSTATUS_BUFF_WIDTH 3
 #define BATTERYSTATUS_BUFF_HEIGHT 1
 
+#define MAINFORM_TEXT_GATEID_TOP 0
+#define MAINFORM_TEXT_GATEID_LEFT  USERNAME_LEFT_PX + USERNAME_WIDTH_PX +BATTERYSTATUS_WIDTH_PX
+#define MAINFORM_TEXT_GATEID_HIEGHT  8
+#define MAINFORM_TEXT_GATEID_WIDTH 24
+
+#define MAINFORM_TEXT_GATEID_BUFF_WIDTH 4
+#define MAINFORM_TEXT_GATEID_BUFF_HEIGHT 1
+					  
+#define MAINFORM_TEXT_SIGNAL_TOP	MAINFORM_TEXT_GATEID_TOP+MAINFORM_TEXT_GATEID_HIEGHT
+#define MAINFORM_TEXT_SIGNAL_LEFT	USERNAME_LEFT_PX + USERNAME_WIDTH_PX + ROOMID_WIDTH_PX
+#define MAINFORM_TEXT_SIGNAL_HIEGHT 8
+#define MAINFORM_TEXT_SIGNAL_WIDTH	24
+					  
+#define MAINFORM_TEXT_SIGNAL_BUFF_WIDTH 4
+#define MAINFORM_TEXT_SIGNAL_BUFF_HEIGHT 1
+
 #define ROOMID_TOP_PX 8
-#define ROOMID_LEFT_PX SCREENX - MENU_IMAGE_WIDTH - BATTERYSTATUS_WIDTH_PX +4
-#define ROOMID_WIDTH_PX 24
+#define ROOMID_LEFT_PX BATTERYSTATUS_LEFT_PX
+#define ROOMID_WIDTH_PX 18
 #define ROOMID_HEIGHT_PX 8
 
 #define ROOMID_BUFF_WIDTH 3
 #define ROOMID_BUFF_HEIGHT 1
 
-
 #define USERNAME_TOP_PX  0
-#define USERNAME_LEFT_PX MENU_IMAGE_WIDTH +2
-#define USERNAME_WIDTH_PX  SCREENX - BATTERYSTATUS_WIDTH_PX - 2*MENU_IMAGE_WIDTH +4
+#define USERNAME_LEFT_PX 14
+#define USERNAME_WIDTH_PX  SCREENX - 2*MENU_IMAGE_WIDTH - 4 - BATTERYSTATUS_WIDTH_PX
 #define USERNAME_HEIGHT_PX 16
 
 #define USERNAME_BUFF_WIDTH 15
 #define USERNAME_BUFF_HEIGHT 2
 
 #define STATUSBAR_TOP_PX 0
-#define STATUSBAR_LEFT_PX MENU_IMAGE_WIDTH
-
-#define STATUSBAR_HEIGHT_PX 16
-#define STATUSBAR_WIDTH_PX SCREENX - MENU_IMAGE_WIDTH*2
-
+#define STATUSBAR_LEFT_PX 2
+#define STATUSBAR_HEIGHT_PX 24
+#define STATUSBAR_WIDTH_PX SCREENX //- MENU_IMAGE_WIDTH - 4 - USERNAME_WIDTH_PX - BATTERYSTATUS_WIDTH_PX - MAINFORM_TEXT_SIGNAL_WIDTH
 
 #define DIALOG_TOP_PX 16
 #define DIALOG_LEFT_PX MENU_IMAGE_WIDTH+2
-#define DIALOG_HEIGHT_PX 112
+#define DIALOG_HEIGHT_PX SCREENX - DIALOG_TOP_PX
 #define DIALOG_WIDTH_PX SCREENX - 2*MENU_IMAGE_WIDTH -4
 
 #define MAINFORM_TOP 0
@@ -70,9 +92,9 @@ using namespace ThreeKShell;
 #define MAINFORM_HEIGHT SCREENY
 #define MAINFORM_WIDTH SCREENX -4
 
-#define STATUS_BUFF_WIDTH 18
-#define STATUS_BUFF_PAGES 3
-#define STATUS_BUFF_HEIGHT 13*STATUS_BUFF_PAGES
+#define MAINFORM_TEXT_MEDSTATUS_BUFF_WIDTH 18
+#define MAINFORM_TEXT_MEDSTATUS_BUFF_PAGES 3
+#define MAINFORM_TEXT_MEDSTATUS_BUFF_HEIGHT 14
 
 #define MSGBOX_ICON_HEIGHT 24
 #define MSGBOX_ICON_WIDTH 24
@@ -93,7 +115,7 @@ using namespace ThreeKShell;
 #define MSGBOX_CONTENT_WIDTH SCREENX-4
 #define MSGBOX_CONTENT_BUFF_WIDTH 26
 #define MSGBOX_CONTENT_BUFF_PAGES 3
-#define MSGBOX_CONTENT_BUFF_HEIGHT 13*STATUS_BUFF_PAGES
+#define MSGBOX_CONTENT_BUFF_HEIGHT 13*MSGBOX_CONTENT_BUFF_PAGES
 
 #define MSGBOX_TOP 0
 #define MSGBOX_LEFT 2
@@ -104,6 +126,9 @@ using namespace ThreeKShell;
 #define WOUND_MNU_ITEM_WIDTH  36
 #define WOUND_MNU_TEXT_BUFF_HEIGHT 2
 #define WOUND_MNU_TEXT_BUFF_WIDTH  6
+
+#define WOUND_MNU_RIGHTCOL_TOP_OFFSET  10
+#define WOUND_MNU_BOTTOMROW_LEFT_OFFSET  14
 
 #define WOUND_FORM_HEIGHT SCREENY
 #define WOUND_FORM_WIDTH  SCREENX
@@ -138,7 +163,7 @@ using namespace ThreeKShell;
 #define LOG_FORM_ICON_WIDTH  MENU_IMAGE_WIDTH
 
 
-#define LOG_FORM_TEXT_TITLE_LEFT LOG_FORM_ICON_LEFT + LOG_FORM_ICON_WIDTH +2
+#define LOG_FORM_TEXT_TITLE_LEFT LOG_FORM_ICON_LEFT + LOG_FORM_ICON_WIDTH
 #define LOG_FORM_TEXT_TITLE_TOP LOG_FORM_PANEL_HEADER_TOP
 #define LOG_FORM_TEXT_TITLE_HEIGHT  8
 #define LOG_FORM_TEXT_TITLE_WIDTH  SCREENX - LOG_FORM_ICON_WIDTH - LOG_FORM_ICON_LEFT - MENU_IMAGE_WIDTH
@@ -147,37 +172,37 @@ using namespace ThreeKShell;
 #define LOG_FORM_TEXT_TITLE_BUFF_WIDTH 18
 
 
-#define LOG_FORM_TEXT_SUBTITLE_LEFT LOG_FORM_ICON_LEFT + LOG_FORM_ICON_WIDTH +2
+#define LOG_FORM_TEXT_SUBTITLE_LEFT LOG_FORM_ICON_LEFT + LOG_FORM_ICON_WIDTH
 #define LOG_FORM_TEXT_SUBTITLE_TOP LOG_FORM_TEXT_TITLE_HEIGHT
-#define LOG_FORM_TEXT_SUBTITLE_HEIGHT  8
+#define LOG_FORM_TEXT_SUBTITLE_HEIGHT  16
 #define LOG_FORM_TEXT_SUBTITLE_WIDTH  SCREENX - LOG_FORM_ICON_WIDTH - LOG_FORM_ICON_LEFT - MENU_IMAGE_WIDTH
 #define LOG_FORM_TEXT_SUBTITLE_BUFF_HEIGHT 1
 #define LOG_FORM_TEXT_SUBTITLE_BUFF_WIDTH 18
 
-
-
 #define LOG_FORM_PANEL_CONTENT_LEFT 0
 #define LOG_FORM_PANEL_CONTENT_TOP LOG_FORM_PANEL_HEADER_HEIGHT
-#define LOG_FORM_PANEL_CONTENT_HEIGHT  SCREENY -LOG_FORM_PANEL_HEADER_HEIGHT
+#define LOG_FORM_PANEL_CONTENT_HEIGHT  SCREENY -LOG_FORM_PANEL_HEADER_HEIGHT - MENU_IMAGE_HEIGHT
 #define LOG_FORM_PANEL_CONTENT_WIDTH  SCREENX
 
 #define LOG_FORM_TEXT_LOG_LEFT MENU_IMAGE_WIDTH +2
 #define LOG_FORM_TEXT_LOG_TOP LOG_FORM_PANEL_HEADER_HEIGHT
 #define LOG_FORM_TEXT_LOG_HEIGHT  SCREENY-LOG_FORM_PANEL_HEADER_HEIGHT
 #define LOG_FORM_TEXT_LOG_WIDTH  SCREENX- 2*MENU_IMAGE_WIDTH -4
-#define LOG_FORM_TEXT_LOG_BUFF_PAGES 1
-#define LOG_FORM_TEXT_LOG_BUFF_HEIGHT 13*LOG_FORM_TEXT_LOG_BUFF_PAGES
+
+#define LOG_FORM_TEXT_LOG_SYSTEM_BUFF_PAGES 5
+//TODO: bytelimit
+#define LOG_FORM_TEXT_LOG_MESSAGE_BUFF_PAGES 19
+
+#define LOG_FORM_TEXT_LOG_BUFF_HEIGHT 13
 #define LOG_FORM_TEXT_LOG_BUFF_WIDTH 18
 					  
 				  
-#define LOGS_COUNT 3
-#define LOG_EVENT 0	  
-#define LOG_MED 1	  
-#define LOG_SYMPTOM 2
+#define LOGS_COUNT 2
+#define LOG_SYSTEM 0	  
+#define LOG_MESSAGE 1	  
 
-#define LOG_EVENT_NAME "Дневник"	  
-#define LOG_MED_NAME "Медицина"	  
-#define LOG_SYMPTOM_NAME "Симптомы"
+#define LOG_SYSTEM_NAME "Система"	  
+#define LOG_MESSAGE_NAME "Сообщения"	  
 
 
 class UIDesigner	 
@@ -203,7 +228,7 @@ private:
 		IControl* _pnlMainFormControls[2];
 			//_pnlStatusBar
 			Panel _pnlStatusBar;
-			IControl* _pnlStatusBarControls[3];
+			IControl* _pnlStatusBarControls[5];
 				//txtUserName
 				char _txtUserNameBuff[USERNAME_BUFF_WIDTH*USERNAME_BUFF_HEIGHT ];
 
@@ -212,46 +237,45 @@ private:
 
 				//txtRoomId
 				char _txtRoomIdBuff[ROOMID_BUFF_WIDTH*ROOMID_BUFF_HEIGHT];
+				
+				//_strMainFormGateId
+				char _strMainFormGateId[MAINFORM_TEXT_GATEID_BUFF_WIDTH*MAINFORM_TEXT_GATEID_BUFF_HEIGHT];
 
-				//txtMainLog               3 pages
-				char _txtMainLog[STATUS_BUFF_WIDTH*STATUS_BUFF_HEIGHT];
+				//_strMainFormSignal
+				char _strMainFormSignal[MAINFORM_TEXT_SIGNAL_BUFF_WIDTH*MAINFORM_TEXT_SIGNAL_BUFF_HEIGHT];
+
+			//_txtMainFormMedStatus
+			TextField _txtMainFormMedStatus;
+			char _strMainFormMedStatusBuff[MAINFORM_TEXT_MEDSTATUS_BUFF_WIDTH*MAINFORM_TEXT_MEDSTATUS_BUFF_HEIGHT*MAINFORM_TEXT_MEDSTATUS_BUFF_PAGES];
+
 		#pragma endregion
 		#pragma region _mnuMainMenu
 		//_mnuMainMenu;
 		ScatteredMenu _mnuMainMenu;
-		IMenuItem* _mnuMainMenuItems[8];
-			//miHelp
-			MenuItem _miHelp;
-			Image _imgMenuHelp;
-			//miScrollUp
+		IMenuItem* _mnuMainMenuItems[5];
+
+			//_miScrollUp
 			MenuItem _miScrollUp;
 			Image _imgMenuScrollUp;
-			//miScrollDown
+			//_miScrollDown
 			MenuItem _miScrollDown;
 			Image _imgMenuScrollDown;
-			//miCycleLeft
-			MenuItem _miCycleLeft;
-			Image _imgMenuCycleLeft; 
-			//miNewShot
+			//_miMedStatus
+			MenuItem _miMedStatus;
+			Image _imgMainFormMenuMedStatus;
+			//_miNewShot
 			MenuItem _miNewShot;
 			Image _imgMenuNewShot;
-			//miKnockOut
-			MenuItem _miKnockOut;
-			Image _imgMenuKnockOut;
-			//miOpenLock
-			MenuItem _miOpenLock;
-			Image _imgMenuOpenLock;
-			//miCycleRight
-			MenuItem _miCycleRight;
-			Image _imgMenuCycleRight;
-			//miShowLogs
+			//_miShowLogs
 			MenuItem _miShowLogs;
 			Image _imgMenuShowLogs;
+			//_miKnockOut
+			MenuItem _miKnockOut;
+			Image _imgMenuKnockOut;
 	#pragma endregion
 		fresult InitMainForm();
 		fresult InitStatusBar();
 		fresult InitMainFormMnu();
-
 	#pragma endregion 
 
 	////////////////////////////////////////////////////////
@@ -361,13 +385,13 @@ private:
 				Image _imgLogFormIcon;
 			//_pnlLogFormContent
 			Panel _pnlLogFormContent;
-			IControl* _pnlLogFormContentControls[3];
-				//_txtLogFormEventLog
-				char _txtLogFormEventLogBuff[LOG_FORM_TEXT_LOG_BUFF_HEIGHT*LOG_FORM_TEXT_LOG_BUFF_WIDTH];
-				//_txtLogFormMedLog
-				char _txtLogFormMedLogBuff[LOG_FORM_TEXT_LOG_BUFF_HEIGHT*LOG_FORM_TEXT_LOG_BUFF_WIDTH];
-				//_txtLogFormSymptomLog
-				char _txtLogFormSymptomLogBuff[LOG_FORM_TEXT_LOG_BUFF_HEIGHT*LOG_FORM_TEXT_LOG_BUFF_WIDTH];
+			IControl* _pnlLogFormContentControls[2];
+				//_txtLogFormSystemLog
+				TextField _txtLogFormSystemLog;
+				char _txtLogFormSystemLogBuff[LOG_FORM_TEXT_LOG_BUFF_HEIGHT*LOG_FORM_TEXT_LOG_BUFF_WIDTH*LOG_FORM_TEXT_LOG_SYSTEM_BUFF_PAGES];
+				//_txtLogFormMessageLog
+				TextField _txtLogFormMessageLog;
+				char _txtLogFormMessageLogBuff[LOG_FORM_TEXT_LOG_BUFF_HEIGHT*LOG_FORM_TEXT_LOG_BUFF_WIDTH*LOG_FORM_TEXT_LOG_MESSAGE_BUFF_PAGES];
 		#pragma endregion
 		#pragma region _mnuLogFormMenu
 		//_mnuLogFormMenu
@@ -403,9 +427,7 @@ private:
 
 #pragma endregion
 
-		////////////////////////////////////////////////////////
-
-	
+	////////////////////////////////////////////////////////
 	
 	//Called if corresponding menuItem is not found
 	fresult virtual OnButtonPressed(ButtonState button);
@@ -418,23 +440,21 @@ protected:
 		TextField txtUserName;
 		TextField txtBatteryStatus;
 		TextField txtRoomId;
+		TextField txtMainFormGateId;
+		TextField txtMainFormSignal;
 	//_pnlMainForm;
-		TextField txtMainLog;
+		fresult SetMedStatus(const char* text);
+
+
 	Form _frmMsgBox;
 	Form _frmWoundForm;	
 	//_pnlWoundFrom
 	TextField txtWoundResult;
 
 	Form _frmLogForm;
-	//_txtLogFormEventLog
-	TextField txtLogFormEventLog;
-	//_txtLogFormMedLog
-	TextField txtLogFormMedLog;
-	//_txtLogFormSymptomLog
-	TextField txtLogFormSymptomLog;
-	fresult AppendLog(ubyte_t logId, const char* message);
 
 public:
+	fresult AppendLog(ubyte_t logId, const char* message);
 	fresult Init();
 	fresult Draw();
 	fresult ShowForm(Form* form);
@@ -442,28 +462,24 @@ public:
 	fresult MessageBoxShow(const char* caption, const char* text, ubyte_t pictureId);
 	fresult MessageBoxClose();
 
-	fresult virtual OnMainMnuHelp(IMenuItem* sender)=0;
-	fresult virtual OnMainMnuScrollUp(IMenuItem* sender)=0;
-	fresult	virtual OnMainMnuScrollDown(IMenuItem* sender)=0;
-	fresult virtual OnMainMnuCycleLeft(IMenuItem* sender)=0;
-	fresult virtual OnMainMnuShot(IMenuItem* sender)=0;
-	fresult virtual OnMainMnuKnockout(IMenuItem* sender)=0;
-	fresult virtual OnMainMnuOpenLock(IMenuItem* sender)=0;
-	fresult virtual OnMainMnuCycleRight(IMenuItem* sender)=0;
+	
+	fresult virtual OnMainMnuScrollUp(IMenuItem* sender);
+	fresult	virtual OnMainMnuScrollDown(IMenuItem* sender);
+	fresult virtual OnMainMnuShot(IMenuItem* sender){return GENERAL_ERROR;}
+	fresult virtual OnMainMnuKnockout(IMenuItem* sender){return GENERAL_ERROR;}
 	fresult virtual OnMainMnuShowLogs(IMenuItem* sender);
-
 	fresult virtual OnMsgBoxMnuOk		 (IMenuItem* sender);
 	fresult virtual OnMsgBoxMnuScrollUp  (IMenuItem* sender);
 	fresult virtual OnMsgBoxMnuScrollDown(IMenuItem* sender);
 
-	fresult virtual OnWoundMnuHead(IMenuItem* sender)=0;
-	fresult virtual OnWoundMnuStomach(IMenuItem* sender)=0;
-	fresult	virtual OnWoundMnuLeftArm(IMenuItem* sender)=0;
-	fresult virtual OnWoundMnuRightArm(IMenuItem* sender)=0;
-	fresult virtual OnWoundMnuChest(IMenuItem* sender)=0;
-	fresult virtual OnWoundMnuBack(IMenuItem* sender)=0;
-	fresult virtual OnWoundMnuLeftLeg(IMenuItem* sender)=0;
-	fresult virtual OnWoundMnuRightLeg(IMenuItem* sender)=0;
+	fresult virtual OnWoundMnuHead(IMenuItem* sender){return GENERAL_ERROR;}
+	fresult virtual OnWoundMnuStomach(IMenuItem* sender){return GENERAL_ERROR;}
+	fresult	virtual OnWoundMnuLeftArm(IMenuItem* sender){return GENERAL_ERROR;}
+	fresult virtual OnWoundMnuRightArm(IMenuItem* sender){return GENERAL_ERROR;}
+	fresult virtual OnWoundMnuChest(IMenuItem* sender){return GENERAL_ERROR;}
+	fresult virtual OnWoundMnuBack(IMenuItem* sender){return GENERAL_ERROR;}
+	fresult virtual OnWoundMnuLeftLeg(IMenuItem* sender){return GENERAL_ERROR;}
+	fresult virtual OnWoundMnuRightLeg(IMenuItem* sender){return GENERAL_ERROR;}
 	fresult virtual OnWoundMnuOk(IMenuItem* sender);
 
 	fresult virtual OnLogFormMnuScrollUp(IMenuItem* sender);
@@ -472,9 +488,7 @@ public:
 	fresult virtual OnLogFormMnuNext(IMenuItem* sender);
 	fresult virtual OnLogFormMnuBack(IMenuItem* sender);
 	fresult virtual OnLogFormMnuCleanLog(IMenuItem* sender);
-	
 
 	void _SystemOnButtonClick(uword_t button);
-	void OnNetworkData();
-
+	
 };

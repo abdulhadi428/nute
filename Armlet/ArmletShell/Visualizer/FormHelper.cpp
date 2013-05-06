@@ -17,7 +17,7 @@ namespace Visualizer {
 		return NO_BUTTON;
 	}
 
-	void FormHelper::Render()
+	void FormHelper::RenderScreen()
 	{
 		for (int y=0; y<SCREENY; y++)
 		for (int x=0; x<SCREENX; x++)
@@ -36,35 +36,27 @@ namespace Visualizer {
 
 	void FormHelper::SetPlayerName(String^ name)
 	{
-		array<unsigned char>^ bytes = Encoding::ASCII->GetBytes(name);
+		array<unsigned char>^ bytes = Encoding::GetEncoding(1251)->GetBytes(name);
+		if (bytes->Length == 0)
+			return;
 		pin_ptr<unsigned char> pinned = &bytes[0];
 		LowLevel::SetPlayerName((char const*const)pinned);
 	}
 
 	void FormHelper::SendMessage(String^ msg)
 	{
-		array<unsigned char>^ bytes = Encoding::ASCII->GetBytes(msg);
+		array<unsigned char>^ bytes = Encoding::GetEncoding(1251)->GetBytes(msg);
+		if (bytes->Length == 0)
+			return;
 		pin_ptr<unsigned char> pinned = &bytes[0];
 		LowLevel::SendMessage((char const*const)pinned);
 	}
 
 	void FormHelper::BindDelegates() {
-		dwVibro = gcnew VoidRoutineDelegateWrapper();
-		dwVibro->Delegate = gcnew VoidRoutineDelegate(mainForm,&MainForm::Vibro);
-		dwDecreasePillCharges = gcnew VoidRoutineDelegateWrapper();
-		dwDecreasePillCharges->Delegate = gcnew VoidRoutineDelegate(mainForm,&MainForm::DecreasePillCharges);
-		dwLog = gcnew IntStrRoutineDelegateWrapper();
-		dwLog->Delegate = gcnew IntStrRoutineDelegate(mainForm,&MainForm::Log);
-		dwSetCureName = gcnew IntStrRoutineDelegateWrapper();
-		dwSetCureName->Delegate = gcnew IntStrRoutineDelegate(mainForm,&MainForm::SetCureName);
-
-		LowLevel::VOID_ROUTINE *pfn1,*pfn2;
-		Marshal::StructureToPtr(dwVibro, (IntPtr)&pfn1, false);
-		Marshal::StructureToPtr(dwDecreasePillCharges, (IntPtr)&pfn2, false);
-		LowLevel::INT_STR_ROUTINE *pfn3,*pfn4;
-		Marshal::StructureToPtr(dwLog, (IntPtr)&pfn3, false);
-		Marshal::StructureToPtr(dwSetCureName, (IntPtr)&pfn4, false);
-		LowLevel::RegisterCallbacks(pfn1,pfn2,pfn3,pfn4);
-	 }
+		BIND_DELEGATE(Vibro);
+		BIND_DELEGATE(Log);
+		BIND_DELEGATE(SetCureName);
+		BIND_DELEGATE(UpdateCurrentCure);
+	}
 
 } //namespace

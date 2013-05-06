@@ -12,32 +12,43 @@ namespace Visualizer {
 	using namespace System::Windows::Forms;
 	using namespace System::Drawing::Imaging;
 
-	private delegate void VoidRoutineDelegate();
-	[StructLayoutAttribute( LayoutKind::Sequential, CharSet = CharSet::Ansi )]
-	private ref struct VoidRoutineDelegateWrapper
-	{
-		[MarshalAsAttribute(UnmanagedType::FunctionPtr)]
-		VoidRoutineDelegate^ Delegate;
-	};
-	private delegate void IntStrRoutineDelegate(int n, char* str);
-	[StructLayoutAttribute( LayoutKind::Sequential, CharSet = CharSet::Ansi )]
-	private ref struct IntStrRoutineDelegateWrapper
-	{
-		[MarshalAsAttribute(UnmanagedType::FunctionPtr)]
-		IntStrRoutineDelegate^ Delegate;
-	};
+	#define DECLARE_MANAGED_CALLBACK_TYPE(FnName) \
+		[StructLayoutAttribute( LayoutKind::Sequential, CharSet = CharSet::Ansi )] \
+		private ref struct FnName##ManagedCallback \
+		{ \
+			[MarshalAsAttribute(UnmanagedType::FunctionPtr)] \
+			FnName##Delegate^ Delegate; \
+		}
+
+	#define DECLARE_MANAGED_CALLBACK_VAR(FnName) \
+		static FnName##ManagedCallback^ pmfn##FnName
+
+	#define BIND_DELEGATE(FnName) \
+			pmfn##FnName = gcnew FnName##ManagedCallback(); \
+			pmfn##FnName->Delegate = gcnew FnName##Delegate(mainForm,&MainForm::##FnName); \
+			Marshal::StructureToPtr(pmfn##FnName, (IntPtr)&LowLevel::##FnName, false);
+
+	private delegate void VibroDelegate();
+	private delegate void LogDelegate(char* msg);
+	private delegate void SetCureNameDelegate(int cure_id, char* name);
+	private delegate void UpdateCurrentCureDelegate();
+
+	DECLARE_MANAGED_CALLBACK_TYPE(Vibro);
+	DECLARE_MANAGED_CALLBACK_TYPE(Log);
+	DECLARE_MANAGED_CALLBACK_TYPE(SetCureName);
+	DECLARE_MANAGED_CALLBACK_TYPE(UpdateCurrentCure);
 
 	ref class MainForm;
 	public ref class FormHelper
 	{
-	//callbacks from LowLevel lib
+	//callbacks from LowLevel unmanaged
 	private:
-		static VoidRoutineDelegateWrapper^ dwVibro;
-		static VoidRoutineDelegateWrapper^ dwDecreasePillCharges;
-		static IntStrRoutineDelegateWrapper^ dwLog;
-		static IntStrRoutineDelegateWrapper^ dwSetCureName;
 		static void BindDelegates();
-	//calls to LowLevel lib
+		DECLARE_MANAGED_CALLBACK_VAR(Vibro);
+		DECLARE_MANAGED_CALLBACK_VAR(Log);
+		DECLARE_MANAGED_CALLBACK_VAR(SetCureName);
+		DECLARE_MANAGED_CALLBACK_VAR(UpdateCurrentCure);
+	//calls to LowLevel unmanaged
 	public:
 		static void SetPlayerName(String^ name);
 		static void SendMessage(String^ msg);
@@ -53,7 +64,7 @@ namespace Visualizer {
 		}
 
 		static int KeyToButton(System::Windows::Forms::Keys key);
-		static void Render();
+		static void RenderScreen();
 	};
 
 } //namespace

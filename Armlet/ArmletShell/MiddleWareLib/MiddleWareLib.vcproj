@@ -220,10 +220,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ServerProtocol.h"
-				>
-			</File>
-			<File
 				RelativePath=".\strlib.h"
 				>
 			</File>

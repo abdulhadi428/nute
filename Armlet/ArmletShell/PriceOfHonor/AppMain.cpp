@@ -1,42 +1,16 @@
+#include "ArmletApi.h"
 #include "ArmletShell.h"
 #include "UserInterface.h"
 #include "MenuDelegate.h"
 #include "MiddleInterface.h"
 #include "Images.h"
 #include "ColorSchema.h"
-//#include <string.h>
-//#include "UpInterface.h"
-//#include "AppMain.h"
-//#include "TextField.h"
-//#include "GraphicRenderer.h"
-//#include "Med.h"
-
-/*TextField tf;
-GraphicRenderer rend;
-*/
+#include "Med.h"
 
 UserInterface UI;
 
-
 void AppOnButtonClick(ubyte_t button)
 {
-/*	if (button == BUTTON_Y) {
-		Position pos = tf.GetScrollPosition();
-		pos.Top++;
-		tf.SetScrollPosition(pos);
-		Clear(0);
-		tf.Draw();
-	}
-	if (button == BUTTON_X) {
-		Position pos = tf.GetScrollPosition();
-		if (pos.Top==0)
-			return;
-		pos.Top--;
-		tf.SetScrollPosition(pos);
-		Clear(0);
-		tf.Draw();
-	}
-*/
 	UI._SystemOnButtonClick(button);
 	return;
 }
@@ -46,6 +20,24 @@ void AppOnButtonHold(ubyte_t button)
 	UI._SystemOnButtonClick(BUTTON_HOLD_OFFSET+button);
 	return;
 }
+
+bool __CALLBACK _QueryLustraTimerCallback(int elapsed)
+{
+	return UI.OnLustraTimer();
+}
+
+
+bool __CALLBACK _MedicineTimerTickCallback(int elapsed)
+{
+	UI.DoMedTick();
+	return true;
+}
+
+bool __CALLBACK _QueryBatteryStatusTimerCallback(int elapsed)
+{
+	return UI.OnBatteryTimer();
+}
+
 
 uword_t gx=0;
 uword_t gy=0;
@@ -64,40 +56,14 @@ bool MoveBoxByTimer()
 
 void AppMainThread(void* param)
 {
-	/*const char* str = "PRICE of HONOR!";
-	DrawTextString(10,10,str,strlen(str),0,0);
-
-	Position pos;
-	Size size,size2;
-
-	Clear(0);
-	char buff[56];
-	size2.Height = 7; size2.Width = 8;
-	InitPositionAndSize(10,10,80,80, &pos, &size);
-	tf.Init(size, pos, buff, size2, &rend);
-	str =
-		"Статус: "
-		"Хиты: 12"
-		"Отсек №4"
-		"        "
-		"В отсеке"
-		"взрыв,  "
-		"радиация";
-
-	tf.SetText(str);
-	tf.Draw();
-
-	RequestTimer(300, MoveBoxByTimer);
-
-	if (
-		!price_of_honor::CheckCures() ||
-		!price_of_honor::CheckWounds()
-		)
-	{
-		tf.SetText("CURE-WOUNDS");
-		tf.Draw();
+	_medInit();
+#ifdef _MSC_VER
+	for (int i=0; i<MaxCureId; i++) {
+		ArmletApi::WritePill(i,i+10);
+		ArmletApi::SetCureName(i, (char*)CureNames[i]);
 	}
-	*/
+#endif
+
 	RegisterButtonHandlers(AppOnButtonClick, AppOnButtonHold);
 
 	//extern const unsigned short ArrowDownOrangeBitmap[];
@@ -130,27 +96,23 @@ void _OnPillConnected( sword_t cure_id, sword_t charges )
 	UI.OnPillConnected(cure_id, charges);
 }
 
-void _SetPlayerName( char* name )
+void _OnSetPlayerName( char* name )
 {
 	UI.SetPlayerName(name);
 }
 
-void _SetBatteryLevel( ubyte_t batLevel)
+
+void _OnExplosion(sword_t roomId)
 {
-	UI.SetBatteryLevel(batLevel);
+	UI.OnExplosion(roomId);
 }
 
-void _SetRoom( sword_t roomId )
+void _OnServerMessage(char* msg)
 {
-	UI.SetRoom(roomId);
+	UI.OnServerMessage(msg);
 }
 
-void _OnExplosion( sword_t room )
+void _OnSetRegenerationRate(sword_t regenRate)
 {
-
-}
-
-void _OnExplosion( uword_t room )
-{
-	
+	_medSetRegenerationRate(regenRate);
 }

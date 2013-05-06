@@ -1,10 +1,10 @@
 #pragma once
+#include "Common.h"				//common defines
+#include "ServerProtocol.h"		//specific server radio protocol
 
 extern const unsigned char Font_6x8_Data[256][6];
 
 namespace ArmletShell {
-
-	#include "Common.h"			//from LowLevelLib
 
 #define _NAMESPACE_PROTECT_
 	#include "Types.h"				//common types
@@ -15,17 +15,6 @@ namespace ArmletShell {
 	#include "strlib.h"				//common strings
 	#include "Buttons.h"			//common button input
 	#include "Images.h"				//common images storage
-#undef _NAMESPACE_PROTECT_
-
-}
-
-namespace ServerProtocol {
-
-	using namespace ArmletShell;
-	#include "Common.h"			//from LowLevelLib
-
-#define _NAMESPACE_PROTECT_
-	#include "ServerProtocol.h"	//specific server radio protocol
 #undef _NAMESPACE_PROTECT_
 
 }

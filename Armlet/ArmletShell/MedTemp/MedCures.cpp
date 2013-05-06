@@ -1,4 +1,215 @@
-#if 0
+#include "ArmletShell.h"
+#include "Med.h"
+
+namespace price_of_honor {
+
+/*
+typedef struct _CureStrings_t {
+	CURE_ID const id;					//cure id
+	char const*const Name;				//cure name
+	char const*const Purpose;			//cure purpose description
+	char const*const Effect;			//cure effect description
+	char const*const Contraindications;	//cure contraindications description
+	char const*const SideEffects;		//cure side effects description
+} CureStrings_t;
+
+const CureStrings_t CureStrings[MaxCureId] =
+*/
+
+const CURE_DESC CureDescs[MaxCureId] = 
+
+{
+	{
+		Anesthetics,
+		"Общее обезболивающее",
+		"Снижение болевых ощущений",
+		"Понижает уровень боли на 1",
+		"Коварные ранения",
+		"Мигрень, галлюцинации и уровень боли 2 (не снимается обезболиванием)"
+	},
+	{
+		Antispasmodic,
+		"Спазмолитик",
+		"Подавление дрожи конечностей, предотвращение кашля, рвоты и судорог",
+		"Подавляет озноб и дрожь, предотвращает кашель, судороги и рвоту."
+			"Может восстановить мелкую моторику и 'разогнуть' из позы боксера", //regeneration based
+		"Без противопоказаний",
+		"Головная боль, уровень боли 1"
+	},
+	{
+		Pyretic,
+		"Жаропонижающее",
+		"Понижение жара, прояснение сознания",
+		"Сбивает жар, проясняет сознание, улучшает восприятие",
+		"Коварные ожоги, коварная радиация, кашель",
+		"Ощущение сильного холода в животе, усилиние кашля, хрипы"
+	},
+	{
+		Aspirator,
+		"Аспиратор",
+		"Обеспечение дыхания",
+		"Обеспечивает дыхание пациенту в течение 10 минут",
+		"Без противопоказаний",
+		"Сильные хрипы, слабый кашель"
+	},
+	{
+		CoagulationFactor,
+		"Фактор свертываемости крови",
+		"Остановление кровопотери",
+		"Прекращение кровотечения. Увеличивает запас крови.", //regeneration based
+		"Без противопоказаний",
+		"При коварных ранениях живота и груди повышает уровень боли на 1"
+		"При применении на ожогах и радиационном поражении переводит ранение в следующую категорию (действует 1 раз на ранение)"
+
+	},
+	{
+		SyntheticBlood,
+		"Искусственная кровь",
+		"Восстановление запаса крови",
+		"Увеличивает запас крови. Облегчение огнестрельных ранений", //regeneration based
+		"Без противопоказаний",
+		"Жажда, жар"
+	},
+	{
+		Leatherette,
+		"Искусственная кожа",
+		"Лечение ожогов",
+		"Понижает уровень боли, восстонавливает запас крови, облегчает ожог", //regeneration based
+		"Поза боксера",
+		"Нет"
+	},
+	{
+		Myorelaxant,
+		"Миорелаксант",
+		"Прекращение судорог, расслабление позы боксера",
+		"'Разгибает' из позы боксера, судороги и дрожь прекращаются",
+		"Рвота, огнестрельные ранения груди",
+		"Потеря крови, смерть при противопоказаниях, совместно со спазмолитиком ухудшает ранения"
+	},
+	{
+		VisceraNanoPack,
+		"Пак нанохирургов для внутренних органов",
+		"Лечение ожогов и радиации",
+		"",
+		"",
+		""
+	},
+	{
+		Anesthetics,
+		"Пак дыхательных нанохирургов",
+		"Лечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
+	},
+	{
+		Antibiotic,
+		"Пак дыхательных нанохирургов",
+		"Лечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
+	},
+	{
+		Absorber,
+		"Пак дыхательных нанохирургов",
+		"Лечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
+	},
+	{
+		PlasterNanoPack,
+		"Пак дыхательных нанохирургов",
+		"Лечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
+	},
+	{
+		NanoExoFrame,
+		"Пак дыхательных нанохирургов",
+		"Лечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
+	},
+	{
+		MagicCure,
+		"Пак дыхательных нанохирургов",
+		"Лечение ударных повреждений и огнестрельных ранений груди",
+		"",
+		"",
+		""
+	}
+};
+COMPILE_TIME_CHECK(sizeof(CureDescs)/sizeof(CURE_DESC)==MaxCureId);
+
+#define NEW_CURE(x)	\
+	class x##Cure_t : public Cure_t { \
+	public: \
+		static CURE_ID const id = x; \
+		virtual void OnUse(void) const; \
+		virtual void OnTick(void) const; \
+	}; \
+	x##Cure_t const x##Cure
+#define CURE_PTR(x)	&x##Cure
+
+NEW_CURE(Analgetic);
+NEW_CURE(Antispasmodic);
+NEW_CURE(Pyretic);
+NEW_CURE(Aspirator);
+NEW_CURE(CoagulationFactor);
+NEW_CURE(SyntheticBlood);
+NEW_CURE(Leatherette);
+NEW_CURE(Myorelaxant);
+NEW_CURE(VisceraNanoPack);
+NEW_CURE(Anesthetics);
+
+const Cure_t* Cures[MaxCureId] = {
+	CURE_PTR(Analgetic),
+	CURE_PTR(Antispasmodic),
+	CURE_PTR(Pyretic),
+	CURE_PTR(Aspirator),
+	CURE_PTR(CoagulationFactor),
+	CURE_PTR(SyntheticBlood),
+	CURE_PTR(Leatherette),
+	CURE_PTR(Myorelaxant),
+	CURE_PTR(VisceraNanoPack),
+	CURE_PTR(Anesthetics)
+};
+COMPILE_TIME_CHECK(sizeof(Cures)/sizeof(Cure_t)==MaxCureId);
+
+#define CURE_STATIC_MEMBER_AS_INLINE_GETTER(x) \
+	inline const char* Cure_t::Cure##x(void) \
+	{ \
+		return CureDesc[Cure_t::id].x; \
+	}
+
+CURE_STATIC_MEMBER_AS_INLINE_GETTER(Name);
+CURE_STATIC_MEMBER_AS_INLINE_GETTER(Purpose);
+CURE_STATIC_MEMBER_AS_INLINE_GETTER(Effect);
+CURE_STATIC_MEMBER_AS_INLINE_GETTER(Contraindications);
+CURE_STATIC_MEMBER_AS_INLINE_GETTER(SideEffects);
+
+inline const Cure_t* GetCureById(CURE_ID id)
+{
+	return Cures[id];
+}
+
+//TODO DBG
+bool CheckCures()
+{
+	for (int i=0; i<MaxCureId; i++)
+	{
+		Cure_t const*const obj = GetCureById((CURE_ID)i);
+		if (obj->id != i) goto out;
+	}
+	return true;
+out:
+	return false;
+}
+
 void AnestheticsCure_t::OnUse(void) const
 {
 //	Снижение болевых ощущений.
@@ -161,7 +372,7 @@ Reg3:
 */
 }
 
-void VisceraNanoPackCure_tOnTick(void)
+void VisceraNanoPackCure_t::OnTick(void) const
 {
 }
 
@@ -189,9 +400,13 @@ void VisceraNanoPackCure_tOnTick(void)
 }
 */
 
+/*void RespiratoryNanoPackCure_t::OnTick(void) const
+{
+}*/
+
 }//namespace
 
-/*
+#if 0
 Пак нанохирургов для внутренних органов.	"Необходим для лечения ожогов и радиации категории 2 и выше.
 Также используется при высоких категориях огнестрела в живот."	"Поднимает радиационный или обычный ожог на 1 категорию за 20 минут до полного излечения.
 Прекращает кровопотерю при огнестрельных ранениях."	"Поднимает радиационный или обычный ожог на 1 категорию за 15 минут до полного излечения.
@@ -215,7 +430,6 @@ void VisceraNanoPackCure_tOnTick(void)
 Не применимо к раненным в позе боксера.
 У всех пациентов с вероятностью судорог, вызывает приступ немедленно и переводит ранение в следующую категорию.
 "
-*/
 
 //Anesthetics_CureEffect
 //Anesthetics_SideEffect
@@ -258,6 +472,7 @@ BOXER_POSE			//"Поза боксера"
 VERTIGO				//"Головокружение"
 */
 }
+#endif
 
 void OnUseAnesthetics()
 {
@@ -278,4 +493,62 @@ void OnUseAnesthetics()
 Уровень боли 2 (не снимается обезболиванием)."
 */
 }
-#endif
+
+void OnTickAnesthetics()
+{
+}
+void OnUseAntispasmodic()
+{
+}
+void OnTickAntispasmodic()
+{
+}
+void OnUsePyretic()
+{
+}
+void OnTickPyretic()
+{
+}
+void OnUseAspirator()
+{
+}
+void OnTickAspirator()
+{
+}
+void OnUseCoagulationFactor()
+{
+}
+void OnTickCoagulationFactor()
+{
+}
+void OnUseSyntheticBlood()
+{
+}
+void OnTickSyntheticBlood()
+{
+}
+void OnUseLeatherette()
+{
+}
+void OnTickLeatherette()
+{
+}
+void OnUseMyorelaxant()
+{
+}
+void OnTickMyorelaxant()
+{
+}
+void OnUseVisceraNanoPack()
+{
+}
+void OnTickVisceraNanoPack()
+{
+}
+void OnUseRespiratoryNanoPack()
+{
+}
+void OnTickRespiratoryNanoPack()
+{
+}
+

@@ -21,7 +21,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			CharacterSet="2"
 			ManagedExtensions="1"
 			>
 			<Tool
@@ -61,6 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/IGNORE:4217 /IGNORE:4049"
 				AdditionalDependencies="$(NoInherit)"
 				LinkIncremental="2"
 				ModuleDefinitionFile=""
@@ -97,7 +98,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			CharacterSet="2"
 			ManagedExtensions="1"
 			WholeProgramOptimization="1"
 			>
@@ -137,6 +138,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/IGNORE:4217 /IGNORE:4049"
 				AdditionalDependencies="$(NoInherit)"
 				LinkIncremental="1"
 				ModuleDefinitionFile=""
@@ -218,7 +220,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Helper.cpp"
+				RelativePath=".\LowLevel.cpp"
 				>
 			</File>
 			<File
@@ -261,10 +263,6 @@
 			</File>
 			<File
 				RelativePath=".\FormHelper.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Helper.h"
 				>
 			</File>
 			<File

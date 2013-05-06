@@ -1,509 +1,281 @@
+#include "ArmletApi.h"
 #include "ArmletShell.h"
 #include "Med.h"
 
-namespace price_of_honor {
-void OnStartLeftArmShotNoWound() {}
-void OnTickLeftArmShotNoWound() {}
-void OnStartLeftArmShotLight() {}
-void OnTickLeftArmShotLight() {}
-void OnStartLeftArmShotMedium() {}
-void OnTickLeftArmShotMedium() {}
-void OnStartLeftArmShotSerious() {}
-void OnTickLeftArmShotSerious() {}
-void OnStartLeftArmShotInsidious() {}
-void OnTickLeftArmShotInsidious() {}
-void OnStartLeftArmShotCritical() {}
-void OnTickLeftArmShotCritical() {}
+namespace medicine {
 
-void OnStartRightArmShotNoWound() {}
-void OnTickRightArmShotNoWound() {}
-void OnStartRightArmShotLight() {}
-void OnTickRightArmShotLight() {}
-void OnStartRightArmShotMedium() {}
-void OnTickRightArmShotMedium() {}
-void OnStartRightArmShotSerious() {}
-void OnTickRightArmShotSerious() {}
-void OnStartRightArmShotInsidious() {}
-void OnTickRightArmShotInsidious() {}
-void OnStartRightArmShotCritical() {}
-void OnTickRightArmShotCritical() {}
+#pragma region WoundEffects
+const char* WoundEffects[MaxWoundType][MaxDamageSeverity] = {
+{ //левую руку
+    //царапина    
+    "Тебе обожгло левую руку как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    неопасное
+    "Тебе обожгло левую руку как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    коварное
+    "Тебе обожгло левую руку как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    опасное
+    "Тебе обожгло левую руку как огнем. Похоже, ранение серьезное, кровь так и течет",
+    //    критическое
+    "Тебя серьезно ранило в левую руку. Течет кровь! Очень больно!",
+},
+{ //правую руку
+    //царапина    
+    "Тебе обожгло правую руку как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    неопасное
+    "Тебе обожгло правую руку как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    коварное
+    "Тебе обожгло правую руку как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    опасное
+    "Тебе обожгло правую руку как огнем. Похоже, ранение серьезное, кровь так и течет",
+    //    критическое
+    "Тебя серьезно ранило в правую руку. Течет кровь! Очень больно!",
+},
+{ //левую ногу
+    //царапина    
+    "Тебе обожгло левую ногу как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    неопасное
+    "Тебе обожгло левую ногу как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    коварное
+    "Тебе обожгло левую ногу как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    опасное
+    "Тебе обожгло левую ногу как огнем. Похоже, ранение серьезное, кровь так и течет",
+    //    критическое
+    "Тебя серьезно ранило в левую ногу. Течет кровь! Очень больно!",
+},
+{ //правую ногу
+    //царапина    
+    "Тебе обожгло правую ногу как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    неопасное
+    "Тебе обожгло правую ногу как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    коварное
+    "Тебе обожгло правую ногу как огнем. Довольно-таки больно, но похоже ничего важного не задето.",
+    //    опасное
+    "Тебе обожгло правую ногу как огнем. Похоже, ранение серьезное, кровь так и течет",
+    //    критическое
+    "Тебя серьезно ранило в правую ногу. Течет кровь! Очень больно!",
+},
 
-void OnStartLeftLegShotNoWound() {}
-void OnTickLeftLegShotNoWound() {}
-void OnStartLeftLegShotLight() {}
-void OnTickLeftLegShotLight() {}
-void OnStartLeftLegShotMedium() {}
-void OnTickLeftLegShotMedium() {}
-void OnStartLeftLegShotSerious() {}
-void OnTickLeftLegShotSerious() {}
-void OnStartLeftLegShotInsidious() {}
-void OnTickLeftLegShotInsidious() {}
-void OnStartLeftLegShotCritical() {}
-void OnTickLeftLegShotCritical() {}
+{ //Ранение в корпус
+    //царапина
+    "Выстрел задел лишь вскользь, почти не больно",
+    //    неопасное 
+    "Похоже, тебя подстрелили! Острая боль в груди",
+    //    коварное 
+    "Похоже, тебя подстрелили! Острая боль в груди",
+    //    опасное
+    "Выстрел задел лишь вскользь, почти не больно",
+    //    критическое
+    "Похоже, тебя подстрелили! Острая боль в груди Сколько крови!",
+},
+{ //Ранение в живот
+    //царапина
+    "Выстрел задел лишь вскользь, почти не больно",
+    //    неопасное 
+    "Похоже, тебя подстрелили! Острая боль в животе",
+    //    коварное 
+    "Выстрел задел лишь вскользь, почти не больно",
+    //    опасное
+    "Похоже, тебя подстрелили! Острая боль в животе",
+    //    критическое
+    "Похоже, тебя подстрелили! Острая боль в животе Сколько крови!",
+},
+{ //Ранение в спину
+    //царапина
+    "Выстрел задел лишь вскользь, почти не больно",
+    //    неопасное 
+    "Похоже, тебя подстрелили! Острая боль в спине",
+    //    коварное 
+    "Выстрел задел лишь вскользь, почти не больно",
+    //    опасное
+    "Похоже, тебя подстрелили! Острая боль в спине",
+    //    критическое
+    "Похоже, тебя подстрелили! Острая боль в спине Сколько крови!",
+},
 
-void OnStartRightLegShotNoWound() {}
-void OnTickRightLegShotNoWound() {}
-void OnStartRightLegShotLight() {}
-void OnTickRightLegShotLight() {}
-void OnStartRightLegShotMedium() {}
-void OnTickRightLegShotMedium() {}
-void OnStartRightLegShotSerious() {}
-void OnTickRightLegShotSerious() {}
-void OnStartRightLegShotInsidious() {}
-void OnTickRightLegShotInsidious() {}
-void OnStartRightLegShotCritical() {}
-void OnTickRightLegShotCritical() {}
-
-void OnStartChestShotNoWound() {}
-void OnTickChestShotNoWound() {}
-void OnStartChestShotLight() {}
-void OnTickChestShotLight() {}
-void OnStartChestShotMedium() {}
-void OnTickChestShotMedium() {}
-void OnStartChestShotSerious() {}
-void OnTickChestShotSerious() {}
-void OnStartChestShotInsidious() {}
-void OnTickChestShotInsidious() {}
-void OnStartChestShotCritical() {}
-void OnTickChestShotCritical() {}
-
-void OnStartAbdomenShotNoWound() {}
-void OnTickAbdomenShotNoWound() {}
-void OnStartAbdomenShotLight() {}
-void OnTickAbdomenShotLight() {}
-void OnStartAbdomenShotMedium() {}
-void OnTickAbdomenShotMedium() {}
-void OnStartAbdomenShotSerious() {}
-void OnTickAbdomenShotSerious() {}
-void OnStartAbdomenShotInsidious() {}
-void OnTickAbdomenShotInsidious() {}
-void OnStartAbdomenShotCritical() {}
-void OnTickAbdomenShotCritical() {}
-
-void OnStartHeadShotNoWound() {}
-void OnTickHeadShotNoWound() {}
-void OnStartHeadShotLight() {}
-void OnTickHeadShotLight() {}
-void OnStartHeadShotMedium() {}
-void OnTickHeadShotMedium() {}
-void OnStartHeadShotSerious() {}
-void OnTickHeadShotSerious() {}
-void OnStartHeadShotInsidious() {}
-void OnTickHeadShotInsidious() {}
-void OnStartHeadShotCritical() {}
-void OnTickHeadShotCritical() {}
-
-void OnStartKnockOutNoWound() {}
-void OnTickKnockOutNoWound() {}
-void OnStartKnockOutLight() {}
-void OnTickKnockOutLight() {}
-void OnStartKnockOutMedium() {}
-void OnTickKnockOutMedium() {}
-void OnStartKnockOutSerious() {}
-void OnTickKnockOutSerious() {}
-void OnStartKnockOutInsidious() {}
-void OnTickKnockOutInsidious() {}
-void OnStartKnockOutCritical() {}
-void OnTickKnockOutCritical() {}
-
-void OnStartExplosionBlastNoWound() {}
-void OnTickExplosionBlastNoWound() {}
-void OnStartExplosionBlastLight() {}
-void OnTickExplosionBlastLight() {}
-void OnStartExplosionBlastMedium() {}
-void OnTickExplosionBlastMedium() {}
-void OnStartExplosionBlastSerious() {}
-void OnTickExplosionBlastSerious() {}
-void OnStartExplosionBlastInsidious() {}
-void OnTickExplosionBlastInsidious() {}
-void OnStartExplosionBlastCritical() {}
-void OnTickExplosionBlastCritical() {}
-
-void OnStartExplosionScorchNoWound() {}
-void OnTickExplosionScorchNoWound() {}
-void OnStartExplosionScorchLight() {}
-void OnTickExplosionScorchLight() {}
-void OnStartExplosionScorchMedium() {}
-void OnTickExplosionScorchMedium() {}
-void OnStartExplosionScorchSerious() {}
-void OnTickExplosionScorchSerious() {}
-void OnStartExplosionScorchInsidious() {}
-void OnTickExplosionScorchInsidious() {}
-void OnStartExplosionScorchCritical() {}
-void OnTickExplosionScorchCritical() {}
-
-void OnStartExplosionRadiationNoWound() {}
-void OnTickExplosionRadiationNoWound() {}
-void OnStartExplosionRadiationLight() {}
-void OnTickExplosionRadiationLight() {}
-void OnStartExplosionRadiationMedium() {}
-void OnTickExplosionRadiationMedium() {}
-void OnStartExplosionRadiationSerious() {}
-void OnTickExplosionRadiationSerious() {}
-void OnStartExplosionRadiationInsidious() {}
-void OnTickExplosionRadiationInsidious() {}
-void OnStartExplosionRadiationCritical() {}
-void OnTickExplosionRadiationCritical() {}
-
-const WOUND_DESC WoundsDescs[MaxType][MaxSeverity] = 
-{
-	{//LeftArmShot
-		{
-			DEF_WOUND(LeftArmShot,Light),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(LeftArmShot,Medium),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(LeftArmShot,Serious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(LeftArmShot,Insidious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(LeftArmShot,Critical),
-			"",
-			0,0
-		},
-	},
-	{//RightArmShot
-		{
-			DEF_WOUND(RightArmShot,Light),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(RightArmShot,Medium),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(RightArmShot,Serious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(RightArmShot,Insidious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(RightArmShot,Critical),
-			"",
-			0,0
-		},
-	},
-	{//LeftLegShot
-		{
-			DEF_WOUND(LeftLegShot,Light),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(LeftLegShot,Medium),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(LeftLegShot,Serious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(LeftLegShot,Insidious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(LeftLegShot,Critical),
-			"",
-			0,0
-		},
-	},
-	{//RightLegShot
-		{
-			DEF_WOUND(RightLegShot,Light),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(RightLegShot,Medium),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(RightLegShot,Serious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(RightLegShot,Insidious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(RightLegShot,Critical),
-			"",
-			0,0
-		},
-	},
-	{//ChestShot
-		{
-			DEF_WOUND(ChestShot,Light),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ChestShot,Medium),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ChestShot,Serious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ChestShot,Insidious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ChestShot,Critical),
-			"",
-			0,0
-		},
-	},
-	{//AbdomenShot
-		{
-			DEF_WOUND(AbdomenShot,Light),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(AbdomenShot,Medium),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(AbdomenShot,Serious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(AbdomenShot,Insidious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(AbdomenShot,Critical),
-			"",
-			0,0
-		},
-	},
-	{//HeadShot
-		{
-			DEF_WOUND(HeadShot,Light),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(HeadShot,Medium),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(HeadShot,Serious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(HeadShot,Insidious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(HeadShot,Critical),
-			"",
-			0,0
-		},
-	},
-	{//KnockOut
-		{
-			DEF_WOUND(KnockOut,Light),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(KnockOut,Medium),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(KnockOut,Serious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(KnockOut,Insidious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(KnockOut,Critical),
-			"",
-			0,0
-		},
-	},
-	{//ExplosionBlast
-		{
-			DEF_WOUND(ExplosionBlast,Light),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionBlast,Medium),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionBlast,Serious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionBlast,Insidious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionBlast,Critical),
-			"",
-			0,0
-		},
-	},
-	{//ExplosionScorch
-		{
-			DEF_WOUND(ExplosionScorch,Light),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionScorch,Medium),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionScorch,Serious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionScorch,Insidious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionScorch,Critical),
-			"",
-			0,0
-		},
-	},
-	{//ExplosionRadiation
-		{
-			DEF_WOUND(ExplosionRadiation,Light),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionRadiation,Medium),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionRadiation,Serious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionRadiation,Insidious),
-			"",
-			0,0
-		},
-		{
-			DEF_WOUND(ExplosionRadiation,Critical),
-			"",
-			0,0
-		},
-	}
+{ //ранение в голову
+    //царапина
+    "Выстрел задел лишь вскользь, почти не больно",
+    //    неопасное
+    "Похоже, тебя подстрелили!  У тебя здоровенная рана. Болит.",
+    //    коварное
+    "Похоже, тебя серьезно подстрелили!  У тебя здоровенная рана. Кровь застилает глаза и почти ничего не видно. Как минимум - ужасный шрам на всю жизнь!",
+    //    опасное
+    "Тебя сбили с ног! Голова сильно болит",
+    //    критическое
+    "Все очень серьезно. Рана такая, что страшно смотреть. Очень больно.  Даже не знаешь, сможешь ли выкарабкаться.",
+},
+{ //Последствия нокаута
+    //царапина
+    "Тебя сбили с ног! Голова  болит",
+    //    неопасное
+    "Тебя сбили с ног! Голова  болит.",
+    //    коварное
+    "Тебя сбили с ног! Голова болит болит",
+    //    опасное
+    "Тебя сбили с ног! Голова сильно болит",
+    //    критическое
+    "Тебя сбили с ног! Голова ужасно болит",
+},
+{ //Ударная волна (взрыв в отсеке)
+    //царапина
+    "Сильный невидимый кулак ударил тебя, но, вроде бы, все в порядке.",
+    //    неопасное
+    "Тебя как будто ударил невидимый кулак. Больно, но жить будешь.",
+    //    коварное
+    "Тебя как будто ударил невидимый кулак. Больно, но жить будешь.",
+    //    опасное
+    "Тебя как будто ударил невидимый кулак. Ты никак не можешь прийти в себя. Похоже, дело серьезное.",
+    //    критическое
+    "Тебя как будто ударил пневматический молот. Тебе очень больно, и, кажется, ты больше не боец.",
+},
+{ //Последствия нокаута
+    //царапина
+    "Ожог-0",
+    //    неопасное
+    "Ожог-1",
+    //    коварное
+    "Ожог-2",
+    //    опасное
+    "Ожог-1",
+    //    критическое
+    "Ожог-4",
+},
+{ //Последствия нокаута
+    //царапина
+    "Ты слышишь сильный грохот. На твоей одежде появились светящиеся пятна, которые вкоре потухли.,",
+    //    неопасное
+    "Ты слышишь сильный грохот. На твоей одежде появились светящиеся пятна, которые вкоре потухли.,",
+    //    коварное
+    "Ты слышишь сильный грохот. На твоей одежде появились светящиеся пятна, которые вкоре пропали.,",
+    //    опасное
+    "Ты слышишь сильный грохот. На твоей одежде появились светящиеся пятна, которые долго не пропадали.,",
+    //    критическое
+    "Ты слышишь сильный грохот. На твоей одежде появились светящиеся пятна, которые долго не пропадали.",
+},
 };
-COMPILE_TIME_CHECK(sizeof(WoundDescs)/sizeof(WOUND_DESC)==MaxType*MaxSeverity);
+COMPILE_TIME_CHECK(sizeof(WoundEffects)/sizeof(char*)==MaxWoundType*MaxDamageSeverity);
+#pragma endregion
 
-//TODO DBG
-bool CheckWounds()
+const DAMAGE_SEVERITY RandomSelectPerTenPercent[10] =
+{ //for random number from 0..9
+	//Graze, Graze, Graze, Graze, 
+	Light, Light, Light, Light,		//40% царапина
+	Light, Light, Light,			//30% неопасное
+	Insidious, Insidious,			//20% коварное
+	Serious							//10% опасное
+};
+COMPILE_TIME_CHECK(sizeof(RandomSelectPerTenPercent)/sizeof(DAMAGE_SEVERITY)==10);
+
+DAMAGE_EFFECT WoundToDamageEffect[MaxWoundType] =
+{ 
+	Rupture, Rupture, Rupture, Rupture,
+	Rupture, Rupture, Rupture, Rupture,
+	Blow, Blow, Thermal, Radiation
+};
+
+int sdeToPain[MaxDamageEffect][MaxDamageSeverity] = {
+	{1,1,1,2,3},
+	{1,1,1,2,3},
+	{0,0,0,0,0},
+	{0,0,0,0,0},
+};
+int sdeToDisfnLevel[MaxDamageEffect][MaxDamageSeverity] = {
+	{0,0,1,1,2},
+	{0,0,1,1,2},
+	{0,0,1,1,2},
+	{0,0,1,1,2},
+};
+int sdeToBloodLoss[MaxDamageEffect][MaxDamageSeverity] = {
+	{5/*000*/,8/*000*/,10/*000*/,20/*000*/,50/*000*/}, //Rupture
+	{5/*000*/,8/*000*/,10/*000*/,20/*000*/,50/*000*/}, //Blow
+	{0,0,0,0,0},	//Thermal - FEATURE CUT
+	{10,10,20,30,40},	//Radiation
+};
+int sdeToBleeding[MaxDamageEffect][MaxDamageSeverity] = {
+	{0,1/*000*/,1/*000*/,5/*000*/,10/*000*/},
+	{0,1/*000*/,1/*000*/,5/*000*/,10/*000*/},
+	{0,0,0,0,0},
+	{0,0,0,0,0},	//Radiation
+};
+int sdeToToxinsAdd[MaxDamageEffect][MaxDamageSeverity] = {
+	{0,0,0,0,0},
+	{0,0,0,0,0},
+	{0,0,0,0,0},
+	{2/*000*/,5/*000*/,10/*000*/,15/*000*/,25/*000*/},	//Radiation
+};
+int sdeToToxinating[MaxDamageEffect][MaxDamageSeverity] = {
+	{0,0,0,0,0},
+	{0,0,0,0,0},
+	{0,0,0,0,0},
+	{0,1/*000*/,1/*000*/,5/*000*/,10/*000*/},	//Radiation
+};
+
+WOUND_DESC WoundDescs[MaxWoundType][MaxDamageSeverity];
+
+void InitWounds()
 {
-	for (int i=0; i<MaxType; i++)
-	for (int j=0; j<MaxSeverity; j++)
+	for (int i=0;i<MaxWoundType;i++)
+		for(int j=0;j<MaxDamageSeverity;j++)
 	{
-			if (WoundDescs[i][j].type != i)	goto out;
-			if (WoundDescs[i][j].severity != j)	goto out;
+		WoundDescs[i][j].target = (TARGET)i;
+		WoundDescs[i][j].severity = (DAMAGE_SEVERITY)j;
+		WoundDescs[i][j].message = WoundEffects[i][j];
+		
+		DAMAGE_EFFECT de = WoundToDamageEffect[i];
+
+		WoundDescs[i][j].PainLevel = (PAIN_LEVEL)sdeToPain[de][j];
+		WoundDescs[i][j].DisfnLevel = (DISFUNCTION_LEVEL)sdeToDisfnLevel[de][j];
+		WoundDescs[i][j].BloodLoss = sdeToBloodLoss[de][j];
+		WoundDescs[i][j].Bleeding = sdeToBleeding[de][j];
+		WoundDescs[i][j].ToxinsAdd = sdeToToxinsAdd[de][j];
+		WoundDescs[i][j].Toxinating = sdeToToxinating[de][j];
 	}
-	return true;
-out:
-	return false;
+}
+
+DAMAGE_SEVERITY NextCategory(DAMAGE_SEVERITY curr)
+{
+	if (curr <= None) return None;
+	if (curr == Graze) return None;
+	if (curr == Light) return Graze;
+	if (curr == Insidious) return Serious;
+	if (curr == Serious) return Critical;
+	if (curr == Critical) return Critical;
+	return None;
+}
+
+DAMAGE_SEVERITY DecreaseCategory(DAMAGE_SEVERITY curr)
+{
+	if (curr <= None) return None;
+	if (curr == Graze) return None;
+	if (curr == Light) return None;
+	if (curr == Insidious) return Light;
+	if (curr == Serious) return Light;
+	if (curr == Critical) return Serious;
+	return None;
+}
+
+DAMAGE_SEVERITY IncreaseCategory(DAMAGE_SEVERITY curr)
+{
+	if (curr <= None) return RandomSelectPerTenPercent[ArmletApi::GetRandom(10)];
+	if (curr == Graze) return Serious;
+	if (curr == Light) return Serious;
+	if (curr == Insidious) return Critical;
+	if (curr == Serious) return Critical;
+	if (curr == Critical) return Critical;
+	return None;
+}
+
+DAMAGE_SEVERITY NextCategory(DAMAGE_SEVERITY* curr) {*curr = NextCategory(*curr); return *curr;}
+DAMAGE_SEVERITY DecreaseCategory(DAMAGE_SEVERITY* curr) {*curr = DecreaseCategory(*curr); return *curr;}
+DAMAGE_SEVERITY IncreaseCategory(DAMAGE_SEVERITY* curr) {*curr = IncreaseCategory(*curr); return *curr;}
+
+void ApplyWound(int wound,int ds, PPART part)
+{
+	Body.BloodCapacity -= WoundDescs[wound][ds].BloodLoss;
+	part->Bleeding = WoundDescs[wound][ds].Bleeding;
+	part->DisfnLevel = WoundDescs[wound][ds].DisfnLevel;
+	part->PainLevel = WoundDescs[wound][ds].PainLevel;
+	part->RemainingTicks = MED_MEGA_TICK;
 }
 
 }//namespace
-
-#if 0
-void OnLimbMediumBeg(short limb_id)
-{
-	//"Ранение болит и умеренно кровоточит"
-	//PainLevel = 1
-	//BloodLevel-=8;
-	//Tick=0
-}
-
-void OnLimbMediumTick(short limb_id)
-{
-	//Tick++;
-	//if (Tick==15) OnLimbLightBeg()
-}
-
-
-
-//====================================
-
-void OnLimbMediumBeg(short limb_id)
-{
-	//"Ранение болит и кровоточит"
-	//PainLevel = 2
-	//BloodLevel -= 20;
-	//Tick=0
-}
-
-void OnLimbMediumTick(short limb_id)
-{
-	//Tick++;
-	//BloodLevel -= 5;
-	//if (Tick==20) OnLimbMediumEnd()
-}
-
-void OnLimbMediumEnd(short limb_id)
-{
-	//OnLimbLightBeg()
-}
-"Ранение болит и кровоточит.
-Уровень боли: 2
-Потеря крови: 20 ед. + 5 ед./мин.
-Переходит в ""Смертельное"" без лечения через 20 минут.
-Переходит в ""Неопасное"" при должном лечении как указано в лекарствах."
-#endif

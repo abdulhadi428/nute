@@ -11,6 +11,7 @@ class ControlBase : public IControl
 protected:
 	Position _Position;
 	Size _Size;
+	//TODO: rename
 	bool_t _bVisible;
 	ubyte_t _ZOrder;
 	IRender* _render;

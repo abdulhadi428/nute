@@ -1,17 +1,9 @@
 #pragma once
+#include "Common.h"
 
 namespace LowLevel {
-	#include "Common.h"
 
-	typedef void (__stdcall VOID_ROUTINE)();
-	typedef void (__stdcall INT_STR_ROUTINE)(int n, char const*const str);
-
-	void LowLevelLibMain(void);
-	void RegisterCallbacks(
-		VOID_ROUTINE* pVibro, 
-		VOID_ROUTINE* pDecreasePillCharges,
-		INT_STR_ROUTINE* pInvokeLog,
-		INT_STR_ROUTINE* pSetCureName);
+	void LowLevelMain(void);										//ARMLET InitializeShell
 
 	//ARMLET EMULTION
 	//input
@@ -24,8 +16,8 @@ namespace LowLevel {
 	void SetCurrentLock(int lock_id);								//ARMLET emulation	GetLockId/OpenLock/DenyLock
 	//output
 	extern unsigned short VideoMemory[SCREENX*SCREENY];				//ARMLET emulation	DrawPixel/DrawArea
-	extern VOID_ROUTINE* DecreasePillCharges;						//ARMLET emulation	WritePill
-	extern VOID_ROUTINE* Vibro;										//ARMLET emulation	DoVibro
+	typedef void (__stdcall VIBRO_CALLBACK)();
+	extern VIBRO_CALLBACK* Vibro;									//ARMLET emulation	DoVibro
 
 	//SERVER EMULATION
 	// OnRadioPacket / SendRadioPacket
@@ -36,13 +28,17 @@ namespace LowLevel {
 	void Explosion(int room_id);									//SERVER emulation
 
 	//LOG EMULATION
-	extern INT_STR_ROUTINE* InvokeLog;								//LOG emulation special processing
+	typedef void (__stdcall LOG_CALLBACK)(char* msg);
+	extern LOG_CALLBACK* Log;										//LOG emulation special processing
 																	//	of "log.txt"											
 	//SPECIAL
 	//input
+	void CheckTimers();												//for timers emulation, in OsEmulation.c
 	void NextMedTick();												//for medicine emulation
-	void CheckTimers();												//for timers emulation
+	int GetPillCharges(int cure_id);								//for medicine emulation
 	//output
-	extern INT_STR_ROUTINE* SetCureName;							//for medicine emulation
-
+	typedef void (__stdcall SET_CURE_NAME_CALLBACL)(int cure_id, char* cure_name);
+	extern SET_CURE_NAME_CALLBACL* SetCureName;						//for medicine emulation
+	typedef void (__stdcall UPDATE_CURRENT_CURE_CALLBACK)();
+	extern UPDATE_CURRENT_CURE_CALLBACK* UpdateCurrentCure;			//for medicine emulation
 } //namespace

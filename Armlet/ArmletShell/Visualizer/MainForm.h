@@ -103,8 +103,11 @@ namespace Visualizer {
 	private: System::Windows::Forms::CheckBox^  checkBoxNoLustra;
 	private: System::Windows::Forms::Button^  buttonRoom13Explosion;
 	private: System::Windows::Forms::Button^  buttonRoom14Explosion;
+	private: System::Windows::Forms::Button^  buttonRoom0Explosion;
 	//TAB PAGE 4
 	private: System::Windows::Forms::GroupBox^  groupBoxPills;
+	private: System::Windows::Forms::RadioButton^  radioButtonCure14;
+	private: System::Windows::Forms::RadioButton^  radioButtonCure13;
 	private: System::Windows::Forms::RadioButton^  radioButtonCure12;
 	private: System::Windows::Forms::RadioButton^  radioButtonCure11;
 	private: System::Windows::Forms::RadioButton^  radioButtonCure10;
@@ -117,6 +120,7 @@ namespace Visualizer {
 	private: System::Windows::Forms::RadioButton^  radioButtonCure3;
 	private: System::Windows::Forms::RadioButton^  radioButtonCure2;
 	private: System::Windows::Forms::RadioButton^  radioButtonCure1;
+	private: System::Windows::Forms::RadioButton^  radioButtonCure0;
 	private: System::Windows::Forms::Label^  labelPillsCharges;
 	private: System::Windows::Forms::NumericUpDown^  numericUpDownPillsCharges;
 	private: System::Windows::Forms::Button^  buttonNextMedTick;
@@ -134,27 +138,31 @@ namespace Visualizer {
 		int currCure;
 		bool bVibrating;
 		bool bVibratingReverseDirection;
-		int bVibrationTicks;
+		 int RemainignVibrationTicks;
 		//LOG
 		void ScrollLogToEnd() {
 			LogWindow->SelectionStart = LogWindow->Text->Length;
 			LogWindow->ScrollToCaret();
 			LogWindow->Refresh();
 		}
+		void UpdateCurrentCureCharges(int charges) {
+			if ((charges < 0)||(charges>99))
+				return;
+			numericUpDownPillsCharges->Value = charges;
+		}
 	public:
 		void Vibro() {
 			bVibrating = true;
-			bVibrationTicks = 10; //0.5 seconds
+			RemainignVibrationTicks = 10; //0.5 seconds
 		}
-		void DecreasePillCharges() {
-			if (numericUpDownPillsCharges->Value !=0)
-				numericUpDownPillsCharges->Value--;
+		void UpdateCurrentCure() {
+			UpdateCurrentCureCharges(LowLevel::GetPillCharges(currCure));
 		}
 		void Log(String^ message) {
 			LogWindow->Text += (message + "\r\n");
 			ScrollLogToEnd();
 		}
-		void Log(int nothing, char* msg)
+		void Log(char* msg)
 		{
 			String^ message = gcnew String(msg);
 			Log(message);
@@ -166,6 +174,9 @@ namespace Visualizer {
 		}
 		void SetCureName(int cure_id, String^ name) {
 			switch (cure_id) {
+				case 0:
+					radioButtonCure0->Text = name;
+					break;
 				case 1:
 					radioButtonCure1->Text = name;
 					break;
@@ -201,6 +212,12 @@ namespace Visualizer {
 					break;
 				case 12:
 					radioButtonCure12->Text = name;
+					break;
+				case 13:
+					radioButtonCure13->Text = name;
+					break;
+				case 14:
+					radioButtonCure14->Text = name;
 					break;
 			}
 		}
@@ -255,10 +272,13 @@ namespace Visualizer {
 			this->radioButtonLustra10 = (gcnew System::Windows::Forms::RadioButton());
 			this->buttonRoom14Explosion = (gcnew System::Windows::Forms::Button());
 			this->buttonRoom13Explosion = (gcnew System::Windows::Forms::Button());
+			this->buttonRoom0Explosion = (gcnew System::Windows::Forms::Button());
 			this->checkBoxNoLustra = (gcnew System::Windows::Forms::CheckBox());
 			this->tabPage4 = (gcnew System::Windows::Forms::TabPage());
 			this->groupBoxPills = (gcnew System::Windows::Forms::GroupBox());
 			this->buttonNextMedTick = (gcnew System::Windows::Forms::Button());
+			this->radioButtonCure14 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonCure13 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButtonCure12 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButtonCure11 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButtonCure10 = (gcnew System::Windows::Forms::RadioButton());
@@ -271,6 +291,7 @@ namespace Visualizer {
 			this->radioButtonCure3 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButtonCure2 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButtonCure1 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonCure0 = (gcnew System::Windows::Forms::RadioButton());
 			this->labelPillsCharges = (gcnew System::Windows::Forms::Label());
 			this->numericUpDownPillsCharges = (gcnew System::Windows::Forms::NumericUpDown());
 			this->buttonConnectPill = (gcnew System::Windows::Forms::Button());
@@ -328,7 +349,7 @@ namespace Visualizer {
 			this->Screen->Location = System::Drawing::Point(114, 32);
 			this->Screen->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->Screen->Name = L"Screen";
-			this->Screen->Size = System::Drawing::Size(160, 128);
+			this->Screen->Size = System::Drawing::Size(162, 130);
 			this->Screen->TabIndex = 3;
 			this->Screen->TabStop = false;
 			// 
@@ -509,7 +530,7 @@ namespace Visualizer {
 			this->ScreenZoomed->Location = System::Drawing::Point(450, 13);
 			this->ScreenZoomed->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->ScreenZoomed->Name = L"ScreenZoomed";
-			this->ScreenZoomed->Size = System::Drawing::Size(640, 512);
+			this->ScreenZoomed->Size = System::Drawing::Size(644, 516);
 			this->ScreenZoomed->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->ScreenZoomed->TabIndex = 13;
 			this->ScreenZoomed->TabStop = false;
@@ -744,10 +765,10 @@ namespace Visualizer {
 			// tabPage3
 			// 
 			this->tabPage3->Controls->Add(this->groupBoxRooms);
-			this->tabPage3->Location = System::Drawing::Point(4, 22);
+			this->tabPage3->Location = System::Drawing::Point(4, 24);
 			this->tabPage3->Name = L"tabPage3";
 			this->tabPage3->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage3->Size = System::Drawing::Size(410, 243);
+			this->tabPage3->Size = System::Drawing::Size(410, 241);
 			this->tabPage3->TabIndex = 2;
 			this->tabPage3->Text = L"Отсеки";
 			this->tabPage3->UseVisualStyleBackColor = true;
@@ -762,6 +783,7 @@ namespace Visualizer {
 			this->groupBoxRooms->Controls->Add(this->radioButtonLustra10);
 			this->groupBoxRooms->Controls->Add(this->buttonRoom14Explosion);
 			this->groupBoxRooms->Controls->Add(this->buttonRoom13Explosion);
+			this->groupBoxRooms->Controls->Add(this->buttonRoom0Explosion);
 			this->groupBoxRooms->Controls->Add(this->checkBoxNoLustra);
 			this->groupBoxRooms->Location = System::Drawing::Point(0, 0);
 			this->groupBoxRooms->Name = L"groupBoxRooms";
@@ -862,6 +884,16 @@ namespace Visualizer {
 			this->buttonRoom13Explosion->UseVisualStyleBackColor = true;
 			this->buttonRoom13Explosion->Click += gcnew System::EventHandler(this, &MainForm::buttonRoom13Explosion_Click);
 			// 
+			// buttonRoom0Explosion
+			// 
+			this->buttonRoom0Explosion->Location = System::Drawing::Point(258, 75);
+			this->buttonRoom0Explosion->Name = L"buttonRoom0Explosion";
+			this->buttonRoom0Explosion->Size = System::Drawing::Size(142, 23);
+			this->buttonRoom0Explosion->TabIndex = 11;
+			this->buttonRoom0Explosion->Text = L" Взрыв в отсеке 0";
+			this->buttonRoom0Explosion->UseVisualStyleBackColor = true;
+			this->buttonRoom0Explosion->Click += gcnew System::EventHandler(this, &MainForm::buttonRoom0Explosion_Click);
+			// 
 			// checkBoxNoLustra
 			// 
 			this->checkBoxNoLustra->AutoSize = true;
@@ -887,6 +919,8 @@ namespace Visualizer {
 			// groupBoxPills
 			// 
 			this->groupBoxPills->Controls->Add(this->buttonNextMedTick);
+			this->groupBoxPills->Controls->Add(this->radioButtonCure14);
+			this->groupBoxPills->Controls->Add(this->radioButtonCure13);
 			this->groupBoxPills->Controls->Add(this->radioButtonCure12);
 			this->groupBoxPills->Controls->Add(this->radioButtonCure11);
 			this->groupBoxPills->Controls->Add(this->radioButtonCure10);
@@ -899,6 +933,7 @@ namespace Visualizer {
 			this->groupBoxPills->Controls->Add(this->radioButtonCure3);
 			this->groupBoxPills->Controls->Add(this->radioButtonCure2);
 			this->groupBoxPills->Controls->Add(this->radioButtonCure1);
+			this->groupBoxPills->Controls->Add(this->radioButtonCure0);
 			this->groupBoxPills->Controls->Add(this->labelPillsCharges);
 			this->groupBoxPills->Controls->Add(this->numericUpDownPillsCharges);
 			this->groupBoxPills->Controls->Add(this->buttonConnectPill);
@@ -911,7 +946,7 @@ namespace Visualizer {
 			// 
 			// buttonNextMedTick
 			// 
-			this->buttonNextMedTick->Location = System::Drawing::Point(242, 191);
+			this->buttonNextMedTick->Location = System::Drawing::Point(15, 203);
 			this->buttonNextMedTick->Name = L"buttonNextMedTick";
 			this->buttonNextMedTick->Size = System::Drawing::Size(146, 23);
 			this->buttonNextMedTick->TabIndex = 26;
@@ -919,13 +954,37 @@ namespace Visualizer {
 			this->buttonNextMedTick->UseVisualStyleBackColor = true;
 			this->buttonNextMedTick->Click += gcnew System::EventHandler(this, &MainForm::buttonNextMedTick_Click);
 			// 
+			// radioButtonCure14
+			// 
+			this->radioButtonCure14->AutoSize = true;
+			this->radioButtonCure14->Location = System::Drawing::Point(192, 155);
+			this->radioButtonCure14->Name = L"radioButtonCure14";
+			this->radioButtonCure14->Size = System::Drawing::Size(68, 19);
+			this->radioButtonCure14->TabIndex = 29;
+			this->radioButtonCure14->TabStop = true;
+			this->radioButtonCure14->Text = L"Cure 14";
+			this->radioButtonCure14->UseVisualStyleBackColor = true;
+			this->radioButtonCure14->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonCure14_CheckedChanged);
+			// 
+			// radioButtonCure13
+			// 
+			this->radioButtonCure13->AutoSize = true;
+			this->radioButtonCure13->Location = System::Drawing::Point(192, 131);
+			this->radioButtonCure13->Name = L"radioButtonCure13";
+			this->radioButtonCure13->Size = System::Drawing::Size(68, 19);
+			this->radioButtonCure13->TabIndex = 28;
+			this->radioButtonCure13->TabStop = true;
+			this->radioButtonCure13->Text = L"Cure 13";
+			this->radioButtonCure13->UseVisualStyleBackColor = true;
+			this->radioButtonCure13->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonCure13_CheckedChanged);
+			// 
 			// radioButtonCure12
 			// 
 			this->radioButtonCure12->AutoSize = true;
-			this->radioButtonCure12->Location = System::Drawing::Point(242, 95);
+			this->radioButtonCure12->Location = System::Drawing::Point(192, 108);
 			this->radioButtonCure12->Name = L"radioButtonCure12";
 			this->radioButtonCure12->Size = System::Drawing::Size(68, 19);
-			this->radioButtonCure12->TabIndex = 25;
+			this->radioButtonCure12->TabIndex = 27;
 			this->radioButtonCure12->TabStop = true;
 			this->radioButtonCure12->Text = L"Cure 12";
 			this->radioButtonCure12->UseVisualStyleBackColor = true;
@@ -934,10 +993,10 @@ namespace Visualizer {
 			// radioButtonCure11
 			// 
 			this->radioButtonCure11->AutoSize = true;
-			this->radioButtonCure11->Location = System::Drawing::Point(242, 70);
+			this->radioButtonCure11->Location = System::Drawing::Point(192, 85);
 			this->radioButtonCure11->Name = L"radioButtonCure11";
 			this->radioButtonCure11->Size = System::Drawing::Size(68, 19);
-			this->radioButtonCure11->TabIndex = 24;
+			this->radioButtonCure11->TabIndex = 25;
 			this->radioButtonCure11->TabStop = true;
 			this->radioButtonCure11->Text = L"Cure 11";
 			this->radioButtonCure11->UseVisualStyleBackColor = true;
@@ -946,10 +1005,10 @@ namespace Visualizer {
 			// radioButtonCure10
 			// 
 			this->radioButtonCure10->AutoSize = true;
-			this->radioButtonCure10->Location = System::Drawing::Point(242, 45);
+			this->radioButtonCure10->Location = System::Drawing::Point(192, 62);
 			this->radioButtonCure10->Name = L"radioButtonCure10";
 			this->radioButtonCure10->Size = System::Drawing::Size(68, 19);
-			this->radioButtonCure10->TabIndex = 23;
+			this->radioButtonCure10->TabIndex = 24;
 			this->radioButtonCure10->TabStop = true;
 			this->radioButtonCure10->Text = L"Cure 10";
 			this->radioButtonCure10->UseVisualStyleBackColor = true;
@@ -958,10 +1017,10 @@ namespace Visualizer {
 			// radioButtonCure9
 			// 
 			this->radioButtonCure9->AutoSize = true;
-			this->radioButtonCure9->Location = System::Drawing::Point(242, 20);
+			this->radioButtonCure9->Location = System::Drawing::Point(192, 39);
 			this->radioButtonCure9->Name = L"radioButtonCure9";
 			this->radioButtonCure9->Size = System::Drawing::Size(61, 19);
-			this->radioButtonCure9->TabIndex = 22;
+			this->radioButtonCure9->TabIndex = 23;
 			this->radioButtonCure9->TabStop = true;
 			this->radioButtonCure9->Text = L"Cure 9";
 			this->radioButtonCure9->UseVisualStyleBackColor = true;
@@ -970,10 +1029,10 @@ namespace Visualizer {
 			// radioButtonCure8
 			// 
 			this->radioButtonCure8->AutoSize = true;
-			this->radioButtonCure8->Location = System::Drawing::Point(121, 95);
+			this->radioButtonCure8->Location = System::Drawing::Point(192, 17);
 			this->radioButtonCure8->Name = L"radioButtonCure8";
 			this->radioButtonCure8->Size = System::Drawing::Size(61, 19);
-			this->radioButtonCure8->TabIndex = 21;
+			this->radioButtonCure8->TabIndex = 22;
 			this->radioButtonCure8->TabStop = true;
 			this->radioButtonCure8->Text = L"Cure 8";
 			this->radioButtonCure8->UseVisualStyleBackColor = true;
@@ -982,10 +1041,10 @@ namespace Visualizer {
 			// radioButtonCure7
 			// 
 			this->radioButtonCure7->AutoSize = true;
-			this->radioButtonCure7->Location = System::Drawing::Point(121, 70);
+			this->radioButtonCure7->Location = System::Drawing::Point(15, 178);
 			this->radioButtonCure7->Name = L"radioButtonCure7";
 			this->radioButtonCure7->Size = System::Drawing::Size(61, 19);
-			this->radioButtonCure7->TabIndex = 20;
+			this->radioButtonCure7->TabIndex = 21;
 			this->radioButtonCure7->TabStop = true;
 			this->radioButtonCure7->Text = L"Cure 7";
 			this->radioButtonCure7->UseVisualStyleBackColor = true;
@@ -994,10 +1053,10 @@ namespace Visualizer {
 			// radioButtonCure6
 			// 
 			this->radioButtonCure6->AutoSize = true;
-			this->radioButtonCure6->Location = System::Drawing::Point(121, 45);
+			this->radioButtonCure6->Location = System::Drawing::Point(15, 155);
 			this->radioButtonCure6->Name = L"radioButtonCure6";
 			this->radioButtonCure6->Size = System::Drawing::Size(61, 19);
-			this->radioButtonCure6->TabIndex = 19;
+			this->radioButtonCure6->TabIndex = 20;
 			this->radioButtonCure6->TabStop = true;
 			this->radioButtonCure6->Text = L"Cure 6";
 			this->radioButtonCure6->UseVisualStyleBackColor = true;
@@ -1006,10 +1065,10 @@ namespace Visualizer {
 			// radioButtonCure5
 			// 
 			this->radioButtonCure5->AutoSize = true;
-			this->radioButtonCure5->Location = System::Drawing::Point(121, 20);
+			this->radioButtonCure5->Location = System::Drawing::Point(15, 131);
 			this->radioButtonCure5->Name = L"radioButtonCure5";
 			this->radioButtonCure5->Size = System::Drawing::Size(61, 19);
-			this->radioButtonCure5->TabIndex = 18;
+			this->radioButtonCure5->TabIndex = 19;
 			this->radioButtonCure5->TabStop = true;
 			this->radioButtonCure5->Text = L"Cure 5";
 			this->radioButtonCure5->UseVisualStyleBackColor = true;
@@ -1018,10 +1077,10 @@ namespace Visualizer {
 			// radioButtonCure4
 			// 
 			this->radioButtonCure4->AutoSize = true;
-			this->radioButtonCure4->Location = System::Drawing::Point(15, 95);
+			this->radioButtonCure4->Location = System::Drawing::Point(15, 108);
 			this->radioButtonCure4->Name = L"radioButtonCure4";
 			this->radioButtonCure4->Size = System::Drawing::Size(61, 19);
-			this->radioButtonCure4->TabIndex = 17;
+			this->radioButtonCure4->TabIndex = 18;
 			this->radioButtonCure4->TabStop = true;
 			this->radioButtonCure4->Text = L"Cure 4";
 			this->radioButtonCure4->UseVisualStyleBackColor = true;
@@ -1030,10 +1089,10 @@ namespace Visualizer {
 			// radioButtonCure3
 			// 
 			this->radioButtonCure3->AutoSize = true;
-			this->radioButtonCure3->Location = System::Drawing::Point(15, 70);
+			this->radioButtonCure3->Location = System::Drawing::Point(15, 85);
 			this->radioButtonCure3->Name = L"radioButtonCure3";
 			this->radioButtonCure3->Size = System::Drawing::Size(61, 19);
-			this->radioButtonCure3->TabIndex = 16;
+			this->radioButtonCure3->TabIndex = 17;
 			this->radioButtonCure3->TabStop = true;
 			this->radioButtonCure3->Text = L"Cure 3";
 			this->radioButtonCure3->UseVisualStyleBackColor = true;
@@ -1042,10 +1101,10 @@ namespace Visualizer {
 			// radioButtonCure2
 			// 
 			this->radioButtonCure2->AutoSize = true;
-			this->radioButtonCure2->Location = System::Drawing::Point(15, 45);
+			this->radioButtonCure2->Location = System::Drawing::Point(15, 62);
 			this->radioButtonCure2->Name = L"radioButtonCure2";
 			this->radioButtonCure2->Size = System::Drawing::Size(61, 19);
-			this->radioButtonCure2->TabIndex = 15;
+			this->radioButtonCure2->TabIndex = 16;
 			this->radioButtonCure2->TabStop = true;
 			this->radioButtonCure2->Text = L"Cure 2";
 			this->radioButtonCure2->UseVisualStyleBackColor = true;
@@ -1054,27 +1113,39 @@ namespace Visualizer {
 			// radioButtonCure1
 			// 
 			this->radioButtonCure1->AutoSize = true;
-			this->radioButtonCure1->Location = System::Drawing::Point(15, 20);
+			this->radioButtonCure1->Location = System::Drawing::Point(15, 39);
 			this->radioButtonCure1->Name = L"radioButtonCure1";
 			this->radioButtonCure1->Size = System::Drawing::Size(61, 19);
-			this->radioButtonCure1->TabIndex = 14;
+			this->radioButtonCure1->TabIndex = 15;
 			this->radioButtonCure1->TabStop = true;
 			this->radioButtonCure1->Text = L"Cure 1";
 			this->radioButtonCure1->UseVisualStyleBackColor = true;
 			this->radioButtonCure1->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonCure1_CheckedChanged);
 			// 
+			// radioButtonCure0
+			// 
+			this->radioButtonCure0->AutoSize = true;
+			this->radioButtonCure0->Location = System::Drawing::Point(15, 17);
+			this->radioButtonCure0->Name = L"radioButtonCure0";
+			this->radioButtonCure0->Size = System::Drawing::Size(61, 19);
+			this->radioButtonCure0->TabIndex = 14;
+			this->radioButtonCure0->TabStop = true;
+			this->radioButtonCure0->Text = L"Cure 0";
+			this->radioButtonCure0->UseVisualStyleBackColor = true;
+			this->radioButtonCure0->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonCure0_CheckedChanged);
+			// 
 			// labelPillsCharges
 			// 
 			this->labelPillsCharges->AutoSize = true;
-			this->labelPillsCharges->Location = System::Drawing::Point(12, 139);
+			this->labelPillsCharges->Location = System::Drawing::Point(271, 182);
 			this->labelPillsCharges->Name = L"labelPillsCharges";
-			this->labelPillsCharges->Size = System::Drawing::Size(236, 15);
+			this->labelPillsCharges->Size = System::Drawing::Size(131, 15);
 			this->labelPillsCharges->TabIndex = 13;
-			this->labelPillsCharges->Text = L"Число зарядов (в любой пилюле) {0..99}";
+			this->labelPillsCharges->Text = L"Число зарядов {0..99}";
 			// 
 			// numericUpDownPillsCharges
 			// 
-			this->numericUpDownPillsCharges->Location = System::Drawing::Point(256, 137);
+			this->numericUpDownPillsCharges->Location = System::Drawing::Point(348, 205);
 			this->numericUpDownPillsCharges->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {99, 0, 0, 0});
 			this->numericUpDownPillsCharges->Name = L"numericUpDownPillsCharges";
 			this->numericUpDownPillsCharges->Size = System::Drawing::Size(54, 21);
@@ -1085,7 +1156,7 @@ namespace Visualizer {
 			// 
 			// buttonConnectPill
 			// 
-			this->buttonConnectPill->Location = System::Drawing::Point(25, 168);
+			this->buttonConnectPill->Location = System::Drawing::Point(196, 203);
 			this->buttonConnectPill->Name = L"buttonConnectPill";
 			this->buttonConnectPill->Size = System::Drawing::Size(146, 23);
 			this->buttonConnectPill->TabIndex = 11;
@@ -1166,13 +1237,14 @@ namespace Visualizer {
 private: System::Void MainForm_Load(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void MainForm_Shown(System::Object^  sender, System::EventArgs^  e) {
-			 LowLevel::LowLevelLibMain();
+			 LowLevel::LowLevelMain();
 		 }
 //TIMER - main output event
 private: System::Void Render_Tick(System::Object^  sender, System::EventArgs^  e) {
-			 FormHelper::Render();
+			 FormHelper::RenderScreen();
 			 Screen->Image = FormHelper::bmp;
 			 ScreenZoomed->Image = FormHelper::bmp;
+
 			 if (bVibrating) {
 				int step = 25;
 				bVibratingReverseDirection = !bVibratingReverseDirection;
@@ -1180,8 +1252,8 @@ private: System::Void Render_Tick(System::Object^  sender, System::EventArgs^  e
 					step = -step;
 				}
 				Left += step;
-				bVibrationTicks--;
-				if (!bVibrationTicks)
+				RemainignVibrationTicks--;
+				if (RemainignVibrationTicks==0)
 					bVibrating = false;
 			 }
 		 }
@@ -1339,34 +1411,40 @@ private: System::Void radioButtonLustra10_CheckedChanged(System::Object^  sender
 			 bool b = radioButtonLustra10->Checked;
 			 if (b)
 				LowLevel::SetCurrentLustra(10);
+			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void radioButtonLustra11_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra11->Checked;
 			 if (b)
 				LowLevel::SetCurrentLustra(11);
+			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void radioButtonLustra12_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra12->Checked;
 			 if (b)
 				LowLevel::SetCurrentLustra(12); //NoRoom
+			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void radioButtonLustra13_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra13->Checked;
 			 if (b)
 				LowLevel::SetCurrentLustra(13);
+			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void radioButtonLustra14_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra14->Checked;
 			 if (b)
 				LowLevel::SetCurrentLustra(14);
+			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void radioButtonLustra15_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra15->Checked;
 			 if (b)
 				LowLevel::SetCurrentLustra(15); //NoRoom
+			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void checkBoxNoLustra_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-				LowLevel::LustraInRange(checkBoxNoLustra->Checked);
+				LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void buttonRoom13Explosion_Click(System::Object^  sender, System::EventArgs^  e) {
 			 LowLevel::Explosion(13);
@@ -1374,54 +1452,84 @@ private: System::Void buttonRoom13Explosion_Click(System::Object^  sender, Syste
 private: System::Void buttonRoom14Explosion_Click(System::Object^  sender, System::EventArgs^  e) {
 			 LowLevel::Explosion(14);
 		 }
+private: System::Void buttonRoom0Explosion_Click(System::Object^  sender, System::EventArgs^  e) {
+			 LowLevel::Explosion(0);
+		 }
 //PILLS(CURES)
+private: System::Void radioButtonCure0_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			 if (radioButtonCure0->Checked)
+				 currCure = 0;
+			 UpdateCurrentCure();
+		 }
 private: System::Void radioButtonCure1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure1->Checked)
 				 currCure = 1;
+			 UpdateCurrentCure();
 		 }
 private: System::Void radioButtonCure2_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure2->Checked)
 				 currCure = 2;
+			 UpdateCurrentCure();
 		 }
 private: System::Void radioButtonCure3_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure3->Checked)
 				 currCure = 3;
+			 UpdateCurrentCure();
 		 }
 private: System::Void radioButtonCure4_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure4->Checked)
 				 currCure = 4;
+			 UpdateCurrentCure();
 		 }
 private: System::Void radioButtonCure5_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure5->Checked)
 				 currCure = 5;
+			 UpdateCurrentCure();
 		 }
 private: System::Void radioButtonCure6_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure6->Checked)
 				 currCure = 6;
+			 UpdateCurrentCure();
 		 }
 private: System::Void radioButtonCure7_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure7->Checked)
 				 currCure = 7;
+			 UpdateCurrentCure();
 		 }
 private: System::Void radioButtonCure8_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure8->Checked)
 				 currCure = 8;
+			 UpdateCurrentCure();
 		 }
 private: System::Void radioButtonCure9_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure9->Checked)
 				 currCure = 9;
+			 UpdateCurrentCure();
 		 }
 private: System::Void radioButtonCure10_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure10->Checked)
 				 currCure = 10;
+			 UpdateCurrentCure();
 		 }
 private: System::Void radioButtonCure11_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure11->Checked)
 				 currCure = 11;
+			 UpdateCurrentCure();
 		 }
 private: System::Void radioButtonCure12_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure12->Checked)
 				 currCure = 12;
+			 UpdateCurrentCure();
+		 }
+private: System::Void radioButtonCure13_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			 if (radioButtonCure13->Checked)
+				 currCure = 13;
+			 UpdateCurrentCure();
+		 }
+private: System::Void radioButtonCure14_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			 if (radioButtonCure14->Checked)
+				 currCure = 14;
+			 UpdateCurrentCure();
 		 }
 private: System::Void buttonConnectPill_Click(System::Object^  sender, System::EventArgs^  e) {
 			 LowLevel::OnPillConnect(

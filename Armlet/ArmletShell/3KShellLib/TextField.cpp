@@ -61,6 +61,9 @@ fresult TextField::AppendText(const char* text)
 	ubyte_t wrapBacktrack;
 	//calculate wrap
 
+	if (text==NULL) 
+		return SUCCESS;
+
 	ubyte_t lineLengthToDrawTx = _Size.Width / _Format.Font.GlyphSize.Width;
 	if (lineLengthToDrawTx <1)
 	{
