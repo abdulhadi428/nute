@@ -79,8 +79,8 @@ namespace NetworkLevel.NetworkDeliveryLevel
         }
         internal void onPillDataRead(byte gate_id, byte[] readData)
         {
-            var PillDataReadHandler = PillConnectedStatus;
-            if (PillDataReadHandler != null) PillDataReadHandler(gate_id, readData);
+            var handler = PillDataRead;
+            if (handler != null) handler(gate_id, readData);
         }
         internal void onPinSet(byte gate_id, byte[] pinSetData)
         {

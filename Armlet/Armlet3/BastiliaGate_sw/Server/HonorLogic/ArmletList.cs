@@ -47,10 +47,11 @@ namespace HonorLogic
         {
             lock (_syncRoot)
             {
-                return _armlets.Select(a => new AStoredData { Id = a.Value.Id, Name = a.Value.Name }).ToList();
+                return _armlets.Select(a => new AStoredData { Id = a.Value.Id, Name = a.Value.Name.Replace('\n', ' '), Regen = a.Value.Regen }).ToList();
             }
         }
 
+/*
         public void Remove(byte id)
         {
             lock (_syncRoot)
@@ -59,6 +60,23 @@ namespace HonorLogic
                 {
                     _armlets.Remove(id);
                 }
+            }
+        }
+*/
+
+        public IArmletInfo[] GetAll()
+        {
+            lock (_syncRoot)
+            {
+                return _armlets.Select(a => a.Value).Cast<IArmletInfo>().ToArray();
+            }
+        }
+
+        public IArmletInfo GetById(byte armletId)
+        {
+            lock (_syncRoot)
+            {
+                return _armlets[armletId];
             }
         }
     }

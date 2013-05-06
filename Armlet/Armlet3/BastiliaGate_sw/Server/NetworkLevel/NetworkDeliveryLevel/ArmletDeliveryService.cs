@@ -1,59 +1,69 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Threading;
 using NetworkLevel.WCFServices;
 
 namespace NetworkLevel.NetworkDeliveryLevel
 {
     class ArmletDeliveryService : IArmletDeliveryServece
     {
-        
-
-        
-        public Task<ArmletDeliveryStatus> DeliverToSingleArmlet(byte armlet_id, byte[] payload)
+        internal void OnTxCompleted(byte gateId, byte[] payload)
         {
-            var task = new Task<ArmletDeliveryStatus>(() =>
-                {
-                    foreach (var gateWcfServiceCallback in GateConnectionPool.GateConnections)
-                    {
-                        gateWcfServiceCallback.Value.SendToArmlet(armlet_id, payload);
-                    }
-                    return ArmletDeliveryStatus.SuccessDeliver;
-                });
-            task.Start();
-            return task;
-
-        }
-
-        public void DeliverToAllArmlets(byte broadcast_id, byte[] payload)
-        {
-            foreach (var gateWcfServiceCallback in GateConnectionPool.GateConnections)
+            var armletId = payload[0];
+            var result = payload[1] == 0;
+            if (result)
             {
-                for (byte armlet_id = 10; armlet_id < 109; armlet_id++)
-                {
-                    gateWcfServiceCallback.Value.SendToArmlet(armlet_id, payload);
-                }
+                OnArmletSuccess(armletId);
             }
         }
 
-        public event Action<byte, byte> BroadcastTXCompleted;
-        public event Action<WCFServices.PlayerUpdate[]> ArmletsStatusUpdate;
+        private void OnArmletSuccess(byte armletId)
+        {
+            var handler = ArmletSuccess;
+            if (handler != null)
+            {
+                ArmletSuccess(armletId);
+            }
+        }
+
+        public void DeliverToSingleArmlet(byte armletId, byte[] payload)
+        {
+            foreach (var callback in GateConnectionPool.GateConnections.Values.ToArray())
+            {
+                callback.SendToArmlet(armletId, payload);
+            }
+        }
+
+
+        public void DeliverToArmlets(byte[] armletIds, byte[] payload)
+        {
+            foreach (var callback in GateConnectionPool.GateConnections.Values.ToArray())
+            {
+                foreach (var armletId in armletIds)
+                {
+                    callback.SendToArmlet(armletId, payload);
+                    Thread.Sleep(20);
+                }
+            }
+
+        }
+
+        public event Action<PlayerUpdate[]> ArmletsStatusUpdate;
         public event Action<byte, byte[]> ArmletSendsData;
 
-        internal void onTxCompleted(byte gate_id, byte[] armlet_id_and_result)
+        public event Action<byte> ArmletSuccess;
+
+       
+        internal void OnArmletStatusUpdate(PlayerUpdate[] updates)
         {
-            //Хитрая логика обработки Комлитов
-            //Да нахер комплиты? Кому они нужны, я вас спрашиваю?
-        }
-        internal void onArmletStatusUpdate(PlayerUpdate[] updates)
-        {
-            var ArmletsStatusUpdateHandler = ArmletsStatusUpdate;
-            if (ArmletsStatusUpdateHandler != null) ArmletsStatusUpdateHandler(updates);
+            var armletsStatusUpdateHandler = ArmletsStatusUpdate;
+            if (armletsStatusUpdateHandler != null) armletsStatusUpdateHandler(updates);
 
         }
-        internal void onArmletSendsData(byte armlet_id, byte[] payload)
+        internal void OnArmletSendsData(byte armletId, byte[] payload)
         {
-            var ArmletSendsDataHandler = ArmletSendsData;
-            if (ArmletSendsDataHandler != null) ArmletSendsDataHandler(armlet_id, payload);
+            var armletSendsDataHandler = ArmletSendsData;
+            if (armletSendsDataHandler != null) armletSendsDataHandler(armletId, payload);
         }
 
     }

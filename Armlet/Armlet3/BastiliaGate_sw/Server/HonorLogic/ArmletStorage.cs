@@ -11,6 +11,7 @@ namespace HonorLogic
     {
         public byte Id { get; set; }
         public string Name { get; set; }
+        public byte Regen { get; set; }
     }
     internal class ArmletStorage
     {
@@ -28,7 +29,7 @@ namespace HonorLogic
             {
                 return GetPersistFileInfo().OpenText().ReadToEnd();
             }
-            catch
+            catch (FileNotFoundException)
             {
                 return null;
             }
@@ -51,7 +52,12 @@ namespace HonorLogic
 
         public string GetName(byte armletId)
         {
-            return _savedData.ContainsKey(armletId) ? _savedData[armletId].Name : null;
+            return _savedData.ContainsKey(armletId) ? Armlet.TransformName(_savedData[armletId].Name) : null;
+        }
+
+        public byte GetRegen(byte armletId)
+        {
+            return (byte) (_savedData.ContainsKey(armletId) ? _savedData[armletId].Regen : 2);
         }
 
         public void SaveData(List<AStoredData> pairs)

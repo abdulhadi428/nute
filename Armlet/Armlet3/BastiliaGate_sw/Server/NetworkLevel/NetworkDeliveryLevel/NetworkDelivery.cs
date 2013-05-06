@@ -1,4 +1,6 @@
-﻿using System.ServiceModel;
+﻿using System.Net;
+using System.ServiceModel;
+using System.ServiceModel.Description;
 using NetworkLevel.WCFServices;
 
 namespace NetworkLevel.NetworkDeliveryLevel
@@ -9,7 +11,8 @@ namespace NetworkLevel.NetworkDeliveryLevel
 
         public static readonly IGateDeliveryService GateDeliveryInstance = new GateDeliveryService();
         public static readonly IArmletDeliveryServece ArmletDeliveryInstance = new ArmletDeliveryService();
-        
+
+
         static NetworkDelivery()
         {
             if (myServiceHost != null)

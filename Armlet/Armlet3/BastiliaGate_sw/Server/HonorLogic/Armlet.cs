@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
-using NetworkLevel.NetworkDeliveryLevel;
+using NetworkLevel.WCFServices;
 using PillInterfaces;
 
 namespace HonorLogic
@@ -9,59 +8,78 @@ namespace HonorLogic
     class Armlet : IArmletInfo
     {
         private readonly GlobalModel _model;
-        
-        public Armlet(byte armletId, GlobalModel model, string name)
+
+        public event Action ArmletUpdated;
+        public void SetRegen(byte regen)
+        {
+            var old = Regen;
+            Regen = regen;
+            if (regen != old)
+            {
+                _model.SavePersistent();
+                OnArmletUpdated();
+            }
+        }
+
+        public void SetToxic(byte toxic)
+        {
+            Toxic = toxic;
+        }
+
+        private void OnArmletUpdated()
+        {
+            Action handler = ArmletUpdated;
+            if (handler != null) handler();
+        }
+
+        public Armlet(byte armletId, GlobalModel model, string name, byte getRegen)
         {
             Name = name ?? ("Браслет " + armletId);
             _model = model;
             Id = armletId;
+            Regen = getRegen;
         }
 
         public void SetName(string text)
         {
+            var oldName = Name;
             Name = text;
-            _model.SavePersistent();
-            SendCommand(MessageId.MSG_SET_PLAYER_NAME, text);
-        }
-
-        private void SendCommand(MessageId messageId, string text)
-        {
-            if (text.Length > 140)
+            if (oldName != text)
             {
-                throw new ArgumentOutOfRangeException("text");
+                _model.SavePersistent();
+                OnArmletUpdated();
             }
-            SendCommand(messageId, Encoding.GetEncoding(1251).GetBytes(text));
         }
 
-        private void SendCommand(MessageId messageId, params byte[] data)
+        public void SetStatus(string status)
         {
-            _model.SendPayload(Id, new[] {(byte) messageId}.Concat(data).ToArray());
-        }
-
-        public void SendMessage(string text)
-        {
-            SendCommand(MessageId.MSG_SHOW_MESSAGE, text);
-        }
-
-        public void SetRegeneration(byte selectedValue)
-        {
-            SendCommand(MessageId.MSG_SET_PLAYER_REGENERATION, selectedValue);
-        }
-
-        public void SetLockList(byte[] lockList)
-        {
-            SendCommand(MessageId.MSG_UPDATE_LOCK_LIST, lockList);
+            Status = status;
+            OnArmletUpdated();
         }
 
         public byte Id { get; private set; }
         public byte Room { get; private set; }
         public byte BloodLevel { get; private set; }
         public string Name { get; private set; }
+        public string Status { get; private set; }
+        public byte Regen { get; private set; }
+        public byte Toxic { get; private set; }
 
-        public void Update(NetworkLevel.WCFServices.PlayerUpdate playerStatusUpdate)
+        public void Update(PlayerUpdate playerStatusUpdate)
         {
             BloodLevel = playerStatusUpdate.NewBlood;
             Room = playerStatusUpdate.NewRoom;
+            OnArmletUpdated();
+        }
+
+        public static string TransformName(string text)
+        {
+            text = text.Trim();
+            if (text.Count(ch => ch == ' ') < 3)
+            {
+                text = text.Replace(' ', '\n');
+            }
+            return text;
         }
     }
 }

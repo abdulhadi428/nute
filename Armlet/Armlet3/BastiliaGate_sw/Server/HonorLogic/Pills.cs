@@ -15,6 +15,11 @@ namespace HonorLogic
             public string Name { get; set; }
             public int Id { get;  set; }
             public int DefaultCount { get; private set; }
+
+            public override string ToString()
+            {
+                return Id + " " + Name;
+            }
         }
 
         public static IEnumerable<IPillType> List

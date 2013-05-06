@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using HonorSerialportGateConsole.Interfaces;
 using HonorSerialportGateConsole.ServerWCFService;
 
@@ -17,9 +18,22 @@ namespace HonorSerialportGateConsole
     public class WCFCallbackHandler: ServerWCFService.IGateWCFServiceCallback
     {
         private HonorSerialportDaemon _daemon;
+        private DateTime _lastHeartBeatTime = DateTime.Now;
+        private Timer _timer;
+
+        private void WatchDog(object state)
+        {
+            if (DateTime.Now.Subtract(_lastHeartBeatTime).TotalSeconds > 2)
+            {
+                Environment.Exit(1);
+            }
+        }
+
+
         public WCFCallbackHandler(HonorSerialportDaemon daemon)
         {
             _daemon = daemon;
+            _timer = new Timer(WatchDog, null, 15 *1000, 2*1000);
         }
 
         public void SendToArmlet(byte armlet_id, byte[] payload)
@@ -99,6 +113,21 @@ namespace HonorSerialportGateConsole
         }
 
         public void EndSendPinSignal(IAsyncResult result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendHeartbeat()
+        {
+            _lastHeartBeatTime = DateTime.Now;
+        }
+
+        public IAsyncResult BeginSendHeartbeat(AsyncCallback callback, object asyncState)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EndSendHeartbeat(IAsyncResult result)
         {
             throw new NotImplementedException();
         }

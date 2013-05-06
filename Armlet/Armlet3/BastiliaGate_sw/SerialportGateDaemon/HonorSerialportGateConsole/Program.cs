@@ -1,23 +1,28 @@
 ﻿using System;
-using HonorSerialportGateConsole.Interfaces;
 
 
 namespace HonorSerialportGateConsole
 {
-    class Program
+    static class Program
     {
 
-        static int Main(string[] args)
+        static int Main()
         {
+            try
+            {
+                using (var daemon = new HonorSerialportDaemon())
+                {
+                    daemon.RunMailCycle();
+                }
+                return 0;
+            }
+            catch (Exception exc)
+            {
+                
+                Console.WriteLine(exc.ToString());
+                return 1;
+            }
             
-            var daemon = new HonorSerialportDaemon();
-            daemon.RunMailCycle();
-            var rand = new Random();
-            
-
-            Console.ReadLine();
-            
-            return 0;
         }
     }
 }

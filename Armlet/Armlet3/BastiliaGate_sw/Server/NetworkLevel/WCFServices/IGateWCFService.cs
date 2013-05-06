@@ -20,7 +20,7 @@ namespace NetworkLevel.WCFServices
         byte RegisterGate (byte preferedGateId);
 
         [OperationContract(IsOneWay = true)]
-        void TXCompleted(byte[] armlet_id_and_result);
+        void TXCompleted(byte[] payload);
 
         [OperationContract(IsOneWay = true)]
         void ArmlteStatusUpdate(PlayerUpdate[] updates);
@@ -60,6 +60,9 @@ namespace NetworkLevel.WCFServices
 
         [OperationContract(IsOneWay = true)]
         void SendPinSignal(byte[] sendPinSignalData);
+
+        [OperationContract(IsOneWay = true)]
+        void SendHeartbeat();
 
     }
 }

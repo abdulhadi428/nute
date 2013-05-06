@@ -18,13 +18,13 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="net.tcp://localhost:8765/GateWcfService/mex" Protocol="mex" SourceId="1" />
+    <MetadataSource Address="net.tcp://leo.local:8765/GateWcfService/mex" Protocol="mex" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="service.wsdl" MetadataType="Wsdl" ID="96ea2014-20e4-4118-bdea-17d042c94b80" SourceId="1" SourceUrl="net.tcp://localhost:8765/GateWcfService/mex" />
-    <MetadataFile FileName="service.xsd" MetadataType="Schema" ID="5ab7844d-f2a7-48bc-ac6b-2e2edd1ce80a" SourceId="1" SourceUrl="net.tcp://localhost:8765/GateWcfService/mex" />
-    <MetadataFile FileName="service1.xsd" MetadataType="Schema" ID="f94570b0-e0b9-4bbe-b03c-1f4c3d9811b7" SourceId="1" SourceUrl="net.tcp://localhost:8765/GateWcfService/mex" />
-    <MetadataFile FileName="NetworkLevel.WCFServices.xsd" MetadataType="Schema" ID="381328c7-ccf2-4847-9138-795ed5c3f3b6" SourceId="1" SourceUrl="net.tcp://localhost:8765/GateWcfService/mex" />
+    <MetadataFile FileName="service1.wsdl" MetadataType="Wsdl" ID="3c2961cb-4d90-4009-8acd-2f28eaa80f2b" SourceId="1" SourceUrl="net.tcp://leo.local:8765/GateWcfService/mex" />
+    <MetadataFile FileName="service2.xsd" MetadataType="Schema" ID="8430e573-52d9-4b6d-912e-a2af2955bfea" SourceId="1" SourceUrl="net.tcp://leo.local:8765/GateWcfService/mex" />
+    <MetadataFile FileName="service21.xsd" MetadataType="Schema" ID="5f9b96cc-5c21-4d83-8c02-199e7dbf6210" SourceId="1" SourceUrl="net.tcp://leo.local:8765/GateWcfService/mex" />
+    <MetadataFile FileName="NetworkLevel.WCFServices1.xsd" MetadataType="Schema" ID="88dc64c4-02a5-4fe2-9e74-d4abcaa6e0e5" SourceId="1" SourceUrl="net.tcp://leo.local:8765/GateWcfService/mex" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

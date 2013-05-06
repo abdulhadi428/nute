@@ -1,15 +1,21 @@
-﻿namespace PillInterfaces
+﻿using System;
+
+namespace PillInterfaces
 {
     public interface IArmletInfo
     {
-        void SetName(string text);
-        void SendMessage(string text);
-        void SetRegeneration(byte selectedValue);
 
         byte Id { get; }
         byte Room { get; }
         byte BloodLevel { get; }
         string Name { get; }
-        void SetLockList(byte[] lockList);
+        string Status { get; }
+        byte Regen { get; }
+        byte Toxic { get; }
+        void SetStatus(string status);
+        void SetName(string text);
+        event Action ArmletUpdated;
+        void SetRegen(byte regen);
+        void SetToxic(byte toxic);
     }
 }

@@ -1,6 +1,7 @@
-﻿ using System;
+ using System;
 using System.Collections.Generic;
-using HonorUtils;
+ using System.Linq;
+ using HonorUtils;
 using NetworkLevel.NetworkDeliveryLevel;
 using PillInterfaces;
 
@@ -13,7 +14,6 @@ namespace HonorLogic
 
         public GateModel(IGateDeliveryService service, byte gateId)
         {
-
             _service = service;
             _gateId = gateId;
             
@@ -42,7 +42,7 @@ namespace HonorLogic
             }
             if (PillDataArrived != null)
             {
-                PillDataArrived(arg3);
+                PillDataArrived(arg3.Skip(2).ToArray());
             }
         }
 
@@ -59,6 +59,10 @@ namespace HonorLogic
                     {
                         PillOnlineChanged();
                     }
+                }
+                if (status)
+                {
+                    ReadPill();
                 }
             }
         }
@@ -78,6 +82,10 @@ namespace HonorLogic
             {
                 GateOnlineChanged();
             }
+            if (!online)
+            {
+                SetPilStatus(false);
+            }
         }
 
         public bool PillOnline { get; private set; }
@@ -91,7 +99,19 @@ namespace HonorLogic
         {
             try
             {
-                _service.SendPinSignal(_gateId, new byte[] {0, 0x02, 10});
+                _service.SendPinSignal(_gateId, new byte[] {0, 0x02, 0x10});
+            }
+            catch (GateNotConnectedException)
+            {
+                SetOnline(false);
+            }
+        }
+
+        public void WritePill(int p, int charges, byte pillAddress = 0)
+        {
+            try
+            {
+                _service.SendPillWhite(_gateId, new [] { pillAddress}.Concat(Utils.ToByteArray(p, charges)).ToArray());
             }
             catch (GateNotConnectedException)
             {
@@ -104,11 +124,11 @@ namespace HonorLogic
             get { return Pills.List; }
         }
 
-        public void WritePill(int p, int charges)
+        public void RefreshPillStatus(byte pillAddress = 0x00)
         {
             try
             {
-                _service.SendPillWhite(_gateId, Utils.ToByteArray(p, charges));
+                _service.CheckIfPillConnected(_gateId, new[] {pillAddress});
             }
             catch (GateNotConnectedException)
             {
@@ -116,11 +136,11 @@ namespace HonorLogic
             }
         }
 
-        public void RefreshPillStatus()
+        private void ReadPill(byte pillAddress = 0x00, byte length = 8)
         {
             try
             {
-                _service.CheckIfPillConnected(_gateId, new byte[] {0});
+                _service.SendPillRead(_gateId, new[] { pillAddress, length});
             }
             catch (GateNotConnectedException)
             {

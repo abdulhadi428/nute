@@ -54,11 +54,13 @@ namespace ServerGUI
         private void UpdateGateOnline()
         {
             IsEnabled = Model.Online;
+            PillGroupBox.Header = "Gate" + (Model.Online ? "Online" : "Offline");
+            UpdatePillOnline();
         }
 
         private void UpdatePillOnline()
         {
-            PillGroupBox.IsEnabled = Model.PillOnline;
+            PillGroupBox.Visibility = Model.PillOnline ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdatePillDataArrived(IEnumerable<byte> obj)

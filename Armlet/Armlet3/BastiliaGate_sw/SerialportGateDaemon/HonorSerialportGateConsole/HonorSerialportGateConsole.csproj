@@ -67,19 +67,22 @@
     <Compile Include="WCFClient.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Service References\ServerWCFService\NetworkLevel.WCFServices.xsd">
+    <None Include="RunDaemon.cmd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Service References\ServerWCFService\NetworkLevel.WCFServices1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServerWCFService\service.wsdl" />
-    <None Include="Service References\ServerWCFService\service.xsd">
+    <None Include="Service References\ServerWCFService\service1.wsdl" />
+    <None Include="Service References\ServerWCFService\service2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServerWCFService\service1.xsd">
+    <None Include="Service References\ServerWCFService\service21.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

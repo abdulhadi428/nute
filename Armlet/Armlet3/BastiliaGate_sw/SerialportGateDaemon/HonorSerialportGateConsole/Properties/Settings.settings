@@ -5,9 +5,6 @@
     <Setting Name="LogIsVerbose" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="WCFIPAddress" Type="System.String" Scope="User">
-      <Value Profile="(Default)">localhost</Value>
-    </Setting>
     <Setting Name="PreferedGateId" Type="System.String" Scope="User">
       <Value Profile="(Default)">5</Value>
     </Setting>

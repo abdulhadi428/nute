@@ -21,6 +21,8 @@ namespace NetworkLevel.WCFServices
             _gateDeliveryService = (GateDeliveryService) NetworkDelivery.GateDeliveryInstance;
             _armletDeliveryService = (ArmletDeliveryService) NetworkDelivery.ArmletDeliveryInstance;
 
+
+            
             OperationContext.Current.Channel.Closed += (sender, args) =>
                 {
                     GateConnectionPool.GateConnections.Remove(_sessionGateId);
@@ -60,19 +62,19 @@ namespace NetworkLevel.WCFServices
             return newIdForGate;
         }
 
-        public void TXCompleted(byte[] armlet_id_and_result)
+        public void TXCompleted(byte[] payload)
         {
-            _armletDeliveryService.onTxCompleted(_sessionGateId, armlet_id_and_result);
+            _armletDeliveryService.OnTxCompleted(_sessionGateId, payload);
         }
 
         public void ArmlteStatusUpdate(PlayerUpdate[] updates)
         {
-            _armletDeliveryService.onArmletStatusUpdate(updates);
+            _armletDeliveryService.OnArmletStatusUpdate(updates);
         }
 
         public void ArmletSendsData(byte armlet_id, byte[] payload)
         {
-            _armletDeliveryService.onArmletSendsData(armlet_id, payload);
+            _armletDeliveryService.OnArmletSendsData(armlet_id, payload);
         }
 
         public void PillConnectionStatus(byte[] isConnectionResultData)

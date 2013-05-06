@@ -4,10 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" Height="200.068" Width="378.947"
-             MinWidth="450"
+             
              Loaded="GateUI_OnLoaded">
     <StackPanel Orientation="Vertical">
-        <Label x:Name="GateStatusLabel">Online/Offline</Label>
         <GroupBox Header="Гейт" DockPanel.Dock="Top" x:Name="GateGroupBox">
             <StackPanel Orientation="Horizontal">
                 <Button x:Name="UpdateButton" Click="UpdateButton_Click">Обновить</Button>
@@ -19,13 +18,13 @@
             <StackPanel Orientation="Vertical">
                 <TextBlock x:Name="PillContentBox"></TextBlock>
 
-                <StackPanel Orientation="Horizontal">
+                <WrapPanel Orientation="Horizontal">
                     
                     <Label>Тип:</Label><ComboBox x:Name="PillTypeBox" IsEditable="False" MinWidth="200"></ComboBox>
                     <Label>Заряды:</Label>
                     <TextBox x:Name="ChargesTextBox" MinWidth="50" Margin="5,0,5,0"></TextBox> 
                     <Button x:Name="WritePillButton" Click="WritePillButton_Click">Записать</Button>
-                </StackPanel>
+                </WrapPanel>
             </StackPanel>
         </GroupBox>
     </StackPanel>

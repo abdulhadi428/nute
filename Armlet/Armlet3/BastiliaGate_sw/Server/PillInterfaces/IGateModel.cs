@@ -12,7 +12,7 @@ namespace PillInterfaces
         event Action GateOnlineChanged;
         event Action<byte[]> PillDataArrived;
         void ActivatePin();
-        void WritePill(int p, int charges);
-        void RefreshPillStatus();
+        void WritePill(int p, int charges, byte pillAddress = 0x00);
+        void RefreshPillStatus(byte pillAddress = 0x00);
     }
 }
