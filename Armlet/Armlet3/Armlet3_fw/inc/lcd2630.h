@@ -61,6 +61,7 @@ public:
     void Cls(Color_t Color);
     void GetBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uint16_t *PBuf);
     void PutBitmap(uint8_t x0, uint8_t y0, uint8_t Width, uint8_t Height, uint16_t *PBuf);
+    void PutPixel (uint8_t x0, uint8_t y0, uint16_t Clr);
 //    void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img);
 //    void DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode);
 };

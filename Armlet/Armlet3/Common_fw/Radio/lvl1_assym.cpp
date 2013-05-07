@@ -121,6 +121,7 @@ void rTmrCallback(void *p) {
 // ============================= Device task ===================================
 #ifdef DEVICE
 enum rMode_t {rmAlone, rmInSync} rMode;
+extern void RFillPkt(uint8_t *Ptr, uint8_t *PLen);
 
 // Calculates how long to wait for our timeslot
 uint32_t rLevel1_t::ICalcWaitRx_ms(uint8_t RcvdSlot) {
@@ -149,7 +150,7 @@ void rLevel1_t::ISleepIfLongToWait(uint8_t RcvdSlot) {
 void rLevel1_t::IDiscovery() {
     //Uart.Printf("Dsc\r");
     bool SomeoneIsNear = false, Retry = false;
-    int8_t BestRssi = -126; // Lowest possible
+    GateRssi = -126; // Lowest possible
     systime_t fTime;
     uint8_t RxRslt;
     uint32_t GateSlot = 0;
@@ -174,10 +175,10 @@ void rLevel1_t::IDiscovery() {
                         Retry = false;                  // No need to retry
                         //Uart.Printf("N: %u; Rssi: %d\r", i, pktRx.RSSI);
                         SomeoneIsNear = true;
-                        if(PktRx.RSSI > BestRssi) {     // Check if switch to this channel
+                        if(PktRx.RSSI > GateRssi) {     // Check if switch to this channel
                             GateN = i;                  // Note, number of concentrator != ID of concentrator
                             GateSlot = PktRx.SlotN;     // Save current slot of the gate
-                            BestRssi = PktRx.RSSI;
+                            GateRssi = PktRx.RSSI;
                             fTime = chTimeNow();        // Save current time
                         }
                     }
@@ -188,7 +189,10 @@ void rLevel1_t::IDiscovery() {
     } // for
 
     // Decide which channel to use
-    if(SomeoneIsNear == false) rMode = rmAlone; // Silence answers our cries
+    if(SomeoneIsNear == false) {
+        rMode = rmAlone; // Silence answers our cries
+        GateN = R_NO_ID;
+    }
     else {  // Some gate is near
         //Uart.Printf("Dsc: %u\r", CntrN);
         rMode = rmInSync;
@@ -249,6 +253,7 @@ uint8_t rLevel1_t::HandleRxDataPkt() {
 void rLevel1_t::IInSync() {
     uint8_t RxRslt = CC.Receive(RDISCOVERY_RX_MS, &PktRx);
     if(RxRslt == OK) {
+        GateRssi = PktRx.RSSI;
         //Uart.Printf("Rx Slot=%u; ID=%u; Srv=%X\r", PktRx.SlotN, PktRx.rID, PktRx.Srv);
         RxRetryCounter = 0;     // Something was successfully received, reset counter
         // Check if pkt is ours
@@ -263,11 +268,16 @@ void rLevel1_t::IInSync() {
             }
 
             // Reply with Data if TxQueue is not empty
-            if(ITxBuf.Get((uint8_t*)&ITxHdr, sizeof(rPktHeader_t)) == OK) {
-                ITxBuf.Get(PktTx.Data, ITxHdr.Length);    // Put data to pkt
-                PktTx.Data[RDATA_CNT-1] = ITxHdr.Length;  // Set data count in last byte
-                PktTx.Srv |= R_CMD_DATA;
-            }
+            // Commented out to use RFillPkt()
+//            if(ITxBuf.Get((uint8_t*)&ITxHdr, sizeof(rPktHeader_t)) == OK) {
+//                ITxBuf.Get(PktTx.Data, ITxHdr.Length);    // Put data to pkt
+//                PktTx.Data[RDATA_CNT-1] = ITxHdr.Length;  // Set data count in last byte
+//                PktTx.Srv |= R_CMD_DATA;
+//            }
+            uint8_t FLen;
+            RFillPkt(PktTx.Data, &FLen);
+            PktTx.Data[RDATA_CNT-1] = FLen;  // Set data count in last byte
+            PktTx.Srv |= R_CMD_DATA;
             CC.Transmit(&PktTx);
 
             // If data was transmitted, report TX ok
@@ -336,7 +346,7 @@ void rLevel1_t::Init(uint16_t ASelfID) {
     ITransmitted.Init();            // Buffer of transmitted pkt headers
     // Init radioIC
     CC.Init();
-    CC.SetTxPower(PwrPlus10dBm);
+    CC.SetTxPower(PwrPlus12dBm);
     //CC.SetTxPower(PwrMinus6dBm);
     // Variables
     ITxHdr.State = FAILURE;

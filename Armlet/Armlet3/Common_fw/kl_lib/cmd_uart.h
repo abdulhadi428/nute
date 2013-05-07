@@ -22,7 +22,7 @@
 //#endif
 
 // UART
-#define UART_TXBUF_SIZE     900
+#define UART_TXBUF_SIZE     2700
 #define UART                USART2
 #define UART_GPIO           GPIOD
 #define UART_TX_PIN         5
@@ -37,7 +37,7 @@
 #define UART_RX_IRQ_ENABLE() nvicEnableVector(STM32_USART2_NUMBER, CORTEX_PRIORITY_MASK(STM32_SERIAL_USART2_PRIORITY))
 #define UART_RX_IRQ         STM32_USART2_HANDLER
 
-#define UART_RXBUF_SZ       720     // unprocessed bytes
+#define UART_RXBUF_SZ       2700    // unprocessed bytes
 #define UART_CMDDATA_SZ     252     // payload bytes
 
 enum RcvState_t {rsStart, rsCmdCode1, rsCmdCode2, rsData1, rsData2};

@@ -50,6 +50,11 @@ int main() {
 
     while(TRUE) {
         chThdSleepMilliseconds(999);
+        // Ctrl-Alt-Del
+        if(!PinIsSet(KEY_GPIO, 3) and !PinIsSet(KEY_GPIO, 4) and !PinIsSet(KEY_GPIO, 9)) {
+            REBOOT();
+        }
+
     }
 }
 
@@ -72,7 +77,6 @@ void Init() {
     PillInit();
     //Sound.Init();
     //Sound.Play("alive.wav");
-    // Radio
     rLevel1.Init(ID);
     App.Init();
 }

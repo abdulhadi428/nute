@@ -9,6 +9,7 @@
 #define KL_LIB_F2XX_H_
 
 #include "stm32f2xx.h"
+#include "stdint-gcc.h"
 #include "ch.h"
 #include "hal.h"
 #include "clocking.h"
@@ -19,6 +20,14 @@
 #define PACKED __attribute__ ((__packed__))
 #ifndef countof
 #define countof(A)  (sizeof(A)/sizeof(A[0]))
+#endif
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
 #endif
 
 // Return values
@@ -59,6 +68,8 @@ enum RiseFall_t {Rising, Falling};
 #define DMA_PRIORITY_MEDIUM     STM32_DMA_CR_PL(0b01)
 #define DMA_PRIORITY_HIGH       STM32_DMA_CR_PL(0b10)
 #define DMA_PRIORITY_VERYHIGH   STM32_DMA_CR_PL(0b11)
+
+#define REBOOT()                SCB_AIRCR = AIRCR_VECTKEY | 0x04
 
 // ============================ Simple delay ===================================
 static inline void DelayLoop(volatile uint32_t ACounter) { while(ACounter--); }

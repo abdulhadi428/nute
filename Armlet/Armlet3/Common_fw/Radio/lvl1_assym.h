@@ -44,6 +44,7 @@ struct rPkt_t {
 #define R_ACK           0x0010
 
 // =========================== Address space ===================================
+#define R_NO_ID         -1
 // Devices
 #define RDEV_BOTTOM_ID  10
 #define RDEV_TOP_ID     109
@@ -128,7 +129,8 @@ private:
 #ifdef DEVICE
     uint8_t RxPktState, *PRxData;
     uint8_t RxRetryCounter; // to check if we get lost
-    uint16_t GateN;   // Number of gate to use. Note, Number != ID.
+    int8_t  GateN;   // Number of gate to use. Note, Number != ID.
+    int8_t GateRssi;
     inline void IInSync();
     inline void IDiscovery();
     uint32_t ICalcWaitRx_ms(uint8_t RcvdSlot);
@@ -150,6 +152,7 @@ public:
     void Shutdown();
     void SetID(uint8_t ASelfID) { SelfID = ASelfID; PktTx.rID = SelfID; }
     uint8_t GetID() { return SelfID; }
+    void GetGateParams(int8_t *PGateN, int8_t *PSignalLevel) { *PGateN = GateN; *PSignalLevel = GateRssi; }
 #endif
 #ifdef GATE
     void SetID(uint16_t ASelfID);

@@ -21,12 +21,17 @@ class Vibrator_t {
 private:
     VirtualTimer ITmr;
 public:
-    void Vibrate(const VibroChunk_t *PSequence); // Vibrate with this function
+    void Vibrate(const VibroChunk_t *PSequence) { // Vibrate with this function
+        chSysLock();
+        VibrateI(PSequence);
+        chSysUnlock();
+    }
     void Vibrate(uint32_t ms);
     void Init();
     void Shutdown();
     // Inner use
     PwmPin_t IPin;
+    void VibrateI(const VibroChunk_t *PSequence);
 };
 extern Vibrator_t Vibro;
 

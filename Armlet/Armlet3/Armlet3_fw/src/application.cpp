@@ -25,38 +25,73 @@
 
 #include "ArmletApi.h"
 
-using namespace ArmletApi;
+//#define DEMONSTRATE
+
+void LcdRedraw();
 
 App_t App;
 
 static EventListener EvtLstnrRadioRx, EvtListenerKeys, EvtListenerPill, EvtListenerIR, EvtListenerTmr;
 static EventSource IEvtSrcTmr;
-static VirtualTimer STmr;
-
 static rPktWithData_t<RRX_PKT_DATA_SZ> SRxPkt;
 
-static uint8_t LustraID;
+static uint8_t AppState[APP_STATE_LEN];
 
-// Timer
-struct ITmr_t {
-    TIMER_PROC* Proc;
-    bool Busy;
-    uint32_t Time, Period;
+// Lustra
+#define LUSTRA_RADIO_RESET_CNT  40  // How many times to wait to reset lustra number
+class Lustra_t {
+public:
+    uint8_t IDForApp, IDForRadio, Counter;
+    void SetID(uint8_t AID) {
+        IDForApp = AID;
+        IDForRadio = AID;
+        Counter = 0;
+    }
+    void PerformReset() {
+        IDForApp = UNKNOWN_ID;
+        if(Counter >= LUSTRA_RADIO_RESET_CNT) IDForRadio = UNKNOWN_ID;
+        else Counter++;
+    }
+    Lustra_t() : IDForApp(UNKNOWN_ID), IDForRadio(UNKNOWN_ID), Counter(0) {}
 };
-static ITmr_t STmrData;
+static Lustra_t Lustra;
 
+// Lcd
+static uint16_t Framebuf[LCD_W*LCD_H];
+static bool LcdHasChanged;
+#define LCD_REDRAW_MS   99
+
+// ==== Timer ====
+#define TMR_CNT     11
+struct TmrData_t {
+    ArmletApi::TIMER_PROC* Callback;
+    int32_t TimeFired, PreviousTimeFired, Period;
+    VirtualTimer VirTmr;
+    bool Fired;
+};
+class ITmr_t {
+public:
+    TmrData_t Tmrs[TMR_CNT];
+    uint32_t Cnt;
+    bool AddTmr(uint32_t APeriod, ArmletApi::TIMER_PROC* PCallback);
+    void Iterate();
+    ITmr_t() : Cnt(0) {}
+};
+static ITmr_t STimers;
 // Pill
 struct Med_t {
     int CureID, Charges;
 } __attribute__ ((__packed__));
 static Med_t Med;
 
-// =============================== App Thread ==================================
-static WORKING_AREA(waAppThread, 1024);
+// =============================== Threads ==================================
+static WORKING_AREA(waAppThread, 10000);
 static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
-    uint16_t w;
+
+    // Init shell
+    ArmletApi::InitializeShell();
 
     // Events
     uint32_t EvtMsk;
@@ -67,17 +102,19 @@ static msg_t AppThread(void *arg) {
     chEvtRegisterMask(&IEvtSrcTmr, &EvtListenerTmr, EVTMASK_TIMER);
 
     while(1) {
-        //chThdSleepMilliseconds(999);
-//        Rslt1 = rLevel1.AddPktToTx(0, Buf, PktSZ, &Rslt2);
-//        Uart.Printf("### %u\r", Rslt1);
-
         EvtMsk = chEvtWaitAny(EVTMASK_RADIO_RX | EVTMASK_KEYS | EVTMASK_PILL | EVTMASK_IR | EVTMASK_TIMER);
 
         if(EvtMsk &EVTMASK_KEYS) {
             for(uint8_t i=0; i<KEYS_CNT; i++) {
                 if(KeyStatus[i].HasChanged) {
-                    if(KeyStatus[i].State == ksReleased) OnButtonRelease(i);
-                    else OnButtonPress(i);
+                    if(KeyStatus[i].State == ksReleased) ArmletApi::OnButtonRelease(i);
+                    else {
+                        #ifdef DEMONSTRATE
+                        Beeper.Beep(ShortBeep);
+                        #endif
+                        Vibro.Vibrate(ShortBrr);
+                        ArmletApi::OnButtonPress(i);
+                    }
                     KeyStatus[i].HasChanged = false;
                 }
             } // for
@@ -85,48 +122,51 @@ static msg_t AppThread(void *arg) {
 
         if(EvtMsk & EVTMASK_RADIO_RX) {
             while(rLevel1.GetReceivedPkt(&SRxPkt) == OK) {
+                #ifdef DEMONSTRATE
+                Uart.Printf("%A\r", SRxPkt.Data, SRxPkt.Length, ' ');
+                #endif
                 //Uart.Printf("%A\r", SRxPkt.Data, SRxPkt.Length, ' ');
                 //rLevel1.AddPktToTx(0, SRxPkt.Data, SRxPkt.Length);
-                OnRadioPacket(SRxPkt.Data, SRxPkt.Length);
+                ArmletApi::OnRadioPacket(SRxPkt.Data, SRxPkt.Length);
             }
         } // if evtmsk
 
         if(EvtMsk & EVTMASK_PILL) {
+            #ifdef DEMONSTRATE
             Beeper.Beep(ShortBeep);
+            #endif
             // Read med
             if(Pill[0].Connected) {
                 Pill[0].Read((uint8_t*)&Med, sizeof(Med_t));
-                OnPillConnect(Med.CureID, Med.Charges);
+                ArmletApi::OnPillConnect(Med.CureID, Med.Charges);
             }
         }
 
         if(EvtMsk & EVTMASK_IR) {
-            w = IR.RxWord;
-            LustraID = w >> 8;
-            Uart.Printf("IR ID=%u\r", LustraID);
-            Beeper.Beep(ShortBeep);
+            uint16_t w = IR.RxWord;
+            Lustra.SetID(w >> 8);
+          //  #ifdef DEMONSTRATE
+//            Uart.Printf("IR ID=%u\r", Lustra.IDForApp);
+           // Beeper.Beep(ShortBeep);
+           // #endif
         }
 
-        if(EvtMsk & EVTMASK_TIMER) {
-            Uart.Printf("Tmr\r");
-            bool Proceed = false;
-            if(STmrData.Proc != NULL) {
-                uint32_t Elapsed = chTimeNow() - STmrData.Time;
-                STmrData.Time = chTimeNow();
-                Proceed = STmrData.Proc(Elapsed);
-            }
-            // Check if stop timer
-            if(!Proceed) {
-                chVTReset(&STmr);
-                STmrData.Busy = false;
-            } // if proceed
-        } // if timer
+        if(EvtMsk & EVTMASK_TIMER) { STimers.Iterate(); } // if timer
     } // while 1
     return 0;
 }
 
-static DIR dir;
-FILINFO FileInfo;
+static WORKING_AREA(waLcdThread, 128);
+static msg_t LcdThread(void *arg) {
+    (void)arg;
+    chRegSetThreadName("Lcd");
+    while(1) {
+        chThdSleepMilliseconds(LCD_REDRAW_MS);
+        if(LcdHasChanged) LcdRedraw();
+    } // while 1
+    return 0;
+}
+
 //=========================== Command processing ===============================
 void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
     uint8_t b;
@@ -135,18 +175,6 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
         case 0x01:
             b = OK;
             Uart.Cmd(0x90, &b, 1);
-            break;
-
-        case 0x50: // Dir
-            res = f_opendir(&dir, NULL);
-            if (res == FR_OK) {
-                for (;;) {
-                    res = f_readdir(&dir, &FileInfo);                   /* Read a directory item */
-                    if (res != FR_OK || FileInfo.fname[0] == 0) break;  /* Break on error or end of dir */
-                    if (FileInfo.fname[0] == '.') continue;             /* Ignore dot entry */
-                    Uart.Printf("%S\r", FileInfo.fname);
-                }
-            }
             break;
 
         case 0x51:  // GetID
@@ -171,13 +199,17 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
 
 // =============================== App class ===================================
 void App_t::Init() {
-    LustraID = UNKNOWN_ID;
-    STmrData.Busy = false;
     chEvtInit(&IEvtSrcTmr);
-    // Init shell
-    ArmletApi::InitializeShell();
 
+    chThdCreateStatic(waLcdThread, sizeof(waLcdThread), LOWPRIO, LcdThread, NULL);
     chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, AppThread, NULL);
+}
+
+// Fill radiopkt with current data
+void RFillPkt(uint8_t *Ptr, uint8_t *PLen) {
+    *Ptr++ = Lustra.IDForRadio;
+    memcpy(Ptr, AppState, APP_STATE_LEN);
+    *PLen = APP_STATE_LEN+1;    // state len and lustra
 }
 
 // Dummy
@@ -185,28 +217,24 @@ void App_t::Init() {
 bool ArmletApi::InitializeShell() { return false; }
 
 void ArmletApi::OnButtonPress(int button_id) {
-    Uart.Printf("Btn Press %u\r", button_id);
-    DoVibroAndBeep(54);
 }
 void ArmletApi::OnButtonRelease(int button_id) {
-    Uart.Printf("Btn Rlz %u\r", button_id);
 }
 
 void ArmletApi::OnRadioPacket(unsigned char* packet, int len) {
-    Uart.Printf("%A\r", packet, len, ' ');
 }
 void ArmletApi::OnPillConnect(int cure_id, int charges) {
-    Uart.Printf("Pill %d, %d\r", Med.CureID, Med.Charges);
 }
 #endif
 // ================================== API ======================================
 unsigned char ArmletApi::GetLustraId() {
-    uint8_t b = LustraID;
-    LustraID = UNKNOWN_ID;  // Reset ID
+    uint8_t b = Lustra.IDForApp;
+    Lustra.PerformReset();
+    Uart.Printf("IR ID=%u %u\r", Lustra.IDForApp, b);
     return b;
 }
 
-int snprintf(char* buf, int bufSz, char* fmt,...) {
+int ArmletApi::snprintf(char* buf, int bufSz, char* fmt,...) {
     va_list args;
     va_start(args, fmt);
     uint32_t Cnt = tiny_vsprintf(buf, bufSz, fmt, args);
@@ -216,9 +244,19 @@ int snprintf(char* buf, int bufSz, char* fmt,...) {
 
 unsigned char ArmletApi::GetBatteryLevel() { return Power.RemainingPercent; }
 
-// Display
+// ==== Display ====
+void LcdRedraw() {
+    Lcd.PutBitmap(0, 0, LCD_W, LCD_H, Framebuf);
+    LcdHasChanged = false;
+}
+
 void ArmletApi::DrawPixel(int x, int y, unsigned short c) {
-    Lcd.PutBitmap(x, y, 1, 1, &c);
+    //Uart.Printf("%u %u %X\r", x, y, c);
+    uint32_t N = x + y*LCD_W;
+    if(N >= (LCD_W*LCD_H)) return;
+    // Add to buffer
+    Framebuf[N] = c;
+    LcdHasChanged = true;
 }
 void ArmletApi::DrawArea(int x, int y, unsigned short *const pc, int len, int sx, int sy) {
     Lcd.PutBitmap(x, y, sx, sy, pc);
@@ -241,26 +279,66 @@ bool ArmletApi::WritePill(int cure_id, int charges) {
     return (Pill[0].Write((uint8_t*)&Med, sizeof(Med_t)) == OK);
 }
 
-// Radio
+// ==== Radio ====
 void ArmletApi::SendRadioPacket(unsigned char* packet, int len) {
     rLevel1.AddPktToTx(0, packet, len);
 }
 unsigned short ArmletApi::GetArmletId() { return rLevel1.GetID(); }
-
-// Timer
-static void AppTmrCallback(void *p) {
-    chEvtBroadcast(&IEvtSrcTmr);
-    chVTSetI(&STmr, MS2ST(STmrData.Period), AppTmrCallback, NULL);
+void ArmletApi::SendAppState(unsigned char packet[APP_STATE_LEN]) {
+    chSysLock();
+    memcpy(AppState, packet, APP_STATE_LEN);
+    chSysUnlock();
 }
-bool ArmletApi::RequestTimer(TIMER_PROC* timerProc, int period) {
-    if(STmrData.Busy) return false;
-    STmrData.Busy = true;
-    STmrData.Proc = timerProc; // Save Callback
-    STmrData.Time = chTimeNow();
-    STmrData.Period = period;
-    chVTReset(&STmr);
-    chVTSet(&STmr, MS2ST(period), AppTmrCallback, NULL);
+void ArmletApi::GetRadioStatus(int* gate_id, int* signal_level) {
+    int8_t FId, FSl;
+    rLevel1.GetGateParams(&FId, &FSl);
+    if(FId == R_NO_ID) *gate_id = -1;
+    else *gate_id = FId;
+    *signal_level = FSl;
+}
+
+
+// ==== Timer ====
+static void AppTmrCallback(void *p) {
+    TmrData_t *PTmr = (TmrData_t*)p;
+    if (!PTmr->Fired) {
+        PTmr->PreviousTimeFired = PTmr->TimeFired;
+        PTmr->TimeFired = chTimeNow();
+        PTmr->Fired = true;
+    }
+    chSysLockFromIsr();
+    chEvtBroadcastI(&IEvtSrcTmr);
+    chVTSetI(&PTmr->VirTmr, MS2ST(PTmr->Period), AppTmrCallback, p);
+    chSysUnlockFromIsr();
+}
+
+bool ITmr_t::AddTmr(uint32_t APeriod, ArmletApi::TIMER_PROC* PCallback) {
+    if((Cnt >= TMR_CNT) or (PCallback == NULL)) return false;
+    Tmrs[Cnt].Fired = false;
+    Tmrs[Cnt].Callback = PCallback;
+    Tmrs[Cnt].Period = APeriod;
+    Tmrs[Cnt].TimeFired = chTimeNow();
+    chVTSet(&Tmrs[Cnt].VirTmr, MS2ST(APeriod), AppTmrCallback, (void*)&Tmrs[Cnt]);
+    Cnt++;
     return true;
+}
+
+void ITmr_t::Iterate() {
+    for (uint32_t i=0; i<Cnt; i++) {
+        if(Tmrs[i].Fired) {
+            int Elapsed = chTimeNow() - Tmrs[i].PreviousTimeFired;
+            //#ifdef DEMONSTRATE
+            //Uart.Printf("Tmr%u p%u e%d\r", i, Tmrs[i].Period, Elapsed);
+            //#endif
+            // Run callback and stop timer if not needed
+            if(!Tmrs[i].Callback(Elapsed)) { chVTReset(&Tmrs[i].VirTmr); }
+            Tmrs[i].Fired = false;
+        } // if
+    } // for
+}
+
+bool ArmletApi::RequestTimer(TIMER_PROC* timerProc, int period) {
+    return STimers.AddTmr(period, timerProc);
 }
 
 int ArmletApi::GetUpTime() { return chTimeNow(); }
@@ -308,4 +386,18 @@ int ArmletApi::AppendFile(FILE* file, char* buf, int len) {
     f_write((FIL*)file, buf, len, &FLen);
     return FLen;
 }
+
+// ===========
+//extern "C" {
+//void _exit() {}
+//void _sbrk() {}
+//void _kill() {}
+//void _getpid() {}
+//void _write() {}
+//void _close() {}
+//void _fstat() {}
+//void _isatty() {}
+//void _lseek() {}
+//void _read() {}
+//}
 

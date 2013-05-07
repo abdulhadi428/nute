@@ -62,7 +62,7 @@ void Beeper_t::Shutdown() {
 Vibrator_t Vibro;
 // Timer callback
 void VibroTmrCallback(void *p) {
-    Vibro.Vibrate((const VibroChunk_t*)p);
+    Vibro.VibrateI((const VibroChunk_t*)p);
 }
 
 void Vibrator_t::Init() {
@@ -70,8 +70,9 @@ void Vibrator_t::Init() {
     IPin.SetFreqHz(171);
 }
 
-void Vibrator_t::Vibrate(const VibroChunk_t *PSequence) {
-    chVTReset(&ITmr);
+void Vibrator_t::VibrateI(const VibroChunk_t *PSequence) {
+    // Reset timer
+    if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);
     // Process chunk
     int8_t Intencity = PSequence->Intencity;
     if((Intencity < 0) or (PSequence->Time_ms == 0)) {    // Nothing to play
@@ -81,7 +82,7 @@ void Vibrator_t::Vibrate(const VibroChunk_t *PSequence) {
     if(Intencity > 100) Intencity = 100;  // Normalize volume
     IPin.On(Intencity);
     // Start timer
-    chVTSet(&ITmr, MS2ST(PSequence->Time_ms), VibroTmrCallback, (void*)(PSequence+1));
+    chVTSetI(&ITmr, MS2ST(PSequence->Time_ms), VibroTmrCallback, (void*)(PSequence+1));
 }
 
 void VibroTmrCallbackStop(void *p) {

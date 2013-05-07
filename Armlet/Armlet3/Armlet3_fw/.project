@@ -292,6 +292,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/MiddleWareLib/Images.h</locationURI>
 		</link>
 		<link>
+			<name>Honor/MiddleWareLib/ImagesLibrary.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/MiddleWareLib/ImagesLibrary.h</locationURI>
+		</link>
+		<link>
 			<name>Honor/MiddleWareLib/KreylFont.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/MiddleWareLib/KreylFont.cpp</locationURI>
@@ -305,11 +310,6 @@
 			<name>Honor/MiddleWareLib/MiddleWareLibMain.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/MiddleWareLib/MiddleWareLibMain.cpp</locationURI>
-		</link>
-		<link>
-			<name>Honor/MiddleWareLib/ServerProtocol.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/MiddleWareLib/ServerProtocol.h</locationURI>
 		</link>
 		<link>
 			<name>Honor/MiddleWareLib/Types.h</name>
@@ -337,9 +337,29 @@
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/AppMain.h</locationURI>
 		</link>
 		<link>
+			<name>Honor/PriceOfHonor/ColorSchema.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/ColorSchema.cpp</locationURI>
+		</link>
+		<link>
+			<name>Honor/PriceOfHonor/ColorSchema.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/ColorSchema.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/PriceOfHonor/ConstStrings.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/ConstStrings.cpp</locationURI>
+		</link>
+		<link>
 			<name>Honor/PriceOfHonor/Form.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/Form.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/PriceOfHonor/Icons.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/Icons.cpp</locationURI>
 		</link>
 		<link>
 			<name>Honor/PriceOfHonor/Icons.h</name>
@@ -347,9 +367,19 @@
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/Icons.h</locationURI>
 		</link>
 		<link>
+			<name>Honor/PriceOfHonor/Images.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/Images.cpp</locationURI>
+		</link>
+		<link>
 			<name>Honor/PriceOfHonor/Images.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/Images.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/PriceOfHonor/Med.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/Med.cpp</locationURI>
 		</link>
 		<link>
 			<name>Honor/PriceOfHonor/Med.h</name>
@@ -357,9 +387,19 @@
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/Med.h</locationURI>
 		</link>
 		<link>
+			<name>Honor/PriceOfHonor/MedBody.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/MedBody.cpp</locationURI>
+		</link>
+		<link>
 			<name>Honor/PriceOfHonor/MedBody.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/MedBody.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/PriceOfHonor/MedCures.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/MedCures.cpp</locationURI>
 		</link>
 		<link>
 			<name>Honor/PriceOfHonor/MedCures.h</name>
@@ -367,9 +407,24 @@
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/MedCures.h</locationURI>
 		</link>
 		<link>
+			<name>Honor/PriceOfHonor/MedSymptoms.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/MedSymptoms.cpp</locationURI>
+		</link>
+		<link>
 			<name>Honor/PriceOfHonor/MedTemp.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/MedTemp.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/PriceOfHonor/MedTypes.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/MedTypes.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/PriceOfHonor/MedWounds.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/MedWounds.cpp</locationURI>
 		</link>
 		<link>
 			<name>Honor/PriceOfHonor/MedWounds.h</name>
@@ -387,9 +442,24 @@
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/MenuDelegate.h</locationURI>
 		</link>
 		<link>
+			<name>Honor/PriceOfHonor/Notes.txt</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/Notes.txt</locationURI>
+		</link>
+		<link>
 			<name>Honor/PriceOfHonor/TZ.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/TZ.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/PriceOfHonor/Temp.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/Temp.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/PriceOfHonor/TestIcon.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/TestIcon.cpp</locationURI>
 		</link>
 		<link>
 			<name>Honor/PriceOfHonor/UI.cpp</name>
@@ -397,14 +467,29 @@
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/UI.cpp</locationURI>
 		</link>
 		<link>
+			<name>Honor/PriceOfHonor/UIDesigner.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/UIDesigner.cpp</locationURI>
+		</link>
+		<link>
 			<name>Honor/PriceOfHonor/UIDesigner.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/UIDesigner.h</locationURI>
 		</link>
 		<link>
+			<name>Honor/PriceOfHonor/UserInterface.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/UserInterface.cpp</locationURI>
+		</link>
+		<link>
 			<name>Honor/PriceOfHonor/UserInterface.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/UserInterface.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/PriceOfHonor/med_krvd.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/PriceOfHonor/med_krvd.cpp</locationURI>
 		</link>
 		<link>
 			<name>Honor/ShellApi/ArmletApi.h</name>
@@ -420,6 +505,11 @@
 			<name>Honor/ShellApi/PlatformDependent.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/ShellApi/PlatformDependent.h</locationURI>
+		</link>
+		<link>
+			<name>Honor/ShellApi/ServerProtocol.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/ArmletShell/ShellApi/ServerProtocol.h</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
