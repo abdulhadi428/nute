@@ -22,6 +22,8 @@
 #include "hal.h"
 #include "usb_cdc.h"
 #include "usb.h"        // @KL
+extern void dbgprn(const char* S, ...);
+extern void dbgprn2(const char* S, uint32_t N);
 
 /*
  * USB Device Descriptor.
@@ -261,7 +263,7 @@ static const USBEndpointConfig ep2config = {
  * Handles the USB driver global events.
  */
 static void usb_event(USBDriver *usbp, usbevent_t event) {
-
+    dbgprn2("evt %u\r", event);
   switch (event) {
   case USB_EVENT_RESET:
     return;

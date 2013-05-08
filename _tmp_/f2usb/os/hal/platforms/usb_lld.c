@@ -33,6 +33,7 @@
 
 #include "usb.h"        // @KL
 extern void dbgprn(const char* S, ...);
+extern void dbgprn2(const char* S, uint32_t N);
 
 #if HAL_USE_USB || defined(__DOXYGEN__)
 
@@ -40,7 +41,7 @@ extern void dbgprn(const char* S, ...);
 /* Driver local definitions.                                                 */
 /*===========================================================================*/
 
-#define TRDT_VALUE      5
+#define TRDT_VALUE      3   // @KL: AHB clock = 24, => TRDT = 24/48 +1
 
 /*===========================================================================*/
 /* Driver exported variables.                                                */
@@ -614,12 +615,12 @@ static void usb_lld_serve_interrupt(USBDriver *usbp) {
 
   sts = otgp->GINTSTS & otgp->GINTMSK;
   otgp->GINTSTS = sts;
-
+  dbgprn2("sts=%X\r", sts);
   /* Reset interrupt handling.*/
   if (sts & GINTSTS_USBRST) {
-      dbgprn("rs\r");
     _usb_reset(usbp);
     _usb_isr_invoke_event_cb(usbp, USB_EVENT_RESET);
+    dbgprn("rs\r");
   }
 
   /* Enumeration done.*/
@@ -754,14 +755,14 @@ static msg_t usb_lld_pump(void *p) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(STM32_OTG1_HANDLER) {
-
-  CH_IRQ_PROLOGUE();
-
-  usb_lld_serve_interrupt(&USBD1);
-
-  CH_IRQ_EPILOGUE();
-}
+//CH_IRQ_HANDLER(STM32_OTG1_HANDLER) {
+//
+//  CH_IRQ_PROLOGUE();
+//
+//  usb_lld_serve_interrupt(&USBD1);
+//
+//  CH_IRQ_EPILOGUE();
+//}
 #endif
 
 #if STM32_USB_USE_OTG2 || defined(__DOXYGEN__)

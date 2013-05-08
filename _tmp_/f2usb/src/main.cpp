@@ -21,72 +21,22 @@
 
 #include "stdarg.h"
 
+#include "kl_usb.h"
+
 static inline void Init();
 
-static SerialUSBDriver SDU1;
+//static SerialUSBDriver SDU1;
 
-/*===========================================================================*/
-/* Command line related.                                                     */
-/*===========================================================================*/
-
-#define SHELL_WA_SIZE   THD_WA_SIZE(2048)
-#define TEST_WA_SIZE    THD_WA_SIZE(256)
-
-static void cmd_mem(BaseSequentialStream *chp, int argc, char *argv[]) {
-  size_t n, size;
-
-  (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: mem\r\n");
-    return;
-  }
-  n = chHeapStatus(NULL, &size);
-  chprintf(chp, "core free memory : %u bytes\r\n", chCoreStatus());
-  chprintf(chp, "heap fragments   : %u\r\n", n);
-  chprintf(chp, "heap free total  : %u bytes\r\n", size);
-}
-
-static void cmd_threads(BaseSequentialStream *chp, int argc, char *argv[]) {
-  static const char *states[] = {THD_STATE_NAMES};
-  Thread *tp;
-
-  (void)argv;
-  if (argc > 0) {
-    chprintf(chp, "Usage: threads\r\n");
-    return;
-  }
-  chprintf(chp, "    addr    stack prio refs     state time\r\n");
-  tp = chRegFirstThread();
-  do {
-    chprintf(chp, "%.8lx %.8lx %4lu %4lu %9s %lu\r\n",
-            (uint32_t)tp, (uint32_t)tp->p_ctx.r13,
-            (uint32_t)tp->p_prio, (uint32_t)7,
-            states[tp->p_state], (uint32_t)tp->p_time);
-    tp = chRegNextThread(tp);
-  } while (tp != NULL);
-}
-
-static const ShellCommand commands[] = {
-  {"mem", cmd_mem},
-  {"threads", cmd_threads},
- // {"test", cmd_test},
-  {NULL, NULL}
-};
-
-static const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SDU1,
-  commands
-};
 
 // Application entry point.
 int main() {
     // ==== Setup clock ====
     uint8_t ClkResult = 1;
-    Clk.SetupFlashLatency(16);  // Setup Flash Latency for clock in MHz
-    // 12 MHz/6 = 2; 2*192 = 384; 384/6 = 64 (preAHB divider); 384/8 = 48 (USB clock)
-    Clk.SetupPLLDividers(6, 192, pllSysDiv6, 8);
-    // 64/4 = 16 MHz core clock. APB1 & APB2 clock derive on AHB clock
-    Clk.SetupBusDividers(ahbDiv4, apbDiv1, apbDiv1);
+    Clk.SetupFlashLatency(24);  // Setup Flash Latency for clock in MHz
+    // 12 MHz/6 = 2; 2*192 = 384; 384/8 = 48 (preAHB divider); 384/8 = 48 (USB clock)
+    Clk.SetupPLLDividers(6, 192, pllSysDiv8, 8);
+    // 48/2 = 24 MHz core clock. APB1 & APB2 clock derive on AHB clock
+    Clk.SetupBusDividers(ahbDiv2, apbDiv1, apbDiv1);
     if((ClkResult = Clk.SwitchToPLL()) == 0) Clk.HSIDisable();
     Clk.UpdateFreqValues();
 
@@ -98,13 +48,13 @@ int main() {
     // Report problem with clock if any
     if(ClkResult) Uart.Printf("Clock failure\r");
 
-    sduObjectInit(&SDU1);
-    sduStart(&SDU1, &serusbcfg);
-
-    usbDisconnectBus(serusbcfg.usbp);
-    chThdSleepMilliseconds(1000);
+//    sduObjectInit(&SDU1);
+//    sduStart(&SDU1, &serusbcfg);
+//
+//    usbDisconnectBus(serusbcfg.usbp);
+//    chThdSleepMilliseconds(1000);
     usbStart(serusbcfg.usbp, &usbcfg);
-    usbConnectBus(serusbcfg.usbp);
+//    usbConnectBus(serusbcfg.usbp);
 
     //shellCreateStatic(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
     while(TRUE) {
@@ -129,6 +79,10 @@ int main() {
 void Init() {
     Uart.Init(115200);
     Uart.Printf("usb AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
+    Usb.Init();
+    Usb.Disconnect();
+    chThdSleepMilliseconds(999);
+    Usb.Connect();
     // Application init
     AppInit();
 }
@@ -139,6 +93,10 @@ void dbgprn(const char* S, ...) {
     va_start(args, S);
     Uart.Printf(S, args);
     va_end(args);
+}
+
+void dbgprn2(const char* S, uint32_t N) {
+    Uart.Printf(S, N);
 }
 
 }

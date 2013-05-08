@@ -105,13 +105,13 @@ void halInit(void) {
   uartInit();
 #endif
 #if HAL_USE_USB || defined(__DOXYGEN__)
-  usbInit();
+  //usbInit();
 #endif
 #if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
   mmcInit();
 #endif
 #if HAL_USE_SERIAL_USB || defined(__DOXYGEN__)
-  sduInit();
+  //sduInit();
 #endif
 #if HAL_USE_RTC || defined(__DOXYGEN__)
   rtcInit();
