@@ -46,7 +46,7 @@ int main() {
     // ==== Init Hard & Soft ====
     Init();
     // Report problem with clock if any
-    if(ClkResult) Uart.Printf("Clock failure\r");
+    if(ClkResult) Uart.Printf("Clock failure\r\n");
 
 //    sduObjectInit(&SDU1);
 //    sduStart(&SDU1, &serusbcfg);
@@ -78,7 +78,7 @@ int main() {
 
 void Init() {
     Uart.Init(115200);
-    Uart.Printf("usb AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
+    Uart.Printf("usb AHB=%u; APB1=%u; APB2=%u; UsbSdio=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, Clk.UsbSdioFreqHz);
     Usb.Init();
     Usb.Disconnect();
     chThdSleepMilliseconds(999);
