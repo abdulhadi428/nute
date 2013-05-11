@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 10/05/2013 19:19:21
+EESchema Schematic File Version 2  date 11/05/2013 14:47:16
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -13,7 +13,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "10 may 2013"
+Date "11 may 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -653,17 +653,9 @@ Wire Wire Line
 Wire Wire Line
 	9050 1850 9250 1850
 Wire Wire Line
-	7150 1950 7450 1950
-Wire Wire Line
-	7450 1950 7450 2050
-Wire Wire Line
 	7450 2050 7550 2050
 Wire Wire Line
-	7550 1650 7450 1650
-Wire Wire Line
-	7450 1650 7450 1750
-Wire Wire Line
-	7450 1750 7150 1750
+	7250 1650 7550 1650
 Wire Wire Line
 	1600 3300 1600 3250
 Wire Wire Line
@@ -683,8 +675,6 @@ Wire Wire Line
 	3450 6450 3650 6450
 Wire Wire Line
 	8050 2550 7150 2550
-Wire Wire Line
-	7150 1850 7550 1850
 Wire Wire Line
 	8050 2050 8150 2050
 Wire Wire Line
@@ -795,32 +785,24 @@ Text Label 1450 5150 0    60   ~ 0
 Text Label 1450 5250 0    60   ~ 0
 2
 Wire Wire Line
-	4650 1950 4550 1950
-Wire Wire Line
-	4650 2050 4550 2050
-Wire Wire Line
-	4650 2150 4550 2150
-Wire Wire Line
 	4650 2250 4550 2250
 Wire Wire Line
 	4650 2350 4550 2350
 Wire Wire Line
-	4650 2450 4550 2450
-Wire Wire Line
-	4650 2550 4550 2550
-Text Label 4550 1950 2    60   ~ 0
+	4650 1950 4550 1950
+Text Label 7300 2350 2    60   ~ 0
 8
-Text Label 4550 2050 2    60   ~ 0
+Text Label 7300 2250 2    60   ~ 0
 7
-Text Label 4550 2150 2    60   ~ 0
+Text Label 7300 2150 2    60   ~ 0
 6
 Text Label 4550 2250 2    60   ~ 0
 3
 Text Label 4550 2350 2    60   ~ 0
 2
-Text Label 4550 2450 2    60   ~ 0
+Text Label 7300 2050 2    60   ~ 0
 5
-Text Label 4550 2550 2    60   ~ 0
+Text Label 4550 1950 2    60   ~ 0
 4
 $Comp
 L LED D2
@@ -841,13 +823,13 @@ Wire Wire Line
 $Comp
 L SWITCH SW1
 U 1 1 518BED9C
-P 4350 5900
-F 0 "SW1" H 4100 6150 60  0000 C CNN
-F 1 "SWITCH" H 4450 6150 60  0000 C CNN
-F 2 "" H 4350 5900 60  0000 C CNN
-F 3 "" H 4350 5900 60  0000 C CNN
-	1    4350 5900
-	1    0    0    -1  
+P 4250 5900
+F 0 "SW1" H 4000 6150 60  0000 C CNN
+F 1 "SWITCH" H 4350 6150 60  0000 C CNN
+F 2 "" H 4250 5900 60  0000 C CNN
+F 3 "" H 4250 5900 60  0000 C CNN
+	1    4250 5900
+	-1   0    0    -1  
 $EndComp
 Wire Wire Line
 	3450 5900 4000 5900
@@ -894,10 +876,6 @@ NoConn ~ 4650 2850
 NoConn ~ 4650 2950
 NoConn ~ 4650 3050
 NoConn ~ 4650 3150
-NoConn ~ 7150 2050
-NoConn ~ 7150 2150
-NoConn ~ 7150 2250
-NoConn ~ 7150 2350
 NoConn ~ 7150 2450
 NoConn ~ 7150 2750
 NoConn ~ 7150 2850
@@ -973,10 +951,38 @@ Wire Wire Line
 	4200 4600 4200 4800
 Wire Wire Line
 	4500 4600 4500 4800
-NoConn ~ 4600 5800
+NoConn ~ 4000 5800
 Wire Wire Line
 	8050 1850 8250 1850
 Wire Wire Line
 	8200 1200 8200 1700
 Connection ~ 8200 1700
+Wire Wire Line
+	7450 2050 7450 1750
+Wire Wire Line
+	7450 1750 7150 1750
+Wire Wire Line
+	7250 1650 7250 1850
+Wire Wire Line
+	7250 1850 7150 1850
+Wire Wire Line
+	7550 1850 7350 1850
+Wire Wire Line
+	7350 1850 7350 1950
+Wire Wire Line
+	7350 1950 7150 1950
+Wire Wire Line
+	7300 2050 7150 2050
+Wire Wire Line
+	7150 2150 7300 2150
+Wire Wire Line
+	7300 2250 7150 2250
+Wire Wire Line
+	7150 2350 7300 2350
+NoConn ~ 4650 2550
+NoConn ~ 4650 2050
+NoConn ~ 4650 2150
+NoConn ~ 4650 2450
+Text Label 3550 5900 0    60   ~ 0
+BAT_IN
 $EndSCHEMATC
