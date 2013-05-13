@@ -16,6 +16,8 @@ void CmdUart_t::Printf(const char *format, ...) {
     uint32_t Cnt = tiny_vsprintf(SprintfBuf, UART_TXBUF_SIZE, format, args);
     va_end(args);
 
+    if((IFullSlotsCount + Cnt) > UART_TXBUF_SIZE) return;
+
     // Put data to buffer
     uint8_t *p = (uint8_t*)SprintfBuf;
     IFullSlotsCount += Cnt;

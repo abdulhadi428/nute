@@ -10,23 +10,19 @@
 #include "hal.h"
 
 #include "kl_lib_f2xx.h"
-#include "kl_sd.h"
+//#include "kl_sd.h"
 
 #include "application.h"
 
-#include "shell.h"
-#include "usb.h"
-#include "usbcfg.h"
-#include "chprintf.h"
+//#include "usb.h"
+//#include "usbcfg.h"
+//#include "chprintf.h"
 
 #include "stdarg.h"
 
 #include "kl_usb.h"
 
 static inline void Init();
-
-//static SerialUSBDriver SDU1;
-
 
 // Application entry point.
 int main() {
@@ -48,30 +44,7 @@ int main() {
     // Report problem with clock if any
     if(ClkResult) Uart.Printf("Clock failure\r\n");
 
-//    sduObjectInit(&SDU1);
-//    sduStart(&SDU1, &serusbcfg);
-//
-//    usbDisconnectBus(serusbcfg.usbp);
-//    chThdSleepMilliseconds(1000);
-    usbStart(serusbcfg.usbp, &usbcfg);
-//    usbConnectBus(serusbcfg.usbp);
-
-    //shellCreateStatic(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
     while(TRUE) {
-//        if (!shelltp) {
-//          if (SDU1.config->usbp->state == USB_ACTIVE) {
-//            /* Spawns a new shell.*/
-//            shelltp =
-//          }
-//        }
-//        else {
-//          /* If the previous shell exited.*/
-//          if (chThdTerminated(shelltp)) {
-//            /* Recovers memory of the previous shell.*/
-//            //chThdRelease(shelltp);
-//            shelltp = NULL;
-//          }
-//        }
         chThdSleepMilliseconds(500);
     }
 }
@@ -87,7 +60,9 @@ void Init() {
     AppInit();
 }
 
+
 extern "C" {
+
 void dbgprn(const char* S, ...) {
     va_list args;
     va_start(args, S);

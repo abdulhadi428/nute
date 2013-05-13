@@ -35,9 +35,11 @@ public:
     void StallIn()  { OTG_FS->ie[SelfN].DIEPCTL |= DIEPCTL_STALL; }
     void StallOut() { OTG_FS->oe[SelfN].DOEPCTL |= DOEPCTL_STALL; }
     void PrepareTransmit(uint8_t *Ptr, uint32_t Len);
-    void PrepareReceive(uint32_t Len);
-    void Transmit(uint8_t *Ptr, uint32_t Len);
+    //void PrepareReceive(uint32_t Len);
     void Receive(uint32_t Len);
+    // IRQ related
+    inline void EnableInFifoEmptyIRQ()  { OTG_FS->DIEPEMPMSK |=  (1 << SelfN); }
+    inline void DisableInFifoEmptyIRQ() { OTG_FS->DIEPEMPMSK &= ~(1 << SelfN); }
 };
 
 class UsbMemAllocator_t {
@@ -52,29 +54,44 @@ public:
     }
 };
 
+struct UsbSetupReq_t {
+    union {
+        uint8_t Buf[SETUP_BUF_SZ];
+        struct {
+            uint8_t   bmRequestType;
+            uint8_t   bRequest;
+            uint16_t  wValue;
+            uint16_t  wIndex;
+            uint16_t  wLength;
+        };
+    };
+};
+
 #define USB_EP_CNT  1
 
 class Usb_t {
 private:
     // Endpoints
     Endpoint_t Ep[USB_EP_CNT];
-    uint8_t SetupBuf[SETUP_BUF_SZ];
     void Ep0SetupHandler();
     uint8_t StdRequestHandler(uint8_t **Ptr, uint32_t *PLen);
     // Common
-    uint16_t IStatus;
     uint8_t Configuration;
-    void RxHandler();
     void SetAddress(uint8_t Addr) { OTG_FS->DCFG = (OTG_FS->DCFG & ~DCFG_DAD_MASK) | DCFG_DAD(Addr); }
     // Buffer operations
-    void ReadToBuf(uint8_t *PBuf, volatile uint32_t *PFifo, uint32_t Cnt);
+    void ReadFifo(uint8_t *PBuf, volatile uint32_t *PFifo, uint32_t Cnt);
+    void WriteFifo(volatile uint32_t *PFifo, uint8_t *PBuf, uint32_t Cnt);
     UsbMemAllocator_t MemAllocator;
     void RxFifoFlush();
     void TxFifoFlush();
     // irq methods
     void IReset();
+    void IRxHandler();
     void IEpOutHandler(uint8_t EpN);
     void IEpInHandler(uint8_t EpN);
+    //
+    UsbSetupReq_t SetupReq;
+    bool NewSetupPkt;
     Thread *PThread;
 public:
     void Init();
