@@ -37,9 +37,13 @@ public:
     void PrepareTransmit(uint8_t *Ptr, uint32_t Len);
     //void PrepareReceive(uint32_t Len);
     void Receive(uint32_t Len);
-    // IRQ related
+    // State change
     inline void EnableInFifoEmptyIRQ()  { OTG_FS->DIEPEMPMSK |=  (1 << SelfN); }
     inline void DisableInFifoEmptyIRQ() { OTG_FS->DIEPEMPMSK &= ~(1 << SelfN); }
+    inline void SetInNAK()    { OTG_FS->ie[SelfN].DIEPCTL |= DIEPCTL_SNAK; }
+    inline void ClearInNAK()  { OTG_FS->ie[SelfN].DIEPCTL |= DIEPCTL_CNAK; }
+    inline void SetOutNAK()   { OTG_FS->oe[SelfN].DOEPCTL |= DOEPCTL_SNAK; }
+    inline void ClearOutNAK() { OTG_FS->oe[SelfN].DOEPCTL |= DOEPCTL_CNAK; }
 };
 
 class UsbMemAllocator_t {
@@ -54,16 +58,14 @@ public:
     }
 };
 
-struct UsbSetupReq_t {
-    union {
-        uint8_t Buf[SETUP_BUF_SZ];
-        struct {
-            uint8_t   bmRequestType;
-            uint8_t   bRequest;
-            uint16_t  wValue;
-            uint16_t  wIndex;
-            uint16_t  wLength;
-        };
+union UsbSetupReq_t {
+    uint8_t Buf[SETUP_BUF_SZ];
+    struct {
+        uint8_t  bmRequestType;
+        uint8_t  bRequest;
+        uint16_t wValue;
+        uint16_t wIndex;
+        uint16_t wLength;
     };
 };
 

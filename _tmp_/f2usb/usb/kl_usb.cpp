@@ -38,10 +38,10 @@ void Usb_t::ITask() {
         chSysUnlock();
 
         // Handle SETUP
-        if(NewSetupPkt) {
-            NewSetupPkt = false;
-            Ep0SetupHandler();
-        }
+//        if(NewSetupPkt) {
+//            NewSetupPkt = false;
+//            Ep0SetupHandler();
+//        }
 
         // Handle RX
 //        while(OTG_FS->GINTSTS & GINTSTS_RXFLVL) RxHandler();
@@ -148,7 +148,7 @@ void Usb_t::WriteFifo(volatile uint32_t *PFifo, uint8_t *PBuf, uint32_t Cnt) {
     while(Cnt) {
         uint32_t w = *((uint32_t*)PBuf);
         *PFifo = w;
-        Uart.Printf("< %04X\r\n", w);
+        //Uart.Printf("< %04X\r\n", w);
         PBuf += 4;
         Cnt--;
     }
@@ -161,6 +161,7 @@ void Usb_t::Ep0SetupHandler() {
     uint32_t Len;
     // Decode request
     if(StdRequestHandler(&Ptr, &Len) == OK) {
+        //Uart.Printf("< %A\r\n", Ptr, Len, ' ');
         // The transfer size cannot exceed the specified amount
         TRIM_VALUE(Len, SetupReq.wLength);
         if((SetupReq.bmRequestType & USB_RTYPE_DIR_MASK) == USB_RTYPE_DIR_DEV2HOST) {
@@ -265,13 +266,13 @@ void Endpoint_t::PrepareTransmit(uint8_t *Ptr, uint32_t Len) {
     DieptCtl |= DIEPCTL_EPENA | DIEPCTL_CNAK;
 
     // Start transfer
-    chSysLock();
+    //chSysLock();
 //    if(IsTransmitting) return;  // do not start if transmitting already
     IsTransmitting = true;
     OTG_FS->ie[SelfN].DIEPTSIZ = Dieptsiz;
     OTG_FS->ie[SelfN].DIEPCTL  = DieptCtl;
     EnableInFifoEmptyIRQ();
-    chSysUnlock();
+    //chSysUnlock();
 }
 
 void Endpoint_t::Receive(uint32_t Len) {
@@ -314,7 +315,7 @@ void Usb_t::IHandleIrq() {
     // Get irq flag
     sts = OTG_FS->GINTSTS & OTG_FS->GINTMSK;
     OTG_FS->GINTSTS = sts;
-    Uart.Printf("u %X\r\n", sts);
+    Uart.Printf("u %X %u\r\n", sts, chTimeNow());
 
     // Reset
     if(sts & GINTSTS_USBRST) IReset();
@@ -355,19 +356,20 @@ void Usb_t::IReset() {
     TxFifoFlush();
     NewSetupPkt = false;
     // Set all EPs in NAK mode and clear Irqs
-    for(uint8_t i=0; i < USB_EP_CNT; i++) {
-        OTG_FS->ie[i].DIEPCTL = DIEPCTL_SNAK;
-        OTG_FS->oe[i].DOEPCTL = DOEPCTL_SNAK;
-        OTG_FS->ie[i].DIEPINT = 0xFF;
-        OTG_FS->oe[i].DOEPINT = 0xFF;
-        Ep[i].IsReceiving = false;
-        Ep[i].IsTransmitting = false;
-        Ep[i].IsTxPending = false;
-    }
+//    for(uint8_t i=0; i < USB_EP_CNT; i++) {
+//        OTG_FS->ie[i].DIEPCTL = DIEPCTL_SNAK;
+//        OTG_FS->oe[i].DOEPCTL = DOEPCTL_SNAK;
+//        OTG_FS->ie[i].DIEPINT = 0xFF;
+//        OTG_FS->oe[i].DOEPINT = 0xFF;
+//        Ep[i].IsReceiving = false;
+//        Ep[i].IsTransmitting = false;
+//        Ep[i].IsTxPending = false;
+//    }
 
     // Disable and clear all EP irqs
     OTG_FS->DAINT = 0xFFFFFFFF;
     OTG_FS->DAINTMSK = DAINTMSK_OEPM(0) | DAINTMSK_IEPM(0);
+    OTG_FS->DIEPEMPMSK &= 0xFFFF0000;
     MemAllocator.Reset();
 
     // RX FIFO init, the address is always zero
@@ -378,7 +380,7 @@ void Usb_t::IReset() {
 
     // Enable EP-related irqs
     OTG_FS->GINTMSK |= GINTMSK_RXFLVLM | GINTMSK_OEPM  | GINTMSK_IEPM;
-    OTG_FS->DIEPMSK  = DIEPMSK_TOCM    | DIEPMSK_XFRCM;
+    OTG_FS->DIEPMSK  = DIEPMSK_XFRCM;
     OTG_FS->DOEPMSK  = DOEPMSK_STUPM   | DOEPMSK_XFRCM;
 
     // Init EP0
@@ -387,11 +389,17 @@ void Usb_t::IReset() {
 #elif EP0_SZ == 64
 #define EPSZBITS    0
 #endif
+    OTG_FS->ie[0].DIEPINT |= 0x5B;  // }
+    OTG_FS->oe[0].DOEPINT |= 0x5B;  // } Clear interrupts
     OTG_FS->oe[0].DOEPTSIZ = DOEPTSIZ_STUPCNT(3);
     OTG_FS->oe[0].DOEPCTL = EPSZBITS;
     OTG_FS->ie[0].DIEPTSIZ = 0;
     OTG_FS->ie[0].DIEPCTL = DIEPCTL_TXFNUM(0) | EPSZBITS;
     OTG_FS->DIEPTXF0 = DIEPTXF_INEPTXFD(EP0_SZ / 4) | DIEPTXF_INEPTXSA(MemAllocator.Alloc(EP0_SZ / 4));
+
+    Ep[0].SetInNAK();
+    //Ep[0].SetOutNAK();
+    Ep[0].EnableInFifoEmptyIRQ();
 }
 
 void Usb_t::IRxHandler() {
@@ -442,14 +450,14 @@ void Usb_t::IEpInHandler(uint8_t EpN) {
     OTG_FS->ie[EpN].DIEPINT = 0xFFFFFFFF;   // Reset IRQs
     Uart.Printf("in %X i%X\r\n", EpN, epint);
     // Transmit transfer complete
-    if ((epint & DIEPINT_XFRC) and (OTG_FS->DIEPMSK & DIEPMSK_XFRCM)) {
+    if((epint & DIEPINT_XFRC) and (OTG_FS->DIEPMSK & DIEPMSK_XFRCM)) {
         Uart.Printf("XFRC\r\n");
         Ep[EpN].DisableInFifoEmptyIRQ();
         Ep[EpN].IsTransmitting = false;
         if(Ep[EpN].cbIn != NULL) Ep[EpN].cbIn();
     }
     // TX FIFO empty
-    if ((epint & DIEPINT_TXFE) and (OTG_FS->DIEPEMPMSK & (1 << EpN))) {
+    if((epint & DIEPINT_TXFE) and (OTG_FS->DIEPEMPMSK & (1 << EpN))) {
         Uart.Printf("TXFE\r\n");
         chSysLockFromIsr();
         Ep[EpN].DisableInFifoEmptyIRQ();
@@ -470,8 +478,9 @@ void Usb_t::IEpInHandler(uint8_t EpN) {
             SpaceAvailable = (OTG_FS->ie[EpN].DTXFSTS & 0xFFFF);
             Uart.Printf(" SpAv2 %u\r\n", SpaceAvailable);
         }
-        //if(Ep[EpN].TxSize != 0)
+        if(Ep[EpN].TxSize != 0)
             Ep[EpN].EnableInFifoEmptyIRQ();
+        Uart.Printf("%u\r\n", chTimeNow());
 //        Ep[EpN].IsTxPending = true;
 //        OTG_FS->DIEPEMPMSK &= ~(1 << EpN);  // Disable TxFifoEmpty irq for this EP
 //        if(PThread->p_state == THD_STATE_SUSPENDED) chThdResumeI(PThread);
@@ -486,8 +495,9 @@ void Usb_t::IEpOutHandler(uint8_t EpN) {
     // Setup packets handling
     if ((epint & DOEPINT_STUP) and (OTG_FS->DOEPMSK & DOEPMSK_STUPM)) {
         chSysLockFromIsr();
-        NewSetupPkt = true;
-        if(PThread->p_state == THD_STATE_SUSPENDED) chThdResumeI(PThread);
+//        NewSetupPkt = true;
+//        if(PThread->p_state == THD_STATE_SUSPENDED) chThdResumeI(PThread);
+        Ep0SetupHandler();
         chSysUnlockFromIsr();
     }
     // Receive transfer complete
