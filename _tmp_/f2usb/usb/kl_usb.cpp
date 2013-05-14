@@ -120,18 +120,23 @@ void Usb_t::Init() {
 
 void Usb_t::RxFifoFlush() {
     OTG_FS->GRSTCTL = GRSTCTL_RXFFLSH;
-    while ((OTG_FS->GRSTCTL & GRSTCTL_RXFFLSH) != 0);
+    while((OTG_FS->GRSTCTL & GRSTCTL_RXFFLSH) != 0);
     // Wait for 3 PHY Clocks
     __NOP();
     __NOP();
 }
 void Usb_t::TxFifoFlush() {
+//    Uart.Printf("TxFlush1: %X %X\r\n", OTG_FS->GRSTCTL, OTG_FS->GINTSTS);
+//    if(!(OTG_FS->GINTSTS & GINTSTS_GINAKEFF)) OTG_FS->DCTL |= DCTL_SGINAK;
+//    while(!(OTG_FS->GINTSTS & GINTSTS_GINAKEFF));
+//    Uart.Printf("TxFlush2: %X %X\r\n", OTG_FS->GRSTCTL, OTG_FS->GINTSTS);
+
     OTG_FS->GRSTCTL = GRSTCTL_TXFNUM(0) | GRSTCTL_TXFFLSH;
-    while ((OTG_FS->GRSTCTL & GRSTCTL_TXFFLSH) != 0);
+    while((OTG_FS->GRSTCTL & GRSTCTL_TXFFLSH) != 0);
     // Wait for 3 PHY Clocks
     __NOP();
     __NOP();
-
+//    OTG_FS->DCTL |= DCTL_CGINAK;
 }
 
 void Usb_t::ReadFifo(uint8_t *PBuf, volatile uint32_t *PFifo, uint32_t Cnt) {
@@ -187,7 +192,7 @@ uint8_t Usb_t::StdRequestHandler(uint8_t **Ptr, uint32_t *PLen) {
     *Ptr = NULL;
     *PLen = 0;
     if(Recipient == USB_RTYPE_RECIPIENT_DEVICE) {
-        Uart.Printf("Dev\r\n");
+        //Uart.Printf("Dev\r\n");
         switch(SetupReq.bRequest) {
             case USB_REQ_GET_STATUS:    // Just return the current status word
                 Uart.Printf("GetStatus\r\n");
@@ -201,7 +206,7 @@ uint8_t Usb_t::StdRequestHandler(uint8_t **Ptr, uint32_t *PLen) {
                 return OK;
                 break;
             case USB_REQ_GET_DESCRIPTOR:
-                Uart.Printf("GetDesc\r\n");
+          //      Uart.Printf("GetDesc\r\n");
                 *PLen = GetDescriptor(SetupReq.Buf[3], SetupReq.Buf[2], (const uint8_t**)Ptr);
                 if(*PLen != 0) return OK;
                 break;
@@ -245,6 +250,7 @@ uint8_t Usb_t::StdRequestHandler(uint8_t **Ptr, uint32_t *PLen) {
 
 void Endpoint_t::PrepareTransmit(uint8_t *Ptr, uint32_t Len) {
     //Uart.Printf("TX: %A\r\n", Ptr, Len, ' ');
+    Uart.Printf("PrepTX L=%u\r\n", Len);
     PTxBuf = Ptr;
     TxSize = Len;
     uint32_t Dieptsiz = OTG_FS->ie[SelfN].DIEPTSIZ;
@@ -271,6 +277,8 @@ void Endpoint_t::PrepareTransmit(uint8_t *Ptr, uint32_t Len) {
     IsTransmitting = true;
     OTG_FS->ie[SelfN].DIEPTSIZ = Dieptsiz;
     OTG_FS->ie[SelfN].DIEPCTL  = DieptCtl;
+    Uart.Printf("cnak1 %X\r\n", OTG_FS->ie[SelfN].DIEPINT);
+
     EnableInFifoEmptyIRQ();
     //chSysUnlock();
 }
@@ -352,7 +360,7 @@ void Usb_t::IHandleIrq() {
 }
 
 void Usb_t::IReset() {
-    Uart.Printf("rst\r\n");
+    Uart.Printf("========= Rst =========\r\n");
     TxFifoFlush();
     NewSetupPkt = false;
     // Set all EPs in NAK mode and clear Irqs
@@ -398,8 +406,7 @@ void Usb_t::IReset() {
     OTG_FS->DIEPTXF0 = DIEPTXF_INEPTXFD(EP0_SZ / 4) | DIEPTXF_INEPTXSA(MemAllocator.Alloc(EP0_SZ / 4));
 
     Ep[0].SetInNAK();
-    //Ep[0].SetOutNAK();
-    Ep[0].EnableInFifoEmptyIRQ();
+    //Ep[0].EnableInFifoEmptyIRQ();
 }
 
 void Usb_t::IRxHandler() {
@@ -450,17 +457,18 @@ void Usb_t::IEpInHandler(uint8_t EpN) {
     OTG_FS->ie[EpN].DIEPINT = 0xFFFFFFFF;   // Reset IRQs
     Uart.Printf("in %X i%X\r\n", EpN, epint);
     // Transmit transfer complete
-    if((epint & DIEPINT_XFRC) and (OTG_FS->DIEPMSK & DIEPMSK_XFRCM)) {
-        Uart.Printf("XFRC\r\n");
-        Ep[EpN].DisableInFifoEmptyIRQ();
-        Ep[EpN].IsTransmitting = false;
+    if(epint & DIEPINT_XFRC) {
+        Uart.Printf("###########\r\n");
+        //Ep[EpN].DisableInFifoEmptyIRQ();
+//        Ep[EpN].IsTransmitting = false;
         if(Ep[EpN].cbIn != NULL) Ep[EpN].cbIn();
     }
     // TX FIFO empty
-    if((epint & DIEPINT_TXFE) and (OTG_FS->DIEPEMPMSK & (1 << EpN))) {
+    if(epint & DIEPINT_TXFE) {
         Uart.Printf("TXFE\r\n");
         chSysLockFromIsr();
         Ep[EpN].DisableInFifoEmptyIRQ();
+        if(Ep[EpN].TxSize == 0) return; // FIXME
 
         uint32_t len = Ep[EpN].TxSize;
         TRIM_VALUE(len, Ep[EpN].InMaxSz);
@@ -478,9 +486,12 @@ void Usb_t::IEpInHandler(uint8_t EpN) {
             SpaceAvailable = (OTG_FS->ie[EpN].DTXFSTS & 0xFFFF);
             Uart.Printf(" SpAv2 %u\r\n", SpaceAvailable);
         }
+
+//        OTG_FS->DCTL |= DCTL_CGINAK;
+        Ep[EpN].ClearInNAK();
+
         if(Ep[EpN].TxSize != 0)
             Ep[EpN].EnableInFifoEmptyIRQ();
-        Uart.Printf("%u\r\n", chTimeNow());
 //        Ep[EpN].IsTxPending = true;
 //        OTG_FS->DIEPEMPMSK &= ~(1 << EpN);  // Disable TxFifoEmpty irq for this EP
 //        if(PThread->p_state == THD_STATE_SUSPENDED) chThdResumeI(PThread);
