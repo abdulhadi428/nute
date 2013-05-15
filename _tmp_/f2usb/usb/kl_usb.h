@@ -26,10 +26,10 @@ public:
     bool IsTransmitting, IsReceiving, IsTxPending;
     uint8_t SelfN;
     uint8_t InMaxSz, OutMaxSz;
-    EpCallback_t cbIn, cbOut;
+//    EpCallback_t cbIn, cbOut;
     // Transfer section
-    uint8_t *PTxBuf;
-    uint32_t TxSize;
+    uint8_t *PXferBuf;
+    uint32_t XFerSz, XferCnt;
     bool TxFifoHandler();
     // Methods
     void StallIn()  { OTG_FS->ie[SelfN].DIEPCTL |= DIEPCTL_STALL; }
@@ -40,6 +40,7 @@ public:
     // State change
     inline void EnableInFifoEmptyIRQ()  { OTG_FS->DIEPEMPMSK |=  (1 << SelfN); }
     inline void DisableInFifoEmptyIRQ() { OTG_FS->DIEPEMPMSK &= ~(1 << SelfN); }
+    inline bool FifoEmtyIRQEnabled()    { return (OTG_FS->DIEPEMPMSK & (1 << SelfN)); }
     inline void SetInNAK()    { OTG_FS->ie[SelfN].DIEPCTL |= DIEPCTL_SNAK; }
     inline void ClearInNAK()  { OTG_FS->ie[SelfN].DIEPCTL |= DIEPCTL_CNAK; }
     inline void SetOutNAK()   { OTG_FS->oe[SelfN].DOEPCTL |= DOEPCTL_SNAK; }
@@ -71,13 +72,14 @@ union UsbSetupReq_t {
 
 #define USB_EP_CNT  1
 
+enum Ep0State_t {esWaitingSetup, esTX, esWaitingSTS, esRX, esSendingSTS, esError};
+
 class Usb_t {
 private:
     // Endpoints
     Endpoint_t Ep[USB_EP_CNT];
-    void Ep0SetupHandler();
-    uint8_t StdRequestHandler(uint8_t **Ptr, uint32_t *PLen);
     // Common
+    Thread *PThread;
     uint8_t Configuration;
     void SetAddress(uint8_t Addr) { OTG_FS->DCFG = (OTG_FS->DCFG & ~DCFG_DAD_MASK) | DCFG_DAD(Addr); }
     // Buffer operations
@@ -91,10 +93,17 @@ private:
     void IRxHandler();
     void IEpOutHandler(uint8_t EpN);
     void IEpInHandler(uint8_t EpN);
-    //
+    inline void DisableIrqs() { OTG_FS->GAHBCFG &= ~GAHBCFG_GINTMSK; }
+    inline void EnableIrqs()  { OTG_FS->GAHBCFG |= GAHBCFG_GINTMSK; }
+    // Ep0 related
+    Ep0State_t Ep0State;
     UsbSetupReq_t SetupReq;
     bool NewSetupPkt;
-    Thread *PThread;
+    void Ep0SetupHandler();
+    uint8_t StdReqHandler(uint8_t **Ptr, uint32_t *PLen);
+    uint8_t NonStdReqHandler();
+    void Ep0InCallback();
+    void Ep0OutCallback();
 public:
     void Init();
     void Connect()    { OTG_FS->GCCFG |=  GCCFG_VBUSBSEN; }
