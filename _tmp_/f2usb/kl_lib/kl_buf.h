@@ -12,6 +12,18 @@
 #include "string.h" // for memcpy
 #include "kl_lib_f2xx.h"
 
+// =============================== Simple ======================================
+template <typename T>
+struct Buf_t {
+    T *Ptr;
+    uint32_t Sz, Cnt;
+    void Reset(T* NewPtr) {
+        Ptr = NewPtr;
+        Sz = 0;
+        Cnt = 0;
+    }
+};
+
 // =========================== Circular buffer =================================
 template <typename T, uint32_t Sz>
 class CircBuf_t {

@@ -9,8 +9,10 @@
 #define KL_USB_H_
 
 #include "kl_lib_f2xx.h"
+#include "kl_buf.h"
 
-#define RX_FIFO_SZ      (STM32_USB_OTG1_RX_FIFO_SIZE / 4)
+#define RX_FIFO_SZW     128
+#define TX0_FIFO_SZW    32
 #define EP0_SZ          64
 #define SETUP_BUF_SZ    8   // Standard value, do not change
 
@@ -28,8 +30,7 @@ public:
     uint8_t InMaxSz, OutMaxSz;
 //    EpCallback_t cbIn, cbOut;
     // Transfer section
-    uint8_t *PXferBuf;
-    uint32_t XFerSz, XferCnt;
+    Buf_t<uint8_t> Tx, Rx;
     bool TxFifoHandler();
     // Methods
     void StallIn()  { OTG_FS->ie[SelfN].DIEPCTL |= DIEPCTL_STALL; }
@@ -45,13 +46,14 @@ public:
     inline void ClearInNAK()  { OTG_FS->ie[SelfN].DIEPCTL |= DIEPCTL_CNAK; }
     inline void SetOutNAK()   { OTG_FS->oe[SelfN].DOEPCTL |= DOEPCTL_SNAK; }
     inline void ClearOutNAK() { OTG_FS->oe[SelfN].DOEPCTL |= DOEPCTL_CNAK; }
+    inline void EnableOut()   { OTG_FS->oe[SelfN].DOEPCTL |= DOEPCTL_EPENA; }
 };
 
 class UsbMemAllocator_t {
 private:
     uint32_t PNext;     // Pointer to the next address in the packet memory
 public:
-    void Reset() { PNext = RX_FIFO_SZ; }
+    void Reset() { PNext = RX_FIFO_SZW; }
     uint32_t Alloc(uint32_t Size) {
         uint32_t next = PNext;
         PNext += Size;
@@ -98,7 +100,7 @@ private:
     // Ep0 related
     Ep0State_t Ep0State;
     UsbSetupReq_t SetupReq;
-    bool NewSetupPkt;
+    uint8_t Ep0RxBuf[99];
     void Ep0SetupHandler();
     uint8_t StdReqHandler(uint8_t **Ptr, uint32_t *PLen);
     uint8_t NonStdReqHandler();

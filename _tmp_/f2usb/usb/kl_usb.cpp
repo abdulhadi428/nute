@@ -26,16 +26,10 @@ static msg_t UsbThread(void *arg) {
 void Usb_t::ITask() {
     while(1) {
         chSysLock();
-        if(!NewSetupPkt and !Ep[0].IsTxPending) {
+        if(!Ep[0].IsTxPending) {
             chSchGoSleepS(THD_STATE_SUSPENDED);     // Will wake up by IRQ
         }
         chSysUnlock();
-
-        // Handle SETUP
-        if(NewSetupPkt) {
-            NewSetupPkt = false;
-            Ep0SetupHandler();
-        }
 
         // Handle RX
 //        while(OTG_FS->GINTSTS & GINTSTS_RXFLVL) RxHandler();
@@ -78,7 +72,7 @@ void Usb_t::Init() {
     // ==== OTG init ====
     // Forced device mode, USB turn-around time = TRDT_VALUE, Full Speed 1.1 PHY, 0 tuning
     OTG_FS->GUSBCFG = GUSBCFG_FDMOD | GUSBCFG_TRDT(TRDT) | GUSBCFG_PHYSEL | 0;
-    OTG_FS->DCFG = 0x02200000 | DCFG_DSPD_FS11; // Full-speed (other options are not available, though)
+    OTG_FS->DCFG = 0x02200000 | DCFG_NZLSOHSK | DCFG_DSPD_FS11; // Full-speed (other options are not available, though)
     OTG_FS->PCGCCTL = 0;    // Nothing is stopped or gated
     OTG_FS->GCCFG = GCCFG_VBUSASEN | GCCFG_VBUSBSEN | GCCFG_PWRDWN /*| GCCFG_NOVBUSSENS*/;
 
@@ -217,9 +211,9 @@ void Endpoint_t::PrepareTransmit(uint8_t *Ptr, uint32_t Len) {
     if(IsTransmitting) return;  // do not start if transmitting already
     //Uart.Printf("TX: %A\r\n", Ptr, Len, ' ');
     Uart.Printf("PrepTX L=%u\r\n", Len);
-    PXferBuf = Ptr;
-    XFerSz = Len;
-    XferCnt = 0;
+    Tx.Ptr = Ptr;
+    Tx.Sz = Len;
+    Tx.Cnt = 0;
     uint32_t Dieptsiz = OTG_FS->ie[SelfN].DIEPTSIZ;
     Dieptsiz &= ~((3<<19) | 0x7F);
     uint32_t DieptCtl = OTG_FS->ie[SelfN].DIEPCTL;
@@ -239,42 +233,46 @@ void Endpoint_t::PrepareTransmit(uint8_t *Ptr, uint32_t Len) {
     DieptCtl |= DIEPCTL_EPENA | DIEPCTL_CNAK;
 
     // Start transfer
-    chSysLock();
+    chSysLockFromIsr();
     IsTransmitting = true;
     OTG_FS->ie[SelfN].DIEPTSIZ = Dieptsiz;
     OTG_FS->ie[SelfN].DIEPCTL  = DieptCtl;
     EnableInFifoEmptyIRQ();
-    chSysUnlock();
+    chSysUnlockFromIsr();
 }
 
 void Endpoint_t::Receive(uint32_t Len) {
-    if(IsReceiving) return;
+    Uart.Printf("PrepRX L=%u\r\n", Len);
+//    if(IsReceiving) return;
     // Prepare reception
     uint32_t Cnt = (Len + OutMaxSz - 1) / OutMaxSz;
+    OTG_FS->oe[SelfN].DOEPTSIZ &= ~((uint32_t) 0x7F);
     OTG_FS->oe[SelfN].DOEPTSIZ |= DOEPTSIZ_PKTCNT(Cnt) | DOEPTSIZ_XFRSIZ(OutMaxSz);
+    Uart.Printf("DOEPTSIZ: %X\r\n", OTG_FS->oe[0].DOEPTSIZ);
     // Start reception
     chSysLockFromIsr();
-    IsReceiving = true;
+//    IsReceiving = true;
     ClearOutNAK();
+    EnableOut();
     chSysUnlockFromIsr();
 }
 
 bool Endpoint_t::TxFifoHandler() {
     // The TXFIFO is filled until there are space and data to be transmitted
-    while(XferCnt < XFerSz) {
-        uint32_t n = XFerSz - XferCnt;    // Number of bytes to transmit total
-        TRIM_VALUE(n, InMaxSz);             // Number of bytes to transmit now
+    while(Tx.Cnt < Tx.Sz) {
+        uint32_t n = Tx.Sz - Tx.Cnt;    // Number of bytes to transmit total
+        TRIM_VALUE(n, InMaxSz);         // Number of bytes to transmit now
         // Check if enough space in FIFO
         uint32_t SpaceAvailable32 = OTG_FS->ie[SelfN].DTXFSTS & 0xFFFF;
         if((SpaceAvailable32 * 4) < n) return false;
-        XferCnt += n;
+        Tx.Cnt += n;
         // Write to FIFO
         n = (n + 3) / 4;    // Number of 32bit words to write
         while(n) {
-            uint32_t t = *((uint32_t*)PXferBuf);
+            uint32_t t = *((uint32_t*)Tx.Ptr);
             Uart.Printf("< %08X\r\n", t);
             *(OTG_FS->FIFO[SelfN]) = t;
-            PXferBuf += 4;
+            Tx.Ptr += 4;
             n--;
         }
         ClearInNAK();
@@ -288,14 +286,13 @@ void Usb_t::IHandleIrq() {
     // Get irq flag
     sts = OTG_FS->GINTSTS & OTG_FS->GINTMSK;
     OTG_FS->GINTSTS = sts;
-    Uart.Printf("u %X %u\r\n", sts, chTimeNow());
+    Uart.Printf("Irq: %X %u\r\n", sts, chTimeNow());
+//    Uart.Printf("OCTL: %X\r\n", OTG_FS->oe[0].DOEPCTL);
 
     // Reset
     if(sts & GINTSTS_USBRST) IReset();
     // Enumeration done
-    if (sts & GINTSTS_ENUMDNE) {
-        (void)OTG_FS->DSTS;
-    }
+    if (sts & GINTSTS_ENUMDNE) { (void)OTG_FS->DSTS; }
 
     // RX FIFO not empty handling
     if (sts & GINTSTS_RXFLVL) {
@@ -308,14 +305,14 @@ void Usb_t::IHandleIrq() {
     }
 
     // OUT & IN event handling
-    if (sts & GINTSTS_IEPINT) {
+    if(sts & GINTSTS_IEPINT) {
         src = OTG_FS->DAINT;
         if(src & (1 << 0)) IEpInHandler(0);
         if(src & (1 << 1)) IEpInHandler(1);
         if(src & (1 << 2)) IEpInHandler(2);
         if(src & (1 << 3)) IEpInHandler(3);
     }
-    if (sts & GINTSTS_OEPINT) {
+    if(sts & GINTSTS_OEPINT) {
         src = OTG_FS->DAINT;
         if(src & (1 << 16)) IEpOutHandler(0);
         if(src & (1 << 17)) IEpOutHandler(1);
@@ -327,7 +324,6 @@ void Usb_t::IHandleIrq() {
 void Usb_t::IReset() {
     Uart.Printf("========= Rst =========\r\n");
     TxFifoFlush();
-    NewSetupPkt = false;
     // Set all EPs in NAK mode and clear Irqs
     for(uint8_t i=0; i < USB_EP_CNT; i++) {
         OTG_FS->ie[i].DIEPCTL = DIEPCTL_SNAK;
@@ -346,7 +342,7 @@ void Usb_t::IReset() {
     MemAllocator.Reset();
 
     // RX FIFO init, the address is always zero
-    OTG_FS->GRXFSIZ = RX_FIFO_SZ;
+    OTG_FS->GRXFSIZ = RX_FIFO_SZW;
     RxFifoFlush();
     // Reset device address to zero
     OTG_FS->DCFG = (OTG_FS->DCFG & ~DCFG_DAD_MASK) | DCFG_DAD(0);
@@ -354,17 +350,19 @@ void Usb_t::IReset() {
     // Enable EP-related irqs
     OTG_FS->GINTMSK |= GINTMSK_RXFLVLM | GINTMSK_OEPM  | GINTMSK_IEPM;
     OTG_FS->DIEPMSK  = DIEPMSK_XFRCM;
-    OTG_FS->DOEPMSK  = DOEPMSK_STUPM   | DOEPMSK_XFRCM;
+    OTG_FS->DOEPMSK  = DOEPMSK_STUPM   | DOEPMSK_XFRCM | DOEPMSK_OTEPDM;
 
     // Init EP0
     OTG_FS->ie[0].DIEPINT |= 0x5B;  // }
     OTG_FS->oe[0].DOEPINT |= 0x5B;  // } Clear interrupts
-    OTG_FS->oe[0].DOEPTSIZ = DOEPTSIZ_STUPCNT(3);
+    OTG_FS->oe[0].DOEPTSIZ = DOEPTSIZ_STUPCNT(3) | DOEPTSIZ_XFRSIZ(Ep[0].OutMaxSz);
     OTG_FS->oe[0].DOEPCTL  = 0; // EP size is 64 bytes
     OTG_FS->ie[0].DIEPTSIZ = 0;
     OTG_FS->ie[0].DIEPCTL = DIEPCTL_TXFNUM(0);
-    OTG_FS->DIEPTXF0 = DIEPTXF_INEPTXFD(EP0_SZ / 4) | DIEPTXF_INEPTXSA(MemAllocator.Alloc(EP0_SZ / 4));
+    OTG_FS->DIEPTXF0 = DIEPTXF_INEPTXFD(TX0_FIFO_SZW) | DIEPTXF_INEPTXSA(RX_FIFO_SZW);
+//    OTG_FS->DIEPTXF0 = DIEPTXF_INEPTXFD(EP0_SZ / 4) | DIEPTXF_INEPTXSA(MemAllocator.Alloc(EP0_SZ / 4));
     Ep0State = esWaitingSetup;
+    Ep[0].Rx.Ptr = Ep0RxBuf;
 }
 
 void Usb_t::IRxHandler() {
@@ -375,32 +373,30 @@ void Usb_t::IRxHandler() {
     switch(sts & GRXSTSP_PKTSTS_MASK) {
         case GRXSTSP_SETUP_COMP:
             Uart.Printf(" setup comp\r\n");
+//            Ep[0].EnableOut();  // Reenable Out transactions, as core disables it when transfer completed
+//            Ep[0].ClearOutNAK();
             break;
         case GRXSTSP_SETUP_DATA:
-            cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
             Uart.Printf(" setup %u %u\r\n", cnt, EpN);
+            chSysLockFromIsr();
             ReadFifo(SetupReq.Buf, OTG_FS->FIFO[0], cnt);
+            chSysUnlockFromIsr();
 //            Uart.Printf("> %A\r\n", SetupReq.Buf, 8, ' ');
             Uart.Printf("%X %X %X %u %u\r\n", SetupReq.bmRequestType, SetupReq.bRequest, SetupReq.wValue, SetupReq.wIndex, SetupReq.wLength);
             break;
+        case GRXSTSP_OUT_COMP:
+            Uart.Printf(" out comp\r\n");
+            //Ep[EpN].EnableOut();  // Reenable Out transactions, as core disables it when transfer completed
+            //Ep[EpN].ClearOutNAK();
+            //Ep[EpN].SetOutNAK();
+            break;
         case GRXSTSP_OUT_DATA:
-            cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
             Uart.Printf(" out %u %u\r\n", cnt, EpN);
-//            if(usbp->epc[ep]->out_state->rxqueued) {
-//              /* Queue associated.*/
-//              otg_fifo_read_to_queue(usbp->otg->FIFO[0],
-//                                     usbp->epc[ep]->out_state->mode.queue.rxqueue,
-//                                     cnt);
-//            }
-//            else {
-//              otg_fifo_read_to_buffer(usbp->otg->FIFO[0],
-//                                      usbp->epc[ep]->out_state->mode.linear.rxbuf,
-//                                      cnt,
-//                                      usbp->epc[ep]->out_state->rxsize -
-//                                      usbp->epc[ep]->out_state->rxcnt);
-//              usbp->epc[ep]->out_state->mode.linear.rxbuf += cnt;
-//            }
-//            usbp->epc[ep]->out_state->rxcnt += cnt;
+            chSysLockFromIsr();
+            ReadFifo(Ep[EpN].Rx.Ptr, OTG_FS->FIFO[0], cnt);
+            chSysUnlockFromIsr();
+            Ep[EpN].Rx.Ptr += cnt;
+            Ep[EpN].Rx.Cnt += cnt;
             break;
         default:
             Uart.Printf(" RX sts: %X\r\n", sts);
@@ -417,7 +413,6 @@ void Usb_t::IEpInHandler(uint8_t EpN) {
     // Transmit transfer complete
     if(epint & DIEPINT_XFRC) {
         Uart.Printf("###########\r\n");
-        //Ep[EpN].DisableInFifoEmptyIRQ();
 //        Ep[EpN].IsTransmitting = false;
         if(EpN == 0) Ep0InCallback();
 //        if(Ep[EpN].cbIn != NULL) Ep[EpN].cbIn();
@@ -436,18 +431,16 @@ void Usb_t::IEpInHandler(uint8_t EpN) {
 void Usb_t::IEpOutHandler(uint8_t EpN) {
     uint32_t epint = OTG_FS->oe[EpN].DOEPINT;
     OTG_FS->oe[EpN].DOEPINT = 0xFFFFFFFF;   // Reset IRQs
-    Uart.Printf("out %u: %X\r\n", EpN, epint);
+    Uart.Printf("=== out %u: %X\r\n", EpN, epint);
+    Uart.Printf("DOEPTSIZ: %X\r\n", OTG_FS->oe[0].DOEPTSIZ);
     // Setup packets handling
     if ((epint & DOEPINT_STUP) and (OTG_FS->DOEPMSK & DOEPMSK_STUPM)) {
-        chSysLockFromIsr();
-        NewSetupPkt = true;
-        if(PThread->p_state == THD_STATE_SUSPENDED) chThdResumeI(PThread);
-        chSysUnlockFromIsr();
+        Ep0SetupHandler();
     }
     // Receive transfer complete
     if ((epint & DOEPINT_XFRC) and (OTG_FS->DOEPMSK & DOEPMSK_XFRCM)) {
         Uart.Printf(" XFR cmp\r\n");
-        Ep[EpN].IsReceiving = false;
+//        Ep[EpN].IsReceiving = false;
         if(EpN == 0) Ep0OutCallback();
 //        if(Ep[EpN].cbOut != NULL) Ep[EpN].cbOut();
     }
@@ -479,19 +472,51 @@ void Usb_t::Ep0SetupHandler() {
             // IN phase
             if(Len > 0) {
                 Ep0State = esTX;
+//                // Check if enough space in FIFO
+//                uint32_t SpaceAvailable32 = OTG_FS->ie[0].DTXFSTS & 0xFFFF;
+//                if((SpaceAvailable32 * 4) < Len) {
+//                    Uart.Printf("no spc\r\n");
+//                    return;
+//                }
+//
+//                uint32_t DieptCtl = OTG_FS->ie[0].DIEPCTL;
+//                DieptCtl |= DIEPCTL_EPENA | DIEPCTL_CNAK;
+//                OTG_FS->ie[0].DIEPCTL = DieptCtl;
+//
+//                // Write to FIFO
+//                Len = (Len + 3) / 4;    // Number of 32bit words to write
+//                while(Len) {
+//                    uint32_t t = *((uint32_t*)Ptr);
+//                    Uart.Printf("<<%08X\r\n", t);
+//                    *(OTG_FS->FIFO[0]) = t;
+//                    Ptr += 4;
+//                    Len--;
+//                }
+//                uint32_t Dieptsiz = OTG_FS->ie[0].DIEPTSIZ;
+//                Dieptsiz &= ~((3<<19) | 0x7F);
+//                uint32_t Cnt = (Len + 64 - 1) / 64;
+//                Dieptsiz |= DIEPTSIZ_PKTCNT(Cnt) | DIEPTSIZ_XFRSIZ(Len);
+//                OTG_FS->ie[0].DIEPTSIZ = Dieptsiz;
+
                 Ep[0].PrepareTransmit(Ptr, Len);    // Start transmit phase
             }
             else {
-                Ep0State = esRX;
+                Ep0State = esWaitingSTS;
                 Ep[0].Receive(0);               // No transmit phase, receive zero sized status pkt
             }
         }
         else {
             // OUT phase
-            if(Len > 0) Ep[0].Receive(Len);             // Start receive phase
-            else        Ep[0].PrepareTransmit(NULL, 0); // No receive state, send zero sized status pkt
-        }
-    }
+            if(Len > 0) {
+                Ep0State = esRX;
+                Ep[0].Receive(Len);             // Start receive phase
+            }
+            else {
+                Ep0State = esSendingSTS;
+                Ep[0].PrepareTransmit(NULL, 0); // No receive state, send zero sized status pkt
+            }
+        } // if dev2host
+    } // if rslt ok
     else { // If error, stall EP
         Ep0State = esError;
         Ep[0].StallIn();
@@ -510,13 +535,14 @@ void Usb_t::Ep0InCallback() {
             /* If the transmitted size is less than the requested size and it is a
                multiple of the maximum packet size then a zero size packet must be
                transmitted.*/
-            if((Ep[0].XFerSz < SetupReq.wLength) and ((Ep[0].XFerSz % Ep[0].InMaxSz) == 0)) {
+            if((Ep[0].Tx.Sz < SetupReq.wLength) and ((Ep[0].Tx.Sz % Ep[0].InMaxSz) == 0)) {
                 Ep[0].PrepareTransmit(NULL, 0);
-                return;
             }
-            // Transmit phase over, receiving the zero sized status packet
-            Ep0State = esWaitingSTS;
-            Ep[0].Receive(0);
+            else {
+                // Transmit phase over, receiving the zero sized status packet
+                Ep0State = esWaitingSTS;
+                Ep[0].Receive(0);
+            }
             break;
         case esSendingSTS:
             Ep0State = esWaitingSetup;
@@ -531,5 +557,28 @@ void Usb_t::Ep0InCallback() {
 }
 
 void Usb_t::Ep0OutCallback() {
-    Uart.Printf("EP0 Out\r\n");
+    Uart.Printf("EP0 Out; st=%u\r\n", Ep0State);
+    switch(Ep0State) {
+        case esRX:
+            Ep0State = esSendingSTS;
+            Ep[0].PrepareTransmit(NULL, 0);
+            break;
+        case esWaitingSTS:  // Status packet received, it must be zero sized
+            if(Ep[0].Rx.Cnt == 0) {
+                Ep0State = esWaitingSetup;
+                Ep[0].Receive(8);
+            }
+            else {
+                Ep0State = esError;
+                Ep[0].StallIn();
+                Ep[0].StallOut();
+            }
+            break;
+        default:
+            Ep0State = esError;
+            Ep[0].StallIn();
+            Ep[0].StallOut();
+            break;
+    } // switch
+    Uart.Printf("EP0 Out; st=%u\r\n", Ep0State);
 }
