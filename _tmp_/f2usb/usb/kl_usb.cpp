@@ -370,6 +370,8 @@ void Usb_t::IRxHandler() {
     uint32_t sts = OTG_FS->GRXSTSP;         // Get the Status from the top of the FIFO
     uint32_t EpN = (sts & GRXSTSP_EPNUM_MASK);
     uint32_t cnt = (sts & GRXSTSP_BCNT_MASK) >> GRXSTSP_BCNT_OFF;
+    uint32_t dpid = (sts & GRXSTSP_DPID_MASK) >> 15;
+    Uart.Printf(" dpid %X\r\n", dpid);
     switch(sts & GRXSTSP_PKTSTS_MASK) {
         case GRXSTSP_SETUP_COMP:
             Uart.Printf(" setup comp\r\n");
@@ -413,6 +415,8 @@ void Usb_t::IEpInHandler(uint8_t EpN) {
     // Transmit transfer complete
     if(epint & DIEPINT_XFRC) {
         Uart.Printf("###########\r\n");
+//        Ep[0].ClearOutNAK();
+//        Ep[0].EnableOut();
 //        Ep[EpN].IsTransmitting = false;
         if(EpN == 0) Ep0InCallback();
 //        if(Ep[EpN].cbIn != NULL) Ep[EpN].cbIn();
