@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-03-19 BZR 4004)-stable date = 23/03/2013 22:56:19
+Cmp-Mod V01 Created by CvPcb (2013-03-19 BZR 4004)-stable date = 24/05/2013 18:15:05
 
 BeginCmp
 TimeStamp = /5102E877;
@@ -96,6 +96,34 @@ TimeStamp = /5102E878;
 Reference = DA1;
 ValeurCmp = NCP1400;
 IdModule  = SOT23-5;
+EndCmp
+
+BeginCmp
+TimeStamp = /519F7A12;
+Reference = HOLE1;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole2_2mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /519F7A03;
+Reference = HOLE2;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole2_2mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /519F79FB;
+Reference = HOLE3;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole2_2mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /519F79F5;
+Reference = HOLE4;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole2_2mm;
 EndCmp
 
 BeginCmp
