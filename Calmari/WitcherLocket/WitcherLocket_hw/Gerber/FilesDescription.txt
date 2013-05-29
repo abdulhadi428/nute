@@ -1,0 +1,6 @@
+WitcherLocket-F_Cu.gtl       - GERBER-файл верхнего слоя платы
+WitcherLocket-F_Mask.gts     - GERBER-файл маски верхнего слоя платы
+WitcherLocket-Edge_Cuts.gbr  - GERBER-файл контура платы
+WitcherLocket-F_SilkS.gto    - GERBER-файл шелкографии верхнего слоя платы
+WitcherLocket.drl            - файл листа сверловки
+other_formats.xls            - заполненная карта заказа с сайта
