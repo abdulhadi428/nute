@@ -8,10 +8,10 @@
 #ifndef LED_H_
 #define LED_H_
 
-#include "stm32f0xx.h"
+#include "stm32f10x.h"
 #include "ch.h"
 #include "hal.h"
-#include "kl_lib_f0.h"
+#include "kl_lib_f100.h"
 
 #define LED_TIM             TIM2
 #define LED_CCR             CCR2

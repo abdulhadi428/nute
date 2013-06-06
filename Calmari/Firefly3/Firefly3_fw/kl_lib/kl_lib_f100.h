@@ -5,13 +5,13 @@
  *      Author: kreyl
  */
 
-#ifndef KL_LIB_F0XX_H_
-#define KL_LIB_F0XX_H_
+#ifndef KL_LIB_F100_H_
+#define KL_LIB_F100_H_
 
-#include "stm32f0xx.h"
+#include "stm32f10x.h"
 #include "ch.h"
 #include "hal.h"
-#include "clocking_f0.h"
+#include "clocking_f100.h"
 
 extern "C" {
 //void _init(void);   // Need to calm linker
@@ -43,12 +43,9 @@ enum PinPullUpDown_t {
     pudPullDown = 0b10
 };
 enum PinSpeed_t {
-    ps2MHz  = 0b00,
+    ps2MHz  = 0b10,
     ps10MHz = 0b01,
     ps50MHz = 0b11
-};
-enum PinAF_t {
-    AF0=0, AF1=1, AF2=2, AF3=3, AF4=4, AF5=5, AF6=6, AF7=7
 };
 
 // Set/clear
@@ -59,77 +56,98 @@ static inline void PinToggle (GPIO_TypeDef *PGpioPort, const uint16_t APinNumber
 static inline bool PinIsSet(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber) { return (PGpioPort->IDR & (uint32_t)(1<<APinNumber)); }
 // Setup
 static inline void PinClockEnable(GPIO_TypeDef *PGpioPort) {
-    if     (PGpioPort == GPIOA) RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
-    else if(PGpioPort == GPIOB) RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
-    else if(PGpioPort == GPIOF) RCC->AHBENR |= RCC_AHBENR_GPIOFEN;
+    if     (PGpioPort == GPIOA) RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
+    else if(PGpioPort == GPIOB) RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
+    else if(PGpioPort == GPIOC) RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+    else if(PGpioPort == GPIOD) RCC->APB2ENR |= RCC_APB2ENR_IOPDEN;
 }
 static inline void PinSetupOut(
         GPIO_TypeDef *PGpioPort,
         const uint16_t APinNumber,
         const PinOutMode_t PinOutMode,
-        const PinPullUpDown_t APullUpDown,
         const PinSpeed_t ASpeed = ps50MHz
         ) {
     // Clock
     PinClockEnable(PGpioPort);
-    // Setup mode
-    PGpioPort->MODER &= ~(0b11 << (APinNumber*2));  // clear previous bits
-    PGpioPort->MODER |= 0b01 << (APinNumber*2);     // Set new bits
-    // Setup output type
-    PGpioPort->OTYPER &= ~(1<<APinNumber);
-    PGpioPort->OTYPER |= (uint32_t)PinOutMode << APinNumber;
-    // Setup Pull-Up or Pull-Down
-    PGpioPort->PUPDR &= ~(0b11 << (APinNumber*2)); // clear previous bits
-    PGpioPort->PUPDR |= (uint32_t)APullUpDown << (APinNumber*2);
-    // Setup speed
-    PGpioPort->OSPEEDR &= ~(0b11 << (APinNumber*2)); // clear previous bits
-    PGpioPort->OSPEEDR |= (uint32_t)ASpeed << (APinNumber*2);
+    // Setup
+    uint32_t CnfMode = ((uint32_t)PinOutMode << 2) | (uint32_t)ASpeed;
+    if(APinNumber < 8) {
+        uint8_t Offset = APinNumber*4;
+        PGpioPort->CRL &= ~((uint32_t)(0b1111 << Offset));  // Clear both mode and cnf
+        PGpioPort->CRL |= CnfMode << Offset;
+    }
+    else {
+        uint8_t Offset = (APinNumber - 8) * 4;
+        PGpioPort->CRH &= ~((uint32_t)(0b1111 << Offset));  // Clear both mode and cnf
+        PGpioPort->CRH |= CnfMode << Offset;
+    }
 }
 static inline void PinSetupIn(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber, const PinPullUpDown_t APullUpDown) {
     // Clock
     PinClockEnable(PGpioPort);
-    // Setup mode
-    PGpioPort->MODER &= ~(0b11 << (APinNumber*2)); // clear previous bits
-    // Setup Pull-Up or Pull-Down
-    PGpioPort->PUPDR &= ~(0b11 << (APinNumber*2)); // clear previous bits
-    PGpioPort->PUPDR |= (uint32_t)APullUpDown << (APinNumber*2);
+    // Setup
+    uint32_t CnfMode;
+    if(APullUpDown == pudNone) CnfMode = 0b0100;
+    else {
+        CnfMode = 0b1000;
+        if(APullUpDown == pudPullDown) PGpioPort->ODR &= ~((uint32_t)(1<<APinNumber));
+        else PGpioPort->ODR |= (uint32_t)(1<<APinNumber);
+    }
+    if(APinNumber < 8) {
+        uint8_t Offset = APinNumber*4;
+        PGpioPort->CRL &= ~((uint32_t)(0b1111 << Offset));  // Clear both mode and cnf
+        PGpioPort->CRL |= CnfMode << Offset;
+    }
+    else {
+        uint8_t Offset = (APinNumber - 8) * 4;
+        PGpioPort->CRH &= ~((uint32_t)(0b1111 << Offset));  // Clear both mode and cnf
+        PGpioPort->CRH |= CnfMode << Offset;
+    }
 }
-static inline void PinSetupAnalog(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber, const PinPullUpDown_t APullUpDown) {
+static inline void PinSetupAnalog(GPIO_TypeDef *PGpioPort, const uint16_t APinNumber) {
     // Clock
     PinClockEnable(PGpioPort);
-    // Setup mode
-    PGpioPort->MODER |= 0b11 << (APinNumber*2);  // Set new bits
-    // Setup Pull-Up or Pull-Down
-    PGpioPort->PUPDR &= ~(0b11 << (APinNumber*2)); // clear previous bits
-    PGpioPort->PUPDR |= (uint32_t)APullUpDown << (APinNumber*2);
+    if(APinNumber < 8) {
+        uint8_t Offset = APinNumber*4;
+        PGpioPort->CRL &= ~((uint32_t)(0b1111 << Offset));  // Clear both mode and cnf
+    }
+    else {
+        uint8_t Offset = (APinNumber - 8) * 4;
+        PGpioPort->CRH &= ~((uint32_t)(0b1111 << Offset));  // Clear both mode and cnf
+    }
 }
-static inline void PinSetupAlterFunc(
+static inline void PinSetupAlterFuncOutput(
         GPIO_TypeDef *PGpioPort,
         const uint16_t APinNumber,
         const PinOutMode_t PinOutMode,
-        const PinPullUpDown_t APullUpDown,
-        const PinAF_t AAlterFunc,
         const PinSpeed_t ASpeed = ps50MHz
         ) {
     // Clock
     PinClockEnable(PGpioPort);
-    // Setup mode
-    PGpioPort->MODER &= ~(0b11 << (APinNumber*2));  // clear previous bits
-    PGpioPort->MODER |= 0b10 << (APinNumber*2);     // Set new bits
-    // Setup output type
-    PGpioPort->OTYPER &= ~(1<<APinNumber);
-    PGpioPort->OTYPER |= (uint32_t)PinOutMode << APinNumber;
-    // Setup Pull-Up or Pull-Down
-    PGpioPort->PUPDR &= ~(0b11 << (APinNumber*2)); // clear previous bits
-    PGpioPort->PUPDR |= (uint32_t)APullUpDown << (APinNumber*2);
-    // Setup speed
-    PGpioPort->OSPEEDR &= ~(0b11 << (APinNumber*2)); // clear previous bits
-    PGpioPort->OSPEEDR |= (uint32_t)ASpeed << (APinNumber*2);
-    // Setup Alternate Function
-    uint32_t n = (APinNumber <= 7)? 0 : 1;      // 0 if 0...7, 1 if 8..15
-    uint32_t Shift = 4 * ((APinNumber <= 7)? APinNumber : APinNumber - 8);
-    PGpioPort->AFR[n] &= ~(0b1111 << Shift);
-    PGpioPort->AFR[n] |= (uint32_t)AAlterFunc << Shift;
+    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;     // Enable AFIO clock
+    // Setup
+    uint32_t CnfMode = ((uint32_t)PinOutMode << 2) | 0b1000 | (uint32_t)ASpeed;
+    if(APinNumber < 8) {
+        uint8_t Offset = APinNumber*4;
+        PGpioPort->CRL &= ~((uint32_t)(0b1111 << Offset));  // Clear both mode and cnf
+        PGpioPort->CRL |= CnfMode << Offset;
+    }
+    else {
+        uint8_t Offset = (APinNumber - 8) * 4;
+        PGpioPort->CRH &= ~((uint32_t)(0b1111 << Offset));  // Clear both mode and cnf
+        PGpioPort->CRH |= CnfMode << Offset;
+    }
+}
+
+// Disable JTAG, leaving SWD
+static inline void JtagDisable() {
+    bool AfioWasEnabled = (RCC->APB2ENR & RCC_APB2ENR_AFIOEN);
+    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;     // Enable AFIO
+    uint32_t tmp = AFIO->MAPR;
+    tmp &= ~0x07000000;
+    tmp |= 0x02000000;
+    AFIO->MAPR = tmp;
+    if (!AfioWasEnabled) RCC->APB2ENR &= ~RCC_APB2ENR_AFIOEN;
 }
 
 // ============================== UART command =================================
@@ -154,4 +172,4 @@ public:
 extern DbgUart_t Uart;
 #endif
 
-#endif /* KL_LIB_F0XX_H_ */
+#endif /* KL_LIB_F100_H_ */

@@ -20,8 +20,7 @@
  *
  * Do not forget to update Freq values after switching.
  *
- * Keep in mind that Flash latency need to be increased at higher speeds.
- * Tune it with SetupFlashLatency.
+ * Flash latency requires no attention as top freq of 24 MHz is too low to affect Flash.
  *
  * AHB  freq max = 24 MHz;
  * APB1 freq max = 24 MHz;
@@ -83,7 +82,6 @@ public:
     void SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div);
     uint8_t SetupPLLDividers(uint8_t HsePreDiv, PllMul_t PllMul);
     void UpdateFreqValues();
-    void SetupFlashLatency();
 };
 
 extern Clk_t Clk;

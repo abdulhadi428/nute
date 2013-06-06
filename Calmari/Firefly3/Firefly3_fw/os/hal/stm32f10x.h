@@ -54,6 +54,8 @@
  extern "C" {
 #endif
 
+#include "halconf.h" // @KL
+
 /** @addtogroup Library_configuration_section
   * @{
   */

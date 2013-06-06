@@ -83,12 +83,13 @@ void Clk_t::UpdateFreqValues() {
 
 // ==== Common use ====
 // AHB, APB
-void Clk_t::SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APBDiv) {
+void Clk_t::SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div) {
     // Setup dividers
     uint32_t tmp = RCC->CFGR;
-    tmp &= ~(RCC_CFGR_HPRE | RCC_CFGR_PPRE);  // Clear bits
+    tmp &= ~(RCC_CFGR_HPRE | RCC_CFGR_PPRE1 | RCC_CFGR_PPRE2);  // Clear bits
     tmp |= ((uint32_t)AHBDiv)  << 4;
-    tmp |= ((uint32_t)APBDiv) << 8;
+    tmp |= ((uint32_t)APB1Div) << 8;
+    tmp |= ((uint32_t)APB2Div) << 11;
     RCC->CFGR = tmp;
 }
 
@@ -139,15 +140,6 @@ uint8_t Clk_t::SetupPLLDividers(uint8_t HsePreDiv, PllMul_t PllMul) {
     return 0;
 }
 
-// Setup Flash latency depending on CPU freq. Page 53 of ref manual.
-// Call after UpdateFreqValues.
-void Clk_t::SetupFlashLatency() {
-    uint32_t tmp = FLASH->ACR;
-    if(AHBFreqHz <= 24000000) tmp &= ~FLASH_ACR_LATENCY;
-    else tmp |= FLASH_ACR_LATENCY;
-    FLASH->ACR = tmp;
-}
-
 /*
  * Early initialization code.
  * This initialization must be performed just after stack setup and before
@@ -157,8 +149,4 @@ void __early_init(void) {
     // Enable HSI. It is enabled by default, but who knows.
     RCC->CR |= RCC_CR_HSION;
     while(!(RCC->CR & RCC_CR_HSIRDY));
-
-    // SYSCFG clock enabled here because it is a multi-functional unit
-    // shared among multiple drivers using external IRQs
-    rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, 1);
 }
