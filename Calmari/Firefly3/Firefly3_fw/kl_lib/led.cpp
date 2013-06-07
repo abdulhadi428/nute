@@ -136,7 +136,7 @@ void LedRGB_t::Init() {
 	LED_TIM->CCMR2 = (OutCmpBits << 8) | OutCmpBits;
 	LED_TIM->CCER = TIM_CCER_CC2E | TIM_CCER_CC3E | TIM_CCER_CC4E;
     // Initial values
-    SetColor(clWhite);
+    SetColor(clBlack);
     INeededColor = clBlack;
     // Thread
     PThread = chThdCreateStatic(waLedThread, sizeof(waLedThread), NORMALPRIO, LedThread, NULL);

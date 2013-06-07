@@ -13,6 +13,7 @@
 #include "adc_f100.h"
 
 Adc_t Adc;
+IWDG_t Iwdg;
 
 #define ADC_VALUE_TO_OFF    540
 #define ADC_VALUE_TO_ON     198
@@ -55,15 +56,25 @@ int main(void) {
 void Init() {
     JtagDisable();
     Uart.Init(57600);
-    Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
     Led.Init();
+    // Set white and print info only when switch on, not after watcdog reset.
+    if(!Iwdg.ResetOccured()) {
+        Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+        Led.SetColor(clWhite);
+    }
     Adc.Init();
 }
 
 void GoSleep() {
-    // Enable backup domain
-    // Start RTC
-    // Setup alarm
+    // Start LSI
+    Clk.LsiEnable();
+    // Start IWDG
+    Iwdg.SetTimeout(4500);
+    Iwdg.Enable();
     // Enter standby mode
+    SCB->SCR |= SCB_SCR_SLEEPDEEP;
+    PWR->CR = PWR_CR_PDDS;
+    PWR->CR |= PWR_CR_CWUF;
+    __WFI();
 }
 

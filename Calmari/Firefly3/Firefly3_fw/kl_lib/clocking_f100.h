@@ -29,6 +29,7 @@
 
 #define CRYSTAL_FREQ_HZ     8000000     // Freq of external crystal, change accordingly
 #define HSI_FREQ_HZ         HSI_VALUE   // Freq of internal generator, not adjustable
+#define LSI_FREQ_HZ         40000       // Freq of internal generator, not adjustable
 
 enum ClkSrc_t {csHSI, csHSE, csPLL};
 enum PllMul_t {
@@ -89,8 +90,13 @@ public:
     void SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div);
     uint8_t SetupPLLDividers(uint8_t HsePreDiv, PllMul_t PllMul);
     void UpdateFreqValues();
-    // Adc clock
+    // Other clocks
     void SetupAdcClk(ADCDiv_t ADCDiv);
+    void LsiEnable() {
+        RCC->CSR |= RCC_CSR_LSION;
+        while(!(RCC->CSR & RCC_CSR_LSIRDY));
+    }
+    void LsiDisable() { RCC->CSR &= RCC_CSR_LSION; }
 };
 
 extern Clk_t Clk;

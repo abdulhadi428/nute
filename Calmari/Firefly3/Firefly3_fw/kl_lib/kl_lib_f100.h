@@ -25,6 +25,16 @@ void __attribute__ ((weak)) _init(void)  {}
 #define countof(A)  (sizeof(A)/sizeof(A[0]))
 #endif
 
+// Simple pseudofunctions
+#define TRIM_VALUE(v, Max)  { if(v > Max) v = Max; }
+#define IS_LIKE(v, precise, deviation)  (((precise - deviation) < v) and (v < (precise + deviation)))
+
+#define ANY_OF_2(a, b1, b2)             (((a)==(b1)) or ((a)==(b2)))
+#define ANY_OF_3(a, b1, b2, b3)         (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)))
+#define ANY_OF_4(a, b1, b2, b3, b4)     (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)) or ((a)==(b4)))
+#define ANY_OF_5(a, b1, b2, b3, b4, b5) (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)) or ((a)==(b4)) or ((a)==(b5)))
+
+
 // ============================ Simple delay ===================================
 static inline void DelayLoop(volatile uint32_t ACounter) { while(ACounter--); }
 static inline void Delay_ms(uint32_t Ams) {
@@ -149,6 +159,43 @@ static inline void JtagDisable() {
     AFIO->MAPR = tmp;
     if (!AfioWasEnabled) RCC->APB2ENR &= ~RCC_APB2ENR_AFIOEN;
 }
+
+// ================================= IWDG ======================================
+enum IwdgPre_t {
+    iwdgPre4 = 0x00,
+    iwdgPre8 = 0x01,
+    iwdgPre16 = 0x02,
+    iwdgPre32 = 0x03,
+    iwdgPre64 = 0x04,
+    iwdgPre128 = 0x05,
+    iwdgPre256 = 0x06
+};
+
+class IWDG_t {
+private:
+    void EnableAccess() { IWDG->KR = 0x5555; }
+    void SetPrescaler(IwdgPre_t Prescaler) { IWDG->PR = (uint32_t)Prescaler; }
+    void SetReload(uint16_t Reload) { IWDG->RLR = Reload; }
+public:
+    void Reload() { IWDG->KR = 0xAAAA; }
+    void Enable() { IWDG->KR = 0xCCCC; }
+    void SetTimeout(uint32_t ms) {
+        EnableAccess();
+        SetPrescaler(iwdgPre256);
+        uint32_t Count = (ms * (LSI_FREQ_HZ/1000)) / 256;
+        TRIM_VALUE(Count, 0xFFF);
+        SetReload(Count);
+        Reload();
+    }
+    bool ResetOccured() {
+        if(RCC->CSR & RCC_CSR_IWDGRSTF) {
+            RCC->CSR |= RCC_CSR_RMVF;   // Clear flags
+            return true;
+        }
+        else return false;
+    }
+};
+
 
 // ============================== UART command =================================
 #define DBG_UART_ENABLED
