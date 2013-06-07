@@ -37,12 +37,10 @@ int main(void) {
 void Init() {
     JtagDisable();
     Uart.Init(57600);
-    Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB1=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+    Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
 
-    PinSetupOut(GPIOA, 3, omPushPull);
-    PinSet(GPIOA, 3);
-//    Led.Init();
-//    Led.SetSmoothly(LED_TOP_VALUE);
+    Led.Init();
+    Led.SetSmoothly(LED_TOP_VALUE);
 //    chThdCreateStatic(waKeyThread, sizeof(waKeyThread), NORMALPRIO, KeyThread, NULL);
 }
 

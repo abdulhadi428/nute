@@ -154,7 +154,7 @@ static inline void JtagDisable() {
 #define DBG_UART_ENABLED
 
 #ifdef DBG_UART_ENABLED
-#define UART_TXBUF_SIZE     45
+#define UART_TXBUF_SIZE     189
 
 class DbgUart_t {
 private:

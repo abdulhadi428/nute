@@ -210,7 +210,7 @@
 			<resource resourceType="PROJECT" workspacePath="/f0test"/>
 		</configuration>
 		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/Torch3"/>
+			<resource resourceType="PROJECT" workspacePath="/Firefly3"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
