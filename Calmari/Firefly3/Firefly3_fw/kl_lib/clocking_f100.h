@@ -62,6 +62,13 @@ enum AHBDiv_t {
 };
 enum APBDiv_t {apbDiv1=0b000, apbDiv2=0b100, apbDiv4=0b101, apbDiv8=0b110, apbDiv16=0b111};
 
+enum ADCDiv_t {
+    adcDiv2=RCC_CFGR_ADCPRE_DIV2,
+    adcDiv4=RCC_CFGR_ADCPRE_DIV4,
+    adcDiv6=RCC_CFGR_ADCPRE_DIV6,
+    adcDiv8=RCC_CFGR_ADCPRE_DIV8
+};
+
 class Clk_t {
 private:
     uint8_t HSEEnable();
@@ -82,6 +89,8 @@ public:
     void SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div);
     uint8_t SetupPLLDividers(uint8_t HsePreDiv, PllMul_t PllMul);
     void UpdateFreqValues();
+    // Adc clock
+    void SetupAdcClk(ADCDiv_t ADCDiv);
 };
 
 extern Clk_t Clk;

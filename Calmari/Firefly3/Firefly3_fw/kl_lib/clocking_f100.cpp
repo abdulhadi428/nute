@@ -140,6 +140,13 @@ uint8_t Clk_t::SetupPLLDividers(uint8_t HsePreDiv, PllMul_t PllMul) {
     return 0;
 }
 
+void Clk_t::SetupAdcClk(ADCDiv_t ADCDiv) {
+    uint32_t tmp = RCC->CFGR;
+    tmp &= ~RCC_CFGR_ADCPRE;
+    tmp |= (uint32_t)ADCDiv;
+    RCC->CFGR = tmp;
+}
+
 /*
  * Early initialization code.
  * This initialization must be performed just after stack setup and before
