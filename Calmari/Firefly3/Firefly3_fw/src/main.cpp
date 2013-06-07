@@ -6,7 +6,7 @@
  * Created on Feb 05, 2013, 20:27
  */
 
-#include "led_smooth.h"
+#include "led.h"
 #include "kl_lib_f100.h"
 #include "ch.h"
 #include "hal.h"
@@ -18,7 +18,7 @@ static inline void Init();
 
 int main(void) {
     // ==== Init clock system ====
-    Clk.SetupBusDividers(ahbDiv1, apbDiv1, apbDiv1);
+    Clk.SetupBusDividers(ahbDiv8, apbDiv1, apbDiv1);
     Clk.UpdateFreqValues();
     // ==== Init OS ====
     halInit();
@@ -40,7 +40,6 @@ void Init() {
     Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
 
     Led.Init();
-    Led.SetSmoothly(LED_TOP_VALUE);
 //    chThdCreateStatic(waKeyThread, sizeof(waKeyThread), NORMALPRIO, KeyThread, NULL);
 }
 
