@@ -498,13 +498,13 @@ private:
 	fresult virtual OnButtonPressed(ButtonState button);
 
 protected:
-	Form* currentForm;
+	Form* currentForm; // отображаема€ форма
 
-	Form _frmMainForm;
-	Form _frmOsanveForm;
-	Form _frmConsForm;
-	Form _frmBattleForm;
-	Form _frmFightForm;
+	Form _frmMainForm; // осанве форма
+	Form _frmOsanveForm; // осанве-выбор форма
+	Form _frmConsForm; // последстви€-выбор форма
+	Form _frmBattleForm; // боевого режима форма
+	Form _frmFightForm; //  форма бо€
 //	Form _frmDefForm;
 
 	//_pnlStatusBar;
@@ -514,6 +514,7 @@ protected:
 		TextField txtForce;
 
 //_pnlMainForm;
+	fresult SetOsanve(void); // обновить список видимых осанве-побратимов
 	fresult SetForces(void); // обновить поле сил персонажа
 	fresult SetBattle(void); // «аполнить список доступных бойцов
 	fresult SetFightField(void); // ќбновить форму бо€
@@ -549,8 +550,8 @@ public:
 	fresult virtual OnConsMnuCancel(IMenuItem* sender){return GENERAL_ERROR;}
     fresult virtual OnConsMnuSelect(IMenuItem* sender);
 
-	fresult virtual OnFightMnuUp(IMenuItem* sender); // сильнее
-	fresult virtual OnFightMnuDown(IMenuItem* sender); // слабее
+	fresult virtual OnFightMnuUP(IMenuItem* sender); // сильнее
+	fresult virtual OnFightMnuDOWN(IMenuItem* sender); // слабее
 	fresult virtual OnFightMnuAtack(IMenuItem* sender); // јтака
 	fresult virtual OnFightMnuDefence(IMenuItem* sender); // защита
     fresult virtual OnFightMnuBattle(IMenuItem* sender); // к выбору противника

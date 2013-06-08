@@ -18,17 +18,17 @@ fresult MenuDelegate::OnClick( IMenuItem* sender )
 	case OnMainMnuSet:
 		fres = _ui->OnMainMnuSet(sender);
 		break;
-	case OnOsanveSelectHandler:
-		fres = _ui->OnOsanveSelectHandler(sender);
+	case OnOsanveMnuSelect:
+		fres = _ui->OnOsanveMnuSelect(sender);
 		break;
-	case OnOsanveCancelHandler:
-		fres = _ui->OnOsanveCancelHandler(sender);
+	case OnOsanveMnuCancel:
+		fres = _ui->OnOsanveMnuCancel(sender);
 		break;
-	case OnConsSelectHandler:		 
-		fres = _ui->OnConsSelectHandler(sender);
+	case OnConsMnuSelect:		 
+		fres = _ui->OnConsMnuSelect(sender);
 		break;
-	case OnConsCancelHandler:
-		fres = _ui->OnConsCancelHandler(sender);
+	case OnConsMnuCancel:
+		fres = _ui->OnConsMnuCancel(sender);
 		break;
 	case OnBattleMnuOsanve:
 		fres = _ui->OnBattleMnuOsanve(sender);
@@ -38,6 +38,12 @@ fresult MenuDelegate::OnClick( IMenuItem* sender )
 		break;
 	case OnBattleMnuSet:
 		fres = _ui->OnBattleMnuSet(sender);
+		break;
+	case OnBattleMnuSelect:
+		fres = _ui->OnBattleMnuSelect(sender);
+		break;
+	case OnFighterSelect:
+		fres = _ui->OnFighterSelect(sender);
 		break;
 	case OnFightMnuUP:
 		fres = _ui->OnFightMnuUP(sender);
@@ -54,10 +60,38 @@ fresult MenuDelegate::OnClick( IMenuItem* sender )
 	case OnFightMnuBattle:
 		fres = _ui->OnFightMnuBattle(sender);
 		break;
-	case OnBattleMnuEnemy:
-		fres = _ui->OnBattleMnuEnemy(sender);
+	case OnFightMnuHeal:
+		fres = _ui->OnFightMnuHeal(sender);
 		break;
 
+	case OnLogFormMnuScrollUp:
+		fres = _ui->OnLogFormMnuScrollUp(sender);
+		break;
+	case OnLogFormMnuScrollDown:
+		fres = _ui->OnLogFormMnuScrollDown(sender);
+		break;
+	case OnLogFormMnuPrev:
+		fres = _ui->OnLogFormMnuPrev(sender);
+		break;
+	case OnLogFormMnuBack:
+		fres = _ui->OnLogFormMnuBack(sender);
+		break;
+	case OnLogFormMnuCleanLog:
+		fres = _ui->OnLogFormMnuCleanLog(sender);
+		break;
+	case OnLogFormMnuNext:
+		fres = _ui->OnLogFormMnuNext(sender);
+		break;
+
+	case OnMsgBoxMnuOk:
+		fres = _ui->OnMsgBoxMnuOk(sender);
+		break;
+	case OnMsgBoxMnuScrollUp:
+		fres = _ui->OnMsgBoxMnuScrollUp(sender);
+		break;
+	case OnMsgBoxMnuScrollDown:
+		fres = _ui->OnMsgBoxMnuScrollDown(sender);
+		break;
 	default:
 		fres = GENERAL_ERROR;
 	}

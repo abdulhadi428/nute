@@ -12,8 +12,8 @@
 #define OSANVE_WOUN 7 // ранен
 #define OSANVE_FGHT 8 // веду бой (можно исп как флаг)
 
-// Отображение абонента в Осанве, с
-#define OSANVE_MAX_WAIT_TIME 120
+// Отображение абонента в Осанве, мс
+#define OSANVE_MAX_WAIT_TIME 120*1000
 // Период рассылки своего состояния, мс
 #define OSANVE_SEND_TIME 10*1000
 // Время предбоевого режима, мс
@@ -22,6 +22,8 @@
 #define FIGHT_MAX_WAIT_TIME 30*1000
 // Период опроса заряда батарейки, мс
 #define BATTERYSTATUS_POLL_TIME 10*1000
+// Время нахождения в последствии,мин
+#define DEFAULT_DEFEAT_TIME 20
 
 // состояния браслета
 #define AL_STATUS_OSANVE  0	//ОСАНВЕ, основной режим
@@ -39,9 +41,7 @@ extern char* OSANVES[OSANVE_COUNT];
 // Боевые константы
 #define FORCE_MAX 255
 #define FORCE_STEP 5
-#define FORCE_SIDE_GOOD 0x00
-#define FORCE_SIDE_EVIL 0x10
-#define FORCE_HEAL 0x08
+
 #define MAX_ATACK_SEQ 7
 
 // последствия
@@ -77,34 +77,34 @@ namespace osanve {
 ///		ubyte_t defPress; // была нажата кнопка
         ubyte_t penaltyCons;   // отложенное последствие
 		uword_t penalty; // сила отложенной атаки на игрока (на время ввода в боевой режим)
-		uword_t defeatTime; // оставшееся время нахождения в последствии
+		uword_t defeatTime; // оставшееся время нахождения в последствии, минуты!
 		bool evil; // сторона силы
-		ubyte_t fph; // скорость восстановления силы (force per hour)
+		ubyte_t fph; // скорость восстановления силы (force per minute)
 		char name[16]; // имя персонажа
 		char fname[16]; //боевое имя персонажа
 		sword_t rights; // права браслета (AL_CAN)
 	};
 
 	void SetOsanve(ubyte_t no);
-	void OnForceTick(void);
+	bool OnForceTick(void); // true при выходе из последствия
   void GetOsanvePacket(char* osanve_packet); // формирование пакета осанве
   void GetAtackPacket(char* a_packet, ubyte_t a); // формирование пакета атаки
   void GetHealPacket(char* h_packet, ubyte_t h); // формирование пакета лечения
 	bool PreFightEnd(void);
 	void SetFPH(ubyte_t newFPH);
 	ubyte_t Atack(ubyte_t a);
-	ubyte_t Atacked(ubyte_t a, ubyte_t cons);
+	ubyte_t Atacked(ubyte_t a, ubyte_t cons, ubyte_t enemyId);
 	ubyte_t Healed(ubyte_t h);
   void DefenceON(void); // Нажата кнопка защиты
   void DefenceOFF(void); // Отжата кнопка защиты
 	void PlayerInit(void);
 
 	struct nick { // Описывает момент получения отклика от игрока
-		ubyte_t userId; // игрок
+//		ubyte_t userId; // игрок
 		ubyte_t force;
 		ubyte_t maxForce;
 		ubyte_t osanve; // сообщение-статус осанве
-		int time; // милисекунда, на которой был ответ
+		int time; // милисекунда, на которой была получена инфа
 	};
 }
 
@@ -112,6 +112,6 @@ using namespace osanve;
 // дин конф игрока
 extern struct player Player;
 // осанве
-extern struct nick OSNV[MAX_ARMLET];
-// бойцы
+// extern struct nick OSNV[MAX_ARMLET];
+// бойцы (фактически динамические параметры всех встреченных браслетов, индекс == userId)
 extern struct nick FGHT[MAX_ARMLET];

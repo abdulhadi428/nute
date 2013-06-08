@@ -6,7 +6,7 @@
 #include "MiddleInterface.h"
 #include "Images.h"
 #include "ColorSchema.h"
-#include "Med.h"
+#include "Osanve.h"
 
 UserInterface UI;
 uword_t gx=0;
@@ -98,31 +98,39 @@ void AppMainThread(void* param)
 			DrawTextString(10,10,err,Length(err),0,0);
 		}
 	}
-
 }
-
-//void _OnPillConnected( sword_t cure_id, sword_t charges )
-//{
-//	UI.OnPillConnected(cure_id, charges);
-//}
 
 // установить имя
 void _OnSetPlayerName( char* name )
 {
 	UI.SetPlayerName(name);
 }
-
-//void _OnExplosion(sword_t roomId)
-//{
-//	UI.OnExplosion(roomId);
-//}
-//
-//void _OnServerMessage(char* msg)
-//{
-//	UI.OnServerMessage(msg);
-//}
-
+// установить скорость регенирации
 void _OnSetRegenerationRate(ubyte_t regenRate)
 {
 	SetFPH(regenRate);
+}
+// реакция на атаку
+void _OnAtackPacket(ubyte_t enemyId, ubyte_t atack, ubyte_t cons)
+{
+  Atacked( atack, cons, enemyId);
+  if( Player.status == AL_STATUS_DEFEAT && cons < CONS_COUNT)
+	UI.MessageBoxShow("Поражение!", CONS[cons], NO_IMAGE);
+}
+
+void _OnHealPacket(ubyte_t enemyId, ubyte_t heal)
+{
+   Healed( heal);
+}
+
+void _OnOsanvePacket(ubyte_t userId, ubyte_t force,ubyte_t maxForce, ubyte_t osanve)
+{  	// ищем первого пустого противника
+  if( userId > MAX_ARMLET)
+	  return;
+  struct nick* fp = &FGHT[userId];
+  	  fp->osanve = osanve;
+	  fp->force = force;
+	  fp->forceMax = forceMax;
+	  fp->time = GetUpTime();
+// перерисовка осанве - по таймеру
 }

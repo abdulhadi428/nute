@@ -1012,19 +1012,59 @@ fresult UIDesigner::SetForces(void)
 	return _txtForce.SetText(tmp);
 }
 
-// Заполнить список доступных бойцов
-fresult UIDesigner::SetBattle(void)
+// обновить список видимых осанве-побратимов
+fresult SetOsanve(void)
 {
-	ubyte_t fcount = 0;
+	ubyte_t ocount = 0;
+	int t = GetUpTime();
 	int i = 0;
-	// чистим все 6 полей
-	//for(i = 0; i < 6; ++i) {
-	//  _txtFighters[i].Clear();
-	//}
 	// ищем первого противника для отображения
 	for(i = 0; i < MAX_ARMLET; ++i)
 	{
-		if( FGHT[i].userId > 0 && FGHT[i].userId < MAX_ARMLET)
+		if( (t - FGHT[i].time) < OSANVE_MAX_WAIT_TIME && Player.groupId == CONF[i].groupId)
+		{ // ячейка не пуста
+			ocount++;
+		}
+		if( ocount > (osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT))
+			break; // если виртуально заполнили пролистанные страницы, остановимся
+	}
+	// назначим новую отображаемую страницу (для случая сокращения списка)
+	osanveListPage = ocount / MSGBOX_CONTENT_BUFF_HEIGHT;
+	ocount = 0;
+	// заполняем менюшку с игроками
+	for(i = 0; i < MAX_ARMLET; ++i)
+	{
+		if( (t - FGHT[i].time) < OSANVE_MAX_WAIT_TIME && Player.groupId == CONF[i].groupId)
+		{ // ячейка не пуста
+			ocount++;
+		}
+	  if( ocount <= (osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT))
+			continue; // не дошли до страницы
+	  if( ocount > ((battleListPage+1)*MSGBOX_CONTENT_BUFF_HEIGHT))
+			break; // всех занесли, кого надо было
+	  int item = ocount % (battleListPage*MSGBOX_CONTENT_BUFF_HEIGHT) - 1;
+	  int pos = 0;
+	  char tmp[MSGBOX_CONTENT_BUFF_WIDTH+1];
+      sprintf( tmp, "%s-%s", CONF[i].name, OSANVES[FGHT[i].osanve]);
+	  tmp[MSGBOX_CONTENT_BUFF_WIDTH] = 0;
+	  for( pos = 0; pos < MSGBOX_CONTENT_BUFF_WIDTH && tmp[pos]!=0; ++pos) // копируем сформированную строку
+		_bufOsanveList[(battleListPage*MSGBOX_CONTENT_BUFF_HEIGHT+item)*MSGBOX_CONTENT_BUFF_WIDTH+pos] = tmp[pos];
+	}
+	if( Player.status == AL_STATUS_OSANVE) // только если список отображается
+	  _txtOsanveList.Draw(); // не уверен, не нужно ли SetText???
+	return SUCCESS;
+}
+
+// Заполнить список доступных бойцов на экране
+fresult UIDesigner::SetBattle(void)
+{
+	ubyte_t fcount = 0;
+	int t = GetUpTime();
+	int i = 0;
+	// ищем первого противника для отображения
+	for(i = 0; i < MAX_ARMLET; ++i)
+	{
+		if( FGHT[i].maxForce > 0 && (t - FGHT[i].time) < FIGHT_MAX_WAIT_TIME)
 		{ // ячейка не пуста
 			fcount++;
 		}
@@ -1037,7 +1077,7 @@ fresult UIDesigner::SetBattle(void)
 	// заполняем менюшку с игроками
 	for(i = 0; i < MAX_ARMLET; ++i)
 	{
-		if( FGHT[i].userId > 0 && FGHT[i].userId < MAX_ARMLET)
+		if( FGHT[i].maxForce > 0 && (t - FGHT[i].time) < FIGHT_MAX_WAIT_TIME)
 		{ // ячейка не пуста
 			fcount++;
 		}
@@ -1049,7 +1089,7 @@ fresult UIDesigner::SetBattle(void)
 	  if( fightersOnScreen[item]!=&FGHT[i]){ // если противник по кнопке сменился
 		char tmp[16];
 		fightersOnScreen[item]=&FGHT[i];
-		sprintf( tmp, "%s%d", CONF[FGHT[i].userId].fname, FGHT[i].maxForce).
+		sprintf( tmp, "%s%d", CONF[i].fname, FGHT[i].maxForce).
 	    _txtFighters[item].SetText( tmp);
 	  }
 	}
@@ -1106,6 +1146,8 @@ fresult UIDesigner::MessageBoxShow( const char* caption, const char* text, ubyte
 
 fresult UIDesigner::MessageBoxClose()
 {
+	if( Player.status == AL_STATUS_DEFEAT && Player.defeatTime > 0)
+		return SUCCESS; // проверка на использование в режиме поражения (запрет закрытия)
 	return CloseForm();
 }
 
@@ -1327,12 +1369,12 @@ fresult	UIDesigner::OnMainMnuList(IMenuItem* sender)
 fresult UIDesigner::OnMainMnuSet( IMenuItem* sender )
 {
 	Player.status = AL_STATUS_OSSEL;
-	ShowForm(&_frmOsanveForm);
-	return SUCCESS;
+	
+	return ShowForm(&_frmOsanveForm);
 }
 
 // Osanve set -> Osanve
-fresult UIDesigner::OnOsanveSelectHandler( IMenuItem* sender )
+fresult UIDesigner::OnOsanveMnuSelect( IMenuItem* sender )
 {
 	int i = 0;
 	for( i = 0; i<OSANVE_COUNT; i++)
@@ -1341,16 +1383,16 @@ fresult UIDesigner::OnOsanveSelectHandler( IMenuItem* sender )
 	if( i < OSANVE_COUNT)
 	  SetOsanve( ubyte_t(i));
 	Player.status = AL_STATUS_OSANVE;
-	ShowForm(&_frmMainForm);
-	return SUCCESS;
+	
+	return ShowForm(&_frmMainForm);
 }
 
 // Osanve set cancel -> Osanve
 fresult UIDesigner::OnOsanveCancelHandler( IMenuItem* sender )
 {
 	Player.status = AL_STATUS_OSANVE;
-	ShowForm(&_frmMainForm);
-	return SUCCESS;
+	
+	return ShowForm(&_frmMainForm);
 }
 
 // Cons set -> Combat mode
@@ -1459,20 +1501,34 @@ fresult UIDesigner::OnFightMnuAtack( IMenuItem* sender )
 	char a_packet[4];
 	GetAtackPacket( a_packet, Player.atack);
 	ArmletApi::SendRadioPacket( a_packet, 4);
-	Atack();
+	Atack(); // списание силы
+	SetFightField();
 	currentForm->Draw();
 	return SUCCESS;
 }
 
-// Fight mode do atack
-fresult UIDesigner::OnFightMnuDef( IMenuItem* sender )
+// Fight mode do heal
+fresult UIDesigner::OnFightMnuHeal( IMenuItem* sender )
 {
-	if( Player.status  = AL_STATUS_DEFENSE){
+	char h_packet[4];
+	GetHealPacket( h_packet, Player.atack);
+	ArmletApi::SendRadioPacket( h_packet, 4);
+	Atack(); // списание силы
+	SetFightField();
+	currentForm->Draw();
+	return SUCCESS;
+}
+
+// Fight mode do defense
+fresult UIDesigner::OnFightMnuDef( IMenuItem* sender )
+{ // пока выход из защиты по повторному нажатию
+	if( Player.status  == AL_STATUS_DEFENSE){
 		Player.status  = AL_STATUS_FIGHT;
 		ShowForm(&_frmFightForm);
 	} else {
-	  Player.status  = AL_STATUS_DEFENSE;
-	  ShowForm(&_frmDefenseForm);
+	  Player.status  = AL_STATUS_DEFENSE; // здесь не должно быть пенальти - переключение из боевой формы
+	  MessageBoxShow( "ЗАЩИТА!", "Сейчас вы \nполучаете в 10\nраз меньше\nот всех атак", NO_IMAGE );
+	  //ShowForm(&_frmDefenseForm);
 	}
 	return SUCCESS;
 }
@@ -1483,14 +1539,19 @@ fresult UIDesigner::OnFightMnuBattle( IMenuItem* sender )
   Player.status  = AL_STATUS_COMBAT;
   Player.enemyId = 0;
   SetFighters();
-  ShowForm(&_frmBattleForm);
-  currentFighter = 0;
-  return SUCCESS;
+  currentFighter = NULL;
+  return ShowForm(&_frmBattleForm);
 }
 
+// Форма МессаджБокса используется для режима защиты
 fresult UIDesigner::OnMsgBoxMnuOk( IMenuItem* sender )
 {
-	return MessageBoxClose();
+	fresult rval = MessageBoxClose();
+	if( Player.status  == AL_STATUS_DEFENSE) {
+	  DefenceOFF();
+	  rval = ShowForm(&_frmFightForm);
+	}
+	return rval;
 }
 
 fresult UIDesigner::OnMsgBoxMnuScrollUp( IMenuItem* sender )

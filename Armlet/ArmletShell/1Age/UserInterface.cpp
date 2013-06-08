@@ -36,10 +36,10 @@ fresult UserInterface::Init()
 
     PlayerInit();
 
-  //Launch osanve send Timer
+ //Launch osanve send Timer (10 sec)
 	ArmletApi::RequestTimer(_OsanveSendTimer, OSANWE_SEND_TIME);
 		
-//launch force regeneration timer
+//launch force regeneration timer (1 min)
 	ArmletApi::RequestTimer(_ForceTimerTickCallback, MED_TICK_TIME);
 
 	//launch battery status timer
@@ -48,13 +48,7 @@ fresult UserInterface::Init()
 	return SUCCESS;
 }
 
-
-fresult UserInterface::OnMainMnuShot(IMenuItem* sender)
-{
-	_woundSelected=FALSE;
-	return ShowForm(&_frmWoundForm);
-}
-
+// дополнительный обработчик всех кнопок
 fresult UserInterface::OnButtonPressed( ButtonState button )
 {
 	return SUCCESS;
@@ -316,33 +310,33 @@ fresult UserInterface::SetBatteryLevel( ubyte_t batteryLevel )
 
 
 // Сообщение (всплывающее) на всяк случай
-void UserInterface::OnServerMessage(char* msg)
-{
-	fresult fres;
+//void UserInterface::OnServerMessage(char* msg)
+//{
+//	fresult fres;
+//
+//	fres = MessageBoxShow("Новое сообщение!", msg, BlueMail);
+//	if (fres!=SUCCESS)	
+//	{
+//		LogError("Cant't show msgbox!");
+//		return;
+//	}
+//
+//	fres = AppendLog(LOG_MESSAGE, "\n");
+//	if (fres!=SUCCESS)	
+//	{
+//		LogError("Cant't write message log!");
+//		return;
+//	}
+//// дубль в лог
+//	fres = AppendLog(LOG_MESSAGE, msg);
+//	if (fres!=SUCCESS)	
+//	{
+//		LogError("Cant't write message log!");
+//		return;
+//	}
+//}
 
-	fres = MessageBoxShow("Новое сообщение!", msg, BlueMail);
-	if (fres!=SUCCESS)	
-	{
-		LogError("Cant't show msgbox!");
-		return;
-	}
-
-	fres = AppendLog(LOG_MESSAGE, "\n");
-	if (fres!=SUCCESS)	
-	{
-		LogError("Cant't write message log!");
-		return;
-	}
-// дубль в лог
-	fres = AppendLog(LOG_MESSAGE, msg);
-	if (fres!=SUCCESS)	
-	{
-		LogError("Cant't write message log!");
-		return;
-	}
-}
-
-// время послать осанву
+// время послать осанву и перерисовать список видимых побратимов
 bool UserInterface::OnOsanveTimer()
 {
 	// Send current osanve
@@ -352,7 +346,9 @@ bool UserInterface::OnOsanveTimer()
 	
 	ArmletApi::SendRadioPacket( osanve_packet, 4);
 
-	return true;
+	SetOsanve();
+
+	return true; // always true - next period timer
 }
 
 // время опросить батарейку
@@ -393,24 +389,28 @@ bool OnPreFightTimer()
 //
 //	return roomId;
 //}
-//
+
 // Roman таймер восстановления сил
 void UserInterface::DoForceTick()
 {
 	fresult fres;
+	
+	if( OnForceTick()) {
+	  ShowForm(&_frmMainForm);
+	  MessageBoxClose();
+	}
 
-	OnForceTick();
 	fres = SetForces();
 	if (fres!=SUCCESS)
 	{
-		LogError("Can't set med status!");
+		LogError("Can't set forces status!");
 		return;
 	}
 
 	fres = RedrawIfForeground(&_frmMainForm);
 	if (fres!=SUCCESS)
 	{
-		LogError("Can't redraw main form!");
+		LogError("Can't redraw osanve form!");
 		return;
 	}
 }

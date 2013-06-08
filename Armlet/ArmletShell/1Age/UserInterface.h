@@ -3,7 +3,7 @@
 #pragma once
 #include "UIDesigner.h"
 #include "ArmletShell.h"
-#include "Med.h"
+#include "Osanve.h"
 
 
 
@@ -31,7 +31,6 @@ public:
 	//fresult SetRadioStatus(sword_t gateId, sword_t level);
 	//void OnExplosion(sword_t room);
 	void OnServerMessage(char* msg);
-	void SetFPH(ubyte_t regenRate);
 	bool OnOsanweTimer();
 	//void DoMedTick();
 	bool OnBatteryTimer();

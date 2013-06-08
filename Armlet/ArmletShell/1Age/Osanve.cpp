@@ -38,10 +38,11 @@ void PlayerInit()
 
 }
 
-// Тик таймера восстановления
-void OnForceTick(void)
-{	
-	//save
+// Тик таймера восстановления (1 min)
+bool OnForceTick(void)
+{
+	bool rval = false;
+//save
 	ArmletApi::WriteFile(&PlayerFile,(char*)&Player,sizeof(player));
 // увеличение сил
   if( Player.force + Player.fph > Player.forceMax)
@@ -53,14 +54,13 @@ void OnForceTick(void)
   	if(Player.defeatTime > 0)
   		Player.defeatTime--;
   		// Последствие поражения закончилось
-  	if(Player.defeatTime <= 0)
+  	if(Player.defeatTime <= 0){
   		Player.status = AL_STATUS_OSANVE;
+		Player.defeatTime = 0;
+		rval = true;
+	}
   }
-//	//To server
-//	ubyte_t state[5];
-//	state[0] = (Player.BloodCapacity);	// / 1000);
-//	state[1] = (Player.ToxinsCapacity);	// / 1000);
-//	ArmletApi::SendAppState(state);
+  return rval;
 }
 
 // сформировать пакетик атаки
@@ -157,7 +157,7 @@ ubyte_t Atack(ubyte_t a)
 
 // атакован кем-то enemyId с силой а и последствием cons
 // cons и enemyId нужны для запоминания при переходе в предбоевой режим
-ubyte_t Atacked(ubyte_t a, ubyte_t cons, enemyId)
+ubyte_t Atacked(ubyte_t a, ubyte_t cons, ubyte_t enemyId)
 {
 	ubyte_t atack = 0;
 	if(cons>CONS_COUNT)
@@ -203,6 +203,7 @@ ubyte_t Atacked(ubyte_t a, ubyte_t cons, enemyId)
 		// поражение, переход в последствие
 		Player.status = AL_STATUS_DEFEAT;
 		Player.penaltyCons = cons; // запоминаем последствие
+		Player.defeatTime = DEFAULT_DEFEAT_TIME;
 		//////////////////////////////////////////////////////////////////
 		/////////////// ВСТАВИТЬ ПРОРИСОВКУ ПОСЛЕДСТВИЯ //////////////////
 		//////////////////////////////////////////////////////////////////
