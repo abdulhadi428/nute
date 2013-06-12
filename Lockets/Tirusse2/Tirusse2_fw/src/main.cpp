@@ -11,6 +11,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "pwr.h"
+#include "lvl1_lckt.h"
 
 #define LED_LOW     63
 #define LED_HIGH    999

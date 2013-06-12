@@ -10,7 +10,6 @@
 
 #include "kl_lib_f100.h"
 
-extern i2c_t i2c;
-
+#define TIRUSSE
 
 #endif /* MAIN_H_ */
