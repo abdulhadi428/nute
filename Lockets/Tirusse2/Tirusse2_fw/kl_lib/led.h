@@ -73,6 +73,7 @@ public:
 #define LED_CCR_N           3
 #define LED_TOP_VALUE       1998
 #define LED_BOTTOM_VALUE    0
+#define LED_INITIAL_VALUE   LED_TOP_VALUE
 #define LED_PWM_FREQ_HZ     999             // No more than 3 kHz
 
 class LedSmooth_t {
@@ -90,6 +91,8 @@ public:
     void Init();
     void Set(uint16_t AValue) { IPin.Set(AValue); ICurrentValue = AValue; }
     void SetSmoothly(uint16_t AValue);
+    bool IsEqOrAbove(uint16_t AValue) { return (ICurrentValue >= AValue); }
+    bool IsEqOrBelow(uint16_t AValue) { return (ICurrentValue <= AValue); }
     // Inner use
     void IrqHandlerI();
 };

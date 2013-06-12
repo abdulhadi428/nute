@@ -38,6 +38,9 @@ void LedSmooth_t::Init() {
     // Remap Tim3 Chnl1 to PB4
     AFIO->MAPR &= ~((uint32_t)0b11 << 10);  // Clear bits
     AFIO->MAPR |=  ((uint32_t)0b10 << 10);  // Partial remap
+    // Initial value
+    Set(LED_INITIAL_VALUE);
+    INeededValue = LED_INITIAL_VALUE;
 }
 
 void LedSmooth_t::SetSmoothly(uint16_t AValue) {
