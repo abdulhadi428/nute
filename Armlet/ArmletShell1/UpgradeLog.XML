@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="ArmletShell">
+</Property><Property Name="Файл решения" Value="C:\Prj\ArmletShell\ArmletShell.sln">
+</Property><Property Name="Date" Value="12 мая 2013 г.">
+</Property><Property Name="Time" Value="13:41">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="ArmletShell.sln" Description="Успешно создана резервная копия файла C:\Prj\ArmletShell\ArmletShell.sln.old">
+</Event><Event ErrorLevel="0" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Converting project file 'C:\Prj\ArmletShell\Visualizer\Visualizer.vcproj'.">
+</Event><Event ErrorLevel="1" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="1" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Attribute 'CopyLocalDependencies' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Attribute 'UseDependenciesInBuild' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Attribute 'CopyLocalDependencies' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Attribute 'UseDependenciesInBuild' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Attribute 'CopyLocalDependencies' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Attribute 'UseDependenciesInBuild' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Attribute 'CopyLocalDependencies' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Attribute 'UseDependenciesInBuild' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Attribute 'CopyLocalDependencies' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="1" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Attribute 'UseDependenciesInBuild' of 'AssemblyReference' is not supported in this version and has been removed during conversion.">
+</Event><Event ErrorLevel="0" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Done converting to new project file 'C:\Prj\ArmletShell\Visualizer\Visualizer.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="Visualizer" Source="Visualizer\Visualizer.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="3KShellLib" Source="3KShellLib\3KShellLib.vcproj" Description="Converting project file 'C:\Prj\ArmletShell\3KShellLib\3KShellLib.vcproj'.">
+</Event><Event ErrorLevel="1" Project="3KShellLib" Source="3KShellLib\3KShellLib.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="0" Project="3KShellLib" Source="3KShellLib\3KShellLib.vcproj" Description="Done converting to new project file 'C:\Prj\ArmletShell\3KShellLib\3KShellLib.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="3KShellLib" Source="3KShellLib\3KShellLib.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="ConsoleUnitTests" Source="ConsoleUnitTests\ConsoleUnitTests.vcproj" Description="Converting project file 'C:\Prj\ArmletShell\ConsoleUnitTests\ConsoleUnitTests.vcproj'.">
+</Event><Event ErrorLevel="1" Project="ConsoleUnitTests" Source="ConsoleUnitTests\ConsoleUnitTests.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="0" Project="ConsoleUnitTests" Source="ConsoleUnitTests\ConsoleUnitTests.vcproj" Description="Done converting to new project file 'C:\Prj\ArmletShell\ConsoleUnitTests\ConsoleUnitTests.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="ConsoleUnitTests" Source="ConsoleUnitTests\ConsoleUnitTests.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="PriceOfHonor" Source="PriceOfHonor\PriceOfHonor.vcproj" Description="Converting project file 'C:\Prj\ArmletShell\PriceOfHonor\PriceOfHonor.vcproj'.">
+</Event><Event ErrorLevel="1" Project="PriceOfHonor" Source="PriceOfHonor\PriceOfHonor.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="0" Project="PriceOfHonor" Source="PriceOfHonor\PriceOfHonor.vcproj" Description="Done converting to new project file 'C:\Prj\ArmletShell\PriceOfHonor\PriceOfHonor.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="PriceOfHonor" Source="PriceOfHonor\PriceOfHonor.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="MiddleWareDll" Source="MiddleWareDll\MiddleWareDll.vcproj" Description="Converting project file 'C:\Prj\ArmletShell\MiddleWareDll\MiddleWareDll.vcproj'.">
+</Event><Event ErrorLevel="1" Project="MiddleWareDll" Source="MiddleWareDll\MiddleWareDll.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="1" Project="MiddleWareDll" Source="MiddleWareDll\MiddleWareDll.vcproj" Description="All user macros reported below for configuration 'Debug|Win32' are used before their definition, which can cause undesirable build results; this is not supported in this release. You can resolve this by changing the inclusion order of the consuming property sheets and making sure they come after the property sheets defining the user macros.">
+</Event><Event ErrorLevel="1" Project="MiddleWareDll" Source="MiddleWareDll\MiddleWareDll.vcproj" Description="MSB4211: C:\Program Files\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppCommon.targets (36,5); Свойству &quot;TargetPath&quot; в первый раз присваивается значение, но оно уже было использовано в &quot;C:\Prj\ArmletShell\MiddleWareDll\MiddleWareDll.vcxproj&quot;.">
+</Event><Event ErrorLevel="1" Project="MiddleWareDll" Source="MiddleWareDll\MiddleWareDll.vcproj" Description="All user macros reported below for configuration 'Release|Win32' are used before their definition, which can cause undesirable build results; this is not supported in this release. You can resolve this by changing the inclusion order of the consuming property sheets and making sure they come after the property sheets defining the user macros.">
+</Event><Event ErrorLevel="1" Project="MiddleWareDll" Source="MiddleWareDll\MiddleWareDll.vcproj" Description="MSB4211: C:\Program Files\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppCommon.targets (36,5); Свойству &quot;TargetPath&quot; в первый раз присваивается значение, но оно уже было использовано в &quot;C:\Prj\ArmletShell\MiddleWareDll\MiddleWareDll.vcxproj&quot;.">
+</Event><Event ErrorLevel="0" Project="MiddleWareDll" Source="MiddleWareDll\MiddleWareDll.vcproj" Description="Done converting to new project file 'C:\Prj\ArmletShell\MiddleWareDll\MiddleWareDll.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="MiddleWareDll" Source="MiddleWareDll\MiddleWareDll.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="MiddleWareLib" Source="MiddleWareLib\MiddleWareLib.vcproj" Description="Converting project file 'C:\Prj\ArmletShell\MiddleWareLib\MiddleWareLib.vcproj'.">
+</Event><Event ErrorLevel="1" Project="MiddleWareLib" Source="MiddleWareLib\MiddleWareLib.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="0" Project="MiddleWareLib" Source="MiddleWareLib\MiddleWareLib.vcproj" Description="Done converting to new project file 'C:\Prj\ArmletShell\MiddleWareLib\MiddleWareLib.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="MiddleWareLib" Source="MiddleWareLib\MiddleWareLib.vcproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="ArmletShell.sln" Description="Преобразование решения успешно завершено">
+</Event><Event ErrorLevel="3" Project="" Source="ArmletShell.sln" Description="Converted">
+</Event></UpgradeLog>
