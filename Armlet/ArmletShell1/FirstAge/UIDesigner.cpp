@@ -30,7 +30,7 @@ fresult UIDesigner::InitStatusBar()
 	controlBuffSizeTx.Width=USERNAME_BUFF_WIDTH;
 	controlBuffSizeTx.Height=USERNAME_BUFF_HEIGHT;
 
-	fres = InitTextField(&txtUserName, controlSize, controlPosition, FormatHeader, FALSE, _txtUserNameBuff, controlBuffSizeTx, NULL);
+	fres = InitTextField(&txtUserName, controlSize, controlPosition, FormatHeader, FALSE, _txtUserNameBuff, controlBuffSizeTx, Player.name);
 	if (fres != SUCCESS)
 		return fres;
 	
@@ -44,23 +44,23 @@ fresult UIDesigner::InitStatusBar()
 	controlBuffSizeTx.Width=BATTERYSTATUS_BUFF_WIDTH;
 	controlBuffSizeTx.Height=BATTERYSTATUS_BUFF_HEIGHT;
 
-	fres = InitTextField(&txtBatteryStatus, controlSize, controlPosition, FormatHeader, FALSE, _txtBatteryStatusBuff, controlBuffSizeTx, NULL);
+	fres = InitTextField(&txtBatteryStatus, controlSize, controlPosition, FormatHeader, FALSE, _txtBatteryStatusBuff, controlBuffSizeTx, "100");
 	if (fres != SUCCESS)
 		return fres;
 
 	//txtTIME - время
-	controlSize.Width = TIMESTATUS_WIDTH_PX;
-	controlSize.Height = TIMESTATUS_HEIGHT_PX;
+	//controlSize.Width = TIMESTATUS_WIDTH_PX;
+	//controlSize.Height = TIMESTATUS_HEIGHT_PX;
 
-	controlPosition.Top = TIMESTATUS_TOP_PX;
-	controlPosition.Left = TIMESTATUS_LEFT_PX;
+	//controlPosition.Top = TIMESTATUS_TOP_PX;
+	//controlPosition.Left = TIMESTATUS_LEFT_PX;
 
-	controlBuffSizeTx.Width=TIMESTATUS_BUFF_WIDTH;
-	controlBuffSizeTx.Height=TIMESTATUS_BUFF_HEIGHT;
+	//controlBuffSizeTx.Width=TIMESTATUS_BUFF_WIDTH;
+	//controlBuffSizeTx.Height=TIMESTATUS_BUFF_HEIGHT;
 
-	fres = InitTextField(&txtTime, controlSize, controlPosition, FormatHeader, FALSE, _txtTimeBuff, controlBuffSizeTx, NULL);
-	if (fres != SUCCESS)
-		return fres;
+	//fres = InitTextField(&txtTime, controlSize, controlPosition, FormatHeader, FALSE, _txtTimeBuff, controlBuffSizeTx, "00:00");
+	//if (fres != SUCCESS)
+	//	return fres;
 
 	//txtFORCE - сила
 	controlPosition.Top = FORCESTATUS_TOP_PX;
@@ -71,8 +71,9 @@ fresult UIDesigner::InitStatusBar()
 
 	controlBuffSizeTx.Height=FORCESTATUS_BUFF_HEIGHT;
 	controlBuffSizeTx.Width=FORCESTATUS_BUFF_WIDTH;
-
-	fres = InitTextField(&txtForce, controlSize, controlPosition, FormatHeader, FALSE, _txtForce, controlBuffSizeTx, NULL);
+	char tmp[9];
+	sprintf( tmp, "%03d/%03d ", Player.force, Player.maxForce);
+	fres = InitTextField(&txtForce, controlSize, controlPosition, FormatHeader, FALSE, _txtForce, controlBuffSizeTx, tmp);
 	if (fres != SUCCESS)
 		return fres;
 
@@ -84,12 +85,12 @@ fresult UIDesigner::InitStatusBar()
 	controlSize.Width = STATUSBAR_WIDTH_PX;
 	controlSize.Height = STATUSBAR_HEIGHT_PX;
 
-	_pnlStatusBarControls[0] = &txtTime;
-	_pnlStatusBarControls[1] = &txtUserName;
-	_pnlStatusBarControls[2] = &txtForce;
-	_pnlStatusBarControls[3] = &txtBatteryStatus;
+//	_pnlStatusBarControls[0] = &txtTime;
+	_pnlStatusBarControls[0] = &txtUserName;
+	_pnlStatusBarControls[1] = &txtForce;
+	_pnlStatusBarControls[2] = &txtBatteryStatus;
 
-	fres = _pnlStatusBar.Init(controlSize, controlPosition, &_renderer, _pnlStatusBarControls, 4);
+	fres = _pnlStatusBar.Init(controlSize, controlPosition, &_renderer, _pnlStatusBarControls, 3);
 	if (fres != SUCCESS)
 		return fres;
 
@@ -227,11 +228,10 @@ fresult UIDesigner::InitOsanveFormMenu()
 	zeroSize.data =0;
 	zeroPosition.data =0;
 
-	controlSize.Height = 8;
+	controlSize.Height = MENU_VERICAL_GAP;
 	controlSize.Width = 60;
 	controlBuffSizeTx.Height=1;
 	controlBuffSizeTx.Width=10;
-	controlPosition.Left = 1;
 // пункты меню выбора осанве
   for( int i = 0; i < (OSANVE_COUNT - 1); i++)
   {
@@ -240,7 +240,7 @@ fresult UIDesigner::InitOsanveFormMenu()
  		  controlPosition.Left = i / 3 * 100;
  		} else {
  		  controlPosition.Top = 120;
-      controlPosition.Left = (SCREENX/3) * (i%3);
+          controlPosition.Left = (SCREENX/3) * (i%3);
     }
 	  fres = InitMenuItem(&_miOsanve[i], &_txtOsanveMenu[i], controlSize, controlPosition, FormatMenu, _bufOsanveMenu[i], controlBuffSizeTx, OSANVES[i], FormatMenu,
 		       NULL, zeroSize, zeroPosition, NO_IMAGE, NULL, OnOsanveMnuSelectH, i);
@@ -253,7 +253,7 @@ fresult UIDesigner::InitOsanveFormMenu()
   controlPosition.Top = 120;
   controlPosition.Left = 120;
   fres = InitMenuItem(&_miOsanve[OSANVE_COUNT - 1], &_txtOsanveMenu[OSANVE_COUNT - 1], controlSize, controlPosition, FormatMenu, _bufOsanveMenu[OSANVE_COUNT - 1], controlBuffSizeTx, "Отмена", FormatMenu,
-		       NULL, zeroSize, zeroPosition, NO_IMAGE, NULL, OnOsanveMnuCancelH, OSANVE_COUNT - 1);
+		       NULL, zeroSize, zeroPosition, NO_IMAGE, NULL, OnOsanveMnuCancelH, BUTTON_R);
   if (fres != SUCCESS)
 		  return fres;
 	_mnuOsanveMenuItems[OSANVE_COUNT - 1] = &_miOsanve[OSANVE_COUNT - 1];
@@ -276,33 +276,33 @@ fresult UIDesigner::InitOsanveForm()
 	Size controlBuffSizeTx;
 
 	controlPosition.Top = 8;
-	controlPosition.Left = 48;
+	controlPosition.Left = 20;
 
 	controlSize.Height = 8;
-	controlSize.Width = 66;
+	controlSize.Width = SCREENX - (controlPosition.Left*2);
 
 	controlBuffSizeTx.Height=1;
-	controlBuffSizeTx.Width=11;
+	controlBuffSizeTx.Width=20;
 
 	osanveListPage = 0;
 
-	fres = InitTextField(&_txtOsanveFormTitle, controlSize, controlPosition, FormatHeader, FALSE, _txtOsanveFormTitleTextBuff, controlBuffSizeTx, "Ваше осанве");
+	fres = InitTextField(&_txtOsanveFormTitle, controlSize, controlPosition, FormatHeader, FALSE, _txtOsanveFormTitleTextBuff, controlBuffSizeTx, "Ваше осанве:");
 	if (fres!=SUCCESS)
 		return fres;
 
 	controlPosition.Top = 0;
 	controlPosition.Left = 0;
 
-	controlSize.Height = 144;
-	controlSize.Width = 66;
+	controlSize.Height = SCREENY;
+	controlSize.Width = SCREENX;
 
-	_pnlConsFormControls[0] = &_txtConsFormTitle;
-//	_pnlConsFormControls[1] = &txtWoundResult;
-	fres = _pnlConsForm.Init(controlSize, controlPosition, &_renderer, _pnlConsFormControls,1);
+	_pnlOsanveFormControls[0] = &_txtOsanveFormTitle;
+	_pnlOsanveFormControls[1] = &_pnlStatusBar;
+	fres = _pnlConsForm.Init(controlSize, controlPosition, &_renderer, _pnlOsanveFormControls, 2);
 	if (fres!=SUCCESS)
 		return fres;
 
-	fres = InitConsFormMenu();
+	fres = InitOsanveFormMenu();
 	return fres;
 }
 
@@ -343,7 +343,7 @@ fresult UIDesigner::InitConsFormMenu()
   controlPosition.Top = 120;
   controlPosition.Left = 120;
   fres = InitMenuItem(&_miCons[CONS_COUNT], &_txtConsMenu[CONS_COUNT ], controlSize, controlPosition, FormatMenu, _bufConsMenu[CONS_COUNT ], controlBuffSizeTx, "Отмена", FormatMenu,
-		       NULL, zeroSize, zeroPosition, NO_IMAGE, NULL, OnConsMnuCancelH, CONS_COUNT );
+		       NULL, zeroSize, zeroPosition, NO_IMAGE, NULL, OnConsMnuCancelH, BUTTON_R );
   if (fres != SUCCESS)
 		  return fres;
 	_mnuConsMenuItems[CONS_COUNT ] = &_miCons[CONS_COUNT ];
@@ -491,21 +491,24 @@ fresult UIDesigner::InitBattleForm()
 	fresult fres;
 	Position controlPosition;
 	Size controlSize;
-//	Size controlBuffSizeTx;
+	Size controlBuffSizeTx;
 
-//	//_txtBattleList
-//	controlPosition.Top = DIALOG_TOP_PX;
-//	controlPosition.Left = DIALOG_LEFT_PX;
-//
-//	controlSize.Height = DIALOG_HEIGHT_PX;
-//	controlSize.Width = DIALOG_WIDTH_PX;
-//
-//	controlBuffSizeTx.Width=MSGBOX_CONTENT_BUFF_WIDTH;
-//	controlBuffSizeTx.Height=MSGBOX_CONTENT_BUFF_HEIGHT*MSGBOX_CONTENT_BUFF_PAGES;
-//
-//	fres = InitTextField(&_txtBattleList, controlSize, controlPosition, FormatText, TRUE, _bufBattleList, controlBuffSizeTx, NULL);
-//	if (fres != SUCCESS)
-//		return fres;
+	controlPosition.Top = 8;
+	controlPosition.Left = 20;
+
+	controlSize.Height = 8;
+	controlSize.Width = SCREENX - controlPosition.Left*2;
+
+	controlBuffSizeTx.Height=1;
+	controlBuffSizeTx.Width=18;
+
+	fres = InitTextField(&_txtBattleCap, controlSize, controlPosition, FormatHeader, FALSE, _bufBattleCap, controlBuffSizeTx, "Выбери противника");
+	if (fres!=SUCCESS)
+		return fres;
+
+
+	//if (fres != SUCCESS)
+	//	return fres;
 	battleListPage = 0;
 	//_pnlBattleForm
 	controlPosition.Top = MAINFORM_TOP;
@@ -518,10 +521,10 @@ fresult UIDesigner::InitBattleForm()
 	if (fres !=SUCCESS)
 		return fres;
 
-//	_pnlBattleFormControls[0] = &_txtBattleList;
-	_pnlBattleFormControls[1] = &_pnlStatusBar;
+	_pnlBattleFormControls[0] = &_pnlStatusBar;
+	_pnlBattleFormControls[1] = &_txtBattleCap;
 
-	fres = _pnlBattleForm.Init(controlSize, controlPosition, &_renderer, _pnlBattleFormControls, 1);
+	fres = _pnlBattleForm.Init(controlSize, controlPosition, &_renderer, _pnlBattleFormControls, 2);
 	if (fres != SUCCESS)
 		return fres;
 
@@ -1047,7 +1050,7 @@ fresult UIDesigner::SetOsanve(void)
 			continue; // не дошли до страницы
 	  if( ocount > ((osanveListPage+1)*MSGBOX_CONTENT_BUFF_HEIGHT))
 			break; // всех занесли, кого надо было
-	  int item = ocount % (osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT) - 1;
+	  int item = (ocount % MSGBOX_CONTENT_BUFF_HEIGHT) - 1;
 	  int pos = 0;
 	  char tmp[MSGBOX_CONTENT_BUFF_WIDTH+1];
       sprintf( tmp, "%s-%s", CONF[i].name, OSANVES[FGHT[i].osanve]);
@@ -1090,7 +1093,7 @@ fresult UIDesigner::SetBattle(void)
 			continue; // не дошли до страницы
 		if( fcount > ((battleListPage+1)*6))
 			break; // всех занесли, кого надо было
-	  int item = fcount % (battleListPage*6) - 1;
+	  int item = (fcount % 6) - 1;
 	  if( fightersOnScreen[item]!=&FGHT[i]){ // если противник по кнопке сменился
 		char tmp[16];
 		fightersOnScreen[item]=&FGHT[i];

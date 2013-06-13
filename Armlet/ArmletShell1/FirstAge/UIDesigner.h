@@ -33,7 +33,7 @@ using namespace ThreeKShell;
 #define	MENU_ITEM_C_LEFT 1
 
 #define MENU_ITEM_L_TOP SCREENY - MENU_VERICAL_GAP
-#define	MENU_ITEM_L_LEFT 4
+#define	MENU_ITEM_L_LEFT 1
 
 #define MENU_ITEM_X_TOP MENU_ITEM_RIGHTSIDE_TOP_OFFSET
 #define	MENU_ITEM_X_LEFT SCREENX - MENU_IMAGE_WIDTH-1
@@ -59,12 +59,12 @@ using namespace ThreeKShell;
 #define BATTERYSTATUS_BUFF_WIDTH 3
 #define BATTERYSTATUS_BUFF_HEIGHT 1
 
-#define FORCESTATUS_WIDTH_PX 42
+#define FORCESTATUS_WIDTH_PX 48
 #define FORCESTATUS_HEIGHT_PX 8
 #define FORCESTATUS_TOP_PX 0
 #define FORCESTATUS_LEFT_PX SCREENX - BATTERYSTATUS_WIDTH_PX - FORCESTATUS_WIDTH_PX
 
-#define FORCESTATUS_BUFF_WIDTH 7
+#define FORCESTATUS_BUFF_WIDTH 8
 #define FORCESTATUS_BUFF_HEIGHT 1
 
 #define TIMESTATUS_WIDTH_PX 36
@@ -76,8 +76,8 @@ using namespace ThreeKShell;
 #define TIMESTATUS_BUFF_HEIGHT 1
 
 #define USERNAME_TOP_PX  0
-#define USERNAME_LEFT_PX TIMESTATUS_WIDTH_PX
-#define USERNAME_WIDTH_PX  SCREENX - FORCESTATUS_WIDTH_PX - BATTERYSTATUS_WIDTH_PX - TIMESTATUS_WIDTH_PX
+#define USERNAME_LEFT_PX 0
+#define USERNAME_WIDTH_PX  SCREENX - FORCESTATUS_WIDTH_PX - BATTERYSTATUS_WIDTH_PX
 #define USERNAME_HEIGHT_PX 8
 
 #define USERNAME_BUFF_WIDTH 15
@@ -91,13 +91,13 @@ using namespace ThreeKShell;
 
 #define DIALOG_TOP_PX 8
 #define DIALOG_LEFT_PX MENU_IMAGE_WIDTH+2
-#define DIALOG_HEIGHT_PX SCREENX - DIALOG_TOP_PX
+#define DIALOG_HEIGHT_PX SCREENY - DIALOG_TOP_PX
 #define DIALOG_WIDTH_PX SCREENX - 2*MENU_IMAGE_WIDTH -4
 
 #define MAINFORM_TOP 0
-#define MAINFORM_LEFT 2
+#define MAINFORM_LEFT 0
 #define MAINFORM_HEIGHT SCREENY
-#define MAINFORM_WIDTH SCREENX -4
+#define MAINFORM_WIDTH SCREENX
 
 
 #define MSGBOX_ICON_HEIGHT 24
@@ -220,18 +220,18 @@ private:
 		IControl* _pnlMainFormControls[2];
 			//_pnlStatusBar
 			Panel _pnlStatusBar;
-			IControl* _pnlStatusBarControls[4];
+			IControl* _pnlStatusBarControls[3];
 				//txtUserName
-				char _txtUserNameBuff[USERNAME_BUFF_WIDTH*USERNAME_BUFF_HEIGHT ];
+				char _txtUserNameBuff[USERNAME_BUFF_WIDTH*USERNAME_BUFF_HEIGHT+1];
 
 				//txtBatteryStatus
-				char _txtBatteryStatusBuff[BATTERYSTATUS_BUFF_WIDTH*BATTERYSTATUS_BUFF_HEIGHT];
+				char _txtBatteryStatusBuff[BATTERYSTATUS_BUFF_WIDTH*BATTERYSTATUS_BUFF_HEIGHT+1];
 
 				//txtRoomId
-				char _txtTimeBuff[TIMESTATUS_BUFF_WIDTH*TIMESTATUS_BUFF_HEIGHT];
+				//char _txtTimeBuff[TIMESTATUS_BUFF_WIDTH*TIMESTATUS_BUFF_HEIGHT+1];
 				
 				//txtForce
-				char _txtForce[FORCESTATUS_BUFF_WIDTH*FORCESTATUS_BUFF_HEIGHT];
+				char _txtForce[FORCESTATUS_BUFF_WIDTH*FORCESTATUS_BUFF_HEIGHT+1];
 
 //				//_strMainFormSignal
 //				char _strMainFormSignal[MAINFORM_TEXT_SIGNAL_BUFF_WIDTH*MAINFORM_TEXT_SIGNAL_BUFF_HEIGHT];
@@ -322,11 +322,11 @@ private:
 		#pragma region _pnlBattleForm
 		Panel _pnlBattleForm;
 
-		IControl* _pnlBattleFormControls[1];
+		IControl* _pnlBattleFormControls[2];
 
-//		TextField _txtBattleList;// список отображает массив FGHT
+		TextField _txtBattleCap;// заголовок
 		ubyte_t battleListPage; // страница списка
-//		char _bufBattleList[MSGBOX_CONTENT_BUFF_WIDTH*MSGBOX_CONTENT_BUFF_HEIGHT*MSGBOX_CONTENT_BUFF_PAGES];
+		char _bufBattleCap[36];
 
 		#pragma endregion
 		#pragma region _mnuBattleMenu
@@ -514,7 +514,7 @@ protected:
 	//_pnlStatusBar;
 		TextField txtUserName;
 		TextField txtBatteryStatus;
-		TextField txtTime;
+//		TextField txtTime;
 		TextField txtForce;
 
 //_pnlMainForm;
