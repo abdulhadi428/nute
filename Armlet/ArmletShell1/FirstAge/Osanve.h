@@ -13,9 +13,9 @@
 #define OSANVE_FGHT 8 // веду бой (можно исп как флаг)
 
 // Отображение абонента в Осанве, с
-#define OSANVE_MAX_WAIT_TIME 20
+#define OSANVE_MAX_WAIT_TIME 60
 // Период рассылки своего состояния, мс
-#define OSANVE_SEND_TIME 10*1000
+#define OSANVE_SEND_TIME 4*1000
 // Время предбоевого режима, мс
 #define PREFIGHT_TIME 10*1000
 // Отображение игроков в боевом режиме без обновления, мс

@@ -87,7 +87,7 @@ using namespace ThreeKShell;
 
 #define DIALOG_TOP_PX 16
 #define DIALOG_LEFT_PX 0
-#define DIALOG_HEIGHT_PX SCREENY - DIALOG_TOP_PX
+#define DIALOG_HEIGHT_PX SCREENY - DIALOG_TOP_PX - MENU_VERTICAL_GAP
 #define DIALOG_WIDTH_PX SCREENX - 2*DIALOG_LEFT_PX
 
 #define MAINFORM_TOP 0
@@ -115,7 +115,7 @@ using namespace ThreeKShell;
 #define MSGBOX_CONTENT_WIDTH SCREENX-4
 #define MSGBOX_CONTENT_BUFF_WIDTH 26
 #define MSGBOX_CONTENT_BUFF_PAGES 3
-#define MSGBOX_CONTENT_BUFF_HEIGHT 12
+#define MSGBOX_CONTENT_BUFF_HEIGHT 11
 
 #define MSGBOX_TOP 0
 #define MSGBOX_LEFT 2
@@ -234,7 +234,7 @@ private:
 
 			//_txtOsanveList
 			TextField _txtOsanveList; // список отображает массив OSNV
-			ubyte_t osanveListPage; // страница списка
+			ubyte_t osanveCount; // строк в списке
 			char _bufOsanveList[MSGBOX_CONTENT_BUFF_WIDTH*MSGBOX_CONTENT_BUFF_HEIGHT*MSGBOX_CONTENT_BUFF_PAGES];
 
 		#pragma endregion

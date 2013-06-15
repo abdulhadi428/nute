@@ -124,15 +124,22 @@ void _OnHealPacket(ubyte_t enemyId, ubyte_t heal)
 }
 
 void _OnOsanvePacket(ubyte_t userId, ubyte_t force,ubyte_t maxForce, ubyte_t osanve)
-{  	// ищем первого пустого противника
+{  	// ищем этого противника
   if( userId > MAX_ARMLET)
 	  return;
   struct nick* fp = &FGHT[userId];
-	  fp->userId = userId;
-  	  fp->osanve = osanve;
-	  fp->force = force;
-	  fp->maxForce = maxForce;
-	  fp->time = ArmletApi::GetUpTime();
+  // проверка на осведомленность, если давно не слышали - сразу перерисуем
+  int t = ArmletApi::GetUpTime();
+  bool needSet = false;
+  if( !fp->userId || (t-fp->time)>OSANVE_MAX_WAIT_TIME)
+	  needSet = true;
+	fp->userId = userId;
+  	fp->osanve = osanve;
+	fp->force = force;
+	fp->maxForce = maxForce;
+	fp->time = t;
+	if( needSet && Player.status == AL_STATUS_OSANVE)
+	  UI.OnOsanveTimer();
 // перерисовка осанве - по таймеру
 }
 

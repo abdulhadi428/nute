@@ -205,6 +205,7 @@ fresult UIDesigner::InitMainForm()
 		return fres;
 
 	fres = InitMainFormMnu();
+//	fres=SetOsanve();
 	if (fres != SUCCESS)
 		return fres;
 
@@ -284,7 +285,7 @@ fresult UIDesigner::InitOsanveForm()
 	controlBuffSizeTx.Height=1;
 	controlBuffSizeTx.Width=12;
 
-	osanveListPage = 0;
+	osanveCount = 0;
 
 	fres = InitTextField(&_txtOsanveFormTitle, controlSize, controlPosition, FormatHeader, FALSE, _txtOsanveFormTitleTextBuff, controlBuffSizeTx, "Ваше осанве:");
 	if (fres!=SUCCESS)
@@ -1023,63 +1024,47 @@ fresult UIDesigner::SetForces(void)
 // обновить список видимых осанве-побратимов
 fresult UIDesigner::SetOsanve(void)
 {
-	ubyte_t ocount = 0;
 	int t = ArmletApi::GetUpTime();
-	char tmp[MSGBOX_CONTENT_BUFF_WIDTH*MSGBOX_CONTENT_BUFF_HEIGHT];
+	char tmp[MSGBOX_CONTENT_BUFF_WIDTH*MSGBOX_CONTENT_BUFF_HEIGHT*MSGBOX_CONTENT_BUFF_PAGES];
 	int i = 0;
 	Position pos;
 	if( Player.status != AL_STATUS_OSANVE) // только если список отображается
 		return SUCCESS;
 	pos = _txtOsanveList.GetScrollPosition();
-	_txtOsanveList.Clear();
+//	_txtOsanveList.Clear();
+	osanveCount = 0;
 	memset( tmp, 0, sizeof(tmp));
 	// ищем первого противника для отображения
 	for(i = 0; i < MAX_ARMLET; ++i)
 	{ // непустой, недавно обновился, из нашей группы
-		if( Player.userId != FGHT[i].userId && FGHT[i].userId != 0 && (t - FGHT[i].time) < OSANVE_MAX_WAIT_TIME && Player.groupId == CONF[i].groupId)
+		if( Player.userId != CONF[i].userId && FGHT[i].userId != 0 && (t - FGHT[i].time) < OSANVE_MAX_WAIT_TIME && Player.groupId == CONF[i].groupId)
 		{ 
 			char s[MSGBOX_CONTENT_BUFF_WIDTH];
 			sprintf( s, "%s-%s", CONF[i].name, OSANVES[FGHT[i].osanve]);
 			int slen = strlen(s);
 			for( int j = 0; j < MSGBOX_CONTENT_BUFF_WIDTH; ++j) // копируем сформированную строку
 		      if( j<slen)
-				tmp[(ocount)*MSGBOX_CONTENT_BUFF_WIDTH+j] = s[j];
+				tmp[(osanveCount)*MSGBOX_CONTENT_BUFF_WIDTH+j] = s[j];
 			  else
-				tmp[(ocount)*MSGBOX_CONTENT_BUFF_WIDTH+j] = ' ';
+				tmp[(osanveCount)*MSGBOX_CONTENT_BUFF_WIDTH+j] = ' ';
 			/*_txtOsanveList.AppendText(CONF[i].name);
 			_txtOsanveList.AppendText("-");
 			_txtOsanveList.AppendText(OSANVES[FGHT[i].osanve]);*/
-			ocount++;
+			osanveCount++;
 		}
-		if( ocount >= MSGBOX_CONTENT_BUFF_HEIGHT) //(osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT))
+		if( osanveCount >= MSGBOX_CONTENT_BUFF_HEIGHT*MSGBOX_CONTENT_BUFF_PAGES) //(osanveCount*MSGBOX_CONTENT_BUFF_HEIGHT))
 			break; // если виртуально заполнили пролистанные страницы, остановимся
 	}
-//	// назначим новую отображаемую страницу (для случая сокращения списка)
-//	osanveListPage = ocount / MSGBOX_CONTENT_BUFF_HEIGHT;
-//	ocount = 0;
-//	// заполняем менюшку с игроками
-//	for(i = 0; i < MAX_ARMLET; ++i)
-//	{ // непустой, недавно обновился, из нашей группы
-//		if( Player.userId != 0 && (t - FGHT[i].time) < OSANVE_MAX_WAIT_TIME && Player.groupId == CONF[i].groupId)
-//		{ // ячейка не пуста
-//			ocount++;
-//		}
-//	  if( ocount <= (osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT))
-//			continue; // не дошли до страницы
-//	  if( ocount > ((osanveListPage+1)*MSGBOX_CONTENT_BUFF_HEIGHT))
-//			break; // всех занесли, кого надо было
-//	  int item = (ocount % (MSGBOX_CONTENT_BUFF_HEIGHT+1)) - 1;
-//	  int pos = 0;
-//
-////      sprintf( item*MSGBOX_CONTENT_BUFF_WIDTH + tmp, "%s-%s", CONF[i].name, OSANVES[FGHT[i].osanve]);
-////	  tmp[MSGBOX_CONTENT_BUFF_WIDTH] = 0;
-////	  for( pos = 0; pos < MSGBOX_CONTENT_BUFF_WIDTH && tmp[pos]!=0; ++pos) // копируем сформированную строку
-////		_bufOsanveList[(osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT+item)*MSGBOX_CONTENT_BUFF_WIDTH+pos] = tmp[pos];
-//	}
-//	if( Player.status == AL_STATUS_OSANVE) // только если список отображается
+	if(osanveCount>0) // предосторожность, если использовали весь список
+	  tmp[(osanveCount)*MSGBOX_CONTENT_BUFF_WIDTH-1] = '\0';
 	_txtOsanveList.SetText(tmp); // не уверен, не нужно ли SetText???
-//	_txtOsanveList.Draw();
+	if(osanveCount<=MSGBOX_CONTENT_BUFF_HEIGHT)
+	{
+		Position zero = { 0 };
+		return _txtOsanveList.SetScrollPosition(zero);
+	}
 	_txtOsanveList.SetScrollPosition(pos);
+	_txtOsanveList.Draw();
 	return SUCCESS;
 }
 
@@ -1391,6 +1376,12 @@ fresult UIDesigner::OnMainMnuFight(IMenuItem* sender)
 
 fresult	UIDesigner::OnMainMnuList(IMenuItem* sender)
 {
+	Position cur = _txtOsanveList.GetScrollPosition();
+	if( cur.Top >= (osanveCount-MSGBOX_CONTENT_BUFF_HEIGHT))
+	{
+		Position zero = { 0 };
+		return _txtOsanveList.SetScrollPosition(zero);
+	}
 	return _txtOsanveList.ScrollDown();
 }
 
