@@ -29,10 +29,11 @@ void PlayerInit()
 	bool ret = ArmletApi::OpenFile(&PlayerFile, "player.bin",false);
 	if (ret) {
 		sz = ArmletApi::ReadFile(&PlayerFile,(char*)&Player,sizeof(player));
-	} else {
+	} /* else {
 		ArmletApi::OpenFile(&PlayerFile, "player.bin",true);
-	}
+	} */
 	if (sz!=sizeof(player)) { // если считан только байт userId
+		ArmletApi::OpenFile(&PlayerFile, "player.bin",true);
 		InitPlayer( &Player); // см. conf.cpp
 	}
 //	memset( OSNV, 0, MAX_ARMLET*sizeof(nick));
@@ -45,7 +46,8 @@ bool OnForceTick(void)
 {
 	bool rval = false;
 //save
-	ArmletApi::WriteFile(&PlayerFile,(char*)&Player,sizeof(player));
+	if( ArmletApi::OpenFile(&PlayerFile, "player.bin",true) )
+	  ArmletApi::WriteFile(&PlayerFile,(char*)&Player,sizeof(player));
 // увеличение сил
   if( Player.force + Player.fph > Player.maxForce)
   	Player.force = Player.maxForce;

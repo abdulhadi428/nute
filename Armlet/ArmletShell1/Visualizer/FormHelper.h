@@ -50,8 +50,9 @@ namespace Visualizer {
 		DECLARE_MANAGED_CALLBACK_VAR(UpdateCurrentCure);
 	//calls to LowLevel unmanaged
 	public:
-		static void SetPlayerName(String^ name);
+		static void SetPlayerName(int olduid, int uid); //String^ name);
 		static void SendMessage(String^ msg);
+		static void SendOsanve(int from, int osanve, int force);
 	//other
 	public:
 		static MainForm^ mainForm;

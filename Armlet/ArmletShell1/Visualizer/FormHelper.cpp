@@ -34,13 +34,17 @@ namespace Visualizer {
 		LowLevel::CheckTimers();
 	}
 
-	void FormHelper::SetPlayerName(String^ name)
+	void FormHelper::SetPlayerName(int olduid, int uid) //String^ name)
 	{
-		array<unsigned char>^ bytes = Encoding::GetEncoding(1251)->GetBytes(name);
-		if (bytes->Length == 0)
-			return;
-		pin_ptr<unsigned char> pinned = &bytes[0];
-		LowLevel::SetPlayerName((char const*const)pinned);
+		//array<unsigned char>^ bytes = Encoding::GetEncoding(1251)->GetBytes(name);
+		//if (bytes->Length == 0)
+		//	return;
+		//pin_ptr<unsigned char> pinned = &bytes[0];
+		LowLevel::SetPlayerName(olduid,uid); //(char const*const)pinned);
+	}
+    void FormHelper::SendOsanve(int from, int osanve, int force)
+	{
+		LowLevel::SendOsanve( from,  osanve,  force);
 	}
 
 	void FormHelper::SendMessage(String^ msg)

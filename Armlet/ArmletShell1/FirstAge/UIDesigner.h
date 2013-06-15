@@ -11,14 +11,10 @@
 #include "conf.h"
 using namespace ThreeKShell;
 #include "Form.h"
-//#include "MenuDelegate.h"
-//#include "project.h"
-
-
 					
 #define MENU_IMAGE_WIDTH 24
 #define MENU_IMAGE_HEIGHT 24
-#define MENU_VERICAL_GAP 8
+#define MENU_VERTICAL_GAP 8
 
 #define MENU_ITEM_LEFTSIDE_TOP_OFFSET 8
 #define MENU_ITEM_RIGHTSIDE_TOP_OFFSET 30
@@ -26,25 +22,25 @@ using namespace ThreeKShell;
 #define MENU_ITEM_A_TOP MENU_ITEM_LEFTSIDE_TOP_OFFSET
 #define	MENU_ITEM_A_LEFT 1
 
-#define MENU_ITEM_B_TOP MENU_ITEM_A_TOP + MENU_IMAGE_HEIGHT+MENU_VERICAL_GAP
+#define MENU_ITEM_B_TOP MENU_ITEM_A_TOP + MENU_IMAGE_HEIGHT+MENU_VERTICAL_GAP
 #define	MENU_ITEM_B_LEFT 1
 
-#define MENU_ITEM_C_TOP MENU_ITEM_B_TOP + MENU_IMAGE_HEIGHT+MENU_VERICAL_GAP
+#define MENU_ITEM_C_TOP MENU_ITEM_B_TOP + MENU_IMAGE_HEIGHT+MENU_VERTICAL_GAP
 #define	MENU_ITEM_C_LEFT 1
 
-#define MENU_ITEM_L_TOP SCREENY - MENU_VERICAL_GAP
+#define MENU_ITEM_L_TOP SCREENY - MENU_VERTICAL_GAP
 #define	MENU_ITEM_L_LEFT 1
 
 #define MENU_ITEM_X_TOP MENU_ITEM_RIGHTSIDE_TOP_OFFSET
 #define	MENU_ITEM_X_LEFT SCREENX - MENU_IMAGE_WIDTH-1
 
-#define MENU_ITEM_Y_TOP MENU_ITEM_X_TOP + MENU_IMAGE_HEIGHT+MENU_VERICAL_GAP
+#define MENU_ITEM_Y_TOP MENU_ITEM_X_TOP + MENU_IMAGE_HEIGHT+MENU_VERTICAL_GAP
 #define	MENU_ITEM_Y_LEFT SCREENX - MENU_IMAGE_WIDTH-1
 
-#define MENU_ITEM_Z_TOP MENU_ITEM_Y_TOP + MENU_IMAGE_HEIGHT+MENU_VERICAL_GAP
+#define MENU_ITEM_Z_TOP MENU_ITEM_Y_TOP + MENU_IMAGE_HEIGHT+MENU_VERTICAL_GAP
 #define	MENU_ITEM_Z_LEFT SCREENX - MENU_IMAGE_WIDTH-1
 
-#define MENU_ITEM_R_TOP SCREENY - MENU_VERICAL_GAP
+#define MENU_ITEM_R_TOP SCREENY - MENU_VERTICAL_GAP
 #define	MENU_ITEM_R_LEFT (SCREENX/3)*2
 
 #define MENU_ITEM_E_TOP MENU_ITEM_R_TOP
@@ -86,13 +82,13 @@ using namespace ThreeKShell;
 
 #define STATUSBAR_TOP_PX 0
 #define STATUSBAR_LEFT_PX 0
-#define STATUSBAR_HEIGHT_PX 8
+#define STATUSBAR_HEIGHT_PX 16
 #define STATUSBAR_WIDTH_PX SCREENX //- MENU_IMAGE_WIDTH - 4 - USERNAME_WIDTH_PX - BATTERYSTATUS_WIDTH_PX - MAINFORM_TEXT_SIGNAL_WIDTH
 
-#define DIALOG_TOP_PX 8
-#define DIALOG_LEFT_PX MENU_IMAGE_WIDTH+2
+#define DIALOG_TOP_PX 16
+#define DIALOG_LEFT_PX 0
 #define DIALOG_HEIGHT_PX SCREENY - DIALOG_TOP_PX
-#define DIALOG_WIDTH_PX SCREENX - 2*MENU_IMAGE_WIDTH -4
+#define DIALOG_WIDTH_PX SCREENX - 2*DIALOG_LEFT_PX
 
 #define MAINFORM_TOP 0
 #define MAINFORM_LEFT 0
@@ -119,7 +115,7 @@ using namespace ThreeKShell;
 #define MSGBOX_CONTENT_WIDTH SCREENX-4
 #define MSGBOX_CONTENT_BUFF_WIDTH 26
 #define MSGBOX_CONTENT_BUFF_PAGES 3
-#define MSGBOX_CONTENT_BUFF_HEIGHT 13
+#define MSGBOX_CONTENT_BUFF_HEIGHT 12
 
 #define MSGBOX_TOP 0
 #define MSGBOX_LEFT 2
@@ -220,15 +216,15 @@ private:
 		IControl* _pnlMainFormControls[2];
 			//_pnlStatusBar
 			Panel _pnlStatusBar;
-			IControl* _pnlStatusBarControls[3];
+			IControl* _pnlStatusBarControls[4];
 				//txtUserName
 				char _txtUserNameBuff[USERNAME_BUFF_WIDTH*USERNAME_BUFF_HEIGHT+1];
 
 				//txtBatteryStatus
 				char _txtBatteryStatusBuff[BATTERYSTATUS_BUFF_WIDTH*BATTERYSTATUS_BUFF_HEIGHT+1];
 
-				//txtRoomId
-				//char _txtTimeBuff[TIMESTATUS_BUFF_WIDTH*TIMESTATUS_BUFF_HEIGHT+1];
+				//txtOsanve
+				char _txtOsanveBuff[2*MSGBOX_CONTENT_BUFF_WIDTH];
 				
 				//txtForce
 				char _txtForce[FORCESTATUS_BUFF_WIDTH*FORCESTATUS_BUFF_HEIGHT+1];
@@ -511,10 +507,10 @@ protected:
 	Form _frmFightForm; //  форма боя
 //	Form _frmDefForm;
 
-	//_pnlStatusBar;
+	// Поля статусной области
 		TextField txtUserName;
 		TextField txtBatteryStatus;
-//		TextField txtTime;
+		TextField txtOsanve;
 		TextField txtForce;
 
 //_pnlMainForm;

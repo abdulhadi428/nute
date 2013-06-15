@@ -48,19 +48,19 @@ fresult UIDesigner::InitStatusBar()
 	if (fres != SUCCESS)
 		return fres;
 
-	//txtTIME - время
-	//controlSize.Width = TIMESTATUS_WIDTH_PX;
-	//controlSize.Height = TIMESTATUS_HEIGHT_PX;
+	//txtOsanve - OSANVE (своё)
+	controlSize.Width = SCREENX;
+	controlSize.Height = TIMESTATUS_HEIGHT_PX;
 
-	//controlPosition.Top = TIMESTATUS_TOP_PX;
-	//controlPosition.Left = TIMESTATUS_LEFT_PX;
+	controlPosition.Top = USERNAME_HEIGHT_PX;
+	controlPosition.Left = TIMESTATUS_LEFT_PX;
 
-	//controlBuffSizeTx.Width=TIMESTATUS_BUFF_WIDTH;
-	//controlBuffSizeTx.Height=TIMESTATUS_BUFF_HEIGHT;
+	controlBuffSizeTx.Width=MSGBOX_CONTENT_BUFF_WIDTH;
+	controlBuffSizeTx.Height=1;
 
-	//fres = InitTextField(&txtTime, controlSize, controlPosition, FormatHeader, FALSE, _txtTimeBuff, controlBuffSizeTx, "00:00");
-	//if (fres != SUCCESS)
-	//	return fres;
+	fres = InitTextField(&txtOsanve, controlSize, controlPosition, FormatHeader, FALSE, _txtOsanveBuff, controlBuffSizeTx, OSANVES[Player.osanve]);
+	if (fres != SUCCESS)
+		return fres;
 
 	//txtFORCE - сила
 	controlPosition.Top = FORCESTATUS_TOP_PX;
@@ -85,12 +85,12 @@ fresult UIDesigner::InitStatusBar()
 	controlSize.Width = STATUSBAR_WIDTH_PX;
 	controlSize.Height = STATUSBAR_HEIGHT_PX;
 
-//	_pnlStatusBarControls[0] = &txtTime;
 	_pnlStatusBarControls[0] = &txtUserName;
 	_pnlStatusBarControls[1] = &txtForce;
 	_pnlStatusBarControls[2] = &txtBatteryStatus;
+	_pnlStatusBarControls[3] = &txtOsanve;
 
-	fres = _pnlStatusBar.Init(controlSize, controlPosition, &_renderer, _pnlStatusBarControls, 3);
+	fres = _pnlStatusBar.Init(controlSize, controlPosition, &_renderer, _pnlStatusBarControls, 4);
 	if (fres != SUCCESS)
 		return fres;
 
@@ -114,7 +114,7 @@ fresult UIDesigner::InitMainFormMnu()
 
 	//All Items
 	controlSize.Width = SCREENX / 3;
-	controlSize.Height = MENU_VERICAL_GAP;
+	controlSize.Height = MENU_VERTICAL_GAP;
 
 	Size tfSize;
 	tfSize.Height = 1;
@@ -228,7 +228,7 @@ fresult UIDesigner::InitOsanveFormMenu()
 	zeroSize.data =0;
 	zeroPosition.data =0;
 
-	controlSize.Height = MENU_VERICAL_GAP;
+	controlSize.Height = MENU_VERTICAL_GAP;
 	controlSize.Width = 60;
 	controlBuffSizeTx.Height=1;
 	controlBuffSizeTx.Width=10;
@@ -236,7 +236,7 @@ fresult UIDesigner::InitOsanveFormMenu()
   for( int i = 0; i < (OSANVE_COUNT - 1); i++)
   {
  		if( i < 6) {
- 		  controlPosition.Top = i % 3 * 32 + 16;
+ 		  controlPosition.Top = i % 3 * (MENU_IMAGE_HEIGHT + MENU_VERTICAL_GAP) + STATUSBAR_HEIGHT_PX + MENU_VERTICAL_GAP;
  		  controlPosition.Left = i / 3 * 100;
  		} else {
  		  controlPosition.Top = 120;
@@ -275,14 +275,14 @@ fresult UIDesigner::InitOsanveForm()
 	Position controlPosition;
 	Size controlBuffSizeTx;
 
-	controlPosition.Top = 8;
-	controlPosition.Left = 20;
+	controlPosition.Top = STATUSBAR_HEIGHT_PX;
+	controlPosition.Left = MENU_IMAGE_WIDTH;
 
-	controlSize.Height = 8;
+	controlSize.Height = MENU_VERTICAL_GAP;
 	controlSize.Width = SCREENX - (controlPosition.Left*2);
 
 	controlBuffSizeTx.Height=1;
-	controlBuffSizeTx.Width=20;
+	controlBuffSizeTx.Width=12;
 
 	osanveListPage = 0;
 
@@ -298,7 +298,7 @@ fresult UIDesigner::InitOsanveForm()
 
 	_pnlOsanveFormControls[0] = &_txtOsanveFormTitle;
 	_pnlOsanveFormControls[1] = &_pnlStatusBar;
-	fres = _pnlConsForm.Init(controlSize, controlPosition, &_renderer, _pnlOsanveFormControls, 2);
+	fres = _pnlOsanveForm.Init(controlSize, controlPosition, &_renderer, _pnlOsanveFormControls, 2);
 	if (fres!=SUCCESS)
 		return fres;
 
@@ -322,7 +322,7 @@ fresult UIDesigner::InitConsFormMenu()
 	zeroSize.data =0;
 	zeroPosition.data =0;
 
-	controlSize.Height = MENU_VERICAL_GAP;
+	controlSize.Height = MENU_VERTICAL_GAP;
 	controlSize.Width = 60;
 	controlBuffSizeTx.Height=1;
 	controlBuffSizeTx.Width=10;
@@ -330,7 +330,7 @@ fresult UIDesigner::InitConsFormMenu()
 // пункты меню выбора последствия
   for( int i = 0; i < (CONS_COUNT ); i++)
   {
- 	  controlPosition.Top = i % 3 * 32 + 16;
+ 	  controlPosition.Top = i % 3 * (MENU_IMAGE_HEIGHT + MENU_VERTICAL_GAP) + STATUSBAR_HEIGHT_PX + MENU_VERTICAL_GAP;
  	  controlPosition.Left = i / 3 * 100;
 	  fres = InitMenuItem(&_miCons[i], &_txtConsMenu[i], controlSize, controlPosition, FormatMenu, _bufConsMenu[i], controlBuffSizeTx, CONS[i], FormatMenu,
 		       NULL, zeroSize, zeroPosition, NO_IMAGE, NULL, OnConsMnuSelectH, i);
@@ -365,11 +365,11 @@ fresult UIDesigner::InitConsForm()
 	Position controlPosition;
 	Size controlBuffSizeTx;
 
-	controlPosition.Top = 8;
-	controlPosition.Left = 48;
+	controlPosition.Top = STATUSBAR_HEIGHT_PX;
+	controlPosition.Left = MENU_IMAGE_WIDTH;
 
-	controlSize.Height = 8;
-	controlSize.Width = 66;
+	controlSize.Height = MENU_VERTICAL_GAP;
+	controlSize.Width = SCREENX - (controlPosition.Left*2);
 
 	controlBuffSizeTx.Height=1;
 	controlBuffSizeTx.Width=11;
@@ -414,16 +414,16 @@ fresult UIDesigner::InitBattleFormMnu()
 
 // Side Items
 	controlSize.Width = SCREENX / 2;
-	controlSize.Height = MENU_VERICAL_GAP;
+	controlSize.Height = MENU_VERTICAL_GAP;
 	tfSize.Height = 1;
 	tfSize.Width = 13;
 // пункты меню выбора противника
   for( int i = 0; i < 6; i++)
   {
-	  char* fname = CONF[0].fname; // если кнопке не досталось бойца
+	  char* fname = ""; // если кнопке не досталось бойца
  	  if( fightersOnScreen[i] )
 		  fname = CONF[fightersOnScreen[i]->userId].fname;
-	  controlPosition.Top = i % 3 * 32 + 16;
+	  controlPosition.Top = i % 3 * (MENU_IMAGE_HEIGHT + MENU_VERTICAL_GAP) + STATUSBAR_HEIGHT_PX + MENU_VERTICAL_GAP;
  	  controlPosition.Left = i / 3 * 81;
 	  fres = InitMenuItem(&_miFighters[i], &_txtFighters[i], controlSize, controlPosition, FormatMenu, _bufFighters[i], tfSize, 
 	         fname, // берем боевое имя игрока из конфигурации по номеру в списке
@@ -436,7 +436,7 @@ fresult UIDesigner::InitBattleFormMnu()
 
 	// Low Items
 	controlSize.Width = SCREENX / 3;
-	controlSize.Height = MENU_VERICAL_GAP;
+	controlSize.Height = MENU_VERTICAL_GAP;
 	tfSize.Height = 1;
 	tfSize.Width = 9;
 
@@ -493,10 +493,10 @@ fresult UIDesigner::InitBattleForm()
 	Size controlSize;
 	Size controlBuffSizeTx;
 
-	controlPosition.Top = 8;
-	controlPosition.Left = 20;
+	controlPosition.Top = STATUSBAR_HEIGHT_PX;
+	controlPosition.Left = MENU_IMAGE_WIDTH;
 
-	controlSize.Height = 8;
+	controlSize.Height = MENU_VERTICAL_GAP;
 	controlSize.Width = SCREENX - controlPosition.Left*2;
 
 	controlBuffSizeTx.Height=1;
@@ -552,7 +552,7 @@ fresult UIDesigner::InitFightFormMnu()
 	zeroSize.data =0;
 
 	//All Items
-	controlSize.Width = MENU_VERICAL_GAP;
+	controlSize.Width = MENU_VERTICAL_GAP;
 	controlSize.Height = SCREENX / 3;
 
 	Size tfSize;
@@ -1025,41 +1025,61 @@ fresult UIDesigner::SetOsanve(void)
 {
 	ubyte_t ocount = 0;
 	int t = ArmletApi::GetUpTime();
+	char tmp[MSGBOX_CONTENT_BUFF_WIDTH*MSGBOX_CONTENT_BUFF_HEIGHT];
 	int i = 0;
+	Position pos;
+	if( Player.status != AL_STATUS_OSANVE) // только если список отображается
+		return SUCCESS;
+	pos = _txtOsanveList.GetScrollPosition();
+	_txtOsanveList.Clear();
+	memset( tmp, 0, sizeof(tmp));
 	// ищем первого противника для отображения
 	for(i = 0; i < MAX_ARMLET; ++i)
 	{ // непустой, недавно обновился, из нашей группы
-		if( Player.userId != 0 && (t - FGHT[i].time) < OSANVE_MAX_WAIT_TIME && Player.groupId == CONF[i].groupId)
-		{ // ячейка не пуста
+		if( Player.userId != FGHT[i].userId && FGHT[i].userId != 0 && (t - FGHT[i].time) < OSANVE_MAX_WAIT_TIME && Player.groupId == CONF[i].groupId)
+		{ 
+			char s[MSGBOX_CONTENT_BUFF_WIDTH];
+			sprintf( s, "%s-%s", CONF[i].name, OSANVES[FGHT[i].osanve]);
+			int slen = strlen(s);
+			for( int j = 0; j < MSGBOX_CONTENT_BUFF_WIDTH; ++j) // копируем сформированную строку
+		      if( j<slen)
+				tmp[(ocount)*MSGBOX_CONTENT_BUFF_WIDTH+j] = s[j];
+			  else
+				tmp[(ocount)*MSGBOX_CONTENT_BUFF_WIDTH+j] = ' ';
+			/*_txtOsanveList.AppendText(CONF[i].name);
+			_txtOsanveList.AppendText("-");
+			_txtOsanveList.AppendText(OSANVES[FGHT[i].osanve]);*/
 			ocount++;
 		}
-		if( ocount > (osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT))
+		if( ocount >= MSGBOX_CONTENT_BUFF_HEIGHT) //(osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT))
 			break; // если виртуально заполнили пролистанные страницы, остановимся
 	}
-	// назначим новую отображаемую страницу (для случая сокращения списка)
-	osanveListPage = ocount / MSGBOX_CONTENT_BUFF_HEIGHT;
-	ocount = 0;
-	// заполняем менюшку с игроками
-	for(i = 0; i < MAX_ARMLET; ++i)
-	{ // непустой, недавно обновился, из нашей группы
-		if( Player.userId != 0 && (t - FGHT[i].time) < OSANVE_MAX_WAIT_TIME && Player.groupId == CONF[i].groupId)
-		{ // ячейка не пуста
-			ocount++;
-		}
-	  if( ocount <= (osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT))
-			continue; // не дошли до страницы
-	  if( ocount > ((osanveListPage+1)*MSGBOX_CONTENT_BUFF_HEIGHT))
-			break; // всех занесли, кого надо было
-	  int item = (ocount % MSGBOX_CONTENT_BUFF_HEIGHT) - 1;
-	  int pos = 0;
-	  char tmp[MSGBOX_CONTENT_BUFF_WIDTH+1];
-      sprintf( tmp, "%s-%s", CONF[i].name, OSANVES[FGHT[i].osanve]);
-	  tmp[MSGBOX_CONTENT_BUFF_WIDTH] = 0;
-	  for( pos = 0; pos < MSGBOX_CONTENT_BUFF_WIDTH && tmp[pos]!=0; ++pos) // копируем сформированную строку
-		_bufOsanveList[(osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT+item)*MSGBOX_CONTENT_BUFF_WIDTH+pos] = tmp[pos];
-	}
-	if( Player.status == AL_STATUS_OSANVE) // только если список отображается
-	  _txtOsanveList.Draw(); // не уверен, не нужно ли SetText???
+//	// назначим новую отображаемую страницу (для случая сокращения списка)
+//	osanveListPage = ocount / MSGBOX_CONTENT_BUFF_HEIGHT;
+//	ocount = 0;
+//	// заполняем менюшку с игроками
+//	for(i = 0; i < MAX_ARMLET; ++i)
+//	{ // непустой, недавно обновился, из нашей группы
+//		if( Player.userId != 0 && (t - FGHT[i].time) < OSANVE_MAX_WAIT_TIME && Player.groupId == CONF[i].groupId)
+//		{ // ячейка не пуста
+//			ocount++;
+//		}
+//	  if( ocount <= (osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT))
+//			continue; // не дошли до страницы
+//	  if( ocount > ((osanveListPage+1)*MSGBOX_CONTENT_BUFF_HEIGHT))
+//			break; // всех занесли, кого надо было
+//	  int item = (ocount % (MSGBOX_CONTENT_BUFF_HEIGHT+1)) - 1;
+//	  int pos = 0;
+//
+////      sprintf( item*MSGBOX_CONTENT_BUFF_WIDTH + tmp, "%s-%s", CONF[i].name, OSANVES[FGHT[i].osanve]);
+////	  tmp[MSGBOX_CONTENT_BUFF_WIDTH] = 0;
+////	  for( pos = 0; pos < MSGBOX_CONTENT_BUFF_WIDTH && tmp[pos]!=0; ++pos) // копируем сформированную строку
+////		_bufOsanveList[(osanveListPage*MSGBOX_CONTENT_BUFF_HEIGHT+item)*MSGBOX_CONTENT_BUFF_WIDTH+pos] = tmp[pos];
+//	}
+//	if( Player.status == AL_STATUS_OSANVE) // только если список отображается
+	_txtOsanveList.SetText(tmp); // не уверен, не нужно ли SetText???
+//	_txtOsanveList.Draw();
+	_txtOsanveList.SetScrollPosition(pos);
 	return SUCCESS;
 }
 
@@ -1392,7 +1412,8 @@ fresult UIDesigner::OnOsanveMnuSelect( IMenuItem* sender )
 	if( i < OSANVE_COUNT)
 	  SetOsanveNum( i);
 	Player.status = AL_STATUS_OSANVE;
-	
+	// Обновим в статусе
+	txtOsanve.SetText( OSANVES[i]);
 	return ShowForm(&_frmMainForm);
 }
 

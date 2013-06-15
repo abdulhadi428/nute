@@ -12,8 +12,8 @@
 #define OSANVE_WOUN 7 // ранен
 #define OSANVE_FGHT 8 // веду бой (можно исп как флаг)
 
-// Отображение абонента в Осанве, мс
-#define OSANVE_MAX_WAIT_TIME 120*1000
+// Отображение абонента в Осанве, с
+#define OSANVE_MAX_WAIT_TIME 20
 // Период рассылки своего состояния, мс
 #define OSANVE_SEND_TIME 10*1000
 // Время предбоевого режима, мс

@@ -6,6 +6,7 @@
 #include "FormHelper.h"
 #pragma warning(disable:4100)
 
+
 namespace Visualizer {
 
 	using namespace System;
@@ -138,6 +139,27 @@ namespace Visualizer {
 		int currCure;
 		bool bVibrating;
 		bool bVibratingReverseDirection;
+private: System::Windows::Forms::Button^  sendOsanveBUT;
+
+private: System::Windows::Forms::NumericUpDown^  forceNUM;
+
+private: System::Windows::Forms::NumericUpDown^  osanveNUM;
+
+private: System::Windows::Forms::NumericUpDown^  fromNUM;
+
+private: System::Windows::Forms::Label^  label2;
+private: System::Windows::Forms::Label^  label1;
+private: System::Windows::Forms::Button^  sendFightBUT;
+
+private: System::Windows::Forms::NumericUpDown^  atackNUM;
+private: System::Windows::Forms::NumericUpDown^  toNUM;
+
+
+private: System::Windows::Forms::Label^  label5;
+private: System::Windows::Forms::Label^  label4;
+private: System::Windows::Forms::Label^  label3;
+private: System::Windows::Forms::NumericUpDown^  uidNUM;
+
 		 int RemainignVibrationTicks;
 		//LOG
 		void ScrollLogToEnd() {
@@ -246,6 +268,19 @@ namespace Visualizer {
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
 			this->groupBoxServer = (gcnew System::Windows::Forms::GroupBox());
+			this->uidNUM = (gcnew System::Windows::Forms::NumericUpDown());
+			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->label3 = (gcnew System::Windows::Forms::Label());
+			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->sendFightBUT = (gcnew System::Windows::Forms::Button());
+			this->atackNUM = (gcnew System::Windows::Forms::NumericUpDown());
+			this->toNUM = (gcnew System::Windows::Forms::NumericUpDown());
+			this->sendOsanveBUT = (gcnew System::Windows::Forms::Button());
+			this->forceNUM = (gcnew System::Windows::Forms::NumericUpDown());
+			this->osanveNUM = (gcnew System::Windows::Forms::NumericUpDown());
+			this->fromNUM = (gcnew System::Windows::Forms::NumericUpDown());
 			this->radioButtonRegenerationLevel3 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButtonRegenerationLevel2 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButtonRegenerationLevel1 = (gcnew System::Windows::Forms::RadioButton());
@@ -303,6 +338,12 @@ namespace Visualizer {
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->groupBoxServer->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->uidNUM))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->atackNUM))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->toNUM))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->forceNUM))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->osanveNUM))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->fromNUM))->BeginInit();
 			this->tabPage2->SuspendLayout();
 			this->groupBoxLocks->SuspendLayout();
 			this->tabPage3->SuspendLayout();
@@ -561,6 +602,19 @@ namespace Visualizer {
 			// 
 			// groupBoxServer
 			// 
+			this->groupBoxServer->Controls->Add(this->uidNUM);
+			this->groupBoxServer->Controls->Add(this->label5);
+			this->groupBoxServer->Controls->Add(this->label4);
+			this->groupBoxServer->Controls->Add(this->label3);
+			this->groupBoxServer->Controls->Add(this->label2);
+			this->groupBoxServer->Controls->Add(this->label1);
+			this->groupBoxServer->Controls->Add(this->sendFightBUT);
+			this->groupBoxServer->Controls->Add(this->atackNUM);
+			this->groupBoxServer->Controls->Add(this->toNUM);
+			this->groupBoxServer->Controls->Add(this->sendOsanveBUT);
+			this->groupBoxServer->Controls->Add(this->forceNUM);
+			this->groupBoxServer->Controls->Add(this->osanveNUM);
+			this->groupBoxServer->Controls->Add(this->fromNUM);
 			this->groupBoxServer->Controls->Add(this->radioButtonRegenerationLevel3);
 			this->groupBoxServer->Controls->Add(this->radioButtonRegenerationLevel2);
 			this->groupBoxServer->Controls->Add(this->radioButtonRegenerationLevel1);
@@ -577,12 +631,124 @@ namespace Visualizer {
 			this->groupBoxServer->TabStop = false;
 			this->groupBoxServer->Text = L"Основное";
 			// 
+			// uidNUM
+			// 
+			this->uidNUM->Location = System::Drawing::Point(205, 15);
+			this->uidNUM->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {255, 0, 0, 0});
+			this->uidNUM->Name = L"uidNUM";
+			this->uidNUM->Size = System::Drawing::Size(48, 21);
+			this->uidNUM->TabIndex = 38;
+			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Location = System::Drawing::Point(163, 88);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(36, 15);
+			this->label5->TabIndex = 37;
+			this->label5->Text = L"Atack";
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(79, 88);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(21, 15);
+			this->label4->TabIndex = 36;
+			this->label4->Text = L"To";
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Location = System::Drawing::Point(161, 59);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(38, 15);
+			this->label3->TabIndex = 35;
+			this->label3->Text = L"Force";
+			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(69, 59);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(48, 15);
+			this->label2->TabIndex = 34;
+			this->label2->Text = L"Osanve";
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(17, 39);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(36, 15);
+			this->label1->TabIndex = 33;
+			this->label1->Text = L"From";
+			// 
+			// sendFightBUT
+			// 
+			this->sendFightBUT->Location = System::Drawing::Point(287, 84);
+			this->sendFightBUT->Name = L"sendFightBUT";
+			this->sendFightBUT->Size = System::Drawing::Size(107, 23);
+			this->sendFightBUT->TabIndex = 32;
+			this->sendFightBUT->Text = L"Send Fight";
+			this->sendFightBUT->UseVisualStyleBackColor = true;
+			// 
+			// atackNUM
+			// 
+			this->atackNUM->Location = System::Drawing::Point(205, 86);
+			this->atackNUM->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {255, 0, 0, 0});
+			this->atackNUM->Name = L"atackNUM";
+			this->atackNUM->Size = System::Drawing::Size(48, 21);
+			this->atackNUM->TabIndex = 31;
+			// 
+			// toNUM
+			// 
+			this->toNUM->Location = System::Drawing::Point(107, 86);
+			this->toNUM->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {255, 0, 0, 0});
+			this->toNUM->Name = L"toNUM";
+			this->toNUM->Size = System::Drawing::Size(48, 21);
+			this->toNUM->TabIndex = 30;
+			// 
+			// sendOsanveBUT
+			// 
+			this->sendOsanveBUT->Location = System::Drawing::Point(287, 55);
+			this->sendOsanveBUT->Name = L"sendOsanveBUT";
+			this->sendOsanveBUT->Size = System::Drawing::Size(107, 23);
+			this->sendOsanveBUT->TabIndex = 28;
+			this->sendOsanveBUT->Text = L"Send Osanve";
+			this->sendOsanveBUT->UseVisualStyleBackColor = true;
+			this->sendOsanveBUT->Click += gcnew System::EventHandler(this, &MainForm::sendOsanveBUT_Click);
+			// 
+			// forceNUM
+			// 
+			this->forceNUM->Location = System::Drawing::Point(205, 57);
+			this->forceNUM->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {255, 0, 0, 0});
+			this->forceNUM->Name = L"forceNUM";
+			this->forceNUM->Size = System::Drawing::Size(48, 21);
+			this->forceNUM->TabIndex = 27;
+			// 
+			// osanveNUM
+			// 
+			this->osanveNUM->Location = System::Drawing::Point(123, 57);
+			this->osanveNUM->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {8, 0, 0, 0});
+			this->osanveNUM->Name = L"osanveNUM";
+			this->osanveNUM->Size = System::Drawing::Size(32, 21);
+			this->osanveNUM->TabIndex = 26;
+			// 
+			// fromNUM
+			// 
+			this->fromNUM->Location = System::Drawing::Point(15, 57);
+			this->fromNUM->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {255, 0, 0, 0});
+			this->fromNUM->Name = L"fromNUM";
+			this->fromNUM->Size = System::Drawing::Size(48, 21);
+			this->fromNUM->TabIndex = 25;
+			// 
 			// radioButtonRegenerationLevel3
 			// 
 			this->radioButtonRegenerationLevel3->AutoSize = true;
-			this->radioButtonRegenerationLevel3->Location = System::Drawing::Point(15, 114);
+			this->radioButtonRegenerationLevel3->Location = System::Drawing::Point(15, 186);
 			this->radioButtonRegenerationLevel3->Name = L"radioButtonRegenerationLevel3";
-			this->radioButtonRegenerationLevel3->Size = System::Drawing::Size(91, 19);
+			this->radioButtonRegenerationLevel3->Size = System::Drawing::Size(84, 17);
 			this->radioButtonRegenerationLevel3->TabIndex = 24;
 			this->radioButtonRegenerationLevel3->TabStop = true;
 			this->radioButtonRegenerationLevel3->Text = L"RegenLev 3";
@@ -592,9 +758,9 @@ namespace Visualizer {
 			// radioButtonRegenerationLevel2
 			// 
 			this->radioButtonRegenerationLevel2->AutoSize = true;
-			this->radioButtonRegenerationLevel2->Location = System::Drawing::Point(15, 88);
+			this->radioButtonRegenerationLevel2->Location = System::Drawing::Point(15, 160);
 			this->radioButtonRegenerationLevel2->Name = L"radioButtonRegenerationLevel2";
-			this->radioButtonRegenerationLevel2->Size = System::Drawing::Size(91, 19);
+			this->radioButtonRegenerationLevel2->Size = System::Drawing::Size(84, 17);
 			this->radioButtonRegenerationLevel2->TabIndex = 23;
 			this->radioButtonRegenerationLevel2->TabStop = true;
 			this->radioButtonRegenerationLevel2->Text = L"RegenLev 2";
@@ -604,9 +770,9 @@ namespace Visualizer {
 			// radioButtonRegenerationLevel1
 			// 
 			this->radioButtonRegenerationLevel1->AutoSize = true;
-			this->radioButtonRegenerationLevel1->Location = System::Drawing::Point(15, 62);
+			this->radioButtonRegenerationLevel1->Location = System::Drawing::Point(15, 134);
 			this->radioButtonRegenerationLevel1->Name = L"radioButtonRegenerationLevel1";
-			this->radioButtonRegenerationLevel1->Size = System::Drawing::Size(91, 19);
+			this->radioButtonRegenerationLevel1->Size = System::Drawing::Size(84, 17);
 			this->radioButtonRegenerationLevel1->TabIndex = 22;
 			this->radioButtonRegenerationLevel1->TabStop = true;
 			this->radioButtonRegenerationLevel1->Text = L"RegenLev 1";
@@ -615,37 +781,37 @@ namespace Visualizer {
 			// 
 			// buttonSetPlayerName
 			// 
-			this->buttonSetPlayerName->Location = System::Drawing::Point(287, 20);
+			this->buttonSetPlayerName->Location = System::Drawing::Point(287, 15);
 			this->buttonSetPlayerName->Name = L"buttonSetPlayerName";
 			this->buttonSetPlayerName->Size = System::Drawing::Size(107, 23);
 			this->buttonSetPlayerName->TabIndex = 21;
-			this->buttonSetPlayerName->Text = L"SetPlayerName";
+			this->buttonSetPlayerName->Text = L"Set Player UID";
 			this->buttonSetPlayerName->UseVisualStyleBackColor = true;
 			this->buttonSetPlayerName->Click += gcnew System::EventHandler(this, &MainForm::buttonSetPlayerName_Click);
 			// 
 			// textBoxPlayerName
 			// 
-			this->textBoxPlayerName->Location = System::Drawing::Point(15, 22);
+			this->textBoxPlayerName->Location = System::Drawing::Point(15, 17);
 			this->textBoxPlayerName->Name = L"textBoxPlayerName";
-			this->textBoxPlayerName->Size = System::Drawing::Size(266, 21);
+			this->textBoxPlayerName->Size = System::Drawing::Size(184, 21);
 			this->textBoxPlayerName->TabIndex = 20;
-			this->textBoxPlayerName->Leave += gcnew System::EventHandler(this, &MainForm::textBoxPlayerName_Leave);
 			this->textBoxPlayerName->Enter += gcnew System::EventHandler(this, &MainForm::textBoxPlayerName_Enter);
+			this->textBoxPlayerName->Leave += gcnew System::EventHandler(this, &MainForm::textBoxPlayerName_Leave);
 			// 
 			// textBoxServerMessage
 			// 
-			this->textBoxServerMessage->Location = System::Drawing::Point(107, 62);
+			this->textBoxServerMessage->Location = System::Drawing::Point(107, 134);
 			this->textBoxServerMessage->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->textBoxServerMessage->Multiline = true;
 			this->textBoxServerMessage->Name = L"textBoxServerMessage";
-			this->textBoxServerMessage->Size = System::Drawing::Size(287, 132);
+			this->textBoxServerMessage->Size = System::Drawing::Size(287, 71);
 			this->textBoxServerMessage->TabIndex = 19;
-			this->textBoxServerMessage->Leave += gcnew System::EventHandler(this, &MainForm::textBoxServerMessage_Leave);
 			this->textBoxServerMessage->Enter += gcnew System::EventHandler(this, &MainForm::textBoxServerMessage_Enter);
+			this->textBoxServerMessage->Leave += gcnew System::EventHandler(this, &MainForm::textBoxServerMessage_Leave);
 			// 
 			// buttonServerMessage
 			// 
-			this->buttonServerMessage->Location = System::Drawing::Point(229, 202);
+			this->buttonServerMessage->Location = System::Drawing::Point(229, 210);
 			this->buttonServerMessage->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->buttonServerMessage->Name = L"buttonServerMessage";
 			this->buttonServerMessage->Size = System::Drawing::Size(165, 26);
@@ -686,7 +852,7 @@ namespace Visualizer {
 			this->radioButtonLockNo->AutoSize = true;
 			this->radioButtonLockNo->Location = System::Drawing::Point(110, 106);
 			this->radioButtonLockNo->Name = L"radioButtonLockNo";
-			this->radioButtonLockNo->Size = System::Drawing::Size(169, 19);
+			this->radioButtonLockNo->Size = System::Drawing::Size(150, 17);
 			this->radioButtonLockNo->TabIndex = 17;
 			this->radioButtonLockNo->TabStop = true;
 			this->radioButtonLockNo->Text = L"Замок не детектируется";
@@ -698,7 +864,7 @@ namespace Visualizer {
 			this->radioButtonLock3->AutoSize = true;
 			this->radioButtonLock3->Location = System::Drawing::Point(110, 80);
 			this->radioButtonLock3->Name = L"radioButtonLock3";
-			this->radioButtonLock3->Size = System::Drawing::Size(72, 19);
+			this->radioButtonLock3->Size = System::Drawing::Size(67, 17);
 			this->radioButtonLock3->TabIndex = 16;
 			this->radioButtonLock3->TabStop = true;
 			this->radioButtonLock3->Text = L"Замок 3";
@@ -710,7 +876,7 @@ namespace Visualizer {
 			this->radioButtonLock2->AutoSize = true;
 			this->radioButtonLock2->Location = System::Drawing::Point(110, 54);
 			this->radioButtonLock2->Name = L"radioButtonLock2";
-			this->radioButtonLock2->Size = System::Drawing::Size(72, 19);
+			this->radioButtonLock2->Size = System::Drawing::Size(67, 17);
 			this->radioButtonLock2->TabIndex = 15;
 			this->radioButtonLock2->TabStop = true;
 			this->radioButtonLock2->Text = L"Замок 2";
@@ -722,7 +888,7 @@ namespace Visualizer {
 			this->radioButtonLock1->AutoSize = true;
 			this->radioButtonLock1->Location = System::Drawing::Point(110, 28);
 			this->radioButtonLock1->Name = L"radioButtonLock1";
-			this->radioButtonLock1->Size = System::Drawing::Size(72, 19);
+			this->radioButtonLock1->Size = System::Drawing::Size(67, 17);
 			this->radioButtonLock1->TabIndex = 14;
 			this->radioButtonLock1->TabStop = true;
 			this->radioButtonLock1->Text = L"Замок 1";
@@ -734,7 +900,7 @@ namespace Visualizer {
 			this->checkBoxLock3->AutoSize = true;
 			this->checkBoxLock3->Location = System::Drawing::Point(15, 77);
 			this->checkBoxLock3->Name = L"checkBoxLock3";
-			this->checkBoxLock3->Size = System::Drawing::Size(77, 19);
+			this->checkBoxLock3->Size = System::Drawing::Size(72, 17);
 			this->checkBoxLock3->TabIndex = 7;
 			this->checkBoxLock3->Text = L"Доступ 3";
 			this->checkBoxLock3->UseVisualStyleBackColor = true;
@@ -745,7 +911,7 @@ namespace Visualizer {
 			this->checkBoxLock2->AutoSize = true;
 			this->checkBoxLock2->Location = System::Drawing::Point(15, 53);
 			this->checkBoxLock2->Name = L"checkBoxLock2";
-			this->checkBoxLock2->Size = System::Drawing::Size(77, 19);
+			this->checkBoxLock2->Size = System::Drawing::Size(72, 17);
 			this->checkBoxLock2->TabIndex = 5;
 			this->checkBoxLock2->Text = L"Доступ 2";
 			this->checkBoxLock2->UseVisualStyleBackColor = true;
@@ -756,7 +922,7 @@ namespace Visualizer {
 			this->checkBoxLock1->AutoSize = true;
 			this->checkBoxLock1->Location = System::Drawing::Point(15, 29);
 			this->checkBoxLock1->Name = L"checkBoxLock1";
-			this->checkBoxLock1->Size = System::Drawing::Size(77, 19);
+			this->checkBoxLock1->Size = System::Drawing::Size(72, 17);
 			this->checkBoxLock1->TabIndex = 3;
 			this->checkBoxLock1->Text = L"Доступ 1";
 			this->checkBoxLock1->UseVisualStyleBackColor = true;
@@ -765,10 +931,10 @@ namespace Visualizer {
 			// tabPage3
 			// 
 			this->tabPage3->Controls->Add(this->groupBoxRooms);
-			this->tabPage3->Location = System::Drawing::Point(4, 24);
+			this->tabPage3->Location = System::Drawing::Point(4, 22);
 			this->tabPage3->Name = L"tabPage3";
 			this->tabPage3->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage3->Size = System::Drawing::Size(410, 241);
+			this->tabPage3->Size = System::Drawing::Size(410, 243);
 			this->tabPage3->TabIndex = 2;
 			this->tabPage3->Text = L"Отсеки";
 			this->tabPage3->UseVisualStyleBackColor = true;
@@ -797,7 +963,7 @@ namespace Visualizer {
 			this->radioButtonLustra15->AutoSize = true;
 			this->radioButtonLustra15->Location = System::Drawing::Point(139, 75);
 			this->radioButtonLustra15->Name = L"radioButtonLustra15";
-			this->radioButtonLustra15->Size = System::Drawing::Size(113, 19);
+			this->radioButtonLustra15->Size = System::Drawing::Size(105, 17);
 			this->radioButtonLustra15->TabIndex = 18;
 			this->radioButtonLustra15->TabStop = true;
 			this->radioButtonLustra15->Text = L"15 / Вне отсека";
@@ -809,7 +975,7 @@ namespace Visualizer {
 			this->radioButtonLustra12->AutoSize = true;
 			this->radioButtonLustra12->Location = System::Drawing::Point(15, 74);
 			this->radioButtonLustra12->Name = L"radioButtonLustra12";
-			this->radioButtonLustra12->Size = System::Drawing::Size(113, 19);
+			this->radioButtonLustra12->Size = System::Drawing::Size(105, 17);
 			this->radioButtonLustra12->TabIndex = 17;
 			this->radioButtonLustra12->TabStop = true;
 			this->radioButtonLustra12->Text = L"12 / Вне отсека";
@@ -821,7 +987,7 @@ namespace Visualizer {
 			this->radioButtonLustra14->AutoSize = true;
 			this->radioButtonLustra14->Location = System::Drawing::Point(139, 48);
 			this->radioButtonLustra14->Name = L"radioButtonLustra14";
-			this->radioButtonLustra14->Size = System::Drawing::Size(100, 19);
+			this->radioButtonLustra14->Size = System::Drawing::Size(94, 17);
 			this->radioButtonLustra14->TabIndex = 16;
 			this->radioButtonLustra14->TabStop = true;
 			this->radioButtonLustra14->Text = L"14 / Отсек 14";
@@ -833,7 +999,7 @@ namespace Visualizer {
 			this->radioButtonLustra13->AutoSize = true;
 			this->radioButtonLustra13->Location = System::Drawing::Point(139, 22);
 			this->radioButtonLustra13->Name = L"radioButtonLustra13";
-			this->radioButtonLustra13->Size = System::Drawing::Size(100, 19);
+			this->radioButtonLustra13->Size = System::Drawing::Size(94, 17);
 			this->radioButtonLustra13->TabIndex = 15;
 			this->radioButtonLustra13->TabStop = true;
 			this->radioButtonLustra13->Text = L"13 / Отсек 13";
@@ -845,7 +1011,7 @@ namespace Visualizer {
 			this->radioButtonLustra11->AutoSize = true;
 			this->radioButtonLustra11->Location = System::Drawing::Point(15, 48);
 			this->radioButtonLustra11->Name = L"radioButtonLustra11";
-			this->radioButtonLustra11->Size = System::Drawing::Size(100, 19);
+			this->radioButtonLustra11->Size = System::Drawing::Size(94, 17);
 			this->radioButtonLustra11->TabIndex = 14;
 			this->radioButtonLustra11->TabStop = true;
 			this->radioButtonLustra11->Text = L"11 / Отсек 11";
@@ -857,7 +1023,7 @@ namespace Visualizer {
 			this->radioButtonLustra10->AutoSize = true;
 			this->radioButtonLustra10->Location = System::Drawing::Point(15, 22);
 			this->radioButtonLustra10->Name = L"radioButtonLustra10";
-			this->radioButtonLustra10->Size = System::Drawing::Size(100, 19);
+			this->radioButtonLustra10->Size = System::Drawing::Size(94, 17);
 			this->radioButtonLustra10->TabIndex = 13;
 			this->radioButtonLustra10->TabStop = true;
 			this->radioButtonLustra10->Text = L"10 / Отсек 10";
@@ -899,7 +1065,7 @@ namespace Visualizer {
 			this->checkBoxNoLustra->AutoSize = true;
 			this->checkBoxNoLustra->Location = System::Drawing::Point(15, 137);
 			this->checkBoxNoLustra->Name = L"checkBoxNoLustra";
-			this->checkBoxNoLustra->Size = System::Drawing::Size(177, 19);
+			this->checkBoxNoLustra->Size = System::Drawing::Size(157, 17);
 			this->checkBoxNoLustra->TabIndex = 10;
 			this->checkBoxNoLustra->Text = L"Люстра не детектируется";
 			this->checkBoxNoLustra->UseVisualStyleBackColor = true;
@@ -959,7 +1125,7 @@ namespace Visualizer {
 			this->radioButtonCure14->AutoSize = true;
 			this->radioButtonCure14->Location = System::Drawing::Point(192, 155);
 			this->radioButtonCure14->Name = L"radioButtonCure14";
-			this->radioButtonCure14->Size = System::Drawing::Size(68, 19);
+			this->radioButtonCure14->Size = System::Drawing::Size(62, 17);
 			this->radioButtonCure14->TabIndex = 29;
 			this->radioButtonCure14->TabStop = true;
 			this->radioButtonCure14->Text = L"Cure 14";
@@ -971,7 +1137,7 @@ namespace Visualizer {
 			this->radioButtonCure13->AutoSize = true;
 			this->radioButtonCure13->Location = System::Drawing::Point(192, 131);
 			this->radioButtonCure13->Name = L"radioButtonCure13";
-			this->radioButtonCure13->Size = System::Drawing::Size(68, 19);
+			this->radioButtonCure13->Size = System::Drawing::Size(62, 17);
 			this->radioButtonCure13->TabIndex = 28;
 			this->radioButtonCure13->TabStop = true;
 			this->radioButtonCure13->Text = L"Cure 13";
@@ -983,7 +1149,7 @@ namespace Visualizer {
 			this->radioButtonCure12->AutoSize = true;
 			this->radioButtonCure12->Location = System::Drawing::Point(192, 108);
 			this->radioButtonCure12->Name = L"radioButtonCure12";
-			this->radioButtonCure12->Size = System::Drawing::Size(68, 19);
+			this->radioButtonCure12->Size = System::Drawing::Size(62, 17);
 			this->radioButtonCure12->TabIndex = 27;
 			this->radioButtonCure12->TabStop = true;
 			this->radioButtonCure12->Text = L"Cure 12";
@@ -995,7 +1161,7 @@ namespace Visualizer {
 			this->radioButtonCure11->AutoSize = true;
 			this->radioButtonCure11->Location = System::Drawing::Point(192, 85);
 			this->radioButtonCure11->Name = L"radioButtonCure11";
-			this->radioButtonCure11->Size = System::Drawing::Size(68, 19);
+			this->radioButtonCure11->Size = System::Drawing::Size(62, 17);
 			this->radioButtonCure11->TabIndex = 25;
 			this->radioButtonCure11->TabStop = true;
 			this->radioButtonCure11->Text = L"Cure 11";
@@ -1007,7 +1173,7 @@ namespace Visualizer {
 			this->radioButtonCure10->AutoSize = true;
 			this->radioButtonCure10->Location = System::Drawing::Point(192, 62);
 			this->radioButtonCure10->Name = L"radioButtonCure10";
-			this->radioButtonCure10->Size = System::Drawing::Size(68, 19);
+			this->radioButtonCure10->Size = System::Drawing::Size(62, 17);
 			this->radioButtonCure10->TabIndex = 24;
 			this->radioButtonCure10->TabStop = true;
 			this->radioButtonCure10->Text = L"Cure 10";
@@ -1019,7 +1185,7 @@ namespace Visualizer {
 			this->radioButtonCure9->AutoSize = true;
 			this->radioButtonCure9->Location = System::Drawing::Point(192, 39);
 			this->radioButtonCure9->Name = L"radioButtonCure9";
-			this->radioButtonCure9->Size = System::Drawing::Size(61, 19);
+			this->radioButtonCure9->Size = System::Drawing::Size(56, 17);
 			this->radioButtonCure9->TabIndex = 23;
 			this->radioButtonCure9->TabStop = true;
 			this->radioButtonCure9->Text = L"Cure 9";
@@ -1031,7 +1197,7 @@ namespace Visualizer {
 			this->radioButtonCure8->AutoSize = true;
 			this->radioButtonCure8->Location = System::Drawing::Point(192, 17);
 			this->radioButtonCure8->Name = L"radioButtonCure8";
-			this->radioButtonCure8->Size = System::Drawing::Size(61, 19);
+			this->radioButtonCure8->Size = System::Drawing::Size(56, 17);
 			this->radioButtonCure8->TabIndex = 22;
 			this->radioButtonCure8->TabStop = true;
 			this->radioButtonCure8->Text = L"Cure 8";
@@ -1043,7 +1209,7 @@ namespace Visualizer {
 			this->radioButtonCure7->AutoSize = true;
 			this->radioButtonCure7->Location = System::Drawing::Point(15, 178);
 			this->radioButtonCure7->Name = L"radioButtonCure7";
-			this->radioButtonCure7->Size = System::Drawing::Size(61, 19);
+			this->radioButtonCure7->Size = System::Drawing::Size(56, 17);
 			this->radioButtonCure7->TabIndex = 21;
 			this->radioButtonCure7->TabStop = true;
 			this->radioButtonCure7->Text = L"Cure 7";
@@ -1055,7 +1221,7 @@ namespace Visualizer {
 			this->radioButtonCure6->AutoSize = true;
 			this->radioButtonCure6->Location = System::Drawing::Point(15, 155);
 			this->radioButtonCure6->Name = L"radioButtonCure6";
-			this->radioButtonCure6->Size = System::Drawing::Size(61, 19);
+			this->radioButtonCure6->Size = System::Drawing::Size(56, 17);
 			this->radioButtonCure6->TabIndex = 20;
 			this->radioButtonCure6->TabStop = true;
 			this->radioButtonCure6->Text = L"Cure 6";
@@ -1067,7 +1233,7 @@ namespace Visualizer {
 			this->radioButtonCure5->AutoSize = true;
 			this->radioButtonCure5->Location = System::Drawing::Point(15, 131);
 			this->radioButtonCure5->Name = L"radioButtonCure5";
-			this->radioButtonCure5->Size = System::Drawing::Size(61, 19);
+			this->radioButtonCure5->Size = System::Drawing::Size(56, 17);
 			this->radioButtonCure5->TabIndex = 19;
 			this->radioButtonCure5->TabStop = true;
 			this->radioButtonCure5->Text = L"Cure 5";
@@ -1079,7 +1245,7 @@ namespace Visualizer {
 			this->radioButtonCure4->AutoSize = true;
 			this->radioButtonCure4->Location = System::Drawing::Point(15, 108);
 			this->radioButtonCure4->Name = L"radioButtonCure4";
-			this->radioButtonCure4->Size = System::Drawing::Size(61, 19);
+			this->radioButtonCure4->Size = System::Drawing::Size(56, 17);
 			this->radioButtonCure4->TabIndex = 18;
 			this->radioButtonCure4->TabStop = true;
 			this->radioButtonCure4->Text = L"Cure 4";
@@ -1091,7 +1257,7 @@ namespace Visualizer {
 			this->radioButtonCure3->AutoSize = true;
 			this->radioButtonCure3->Location = System::Drawing::Point(15, 85);
 			this->radioButtonCure3->Name = L"radioButtonCure3";
-			this->radioButtonCure3->Size = System::Drawing::Size(61, 19);
+			this->radioButtonCure3->Size = System::Drawing::Size(56, 17);
 			this->radioButtonCure3->TabIndex = 17;
 			this->radioButtonCure3->TabStop = true;
 			this->radioButtonCure3->Text = L"Cure 3";
@@ -1103,7 +1269,7 @@ namespace Visualizer {
 			this->radioButtonCure2->AutoSize = true;
 			this->radioButtonCure2->Location = System::Drawing::Point(15, 62);
 			this->radioButtonCure2->Name = L"radioButtonCure2";
-			this->radioButtonCure2->Size = System::Drawing::Size(61, 19);
+			this->radioButtonCure2->Size = System::Drawing::Size(56, 17);
 			this->radioButtonCure2->TabIndex = 16;
 			this->radioButtonCure2->TabStop = true;
 			this->radioButtonCure2->Text = L"Cure 2";
@@ -1115,7 +1281,7 @@ namespace Visualizer {
 			this->radioButtonCure1->AutoSize = true;
 			this->radioButtonCure1->Location = System::Drawing::Point(15, 39);
 			this->radioButtonCure1->Name = L"radioButtonCure1";
-			this->radioButtonCure1->Size = System::Drawing::Size(61, 19);
+			this->radioButtonCure1->Size = System::Drawing::Size(56, 17);
 			this->radioButtonCure1->TabIndex = 15;
 			this->radioButtonCure1->TabStop = true;
 			this->radioButtonCure1->Text = L"Cure 1";
@@ -1127,7 +1293,7 @@ namespace Visualizer {
 			this->radioButtonCure0->AutoSize = true;
 			this->radioButtonCure0->Location = System::Drawing::Point(15, 17);
 			this->radioButtonCure0->Name = L"radioButtonCure0";
-			this->radioButtonCure0->Size = System::Drawing::Size(61, 19);
+			this->radioButtonCure0->Size = System::Drawing::Size(56, 17);
 			this->radioButtonCure0->TabIndex = 14;
 			this->radioButtonCure0->TabStop = true;
 			this->radioButtonCure0->Text = L"Cure 0";
@@ -1151,8 +1317,8 @@ namespace Visualizer {
 			this->numericUpDownPillsCharges->Size = System::Drawing::Size(54, 21);
 			this->numericUpDownPillsCharges->TabIndex = 12;
 			this->numericUpDownPillsCharges->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {50, 0, 0, 0});
-			this->numericUpDownPillsCharges->Leave += gcnew System::EventHandler(this, &MainForm::numericUpDownPillsCharges_Leave);
 			this->numericUpDownPillsCharges->Enter += gcnew System::EventHandler(this, &MainForm::numericUpDownPillsCharges_Enter);
+			this->numericUpDownPillsCharges->Leave += gcnew System::EventHandler(this, &MainForm::numericUpDownPillsCharges_Leave);
 			// 
 			// buttonConnectPill
 			// 
@@ -1207,8 +1373,8 @@ namespace Visualizer {
 			this->Text = L"Armlet Visualizer";
 			this->Load += gcnew System::EventHandler(this, &MainForm::MainForm_Load);
 			this->Shown += gcnew System::EventHandler(this, &MainForm::MainForm_Shown);
-			this->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::MainForm_KeyUp);
 			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::MainForm_KeyDown);
+			this->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &MainForm::MainForm_KeyUp);
 			this->groupBoxMain->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->Screen))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->ScreenZoomed))->EndInit();
@@ -1216,6 +1382,12 @@ namespace Visualizer {
 			this->tabPage1->ResumeLayout(false);
 			this->groupBoxServer->ResumeLayout(false);
 			this->groupBoxServer->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->uidNUM))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->atackNUM))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->toNUM))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->forceNUM))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->osanveNUM))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->fromNUM))->EndInit();
 			this->tabPage2->ResumeLayout(false);
 			this->groupBoxLocks->ResumeLayout(false);
 			this->groupBoxLocks->PerformLayout();
@@ -1370,8 +1542,13 @@ private: System::Void radioButtonRegenerationLevel3_CheckedChanged(System::Objec
 		 }
 //PLAYER NAME
 private: System::Void buttonSetPlayerName_Click(System::Object^  sender, System::EventArgs^  e) {
-			 FormHelper::SetPlayerName(textBoxPlayerName->Text);
+			 FormHelper::SetPlayerName( int(toNUM->Value), int(uidNUM->Value)); //textBoxPlayerName->Text);
 		 }
+//OSANVE
+private: System::Void sendOsanveBUT_Click(System::Object^  sender, System::EventArgs^  e) {
+			 FormHelper::SendOsanve( int(fromNUM->Value), int(osanveNUM->Value), int(forceNUM->Value)); //textBoxPlayerName->Text);
+		 }
+
 //SEND MESSAGE
 private: System::Void buttonServerMessage_Click(System::Object^  sender, System::EventArgs^  e) {
 			 FormHelper::SendMessage(textBoxServerMessage->Text);
@@ -1539,6 +1716,7 @@ private: System::Void buttonConnectPill_Click(System::Object^  sender, System::E
 private: System::Void buttonNextMedTick_Click(System::Object^  sender, System::EventArgs^  e) {
 			 LowLevel::NextMedTick();
 		 }
+
 }; //class
 
 } //namespace

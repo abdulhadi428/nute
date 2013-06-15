@@ -70,20 +70,15 @@ namespace LowLevel {
 	VIBRO_CALLBACK* Vibro = 0;
 
 	//SERVER EMULATION
-	void SetPlayerName(char const*const name)
+	void SetPlayerName(int olduid, int uid) //char const*const name)
 	{ // ROMAN TO DO!!! Setting player ID may be?
-		//int size = strlen(name);
-		//int full_size = sizeof(SRV_STRING) + size;	//-1 for already [1]
-		//											//+1 for \0
+		ATACK_PACKET ap;
+		ap.src = 0;
+		ap.flags = PACKET_TYPE_ATACK;
+		ap.dst = (unsigned char)(olduid);
+		ap.atack = (unsigned char)(uid);
 
-		//SRV_STRING* packet = (SRV_STRING*)malloc(full_size);
-		//packet->header.msg_type = MSG_SET_PLAYER_NAME;
-		//packet->header.srv_msg_num = NoncheId++;
-		//memcpy(packet->string,name, size+1);
-		////TODO timer/list helper
-		//ArmletApi::OnRadioPacket((unsigned char*)packet,full_size);
-		//memset(packet,0,full_size);
-		//free(packet);
+		ArmletApi::OnRadioPacket((unsigned char*)&ap,PACKET_LEN);
 	}
 
 	//SERVER EMULATION
@@ -108,7 +103,16 @@ namespace LowLevel {
 		UNREFERENCED_PARAMETER(bAllow);
 		//FUTURE
 	}
-
+	// OSANVE
+	void SendOsanve(int from, int osanve, int force)
+	{
+		OSANVE_PACKET op;
+		op.src = (unsigned char)(from);
+		op.flags = (unsigned char)(osanve & OSANVE_MASK);
+		op.force = (unsigned char)force;
+		op.maxForce = 250;
+		ArmletApi::OnRadioPacket((unsigned char*)&op,PACKET_LEN);
+	}
 	//SERVER EMULATION
 	void SendMessage(char const*const msg)
 	{ // Roman ѕока делаем полностью нулевое сообщение
@@ -121,7 +125,7 @@ namespace LowLevel {
 		packet->src = 0;
 		packet->flags = 0;
 		packet->force = 0;
-		packet->maxForce = full_size;
+		packet->maxForce = (unsigned char)full_size;
 		memcpy(packet+1,msg, size);
 		//TODO timer/list helper
 		ArmletApi::OnRadioPacket((unsigned char*)packet,full_size);

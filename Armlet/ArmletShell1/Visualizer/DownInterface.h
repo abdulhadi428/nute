@@ -21,10 +21,11 @@ namespace LowLevel {
 
 	//SERVER EMULATION
 	// OnRadioPacket / SendRadioPacket
-	void SetPlayerName(char const*const name);						//SERVER emulation
+	void SetPlayerName(int olduid, int uid);//char const*const name);						//SERVER emulation
 	void SetRegenerationLevel(int level);							//SERVER emulation
 	void SetLockAccess(int lock_id, bool bAllow);					//SERVER emulation
 	void SendMessage(char const*const msg);							//SERVER emulation
+	void SendOsanve(int from, int osanve, int force);
 	void Explosion(int room_id);									//SERVER emulation
 
 	//LOG EMULATION
