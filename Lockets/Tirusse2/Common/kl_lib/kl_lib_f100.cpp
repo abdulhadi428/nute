@@ -166,7 +166,7 @@ void DbgUart_t::Init(uint32_t ABaudrate) {
 
     // ==== DMA ====
     // Here only the unchanged parameters of the DMA are configured.
-    dmaStreamAllocate     (STM32_DMA1_STREAM4, 1, DbgUartIrq, NULL);
+    dmaStreamAllocate     (STM32_DMA1_STREAM4, IRQ_PRIO_MEDIUM, DbgUartIrq, NULL);
     dmaStreamSetPeripheral(STM32_DMA1_STREAM4, &USART1->DR);
     dmaStreamSetMode      (STM32_DMA1_STREAM4,
             STM32_DMA_CR_PL(0b10) |     // Priority is high
