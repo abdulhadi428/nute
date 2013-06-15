@@ -14,10 +14,10 @@
  */
 
 #include <inttypes.h>
-#include "kl_lib_f2xx.h"
+#include "kl_lib_f100.h"
 #include "cc1101defins.h"
 #include "cc1101_rf_settings.h"
-#include "lvl1_assym.h"
+#include "lvl1_lckt.h"
 
 // Pins
 #define CC_GPIO     GPIOA
@@ -26,14 +26,17 @@
 #define CC_SCK      5
 #define CC_MISO     6
 #define CC_MOSI     7
-#define CC_CS       10
+#define CC_CS       2
 
 // SPI
 #define CC_SPI      SPI1
 
+enum CCState_t {ccIdle, ccSleeping, ccReceiving, ccTransmitting};
+
 class cc1101_t {
 private:
     uint8_t IState; // Inner CC state, returned as first byte
+    EventSource IEvtSrcTx, IEvtSrcRx;
     // Pins
     void CsHi() { PinSet(CC_GPIO, CC_CS); }
     void CsLo() { PinClear(CC_GPIO, CC_CS); }
@@ -61,14 +64,23 @@ private:
         WriteStrobe(CC_SCAL);
     }
 public:
+    CCState_t State;
     void Init();
     void SetChannel(uint8_t AChannel);
     void SetTxPower(uint8_t APwr) { WriteRegister(CC_PATABLE, APwr); }
+    // Events
+    void RegisterEvtRx(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcRx, PEvtLstnr, EvtMask); }
+    void RegisterEvtTx(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcTx, PEvtLstnr, EvtMask); }
     // State change
-    void Transmit(rPkt_t *pPkt);
-    uint8_t Receive(uint32_t Timeout_ms, rPkt_t *pPkt);
-    void EnterIdle()  { WriteStrobe(CC_SIDLE); }
-    void Sleep() { WriteStrobe(CC_SPWD); }
+    void TransmitSync(rPkt_t *pPkt);
+    uint8_t ReceiveSync(uint32_t Timeout_ms, rPkt_t *pPkt);
+    void TransmitAsync(rPkt_t *pPkt);
+    void ReceiveAsync();
+    void EnterIdle()  { WriteStrobe(CC_SIDLE); State = ccIdle; }
+    void Sleep() { WriteStrobe(CC_SPWD); State = ccSleeping; }
+    uint8_t ReadFIFO(rPkt_t *pPkt);
+    // Inner use
+    inline void IHandleAsync();
 };
 
 extern cc1101_t CC;

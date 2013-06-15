@@ -210,6 +210,22 @@ public:
     void Off() { *PCCR = 0; }
 };
 
+// ==== External IRQ ====
+//enum ExtiTrigType_t {
+//static inline void PinIrqSetup(GPIO_TypeDef *PGpioPort, const uint8_t APinNumber, EXTITrigger_TypeDef ATriggerType) {
+//    // Get IRQ channel
+//    uint8_t IChannel;
+//    if      ((APinNumber >= 0)  and (APinNumber <= 4))  IChannel = EXTI0_IRQn + APinNumber;
+//    else if ((APinNumber >= 5)  and (APinNumber <= 9))  IChannel = EXTI9_5_IRQn;
+//    else if ((APinNumber >= 10) and (APinNumber <= 15)) IChannel = EXTI15_10_IRQn;
+//
+//}
+//
+//
+//uint8_t N = APinNumber / 4;    // Indx of EXTICR register
+//uint8_t Shift = (APinNumber & 0x03) * 4;
+//AFIO->EXTICR[N] &= ~((uint32_t)0b1111 << Shift);    // Clear bits
+
 // ================================= IWDG ======================================
 enum IwdgPre_t {
     iwdgPre4 = 0x00,
@@ -261,6 +277,12 @@ private:
     bool IDmaIsIdle;
 public:
     void Printf(const char *S, ...);
+    void PrintNow(const char *S) {
+        while(*S != 0) {
+            while(!(USART1->SR & USART_SR_TXE));
+            USART1->DR = *S++;
+        }
+    }
     void FlushTx() { while(!IDmaIsIdle); }  // wait DMA
     void Init(uint32_t ABaudrate);
     void IRQDmaTxHandler();
@@ -268,6 +290,45 @@ public:
 
 extern DbgUart_t Uart;
 #endif
+
+// ================================= SPI =======================================
+enum CPHA_t {cphaFirstEdge, cphaSecondEdge};
+enum CPOL_t {cpolIdleLow, cpolIdleHigh};
+enum SpiBaudrate_t {
+    sbFdiv2   = 0b000,
+    sbFdiv4   = 0b001,
+    sbFdiv8   = 0b010,
+    sbFdiv16  = 0b011,
+    sbFdiv32  = 0b100,
+    sbFdiv64  = 0b101,
+    sbFdiv128 = 0b110,
+    sbFdiv256 = 0b111,
+};
+
+static inline void SpiSetup(
+        SPI_TypeDef *Spi,
+        BitOrder_t BitOrder,
+        CPOL_t CPOL,
+        CPHA_t CPHA,
+        SpiBaudrate_t Baudrate
+        ) {
+    // Clocking
+    if      (Spi == SPI1) { rccEnableSPI1(FALSE); }
+#ifndef STM32F10X_LD_VL
+    else if (Spi == SPI2) { rccEnableSPI2(FALSE); }
+#endif
+    // Mode: Master, NSS software controlled and is 1, 8bit, NoCRC, FullDuplex
+    Spi->CR1 = SPI_CR1_SSM | SPI_CR1_SSI | SPI_CR1_MSTR;
+    if(BitOrder == boLSB) Spi->CR1 |= SPI_CR1_LSBFIRST;     // MSB/LSB
+    if(CPOL == cpolIdleHigh) Spi->CR1 |= SPI_CR1_CPOL;      // CPOL
+    if(CPHA == cphaSecondEdge) Spi->CR1 |= SPI_CR1_CPHA;    // CPHA
+    Spi->CR1 |= ((uint16_t)Baudrate) << 3;                  // Baudrate
+    Spi->CR2 = 0;
+}
+
+static inline void SpiEnable (SPI_TypeDef *Spi) { Spi->CR1 |=  SPI_CR1_SPE; }
+static inline void SpiDisable(SPI_TypeDef *Spi) { Spi->CR1 &= ~SPI_CR1_SPE; }
+
 
 // =============================== I2C =========================================
 class i2c_t {

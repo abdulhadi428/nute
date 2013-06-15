@@ -6,20 +6,19 @@
  */
 
 #include "cc1101.h"
-
-#define GPIO0_IRQ_MASK  ((uint32_t)0x10)    // Line 4
+#include "ch.h"
 
 cc1101_t CC;
 static Thread *PWaitingThread = NULL;
 
 void cc1101_t::Init() {
     // ==== GPIO ====
-    PinSetupOut      (GPIOA, CC_CS,   omPushPull, pudNone);
-    PinSetupAlterFunc(GPIOA, CC_SCK,  omPushPull, pudNone, AF5);
-    PinSetupAlterFunc(GPIOA, CC_MISO, omPushPull, pudNone, AF5);
-    PinSetupAlterFunc(GPIOA, CC_MOSI, omPushPull, pudNone, AF5);
-    PinSetupIn       (GPIOA, CC_GDO0, pudNone);
-    PinSetupIn       (GPIOA, CC_GDO2, pudNone);
+    PinSetupOut(GPIOA, CC_CS,   omPushPull);
+    PinSetupAlterFuncOutput(GPIOA, CC_SCK,  omPushPull);
+    PinSetupAlterFuncOutput(GPIOA, CC_MISO, omPushPull);
+    PinSetupAlterFuncOutput(GPIOA, CC_MOSI, omPushPull);
+    PinSetupIn(GPIOA, CC_GDO0, pudNone);
+    PinSetupIn(GPIOA, CC_GDO2, pudNone);
     CsHi();
 
     // ==== SPI ====    MSB first, master, ClkLowIdle, FirstEdge, Baudrate=f/2
@@ -30,17 +29,23 @@ void cc1101_t::Init() {
     CReset();
     FlushRxFIFO();
     RfConfig();
+    chEvtInit(&IEvtSrcRx);
+    chEvtInit(&IEvtSrcTx);
+    State = ccIdle;
 
     // ==== IRQ ====
-    rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, FALSE); // Enable sys cfg controller
-    SYSCFG->EXTICR[1] &= 0xFFFFFFF0;    // EXTI4 is connected to PortA
+    RCC->APB2ENR |= RCC_APB2ENR_AFIOEN; // Enable AFIO clock
+    uint8_t tmp = CC_GDO0 / 4;          // Indx of EXTICR register
+    uint8_t Shift = (CC_GDO0 & 0x03) * 4;
+    AFIO->EXTICR[tmp] &= ~((uint32_t)0b1111 << Shift);    // Clear bits and leave clear to select GPIOA
+    tmp = 1<<CC_GDO0;   // IRQ mask
     // Configure EXTI line
-    EXTI->IMR  |=  GPIO0_IRQ_MASK;      // Interrupt mode enabled
-    EXTI->EMR  &= ~GPIO0_IRQ_MASK;      // Event mode disabled
-    EXTI->RTSR &= ~GPIO0_IRQ_MASK;      // Rising trigger disabled
-    EXTI->FTSR |=  GPIO0_IRQ_MASK;      // Falling trigger enabled
-    EXTI->PR    =  GPIO0_IRQ_MASK;      // Clean irq flag
-    nvicEnableVector(EXTI4_IRQn, CORTEX_PRIORITY_MASK(IRQ_PRIO_HIGH));
+    EXTI->IMR  |=  tmp;      // Interrupt mode enabled
+    EXTI->EMR  &= ~tmp;      // Event mode disabled
+    EXTI->RTSR &= ~tmp;      // Rising trigger disabled
+    EXTI->FTSR |=  tmp;      // Falling trigger enabled
+    EXTI->PR    =  tmp;      // Clean irq flag
+    nvicEnableVector(EXTI4_IRQn, CORTEX_PRIORITY_MASK(IRQ_PRIO_MEDIUM));
 }
 
 // ========================== TX, RX, freq and power ===========================
@@ -61,7 +66,7 @@ void cc1101_t::SetChannel(uint8_t AChannel) {
 //    //Uart.Printf("\r");
 //}
 
-void cc1101_t::Transmit(rPkt_t *pPkt) {
+void cc1101_t::TransmitSync(rPkt_t *pPkt) {
     // WaitUntilChannelIsBusy();   // If this is not done, time after time FIFO is destroyed
     while(IState != CC_STB_IDLE) EnterIdle();
     WriteTX((uint8_t*)pPkt, RPKT_LEN);
@@ -73,10 +78,19 @@ void cc1101_t::Transmit(rPkt_t *pPkt) {
     chSysUnlock();  // Will be here when IRQ will fire
 }
 
+void cc1101_t::TransmitAsync(rPkt_t *pPkt) {
+    // WaitUntilChannelIsBusy();   // If this is not done, time after time FIFO is destroyed
+    PWaitingThread = NULL;
+    State = ccTransmitting;
+    while(IState != CC_STB_IDLE) EnterIdle();
+    WriteTX((uint8_t*)pPkt, RPKT_LEN);
+    EnterTX();
+}
+
 /*
  * Enter RX mode and wait reception for Timeout_ms.
  */
-uint8_t cc1101_t::Receive(uint32_t Timeout_ms, rPkt_t *pPkt) {
+uint8_t cc1101_t::ReceiveSync(uint32_t Timeout_ms, rPkt_t *pPkt) {
     FlushRxFIFO();
     EnterRX();  // After that, some time will be wasted to recalibrate
     chSysLock();
@@ -88,33 +102,15 @@ uint8_t cc1101_t::Receive(uint32_t Timeout_ms, rPkt_t *pPkt) {
         EnterIdle();            // Get out of RX mode
         return TIMEOUT;
     }
-    else {  // IRQ occured: something received, or CRC error
-        uint8_t b, *p = (uint8_t*)pPkt;
-        // Check if received successfully
-        b = ReadRegister(CC_PKTSTATUS);
-        //    Uart.Printf("St: %X  ", b);
-        if(b & 0x80) {  // CRC OK
-            // Read FIFO
-            CsLo();                                            // Start transmission
-            BusyWait();                                        // Wait for chip to become ready
-            ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG); // Address with read & burst flags
-            for(uint8_t i=0; i<RPKT_LEN; i++) {                // Read bytes
-                b = ReadWriteByte(0);
-                *p++ = b;
-          //      Uart.Printf(" %X", b);
-            }
-            // Receive two additional info bytes
-            b = ReadWriteByte(0);   // RSSI
-            ReadWriteByte(0);       // LQI
-            CsHi();                 // End transmission
-            pPkt->RSSI = RSSI_dBm(b);
-            return OK;
-        }
-        else {  // CRC Error
+    // IRQ occured: something received, or CRC error
+    else return ReadFIFO(pPkt);
+}
 
-            return FAILURE;
-        }
-    } // IRQ or Timeout
+void cc1101_t::ReceiveAsync() {
+    PWaitingThread = NULL;
+    State = ccReceiving;
+    FlushRxFIFO();
+    EnterRX();
 }
 
 // Return RSSI in dBm
@@ -125,6 +121,31 @@ int8_t cc1101_t::RSSI_dBm(uint8_t ARawRSSI) {
     return RSSI;
 }
 
+
+uint8_t cc1101_t::ReadFIFO(rPkt_t *pPkt) {
+    uint8_t b, *p = (uint8_t*)pPkt;
+     // Check if received successfully
+     b = ReadRegister(CC_PKTSTATUS);
+     //    Uart.Printf("St: %X  ", b);
+     if(b & 0x80) {  // CRC OK
+         // Read FIFO
+         CsLo();                                            // Start transmission
+         BusyWait();                                        // Wait for chip to become ready
+         ReadWriteByte(CC_FIFO|CC_READ_FLAG|CC_BURST_FLAG); // Address with read & burst flags
+         for(uint8_t i=0; i<RPKT_LEN; i++) {                // Read bytes
+             b = ReadWriteByte(0);
+             *p++ = b;
+       //      Uart.Printf(" %X", b);
+         }
+         // Receive two additional info bytes
+         b = ReadWriteByte(0);   // RSSI
+         ReadWriteByte(0);       // LQI
+         CsHi();                 // End transmission
+         pPkt->RSSI = RSSI_dBm(b);
+         return OK;
+     }
+     else return FAILURE;
+}
 
 // =========================== Registers & Strobes =============================
 uint8_t cc1101_t::ReadWriteByte(uint8_t AByte) {
@@ -214,12 +235,22 @@ void cc1101_t::RfConfig() {
 }
 
 // ============================= Interrupts ====================================
+void cc1101_t::IHandleAsync() {
+    if(State == ccTransmitting) {
+        State = ccIdle;
+        chEvtBroadcastI(&IEvtSrcTx);
+    }
+    else if(State == ccReceiving) {
+        State = ccIdle;
+        chEvtBroadcastI(&IEvtSrcRx);
+    }
+}
+
 extern "C" {
 
 CH_IRQ_HANDLER(EXTI4_IRQHandler) {
     CH_IRQ_PROLOGUE();
     EXTI->PR = (1 << 4);  // Clean irq flag
-
     // Resume thread if any
     chSysLockFromIsr();
     if(PWaitingThread != NULL) {
@@ -229,6 +260,7 @@ CH_IRQ_HANDLER(EXTI4_IRQHandler) {
         }
         PWaitingThread = NULL;
     }
+    else CC.IHandleAsync(); // Async task completed
     chSysUnlockFromIsr();
 
     CH_IRQ_EPILOGUE();
