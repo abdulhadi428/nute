@@ -103,7 +103,11 @@ void __SYSCALL SendRadioPacket(unsigned char* packet, int len) {
 		}
 		if (IS_ATACK_PACKET(packet)) {
 			struct ATACK_PACKET* ap = (struct ATACK_PACKET*)packet;
-			LowLevel::LowLog("PROTOCOL: receive ATACK packet from %d to %d atack=%d and cons=%d",
+			if(IS_ATACKHEAL_PACKET(packet))
+			  LowLevel::LowLog("PROTOCOL: receive HEAL packet from %d to %d health+=%d",
+				ap->src, ap->dst, ap->atack, GET_CONS(ap->flags));
+			else
+			  LowLevel::LowLog("PROTOCOL: receive ATACK packet from %d to %d atack=%d and cons=%d",
 				ap->src, ap->dst, ap->atack, GET_CONS(ap->flags));
 		}else {
 		    struct OSANVE_PACKET* op = (struct OSANVE_PACKET*)packet;

@@ -8,7 +8,7 @@
 	#define APP_STATE_LEN	5
 
 	//medicine tick duration, 1min//5 secs
-	#define MED_TICK_TIME 60*1000
+	#define FORCE_TICK_TIME 30*1000
 
 	//IDS
 	#define UNKNOWN_ID	255

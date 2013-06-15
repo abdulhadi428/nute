@@ -114,6 +114,7 @@ void _OnSetRegenerationRate(ubyte_t regenRate)
 void _OnAtackPacket(ubyte_t enemyId, ubyte_t atack, ubyte_t cons)
 {
   Atacked( atack, cons, enemyId);
+  UI.OnOsanveTimer();
   if( Player.status == AL_STATUS_DEFEAT && cons < CONS_COUNT)
 	UI.MessageBoxShow("Поражение!", CONS[cons], NO_IMAGE);
 }

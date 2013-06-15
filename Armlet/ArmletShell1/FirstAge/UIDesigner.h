@@ -32,13 +32,13 @@ using namespace ThreeKShell;
 #define	MENU_ITEM_L_LEFT 1
 
 #define MENU_ITEM_X_TOP MENU_ITEM_RIGHTSIDE_TOP_OFFSET
-#define	MENU_ITEM_X_LEFT SCREENX - MENU_IMAGE_WIDTH-1
+#define	MENU_ITEM_X_LEFT 2*SCREENX/3
 
 #define MENU_ITEM_Y_TOP MENU_ITEM_X_TOP + MENU_IMAGE_HEIGHT+MENU_VERTICAL_GAP
-#define	MENU_ITEM_Y_LEFT SCREENX - MENU_IMAGE_WIDTH-1
+#define	MENU_ITEM_Y_LEFT 2*SCREENX/3
 
 #define MENU_ITEM_Z_TOP MENU_ITEM_Y_TOP + MENU_IMAGE_HEIGHT+MENU_VERTICAL_GAP
-#define	MENU_ITEM_Z_LEFT SCREENX - MENU_IMAGE_WIDTH-1
+#define	MENU_ITEM_Z_LEFT 2*SCREENX/3
 
 #define MENU_ITEM_R_TOP SCREENY - MENU_VERTICAL_GAP
 #define	MENU_ITEM_R_LEFT (SCREENX/3)*2
@@ -95,6 +95,8 @@ using namespace ThreeKShell;
 #define MAINFORM_HEIGHT SCREENY
 #define MAINFORM_WIDTH SCREENX
 
+#define FIGHT_CONTENT_BUFF_WIDTH 17
+#define FIGHT_CONTENT_BUFF_HEIGHT 11
 
 #define MSGBOX_ICON_HEIGHT 24
 #define MSGBOX_ICON_WIDTH 24
@@ -104,7 +106,7 @@ using namespace ThreeKShell;
 
 #define MSGBOX_TITLE_TOP 0
 #define MSGBOX_TITLE_LEFT MSGBOX_ICON_LEFT+MSGBOX_ICON_WIDTH+1
-#define MSGBOX_TITLE_WIDTH SCREENX - 2*MENU_IMAGE_WIDTH +2
+#define MSGBOX_TITLE_WIDTH SCREENX - MENU_IMAGE_WIDTH +1
 #define MSGBOX_TITLE_HEIGHT 24
 #define MSGBOX_TITLE_BUFF_WIDTH 18
 #define MSGBOX_TITLE_BUFF_HEIGHT 3
@@ -333,7 +335,7 @@ private:
 			//
 			MenuItem _miFighters[6];
 			TextField _txtFighters[6];
-			char _bufFighters[6][16];
+			char _bufFighters[6][32];
 			struct nick* fightersOnScreen[6];
 			//
 			MenuItem _menuOsanve;
@@ -363,14 +365,14 @@ private:
 		IControl* _pnlFightFormControls[2];
 
 		TextField _txtFightField;
-		char _bufFightField[MSGBOX_CONTENT_BUFF_WIDTH*MSGBOX_CONTENT_BUFF_HEIGHT];
+		char _bufFightField[FIGHT_CONTENT_BUFF_WIDTH*FIGHT_CONTENT_BUFF_HEIGHT];
 		struct nick* currentFighter; // указатель на элемент массива FGHT
 
 		#pragma endregion
 		#pragma region _mnuFightMenu
 		//_mnuFightMenu; - меню боевого режима
 		ScatteredMenu _mnuFightMenu;
-		IMenuItem* _mnuFightMenuItems[5];
+		IMenuItem* _mnuFightMenuItems[6];
 			//
 			MenuItem _menuFightUP;
 			TextField _txtMenuFightUP;

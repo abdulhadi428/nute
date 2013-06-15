@@ -415,8 +415,8 @@ fresult UIDesigner::InitBattleFormMnu()
 
 // Side Items
 	controlSize.Width = SCREENX / 2;
-	controlSize.Height = MENU_VERTICAL_GAP;
-	tfSize.Height = 1;
+	controlSize.Height = 2*MENU_VERTICAL_GAP;
+	tfSize.Height = 2;
 	tfSize.Width = 13;
 // пункты меню выбора противника
   for( int i = 0; i < 6; i++)
@@ -553,8 +553,8 @@ fresult UIDesigner::InitFightFormMnu()
 	zeroSize.data =0;
 
 	//All Items
-	controlSize.Width = MENU_VERTICAL_GAP;
-	controlSize.Height = SCREENX / 3;
+	controlSize.Height = MENU_VERTICAL_GAP;
+	controlSize.Width = SCREENX / 3;
 
 	Size tfSize;
 	tfSize.Height = 1;
@@ -623,11 +623,12 @@ fresult UIDesigner::InitFightFormMnu()
 	_mnuFightMenuItems[0] = &_menuFightUP;
 	_mnuFightMenuItems[1] = &_menuFightDOWN;
 	_mnuFightMenuItems[2] = &_menuAtack;
-	_mnuFightMenuItems[3] = &_menuDef;
-	_mnuFightMenuItems[4] = &_menuBattle;
+    _mnuFightMenuItems[3] = &_menuHeal;
+	_mnuFightMenuItems[4] = &_menuDef;
+	_mnuFightMenuItems[5] = &_menuBattle;
 		
 
-	fres =_mnuFightMenu.Init(_mnuFightMenuItems, 5);
+	fres =_mnuFightMenu.Init(_mnuFightMenuItems, 6);
 	if (fres != SUCCESS)
 		return fres;
 
@@ -648,12 +649,12 @@ fresult UIDesigner::InitFightForm()
 	controlPosition.Left = DIALOG_LEFT_PX;
 
 	controlSize.Height = DIALOG_HEIGHT_PX;
-	controlSize.Width = DIALOG_WIDTH_PX;
+	controlSize.Width = SCREENX - (SCREENX/3); // справа у нас менюшечка
 
-	controlBuffSizeTx.Width=MSGBOX_CONTENT_BUFF_WIDTH;
-	controlBuffSizeTx.Height=MSGBOX_CONTENT_BUFF_HEIGHT*MSGBOX_CONTENT_BUFF_PAGES;
+	controlBuffSizeTx.Width=FIGHT_CONTENT_BUFF_WIDTH;
+	controlBuffSizeTx.Height=FIGHT_CONTENT_BUFF_HEIGHT;
 
-	fres = InitTextField(&_txtFightField, controlSize, controlPosition, FormatText, TRUE, _bufFightField, controlBuffSizeTx, NULL);
+	fres = InitTextField(&_txtFightField, controlSize, controlPosition, FormatText, TRUE, _bufFightField, controlBuffSizeTx, "");
 	if (fres != SUCCESS)
 		return fres;
 
@@ -1064,7 +1065,7 @@ fresult UIDesigner::SetOsanve(void)
 		return _txtOsanveList.SetScrollPosition(zero);
 	}
 	_txtOsanveList.SetScrollPosition(pos);
-	_txtOsanveList.Draw();
+	_txtOsanveList.Draw(); // RedrawIfForeground(&_frmMainForm);  
 	return SUCCESS;
 }
 
@@ -1074,6 +1075,11 @@ fresult UIDesigner::SetBattle(void)
 	ubyte_t fcount = 0;
 	int t = ArmletApi::GetUpTime();
 	int i = 0;
+	// Очистим менюшки - по другому не придумал :(
+	for( i = 0; i<6; ++i){
+	  fightersOnScreen[i]=NULL; // ссылки на противников
+	  _txtFighters[i].SetText( ""); // сотрем менюшку
+	}
 	// ищем первого противника для отображения
 	for(i = 0; i < MAX_ARMLET; ++i)
 	{
@@ -1090,21 +1096,21 @@ fresult UIDesigner::SetBattle(void)
 	// заполняем менюшку с игроками
 	for(i = 0; i < MAX_ARMLET; ++i)
 	{
-		if( FGHT[i].maxForce > 0 && (t - FGHT[i].time) < FIGHT_MAX_WAIT_TIME)
-		{ // ячейка не пуста
-			fcount++;
+	  int item = fcount % 6;
+	  if( FGHT[i].maxForce == 0 || (t - FGHT[i].time) >= FIGHT_MAX_WAIT_TIME)
+		{ continue;
 		}
+		fcount++;
 		if( fcount <= (battleListPage*6))
 			continue; // не дошли до страницы
 		if( fcount > ((battleListPage+1)*6))
 			break; // всех занесли, кого надо было
-	  int item = (fcount % 6) - 1;
-	  if( fightersOnScreen[item]!=&FGHT[i]){ // если противник по кнопке сменился
-		char tmp[16];
+	  // рисуем новые имена
+		char tmp[32];
 		fightersOnScreen[item]=&FGHT[i];
-		sprintf( tmp, "%s%d", CONF[i].fname, FGHT[i].maxForce);
+		sprintf( tmp, "%s\n%d/%d", CONF[i].fname, FGHT[i].force,FGHT[i].maxForce);
+		tmp[31] = '\0';
 	    _txtFighters[item].SetText( tmp);
-	  }
 	}
 	return SUCCESS;
 }
@@ -1112,12 +1118,12 @@ fresult UIDesigner::SetBattle(void)
 // Обновить форму боя
 fresult UIDesigner::SetFightField(void)
 {
-  char tmp[MSGBOX_CONTENT_BUFF_WIDTH*MSGBOX_CONTENT_BUFF_HEIGHT];
+  char tmp[FIGHT_CONTENT_BUFF_WIDTH*FIGHT_CONTENT_BUFF_HEIGHT];
   if( Player.enemyId <=0 || Player.enemyId >= MAX_ARMLET || !currentFighter)
 	return GENERAL_WARNING;
 
-  sprintf( tmp, "Бой с %s:\n%d/%d\nВаши силы:\n%d/%d", CONF[currentFighter->userId].fname,
-	  currentFighter->force,currentFighter->maxForce,Player.force,Player.maxForce);
+  sprintf( tmp, "Бой с\n%s:\n%d/%d\n\nВаши силы:\n%d/%d\n\nАтакуем силой:\n%d", CONF[currentFighter->userId].fname,
+	  currentFighter->force,currentFighter->maxForce,Player.force,Player.maxForce,Player.atack);
   return _txtFightField.SetText( tmp);
 }
 
@@ -1498,21 +1504,21 @@ fresult UIDesigner::OnFightMnuUP( IMenuItem* sender )
 	  Player.atack = Player.force;
 	else
 	 Player.atack += FORCE_STEP;
-	currentForm->Menu->Draw();
+	SetFightField(); //currentForm->Menu->Draw();
 	return SUCCESS;
 }
 
 // Fight mode atack down
 fresult UIDesigner::OnFightMnuDOWN( IMenuItem* sender )
 {
-	if( (Player.atack - FORCE_STEP) < 5) {
-		if( Player.force >= 5)
-			Player.atack = 5;
-		else
-	    Player.atack = Player.force;
+	if( (Player.atack - FORCE_STEP) < 0) {
+//		if( Player.force >= 0)
+			Player.atack = 0;
+		//else
+	 //       Player.atack = Player.force;
 	} else
 	  Player.atack -= FORCE_STEP;
-	currentForm->Menu->Draw();
+	SetFightField(); ///currentForm->Menu->Draw();
 	return SUCCESS;
 }
 
@@ -1548,7 +1554,7 @@ fresult UIDesigner::OnFightMnuDefence( IMenuItem* sender )
 		ShowForm(&_frmFightForm);
 	} else {
 	  Player.status  = AL_STATUS_DEFENSE; // здесь не должно быть пенальти - переключение из боевой формы
-	  MessageBoxShow( "ЗАЩИТА!", "Сейчас вы \nполучаете в 10\nраз меньше\nот всех атак", NO_IMAGE );
+	  MessageBoxShow( "ЗАЩИТА!", "Сейчас вы получаете в 10 раз меньше вреда от всех атак", NO_IMAGE );
 	  //ShowForm(&_frmDefenseForm);
 	}
 	return SUCCESS;
@@ -1570,6 +1576,7 @@ fresult UIDesigner::OnMsgBoxMnuOk( IMenuItem* sender )
 	fresult rval = MessageBoxClose();
 	if( Player.status  == AL_STATUS_DEFENSE) {
 	  DefenceOFF();
+	  SetFightField();
 	  rval = ShowForm(&_frmFightForm);
 	}
 	return rval;
@@ -1669,7 +1676,7 @@ fresult UIDesigner::InitMsgBoxForm()
 	controlSize.Height  = MSGBOX_ICON_HEIGHT;
 	controlSize.Width = MSGBOX_ICON_WIDTH;
 
-	fres = InitImage(&_imgMessageBoxIcon, controlSize, controlPosition, NO_IMAGE);
+	fres = InitImage(&_imgMessageBoxIcon, controlSize, controlPosition, OrangeTarget);
 	if (fres != SUCCESS)
 		return fres;
 
@@ -1716,8 +1723,8 @@ fresult UIDesigner::InitMsgBoxForm()
 			return fres;
 
 	//_miMsgBoxMnuOk
-	controlPosition.Top  = 0;
-	controlPosition.Left = SCREENX-MENU_IMAGE_WIDTH -2;
+	controlPosition.Top  = SCREENY-MENU_IMAGE_HEIGHT;
+	controlPosition.Left = (SCREENX-MENU_IMAGE_WIDTH)/2;
 
 	controlSize.Height  = MENU_IMAGE_HEIGHT;
 	controlSize.Width = MENU_IMAGE_WIDTH;

@@ -41,7 +41,7 @@ fresult UserInterface::Init()
 	ArmletApi::RequestTimer(_OsanveSendTimer, OSANVE_SEND_TIME);
 		
 //launch force regeneration timer (1 min)
-	ArmletApi::RequestTimer(_ForceTimerTickCallback, MED_TICK_TIME);
+	ArmletApi::RequestTimer(_ForceTimerTickCallback, FORCE_TICK_TIME);
 
 	//launch battery status timer
 	ArmletApi::RequestTimer(_QueryBatteryStatusTimerCallback, BATTERYSTATUS_POLL_TIME);
@@ -347,7 +347,14 @@ bool UserInterface::OnOsanveTimer()
 	
 	ArmletApi::SendRadioPacket( osanve_packet, 4);
 
-	SetOsanve();
+	SetOsanve(); // чтобы в памяти всегда был актуальный список
+
+	SetForces();
+
+	if( Player.status == AL_STATUS_FIGHT)
+		SetFightField();
+
+	RedrawIfForeground(&_frmMainForm);
 
 	return true; // always true - next period timer
 }
@@ -399,13 +406,6 @@ void UserInterface::DoForceTick()
 	if( OnForceTick()) {
 	  ShowForm(&_frmMainForm);
 	  MessageBoxClose();
-	}
-
-	fres = SetForces();
-	if (fres!=SUCCESS)
-	{
-		LogError("Can't set forces status!");
-		return;
 	}
 
 	fres = RedrawIfForeground(&_frmMainForm);

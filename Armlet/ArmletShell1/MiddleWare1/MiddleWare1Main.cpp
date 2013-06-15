@@ -104,10 +104,13 @@ namespace ArmletApi {
 		  ATACK_PACKET* ap = (ATACK_PACKET*)packet;
 		  if( ap->dst != Player.userId) // не нас, пронесло...
 			  return;
-		  if(*(packet+1) & FORCE_HEAL) // упс, прилетело
+		  if(*(packet+1) & FORCE_HEAL) { // полечили
 			  _OnHealPacket(ap->src, ap->atack);
-		  else
+			  DoVibroAndBeep(200);
+		  } else { //  упс, прилетело
 			  _OnAtackPacket(ap->src, ap->atack, GET_CONS(ap->flags));
+			  DoVibroAndBeep(500);
+		  }
 		} else { // пакет осанве
 			OSANVE_PACKET* op = (OSANVE_PACKET*)packet;
 			_OnOsanvePacket( op->src, op->force, op->maxForce, op->flags&OSANVE_MASK);

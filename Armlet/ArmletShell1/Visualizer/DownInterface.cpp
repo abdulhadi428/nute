@@ -113,6 +113,18 @@ namespace LowLevel {
 		op.maxForce = 250;
 		ArmletApi::OnRadioPacket((unsigned char*)&op,PACKET_LEN);
 	}
+	// ATACK packet
+	void SendFight(int from, int to, int atack, bool heal)
+	{
+		ATACK_PACKET ap;
+		ap.src = (unsigned char)(from);
+		ap.flags = PACKET_TYPE_ATACK;
+		if(heal)
+			ap.flags|=FORCE_HEAL;
+		ap.dst = (unsigned char)to;
+		ap.atack = (unsigned char)atack;
+		ArmletApi::OnRadioPacket((unsigned char*)&ap,PACKET_LEN);
+	}
 	//SERVER EMULATION
 	void SendMessage(char const*const msg)
 	{ // Roman ѕока делаем полностью нулевое сообщение

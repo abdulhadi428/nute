@@ -42,10 +42,10 @@ namespace Visualizer {
 		//pin_ptr<unsigned char> pinned = &bytes[0];
 		LowLevel::SetPlayerName(olduid,uid); //(char const*const)pinned);
 	}
-    void FormHelper::SendOsanve(int from, int osanve, int force)
-	{
-		LowLevel::SendOsanve( from,  osanve,  force);
-	}
+ //   void FormHelper::SendOsanve(int from, int osanve, int force)
+	//{
+	//	LowLevel::SendOsanve( from,  osanve,  force);
+	//}
 
 	void FormHelper::SendMessage(String^ msg)
 	{

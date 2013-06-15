@@ -26,6 +26,7 @@ namespace LowLevel {
 	void SetLockAccess(int lock_id, bool bAllow);					//SERVER emulation
 	void SendMessage(char const*const msg);							//SERVER emulation
 	void SendOsanve(int from, int osanve, int force);
+	void SendFight(int from, int to, int atack, bool heal); // отправка пакета атаки или лечения
 	void Explosion(int room_id);									//SERVER emulation
 
 	//LOG EMULATION

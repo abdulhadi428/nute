@@ -18,11 +18,11 @@
 #define OSANVE_SEND_TIME 4*1000
 // Время предбоевого режима, мс
 #define PREFIGHT_TIME 10*1000
-// Отображение игроков в боевом режиме без обновления, мс
-#define FIGHT_MAX_WAIT_TIME 30*1000
+// Отображение игроков в боевом режиме без обновления, с
+#define FIGHT_MAX_WAIT_TIME 30
 // Период опроса заряда батарейки, мс
 #define BATTERYSTATUS_POLL_TIME 10*1000
-// Время нахождения в последствии,мин
+// Время нахождения в последствии, в циклах увеличения силы FORCE_TICK_TIME
 #define DEFAULT_DEFEAT_TIME 20
 
 // состояния браслета

@@ -159,6 +159,7 @@ private: System::Windows::Forms::Label^  label5;
 private: System::Windows::Forms::Label^  label4;
 private: System::Windows::Forms::Label^  label3;
 private: System::Windows::Forms::NumericUpDown^  uidNUM;
+private: System::Windows::Forms::Button^  button1;
 
 		 int RemainignVibrationTicks;
 		//LOG
@@ -332,6 +333,7 @@ private: System::Windows::Forms::NumericUpDown^  uidNUM;
 			this->buttonConnectPill = (gcnew System::Windows::Forms::Button());
 			this->tabPage5 = (gcnew System::Windows::Forms::TabPage());
 			this->LogWindow = (gcnew System::Windows::Forms::TextBox());
+			this->button1 = (gcnew System::Windows::Forms::Button());
 			this->groupBoxMain->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->Screen))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->ScreenZoomed))->BeginInit();
@@ -602,6 +604,7 @@ private: System::Windows::Forms::NumericUpDown^  uidNUM;
 			// 
 			// groupBoxServer
 			// 
+			this->groupBoxServer->Controls->Add(this->button1);
 			this->groupBoxServer->Controls->Add(this->uidNUM);
 			this->groupBoxServer->Controls->Add(this->label5);
 			this->groupBoxServer->Controls->Add(this->label4);
@@ -692,6 +695,7 @@ private: System::Windows::Forms::NumericUpDown^  uidNUM;
 			this->sendFightBUT->TabIndex = 32;
 			this->sendFightBUT->Text = L"Send Fight";
 			this->sendFightBUT->UseVisualStyleBackColor = true;
+			this->sendFightBUT->Click += gcnew System::EventHandler(this, &MainForm::sendFightBUT_Click);
 			// 
 			// atackNUM
 			// 
@@ -748,7 +752,7 @@ private: System::Windows::Forms::NumericUpDown^  uidNUM;
 			this->radioButtonRegenerationLevel3->AutoSize = true;
 			this->radioButtonRegenerationLevel3->Location = System::Drawing::Point(15, 186);
 			this->radioButtonRegenerationLevel3->Name = L"radioButtonRegenerationLevel3";
-			this->radioButtonRegenerationLevel3->Size = System::Drawing::Size(84, 17);
+			this->radioButtonRegenerationLevel3->Size = System::Drawing::Size(91, 19);
 			this->radioButtonRegenerationLevel3->TabIndex = 24;
 			this->radioButtonRegenerationLevel3->TabStop = true;
 			this->radioButtonRegenerationLevel3->Text = L"RegenLev 3";
@@ -760,7 +764,7 @@ private: System::Windows::Forms::NumericUpDown^  uidNUM;
 			this->radioButtonRegenerationLevel2->AutoSize = true;
 			this->radioButtonRegenerationLevel2->Location = System::Drawing::Point(15, 160);
 			this->radioButtonRegenerationLevel2->Name = L"radioButtonRegenerationLevel2";
-			this->radioButtonRegenerationLevel2->Size = System::Drawing::Size(84, 17);
+			this->radioButtonRegenerationLevel2->Size = System::Drawing::Size(91, 19);
 			this->radioButtonRegenerationLevel2->TabIndex = 23;
 			this->radioButtonRegenerationLevel2->TabStop = true;
 			this->radioButtonRegenerationLevel2->Text = L"RegenLev 2";
@@ -772,7 +776,7 @@ private: System::Windows::Forms::NumericUpDown^  uidNUM;
 			this->radioButtonRegenerationLevel1->AutoSize = true;
 			this->radioButtonRegenerationLevel1->Location = System::Drawing::Point(15, 134);
 			this->radioButtonRegenerationLevel1->Name = L"radioButtonRegenerationLevel1";
-			this->radioButtonRegenerationLevel1->Size = System::Drawing::Size(84, 17);
+			this->radioButtonRegenerationLevel1->Size = System::Drawing::Size(91, 19);
 			this->radioButtonRegenerationLevel1->TabIndex = 22;
 			this->radioButtonRegenerationLevel1->TabStop = true;
 			this->radioButtonRegenerationLevel1->Text = L"RegenLev 1";
@@ -800,11 +804,11 @@ private: System::Windows::Forms::NumericUpDown^  uidNUM;
 			// 
 			// textBoxServerMessage
 			// 
-			this->textBoxServerMessage->Location = System::Drawing::Point(107, 134);
+			this->textBoxServerMessage->Location = System::Drawing::Point(107, 143);
 			this->textBoxServerMessage->Margin = System::Windows::Forms::Padding(3, 4, 3, 4);
 			this->textBoxServerMessage->Multiline = true;
 			this->textBoxServerMessage->Name = L"textBoxServerMessage";
-			this->textBoxServerMessage->Size = System::Drawing::Size(287, 71);
+			this->textBoxServerMessage->Size = System::Drawing::Size(287, 62);
 			this->textBoxServerMessage->TabIndex = 19;
 			this->textBoxServerMessage->Enter += gcnew System::EventHandler(this, &MainForm::textBoxServerMessage_Enter);
 			this->textBoxServerMessage->Leave += gcnew System::EventHandler(this, &MainForm::textBoxServerMessage_Leave);
@@ -1353,6 +1357,16 @@ private: System::Windows::Forms::NumericUpDown^  uidNUM;
 			this->LogWindow->TabIndex = 17;
 			this->LogWindow->VisibleChanged += gcnew System::EventHandler(this, &MainForm::LogWindow_VisibleChanged);
 			// 
+			// button1
+			// 
+			this->button1->Location = System::Drawing::Point(287, 113);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(107, 23);
+			this->button1->TabIndex = 39;
+			this->button1->Text = L"Send Heal";
+			this->button1->UseVisualStyleBackColor = true;
+			this->button1->Click += gcnew System::EventHandler(this, &MainForm::button1_Click);
+			// 
 			// MainForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
@@ -1546,7 +1560,7 @@ private: System::Void buttonSetPlayerName_Click(System::Object^  sender, System:
 		 }
 //OSANVE
 private: System::Void sendOsanveBUT_Click(System::Object^  sender, System::EventArgs^  e) {
-			 FormHelper::SendOsanve( int(fromNUM->Value), int(osanveNUM->Value), int(forceNUM->Value)); //textBoxPlayerName->Text);
+			 LowLevel::SendOsanve( int(fromNUM->Value), int(osanveNUM->Value), int(forceNUM->Value));
 		 }
 
 //SEND MESSAGE
@@ -1716,7 +1730,14 @@ private: System::Void buttonConnectPill_Click(System::Object^  sender, System::E
 private: System::Void buttonNextMedTick_Click(System::Object^  sender, System::EventArgs^  e) {
 			 LowLevel::NextMedTick();
 		 }
-
+// FIGHT!!!
+private: System::Void sendFightBUT_Click(System::Object^  sender, System::EventArgs^  e) {
+			 LowLevel::SendFight( int(fromNUM->Value), int(toNUM->Value), int(atackNUM->Value), false);
+		 }
+// HEAL!!!
+private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+			 LowLevel::SendFight( int(fromNUM->Value), int(toNUM->Value), int(atackNUM->Value), true);
+		 }
 }; //class
 
 } //namespace

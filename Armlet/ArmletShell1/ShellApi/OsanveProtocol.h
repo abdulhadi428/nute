@@ -8,7 +8,8 @@
 #define FORCE_SIDE_EVIL 0x10
 #define FORCE_HEAL 0x08
 #define GET_CONS(b) ((b&CONS_MASK)>>4)
-#define IS_ATACK_PACKET(p)	(*(p+1)&0x80)
+#define IS_ATACK_PACKET(p)	(*(p+1)&PACKET_TYPE_ATACK)
+#define IS_ATACKHEAL_PACKET(p)	((*(p+1)&PACKET_TYPE_ATACK)&&(*(p+1)&FORCE_HEAL))
 
 namespace OsanveProtocol {
 

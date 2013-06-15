@@ -52,7 +52,7 @@ namespace Visualizer {
 	public:
 		static void SetPlayerName(int olduid, int uid); //String^ name);
 		static void SendMessage(String^ msg);
-		static void SendOsanve(int from, int osanve, int force);
+//		static void SendOsanve(int from, int osanve, int force);
 	//other
 	public:
 		static MainForm^ mainForm;
