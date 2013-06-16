@@ -18,7 +18,6 @@
 #include "hal.h"
 #include "main.h"   // To distinct between concentrator and device
 #include "kl_lib_f100.h"
-//#include "kl_buf.h"
 
 // ============================== Pkt_t ========================================
 struct rPkt_t {
@@ -26,6 +25,8 @@ struct rPkt_t {
     int8_t RSSI;        // Received signal level, RX use only
 } __attribute__ ((__packed__));
 #define RPKT_LEN    (sizeof(rPkt_t)-1)  // Exclude RSSI
+
+#define THE_BYTE        0xCA
 
 // =========================== Address space ===================================
 // Devices
@@ -35,16 +36,31 @@ struct rPkt_t {
 #define CHANNEL_ZERO    200
 
 // ============================== Timings ======================================
-#define TIMESLOT_MS         20  // Length of one timeslot
+#define RX_DURATION_MS          20  // How long to listen
+#define DISAPPEAR_TIMEOUT_MS    999
 
 // ================================ Level1 =====================================
 class rLevel1_t {
 private:
+#ifdef TIRUSSE
+    rPkt_t PktRx;
+    EventSource IEvtSrcAppearance;
+    VirtualTimer DisappearTmr;
+#endif
 public:
+#ifdef TX2
     void Init(uint16_t ASelfID);
-    // Inner use
     rPkt_t PktTx;       // Local rPkt to transmit
     inline void TxDone();
+#else
+    bool SomethingIsNear;
+    bool Enabled;
+    void Init();
+    void RegisterEvtAppearance(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcAppearance, PEvtLstnr, EvtMask); }
+    // Inner use
+    void Task();
+    void TimeoutHandler();
+#endif
 };
 
 extern rLevel1_t rLevel1;

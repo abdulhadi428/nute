@@ -17,7 +17,12 @@
 #define LED_HIGH    999
 static Pwr_t Pwr;
 
-// Event masks
+// Events
+#define EVTMASK_APPEARANCE  EVENT_MASK(0)
+#define EVTMASK_EXTPWR      EVENT_MASK(1)
+#define EVTMASK_CHARGING    EVENT_MASK(2)
+
+static EventListener EvtLstnrAppearance, EvtListenerExtPwr, EvtListenerCharging;
 
 static inline void Init();
 
@@ -30,31 +35,35 @@ int main(void) {
     chSysInit();
     // ==== Init Hard & Soft ====
     Init();
-//    PinSetupOut(GPIOA, 1, omPushPull);
 
-    bool IsConnected = false;
+    // Events
+    uint32_t EvtMsk;
+    rLevel1.RegisterEvtAppearance(&EvtLstnrAppearance, EVTMASK_APPEARANCE);
+    // Pwr.reg
+
     while(TRUE) {
-        chThdSleepMilliseconds(999);
-        // Check if connected
-        if(Pwr.ExtPwrOn() and !IsConnected) {
-            IsConnected = true;
-            // Radio disable
+        EvtMsk = chEvtWaitAny(EVTMASK_APPEARANCE | EVTMASK_EXTPWR | EVTMASK_CHARGING);
+        // Appear/disappear
+        if(EvtMsk & EVTMASK_APPEARANCE) {
+            if(rLevel1.SomethingIsNear) LedSmooth.SetSmoothly(LED_TOP_VALUE);
+            else LedSmooth.SetSmoothly(0);
         }
-        else if(IsConnected and !Pwr.ExtPwrOn()) {
-            IsConnected = false;
-            // Radio enable
+        // Power
+        if(EvtMsk & EVTMASK_EXTPWR) {
+            LedSmooth.SetSmoothly(0);
+            rLevel1.Enabled = !Pwr.ExtPwrOn();
         }
-
+        if(EvtMsk & EVTMASK_CHARGING) {
+//            if(Pwr.Charging()) LedSmooth.GlimmerOn();
+//            else LedSmooth.SetSmoothly(LED_LOW);
+        }
         // Demonstrate charge status
-        if(IsConnected) {
-            if(Pwr.Charging()) {
-                // Glimmer LED
-                if(LedSmooth.IsEqOrAbove(LED_HIGH)) LedSmooth.SetSmoothly(LED_LOW);
-                else if(LedSmooth.IsEqOrBelow(LED_LOW))LedSmooth.SetSmoothly(LED_HIGH);
-            }
-            else LedSmooth.SetSmoothly(LED_LOW);
-        }
-        else LedSmooth.SetSmoothly(0);
+//        if(Pwr.Charging()) {
+//            // Glimmer LED
+//            if(LedSmooth.IsEqOrAbove(LED_HIGH)) LedSmooth.SetSmoothly(LED_LOW);
+//            else if(LedSmooth.IsEqOrBelow(LED_LOW))LedSmooth.SetSmoothly(LED_HIGH);
+//        }
+//        else
 
     } // while
 }
@@ -65,5 +74,6 @@ void Init() {
     LedSmooth.Init();
     LedSmooth.SetSmoothly(0);
     Pwr.Init();
+    rLevel1.Init();
     Uart.Printf("\rTirusse2  AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
 }

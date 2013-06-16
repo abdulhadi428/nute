@@ -57,7 +57,9 @@ void LedSmooth_t::IrqHandlerI() {
     IPin.Set(ICurrentValue);
     if(ICurrentValue != INeededValue) {
         uint32_t Delay = ISetupDelay(ICurrentValue);
+        chSysLockFromIsr();
         chVTSetI(&ITmr, MS2ST(Delay), LedTmrCallback, NULL);
+        chSysUnlockFromIsr();
     }
 }
 #endif
