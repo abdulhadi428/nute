@@ -41,12 +41,25 @@ void LedSmooth_t::Init() {
     // Initial value
     Set(LED_INITIAL_VALUE);
     INeededValue = LED_INITIAL_VALUE;
+    IState = slsNone;
 }
 
 void LedSmooth_t::SetSmoothly(uint16_t AValue) {
+    IState = slsNone;
     if(INeededValue == AValue) return;
     chVTReset(&ITmr);
     INeededValue = AValue;
+    uint32_t Delay = ISetupDelay(ICurrentValue);
+    chVTSet(&ITmr, MS2ST(Delay), LedTmrCallback, NULL);
+}
+
+void LedSmooth_t::Glimmer(uint16_t AMax, uint16_t AMin) {
+    chVTReset(&ITmr);
+    IState = slsGlimmer;
+    IMax = AMax;
+    IMin = AMin;
+    if(ICurrentValue < IMax) INeededValue = IMax;
+    else INeededValue = IMin;
     uint32_t Delay = ISetupDelay(ICurrentValue);
     chVTSet(&ITmr, MS2ST(Delay), LedTmrCallback, NULL);
 }
@@ -55,6 +68,13 @@ void LedSmooth_t::IrqHandlerI() {
     if (INeededValue < ICurrentValue) ICurrentValue--;
     else ICurrentValue++;
     IPin.Set(ICurrentValue);
+
+    // if equal and glimmer needed, switch to another
+    if(IState == slsGlimmer) {
+        if(ICurrentValue == IMax) INeededValue = IMin;
+        else if(ICurrentValue == IMin) INeededValue = IMax;
+    }
+
     if(ICurrentValue != INeededValue) {
         uint32_t Delay = ISetupDelay(ICurrentValue);
         chSysLockFromIsr();

@@ -46,22 +46,30 @@ static void DisappearTmrCallback(void *p) {
 }
 
 void rLevel1_t::Task() {
-    CC.EnterIdle();
-    CC.SetChannel(CHANNEL_ZERO);
-    uint8_t Result = CC.ReceiveSync(RX_DURATION_MS, &PktRx);
-    if(Result == OK) {
-        if(PktRx.TheByte == THE_BYTE) {
-            Uart.Printf("Rx %d\r", PktRx.RSSI);
-            // Check if changed
-            if(!SomethingIsNear) {
-                SomethingIsNear = true;
-                chEvtBroadcast(&IEvtSrcAppearance);
-            }
-            // Handle disappearTmr
-            chVTReset(&DisappearTmr);
-            chVTSet(&DisappearTmr, MS2ST(DISAPPEAR_TIMEOUT_MS), DisappearTmrCallback, NULL);
-        }
+    if(!Enabled) {
+        chThdSleepMilliseconds(999);
+        return;
     }
+    // Iterate channels
+    for(uint32_t n = CHANNEL_ZERO; n < (CHANNEL_ZERO + RDEVICE_CNT - 1); n++) {
+        CC.SetChannel(n);
+        uint8_t Result = CC.ReceiveSync(RX_DURATION_MS, &PktRx);
+        if(Result == OK) {
+            if(PktRx.TheByte == THE_BYTE) {
+                Uart.Printf("Rx %d\r", PktRx.RSSI);
+                // Check if changed
+                if(!SomethingIsNear) {
+                    SomethingIsNear = true;
+                    chEvtBroadcast(&IEvtSrcAppearance);
+                }
+                // Handle disappearTmr
+                chVTReset(&DisappearTmr);
+                chVTSet(&DisappearTmr, MS2ST(DISAPPEAR_TIMEOUT_MS), DisappearTmrCallback, NULL);
+            } // if TheByte
+        } // id rslt ok
+    } // for
+    CC.Sleep();
+    chThdSleepMilliseconds(1800);
 }
 
 void rLevel1_t::TimeoutHandler() {

@@ -76,10 +76,13 @@ public:
 #define LED_INITIAL_VALUE   LED_TOP_VALUE
 #define LED_PWM_FREQ_HZ     999             // No more than 3 kHz
 
+enum SmLedState_t {slsNone, slsGlimmer};
 class LedSmooth_t {
 private:
     VirtualTimer ITmr;
     PwmPin_t IPin;
+    SmLedState_t IState;
+    uint16_t IMax, IMin;
     uint16_t ICurrentValue, INeededValue;
     uint32_t ISetupDelay(uint16_t AValue) {
         return (uint32_t)((810 / (AValue+4)) + 1);
@@ -93,6 +96,7 @@ public:
     void SetSmoothly(uint16_t AValue);
     bool IsEqOrAbove(uint16_t AValue) { return (ICurrentValue >= AValue); }
     bool IsEqOrBelow(uint16_t AValue) { return (ICurrentValue <= AValue); }
+    void Glimmer(uint16_t AMax, uint16_t AMin);
     // Inner use
     void IrqHandlerI();
 };

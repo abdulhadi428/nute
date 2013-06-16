@@ -16,7 +16,7 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "main.h"   // To distinct between concentrator and device
+#include "main.h"   // To distinct between TX2 and Tirusse
 #include "kl_lib_f100.h"
 
 // ============================== Pkt_t ========================================
@@ -31,13 +31,14 @@ struct rPkt_t {
 // =========================== Address space ===================================
 // Devices
 #define RDEV_BOTTOM_ID  1
-#define RDEV_TOP_ID     7
+#define RDEV_TOP_ID     50
+
 #define RDEVICE_CNT     ((1+RDEV_TOP_ID)-RDEV_BOTTOM_ID)
 #define CHANNEL_ZERO    200
 
 // ============================== Timings ======================================
-#define RX_DURATION_MS          20  // How long to listen
-#define DISAPPEAR_TIMEOUT_MS    999
+#define RX_DURATION_MS          18  // How long to listen
+#define DISAPPEAR_TIMEOUT_MS    3600
 
 // ================================ Level1 =====================================
 class rLevel1_t {
