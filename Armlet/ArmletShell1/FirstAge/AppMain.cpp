@@ -115,13 +115,14 @@ void _OnAtackPacket(ubyte_t enemyId, ubyte_t atack, ubyte_t cons)
 {
   Atacked( atack, cons, enemyId);
   UI.OnOsanveTimer();
-  if( Player.status == AL_STATUS_DEFEAT && cons < CONS_COUNT)
-	UI.MessageBoxShow("Поражение!", CONS[cons], NO_IMAGE);
+ // if( Player.status == AL_STATUS_DEFEAT && cons < CONS_COUNT)
+	//UI.MessageBoxShow("Поражение!", CTEXT[cons], RedCancel);
 }
 
 void _OnHealPacket(ubyte_t enemyId, ubyte_t heal)
 {
    Healed( heal);
+   UI.OnOsanveTimer();
 }
 
 void _OnOsanvePacket(ubyte_t userId, ubyte_t force,ubyte_t maxForce, ubyte_t osanve)
@@ -132,14 +133,14 @@ void _OnOsanvePacket(ubyte_t userId, ubyte_t force,ubyte_t maxForce, ubyte_t osa
   // проверка на осведомленность, если давно не слышали - сразу перерисуем
   int t = ArmletApi::GetUpTime();
   bool needSet = false;
-  if( !fp->userId || (t-fp->time)>OSANVE_MAX_WAIT_TIME)
+  if( (!fp->userId || (t-fp->time)>OSANVE_MAX_WAIT_TIME) && Player.status == AL_STATUS_OSANVE)
 	  needSet = true;
 	fp->userId = userId;
   	fp->osanve = osanve;
 	fp->force = force;
 	fp->maxForce = maxForce;
 	fp->time = t;
-	if( needSet && Player.status == AL_STATUS_OSANVE)
+	if( needSet )
 	  UI.OnOsanveTimer();
 // перерисовка осанве - по таймеру
 }

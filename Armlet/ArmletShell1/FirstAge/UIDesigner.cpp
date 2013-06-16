@@ -10,6 +10,14 @@
 
 char* OSANVES[OSANVE_COUNT] = {"все норм","творю","радуюсь","жду помощь","скучаю","подавлен","страдаю","ранен","веду бой"};
 char* CONS[CONS_COUNT] = {"истощение","миражи","безумие","печаль","боль","берсерк"};
+// описания последствий
+char* CTEXT[CONS_COUNT] = 
+ {"Бой истощил вас. Все тело болит как при тяжелом ранении.\nУ вас 1 хит",
+ "Вас выбросило из незримого мира, но видения преследуют вас.\nВы везде видите угрожающих призраков",
+ "Поражение не проходит бесследно! Вы не в себе, потеряли рассудок.\nСовершайте неадекватные действия",
+ "Мир потерял краски для вас. Все предрешено, мир обречен погрузится в ночь.\nАпатия, вы безутешны и замкнуты в себе",
+ "В незримом бою вас поразили клинком. Леденящая боль пронзает вас до сих пор.\nВам ОЧЕНЬ больно",
+ "Кругом враги! Они все ближе, сжимают кольцо!\nБросайтесь с оружием на всех кто рядом. Нет оружия - убегайте"};
 
 //W160H128
 // Roman: Время Имя Сила/Макс Батарея
@@ -1565,21 +1573,32 @@ fresult UIDesigner::OnFightMnuBattle( IMenuItem* sender )
 {
   Player.status  = AL_STATUS_COMBAT;
   Player.enemyId = 0;
-  SetFightField();
+  SetBattle();
   currentFighter = NULL;
   return ShowForm(&_frmBattleForm);
 }
 
-// Форма МессаджБокса используется для режима защиты
+// Форма МессаджБокса используется для режима защиты, последствия и предблевого
 fresult UIDesigner::OnMsgBoxMnuOk( IMenuItem* sender )
 {
-	fresult rval = MessageBoxClose();
-	if( Player.status  == AL_STATUS_DEFENSE) {
+  fresult rval = MessageBoxClose(); // закроет, проверив время последствия
+  switch( Player.status) {
+	case AL_STATUS_DEFENSE: // защита, отключение, возврат в сражение
+	{
 	  DefenceOFF();
 	  SetFightField();
 	  rval = ShowForm(&_frmFightForm);
+	  break;
 	}
-	return rval;
+	case AL_STATUS_PREPARE: // предбоевой, переход в защиту (успел нажать)
+	{
+	  currentFighter = &FGHT[Player.enemyId]; // запоминаем, кто на нас напал
+	  OnFightMnuDefence(NULL); // обработчик менюшки сделает всю работу
+	  DefenceON(); // нужно, чтоб получить отложенные атаки
+	  break;
+	}
+  }
+  return rval;
 }
 
 fresult UIDesigner::OnMsgBoxMnuScrollUp( IMenuItem* sender )

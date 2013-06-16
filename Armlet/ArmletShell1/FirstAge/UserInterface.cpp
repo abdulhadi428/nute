@@ -349,12 +349,16 @@ bool UserInterface::OnOsanveTimer()
 
 	SetOsanve(); // чтобы в памяти всегда был актуальный список
 
-	SetForces();
+	SetForces(); // чтобы свои силы отображались в статусе
 
 	if( Player.status == AL_STATUS_FIGHT)
-		SetFightField();
+		SetFightField(); // чтобы актуальной была инфа на экране сражения
+	else if( Player.status == AL_STATUS_COMBAT)
+		SetBattle(); // чтобы были актуальные противники
 
-	RedrawIfForeground(&_frmMainForm);
+	currentForm->FormPanel->Draw();
+	currentForm->Menu->Draw();
+	//RedrawIfForeground(&_frmMainForm);
 
 	return true; // always true - next period timer
 }

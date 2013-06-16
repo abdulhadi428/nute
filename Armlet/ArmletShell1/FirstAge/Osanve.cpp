@@ -4,7 +4,8 @@
 #include "UserInterface.h"
 #include "Osanve.h"
 #include "conf.h"
-
+#include "Images.h"
+#include <stdio.h>
 extern UserInterface UI;
 
 //namespace osanve {
@@ -46,7 +47,7 @@ bool OnForceTick(void)
 {
 	bool rval = false;
 //save
-	if( ArmletApi::OpenFile(&PlayerFile, "player.bin",true) )
+	if( ArmletApi::OpenFile(&PlayerFile, "player.bin",false) )
 	  ArmletApi::WriteFile(&PlayerFile,(char*)&Player,sizeof(player));
 // увеличение сил
   if( Player.force + Player.fph > Player.maxForce)
@@ -144,6 +145,8 @@ ubyte_t Healed(ubyte_t h)
 		Player.force = Player.maxForce;
 	else
 		Player.force += h;
+	if( Player.status != AL_STATUS_DEFENSE && Player.status != AL_STATUS_DEFEAT)
+		ArmletApi::DoVibroAndBeep(200);
   return Player.force;
 }
 
@@ -178,6 +181,7 @@ ubyte_t Atacked(ubyte_t a, ubyte_t cons, ubyte_t enemyId)
 		case AL_STATUS_FIGHT: // в бою
 		{ // сила атаки не может быть меньше 5
 			atack = a;
+			ArmletApi::DoVibroAndBeep(500);
 			break;
 		}
 		case AL_STATUS_DEFEAT: // уже поражен, в последствии
@@ -193,12 +197,16 @@ ubyte_t Atacked(ubyte_t a, ubyte_t cons, ubyte_t enemyId)
 			else
 			  Player.penalty += a;
 			Player.penaltyCons = cons; // и последствие
-			Player.status = AL_STATUS_PREPARE;
-			//Launch PreFight Timer
-	    ArmletApi::RequestTimer(_PreFightTimerCallback, PREFIGHT_TIME);
-		//////////////////////////////////////////////////////////////////
-		/////////////// ВСТАВИТЬ ПРОРИСОВКУ ПРЕДБОЕВОГО РЕЖИМА ///////////
-		//////////////////////////////////////////////////////////////////
+			if(Player.status != AL_STATUS_PREPARE) {
+			  char tmp[MSGBOX_CONTENT_BUFF_HEIGHT*MSGBOX_CONTENT_BUFF_WIDTH];
+			  Player.status = AL_STATUS_PREPARE;
+			  //Launch PreFight Timer
+	          ArmletApi::RequestTimer(_PreFightTimerCallback, PREFIGHT_TIME);
+			  sprintf(tmp,"На вас напал %s! Ущерб от первой атаки %d сил.\nБегите или примите бой!",
+				  CONF[enemyId].fname, a);
+              UI.MessageBoxShow("Нападение!", tmp, BlueWarning);
+			}
+		    ArmletApi::DoVibroAndBeep(500);
 			break;
 		}
 	}
@@ -212,6 +220,7 @@ ubyte_t Atacked(ubyte_t a, ubyte_t cons, ubyte_t enemyId)
 		Player.penalty = 0;
 		Player.penaltyCons = cons; // запоминаем последствие
 		Player.defeatTime = DEFAULT_DEFEAT_TIME;
+    	UI.MessageBoxShow("Поражение!", CTEXT[cons], RedCancel);
 		//////////////////////////////////////////////////////////////////
 		/////////////// ВСТАВИТЬ ПРОРИСОВКУ ПОСЛЕДСТВИЯ //////////////////
 		//////////////////////////////////////////////////////////////////

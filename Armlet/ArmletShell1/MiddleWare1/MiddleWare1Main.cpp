@@ -35,7 +35,7 @@ namespace ArmletApi {
 		// Заставка
 		Clear(LIGHT|BLUE);
 		FILE log;
-		char tmp[16];
+//		char tmp[16];
 		const char* str = "FIRST AGE: NORTH COURAGE";
 		char* s = "test log" ;
 		uword_t a = GetArmletId();
@@ -106,10 +106,8 @@ namespace ArmletApi {
 			  return;
 		  if(*(packet+1) & FORCE_HEAL) { // полечили
 			  _OnHealPacket(ap->src, ap->atack);
-			  DoVibroAndBeep(200);
 		  } else { //  упс, прилетело
 			  _OnAtackPacket(ap->src, ap->atack, GET_CONS(ap->flags));
-			  DoVibroAndBeep(500);
 		  }
 		} else { // пакет осанве
 			OSANVE_PACKET* op = (OSANVE_PACKET*)packet;

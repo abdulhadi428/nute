@@ -55,7 +55,8 @@ extern char* OSANVES[OSANVE_COUNT];
 
 // названия последствий
 extern char* CONS[CONS_COUNT];
-
+// описания последствий
+extern char* CTEXT[CONS_COUNT];
 
 // Разрешения-права (флаги)
 #define AL_CAN_FIGHT  1 // Сражаться
