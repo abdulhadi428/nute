@@ -13,11 +13,11 @@
 void Adc_t::Init() {
     Clk.SetupAdcClk(adcDiv4);
     rccEnableADC1(FALSE);
-    PinSetupAnalog(GPIOB, 1);
+    PinSetupAnalog(GPIOA, 1);
 
     Enable();       // May configure only enabled ADC
     SetChannelCount(1);
-    ChannelConfig(9, ADC_SampleTime_55_5Cycles, 1);
+    ChannelConfig(1, ADC_SampleTime_55_5Cycles, 1);
     Calibrate();    // Must be performed when ADC is disabled
 }
 

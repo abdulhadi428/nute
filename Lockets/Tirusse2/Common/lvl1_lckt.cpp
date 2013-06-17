@@ -40,6 +40,7 @@ static msg_t rLvl1Thread(void *arg) {
     return 0;
 }
 
+#ifndef TX2
 // Timer callback
 static void DisappearTmrCallback(void *p) {
     rLevel1.TimeoutHandler();
@@ -80,6 +81,7 @@ void rLevel1_t::TimeoutHandler() {
         chSysUnlockFromIsr();
     }
 }
+#endif
 
 // ================================= Common ====================================
 #ifdef TX2

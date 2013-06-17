@@ -9,14 +9,13 @@
 #include "kl_lib_f100.h"
 #include "ch.h"
 #include "hal.h"
-//#include "pwr.h"
+#include "pwr.h"
 #include "lvl1_lckt.h"
 
-//static Pwr_t Pwr;
-
-// Event masks
-
 static inline void Init();
+
+#define LED_ON()    PinSet(GPIOB, 0)
+#define LED_OFF()   PinClear(GPIOB, 0)
 
 int main(void) {
     // ==== Init clock system ====
@@ -27,10 +26,20 @@ int main(void) {
     chSysInit();
     // ==== Init Hard & Soft ====
     Init();
-//    PinSetupOut(GPIOA, 1, omPushPull);
 
+    bool IsOn = false;
     while(TRUE) {
-        chThdSleepMilliseconds(999);
+        chThdSleepMilliseconds(108);
+        if(!IsOn) {
+            IsOn = true;
+            LED_ON();
+        }
+        else {
+            if(Pwr.BatteryDischarged) {
+                IsOn = false;
+                LED_OFF();
+            }
+        }
     } // while
 }
 
@@ -49,9 +58,11 @@ static inline uint8_t GetID() {
 void Init() {
     JtagDisable();
     Uart.Init(57600);
-//    Pwr.Init();
+    Pwr.Init();
     // Get ID
     uint8_t id = GetID();
     rLevel1.Init(id);
+    // LED
+    PinSetupOut(GPIOB, 0, omPushPull);
     Uart.Printf("\rTx2 id=%u  AHB=%u; APB1=%u; APB2=%u\r", id, Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
 }

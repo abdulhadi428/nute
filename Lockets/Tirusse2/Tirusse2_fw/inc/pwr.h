@@ -9,7 +9,6 @@
 #define PWR_H_
 
 #include "kl_lib_f100.h"
-#include "main.h"   // To distinct between TX2 and Tirusse
 
 #define CHARGE_GPIO     GPIOA
 #define CHARGE_PIN      12

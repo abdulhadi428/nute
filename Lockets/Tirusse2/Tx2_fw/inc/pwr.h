@@ -15,15 +15,23 @@
 #define EXT_PWR_GPIO    GPIOA
 #define EXT_PWR_PIN     0
 
+#define BATTERY_EMPTY_MV    3600
+
 class Pwr_t {
+private:
+//    EventSource IEvtSrcPwr;
+//    bool IExtPwrConnected, ICharging;
 public:
-    void Init() {
-        PinSetupIn(EXT_PWR_GPIO, EXT_PWR_PIN, pudPullDown);
-        PinSetupIn(CHARGE_GPIO, CHARGE_PIN, pudPullUp);
-    }
-    bool ExtPwrOn() { return PinIsSet(EXT_PWR_GPIO, EXT_PWR_PIN); }
-    bool Charging() { return !PinIsSet(CHARGE_GPIO, CHARGE_PIN); }
+    bool BatteryDischarged;
+    void Init();
+//    bool ExtPwrOn() { return PinIsSet(EXT_PWR_GPIO, EXT_PWR_PIN); }
+//    bool Charging() { return !PinIsSet(CHARGE_GPIO, CHARGE_PIN); }
+//    void RegisterEvtPwr(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcPwr, PEvtLstnr, EvtMask); }
+    // Inner use
+    void Task();
 };
+
+extern Pwr_t Pwr;
 
 
 #endif /* PWR_H_ */
