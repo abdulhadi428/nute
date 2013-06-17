@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "LowLevel.h"
 #include "OsanveProtocol.h"
+#include "conf.h"
 
 #define _CRT_SECURE_NO_WARNINGS
 #include "stdio.h"	//_vsnprintf
@@ -110,7 +111,7 @@ namespace LowLevel {
 		op.src = (unsigned char)(from);
 		op.flags = (unsigned char)(osanve & OSANVE_MASK);
 		op.force = (unsigned char)force;
-		op.maxForce = 250;
+		op.maxForce = CONF[op.src].maxForce;
 		ArmletApi::OnRadioPacket((unsigned char*)&op,PACKET_LEN);
 	}
 	// ATACK packet

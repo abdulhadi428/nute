@@ -35,7 +35,7 @@ fresult InitColorSchema()
 	if  (fres!=SUCCESS)
 		return fres;
 
-	fres = GetTextFormat(DEFAULT_FONT, GREEN, RED,&gTextFormats[FormatParrot]);
+	fres = GetTextFormat(DEFAULT_FONT, GREEN, MENU_FOREGROUND,&gTextFormats[FormatParrot]);
 	if  (fres!=SUCCESS)
 		return fres;	
 

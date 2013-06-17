@@ -1,5 +1,6 @@
 #pragma once
 #include "ArmletShell.h"
+#include "conf.h"
 // сообщение-статус осанве
 #define OSANVE_COUNT 9 // число состояний
 #define OSANVE_NORM 0 // все норм (по умолчанию)
@@ -41,7 +42,6 @@ extern char* OSANVES[OSANVE_COUNT];
 // Боевые константы
 #define FORCE_MAX 255
 #define FORCE_STEP 5
-#define MAX_ARMLET 255
 #define MAX_ATACK_SEQ 7
 
 // последствия
@@ -100,6 +100,9 @@ extern char* CTEXT[CONS_COUNT];
   void DefenceON(void); // Нажата кнопка защиты
   void DefenceOFF(void); // Отжата кнопка защиты
 	void PlayerInit(void);
+/// заполнение структуры игрока по ID инфой из таблицы
+/// false - ошибка (неверный ID)
+   bool InitPlayer(struct player* p);
 
 	struct nick { // Описывает момент получения отклика от игрока
 		ubyte_t userId; // игрок

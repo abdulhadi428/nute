@@ -1115,9 +1115,11 @@ fresult UIDesigner::SetBattle(void)
 			break; // всех занесли, кого надо было
 	  // рисуем новые имена
 		char tmp[32];
+		TextFormat* tformat = (CONF[i].evil)?(gFormatsRepository.GetFormatById(FormatMenu)):(gFormatsRepository.GetFormatById(FormatParrot));
 		fightersOnScreen[item]=&FGHT[i];
 		sprintf( tmp, "%s\n%d/%d", CONF[i].fname, FGHT[i].force,FGHT[i].maxForce);
 		tmp[31] = '\0';
+		_txtFighters[item].SetTextFormat( tformat);
 	    _txtFighters[item].SetText( tmp);
 	}
 	return SUCCESS;
