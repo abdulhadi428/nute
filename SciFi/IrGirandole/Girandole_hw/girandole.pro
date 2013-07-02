@@ -1,4 +1,4 @@
-update=26/05/2013 00:03:24
+update=7/2/2013 5:01:02 PM
 version=1
 last_client=eeschema
 [general]
@@ -53,4 +53,4 @@ LibName5=st_kl
 LibName6=Tittar_kl
 LibName7=Transistors_kl
 LibName8=Sensors
-LibName9=memory
+LibName9=OpAmp_kl
