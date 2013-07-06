@@ -38,7 +38,7 @@ char buf1[6*1024];
 void _medOnMedTick(char** oSymptoms)
 {	
 	//save
-	ArmletApi::ReadFile(&MedFile,(char*)&Body,sizeof(BODY));
+	ArmletApi::WriteFile(&MedFile,(char*)&Body,sizeof(BODY));
 
 	//To server
 	ubyte_t state[5];
