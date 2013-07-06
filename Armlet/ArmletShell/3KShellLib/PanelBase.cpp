@@ -52,7 +52,7 @@ fresult PanelBase::DrawArea( Position pos, Size size )
 	Position ctrlDrawPos;
 	Size ctrlDrawSize;
 
-	IControl* control;
+	IControl* control = NULL;
 	bool_t hasIntersection;
 	fresult fres;
 
@@ -60,6 +60,8 @@ fresult PanelBase::DrawArea( Position pos, Size size )
 	for (int i=0;i < _ControlsCount; i++)
 	{
 		control = _Controls[i];
+		if( !control)
+			continue;
 		ctrlPos = control->GetPosition();
 		ctrlSize = control->GetSize();
 		//has intersection?
