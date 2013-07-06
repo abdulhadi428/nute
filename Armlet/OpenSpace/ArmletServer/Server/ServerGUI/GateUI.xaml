@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="ServerGUI.GateUI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" Height="200.068" Width="378.947"
+             
+             Loaded="GateUI_OnLoaded">
+    <StackPanel Orientation="Vertical">
+        <GroupBox Header="Гейт" DockPanel.Dock="Top" x:Name="GateGroupBox">
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="UpdateButton" Click="UpdateButton_Click">Обновить</Button>
+                <Label>Дополнительное устройство</Label> 
+                <Button x:Name="ActivatePin" Click="ActivatePin_OnClick">Активировать</Button>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Пилюля" x:Name="PillGroupBox">
+            <StackPanel Orientation="Vertical">
+                <TextBlock x:Name="PillContentBox"></TextBlock>
+
+                <WrapPanel Orientation="Horizontal">
+                    
+                    <Label>Тип:</Label><ComboBox x:Name="PillTypeBox" IsEditable="False" MinWidth="200"></ComboBox>
+                    <Label>Заряды:</Label>
+                    <TextBox x:Name="ChargesTextBox" MinWidth="50" Margin="5,0,5,0"></TextBox> 
+                    <Button x:Name="WritePillButton" Click="WritePillButton_Click">Записать</Button>
+                </WrapPanel>
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+
+</UserControl>
