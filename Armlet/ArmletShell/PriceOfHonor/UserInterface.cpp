@@ -332,6 +332,7 @@ void UserInterface::OnServerMessage(char* msg)
 		LogError("Cant't show msgbox!");
 		return;
 	}
+	ArmletApi::DoVibroAndBeep(500);
 
 	fres = AppendLog(LOG_MESSAGE, "\n");
 	if (fres!=SUCCESS)	

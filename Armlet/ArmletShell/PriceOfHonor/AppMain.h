@@ -1,6 +1,6 @@
 #pragma once
 
-#define FIRMWARE_VERSION "0.7"
+#define FIRMWARE_VERSION "0.9"
 
 void AppMainThread(void* param);
 
