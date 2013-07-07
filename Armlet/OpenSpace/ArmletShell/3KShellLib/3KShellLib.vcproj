@@ -174,11 +174,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TextField.cpp"
+				RelativePath=".\Styles.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\TextForm.cpp"
+				RelativePath=".\TextBoxFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TextField.cpp"
 				>
 			</File>
 		</Filter>
@@ -224,6 +228,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ITextStream.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MenuBase.h"
 				>
 			</File>
@@ -252,11 +260,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TextField.h"
+				RelativePath=".\Styles.h"
 				>
 			</File>
 			<File
-				RelativePath=".\TextForm.h"
+				RelativePath=".\TextBoxFactory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TextField.h"
 				>
 			</File>
 		</Filter>

@@ -1,4 +1,5 @@
 #include "ArmletShell.h"
+#include "ITextStream.h"
 #include "TextField.h"
 
 namespace ThreeKShell {
@@ -53,22 +54,24 @@ void TextField::SetTextFormat( TextFormat* format )
 		_Format = *format;
 }
 
-
 fresult TextField::AppendText(const char* text)
+{
+	return AppendText(text, Length(text));
+}
+
+fresult TextField::AppendText(const char* text, uword_t sz)
 {
 	fresult fres = SUCCESS;
 	ubyte_t wrapLimit;
 	ubyte_t wrapBacktrack;
-	//calculate wrap
 
-	if (text==NULL) 
+	//if nothing read
+	if (text == NULL) 
 		return SUCCESS;
-
+	
+	//calculate wrap params
 	ubyte_t lineLengthToDrawTx = _Size.Width / _Format.Font.GlyphSize.Width;
-	if (lineLengthToDrawTx <1)
-	{
-		return GENERAL_ERROR;
-	}
+	FAILIF(lineLengthToDrawTx <1);
 
 	//that may exceed the buff - then we'll need to wrap to buff width, not the size width
 	if (_textBuffSizeTx.Width < lineLengthToDrawTx || !_WordWrap)
@@ -87,14 +90,10 @@ fresult TextField::AppendText(const char* text)
 
 	Position buffWritePosition;
 	buffWritePosition.data = _textBuffCarretPositionTx.data;
-	if (! (buffWritePosition.Left*buffWritePosition.Top < _buffLength))
-	{
-		return GENERAL_ERROR;
-	}
+	FAILIF(! (buffWritePosition.Left*buffWritePosition.Top < _buffLength));
 
 	uword_t strReadIndex=0;
-
-	while (text[strReadIndex]!=0)
+	while (strReadIndex < sz)
 	{
 		//read ahead to next word end
 		ubyte_t readAheadIndex =0;
@@ -173,7 +172,6 @@ fresult TextField::AppendText(const char* text)
 					{
 						buffWritePosition.Left++;
 					}
-					
 				}
 				else
 				{
@@ -185,7 +183,6 @@ fresult TextField::AppendText(const char* text)
 			}
 			i++;
 		} while (i< readAheadIndex);
-		
 	}
 
 	//adjust caret pos
@@ -214,19 +211,51 @@ fresult TextField::SetText(const char* text )
 {
 	fresult fres;
 	fres= Clear();
-	if (fres!=SUCCESS)
-	{
-		return fres;
-	}
+	ENSURESUCCESS(fres);
+
+	_textBuffCarretPositionTx.data =0;
+
+	//Init TextSrc
+	_textStream = NULL;
+	_streamed = false;
+	//buff offset in stream
+	_streamPos = 0;
 
 	//append to 0,0
 	fres = AppendText(text);
-	if (fres!=SUCCESS)
-	{
-		return fres;
-	}
+	ENSURESUCCESS(fres);
 
 	return SUCCESS;
+}
+
+fresult TextField::SetTextStream( ITextStream* stream )
+{
+	FAILIF(stream==NULL);
+
+	fresult fres;
+	fres= Clear();
+	ENSURESUCCESS(fres);
+
+	_textBuffCarretPositionTx.data =0;
+	//Init TextSrc
+	_textStream = stream;
+	_streamed = true;
+	//buff offset in stream
+	_streamPos = 0;
+	
+	uword_t frameLength = (_Size.Height / _Format.Font.GlyphSize.Height) * _Size.Width / _Format.Font.GlyphSize.Width;
+	uword_t readChars = 0;
+	//2 frames fwd
+	char* text = stream->GetTextAt(0, frameLength*2, &readChars);
+
+	while(readChars !=0)
+	{
+		fres = AppendText(text, readChars);
+		ENSURESUCCESS(fres);
+	}
+	
+	fres = SUCCESS;
+	return fres;
 }
 
 Position TextField::GetScrollPosition()
@@ -296,12 +325,15 @@ fresult TextField::Init(Size size, Position position, char* buff, Size buffSize,
 	_ScrollPositionTx.Left = 0;
 	_ScrollPositionTx.Top = 0;
 
+	//Init Src
+	_textStream = NULL;
+	_streamPos = 0;
 	
 	//Defaulting:
 	_Format.BgColor = ThreeK_DEFAULT_TEXTFIELD_BACKGROUND;
 	_Format.FgColor = ThreeK_DEFAULT_TEXTFIELD_FOREGROUND;
 	//Get Default font
-	fres = GetFontById(ThreeK_DEFAULT_TEXTFIELD_FONT, &(_Format.Font));
+	fres = CreateFontById(ThreeK_DEFAULT_TEXTFIELD_FONT, &(_Format.Font));
 	if (fres != SUCCESS)
 	{
 		return fres;
@@ -467,5 +499,6 @@ fresult TextField::ScrollDown()
 	pos.Top++;
 	return SetScrollPosition(pos);
 }
+
 
 }

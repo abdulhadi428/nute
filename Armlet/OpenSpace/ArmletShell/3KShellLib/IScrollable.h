@@ -12,11 +12,11 @@ public:
 	//  GENERAL_WARNING
 	//       - if position was adjusted to fit in TextSize (*positon parameter will contain adjusted values)
 	//
-	fresult virtual	SetScrollPosition (Position position) =0;
-	fresult virtual	ScrollUp () =0;
-	fresult virtual	ScrollDown () =0;
+	virtual fresult SetScrollPosition (Position position) =0;
+	virtual	fresult ScrollUp () =0;
+	virtual	fresult ScrollDown () =0;
 
-	Position virtual GetScrollPosition() =0;
+	virtual Position GetScrollPosition() =0;
 };
 
 }

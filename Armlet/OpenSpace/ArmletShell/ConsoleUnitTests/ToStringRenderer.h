@@ -23,7 +23,7 @@ public:
 	char* _buff;
 	char* _formatBuff;
 
-	fresult virtual DrawString( Position pospx, const char* str, uword_t length, TextFormat* format);
+	virtual fresult DrawString( Position pospx, const char* str, uword_t length, TextFormat* format);
 
 	fresult Init(Size size);
 	fresult Cls();

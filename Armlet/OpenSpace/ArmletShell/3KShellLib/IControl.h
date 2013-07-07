@@ -13,29 +13,29 @@ class IControl
 
 public:
 	
-	Size virtual GetSize()=0;
-	Position virtual GetPosition()=0;
-	ubyte_t virtual GetZOrder()=0;
-	bool_t virtual GetVisible()=0;
+	virtual Size GetSize()=0;
+	virtual Position GetPosition()=0;
+	virtual ubyte_t GetZOrder()=0;
+	virtual bool_t GetVisible()=0;
 
 	//Setters
-	void virtual SetVisible(bool_t visible)=0;
+	virtual void SetVisible(bool_t visible)=0;
 
-	void virtual SetZOrder(ubyte_t ZOrder)=0;
+	virtual void SetZOrder(ubyte_t ZOrder)=0;
 
 	//Set the size;
-	fresult virtual SetSize(Size size)=0;
+	virtual fresult SetSize(Size size)=0;
 
 	//Set the position
-	fresult virtual SetPosition(Position position)=0;
+	virtual fresult SetPosition(Position position)=0;
 
 	//Logic
 	
 	//renders control content to screen
-	fresult virtual Draw()=0;
+	virtual fresult Draw()=0;
 
 	//renders control partially to screen
-	fresult virtual DrawArea(Position pos, Size size)=0;
+	virtual fresult DrawArea(Position pos, Size size)=0;
 };
 
 }

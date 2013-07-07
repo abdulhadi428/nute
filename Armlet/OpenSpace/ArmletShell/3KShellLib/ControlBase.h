@@ -16,7 +16,7 @@ protected:
 	ubyte_t _ZOrder;
 	IRender* _render;
 
-	fresult virtual BaseInit( Size size, Position position, IRender* render)
+	virtual fresult BaseInit( Size size, Position position, IRender* render)
 	{
 		_Size = size;
 		_Position = position;
@@ -28,50 +28,50 @@ protected:
 
 public:
 
-	Size virtual GetSize() 
+	virtual Size GetSize() 
 	{
 		return _Size;
 	}
 
-	Position virtual GetPosition() 
+	virtual Position  GetPosition() 
 	{
 		return _Position;
 	}
 
-	ubyte_t virtual GetZOrder()
+	virtual ubyte_t GetZOrder()
 	{
 		return _ZOrder;
 	}
 
-	bool_t virtual GetVisible()
+	virtual bool_t GetVisible()
 	{
 		return _bVisible;
 	}
 
 
-	void virtual SetVisible( bool_t visible )
+	virtual void SetVisible( bool_t visible )
 	{
 		_bVisible = visible;
 	};
 
-	void virtual SetZOrder( ubyte_t ZOrder )
+	virtual void SetZOrder( ubyte_t ZOrder )
 	{
 		_ZOrder= ZOrder;
 	};
 
-	fresult virtual SetSize( Size size )
+	virtual fresult SetSize( Size size )
 	{
 		_Size = size;
 		return SUCCESS;
 	}
 
-	fresult virtual SetPosition( Position position )
+	virtual fresult SetPosition( Position position )
 	{
 		_Position = position;
 		return SUCCESS;
 	}
 
-	fresult virtual Draw() 
+	virtual fresult Draw() 
 	{
 		return DrawArea(_Position, _Size);
 	}

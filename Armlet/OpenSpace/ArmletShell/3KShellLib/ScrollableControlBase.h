@@ -10,31 +10,31 @@ class ScrollableControlBase : public ControlBase, public IScrollable
 protected:
 	Position _ScrollPosition;
 
-	fresult virtual BaseInit( Size size, Position position, IRender* render)
+	virtual fresult BaseInit( Size size, Position position, IRender* render)
 	{
 		_ScrollPosition.data =0;
 		return ControlBase::BaseInit(size,position,render);
 	};
 
 public:
-	Position virtual GetScrollPosition()
+	virtual Position GetScrollPosition()
 	{
 		return _ScrollPosition;
 	};
 
-	fresult virtual SetScrollPosition (Position position)
+	virtual fresult SetScrollPosition (Position position)
 	{
 		_ScrollPosition= position;
 		return SUCCESS;
 	};
 
-	fresult virtual ScrollUp() 
+	virtual fresult ScrollUp() 
 	{
 		_ScrollPosition.Top--;
 		return SetScrollPosition(_ScrollPosition);
 	}
 
-	fresult virtual ScrollDown() 
+	virtual fresult ScrollDown() 
 	{
 		_ScrollPosition.Top++;
 		return SetScrollPosition(_ScrollPosition);	

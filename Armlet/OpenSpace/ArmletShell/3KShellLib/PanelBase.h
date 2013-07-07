@@ -15,7 +15,7 @@ protected:
 	
 	fresult SetControls( IControl** controls, ubyte_t count );
 
-	fresult virtual DrawArea( Position pos, Size size );
+	virtual fresult DrawArea( Position pos, Size size );
 
 };
 

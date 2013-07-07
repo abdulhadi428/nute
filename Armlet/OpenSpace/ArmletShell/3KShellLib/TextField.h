@@ -2,11 +2,11 @@
 /* Text Field:
 Setting Text
  1. Text is a padded with 0x0 rectangular text area
- 2. Dimestions should be set by TextSize
+ 2. Dimensions should be set by TextSize
 
 Setting Format
  1. Text is a padded with 0x0 rectangular text area
- 2. Dimestions cosidered to be TextSize
+ 2. Dimensions considered to be TextSize
  
 Setting Size:
  1. Size is viewable area of the text (i.e. "window" of the text currently shown on screen)
@@ -20,6 +20,7 @@ Setting ScrollPosition
 */
 
 #include "ScrollableControlBase.h"
+#include "ITextStream.h"
 
 namespace ThreeKShell {
 
@@ -35,8 +36,15 @@ private:
 	Size _textBuffSizeTx;
 	uword_t _buffLength;
 	char* _textBuff;
-	Position _textBuffCarretPositionTx;
 
+	//for streamed textfield
+	ITextStream* _textStream;
+	bool_t _streamed;
+	//buff offset in stream
+	uword_t _streamPos;
+
+
+	Position _textBuffCarretPositionTx;
 	TextFormat _Format;
 	
 	bool_t _WordWrap;
@@ -54,6 +62,8 @@ private:
 	//NOTE:
 	//If required length exceeds textSize.Width - returns GENERAL_WARNING and length is set to actual length
 	fresult GetLineAtXY( Position pos, ubyte_t* ioLength, char** oLine);
+
+	fresult TextField::AppendText(const char* text, uword_t sz);
 
 public:
 	
@@ -81,6 +91,9 @@ public:
 	//Setting the text;
 	fresult SetText(const char* text);
 
+	//Setting text stream
+	fresult SetTextStream(ITextStream* stream);
+
 	//append the text to current caret pos
 	fresult AppendText(const char* text);
 
@@ -91,7 +104,7 @@ public:
 	//  GENERAL_WARNING
 	//       - if position was adjusted to fit in TextSize (*positon parameter will contain adjusted values)
 	//
-	fresult virtual SetScrollPosition (Position position);
+	virtual fresult SetScrollPosition (Position position);
 
 	//Initialization;
 	fresult Init(Size size, Position position, char* buff, Size buffSize, IRender* renderer);
@@ -99,13 +112,13 @@ public:
 	//Logic
 	
 	//renders control partially to screen
-	fresult virtual DrawArea(Position pos, Size size);
+	virtual fresult DrawArea(Position pos, Size size);
 
-	Position virtual GetScrollPosition();
+	virtual Position GetScrollPosition();
 
-	fresult virtual ScrollUp();
+	virtual fresult ScrollUp();
 
-	fresult virtual ScrollDown();
+	virtual fresult ScrollDown();
 
 };
 

@@ -9,7 +9,7 @@ class Image : public ScrollableControlBase
 	Size _bitmapSize;
 public:
 
-	fresult virtual DrawArea( Position pos, Size size );
+	virtual fresult DrawArea( Position pos, Size size );
 	fresult Init(Size size, Position position, IRender* render)
 	{
 		fresult fres;

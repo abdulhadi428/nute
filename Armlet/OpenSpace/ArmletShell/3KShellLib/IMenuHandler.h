@@ -6,7 +6,7 @@ namespace ThreeKShell {
 class IMenuHandler
 {
 public:
-	fresult virtual	OnClick(IMenuItem* sender)=0;
+	virtual fresult OnClick(IMenuItem* sender)=0;
 };
 
 }
