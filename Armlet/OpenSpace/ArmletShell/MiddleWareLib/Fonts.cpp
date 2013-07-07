@@ -8,7 +8,7 @@ namespace ArmletShell {
 //}
 //#undef _FONT_PROTECTION_
 
-	fresult GetFontById( ubyte_t fontId, FontDescription* oFont )
+	fresult CreateFontById( ubyte_t fontId, FontDescription* oFont )
 	{
 		if (fontId != 1)
 			return GENERAL_ERROR;
@@ -20,10 +20,10 @@ namespace ArmletShell {
 		return SUCCESS;
 	}
 
-	fresult GetTextFormat(ubyte_t fontId, Color bgColor, Color fgColor, TextFormat* oFormat )
+	fresult CreateTextFormat(ubyte_t fontId, Color bgColor, Color fgColor, TextFormat* oFormat )
 	{
 		fresult fres;
-		fres = GetFontById(fontId, &(oFormat->Font));
+		fres = CreateFontById(fontId, &(oFormat->Font));
 		if (fres != SUCCESS)
 			return fres;
 
@@ -33,7 +33,7 @@ namespace ArmletShell {
 		return SUCCESS;
 	}
 
-	fresult FormatsRepository::Init( TextFormat* formats, sbyte_t formatsCount )
+	fresult FormatsRepository_DEPRECATED::Init( TextFormat* formats, sbyte_t formatsCount )
 	{
 		_formats = formats;
 		_formatsCount = formatsCount;
@@ -41,7 +41,7 @@ namespace ArmletShell {
 		return SUCCESS;
 	}
 
-	TextFormat* FormatsRepository::GetFormatById( sbyte_t id )
+	TextFormat* FormatsRepository_DEPRECATED::GetFormatById( sbyte_t id )
 	{
 		if (id < 0 || id >= _formatsCount)
 		{

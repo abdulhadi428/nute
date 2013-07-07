@@ -71,3 +71,6 @@ inline void InitPositionAndSize(
 	size->Height = height;
 	size->Width = width;
 }
+
+#define FAILIF(expr) if (expr) return GENERAL_ERROR
+#define ENSURESUCCESS(val) if (val!=SUCCESS) return val

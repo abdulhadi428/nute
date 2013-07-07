@@ -21,10 +21,10 @@ typedef struct _TextFormat
 	FontDescription Font;
 } TextFormat;
 
-fresult GetFontById(ubyte_t fontId, FontDescription* oFont );
-fresult GetTextFormat(ubyte_t fontId, Color bgColor, Color fgColor, TextFormat* oFormat);
+fresult CreateFontById(ubyte_t fontId, FontDescription* oFont );
+fresult CreateTextFormat(ubyte_t fontId, Color bgColor, Color fgColor, TextFormat* oFormat);
 
-class FormatsRepository
+class FormatsRepository_DEPRECATED
 {
 	TextFormat* _formats;
 	sbyte_t _formatsCount;
