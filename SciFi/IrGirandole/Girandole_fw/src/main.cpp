@@ -15,9 +15,14 @@
 //          ^^^^^^^^ ID
 // Pkt is left-adjusted.
 
+#define TRANSMIT_PERIOD_MS  999
+
 ir_t ir;
 static inline void Init();
+static inline void GoSleep();
 static uint8_t ID;
+static IWDG_t Iwdg;
+static EventListener EvtLstnrIrTxEnd;
 
 int main(void) {
     // ==== Init clock system ====
@@ -28,14 +33,18 @@ int main(void) {
     chSysInit();
     // ==== Init Hard & Soft ====
     Init();
-
+    ir.RegisterEvtTxEnd(&EvtLstnrIrTxEnd, EVENT_MASK(0));
     while(TRUE) {
-        chThdSleepMilliseconds(180);
         uint16_t w = ID;
         w <<= 8;
         w |= 0x04;
         //Uart.Printf("%X\r", w);
         ir.TransmitWord(w, 100);
+        chEvtWaitAny(EVENT_MASK(0));
+        // Transmission completed
+        //Uart.Printf("TxEnd\r");
+        GoSleep();
+        //chThdSleepMilliseconds(999);
     }
 }
 
@@ -57,5 +66,23 @@ void Init() {
     ir.Init();
     ID = GetID();
     ir.Init();
-    Uart.Printf("\rGirandole #%u  AHB=%u; APB1=%u; APB2=%u\r", ID, Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+    // Set white and print info only when switch on, not after watcdog reset.
+    if(!Iwdg.ResetOccured()) {
+        Uart.Printf("\rGirandole #%u  AHB=%u; APB1=%u; APB2=%u\r", ID, Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+        chThdSleepMilliseconds(999);    // Timeout to connect programmator
+    }
+    else Uart.Printf("W\r");
+}
+
+void GoSleep() {
+    // Start LSI
+    Clk.LsiEnable();
+    // Start IWDG
+    Iwdg.SetTimeout(TRANSMIT_PERIOD_MS);
+    Iwdg.Enable();
+    // Enter standby mode
+    SCB->SCR |= SCB_SCR_SLEEPDEEP;
+    PWR->CR = PWR_CR_PDDS;
+    PWR->CR |= PWR_CR_CWUF;
+    __WFI();
 }

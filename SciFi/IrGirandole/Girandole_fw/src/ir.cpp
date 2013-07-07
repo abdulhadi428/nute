@@ -9,6 +9,7 @@
 #include "stm32f10x.h"
 
 void ir_t::Init() {
+    chEvtInit(&IEvtSrcTxEnd);
     // ==== GPIO ====
     // Once the DAC channel is enabled, the corresponding GPIO pin is automatically
     // connected to the DAC converter. In order to avoid parasitic consumption,
@@ -93,6 +94,7 @@ void ir_t::IChunkTmrHandler() {
         ChunkTmr.Disable();
         IDacCarrierDisable(); // Stop Dac
         CarrierTmr.PwmSet(0);
+        chEvtBroadcast(&IEvtSrcTxEnd);
     }
     else {
         PChunk++;

@@ -41,6 +41,7 @@ struct IrChunk_t {
 
 class ir_t {
 private:
+    EventSource IEvtSrcTxEnd;
     IrChunk_t TxBuf[CHUNK_CNT], *PChunk; // Buffer of power values: header + all one's + 1 delay after
     uint16_t CarrierArr[CARRIER_PERIOD_CNT], ZeroArr[CARRIER_PERIOD_CNT];
     Timer_t SamplingTmr, ChunkTmr, CarrierTmr;
@@ -59,6 +60,7 @@ public:
     bool Busy;
     void Init();
     void TransmitWord(uint16_t wData, uint8_t PwrPercent);
+    void RegisterEvtTxEnd(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcTxEnd, PEvtLstnr, EvtMask); }
     // Inner use
     void IChunkTmrHandler();
 };
