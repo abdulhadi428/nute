@@ -27,44 +27,41 @@ void Timer_t::Init(TIM_TypeDef* PTmr) {
     else PClk = &Clk.APB1FreqHz;
 }
 
-//void Timer_t::PwmInit(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted) {
-//    // GPIO
-//    if     (ANY_OF_2(ITmr, TIM1, TIM2))       PinSetupAlterFunc(GPIO, N, omPushPull, pudNone, AF1);
-//    else if(ANY_OF_3(ITmr, TIM3, TIM4, TIM5)) PinSetupAlterFunc(GPIO, N, omPushPull, pudNone, AF2);
-//    else if(ANY_OF_4(ITmr, TIM8, TIM9, TIM10, TIM11)) PinSetupAlterFunc(GPIO, N, omPushPull, pudNone, AF3);
-//    else if(ANY_OF_3(ITmr, TIM12, TIM13, TIM14)) PinSetupAlterFunc(GPIO, N, omPushPull, pudNone, AF9);
-//    // Enable outputs for advanced timers
-//    ITmr->BDTR = TIM_BDTR_MOE | TIM_BDTR_AOE;
-//    // Output
-//    uint16_t tmp = (Inverted == invInverted)? 0b111 : 0b110; // PWM mode 1 or 2
-//    switch(Chnl) {
-//        case 1:
-//            PCCR = &ITmr->CCR1;
-//            ITmr->CCMR1 |= (tmp << 4);
-//            ITmr->CCER  |= TIM_CCER_CC1E;
-//            break;
-//
-//        case 2:
-//            PCCR = &ITmr->CCR2;
-//            ITmr->CCMR1 |= (tmp << 12);
-//            ITmr->CCER  |= TIM_CCER_CC2E;
-//            break;
-//
-//        case 3:
-//            PCCR = &ITmr->CCR3;
-//            ITmr->CCMR2 |= (tmp << 4);
-//            ITmr->CCER  |= TIM_CCER_CC3E;
-//            break;
-//
-//        case 4:
-//            PCCR = &ITmr->CCR4;
-//            ITmr->CCMR2 |= (tmp << 12);
-//            ITmr->CCER  |= TIM_CCER_CC4E;
-//            break;
-//
-//        default: break;
-//    }
-//}
+void Timer_t::PwmInit(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted) {
+    // GPIO
+    PinSetupAlterFuncOutput(GPIO, N, omPushPull, ps50MHz);  // Timer output
+    // Enable outputs for advanced timers
+    ITmr->BDTR = TIM_BDTR_MOE | TIM_BDTR_AOE;
+    // Output
+    uint16_t tmp = (Inverted == invInverted)? 0b111 : 0b110; // PWM mode 1 or 2
+    switch(Chnl) {
+        case 1:
+            PCCR = &ITmr->CCR1;
+            ITmr->CCMR1 |= (tmp << 4);
+            ITmr->CCER  |= TIM_CCER_CC1E;
+            break;
+
+        case 2:
+            PCCR = &ITmr->CCR2;
+            ITmr->CCMR1 |= (tmp << 12);
+            ITmr->CCER  |= TIM_CCER_CC2E;
+            break;
+
+        case 3:
+            PCCR = &ITmr->CCR3;
+            ITmr->CCMR2 |= (tmp << 4);
+            ITmr->CCER  |= TIM_CCER_CC3E;
+            break;
+
+        case 4:
+            PCCR = &ITmr->CCR4;
+            ITmr->CCMR2 |= (tmp << 12);
+            ITmr->CCER  |= TIM_CCER_CC4E;
+            break;
+
+        default: break;
+    }
+}
 
 
 // ============================== UART command =================================

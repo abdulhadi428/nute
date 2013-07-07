@@ -35,7 +35,7 @@ int main(void) {
         w <<= 8;
         w |= 0x04;
         //Uart.Printf("%X\r", w);
-        ir.TransmitWord(w, 10);
+        ir.TransmitWord(w, 100);
     }
 }
 

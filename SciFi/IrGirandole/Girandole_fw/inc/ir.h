@@ -43,7 +43,18 @@ class ir_t {
 private:
     IrChunk_t TxBuf[CHUNK_CNT], *PChunk; // Buffer of power values: header + all one's + 1 delay after
     uint16_t CarrierArr[CARRIER_PERIOD_CNT], ZeroArr[CARRIER_PERIOD_CNT];
-    Timer_t CarrierTmr, ChunkTmr;
+    Timer_t SamplingTmr, ChunkTmr, CarrierTmr;
+    uint16_t CarrierTmrPwr;
+    inline void IDacCarrierDisable() {
+        dmaStreamDisable(STM32_DMA1_STREAM3);
+        dmaStreamSetMemory0(STM32_DMA1_STREAM3, ZeroArr);
+        dmaStreamEnable(STM32_DMA1_STREAM3);
+    }
+    inline void IDacCarrierEnable() {
+        dmaStreamDisable(STM32_DMA1_STREAM3);
+        dmaStreamSetMemory0(STM32_DMA1_STREAM3, CarrierArr);
+        dmaStreamEnable(STM32_DMA1_STREAM3);
+    }
 public:
     bool Busy;
     void Init();

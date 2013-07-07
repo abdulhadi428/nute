@@ -182,7 +182,7 @@ private:
     uint32_t *PClk;
 public:
     //Timer_t(TIM_TypeDef* Tmr): ITmr(Tmr), PClk(NULL), PCCR(NULL) {}
-    __IO uint32_t *PCCR;    // Made public to allow DMA
+    __IO uint16_t *PCCR;    // Made public to allow DMA
     // Common
     void Init(TIM_TypeDef* PTmr);
     void Deinit();
@@ -220,8 +220,8 @@ public:
     inline void IrqOnUpdateEnable() { ITmr->DIER |= TIM_DIER_UIE; }
 
     // PWM
-//    void PwmInit(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted);
-//    void PwmSet(uint16_t Value) { *PCCR = Value; }
+    void PwmInit(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted);
+    void PwmSet(uint16_t Value) { *PCCR = Value; }
 };
 
 // ================================= IWDG ======================================
