@@ -1,5 +1,5 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HonorGateServer", "HonorGateServer\HonorGateServer.csproj", "{87E1983E-BCD5-475A-A655-27DF5D835BA1}"
 EndProject
