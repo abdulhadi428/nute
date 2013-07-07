@@ -166,10 +166,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\med_krvd.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\MedBody.cpp"
 				>
 			</File>
