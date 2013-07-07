@@ -10,6 +10,6 @@
 
 #define DEFAULT_BACKGROUND 0xFFFF
 
-extern FormatsRepository gFormatsRepository; 
+extern FormatsRepository_DEPRECATED gFormatsRepository; 
 
 fresult InitColorSchema();

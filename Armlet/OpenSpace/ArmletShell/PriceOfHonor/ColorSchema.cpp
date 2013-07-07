@@ -16,26 +16,26 @@
 #define DEFAULT_FONT 1
 
 TextFormat gTextFormats[FORMATS_COUNT];
-FormatsRepository gFormatsRepository; 
+FormatsRepository_DEPRECATED gFormatsRepository; 
  
  
 fresult InitColorSchema()
 {
 	fresult fres;
 	
-	fres = GetTextFormat(DEFAULT_FONT, HEADER_BACKGROUND, HEADER_FOREGROUND,&gTextFormats[FormatHeader]);
+	fres = CreateTextFormat(DEFAULT_FONT, HEADER_BACKGROUND, HEADER_FOREGROUND,&gTextFormats[FormatHeader]);
 	if  (fres!=SUCCESS)
 		return fres;
 	
-	fres = GetTextFormat(DEFAULT_FONT, MENU_BACKGROUND, MENU_FOREGROUND,&gTextFormats[FormatMenu]);
+	fres = CreateTextFormat(DEFAULT_FONT, MENU_BACKGROUND, MENU_FOREGROUND,&gTextFormats[FormatMenu]);
 	if  (fres!=SUCCESS)
 		return fres;		
 
-	fres = GetTextFormat(DEFAULT_FONT, TEXT_BACKGROUND, TEXT_FOREGROUND,&gTextFormats[FormatText]);
+	fres = CreateTextFormat(DEFAULT_FONT, TEXT_BACKGROUND, TEXT_FOREGROUND,&gTextFormats[FormatText]);
 	if  (fres!=SUCCESS)
 		return fres;
 
-	fres = GetTextFormat(DEFAULT_FONT, GREEN, RED,&gTextFormats[FormatParrot]);
+	fres = CreateTextFormat(DEFAULT_FONT, GREEN, RED,&gTextFormats[FormatParrot]);
 	if  (fres!=SUCCESS)
 		return fres;	
 
