@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include "LowLevel.h"
+#include "ArmletApi.h"
+#include "..\KernelDll\KernelApi.h"
 #include "ServerProtocol.h"
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -8,22 +9,14 @@
 #include "string.h"	//strlen
 #include "malloc.h" //malloc
 
-namespace LowLevel {
+namespace Callouts {
+	short NoncheId = 1000;
 
-	void LowLevelMain(void)
+	void ArmletMain(void)
 	{		
 		if (!ArmletApi::InitializeShell()) {
 			ArmletApi::CriticalError("InitializeShell failed");
 		}
-	}
-
-	void __cdecl LowLog(char* fmt,...)
-	{
-		char buf[4096];
-		va_list args;
-		va_start(args, fmt);
-		_vsnprintf( buf, sizeof(buf), fmt, args);
-		Log(buf);
 	}
 
 	//ARMLET emulation same
@@ -43,31 +36,6 @@ namespace LowLevel {
 	{
 		ArmletApi::OnPillConnect(cure_id, charges);
 	}
-
-	//ARMLET emulation GetLustraId
-	void LustraInRange(bool bInRange)
-	{
-		bLustraInRange = bInRange;
-	}
-
-	//ARMLET emulation	GetLustraId
-	void SetCurrentLustra(int lustra_id)
-	{
-		if ((lustra_id < 0) || (lustra_id >= UNKNOWN_ID))
-			LastLustraId = UNKNOWN_ID;
-		LastLustraId = (unsigned char)lustra_id;
-	}
-
-	//ARMLET emulation	GetLockId/OpenLock/DenyLock
-	void SetCurrentLock(int lock_id)
-	{
-		if ((lock_id <= 0) || (lock_id >= UNKNOWN_ID))
-			CurrentLockId = UNKNOWN_ID;
-		CurrentLockId = (unsigned char)lock_id;
-	}
-
-	//ARMLET emulation	DoVibro
-	VIBRO_CALLBACK* Vibro = 0;
 
 	//SERVER EMULATION
 	void SetPlayerName(char const*const name)
@@ -141,22 +109,10 @@ namespace LowLevel {
 		free(packet);
 	}
 
-	LOG_CALLBACK* Log = 0;
-
 	//SPECIAL PLATFORM DEPENDENT
 	void NextMedTick()
 	{
 		ArmletApi::NextMedTick();
 	}
-
-	int GetPillCharges(int cure_id)
-	{
-		if ((cure_id < 0)||(cure_id > 14))
-			return 20;
-		return CureCharges[cure_id];
-	}
-
-	SET_CURE_NAME_CALLBACL* SetCureName = 0;
-	UPDATE_CURRENT_CURE_CALLBACK* UpdateCurrentCure = 0;
 
 } //namespace

@@ -26,7 +26,7 @@ namespace Visualizer {
 	#define BIND_DELEGATE(FnName) \
 			pmfn##FnName = gcnew FnName##ManagedCallback(); \
 			pmfn##FnName->Delegate = gcnew FnName##Delegate(mainForm,&MainForm::##FnName); \
-			Marshal::StructureToPtr(pmfn##FnName, (IntPtr)&LowLevel::##FnName, false);
+			Marshal::StructureToPtr(pmfn##FnName, (IntPtr)&KernelApi::##FnName, false);
 
 	private delegate void VibroDelegate();
 	private delegate void LogDelegate(char* msg);

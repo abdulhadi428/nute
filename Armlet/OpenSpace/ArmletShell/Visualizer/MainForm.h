@@ -1,7 +1,8 @@
 #pragma once
 #include "stdafx.h"
 #pragma unmanaged
-#include "DownInterface.h"
+#include "CalloutInterface.h"
+#include "..\KernelDll\KernelApi.h"
 #pragma managed
 #include "FormHelper.h"
 #pragma warning(disable:4100)
@@ -156,7 +157,7 @@ namespace Visualizer {
 			RemainignVibrationTicks = 10; //0.5 seconds
 		}
 		void UpdateCurrentCure() {
-			UpdateCurrentCureCharges(LowLevel::GetPillCharges(currCure));
+			UpdateCurrentCureCharges(KernelApi::GetPillCharges(currCure));
 		}
 		void Log(String^ message) {
 			LogWindow->Text += (message + "\r\n");
@@ -1237,7 +1238,7 @@ namespace Visualizer {
 private: System::Void MainForm_Load(System::Object^  sender, System::EventArgs^  e) {
 		 }
 private: System::Void MainForm_Shown(System::Object^  sender, System::EventArgs^  e) {
-			 LowLevel::LowLevelMain();
+			 Callouts::ArmletMain();
 		 }
 //TIMER - main output event
 private: System::Void Render_Tick(System::Object^  sender, System::EventArgs^  e) {
@@ -1287,7 +1288,7 @@ private: System::Void MainForm_KeyDown(System::Object^  sender, System::Windows:
 			 {
 				int button = FormHelper::KeyToButton(e->KeyCode);
 				if (button != NO_BUTTON)
-					 LowLevel::OnButtonPress(button);
+					 Callouts::OnButtonPress(button);
 			 }
 		 }
 private: System::Void MainForm_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
@@ -1295,78 +1296,78 @@ private: System::Void MainForm_KeyUp(System::Object^  sender, System::Windows::F
 			 {
 				int button = FormHelper::KeyToButton(e->KeyCode);
 				if (button != NO_BUTTON)
-					 LowLevel::OnButtonRelease(button);
+					 Callouts::OnButtonRelease(button);
 			}
 		 }
 private: System::Void buttonA_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonPress(BUTTON_A);
+			 Callouts::OnButtonPress(BUTTON_A);
 		 }
 private: System::Void buttonA_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonRelease(BUTTON_A);
+			 Callouts::OnButtonRelease(BUTTON_A);
 		 }
 private: System::Void buttonB_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonPress(BUTTON_B);
+			 Callouts::OnButtonPress(BUTTON_B);
 		 }
 private: System::Void buttonB_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonRelease(BUTTON_B);
+			 Callouts::OnButtonRelease(BUTTON_B);
 		 }
 private: System::Void buttonC_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonPress(BUTTON_C);
+			 Callouts::OnButtonPress(BUTTON_C);
 		 }
 private: System::Void buttonC_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonRelease(BUTTON_C);
+			 Callouts::OnButtonRelease(BUTTON_C);
 		 }
 private: System::Void buttonX_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonPress(BUTTON_X);
+			 Callouts::OnButtonPress(BUTTON_X);
 		 }
 private: System::Void buttonX_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonRelease(BUTTON_X);
+			 Callouts::OnButtonRelease(BUTTON_X);
 		 }
 private: System::Void buttonY_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonPress(BUTTON_Y);
+			 Callouts::OnButtonPress(BUTTON_Y);
 		 }
 private: System::Void buttonY_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonRelease(BUTTON_Y);
+			 Callouts::OnButtonRelease(BUTTON_Y);
 		 }
 private: System::Void buttonZ_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonPress(BUTTON_Z);
+			 Callouts::OnButtonPress(BUTTON_Z);
 		 }
 private: System::Void buttonZ_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonRelease(BUTTON_Z);
+			 Callouts::OnButtonRelease(BUTTON_Z);
 		 }
 private: System::Void buttonL_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonPress(BUTTON_L);
+			 Callouts::OnButtonPress(BUTTON_L);
 		 }
 private: System::Void buttonL_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonRelease(BUTTON_L);
+			 Callouts::OnButtonRelease(BUTTON_L);
 		 }
 private: System::Void buttonE_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonPress(BUTTON_E);
+			 Callouts::OnButtonPress(BUTTON_E);
 		 }
 private: System::Void buttonE_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonRelease(BUTTON_E);
+			 Callouts::OnButtonRelease(BUTTON_E);
 		 }
 private: System::Void buttonR_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonRelease(BUTTON_R);
+			 Callouts::OnButtonRelease(BUTTON_R);
 		 }
 private: System::Void buttonR_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 LowLevel::OnButtonPress(BUTTON_R);
+			 Callouts::OnButtonPress(BUTTON_R);
 		 }
 //REGENERATION LEVEL
 private: System::Void radioButtonRegenerationLevel1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			bool b = radioButtonRegenerationLevel1->Checked;
 			if (b)
-				LowLevel::SetRegenerationLevel(1);
+				Callouts::SetRegenerationLevel(1);
 		 }
 private: System::Void radioButtonRegenerationLevel2_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			bool b = radioButtonRegenerationLevel2->Checked;
 			if (b)
-				LowLevel::SetRegenerationLevel(2);
+				Callouts::SetRegenerationLevel(2);
 		 }
 private: System::Void radioButtonRegenerationLevel3_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			bool b = radioButtonRegenerationLevel3->Checked;
  			if (b)
-				LowLevel::SetRegenerationLevel(3);
+				Callouts::SetRegenerationLevel(3);
 		 }
 //PLAYER NAME
 private: System::Void buttonSetPlayerName_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -1378,82 +1379,82 @@ private: System::Void buttonServerMessage_Click(System::Object^  sender, System:
 		 }
 //LOCKS
 private: System::Void checkBoxLock1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			LowLevel::SetLockAccess(1,checkBoxLock1->Checked);
+			Callouts::SetLockAccess(1,checkBoxLock1->Checked);
 		 }
 private: System::Void checkBoxLock2_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			LowLevel::SetLockAccess(2,checkBoxLock2->Checked);
+			Callouts::SetLockAccess(2,checkBoxLock2->Checked);
 		 }
 private: System::Void checkBoxLock3_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			LowLevel::SetLockAccess(3,checkBoxLock3->Checked);
+			Callouts::SetLockAccess(3,checkBoxLock3->Checked);
 		 }
 private: System::Void radioButtonLock1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			bool b = radioButtonLock1->Checked;
  			if (b)
-				LowLevel::SetCurrentLock(1);
+				KernelApi::SetCurrentLock(1);
 		 }
 private: System::Void radioButtonLock2_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			bool b = radioButtonLock2->Checked;
  			if (b)
-				LowLevel::SetCurrentLock(2);
+				KernelApi::SetCurrentLock(2);
 		 }
 private: System::Void radioButtonLock3_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			bool b = radioButtonLock3->Checked;
  			if (b)
-				LowLevel::SetCurrentLock(3);
+				KernelApi::SetCurrentLock(3);
 		 }
 private: System::Void radioButtonLockNo_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			bool b = radioButtonLockNo->Checked;
  			if (b)
-				LowLevel::SetCurrentLock(0);
+				KernelApi::SetCurrentLock(0);
 		 }
 //ROOMS
 private: System::Void radioButtonLustra10_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra10->Checked;
 			 if (b)
-				LowLevel::SetCurrentLustra(10);
-			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
+				KernelApi::SetCurrentLustra(10);
+			 KernelApi::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void radioButtonLustra11_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra11->Checked;
 			 if (b)
-				LowLevel::SetCurrentLustra(11);
-			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
+				KernelApi::SetCurrentLustra(11);
+			 KernelApi::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void radioButtonLustra12_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra12->Checked;
 			 if (b)
-				LowLevel::SetCurrentLustra(12); //NoRoom
-			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
+				KernelApi::SetCurrentLustra(12); //NoRoom
+			 KernelApi::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void radioButtonLustra13_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra13->Checked;
 			 if (b)
-				LowLevel::SetCurrentLustra(13);
-			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
+				KernelApi::SetCurrentLustra(13);
+			 KernelApi::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void radioButtonLustra14_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra14->Checked;
 			 if (b)
-				LowLevel::SetCurrentLustra(14);
-			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
+				KernelApi::SetCurrentLustra(14);
+			 KernelApi::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void radioButtonLustra15_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra15->Checked;
 			 if (b)
-				LowLevel::SetCurrentLustra(15); //NoRoom
-			 LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
+				KernelApi::SetCurrentLustra(15); //NoRoom
+			 KernelApi::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void checkBoxNoLustra_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-				LowLevel::LustraInRange(!checkBoxNoLustra->Checked);
+				KernelApi::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
 private: System::Void buttonRoom13Explosion_Click(System::Object^  sender, System::EventArgs^  e) {
-			 LowLevel::Explosion(13);
+			 Callouts::Explosion(13);
 		 }
 private: System::Void buttonRoom14Explosion_Click(System::Object^  sender, System::EventArgs^  e) {
-			 LowLevel::Explosion(14);
+			 Callouts::Explosion(14);
 		 }
 private: System::Void buttonRoom0Explosion_Click(System::Object^  sender, System::EventArgs^  e) {
-			 LowLevel::Explosion(0);
+			 Callouts::Explosion(0);
 		 }
 //PILLS(CURES)
 private: System::Void radioButtonCure0_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -1532,12 +1533,12 @@ private: System::Void radioButtonCure14_CheckedChanged(System::Object^  sender, 
 			 UpdateCurrentCure();
 		 }
 private: System::Void buttonConnectPill_Click(System::Object^  sender, System::EventArgs^  e) {
-			 LowLevel::OnPillConnect(
+			 Callouts::OnPillConnect(
 				 currCure, 
 				 (int)numericUpDownPillsCharges->Value);
 		 }
 private: System::Void buttonNextMedTick_Click(System::Object^  sender, System::EventArgs^  e) {
-			 LowLevel::NextMedTick();
+			 Callouts::NextMedTick();
 		 }
 }; //class
 

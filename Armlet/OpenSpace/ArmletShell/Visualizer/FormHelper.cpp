@@ -22,7 +22,7 @@ namespace Visualizer {
 		for (int y=0; y<SCREENY; y++)
 		for (int x=0; x<SCREENX; x++)
 		{
-			unsigned short val = LowLevel::VideoMemory[SCREENX*y+x];
+			unsigned short val = KernelApi::VideoMemory[SCREENX*y+x];
 			unsigned char r = (val & 0xF00) >> 8;
 			unsigned char g = (val & 0xF0) >> 4;
 			unsigned char b = val & 0xF;
@@ -31,7 +31,7 @@ namespace Visualizer {
 				y,
 				Color::FromArgb(0, r*16, g*16, b*16));
 		}
-		LowLevel::CheckTimers();
+		KernelApi::CheckTimers();
 	}
 
 	void FormHelper::SetPlayerName(String^ name)
@@ -40,7 +40,7 @@ namespace Visualizer {
 		if (bytes->Length == 0)
 			return;
 		pin_ptr<unsigned char> pinned = &bytes[0];
-		LowLevel::SetPlayerName((char const*const)pinned);
+		Callouts::SetPlayerName((char const*const)pinned);
 	}
 
 	void FormHelper::SendMessage(String^ msg)
@@ -49,7 +49,7 @@ namespace Visualizer {
 		if (bytes->Length == 0)
 			return;
 		pin_ptr<unsigned char> pinned = &bytes[0];
-		LowLevel::SendMessage((char const*const)pinned);
+		Callouts::SendMessage((char const*const)pinned);
 	}
 
 	void FormHelper::BindDelegates() {
