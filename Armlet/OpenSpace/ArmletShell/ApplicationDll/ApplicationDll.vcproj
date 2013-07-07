@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="MiddleWareDll"
+	Name="ApplicationDll"
 	ProjectGUID="{7CEC398E-5A29-4BD1-B54C-C4BC8023EC72}"
-	RootNamespace="MiddleWareLib"
+	RootNamespace="ApplicationDll"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -62,10 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="$(OutDir)\Visualizer.lib"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile="MiddleWareDll.def"
+				ModuleDefinitionFile="ApplicationDll.def"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -136,9 +135,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="$(OutDir)\Visualizer.lib"
 				IgnoreAllDefaultLibraries="false"
-				ModuleDefinitionFile="MiddleWareDll.def"
+				ModuleDefinitionFile="ApplicationDll.def"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -167,11 +165,11 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\main.cpp"
+			RelativePath=".\ApplicationDll.def"
 			>
 		</File>
 		<File
-			RelativePath=".\MiddleWareDll.def"
+			RelativePath=".\ApplicationDllMain.cpp"
 			>
 		</File>
 	</Files>

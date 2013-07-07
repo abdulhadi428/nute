@@ -1,4 +1,4 @@
-LIBRARY   MiddleWareDll
+LIBRARY   ApplicationDll
 EXPORTS
 	InitializeShell
 	CriticalError	
