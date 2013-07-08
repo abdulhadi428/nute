@@ -178,6 +178,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PanelFactory.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PictureBoxFactory.cpp"
 				>
 			</File>

@@ -1,11 +1,8 @@
-#include "PanelFactory.h"
-#include "ArmletShell.h"
+#include "ThreeKShell.h"
 
 namespace ThreeKShell {
 
-
-
-	IControl*[] PanelFactory::AllocControlArray( ubyte_t controlsCount )
+	IControl** PanelFactory::AllocControlArray( ubyte_t controlsCount )
 	{
 		return new IControl*[controlsCount];
 	}
@@ -19,7 +16,7 @@ namespace ThreeKShell {
 	{
 		fresult fres;
 		
-		IControl* controls = AllocControlArray(controlsCount);
+		IControl** controls = AllocControlArray(controlsCount);
 		FAILIF(controlsCount==NULL);
 
 		Panel* pnl = AllocPanel();
