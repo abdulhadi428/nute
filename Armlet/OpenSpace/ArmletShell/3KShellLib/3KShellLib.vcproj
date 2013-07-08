@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="3KShellLib"
 	ProjectGUID="{2421FB2A-10E8-421F-B832-57CCEE7FD08D}"
 	RootNamespace="3KShellLib"
@@ -170,7 +170,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MenuItemFactory.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PanelBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PictureBoxFactory.cpp"
 				>
 			</File>
 			<File
@@ -178,11 +186,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TextBoxFactory.cpp"
+				RelativePath=".\TextField.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\TextField.cpp"
+				RelativePath=".\TextFieldFactory.cpp"
 				>
 			</File>
 		</Filter>
@@ -244,11 +252,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MenuItemFactory.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Panel.h"
 				>
 			</File>
 			<File
 				RelativePath=".\PanelBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PanelFactory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PictureBoxFactory.h"
 				>
 			</File>
 			<File
@@ -264,11 +284,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TextBoxFactory.h"
+				RelativePath=".\TextField.h"
 				>
 			</File>
 			<File
-				RelativePath=".\TextField.h"
+				RelativePath=".\TextFieldFactory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ThreeKShell.h"
 				>
 			</File>
 		</Filter>

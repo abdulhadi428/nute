@@ -1,6 +1,6 @@
 #include "ArmletShell.h"
 #include "UserInterface.h"
-#include "Images.h"
+#include "AppSpecificImages.h"
 #include "ArmletApi.h"
 #include "AppMain.h"
 

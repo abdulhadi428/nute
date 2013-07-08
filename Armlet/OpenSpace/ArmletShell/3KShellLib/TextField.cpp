@@ -1,6 +1,4 @@
-#include "ArmletShell.h"
-#include "ITextStream.h"
-#include "TextField.h"
+#include "ThreeKShell.h"
 
 namespace ThreeKShell {
 

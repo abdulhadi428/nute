@@ -1,8 +1,6 @@
-#pragma once 
-#include "IControl.h"
-#include "IRender.h"
-
-namespace ThreeKShell {
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
 //Base class for any control
 class ControlBase : public IControl
@@ -77,5 +75,3 @@ public:
 	}
 
 };
-
-}

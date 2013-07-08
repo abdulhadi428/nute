@@ -1,9 +1,6 @@
-#pragma once
-#include "IMenuItem.h"
-#include "IMenuHandler.h"
-#include "IControl.h"
-
-namespace ThreeKShell {
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
 class MenuItemBase : public  IMenuItem
 {
@@ -28,5 +25,3 @@ public:
 
 	bool_t virtual CheckAccelerator(ButtonState button);
 };
-
-}

@@ -1,7 +1,7 @@
 #include "ArmletShell.h"
 #include "UIDesigner.h"
 #include "MenuDelegate.h"
-#include "Images.h"
+#include "AppSpecificImages.h"
 #include "ColorSchema.h"
 
 #pragma warning(disable:4100)

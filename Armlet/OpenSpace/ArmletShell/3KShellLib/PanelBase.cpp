@@ -1,5 +1,4 @@
-#include "ArmletShell.h"
-#include "PanelBase.h"
+#include "ThreeKShell.h"
 
 namespace ThreeKShell {
 

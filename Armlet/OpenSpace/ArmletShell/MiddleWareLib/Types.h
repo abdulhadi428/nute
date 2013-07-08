@@ -73,4 +73,5 @@ inline void InitPositionAndSize(
 }
 
 #define FAILIF(expr) if (expr) return GENERAL_ERROR
+#define NULLIF(expr) if (expr) return NULL
 #define ENSURESUCCESS(val) if (val!=SUCCESS) return val

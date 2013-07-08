@@ -1,6 +1,6 @@
-#pragma once
-
-namespace ThreeKShell {
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
 typedef sword_t ButtonState;
 
@@ -17,5 +17,3 @@ public:
 
 	virtual bool_t CheckAccelerator(ButtonState button)=0;
 };
-
-}

@@ -1,8 +1,6 @@
-#pragma once
-#include "ControlBase.h"
-#include "IScrollable.h"
-
-namespace ThreeKShell {
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
 class ScrollableControlBase : public ControlBase, public IScrollable
 {
@@ -41,5 +39,3 @@ public:
 	}
 
 };
-
-}

@@ -1,7 +1,6 @@
-#pragma once
-#include "PanelBase.h"
-
-namespace ThreeKShell {
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
 class Panel : public PanelBase
 {
@@ -11,5 +10,3 @@ public:
 		return BaseInit(size, position, renderer, controls, controlsCount);
 	}
 };
-
-}

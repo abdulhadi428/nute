@@ -1,8 +1,8 @@
-#pragma once
-#include "ScrollableControlBase.h"
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
-namespace ThreeKShell {
-
+//TODO: Rename To ImageBox
 class Image : public ScrollableControlBase
 {
 	uword_t const* _bitmap;
@@ -25,6 +25,15 @@ public:
 		return fres;
 	}
 
+	fresult SetImage(BitmapImage* bmp)
+	{
+		FAILIF(bmp==NULL);
+		return SetImage(bmp->Bitmap, bmp->ImageSize);
+	}
+
 };
 
-}
+class PictureBox : public Image
+{
+
+};

@@ -1,7 +1,6 @@
-#pragma once
-#include "MenuBase.h"
-
-namespace ThreeKShell {
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
 class ScatteredMenu : public MenuBase
 {
@@ -24,4 +23,3 @@ public:
 
 };
 
-}

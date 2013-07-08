@@ -1,7 +1,6 @@
-#pragma once
-#include "ControlBase.h"
-
-namespace ThreeKShell {
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
 class PanelBase : public ControlBase
 {
@@ -19,4 +18,3 @@ protected:
 
 };
 
-}

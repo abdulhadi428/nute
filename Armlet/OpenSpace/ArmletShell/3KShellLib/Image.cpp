@@ -1,5 +1,4 @@
-#include "ArmletShell.h"
-#include "Image.h"
+#include "ThreeKShell.h"
 
 namespace ThreeKShell {
 

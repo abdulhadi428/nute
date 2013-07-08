@@ -1,4 +1,7 @@
-﻿#pragma once
+﻿#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
+
 /* Text Field:
 Setting Text
  1. Text is a padded with 0x0 rectangular text area
@@ -18,11 +21,6 @@ Setting ScrollPosition
  2. Setting scroll Position is ubyte_telligent. So setting position so, that it (according to size) move out of Text - will set the Topmost (and Leftmost) possible coordinates
 
 */
-
-#include "ScrollableControlBase.h"
-#include "ITextStream.h"
-
-namespace ThreeKShell {
 
 #define ThreeK_DEFAULT_TEXTFIELD_BACKGROUND 5
 #define ThreeK_DEFAULT_TEXTFIELD_FOREGROUND 10
@@ -121,5 +119,3 @@ public:
 	virtual fresult ScrollDown();
 
 };
-
-}

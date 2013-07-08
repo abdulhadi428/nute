@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="OpenSpaceApp"
 	ProjectGUID="{ED6F4CE0-7FB0-4686-8904-5D1C34CC3ECE}"
 	RootNamespace="OpenSpaceApp"
@@ -154,11 +154,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ColorSchema.cpp"
+				RelativePath=".\AppSpecificImages.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Images.cpp"
+				RelativePath=".\ColorSchema.cpp"
 				>
 			</File>
 			<File
@@ -204,15 +204,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AppSpecificImages.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ColorSchema.h"
 				>
 			</File>
 			<File
 				RelativePath=".\Form.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Images.h"
 				>
 			</File>
 			<File

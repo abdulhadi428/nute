@@ -1,12 +1,10 @@
-#pragma once
-
-namespace ThreeKShell {
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
 /* Text Field:
 IControl interface
 */
-
-//#include "IRender.h"
 
 class IControl
 {
@@ -37,5 +35,3 @@ public:
 	//renders control partially to screen
 	virtual fresult DrawArea(Position pos, Size size)=0;
 };
-
-}

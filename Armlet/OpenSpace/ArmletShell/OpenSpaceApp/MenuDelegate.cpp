@@ -130,11 +130,11 @@ fresult MenuDelegate::Init(MenuHandlers handler, UIDesigner* ui)
 	return fres;
 }
 
-MenuDelegate g_MenuHandlers[Last];
+MenuDelegate g_MenuHandlers[MenuHandlersLast];
 
 void InitMenuHandlerDelegates( UIDesigner* ui )
 {
-	for (ubyte_t i=0;i< Last; i++)
+	for (ubyte_t i=0;i< MenuHandlersLast; i++)
 	{
 		g_MenuHandlers[i].Init((MenuHandlers)i, ui);
 	}

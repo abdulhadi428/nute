@@ -3,7 +3,7 @@
 #include "UserInterface.h"
 #include "MenuDelegate.h"
 #include "MiddleInterface.h"
-#include "Images.h"
+#include "AppSpecificImages.h"
 #include "ColorSchema.h"
 #include "Med.h"
 

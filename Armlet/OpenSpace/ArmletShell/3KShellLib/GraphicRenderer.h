@@ -1,7 +1,6 @@
-#pragma once
-#include "IRender.h"
-
-namespace ThreeKShell {
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
 class GraphicRenderer : public IRender
 {
@@ -13,5 +12,3 @@ public:
 	virtual fresult DrawBitmap( Position pospx, Size sizepx, uword_t const*const bitmap, Size bitmapSize, Position bitmapReadPos );
 
 };
-
-}

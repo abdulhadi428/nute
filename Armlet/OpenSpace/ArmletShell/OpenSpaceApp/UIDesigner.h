@@ -1,11 +1,5 @@
 #pragma once
-#include "GraphicRenderer.h"
-#include "TextField.h"
-#include "Image.h"
-#include "MenuItem.h"
-#include "Panel.h"
-#include "ScatteredMenu.h"
-using namespace ThreeKShell;
+#include "ThreeKShell.h"
 #include "Form.h"
 //#include "MenuDelegate.h"
 //#include "project.h"

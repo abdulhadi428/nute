@@ -1,6 +1,6 @@
-#pragma once
-
-namespace ThreeKShell {
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
 class IScrollable
 {
@@ -19,4 +19,3 @@ public:
 	virtual Position GetScrollPosition() =0;
 };
 
-}

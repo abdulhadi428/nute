@@ -1,7 +1,6 @@
-#pragma once
-#include "IMenuItem.h"
-
-namespace ThreeKShell {
+#ifndef _NAMESPACE_PROTECT_
+	#error "Use ThreeKShell.h"
+#endif
 
 class IMenu
 {
@@ -21,5 +20,3 @@ public:
 
 	virtual fresult  Draw()=0;
 };
-
-}

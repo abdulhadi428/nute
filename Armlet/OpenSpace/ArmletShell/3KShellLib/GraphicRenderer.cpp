@@ -1,5 +1,4 @@
-#include "ArmletShell.h"
-#include "GraphicRenderer.h"
+#include "ThreeKShell.h"
 
 namespace ThreeKShell {
 

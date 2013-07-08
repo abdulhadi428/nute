@@ -1,6 +1,6 @@
 #pragma once
 #include "UIDesigner.h"
-#include "IMenuHandler.h"
+#include "ThreeKShell.h"
 
 typedef enum _ON_MNU {
 	Empty,
@@ -27,7 +27,7 @@ typedef enum _ON_MNU {
 	OnLogFormMnuNextHandler,
 	OnLogFormMnuBackHandler,
 	OnLogFormMnuCleanLogHandler,
-	Last
+	MenuHandlersLast
 } MenuHandlers;
 
 class MenuDelegate : public IMenuHandler
@@ -40,7 +40,7 @@ public:
 };
 
 
-extern MenuDelegate g_MenuHandlers[Last];
+extern MenuDelegate g_MenuHandlers[MenuHandlersLast];
 
 void InitMenuHandlerDelegates(UIDesigner* ui);
 
