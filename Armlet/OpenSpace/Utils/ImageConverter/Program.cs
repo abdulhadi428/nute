@@ -15,7 +15,7 @@ namespace ImageConverter
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ImageConverter());
+            Application.Run(new frmImageConverter());
         }
     }
 }
