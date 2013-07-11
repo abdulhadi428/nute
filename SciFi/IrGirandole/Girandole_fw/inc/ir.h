@@ -39,6 +39,9 @@ struct IrChunk_t {
 #define CARRIER_PERIOD_CNT  2
 #define SAMPLING_FREQ_HZ    (CARRIER_PERIOD_CNT*IR_CARRIER_HZ)
 
+// Currents
+enum DacCurrent_t {dc50mA=153, dc100mA=306, dc150mA=450, dc200mA=595, dc400mA=1152, dc800mA=2304, dc1000mA=3006};
+
 class ir_t {
 private:
     EventSource IEvtSrcTxEnd;
@@ -59,7 +62,7 @@ private:
 public:
     bool Busy;
     void Init();
-    void TransmitWord(uint16_t wData, uint8_t PwrPercent);
+    void TransmitWord(uint16_t wData, DacCurrent_t ACurrent, uint8_t PwmPercent);
     void RegisterEvtTxEnd(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcTxEnd, PEvtLstnr, EvtMask); }
     // Inner use
     void IChunkTmrHandler();

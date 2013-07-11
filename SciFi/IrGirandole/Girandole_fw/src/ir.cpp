@@ -8,6 +8,8 @@
 #include "ir.h"
 #include "stm32f10x.h"
 
+//#define DAC_CONST   0
+
 void ir_t::Init() {
     chEvtInit(&IEvtSrcTxEnd);
     // ==== GPIO ====
@@ -17,6 +19,10 @@ void ir_t::Init() {
     PinSetupAnalog(GPIOA, 4);
     // ==== DAC ====
     rccEnableAPB1(RCC_APB1ENR_DACEN, FALSE);
+#ifdef DAC_CONST
+    DAC->CR = DAC_CR_EN1 | DAC_CR_BOFF1;
+    DAC->DHR12R1 = DAC_CONST;
+#else
     DAC->CR = DAC_CR_EN1 | DAC_CR_DMAEN1 | (0b010 << 3) | DAC_CR_TEN1;   // TIM7, enable trigger;
     // ZeroArr
     for(uint8_t i=0; i<CARRIER_PERIOD_CNT; i++) ZeroArr[i] = 0;
@@ -51,15 +57,15 @@ void ir_t::Init() {
     CarrierTmr.SetUpdateFrequency(IR_CARRIER_HZ);
     CarrierTmr.PwmSet(0);
     CarrierTmr.Enable();    // Start timer-based carrier
+#endif
 }
 
-void ir_t::TransmitWord(uint16_t wData, uint8_t PwrPercent) {
+void ir_t::TransmitWord(uint16_t wData, DacCurrent_t ACurrent, uint8_t PwmPercent) {
 //    if(Busy) return;
     Busy = true;
     // Calculate power
-    uint16_t Pwr = (uint16_t)((MAX_PWR * PwrPercent) / 100);
     CarrierTmrPwr = CarrierTmr.GetTopValue() / 2;
-    CarrierTmrPwr = (CarrierTmrPwr * PwrPercent) / 100;
+    CarrierTmrPwr = (CarrierTmrPwr * PwmPercent) / 100;
     // ==== Fill buffer with powers depending on data ====
     PChunk = TxBuf;
     *PChunk++ = {1, 2400}; // }
@@ -74,7 +80,8 @@ void ir_t::TransmitWord(uint16_t wData, uint8_t PwrPercent) {
     // Fill carrier array
 //    for(uint8_t i=0; i<5; i++) CarrierArr[i] = 4005;
 //    for(uint8_t i=5; i<11; i++) CarrierArr[i] = 0;
-    CarrierArr[0] = Pwr;
+    CarrierArr[0] = (uint16_t)ACurrent;
+    CarrierArr[1] = 0;
 //    for(uint8_t i=0; i<CHUNK_CNT; i++) Uart.Printf("%u %u\r", TxBuf[i].Pwr, TxBuf[i].Duration);
 //    Uart.Printf("\r");
     // ==== Start transmission ====

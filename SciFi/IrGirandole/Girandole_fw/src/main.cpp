@@ -39,12 +39,12 @@ int main(void) {
         w <<= 8;
         w |= 0x04;
         //Uart.Printf("%X\r", w);
-        ir.TransmitWord(w, 100);
+        ir.TransmitWord(w, dc100mA, 100);
         chEvtWaitAny(EVENT_MASK(0));
         // Transmission completed
         //Uart.Printf("TxEnd\r");
-        GoSleep();
-        //chThdSleepMilliseconds(999);
+        //GoSleep();
+        chThdSleepMilliseconds(999);
     }
 }
 

@@ -171,9 +171,8 @@ P2                  0.000
 P3                  8.000u   
 P4                  8.000u   
 P5                 17.000u   
-VONE              100.000m   
-VZERO               0.000 (*)
-(*) Default Parameter
+VONE                3.000    
+VZERO             200.000m   
 
 
 
@@ -181,17 +180,17 @@ DC Operating Point Voltages
 ===========================
 Node         Voltage  Node         Voltage  Node         Voltage 
 1             4.200   UB          153.913m  3          -349.383n 
-VBAT          4.200   5            -3.474m  UIN           0.000  
-X3.4         -1.356   X3.5          2.642   X3.10      -761.980m 
-X3.6          2.651   X3.9         -3.474m  X3.11      -765.309m 
-X3.3         -1.737m  X3.98         2.100   X3.12        -1.469  
-X3.14         5.150   X3.16      -950.000m  X3.25        -1.183  
-X3.26        -1.183   X3.27      -690.694m  X3.32       153.852m 
-X3.20        -1.737m  X3.21         2.099   X3.23         2.099  
-X3.33       153.913m  X3.52         2.728   X3.53         2.100  
-X3.54         2.100   X3.34      -695.087m  X3.35         1.003  
-X3.72         1.970   X3.70         1.970   X3.71         1.970  
-X3.96       153.913m 
+VBAT          4.200   5            -3.474m  6            -3.474m 
+UIN         200.000m  X3.4         -1.356   X3.5          2.642  
+X3.10      -761.980m  X3.6          2.651   X3.9         -3.474m 
+X3.11      -765.309m  X3.3         -1.737m  X3.98         2.100  
+X3.12        -1.469   X3.14         5.150   X3.16      -950.000m 
+X3.25        -1.183   X3.26        -1.183   X3.27      -690.694m 
+X3.32       153.852m  X3.20        -1.737m  X3.21         2.099  
+X3.23         2.099   X3.33       153.913m  X3.52         2.728  
+X3.53         2.100   X3.54         2.100   X3.34      -695.087m 
+X3.35         1.003   X3.72         1.970   X3.70         1.970  
+X3.71         1.970   X3.96       153.913m 
 
 DC Operating Point Inductor Current
 ===================================
@@ -221,17 +220,17 @@ State                     OFF               ON               ON              OFF
 
 Instance:               X3.D5            X3.D6           X3.D11           X3.D12
 Using model:            X3.DX            X3.DX            X3.DX            X3.DX
-ID                     1.798            1.807         -139.680f           1.628p
-VD                   848.939m         849.061m        -129.746m         129.746m
-REQ                   14.383m          14.316m         997.444G          16.854G
+ID                     1.798            1.807         -139.678f           1.628p
+VD                   848.939m         849.061m        -129.744m         129.744m
+REQ                   14.383m          14.316m         997.444G          16.855G
 CAP                    0.000            0.000            0.000            0.000 
 
 DC Power Terms:
-PD                     1.527            1.534           18.123f         211.292f
+PD                     1.527            1.534           18.122f         211.273f
 PS                     0.000            0.000            0.000            0.000 
 
 DC Pin Currents:
-Id                     1.798            1.807         -139.680f           1.628p
+Id                     1.798            1.807         -139.678f           1.628p
 
 Condition:
 State                     HOT              HOT              OFF              OFF
@@ -276,44 +275,44 @@ State                     OFF              LIN              LIN
 
 Operating point for devices of type Resistor
 ============================================
-Instance:                   R1               R2               R3            X3.R1
+Instance:                   R1               R2               R3              R10
 DC Power Terms:
-PD                  2.443E-021          12.067n           1.221p         464.028f
+PD                  2.443E-021           0.000            1.221p          12.067n
 
 DC Pin Currents:
-Ir                     49.426p          -3.474u          -3.494u        -267.187p
+Ir                     49.426p           0.000           -3.494u          -3.474u
 
 
-Instance:                X3.R2            X3.R3            X3.R4            X3.R5
+Instance:                X3.R1            X3.R2            X3.R3            X3.R4
 DC Power Terms:
-PD                    464.028f         971.138u         960.289u         372.396u
+PD                    464.028f         464.028f         971.138u         960.289u
 
 DC Pin Currents:
-Ir                   -267.187p         623.262u         619.771u         626.755u
+Ir                   -267.187p        -267.187p         623.262u         619.771u
 
 
-Instance:                X3.R6            X3.R7          X3.RZP2          X3.RZP1
+Instance:                X3.R5            X3.R6            X3.R7          X3.RZP2
 DC Power Terms:
-PD                    368.235u           2.109u           0.000           10.779 
+PD                    372.396u         368.235u           2.109u           0.000 
 
 DC Pin Currents:
-Ir                    623.245u        -590.838n           0.000           -3.283 
+Ir                    626.755u         623.245u        -590.838n           0.000 
 
 
-Instance:               X3.RP3          X3.RBUG            X3.RX            X3.R8
+Instance:              X3.RZP1           X3.RP3          X3.RBUG            X3.RX
 DC Power Terms:
-PD                      7.788           37.875m         706.768p          96.299 
+PD                     10.779            7.788           37.875m         706.768p
 
 DC Pin Currents:
-Ir                      2.791          -19.461m        -840.695n          23.801 
+Ir                     -3.283            2.791          -19.461m        -840.695n
 
 
-Instance:                X3.R9
+Instance:                X3.R8            X3.R9
 DC Power Terms:
-PD                    139.348m
+PD                     96.299          139.348m
 
 DC Pin Currents:
-Ir                    905.369m
+Ir                     23.801          905.369m
 
 
 
@@ -330,12 +329,20 @@ Il                     -3.283         -840.695n
 
 Operating point for devices of type Capacitor
 =============================================
-Instance:                   C3           X3.CIN            X3.C2            X3.CP
+Instance:                   C3               C4           X3.CIN            X3.C2
 DC Power Terms:
 PS                      0.000            0.000            0.000            0.000 
 
 DC Pin Currents:
 Ic                      0.000            0.000            0.000            0.000 
+
+
+Instance:                X3.CP
+DC Power Terms:
+PS                      0.000 
+
+DC Pin Currents:
+Ic                      0.000 
 
 
 
@@ -347,7 +354,7 @@ DC Power Terms:
 PG                      0.000 
 
 DC Pin Currents:
-ISource                -3.474u
+ISource                 0.000 
 
 
 
@@ -371,7 +378,7 @@ ISource              -27.907m           0.000         -840.695n          23.791
 
 Instance:              X3.G24           X3.G25           X3.FOL         X3.EREFQ
 DC Power Terms:
-PG                   139.237m         223.902u         229.093f         228.766f
+PG                   139.237m         223.902u         229.090f         228.767f
 
 DC Pin Currents:
 ISource              904.650m         356.301u          -1.766p          -1.486p
@@ -379,10 +386,10 @@ ISource              904.650m         356.301u          -1.766p          -1.486p
 
 Instance:              X3.FQ1           X3.FQ2
 DC Power Terms:
-PG                  -565.159f        -250.265f
+PG                  -565.150f        -250.265f
 
 DC Pin Currents:
-ISource              139.680f           1.626p
+ISource              139.678f           1.626p
 
 
 
@@ -409,7 +416,7 @@ DC Power Terms:
 PG                     1.534            0.000            0.000            0.000 
 
 DC Pin Currents:
-ISource                1.807           -1.766p        -139.680f          -1.626p
+ISource                1.807           -1.766p        -139.678f          -1.626p
 
 
 Instance:            X3.IBIAS

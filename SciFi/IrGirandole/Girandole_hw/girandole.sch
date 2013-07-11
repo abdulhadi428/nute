@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 03/07/2013 13:12:06
+EESchema Schematic File Version 2  date 11/07/2013 14:06:46
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -15,7 +15,7 @@ $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "3 jul 2013"
+Date "11 jul 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -866,7 +866,7 @@ F 3 "" H 1800 9600 60  0000 C CNN
 	1    1800 9600
 	0    -1   -1   0   
 $EndComp
-Text Label 13200 7550 0    61   ~ 0
+Text Label 12650 7550 0    61   ~ 0
 DAC
 $Comp
 L R R9
@@ -1027,7 +1027,7 @@ L R R5
 U 1 1 51D2E00E
 P 13450 7850
 F 0 "R5" V 13530 7700 50  0000 C CNN
-F 1 "30k" V 13450 7850 50  0000 C CNN
+F 1 "20k" V 13450 7850 50  0000 C CNN
 F 2 "RES_0603" V 13530 7950 28  0000 C CNN
 F 3 "" H 13450 7850 60  0000 C CNN
 	1    13450 7850
@@ -1160,7 +1160,7 @@ L C C1
 U 1 1 51D307E3
 P 14450 7550
 F 0 "C1" V 14650 7750 50  0000 L CNN
-F 1 "3.3pF" V 14550 7650 50  0000 L CNN
+F 1 "DoNotMount" V 14550 7650 50  0000 L CNN
 F 2 "CAP_0603" V 14550 7400 28  0000 C BNN
 F 3 "~" H 14450 7550 60  0000 C CNN
 	1    14450 7550
@@ -1583,7 +1583,7 @@ Wire Wire Line
 	4600 9700 4600 10450
 Connection ~ 1800 9600
 Wire Wire Line
-	13450 7550 13200 7550
+	12900 7550 12650 7550
 Wire Wire Line
 	8350 8450 8650 8450
 Wire Wire Line
@@ -1796,4 +1796,17 @@ Wire Wire Line
 Wire Wire Line
 	14800 7000 15200 7000
 Connection ~ 15200 7000
+$Comp
+L C C_AddItSomehow
+U 1 1 51DE8695
+P 13100 7550
+F 0 "C_AddItSomehow" V 13300 7450 50  0000 L CNN
+F 1 "10uF" V 13200 7650 50  0000 L CNN
+F 2 "CAP_0603" V 13200 7400 28  0000 C BNN
+F 3 "~" H 13100 7550 60  0000 C CNN
+	1    13100 7550
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	13300 7550 13450 7550
 $EndSCHEMATC
