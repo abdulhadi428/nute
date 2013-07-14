@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-05-16 BZR 4016)-stable date = 13/07/2013 15:46:10
+Cmp-Mod V01 Created by CvPcb (2013-05-16 BZR 4016)-stable date = 15/07/2013 00:13:24
 
 BeginCmp
 TimeStamp = /5102E184;
@@ -92,6 +92,20 @@ IdModule  = CAP_0805;
 EndCmp
 
 BeginCmp
+TimeStamp = /51E2C616;
+Reference = C14;
+ValeurCmp = 10u;
+IdModule  = CAP_0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /51E2C636;
+Reference = C15;
+ValeurCmp = 10u;
+IdModule  = CAP_0805;
+EndCmp
+
+BeginCmp
 TimeStamp = /51E13F5A;
 Reference = D1;
 ValeurCmp = SS14;
@@ -113,6 +127,13 @@ IdModule  = SC82AB;
 EndCmp
 
 BeginCmp
+TimeStamp = /51E2C610;
+Reference = DA3;
+ValeurCmp = MCP73832;
+IdModule  = SOT23-5;
+EndCmp
+
+BeginCmp
 TimeStamp = /518BB5F0;
 Reference = DD1;
 ValeurCmp = STM32F100C4;
@@ -123,21 +144,14 @@ BeginCmp
 TimeStamp = /518BEE94;
 Reference = F1;
 ValeurCmp = FUSE0R;
-IdModule  = SOLDERFUSE;
+IdModule  = SMD0603_FUSE;
 EndCmp
 
 BeginCmp
 TimeStamp = /51E1315F;
 Reference = F2;
 ValeurCmp = FUSE0R;
-IdModule  = SOLDERFUSE;
-EndCmp
-
-BeginCmp
-TimeStamp = /51E1094E;
-Reference = HOLE1;
-ValeurCmp = HOLE_METALLED;
-IdModule  = Hole3_5_out6mm;
+IdModule  = SMD0603_FUSE;
 EndCmp
 
 BeginCmp
@@ -179,6 +193,13 @@ BeginCmp
 TimeStamp = /51E13D2B;
 Reference = R3;
 ValeurCmp = 13R;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /51E2C630;
+Reference = R4;
+ValeurCmp = 2k;
 IdModule  = RES_0603;
 EndCmp
 
@@ -250,6 +271,55 @@ TimeStamp = /51E14234;
 Reference = XL6;
 ValeurCmp = CONN_2;
 IdModule  = SIL-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /51E2D2D1;
+Reference = XL7;
+ValeurCmp = USB_MICRO_B;
+IdModule  = USBmicro_MOLEX_WM17142;
+EndCmp
+
+BeginCmp
+TimeStamp = /51E2FE6D;
+Reference = XL8;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
+EndCmp
+
+BeginCmp
+TimeStamp = /51E2FE7F;
+Reference = XL9;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
+EndCmp
+
+BeginCmp
+TimeStamp = /51E30074;
+Reference = XL10;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
+EndCmp
+
+BeginCmp
+TimeStamp = /51E30083;
+Reference = XL11;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
+EndCmp
+
+BeginCmp
+TimeStamp = /51E30056;
+Reference = XL12;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
+EndCmp
+
+BeginCmp
+TimeStamp = /51E30065;
+Reference = XL13;
+ValeurCmp = CONN_1;
+IdModule  = SIL-1;
 EndCmp
 
 EndListe
