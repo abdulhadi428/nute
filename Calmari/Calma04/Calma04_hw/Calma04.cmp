@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-05-16 BZR 4016)-stable date = 15/07/2013 00:13:24
+Cmp-Mod V01 Created by CvPcb (2013-05-16 BZR 4016)-stable date = 15/07/2013 21:14:11
 
 BeginCmp
 TimeStamp = /5102E184;
@@ -207,6 +207,20 @@ BeginCmp
 TimeStamp = /5102E173;
 Reference = R5;
 ValeurCmp = 10k;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /51E42641;
+Reference = R6;
+ValeurCmp = 10k;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /51E42797;
+Reference = R7;
+ValeurCmp = 120k;
 IdModule  = RES_0603;
 EndCmp
 

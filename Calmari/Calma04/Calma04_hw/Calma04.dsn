@@ -38,7 +38,7 @@
       (place XL7 124000 -143900 front 90 (PN USB_MICRO_B))
     )
     (component TESTPOINT_1MM
-      (place TP1 150000 -137600 front 0 (PN TESTPOINT))
+      (place TP1 150200 -137600 front 0 (PN TESTPOINT))
     )
     (component "SOT23-5"
       (place DA3 123100 -133400 front 180 (PN MCP73832))
@@ -69,11 +69,11 @@
     )
     (component RES_0603
       (place R4 126300 -133800 front 90 (PN 2k))
-      (place R3 153500 -130800 front 90 (PN 13R))
-      (place R2 144400 -129600 front 0 (PN 330k))
+      (place R3 162200 -131000 front 0 (PN 13R))
+      (place R2 144400 -129300 front 0 (PN 330k))
       (place Q1 160200 -126300 front 90 (PN "ALS-PT19-315C"))
       (place R5 155700 -126400 front 270 (PN 10k))
-      (place R1 148800 -129700 front 0 (PN 330k))
+      (place R1 148800 -129300 front 0 (PN 330k))
       (place C1 157800 -126300 front 270 (PN 0.1u))
       (place C12 157200 -131000 front 0 (PN 0.1u))
       (place C10 150900 -134600 front 0 (PN 1u))
@@ -83,6 +83,8 @@
       (place C3 137400 -144400 front 270 (PN 0.1u))
       (place C4 147600 -144200 front 270 (PN 0.1u))
       (place C5 150500 -142000 front 270 (PN 0.1u))
+      (place R6 153300 -131500 front 270 (PN 10k))
+      (place R7 148800 -132100 front 180 (PN 120k))
     )
     (component LQFP48
       (place DD1 143000 -137300 front 180 (PN STM32F100C4))
@@ -101,7 +103,7 @@
     )
     (component CAP_0805
       (place C11 157000 -147200 front 0 (PN 10u))
-      (place C13 157700 -133700 front 0 (PN 10u))
+      (place C13 157400 -133900 front 0 (PN 10u))
       (place C9 133800 -141000 front 180 (PN 10u))
       (place C14 122600 -137700 front 180 (PN 10u))
       (place C15 123500 -129300 front 0 (PN 10u))
@@ -504,6 +506,9 @@
     (net /Charge
       (pins DA3-1 DD1-17 XL8-1 XL9-1)
     )
+    (net /FB
+      (pins DD1-14 R7-2)
+    )
     (net /RX
       (pins XL1-1 DD1-31)
     )
@@ -523,8 +528,14 @@
         DA1-PAD@4 DA1-PAD@5 DA1-PAD@6 DA1-PAD@7 C11-2 C13-2 C9-2 C14-2 C15-2 C7-2
         C1-2 C12-2 C10-2 C8-2 C6-2 C2-2 C3-2 C4-2 C5-2 SW2-2 SW2-2@1 XL12-1 XL13-1)
     )
-    (net "N-0000019"
-      (pins DA3-5 R4-1)
+    (net "N-0000017"
+      (pins DA1-4 R6-2 R7-1)
+    )
+    (net "N-0000018"
+      (pins R3-1 DA1-2 R6-1)
+    )
+    (net "N-0000020"
+      (pins DD1-11 DA1-5)
     )
     (net "N-0000021"
       (pins XL5-2 DA1-1)
@@ -535,12 +546,6 @@
     (net "N-0000024"
       (pins L1-1 DA1-8 D1-A)
     )
-    (net "N-0000025"
-      (pins R3-1 DA1-2 DA1-4)
-    )
-    (net "N-0000027"
-      (pins DD1-11 DA1-5)
-    )
     (net "N-000003"
       (pins Q1-2 R5-1 DD1-19 C1-1)
     )
@@ -550,9 +555,12 @@
     (net "N-000005"
       (pins R2-2 R1-1 DD1-18)
     )
-    (class kicad_default "" +3.3V +5V +BATT /BAT_IN /BTN /Charge /RX /SB_SWCLK
-      /SB_SWDAT /TX GND "N-0000019" "N-0000021" "N-0000022" "N-0000024" "N-0000025"
-      "N-0000027" "N-000003" "N-000004" "N-000005"
+    (net "N-000006"
+      (pins DA3-5 R4-1)
+    )
+    (class kicad_default "" +3.3V +5V +BATT /BAT_IN /BTN /Charge /FB /RX /SB_SWCLK
+      /SB_SWDAT /TX GND "N-0000017" "N-0000018" "N-0000020" "N-0000021" "N-0000022"
+      "N-0000024" "N-000003" "N-000004" "N-000005" "N-000006"
       (circuit
         (use_via Via[0-1]_889:635_um)
       )

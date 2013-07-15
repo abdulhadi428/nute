@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 14/07/2013 23:49:17
+EESchema Schematic File Version 2  date 16/07/2013 00:07:37
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -13,7 +13,7 @@ $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "14 jul 2013"
+Date "15 jul 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -749,23 +749,23 @@ $EndComp
 $Comp
 L R R3
 U 1 1 51E13D2B
-P 9300 2800
-F 0 "R3" V 9380 2650 50  0000 C CNN
-F 1 "13R" V 9300 2800 50  0000 C CNN
-F 2 "RES_0603" V 9380 2900 28  0000 C CNN
-F 3 "~" H 9300 2800 60  0000 C CNN
-	1    9300 2800
+P 9950 3100
+F 0 "R3" V 10030 2950 50  0000 C CNN
+F 1 "13R" V 9950 3100 50  0000 C CNN
+F 2 "RES_0603" V 10030 3200 28  0000 C CNN
+F 3 "~" H 9950 3100 60  0000 C CNN
+	1    9950 3100
 	1    0    0    -1  
 $EndComp
 $Comp
 L GND #PWR035
 U 1 1 51E13D38
-P 9300 3150
-F 0 "#PWR035" H 9390 3130 30  0001 C CNN
-F 1 "GND" H 9300 3070 30  0001 C CNN
-F 2 "" H 9300 3150 60  0001 C CNN
-F 3 "" H 9300 3150 60  0001 C CNN
-	1    9300 3150
+P 9950 3450
+F 0 "#PWR035" H 10040 3430 30  0001 C CNN
+F 1 "GND" H 9950 3370 30  0001 C CNN
+F 2 "" H 9950 3450 60  0001 C CNN
+F 3 "" H 9950 3450 60  0001 C CNN
+	1    9950 3450
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -860,7 +860,6 @@ NoConn ~ 3250 2750
 NoConn ~ 3250 2850
 NoConn ~ 5750 2750
 NoConn ~ 5750 2650
-NoConn ~ 5750 2550
 NoConn ~ 5750 2450
 NoConn ~ 5750 2350
 $Comp
@@ -887,7 +886,7 @@ F 3 "" H 8000 4850 60  0001 C CNN
 	1    8000 4850
 	1    0    0    -1  
 $EndComp
-Text Notes 9500 2800 0    60   ~ 0
+Text Notes 10100 3200 0    60   ~ 0
 R=252/Iled[mA]
 $Comp
 L GND #PWR039
@@ -1232,14 +1231,7 @@ Wire Wire Line
 Wire Wire Line
 	8800 2750 8800 2850
 Wire Wire Line
-	9300 3050 9300 3150
-Wire Wire Line
-	9200 2450 9300 2450
-Wire Wire Line
-	9300 2350 9300 2550
-Wire Wire Line
-	9200 2350 9300 2350
-Connection ~ 9300 2450
+	9950 3350 9950 3450
 Wire Wire Line
 	8100 1950 8100 1500
 Wire Wire Line
@@ -1433,4 +1425,42 @@ F 3 "" H 12900 3550 60  0000 C CNN
 $EndComp
 Text Notes 12750 3150 0    60   ~ 0
 Connectors for spliting pcb
+$Comp
+L R R6
+U 1 1 51E42641
+P 9600 2600
+F 0 "R6" V 9680 2450 50  0000 C CNN
+F 1 "10k" V 9600 2600 50  0000 C CNN
+F 2 "RES_0603" V 9680 2700 28  0000 C CNN
+F 3 "~" H 9600 2600 60  0000 C CNN
+	1    9600 2600
+	-1   0    0    1   
+$EndComp
+$Comp
+L R R7
+U 1 1 51E42797
+P 10200 2350
+F 0 "R7" V 10280 2200 50  0000 C CNN
+F 1 "120k" V 10200 2350 50  0000 C CNN
+F 2 "RES_0603" V 10280 2450 28  0000 C CNN
+F 3 "~" H 10200 2350 60  0000 C CNN
+	1    10200 2350
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	9200 2350 9950 2350
+Wire Wire Line
+	9200 2450 9200 2850
+Wire Wire Line
+	9200 2850 9950 2850
+Connection ~ 9600 2350
+Wire Wire Line
+	10450 2350 10750 2350
+Connection ~ 9600 2850
+Wire Wire Line
+	5750 2550 6000 2550
+Text Label 6000 2550 0    60   ~ 0
+FB
+Text Label 10750 2350 2    60   ~ 0
+FB
 $EndSCHEMATC
