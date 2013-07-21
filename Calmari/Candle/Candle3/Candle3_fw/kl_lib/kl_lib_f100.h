@@ -14,7 +14,6 @@
 #include "clocking_f100.h"
 
 extern "C" {
-//void _init(void);   // Need to calm linker
 void __attribute__ ((weak)) _init(void)  {}
 }
 
@@ -23,6 +22,8 @@ void __attribute__ ((weak)) _init(void)  {}
 #ifndef countof
 #define countof(A)  (sizeof(A)/sizeof(A[0]))
 #endif
+
+typedef void (*ftVoidVoid)(void);
 
 // Simple pseudofunctions
 #define TRIM_VALUE(v, Max)  { if(v > Max) v = Max; }

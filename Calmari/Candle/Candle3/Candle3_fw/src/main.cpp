@@ -56,12 +56,13 @@ int main(void) {
 
     // Events
     uint32_t EvtMsk;
-    Buttons.RegisterEvt(&EvtListenerKeys, EVTMASK_KEYS);
+//    Btn.RegisterEvt(&EvtListenerKeys, EVTMASK_KEYS);
     // Application cycle
     while(TRUE) {
-        EvtMsk = chEvtWaitAny(EVTMASK_RADIO_RX | EVTMASK_KEYS);
+        chThdSleepMilliseconds(999);
+//        EvtMsk = chEvtWaitAny(EVTMASK_RADIO_RX | EVTMASK_KEYS);
         // Check keys
-        if(EvtMsk & EVTMASK_KEYS) ProcessBtnEvt();
+//        if(EvtMsk & EVTMASK_KEYS) ProcessBtnEvt();
 //        if((EvtMsk & EVTMASK_RADIO_TX) and (BtnTx.State == stPressed)) {
 //            // Transmit color
 //        }
@@ -76,35 +77,36 @@ void Init() {
     Uart.Init(57600);
     ColorIndx = COLOR_COUNT-1;
     Led.Init();
-    Led.SetColor(ColorTable[ColorIndx]);
-    Buttons.Init();
+    Led.SetColorSmoothly(ColorTable[ColorIndx]);
+    Btn.Init();
+    Btn.EvtCallback = ProcessBtnEvt;
     Uart.Printf("\rCandle AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
 }
 
 void ProcessBtnEvt() {
     switch(State) {
         case sIdle:
-            if((BtnUp.Evt == evtPressed) and (BtnDown.Evt == evtPressed)) {     // Both pressed, switch to sFade
+            if((Btn.Up.Evt == evtPressed) and (Btn.Down.Evt == evtPressed)) {     // Both pressed, switch to sFade
                 State = sFade;
-                Led.SetColorSmoothly(BtnTx.Pressed? COLOR_FADE : clBlack);
+                Led.SetColorSmoothly(Btn.Tx.Pressed? COLOR_FADE : clBlack);
             }
-            else if(BtnUp.Pressed() or BtnDown.Pressed()) State = sColorEdit;   // Any pressed
+            else if(Btn.Up.Pressed or Btn.Down.Pressed) State = sColorEdit;   // Any pressed
             break;
 
         case sColorEdit:
-            if((BtnUp.Evt == evtPressed) and (BtnDown.Evt == evtPressed)) {     // Both pressed, switch to sFade
+            if(Btn.Up.Pressed and Btn.Down.Pressed) {     // Both pressed, switch to sFade
                 State = sFade;
-                Led.SetColorSmoothly(BtnTx.Pressed? COLOR_FADE : clBlack);
+                Led.SetColorSmoothly(Btn.Tx.Pressed? COLOR_FADE : clBlack);
             }
-            else if((BtnUp.Evt == evtReleased) or (BtnDown.Evt == evtReleased)) State = sIdle;  // Any released
+            else if((Btn.Up.Evt == evtReleased) or (Btn.Down.Evt == evtReleased)) State = sIdle;  // Any released
             // Process long hold of button
-            else if(BtnUp.Evt == evtTick) {
+            else if(Btn.Up.Evt == evtTick) {
                 if(ColorIndx < (COLOR_COUNT-1)) {    // Top value not reached
                     ColorIndx++;
                     Led.SetColorSmoothly(ColorTable[ColorIndx]);
                 }
             }
-            else if(BtnDown.Evt == evtTick) {
+            else if(Btn.Down.Evt == evtTick) {
                 if(ColorIndx > 0) {    // Top value not reached
                     ColorIndx--;
                     Led.SetColorSmoothly(ColorTable[ColorIndx]);
@@ -113,16 +115,13 @@ void ProcessBtnEvt() {
             break;
 
         case sFade:
-            if((BtnUp.Evt == evtPressed) or (BtnDown.Evt == evtPressed)) {
+            if((Btn.Up.Evt == evtPressed) or (Btn.Down.Evt == evtPressed)) {
                 State = sColorEdit;
                 Led.SetColorSmoothly(ColorTable[ColorIndx]);
             }
-            else if(BtnTx.Evt == evtPressed)  Led.SetColorSmoothly(COLOR_FADE);
-            else if(BtnTx.Evt == evtReleased) Led.SetColorSmoothly(clBlack);
+            else if(Btn.Tx.Evt == evtPressed)  Led.SetColorSmoothly(COLOR_FADE);
+            else if(Btn.Tx.Evt == evtReleased) Led.SetColorSmoothly(clBlack);
             break;
     } // switch state
-    // Clear events
-    BtnUp.ClearEvent();
-    BtnDown.ClearEvent();
-    BtnTx.ClearEvent();
+    Btn.ClearEvents();
 }

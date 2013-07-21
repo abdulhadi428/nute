@@ -8,43 +8,71 @@
 #include "buttons.h"
 #include "ch.h"
 
-Keys_t Keys;
+#define TICK_CNT    (BTN_TICK_PERIOD_MS / BTN_POLL_PERIOD_MS)
 
-// ==== Keys Thread ====
-static WORKING_AREA(waKeysThread, 128);
-static msg_t KeysThread(void *arg) {
-    (void)arg;
-    chRegSetThreadName("Keys");
+Buttons_t Btn;
 
-    uint8_t i;
-    KeyState_t Now;
-    bool FHasChanged;
-    while(1) {
-        chThdSleepMilliseconds(KEYS_POLL_PERIOD_MS);
-        // Check keys
-        FHasChanged = false;
-        for(i=0; i<KEYS_CNT; i++) {
-            Now = PinIsSet(Key[i].Gpio, Key[i].Pin)? ksReleased : ksPressed;
-            if(Keys.Status[i].State != Now) {
-                Keys.Status[i].State = Now;
-                Keys.Status[i].HasChanged = true;
-//                Uart.Printf("Key %u\r", i);
-                FHasChanged = true;
-            }
-        } // for
-        if(FHasChanged) chEvtBroadcast(&Keys.EvtSrc);
+// ============================= Single button =================================
+void Btn_t::Init(GPIO_TypeDef *Gpio, uint16_t Pin) {
+    PGpio = Gpio;
+    IPin = Pin;
+    PinSetupIn(Gpio, Pin, pudPullUp);
+}
+
+void Btn_t::CheckTransition() {
+    if(!PinIsSet(PGpio, IPin) and !Pressed) { // Pressed
+        Pressed = true;
+        Evt = evtPressed;
     }
+    if(PinIsSet(PGpio, IPin) and Pressed) { // Released
+        Pressed = false;
+        Evt = evtReleased;
+    }
+}
+
+// ================================ Buttons ====================================
+static WORKING_AREA(waBtnThread, 128);
+static msg_t BtnThread(void *arg) {
+    (void)arg;
+    chRegSetThreadName("Btn");
+    while(1) Btn.Task();
     return 0;
 }
 
-// ==== Keys methods ====
-void Keys_t::Init() {
-    chEvtInit(&Keys.EvtSrc);
-    for(uint8_t i=0; i<KEYS_CNT; i++) PinSetupIn(Key[i].Gpio, Key[i].Pin, pudPullUp);
+void Buttons_t::Init() {
+//    chEvtInit(&EvtSrc);
+    Up.Init  (GPIOB, 6);
+    Down.Init(GPIOB, 7);
+    Tx.Init  (GPIOA, 1);
     // Create and start thread
-    chThdCreateStatic(waKeysThread, sizeof(waKeysThread), NORMALPRIO, KeysThread, NULL);
+    chThdCreateStatic(waBtnThread, sizeof(waBtnThread), NORMALPRIO, BtnThread, NULL);
 }
 
-void Keys_t::Shutdown() {
-    for(uint8_t i=0; i<KEYS_CNT; i++) PinSetupAnalog(Key[i].Gpio, Key[i].Pin);
+void Buttons_t::Shutdown() {
+    Up.Shutdown();
+    Down.Shutdown();
+    Tx.Shutdown();
 }
+
+void Buttons_t::Task() {
+       chThdSleepMilliseconds(BTN_POLL_PERIOD_MS);
+       // Check transition from pressed to depressed and vice versa
+       Up.CheckTransition();
+       Down.CheckTransition();
+       Tx.CheckTransition();
+
+       // Check if long-press tick occured
+       if((Up.Evt == evtPressed) or (Down.Evt == evtPressed)) TickCounter = 0;
+       if(TickCounter++ >= TICK_CNT) {
+           if((Up.Evt == evtNone) and Up.Pressed) Up.Evt = evtTick;
+           if((Down.Evt == evtNone) and Down.Pressed) Down.Evt = evtTick;
+           TickCounter = 0;
+       }
+
+       // Check if event occcured
+       if((Up.Evt != evtNone) or (Down.Evt != evtNone) or (Tx.Evt != evtNone)) {
+//           Uart.Printf("%u %u %u\r", Up.Evt, Down.Evt, Tx.Evt);
+           if(EvtCallback != NULL) EvtCallback();
+//           chEvtBroadcast(&EvtSrc);
+       }
+   }

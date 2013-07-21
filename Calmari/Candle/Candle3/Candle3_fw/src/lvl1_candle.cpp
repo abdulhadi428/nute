@@ -6,7 +6,7 @@
  */
 
 #include "lvl1_candle.h"
-#include "cc1101.h"
+//#include "cc1101.h"
 
 //#define DBG_PINS
 
@@ -73,9 +73,9 @@ void rLevel1_t::Init(uint8_t TxPwr) {
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull);
 #endif
     // Init radioIC
-    CC.Init();
-    CC.SetChannel(R_CHANNEL);
-    CC.SetTxPower(TxPwr);
+//    CC.Init();
+//    CC.SetChannel(R_CHANNEL);
+//    CC.SetTxPower(TxPwr);
     // Variables
     chEvtInit(&IEvtSrcRadioRx);
     // Init thread. High priority is required to satisfy timings.

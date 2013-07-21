@@ -108,7 +108,7 @@ struct Color_t {
  * RGB LED
  * Provides smooth color change.
  */
-#define LED_SETUP_DELAY_MS  45
+#define LED_SETUP_DELAY_MS  7
 
 #define LED_TIM         TIM1
 #define LED_RED_CCR     CCR3
