@@ -25,6 +25,20 @@ void __attribute__ ((weak)) _init(void)  {}
 
 typedef void (*ftVoidVoid)(void);
 
+// Return values
+#define OK              0
+#define FAILURE         1
+#define TIMEOUT         2
+#define BUSY            3
+#define NEW             4
+#define IN_PROGRESS     5
+#define LAST            6
+#define CMD_ERROR       7
+
+enum BitOrder_t {boMSB, boLSB};
+enum LowHigh_t  {Low, High};
+enum RiseFall_t {Rising, Falling};
+
 // Simple pseudofunctions
 #define TRIM_VALUE(v, Max)  { if(v > Max) v = Max; }
 #define IS_LIKE(v, precise, deviation)  (((precise - deviation) < v) and (v < (precise + deviation)))
@@ -38,7 +52,7 @@ typedef void (*ftVoidVoid)(void);
 #define IRQ_PRIO_LOW            15  // Minimum
 #define IRQ_PRIO_MEDIUM         9
 #define IRQ_PRIO_HIGH           7
-#define IRQ_PRIO_VERYHIGH       4 // Higher than systick
+#define IRQ_PRIO_VERYHIGH       4   // Higher than systick
 
 // DMA
 #define DMA_PRIORITY_LOW        STM32_DMA_CR_PL(0b00)
@@ -160,6 +174,18 @@ static inline void PinSetupAlterFuncOutput(
     }
 }
 
+class PwmPin_t {
+private:
+    uint32_t *PClk;
+    TIM_TypeDef* Tim;
+public:
+    __IO uint16_t *PCCR;    // Made public to allow DMA
+    void SetFreqHz(uint32_t FreqHz);
+    void Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, uint16_t TopValue, bool Inverted=false);
+    void Set(uint16_t Value) { *PCCR = Value; }
+    void Off() { *PCCR = 0; }
+};
+
 // Disable JTAG, leaving SWD
 static inline void JtagDisable() {
     bool AfioWasEnabled = (RCC->APB2ENR & RCC_APB2ENR_AFIOEN);
@@ -261,6 +287,47 @@ public:
     }
 };
 
+// ================================= SPI =======================================
+enum CPHA_t {cphaFirstEdge, cphaSecondEdge};
+enum CPOL_t {cpolIdleLow, cpolIdleHigh};
+enum SpiBaudrate_t {
+    sbFdiv2   = 0b000,
+    sbFdiv4   = 0b001,
+    sbFdiv8   = 0b010,
+    sbFdiv16  = 0b011,
+    sbFdiv32  = 0b100,
+    sbFdiv64  = 0b101,
+    sbFdiv128 = 0b110,
+    sbFdiv256 = 0b111,
+};
+
+static inline void SpiSetup(
+        SPI_TypeDef *Spi,
+        BitOrder_t BitOrder,
+        CPOL_t CPOL,
+        CPHA_t CPHA,
+        SpiBaudrate_t Baudrate
+        ) {
+    // Clocking
+    if      (Spi == SPI1) { rccEnableSPI1(FALSE); }
+#ifdef RCC_APB1ENR_SPI2EN
+    else if (Spi == SPI2) { rccEnableSPI2(FALSE); }
+#endif
+#ifdef RCC_APB1ENR_SPI3EN
+    else if (Spi == SPI3) { rccEnableSPI3(FALSE); }
+#endif
+    // Mode: Master, NSS software controlled and is 1, 8bit, NoCRC, FullDuplex
+    Spi->CR1 = SPI_CR1_SSM | SPI_CR1_SSI | SPI_CR1_MSTR;
+    if(BitOrder == boLSB) Spi->CR1 |= SPI_CR1_LSBFIRST;     // MSB/LSB
+    if(CPOL == cpolIdleHigh) Spi->CR1 |= SPI_CR1_CPOL;      // CPOL
+    if(CPHA == cphaSecondEdge) Spi->CR1 |= SPI_CR1_CPHA;    // CPHA
+    Spi->CR1 |= ((uint16_t)Baudrate) << 3;                  // Baudrate
+    Spi->CR2 = 0;
+}
+
+static inline void SpiEnable (SPI_TypeDef *Spi) { Spi->CR1 |=  SPI_CR1_SPE; }
+static inline void SpiDisable(SPI_TypeDef *Spi) { Spi->CR1 &= ~SPI_CR1_SPE; }
+
 
 // ============================== UART command =================================
 #define DBG_UART_ENABLED
@@ -283,5 +350,47 @@ public:
 
 extern DbgUart_t Uart;
 #endif
+
+
+// =============================== I2C =========================================
+class i2c_t {
+private:
+    I2C_TypeDef *ii2c;
+    GPIO_TypeDef *IPGpio;
+    uint16_t ISclPin, ISdaPin;
+    uint32_t IBitrateHz;
+    void SendStart()  { ii2c->CR1 |= I2C_CR1_START; }
+    void SendStop()   { ii2c->CR1 |= I2C_CR1_STOP; }
+    void AckEnable()  { ii2c->CR1 |= I2C_CR1_ACK; }
+    void AckDisable() { ii2c->CR1 &= ~I2C_CR1_ACK; }
+    bool RxIsNotEmpty()  { return (ii2c->SR1 & I2C_SR1_RXNE); }
+    void ClearAddrFlag() { (void)ii2c->SR1; (void)ii2c->SR2; }
+    void DmaLastTransferSet() { ii2c->CR2 |= I2C_CR2_LAST; }
+    // Address and data
+    void SendAddrWithWrite(uint8_t Addr) { ii2c->DR = (uint8_t)(Addr<<1); }
+    void SendAddrWithRead (uint8_t Addr) { ii2c->DR = ((uint8_t)(Addr<<1)) | 0x01; }
+    void SendData(uint8_t b) { ii2c->DR = b; }
+    uint8_t ReceiveData() { return ii2c->DR; }
+    // Flags operations
+    uint8_t IBusyWait();
+    uint8_t WaitEv5();
+    uint8_t WaitEv6();
+    uint8_t WaitEv8();
+    uint8_t WaitAck();
+    uint8_t WaitRx();
+    uint8_t WaitStop();
+public:
+    bool Error;
+    Thread *PRequestingThread;
+    const stm32_dma_stream_t *PDmaTx, *PDmaRx;
+    void Init(I2C_TypeDef *pi2c, uint32_t BitrateHz);
+    void Standby();
+    void Resume();
+    void Reset();
+    uint8_t CmdWriteRead(uint8_t Addr, uint8_t *WPtr, uint8_t WLength, uint8_t *RPtr, uint8_t RLength);
+    uint8_t CmdWriteWrite(uint8_t Addr, uint8_t *WPtr1, uint8_t WLength1, uint8_t *WPtr2, uint8_t WLength2);
+};
+
+
 
 #endif /* KL_LIB_F100_H_ */
