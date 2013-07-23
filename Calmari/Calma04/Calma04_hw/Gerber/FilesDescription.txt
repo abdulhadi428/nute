@@ -1,0 +1,8 @@
+Calma04-F_Cu.gtl       - GERBER-файл верхнего слоя платы
+Calma04-B_Cu.gbl       - GERBER-файл нижнего слоя платы
+Calma04-F_Mask.gts     - GERBER-файл маски верхнего слоя платы
+Calma04-B_Mask.gbs     - GERBER-файл маски нижнего слоя платы 
+Calma04-Edge_Cuts.gbr  - GERBER-файл контура платы
+Calma04-F_SilkS.gto    - GERBER-файл шелкографии верхнего слоя платы
+Calma04.drl            - файл листа сверловки
+other_formats.xls       - заполненная карта заказа с сайта
