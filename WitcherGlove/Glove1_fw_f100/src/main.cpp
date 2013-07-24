@@ -16,7 +16,7 @@
 #include "ManyLed.h"
 #include "vibro.h"
 
-#define TESTING
+//#define TESTING
 
 static inline void Init();
 
