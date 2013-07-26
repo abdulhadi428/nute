@@ -65,6 +65,7 @@
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="ApplicationDll.def"
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -137,6 +138,7 @@
 				Name="VCLinkerTool"
 				IgnoreAllDefaultLibraries="false"
 				ModuleDefinitionFile="ApplicationDll.def"
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"

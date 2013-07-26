@@ -1,6 +1,21 @@
-#include "ArmletApi.h"
+#include "Common.h"
 
-int DllMain()
+extern "C" __declspec(dllexport) 
+int __stdcall DllMain(void* hinstDLL, unsigned long fdwReason, void* lpvReserved)
 {
-	return 0;
+	UNREFERENCED_PARAMETER(hinstDLL);
+	UNREFERENCED_PARAMETER(lpvReserved);
+
+	switch (fdwReason)
+	{
+	case 1://DLL_PROCESS_ATTACH
+        break;
+	case 0://DLL_PROCESS_DETACH:
+        break;
+	case 2://DLL_THREAD_ATTACH:
+        break;
+	case 3://DLL_THREAD_DETACH:
+        break;
+	}
+	return true;
 }
