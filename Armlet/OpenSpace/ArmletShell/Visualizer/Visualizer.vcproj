@@ -204,36 +204,12 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\AssemblyInfo.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CalloutInterface.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\FormHelper.cpp"
 				>
-			</File>
-			<File
-				RelativePath=".\stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\Visualizer.cpp"
@@ -263,14 +239,6 @@
 					>
 				</File>
 			</File>
-			<File
-				RelativePath=".\resource.h"
-				>
-			</File>
-			<File
-				RelativePath=".\stdafx.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -283,6 +251,42 @@
 			</File>
 			<File
 				RelativePath=".\app.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\resource.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Internal files"
+			>
+			<File
+				RelativePath=".\AssemblyInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\stdafx.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\stdafx.h"
 				>
 			</File>
 		</Filter>

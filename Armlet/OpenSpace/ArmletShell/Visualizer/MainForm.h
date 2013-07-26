@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #pragma unmanaged
+#include "Common.h"
 #include "CalloutInterface.h"
 #include "..\KernelDll\KernelApi.h"
 #pragma managed

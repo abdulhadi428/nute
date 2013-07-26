@@ -19,7 +19,7 @@ int __clrcall main(array<System::String ^> ^args)
 
 /*
 Due to initialization of global object in libraries
-entry pint is:
+entry point is:
 int __clrcall mainCRTStartupStrArray(cli::array<class System::String ^ >^)
 ?mainCRTStartupStrArray@@$$FYMHP$01AP$AAVString@System@@@Z
 */

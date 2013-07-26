@@ -1,6 +1,8 @@
 #include "stdafx.h"
-#include "ArmletApi.h"
+#include "Common.h"
+#include "CalloutInterface.h"
 #include "..\KernelDll\KernelApi.h"
+#include "ArmletApi.h"
 #include "ServerProtocol.h"
 
 #define _CRT_SECURE_NO_WARNINGS

@@ -22,7 +22,7 @@ namespace Visualizer {
 		for (int y=0; y<SCREENY; y++)
 		for (int x=0; x<SCREENX; x++)
 		{
-			unsigned short val = KernelApi::VideoMemory[SCREENX*y+x];
+			unsigned short val = KernelApi::VideoMemory[SCREENX*y+x]; //TODO GetVideoPixel(x,y)
 			unsigned char r = (val & 0xF00) >> 8;
 			unsigned char g = (val & 0xF0) >> 4;
 			unsigned char b = val & 0xF;
