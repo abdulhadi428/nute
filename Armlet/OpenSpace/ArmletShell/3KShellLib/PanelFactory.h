@@ -8,8 +8,11 @@ class PanelFactory
 	Panel* AllocPanel();
 
 	IRender* _render;
-public:
-	PanelFactory(IRender* render);
+	Repositories* _repositories;
 
-	fresult GetPanel(Size sz, Position pos, ubyte_t controlsCount, Panel* o_pnl);
+public:
+
+	fresult Init (IRender* render, Repositories* reps);
+	fresult GetPanel(Size sz, Position pos, ubyte_t controlsCount, Panel** o_pnl);
+	fresult GetPanel(Size sz, Position pos, ubyte_t controlsCount, ColorHandle clrhandle,  Panel** o_pnl);
 };

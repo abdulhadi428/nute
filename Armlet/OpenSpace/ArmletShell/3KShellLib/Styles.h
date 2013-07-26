@@ -2,6 +2,10 @@
 	#error "Use ThreeKShell.h"
 #endif
 
+#define INVALID_HANDLE -1
+
+typedef uword_t ColorHandle;
+
 #define COLORS_COUNT 30
 
 #define CL_TRANSPARENT						0
@@ -27,6 +31,8 @@
 #define CL_MENU_EVEN_BACKGROUND					PRESETCOLORSOFFSET		+12
 #define CL_MENU_EVEN_DISABLED_TEXT_FOREGROUND	PRESETCOLORSOFFSET		+13
 #define CL_MENU_EVEN_DISABLED_BACKGROUND 		PRESETCOLORSOFFSET		+14
+
+#define CL_SYSTEM_LAST 							PRESETCOLORSOFFSET		+14
 		
 class ColorsRepository
 {
@@ -34,16 +40,18 @@ private:
 	Color _colors[COLORS_COUNT];
 
 public:
-	ColorsRepository();
+	fresult Init();
 
 	fresult ResetColors();
-	fresult RegisterColor(const ubyte_t id, const Color color);
-	fresult Register16ARGBColor(const ubyte_t id,const ubyte_t a,const ubyte_t r,const ubyte_t g,const ubyte_t b);
-	fresult Register24bitARGBColor(const ubyte_t id,const ubyte_t a,const ubyte_t r,const ubyte_t g, ubyte_t b);
+	fresult RegisterColor(const ColorHandle id, const Color color);
+	fresult Register16ARGBColor(const ColorHandle id,const ubyte_t a,const ubyte_t r,const ubyte_t g,const ubyte_t b);
+	fresult Register24bitARGBColor(const ColorHandle id,const ubyte_t a,const ubyte_t r,const ubyte_t g, ubyte_t b);
 	
-	fresult GetColorById(const ubyte_t id, uword_t* color);
+	fresult GetColorById(const ColorHandle id, uword_t* color);
 		
 };
+
+typedef ubyte_t FontHandle;
 
 #define FONTS_COUNT 5
 
@@ -58,16 +66,16 @@ private:
 	FontDescription _fonts[FONTS_COUNT];
 
 public:
-	FontsRepository();
+	fresult Init();
 
 	fresult ResetFonts();
-	fresult RegisterFont(const ubyte_t id, const ubyte_t systemFontId);
+	fresult RegisterFont(const FontHandle id, const ubyte_t systemFontId);
 
-	fresult GetFont(const ubyte_t id, FontDescription* font);
+	fresult GetFont(const FontHandle id, FontDescription* font);
 
 };
 
-
+typedef ubyte_t TextFormatHandle;
 #define TEXTFORMATS_COUNT 15
 
 #define TF_DEFAULT			0
@@ -86,13 +94,27 @@ private:
 	FontsRepository* _fonts;
 
 public:
-	TextFormatsRepository(const ColorsRepository* _colors, const FontsRepository* _fonts);
+	fresult Init(const ColorsRepository* _colors, const FontsRepository* _fonts);
 
 	fresult ResetTextFormats();
-	fresult RegisterTextFormat( const ubyte_t id, TextFormat* tf);
-	fresult GetTextFormat( const ubyte_t id, TextFormat* o_textFormat);
+	fresult RegisterTextFormat( const TextFormatHandle id, TextFormat* tf);
+	fresult GetTextFormat( const TextFormatHandle id, TextFormat** o_textFormat);
 	
 	fresult CreateTextFormatByStyles(ubyte_t fontId, ubyte_t fgColorId, ubyte_t bgColorId, TextFormat* o_tf);
+};
+
+typedef uword_t ImageHandle;
+
+class ImagesRepository
+{
+	BitmapImage* _images[MAX_IMAGES];
+	uword_t _imagesCount;
+	uword_t _usedImages;
+public:
+	fresult Init();
+
+	fresult RegisterImage(BitmapImage* bitmap);
+	BitmapImage* GetImageById(ImageHandle id);
 };
 
 class Repositories
@@ -103,5 +125,5 @@ public:
 	TextFormatsRepository* TextFormats;
 	ImagesRepository* Images;
 
-	Repositories(ColorsRepository* colors, FontsRepository* fonts,	TextFormatsRepository* textFormats, ImagesRepository* images);
+	fresult Init(ColorsRepository* colors, FontsRepository* fonts,	TextFormatsRepository* textFormats, ImagesRepository* images);
 };

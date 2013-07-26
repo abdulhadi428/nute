@@ -2,20 +2,21 @@
 
 namespace ThreeKShell {
 
-TextFieldFactory::TextFieldFactory(Repositories* styles, IRender* renderer)
+fresult TextFieldFactory::Init(IRender* renderer, Repositories* styles)
 {
+	fresult fres;
 	_styles = styles;
 	_renderer = renderer;
-	ResetDefaults();
+	fres = ResetDefaults();
+	ENSURESUCCESS(fres);
+	
+	return SUCCESS;
 }
  
 fresult TextFieldFactory::ResetDefaults()
 {
-	fresult fres;
-	fres = _styles->TextFormats->GetTextFormat(TF_DEFAULT, DefaultTextFormat);
-	ENSURESUCCESS(fres);
-
-	CurrentTextFormat = DefaultTextFormat;
+	DefaultTextFormatHandle = TF_DEFAULT;
+	CurrentTextFormatHandle = DefaultTextFormatHandle;
 
 	DefaultWrap = true;
 	CurrentWrap = DefaultWrap;
@@ -25,15 +26,35 @@ fresult TextFieldFactory::ResetDefaults()
 
 	return SUCCESS;
 }
+fresult TextFieldFactory::GetTextBox(Position pos, ubyte_t maxLineLen , TextField** o_tf)
+{
+	fresult fres;
+	TextFormat* tfmt;
+	Size pxSize;
+
+	fres = _styles->TextFormats->GetTextFormat(CurrentTextFormatHandle, &tfmt);
+	ENSURESUCCESS(fres);
+
+	pxSize.Height = tfmt->Font.GlyphSize.Height;
+	pxSize.Width = maxLineLen*tfmt->Font.GlyphSize.Width;
+
+	return GetTextBox(pos, NULL, pxSize, TRUE, o_tf);
+}
 
 
 fresult TextFieldFactory::GetTextBox(Position pos, const char* text , TextField** o_tf)
 {
+	fresult fres;
 	//autosize it
 	uword_t len = Length(text);
 	Size pxSize;
-	pxSize.Height = CurrentTextFormat->Font.GlyphSize.Height;
-	pxSize.Width = len*CurrentTextFormat->Font.GlyphSize.Width;
+
+	TextFormat* tfmt;
+	fres = _styles->TextFormats->GetTextFormat(CurrentTextFormatHandle, &tfmt);
+	ENSURESUCCESS(fres);
+
+	pxSize.Height = tfmt->Font.GlyphSize.Height;
+	pxSize.Width = len*tfmt->Font.GlyphSize.Width;
 
 	return GetTextBox(pos, text, pxSize, TRUE, o_tf);
 }
@@ -44,7 +65,12 @@ fresult TextFieldFactory::GetTextBox(Position pos, Size sizepx , TextField** o_t
 	//must be non-static text textbox
 	Size buffSz;
 	char* buff;
-	buff = AllocBuffBySizePx(sizepx, CurrentTextFormat, DefaultFrames, &buffSz);
+
+	TextFormat* tfmt;
+	fres = _styles->TextFormats->GetTextFormat(CurrentTextFormatHandle, &tfmt);
+	ENSURESUCCESS(fres);
+
+	buff = AllocBuffBySizePx(sizepx, tfmt, DefaultFrames, &buffSz);
 	FAILIF(buff==NULL);
 	
 	fres = GetTextBox(pos, NULL, sizepx, buff, buffSz, o_tf);
@@ -52,12 +78,12 @@ fresult TextFieldFactory::GetTextBox(Position pos, Size sizepx , TextField** o_t
 	return fres;
 }
 
-fresult TextFieldFactory::GetTextBox(Position pos, const char* text, Size sizepx, bool_t staticText, TextField** o_tf)
+fresult TextFieldFactory::GetTextBox(Position pos, const char* text, Size sizepx, bool_t noScroll, TextField** o_tf)
 {
 	fresult fres;
 
 	ubyte_t pages;
-	if (staticText==TRUE)
+	if (noScroll==TRUE)
 	{
 		pages = 1;
 	}
@@ -65,9 +91,14 @@ fresult TextFieldFactory::GetTextBox(Position pos, const char* text, Size sizepx
 	{
 		pages = CurrentFrames;
 	}
+	
+	TextFormat *tfmt;
+	fres = _styles->TextFormats->GetTextFormat(CurrentTextFormatHandle, &tfmt);
+	ENSURESUCCESS(fres);
+	
 	char* buff;
 	Size buffSz;
-	buff = AllocBuffBySizePx(sizepx, CurrentTextFormat, pages, &buffSz);
+	buff = AllocBuffBySizePx(sizepx, tfmt, pages, &buffSz);
 	FAILIF(buff==NULL);
 
 
@@ -85,7 +116,11 @@ fresult TextFieldFactory::GetTextBox(Position pos, const char* text, Size sizepx
 	fres = tf->Init(sizepx, pos, buff, buffSz, _renderer);
 	ENSURESUCCESS(fres);
 
-	tf->SetTextFormat(CurrentTextFormat);
+	TextFormat* tfmt;
+	fres = _styles->TextFormats->GetTextFormat(CurrentTextFormatHandle, &tfmt);
+	ENSURESUCCESS(fres);
+
+	tf->SetTextFormat(tfmt);
 
 	tf->SetWordWrap(DefaultWrap);
 
@@ -125,7 +160,10 @@ char* TextFieldFactory::AllocBuffBySizeTx( Size sizeTx, ubyte_t pages, Size* o_b
 
 char* TextFieldFactory::allocBytes( uword_t io_len )
 {
-	return new char[io_len];
+	char* res = new char[io_len];
+	StrPad(res, 0, 0, io_len);
+	
+	return res;
 }
 
 TextField* TextFieldFactory::allocTextField()

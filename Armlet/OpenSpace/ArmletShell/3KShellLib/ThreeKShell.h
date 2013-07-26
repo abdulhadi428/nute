@@ -20,6 +20,7 @@ namespace ThreeKShell {
 	#include "TextField.h"
 	#include "TextFieldFactory.h"
 
+	#include "SystemImagesLib.h"	//common images lib
 	#include "Image.h"
 	#include "PictureBoxFactory.h"
 
@@ -37,10 +38,11 @@ namespace ThreeKShell {
 	#include "MenuBase.h"
 	#include "ScatteredMenu.h"
 	#include "MenuItemFactory.h"
+	#include "MenuFactory.h"
 
-	//#include "TextForm.h"
+	#include "Factories.h"
 
-#undef _NAMESPACE_PROTECT_
+//#undef _NAMESPACE_PROTECT_
 }
 using namespace ThreeKShell;
 

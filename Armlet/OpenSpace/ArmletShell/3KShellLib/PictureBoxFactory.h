@@ -10,9 +10,9 @@ class PictureBoxFactory
 	ImagesRepository* _images;
 
 public:
-	PictureBoxFactory(IRender* render, ImagesRepository* images);
+	fresult Init(IRender* render, ImagesRepository* images);
 
-	fresult GetPictureBox(Position pos, ubyte_t imageId, PictureBox* o_pbx);
-	fresult GetPictureBox(Size sz, Position pos, ubyte_t imageId, PictureBox* o_pbx);
-	fresult GetPictureBox(Size sz, Position pos, BitmapImage* bmp, PictureBox* o_pbx);
+	fresult GetPictureBox(Position pos, ubyte_t imageId, PictureBox** o_pbx);
+	fresult GetPictureBox(Size sz, Position pos, ubyte_t imageId, PictureBox** o_pbx);
+	fresult GetPictureBox(Size sz, Position pos, BitmapImage* bmp, PictureBox** o_pbx);
 };

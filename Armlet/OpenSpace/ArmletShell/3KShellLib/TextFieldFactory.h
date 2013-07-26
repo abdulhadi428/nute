@@ -15,10 +15,10 @@ private:
 
 public:
 
-	TextFieldFactory(Repositories* styles, IRender* renderer);
+	fresult Init(IRender* renderer, Repositories* styles);
 
-	TextFormat* DefaultTextFormat;
-	TextFormat* CurrentTextFormat;
+	TextFormatHandle DefaultTextFormatHandle;
+	TextFormatHandle CurrentTextFormatHandle;
 
 	bool_t DefaultWrap;
 	bool_t CurrentWrap;
@@ -30,6 +30,7 @@ public:
 
 	fresult GetTextBox(Position pos, const char* text, TextField** o_tf);
 	fresult GetTextBox(Position pos, Size sizepx, TextField** o_tf);
-	fresult GetTextBox(Position pos, const char* text, Size sizepx, bool_t staticText, TextField** o_tf);
+	fresult GetTextBox(Position pos, ubyte_t maxLineLen , TextField** o_tf);
+	fresult GetTextBox(Position pos, const char* text, Size sizepx, bool_t noScroll, TextField** o_tf);
 	fresult GetTextBox(Position pos, const char* text, Size sizepx, char* buff, Size buffSz, TextField** o_tf);
 };

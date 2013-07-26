@@ -3,9 +3,14 @@
 namespace ThreeKShell {
 
 #pragma region Colors
-ColorsRepository::ColorsRepository()
+
+fresult ColorsRepository::Init()
 {
-	ResetColors();
+	fresult fres;
+	fres= ResetColors();
+	ENSURESUCCESS(fres);
+
+	return SUCCESS;
 }
 
 fresult ColorsRepository::ResetColors()
@@ -20,11 +25,11 @@ fresult ColorsRepository::ResetColors()
 	_colors[CL_BLUE]								= BLUE;
 	_colors[CL_WHITE]								= WHITE;
 	_colors[CL_CONTROL_BACKGROUND]					= WHITE;
-	_colors[CL_HEADER_BACKGROUND]					= 0xD9EF;
-	_colors[CL_HEADER_TEXT_FOREGROUND]				= 0x0000;
-	_colors[CL_DEFAULT_TEXT_FOREGROUND]				= 0x0000;
-	_colors[CL_MENU_TEXT_FOREGROUND]				= 0x0000;
-	_colors[CL_MENU_BACKGROUND]						= 0xFF61;
+	_colors[CL_HEADER_BACKGROUND]					= WHITE;
+	_colors[CL_HEADER_TEXT_FOREGROUND]				= BLACK;
+	_colors[CL_DEFAULT_TEXT_FOREGROUND]				= BLACK;
+	_colors[CL_MENU_TEXT_FOREGROUND]				= BLACK;
+	_colors[CL_MENU_BACKGROUND]						= WHITE;
 	_colors[CL_MENU_SELECTED_TEXT_FOREGROUND]		= RED;
 	_colors[CL_MENU_SELECTED_BACKGROUND]			= BLUE;
 	_colors[CL_MENU_DISABLED_TEXT_FOREGROUND]		= RED;
@@ -37,7 +42,7 @@ fresult ColorsRepository::ResetColors()
 	return SUCCESS;
 }
 
-fresult ColorsRepository::RegisterColor(const ubyte_t id, const uword_t color )
+fresult ColorsRepository::RegisterColor(const ColorHandle id, const uword_t color )
 {
 	FAILIF (!(id<COLORS_COUNT));
 	_colors[id] = color;
@@ -45,7 +50,7 @@ fresult ColorsRepository::RegisterColor(const ubyte_t id, const uword_t color )
 	return SUCCESS;
 }
 
-fresult ColorsRepository::Register16ARGBColor(const ubyte_t id,const ubyte_t a,const ubyte_t r,const ubyte_t g,const ubyte_t b)
+fresult ColorsRepository::Register16ARGBColor(const ColorHandle id,const ubyte_t a,const ubyte_t r,const ubyte_t g,const ubyte_t b)
 {
 	FAILIF(a>15);
 	FAILIF(r>15);
@@ -56,17 +61,17 @@ fresult ColorsRepository::Register16ARGBColor(const ubyte_t id,const ubyte_t a,c
 	return RegisterColor(id,color16bit);
 }
 
-fresult ColorsRepository::Register24bitARGBColor(const ubyte_t id,const ubyte_t a,const ubyte_t r,const ubyte_t g,const ubyte_t b)
+fresult ColorsRepository::Register24bitARGBColor(const ColorHandle id,const ubyte_t a,const ubyte_t r,const ubyte_t g,const ubyte_t b)
 {
-	ubyte_t a4 = a>>4;
-	ubyte_t r4 = r>>4;
-	ubyte_t g4 = g>>4;
-	ubyte_t b4 = b>>4;
+	ubyte_t a4 = a>>4 & 0x0F;
+	ubyte_t r4 = r>>4 & 0x0F;
+	ubyte_t g4 = g>>4 & 0x0F;
+	ubyte_t b4 = b>>4 & 0x0F;
 
-	return Register16ARGBColor(id,a4,b4,g4,b4);
+	return Register16ARGBColor(id,a4,r4,g4,b4);
 }
 
-fresult ColorsRepository::GetColorById(const ubyte_t id, Color* color)
+fresult ColorsRepository::GetColorById(const ColorHandle id, Color* color)
 {
 	FAILIF (!(id<COLORS_COUNT));
 	
@@ -76,9 +81,15 @@ fresult ColorsRepository::GetColorById(const ubyte_t id, Color* color)
 #pragma endregion
 
 #pragma region //fonts
-FontsRepository::FontsRepository()
+fresult FontsRepository::Init()
 {
-	ResetFonts();
+	fresult fres;
+
+	fres = ResetFonts();
+	ENSURESUCCESS(fres);
+
+	return SUCCESS;
+
 }
 
 fresult FontsRepository::ResetFonts()
@@ -100,14 +111,14 @@ fresult FontsRepository::ResetFonts()
 	return fres;	
 }
 
-fresult FontsRepository::RegisterFont( const ubyte_t id, const ubyte_t systemFontId )
+fresult FontsRepository::RegisterFont( const FontHandle id, const ubyte_t systemFontId )
 {
 	FAILIF (!(id<FONTS_COUNT));
 	::CreateFontById(systemFontId, &_fonts[id]);
 	return SUCCESS;
 }
 
-fresult FontsRepository::GetFont( const ubyte_t id, FontDescription* font )
+fresult FontsRepository::GetFont( const FontHandle id, FontDescription* font )
 {
 	FAILIF (!(id<FONTS_COUNT));		
 	*font = _fonts[id];
@@ -116,13 +127,17 @@ fresult FontsRepository::GetFont( const ubyte_t id, FontDescription* font )
 }
 #pragma endregion
 
-
 #pragma region//formats
-TextFormatsRepository::TextFormatsRepository(const ColorsRepository* colors, const FontsRepository* fonts)
+fresult TextFormatsRepository::Init(const ColorsRepository* colors, const FontsRepository* fonts)
 {
+	fresult fres;
 	_colors = (ColorsRepository*)colors;
 	_fonts = (FontsRepository*)fonts;
-	ResetTextFormats();
+	fres = ResetTextFormats();
+	ENSURESUCCESS(fres);
+
+	return SUCCESS;
+
 }
 
 fresult TextFormatsRepository::ResetTextFormats()
@@ -158,7 +173,7 @@ fresult TextFormatsRepository::ResetTextFormats()
 	return SUCCESS;	
 }
 
-fresult TextFormatsRepository::RegisterTextFormat( const ubyte_t id, TextFormat* tf)
+fresult TextFormatsRepository::RegisterTextFormat( const TextFormatHandle id, TextFormat* tf)
 {
 	FAILIF (!(id<TEXTFORMATS_COUNT));	
 	_formats[id] = *tf;
@@ -166,11 +181,11 @@ fresult TextFormatsRepository::RegisterTextFormat( const ubyte_t id, TextFormat*
 	return SUCCESS;	
 }
 
-fresult TextFormatsRepository::GetTextFormat( const ubyte_t id, TextFormat* o_textFormat)
+fresult TextFormatsRepository::GetTextFormat( const TextFormatHandle id, TextFormat** o_textFormat)
 {
 	
 	FAILIF (!(id<TEXTFORMATS_COUNT));
-	o_textFormat = &_formats[id];
+	*o_textFormat = &_formats[id];
 	return SUCCESS;	
 }
 
@@ -179,11 +194,11 @@ fresult TextFormatsRepository::CreateTextFormatByStyles( ubyte_t fontId, ubyte_t
 	fresult fres;
 
 	Color fg;
-	fres = _colors->GetColorById(CL_BLACK, &fg);
+	fres = _colors->GetColorById(fgColorId, &fg);
 	ENSURESUCCESS(fres);
 
 	Color bg;
-	fres = _colors->GetColorById(CL_BLACK, &bg);
+	fres = _colors->GetColorById(bgColorId, &bg);
 	ENSURESUCCESS(fres);
 
 	FontDescription fd;
@@ -196,13 +211,40 @@ fresult TextFormatsRepository::CreateTextFormatByStyles( ubyte_t fontId, ubyte_t
 }
 #pragma endregion//formats
 
+#pragma region //images
+BitmapImage* ImagesRepository::GetImageById(ImageHandle id)
+{
+	NULLIF(id<0 || !(id < _usedImages));
+
+	return _images[id];
+}
+
+fresult ImagesRepository::Init()
+{
+	_usedImages  =0;
+
+	FillStdImages(this);
+
+	return SUCCESS;
+}	
+
+fresult ImagesRepository::RegisterImage( BitmapImage* bitmap )
+{
+	FAILIF(!(_usedImages +1<MAX_IMAGES));
+	_images[_usedImages++] = bitmap;
+	return SUCCESS;
+}
+#pragma endregion Images
+
 #pragma region //repositories
-Repositories::Repositories( ColorsRepository* colors, FontsRepository* fonts, TextFormatsRepository* textFormats, ImagesRepository* images)
+fresult Repositories::Init( ColorsRepository* colors, FontsRepository* fonts, TextFormatsRepository* textFormats, ImagesRepository* images)
 {
 	Colors = colors;
 	Fonts = fonts;
 	TextFormats = textFormats;
 	Images = images;
+
+	return SUCCESS;
 }
 
 #pragma endregion

@@ -150,6 +150,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Factories.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GraphicRenderer.cpp"
 				>
 			</File>
@@ -159,6 +163,10 @@
 			</File>
 			<File
 				RelativePath=".\MenuBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuFactory.cpp"
 				>
 			</File>
 			<File
@@ -190,6 +198,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SystemImagesLib.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TextField.cpp"
 				>
 			</File>
@@ -205,6 +217,14 @@
 			>
 			<File
 				RelativePath=".\ControlBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Factories.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Form_DEPRECATED.h"
 				>
 			</File>
 			<File
@@ -248,6 +268,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MenuFactory.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MenuItem.h"
 				>
 			</File>
@@ -285,6 +309,10 @@
 			</File>
 			<File
 				RelativePath=".\Styles.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SystemImagesLib.h"
 				>
 			</File>
 			<File
