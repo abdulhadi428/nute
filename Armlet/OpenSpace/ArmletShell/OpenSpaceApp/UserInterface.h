@@ -23,7 +23,7 @@ class UserInterface : public UIDesigner
 	sword_t GetRoomIdFromLustraId(sword_t lustraId);
 	
 	fresult AddNewWound(TARGET bodyPart);
-	fresult RedrawIfForeground(Form* form);
+	fresult RedrawIfForeground(Form_DEPRECATED* form);
 
 	void LogError(char* message);
 	

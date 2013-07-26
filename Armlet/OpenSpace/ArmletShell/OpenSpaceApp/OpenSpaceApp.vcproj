@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="OpenSpaceApp"
 	ProjectGUID="{ED6F4CE0-7FB0-4686-8904-5D1C34CC3ECE}"
 	RootNamespace="OpenSpaceApp"
@@ -150,6 +150,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\ApplicationBase.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\AppMain.cpp"
 				>
 			</File>
@@ -159,6 +163,18 @@
 			</File>
 			<File
 				RelativePath=".\ColorSchema.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FormBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FormManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MainForm.cpp"
 				>
 			</File>
 			<File
@@ -186,6 +202,34 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OpenSpaceApp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceFormBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceForms.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceImages.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceLogic.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceStatusBar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StatusBarBase.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\UIDesigner.cpp"
 				>
 			</File>
@@ -200,6 +244,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\ApplicationBase.h"
+				>
+			</File>
+			<File
 				RelativePath=".\AppMain.h"
 				>
 			</File>
@@ -212,7 +260,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Form.h"
+				RelativePath=".\FormBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FormManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IForm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MainForm.h"
 				>
 			</File>
 			<File
@@ -244,6 +304,42 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OpenSpace.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceApp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceFormBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceForms.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceImages.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceLogic.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceStatusBar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StatusBarBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\To3KShell.h"
+				>
+			</File>
+			<File
 				RelativePath=".\TZ.h"
 				>
 			</File>
@@ -261,6 +357,34 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\Images\battery_stub.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\menu_down.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\menu_left.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\menu_right.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\net_stub.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\scroll_down.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\scroll_up.png"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

@@ -501,7 +501,7 @@ fresult UserInterface::AddNewWound(TARGET bodyPart)
 	return SUCCESS;
 }
 
-fresult UserInterface::RedrawIfForeground(Form* form)
+fresult UserInterface::RedrawIfForeground(Form_DEPRECATED* form)
 {
 	fresult fres;
 	

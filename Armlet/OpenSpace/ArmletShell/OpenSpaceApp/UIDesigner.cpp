@@ -1000,7 +1000,7 @@ fresult UIDesigner::InitMenuItem(MenuItem* mi,
 	return SUCCESS;
 }
 
-fresult UIDesigner::ShowForm( Form* form )
+fresult UIDesigner::ShowForm( Form_DEPRECATED* form )
 {
 	form->BackgroundForm = currentForm;
 	currentForm = form;
@@ -1010,7 +1010,7 @@ fresult UIDesigner::ShowForm( Form* form )
 
 fresult UIDesigner::CloseForm()
 {
-	Form* curForm = currentForm;
+	Form_DEPRECATED* curForm = currentForm;
 	currentForm = currentForm->BackgroundForm;
 	curForm ->BackgroundForm = NULL;
 	Draw();

@@ -1,6 +1,6 @@
 #pragma once
 #include "ThreeKShell.h"
-#include "Form.h"
+#include "Form_DEPRECATED.h"
 //#include "MenuDelegate.h"
 //#include "project.h"
 
@@ -427,9 +427,9 @@ private:
 	fresult virtual OnButtonPressed(ButtonState button);
 
 protected:
-	Form* currentForm;
+	Form_DEPRECATED	* currentForm;
 
-	Form _frmMainForm;
+	Form_DEPRECATED _frmMainForm;
 	//_pnlStatusBar;
 		TextField txtUserName;
 		TextField txtBatteryStatus;
@@ -440,18 +440,18 @@ protected:
 		fresult SetMedStatus(const char* text);
 
 
-	Form _frmMsgBox;
-	Form _frmWoundForm;	
+	Form_DEPRECATED _frmMsgBox;
+	Form_DEPRECATED _frmWoundForm;	
 	//_pnlWoundFrom
 	TextField txtWoundResult;
 
-	Form _frmLogForm;
+	Form_DEPRECATED _frmLogForm;
 
 public:
 	fresult AppendLog(ubyte_t logId, const char* message);
 	fresult Init();
 	fresult Draw();
-	fresult ShowForm(Form* form);
+	fresult ShowForm(Form_DEPRECATED* form);
 	fresult CloseForm();
 	fresult MessageBoxShow(const char* caption, const char* text, ubyte_t pictureId);
 	fresult MessageBoxClose();
