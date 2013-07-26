@@ -1,0 +1,12 @@
+REAL DEPLOY:
+============
+                                       xN                                     xM          x50
+MAINSERVER <--- ARMLET SERVER <-- ARMLET GATE <----- DRIVERS <------------- ARMHUB <---- ARMLET <---------- App
+	   TODO               WCF             SERIAL         SERIAL_VIA_USB        RADIO         ArmletApi
+
+
+VIRTUAL DEPLOY:
+===============
+                                       x1                                                 x1
+MAINSERVER <--- ARMLET SERVER <-- ARMLET GATE <------------------------------------- VISUALIZER <---------- App
+  	   TODO     (VM1)     WCF    (VM2)    SERIAL                      PIPE(TODO)    TODO     ArmletApi
