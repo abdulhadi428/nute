@@ -1,9 +1,6 @@
 #pragma once
 #include "PlatformDependent.h"
 
-#define UNREFERENCED_PARAMETER(P)	(P)
-#define COMPILE_TIME_CHECK(e) extern char _COMPILE_TIME_CHECK_[(e)?1:-1]
-
 namespace KernelApi {
 	extern __LOWVAR unsigned short VideoMemory[SCREENX*SCREENY];
 

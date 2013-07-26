@@ -22,14 +22,15 @@ namespace ArmletApi {
 			bsrand = true;
 		}
 		if (max < 0) return 0;
-		int rnd = rand() % max;
+		int _max = max+1;
+		int rnd = rand() % (_max);
 		if (rnd<0) {
 			rnd = 0;
 		}
-		if (rnd >= max) {
-			rnd = max - 1;
+		if (rnd >= _max) {
+			rnd = _max - 1;
 		}
-		return rnd;
+		return (unsigned int)rnd;
 	}
 
 	int  __SYSCALL GetUpTime()
@@ -40,8 +41,13 @@ namespace ArmletApi {
 			startTime = time(NULL);
 			return 0;
 		}
-		long uptime = (long)( time(NULL) - startTime );
-		return (int)uptime;
+		__int64 uptime = (__int64)( time(NULL) - startTime );
+		int _uptime = (int)(uptime*1000);
+		if (_uptime < 0) {
+			startTime = 0;
+			return 0;
+		}
+		return _uptime;
 	}
 
 	int __SYSCALL snprintf(char* buf, int bufSz, char* fmt,...)
@@ -86,6 +92,9 @@ namespace ArmletApi {
 		memcpy(&hFile, file, sizeof(FILE));
 		if (len < 0) return 0;
 
+		SetFilePointer(hFile,0,0,FILE_BEGIN);
+		SetEndOfFile(hFile);
+
 		BOOL res = ::WriteFile( hFile, buf, len, &retlen, NULL);
 		if (res) return retlen;
 		return 0;
@@ -94,14 +103,18 @@ namespace ArmletApi {
 	//__SYSCALL return length written
 	int __SYSCALL AppendFile(FILE* file, char* buf, int len)
 	{
+DWORD retlen;
 		COMPILE_TIME_CHECK(sizeof(FILE)==sizeof(HANDLE));
 		HANDLE hFile;
 		memcpy(&hFile, file, sizeof(FILE));
+		if (len < 0) return 0;
 
-		if (!SetEndOfFile(hFile))
-			return 0;
+		SetFilePointer(hFile,0,0,FILE_END);
+		SetEndOfFile(hFile);
 
-		return WriteFile(file, buf, len);
+		BOOL res = ::WriteFile( hFile, buf, len, &retlen, NULL);
+		if (res) return retlen;
+		return 0;
 	}
 
 	//bool __FUTURE StartThread(THREAD_PROC* startProc, void* param)

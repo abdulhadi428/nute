@@ -65,6 +65,7 @@
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile=""
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -137,6 +138,7 @@
 				Name="VCLinkerTool"
 				IgnoreAllDefaultLibraries="false"
 				ModuleDefinitionFile=""
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -174,6 +176,10 @@
 		</File>
 		<File
 			RelativePath=".\ArmletKernel.h"
+			>
+		</File>
+		<File
+			RelativePath=".\HubEmulation.cpp"
 			>
 		</File>
 		<File
