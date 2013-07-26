@@ -24,6 +24,7 @@ typedef struct _TextFormat
 fresult CreateFontById(ubyte_t fontId, FontDescription* oFont );
 fresult CreateTextFormat(ubyte_t fontId, Color bgColor, Color fgColor, TextFormat* oFormat);
 
+//TODO: remove
 class FormatsRepository_DEPRECATED
 {
 	TextFormat* _formats;

@@ -14,8 +14,7 @@ namespace ArmletShell {
 	#include "Dimensions.h"			//common graphic calculations
 	#include "strlib.h"				//common strings
 	#include "Buttons.h"			//common button input
-	#include "Images.h"				//images repository
-	#include "SystemImagesLib.h"	//common images lib
+	#include "Images.h"				//common images API
 #undef _NAMESPACE_PROTECT_
 
 }

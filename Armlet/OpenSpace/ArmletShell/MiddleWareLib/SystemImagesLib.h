@@ -1,3 +1,4 @@
+#if 0
 #pragma once
 
 #define SYS_IMAGES_COUNT 4
@@ -10,3 +11,4 @@
 
 
 void FillStdImages(ImagesRepository* images);
+#endif

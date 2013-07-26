@@ -2,6 +2,7 @@
 
 namespace ArmletShell {
 
+/*
 BitmapImage* ImagesRepository::GetImageById(sword_t id)
 {
 	NULLIF(id<0 || !(id < _imagesCount));
@@ -21,7 +22,7 @@ fresult ImagesRepository::RegisterImage( BitmapImage* bitmap )
 	_images[_imagesCount++] = bitmap;
 	return SUCCESS;
 }
-
+*/
 //old rep
 fresult ImagesRepository_::Init( BitmapImage* images, sword_t imagesCount )
 {

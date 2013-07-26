@@ -2,8 +2,6 @@
 	#error "Use ArmletShell.h"
 #endif
 
-#define COMPILE_TIME_CHECK(e) extern ubyte_t _COMPILE_TIME_CHECK_[(e)?1:-1]
-
 #define NULL 0
 #define TRUE 1
 #define FALSE 0

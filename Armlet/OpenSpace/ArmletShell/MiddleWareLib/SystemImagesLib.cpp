@@ -1,3 +1,4 @@
+#if 0
 #include "ArmletShell.h"
 #pragma region static img defs
 
@@ -138,3 +139,4 @@ void FillStdImages(ImagesRepository* images)
 	images->RegisterImage(&_images[3]);
 
 }
+#endif
