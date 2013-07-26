@@ -72,7 +72,16 @@ namespace ImageConverter
             cppContent.AppendLine();
             cppContent.AppendLine("#pragma endregion"); 
             cppContent.AppendLine();
-            cppContent.AppendLine("BitmapImage _images[SYS_IMAGES_COUNT];");
+            if (chkSystemImages.Checked)
+            {
+                cppContent.AppendLine("BitmapImage _images[SYS_IMAGES_COUNT];");
+            }
+            else
+            {
+                cppContent.AppendFormat("BitmapImage _images[{0}];", imageIndex);
+                cppContent.AppendLine();
+            }
+            
             cppContent.AppendLine();
             cppContent.AppendLine();
             cppContent.AppendFormat("void {0}(ImagesRepository* images)", initFuncName);
