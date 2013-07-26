@@ -8,39 +8,43 @@
 
 	#define __CALLBACK __cdecl
 
-#ifdef _PC_VISUALIZER_
-	#define __LOWCALL __declspec(dllimport) __cdecl
-	#define __LOWVAR  __declspec(dllimport)
-	#define __CALLOUT __declspec(dllimport) __cdecl
-#else
-#ifdef _PC_KERNEL_
-	#define __LOWCALL __declspec(dllexport) __cdecl
-	#define __LOWVAR  __declspec(dllexport)
-	#define __SYSCALL __declspec(dllexport) __cdecl
-#else
-#ifdef _ARMLET_
-	#define __SYSCALL __declspec(dllimport) __cdecl
-	#define __CALLOUT __declspec(dllexport) __cdecl
-	#define __NOCALL __cdecl
-#else
+#if !(defined(_PC_VISUALIZER_)||defined(_PC_KERNEL_)||defined(_ARMLET_))
 	#error "Platform component unknown"
 #endif
+
+#ifdef _PC_VISUALIZER_
+	#define __CALLOUT __declspec(dllimport) __cdecl		//Visualizer calls ApplicationDll
+	#define __LOWCALL __declspec(dllimport) __cdecl		//Visualizer calls KernelDll
+	#define	__LOWCALLBACK __declspec(dllimport)			//Visualizer called by KernelDll
+	#define	__LOWCALLOUT __declspec(dllimport)			//ApplicationDll called by KernelDll
+	#define __LOWVAR  __declspec(dllimport)				//todo remove
 #endif
+#ifdef _PC_KERNEL_
+	#define	__LOWCALLBACK __declspec(dllexport)			//KernelDll calls Visualizer callback
+	#define	__LOWCALLOUT __declspec(dllexport)			//KernelDll calls ApplicationDll callout (inited by Visualizer)
+	#define __LOWCALL __declspec(dllexport) __cdecl		//KernelDll called by Visualizer
+	#define __SYSCALL __declspec(dllexport) __cdecl		//KernelDll called by ApplicationDll
+	#define __LOWVAR  __declspec(dllexport)				//todo remove 
+#endif
+#ifdef _ARMLET_
+	#define __NOCALL __cdecl							//implemented by ApplicationDll
+														//never calls Visualizer directly
+	#define __SYSCALL __declspec(dllimport) __cdecl		//Application calls KernelDll		(Armlet App/OS)
+	#define __CALLOUT __declspec(dllexport) __cdecl		//Application called by Visualizer	(by Armlet App/OS)
 #endif
 
-#endif
-
-#ifndef _MSC_VER
+#else //!_MSC_VER
 
 #define PFD_SIZES
 
     #define MUTEX_SIZE 1
     #define FILE_SIZE   558 //sizeof(FIL)
 
-	#define __NOCALL
-	#define __CALLOUT
-	#define __SYSCALL
 	#define __CALLBACK
+
+	#define __NOCALL
+	#define __SYSCALL
+	#define __CALLOUT
 
 #endif
 

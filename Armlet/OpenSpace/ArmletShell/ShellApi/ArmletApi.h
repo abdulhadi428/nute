@@ -37,7 +37,6 @@ namespace ArmletApi {
 
 	//__SYSCALLs: shells calls kernel, api is implemented by kernel
 #ifdef __SYSCALL
-	int __SYSCALL snprintf(char* buf, int bufSz, char* fmt,...);		//__SYSCALL sprintf support, OsEmulation.cpp
 	//ARMLET
 	unsigned char __SYSCALL GetBatteryLevel();							//__SYSCALL returns 0-100%
 	void __SYSCALL SetScreenBrightness(unsigned char percent);			//__SYSCALL sets screen brightness
@@ -57,20 +56,24 @@ namespace ArmletApi {
 	void __SYSCALL SendAppState(unsigned char packet[APP_STATE_LEN]);	//__SYSCALL for datagram trapsport
 	void __SYSCALL GetRadioStatus(int* gate_id, int* signal_level);
 
-	//OS
+	//OS (OsEmulation.cpp)
 	typedef char MUTEX[MUTEX_SIZE];										//OS-dependent mutext storage
 	typedef char FILE[FILE_SIZE];										//OS-dependent file storage
 
+	unsigned int __SYSCALL GetRandom(unsigned int max);					//returns random value in range [0..max]
+	int  __SYSCALL GetUpTime();											//return msces from armlet start
+	int __SYSCALL snprintf(char* buf, int bufSz, char* fmt,...);		//__SYSCALL sprintf support, 
 	bool __SYSCALL OpenFile(FILE* file, const char* filename, bool bCreate);	//__SYSCALL opens/create file
+	bool __SYSCALL CloseFile(FILE* file);								//__SYSCALL closes file
+
 	int __SYSCALL ReadFile(FILE* file, char* buf, int len);				//__SYSCALL returns length read
 	int __SYSCALL WriteFile(FILE* file, char* buf, int len);			//__SYSCALL returns length written
 	int __SYSCALL AppendFile(FILE* file, char* buf, int len);			//__SYSCALL return length written
+
 	bool __SYSCALL RequestTimer(TIMER_PROC* timerProc, int period);		//__SYSCALL, period in msecs
-	int  __SYSCALL GetUpTime();											//return msces from armlet start
-	unsigned int __SYSCALL GetRandom(unsigned int max);					//returns random value in range [0..max]
 	//SPECIAL PLATFORM DEPENDENT
 	#ifdef _MSC_VER
-		void __SYSCALL SetCureName(int cure_id, char* name);				//visualizer only __SYSCALL
+		void __SYSCALL SetCureName(int cure_id, char* name);			//visualizer only __SYSCALL
 	#endif
 #endif
 
