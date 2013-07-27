@@ -1,0 +1,14 @@
+ѕараметры игрока/пилюль, отправл€емые браслетом на сервер ќ  
+https://docs.google.com/spreadsheet/ccc?key=0AnGPZGzAxqA0dGVwckZES3FFeUJaZmЕ
+GUI браслета https://docs.google.com/document/d/1xagNO7O_LtFsE8JSJX4i0siV0X1Nv8W08yu4vKmЕ
+ѕаттерны к стрессам 
+https://docs.google.com/document/d/1l8yN8C-i3p69pe5TYBQkXi_rfVYApJDmQSmjyO4Е
+÷епочки медицинских событий и лекарств/веществ
+https://docs.google.com/document/d/1MTMF70qyeC37KWW8BbZ39rP7RXDkNCFmHyZtTm8Е
+‘лэшбеки игроков
+https://docs.google.com/document/d/1sQhY1guvy3s5-IU1RRe0MSqIddzGHtxHf0PcruXЕ
+
+===
+OpenSpace.ServeGame.com
+login openspace
+pass TorLenoVas
