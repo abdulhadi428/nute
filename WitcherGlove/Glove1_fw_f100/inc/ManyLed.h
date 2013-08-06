@@ -10,7 +10,9 @@
 
 #include "kl_lib_f100.h"
 
-#define LED_TOP_BRT 250
+#define LED_PRESCALER   4000
+#define LED_TOP         1000
+#define LED_VALUE       (LED_TOP/2)
 
 extern PwmPin_t RedLed, GreenLed, YellowLed, BlueLed, UvLed;
 

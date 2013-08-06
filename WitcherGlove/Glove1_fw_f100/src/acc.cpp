@@ -23,10 +23,13 @@ void AccInit() {
     Acc[5].SetPortAndPins(GPIOC, 10, 11, 12);
 //    Acc[6].SetPortAndPins(GPIOB, 13, 14, 15);
     // Init
+    bool InitOk=true;
     for(uint8_t i=0; i<ACC_CNT; i++) {
         Acc[i].Init();
-        if(!Acc[i].IsOperational) Uart.Printf("Acc %u is not operational\r", i);
+        //if(!Acc[i].IsOperational) Uart.Printf("Acc %u init fail\r", i);
+        if(!Acc[i].IsOperational) InitOk = false;
     }
+    if(InitOk) Uart.Printf("Acc init ok\r");
 }
 
 

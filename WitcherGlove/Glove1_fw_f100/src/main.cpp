@@ -16,22 +16,25 @@
 #include "ManyLed.h"
 #include "vibro.h"
 
+/*
+ * TODO:
+ * - Charge indication
+ */
+
 //#define TESTING
 
 static inline void Init();
 
 #ifndef TESTING
-static inline bool IsUsbPowered() { return  PinIsSet(GPIOA, 9); }
-static inline bool IsCharging()   { return !PinIsSet(GPIOB, 2); }
+extern IWDG_t Iwdg;
+//static inline bool IsUsbPowered() { return  PinIsSet(GPIOA, 9); }
+//static inline bool IsCharging()   { return !PinIsSet(GPIOB, 2); }
 #endif
 
 // Application entry point.
 int main() {
     // ==== Setup clock ====
-    //uint8_t ClkResult = 1;
-    // 16 MHz/8 = 2; 2*192 = 384; 384/8 = 48 (preAHB divider); 384/8 = 48 (USB clock)
-    //Clk.SetupPLLDividers(8, 192, pllSysDiv8, 8);
-    // 48/4 = 12 MHz core clock. APB1 & APB2 clock derive on AHB clock
+    // 8/1 = 8 MHz core clock. APB1 & APB2 clock derive on AHB clock
     Clk.SetupBusDividers(ahbDiv1, apbDiv1, apbDiv1);
     //if((ClkResult = Clk.SwitchToPLL()) == 0) Clk.HSIDisable();
     Clk.UpdateFreqValues();
@@ -96,15 +99,20 @@ void Init() {
     JtagDisable();
     Uart.Init(USART2, 256000);
 #ifndef TESTING
-    Uart.Printf("Glove1_f100 AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
     // Charging and powering
     PinSetupIn(GPIOA, 9, pudPullDown);
     PinSetupIn(GPIOB, 2, pudPullUp);
 
     LedsInit();
-    AccInit();
     VibroInit();
-
+    if(!Iwdg.ResetOccured()) {
+        Uart.Printf("Glove1_f100 AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+        Vibro.On(100);
+        chThdSleepMilliseconds(999);
+        Vibro.Off();
+    }
+    else Uart.Printf("W\r");
+    AccInit();
     // Application init
     App.Init();
 #else

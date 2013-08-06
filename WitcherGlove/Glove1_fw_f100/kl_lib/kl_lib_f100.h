@@ -160,11 +160,14 @@ static inline void PinSetupAlterFuncOutput(
 }
 
 class PwmPin_t {
+private:
+    TIM_TypeDef* Tim;
 public:
     __IO uint16_t *PCCR;
     void Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, uint16_t TopValue, bool Inverted=false);
     void On(uint16_t Brightness) { *PCCR = Brightness; }
     void Off() { *PCCR = 0; }
+    void SetPrescaler(uint16_t PrescValue) { Tim->PSC = PrescValue; }
 };
 
 // ================================== Remap ====================================

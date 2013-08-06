@@ -12,7 +12,6 @@
 
 // ================================ PWM pin ====================================
 void PwmPin_t::Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, uint16_t TopValue, bool Inverted) {
-    TIM_TypeDef* Tim;
     PinSetupAlterFuncOutput(GPIO, N, omPushPull);
     switch(TimN) {
         case 1:
