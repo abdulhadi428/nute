@@ -21,7 +21,7 @@
 
 App_t App;
 
-#define TOLERANCE   30
+#define TOLERANCE   1.2
 #define T_FILTER    5
 
 //#define SLEEP_ENABLED
@@ -37,7 +37,7 @@ int8_t signStatus=-1;
 bool newSign=false;
 uint32_t SignCodeNumb=999999;
 int32_t countdown=0;
-int32_t initialCountdown=20;
+int32_t initialCountdown=40;
 int16_t timeToSleep=SLEEP_TIMEOUT_INITIAL;
 
 
@@ -73,7 +73,7 @@ private:
 public:
     uint8_t CurrentSubsign;
     void AddAcc(uint8_t ID, int16_t *PAcc);
-    int16_t IsSimilar(const int16_t *PSign, const int16_t *PSignMask);
+    int16_t IsSimilar(const int16_t *PSign, const int16_t radius);
     void PrintVect() {
         for(uint8_t i=0; i<21; i++) Uart.Printf("%d,", AccVector[i]);
         Uart.Printf("\r\n");
@@ -86,44 +86,21 @@ void Process_t::AddAcc(uint8_t ID, int16_t *PAcc) {
     AperiodicFilter(T_FILTER, &AccVector[ID*3+2], PAcc[2]);
 }
 
-int16_t Process_t::IsSimilar(const int16_t *PSign, const int16_t *PSignMask) {
-    double xS, xC, xX; //sign coord vs current coord vs cross.
-    double yS, yC, yX; //cross is called X, because C is already in use
-    double zS, zC, zX;
-
-    int16_t summAngle=0;
-
-    for (uint8_t i=0; i<(ACC_VECTOR_SZ/3); i++){
-        xS=PSign[i*3];
-        yS=PSign[i*3+1];
-        zS=PSign[i*3+2];
-
-        xC=AccVector[i*3];
-        yC=AccVector[i*3+1];
-        zC=AccVector[i*3+2];
-
-        xX=yS*zC-zS*yC;
-        yX=-xS*zC+zS*xC;
-        zX=xS*yC-yS*xC;
-
-        double dotL=double(xS*xC+yS*yC+zS*zC);
-        double crossL=sqrt(double(xX*xX+yX*yX+zX*zX));
-        double signL=sqrt(double(xS*xS+yS*yS+zS*zS));
-        double curL=sqrt(double(xC*xC+yC*yC+zC*zC));
-
-
-        crossL=crossL/(signL*curL); //sin(alpha)=y/d
-        dotL=dotL/(signL*curL); //cos(alpha)=x/d
-
-        //let d be 1
-
-        double angle=(atan2(crossL,dotL)*180/M_PI);
-
-        summAngle=summAngle+int(angle)*PSignMask[i];
-
-        if (int(angle) > TOLERANCE) return -1;
+int16_t Process_t::IsSimilar(const int16_t *PSign, const int16_t radius) {
+    double dist=0;
+    double diff=0;
+    int16_t result=0;
+    for (uint8_t i=0; i<ACC_VECTOR_SZ; i++){
+        diff=PSign[i]-AccVector[i];
+        dist=dist+diff*diff;
     }
-    return summAngle;
+    result=int(sqrt(dist));
+
+    if (result>int(float(radius)*TOLERANCE)){
+        result=-1;
+    }
+
+    return result;
 }
 
 // ========================= Timer subsystem ===================================
@@ -288,8 +265,8 @@ static WORKING_AREA(waAppThread, 1024);
 static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
-    int16_t bestSummAngle=180*6;
-    int16_t summAngle=0;
+    int16_t bestResult=9999;
+    int16_t result=0;
     uint32_t tmpCode = 0;
     int8_t tmpStatus = -1;
     uint32_t newCode = 0;
@@ -333,31 +310,31 @@ static msg_t AppThread(void *arg) {
 //                Uart.Printf("%u %d %d %d; ", i, Acc[i].a[0], Acc[i].a[1], Acc[i].a[2]);
                 // Copy accelerations to vector
                 Process.AddAcc(i, &Acc[i].a[0]);
-                bestSummAngle=180*6;
+                bestResult=9999;
                 newCode=SignCodeNumb;
                 newStatus=signStatus;
-//                for(uint8_t j=0; j<SUBSIGN_CNT; j++) {
-//                    summAngle=Process.IsSimilar(Subsign[j],SubsignMask[j]);
-//
-//                    if (summAngle>-1){
-//                        tmpCode=(SignCodeNumb*100)%1000000+j;
-//                        tmpStatus=analize(tmpCode);
-//                        if ((tmpStatus>-1)&&(summAngle<bestSummAngle)) {
-//                             newCode=tmpCode;
-//                             newStatus=tmpStatus;
-//                             bestSummAngle=summAngle;
-//                             Process.CurrentSubsign = j;
-//                             countdown=initialCountdown;
-//                             Uart.Printf("%d\r\n",j);
-//                        }
-//                    }
-//
-//                }
-//                SignCodeNumb=newCode;
-//                if (signStatus!=newStatus){
-//                    signStatus=newStatus;
-//                    execStatus();
-//                }
+                for(uint8_t j=0; j<SUBSIGN_CNT; j++) {
+                    result=Process.IsSimilar(Subsign[j],hyperRadius[j]);
+
+                    if (result>-1){
+                        tmpCode=(SignCodeNumb*100)%1000000+j;
+                        tmpStatus=analize(tmpCode);
+                        if ((tmpStatus>-1)&&(result<bestResult)) {
+                             newCode=tmpCode;
+                             newStatus=tmpStatus;
+                             bestResult=result;
+                             Process.CurrentSubsign = j;
+                             countdown=initialCountdown;
+                             Uart.Printf("%d\r\n",j);
+                        }
+                    }
+
+                }
+                SignCodeNumb=newCode;
+                if (signStatus!=newStatus){
+                    signStatus=newStatus;
+                    execStatus();
+                }
 
             }
             else {
@@ -369,12 +346,12 @@ static msg_t AppThread(void *arg) {
         } // for i
         FirstTime = false;
 
-        counter=counter+1;
+    //    counter=counter+1;
 
-        if (counter%10==0){
-          counter=0;
-          Process.PrintVect();
-        }
+    //    if (counter%10==0){
+    //      counter=0;
+    //      Process.PrintVect();
+    //    }
     } // while 1
 
 //
