@@ -14,7 +14,6 @@
 
 #include "signs.h"
 
-#include "VibroSequences.h"
 #include "vibro.h"
 
 #include <math.h>

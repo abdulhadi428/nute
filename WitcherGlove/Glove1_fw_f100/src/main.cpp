@@ -15,8 +15,7 @@
 #include "application.h"
 #include "ManyLed.h"
 #include "vibro.h"
-
-// TODO: Charge level indication
+#include "adc_f100.h"
 
 //#define TESTING
 
@@ -32,7 +31,7 @@ static void Indication();
 #define CHARGING_GPIO   GPIOB
 #define CHARGING_PIN    2
 // ExtPwr & Charging
-static inline bool IsExtPwrOn()   { return  PinIsSet(EXT_PWR_GPIO, EXT_PWR_PIN); }
+static inline bool IsExtPwrOn() { return  PinIsSet(EXT_PWR_GPIO, EXT_PWR_PIN); }
 static inline bool IsCharging() { return !PinIsSet(CHARGING_GPIO, CHARGING_PIN); }
 #endif
 
@@ -99,8 +98,8 @@ int main() {
 }
 
 // ===================================== Indication ============================
-#define VIBRO_SOURCE    10
-#define VIBRO_FORCE     50
+#define VIBRO_SOURCE    36
+#define VIBRO_FORCE     63
 #define VIBRO_EXEC      100
 #define VIBRO_HOLD      VIBRO_SOURCE
 
@@ -201,6 +200,28 @@ void Indication() {
 }
 
 // =============================== Init ========================================
+static inline void ShowChargeLevel() {
+    Adc_t Adc;
+    uint32_t rslt = 0;
+    Adc.Init();
+    for(uint8_t i=0; i<8; i++) {
+        Adc.StartConversion();
+        while(!Adc.ConversionCompleted()) chThdSleepMilliseconds(20);
+        rslt += Adc.Result();
+    }
+    Adc.Disable();
+    Adc.ClockOff();
+    rslt >>= 3;
+    rslt = (rslt * 16225) / 10000;
+    Uart.Printf("mv=%u\r", rslt);
+    // Show charge
+    BlueLed.On(LED_LOW);    // Always
+    if(rslt > 3700) RedLed.On   (LED_LOW);
+    if(rslt > 3800) YellowLed.On(LED_LOW);
+    if(rslt > 3900) GreenLed.On (LED_LOW);
+    if(rslt > 4050) WhiteLed.On (LED_LOW);
+}
+
 void Init() {
     JtagDisable();
     Uart.Init(USART2, 256000);
@@ -214,8 +235,10 @@ void Init() {
     if(!Iwdg.ResetOccured()) {
         Uart.Printf("Glove1_f100 AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
         Vibro.On(100);
-        chThdSleepMilliseconds(999);
-        Vibro.Off();
+        chThdSleepMilliseconds(99);
+        ShowChargeLevel();
+        chThdSleepMilliseconds(900);
+        SwitchOffEverything();
     }
     else Uart.Printf("W\r");
     AccInit();

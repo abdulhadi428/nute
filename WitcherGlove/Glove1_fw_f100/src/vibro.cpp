@@ -7,7 +7,7 @@
 
 #include "vibro.h"
 
-#define VIBRO_TOP   207
+#define VIBRO_TOP   100
 
 PwmPin_t Vibro;
 

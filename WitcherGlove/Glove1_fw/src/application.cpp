@@ -24,7 +24,7 @@ int8_t signStatus=-1;
 bool newSign=false;
 
 
-#define TOLERANCE   200
+#define TOLERANCE   400
 #define T_FILTER    5
 
 #define INIT_FORCE  80
