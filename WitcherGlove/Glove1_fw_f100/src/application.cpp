@@ -21,31 +21,28 @@
 
 App_t App;
 
-#define TOLERANCE   1.2
-#define T_FILTER    5
+#define TOLERANCE               1.2
+#define INITIAL_COUNTDOWN       80
+#define T_FILTER                5
 
-//#define SLEEP_ENABLED
+// ==== Sleep-related consts ====
+#define SLEEP_ENABLED
 #define SLEEP_TIMEOUT           100
 #define SLEEP_TIMEOUT_INITIAL   4
 #define STABLE_TOLERANCE        20
+// ==============================
 
-#define INIT_FORCE  80
-#define CALLED_FORCE 150
 #define INIT_CHANCE 300
 
-int8_t signStatus=-1;
-bool newSign=false;
-uint32_t SignCodeNumb=999999;
-int32_t countdown=0;
-int32_t initialCountdown=40;
-int16_t timeToSleep=SLEEP_TIMEOUT_INITIAL;
+//static bool newSign = false;
 
-
-int16_t counter=0;  ///to remove
+//static int16_t counter = 0;  ///to remove
 
 // Sleep related
 IWDG_t Iwdg;
-bool FirstTime = true;  // First time after reset
+static bool FirstTime = true;  // First time after reset
+static int16_t SleepTimeoutCounter = SLEEP_TIMEOUT_INITIAL;
+
 void GoSleep() {
     // Start LSI
     Clk.LsiEnable();
@@ -59,204 +56,116 @@ void GoSleep() {
     __WFI();
 }
 
+// =========================== Process_t =======================================
 class Process_t {
 private:
     int16_t AccVector[ACC_VECTOR_SZ];
     void AperiodicFilter(int16_t T, int16_t *PrevValue, int16_t NewValue) {
         if(FirstTime) *PrevValue = NewValue;
         else *PrevValue = *PrevValue + ((NewValue - *PrevValue) / T);
-        if (Abs(NewValue - *PrevValue)>STABLE_TOLERANCE){
-            timeToSleep=SLEEP_TIMEOUT;
-        }
+        // Check if value changed. Reset SleepTimeoutCounter if yes.
+        if(Abs(NewValue - *PrevValue) > STABLE_TOLERANCE) SleepTimeoutCounter = SLEEP_TIMEOUT;
     }
-    int16_t Abs(int16_t v) { return (v<0)? -v : v; }
+    int16_t Abs(int16_t v) { return (v < 0)? -v : v; }
 public:
     uint8_t CurrentSubsign;
     void AddAcc(uint8_t ID, int16_t *PAcc);
     int16_t IsSimilar(const int16_t *PSign, const int16_t radius);
     void PrintVect() {
-        for(uint8_t i=0; i<21; i++) Uart.Printf("%d,", AccVector[i]);
+        for(uint8_t i = 0; i < 21; i++) Uart.Printf("%d,", AccVector[i]);
         Uart.Printf("\r\n");
     }
 } Process;
 
 void Process_t::AddAcc(uint8_t ID, int16_t *PAcc) {
-    AperiodicFilter(T_FILTER, &AccVector[ID*3+0], PAcc[0]);
-    AperiodicFilter(T_FILTER, &AccVector[ID*3+1], PAcc[1]);
-    AperiodicFilter(T_FILTER, &AccVector[ID*3+2], PAcc[2]);
+    AperiodicFilter(T_FILTER, &AccVector[ID * 3 + 0], PAcc[0]);
+    AperiodicFilter(T_FILTER, &AccVector[ID * 3 + 1], PAcc[1]);
+    AperiodicFilter(T_FILTER, &AccVector[ID * 3 + 2], PAcc[2]);
 }
 
 int16_t Process_t::IsSimilar(const int16_t *PSign, const int16_t radius) {
-    double dist=0;
-    double diff=0;
-    int16_t result=0;
-    for (uint8_t i=0; i<ACC_VECTOR_SZ; i++){
-        diff=PSign[i]-AccVector[i];
-        dist=dist+diff*diff;
+    double dist = 0;
+    double diff = 0;
+    int16_t result = 0;
+    for(uint8_t i = 0; i < ACC_VECTOR_SZ; i++) {
+        diff = PSign[i] - AccVector[i];
+        dist = dist + diff * diff;
     }
-    result=int(sqrt(dist));
+    result = int(sqrt(dist));
 
-    if (result>int(float(radius)*TOLERANCE)){
-        result=-1;
-    }
+    if(result > int(float(radius) * TOLERANCE)) result = -1;
 
     return result;
 }
 
-// ========================= Timer subsystem ===================================
-#define TMR_DELAY   1999
-systime_t Time;
+// Returns stIdle if no making sence sequence found
+static Status_t Analyze(uint32_t code) {
+    uint32_t sub = 0;
+    Status_t newStatus = stIdle;
 
-static void resetSign(){
-    GreenLed.Off();
-    RedLed.Off();
-    YellowLed.Off();
-    BlueLed.Off();
-    UvLed.Off();
-    Vibro.Off();
-}
+    sub = code % 100;
 
-static void signExecForce(){
-       Vibro.On(VIBRO_TOP);
-       chThdSleepMilliseconds(500);
-       Vibro.On(INIT_FORCE);
-}
-
-static int8_t analize(uint32_t code){
-    uint32_t sub=0;
-    int8_t newStatus=IDLE_STATUS;
-
-    sub=code%100;
-
-    switch(sub){
+    switch(sub) {
         case AARD_SOURCE_DONE:
-            newStatus=AARD_SOURCE_STATUS;
-        break;
+            newStatus = stAardSrc;
+            break;
         case IGNI_SOURCE_DONE:
-            newStatus=IGNI_SOURCE_STATUS;
-        break;
+            newStatus = stIgniSrc;
+            break;
         case KVEN_SOURCE_DONE:
-            newStatus=KVEN_SOURCE_STATUS;
-        break;
+            newStatus = stKvenSrc;
+            break;
         case IRDEN_SOURCE_DONE:
-            newStatus=IRDEN_SOURCE_STATUS;
-        break;
+            newStatus = stIrdenSrc;
+            break;
         case GELIO_SOURCE_DONE:
-            newStatus=GELIO_SOURCE_STATUS;
-        break;
+            newStatus = stGelioSrc;
+            break;
         case RESET_DONE:
-            newStatus=RESET_STATUS;
-        break;
+            newStatus = stSignReset;
+            break;
     }
 
-    sub=code%10000;
+    sub = code % 10000;
 
-    switch(sub){
+    switch(sub) {
         case AARD_FORCE_DONE:
-            newStatus=AARD_FORCE_STATUS;
-        break;
+            newStatus = stAardForce;
+            break;
         case IGNI_FORCE_DONE:
-            newStatus=IGNI_FORCE_STATUS;
-        break;
+            newStatus = stIgniForce;
+            break;
         case KVEN_FORCE_DONE:
-            newStatus=KVEN_FORCE_STATUS;
-        break;
+            newStatus = stKvenForce;
+            break;
         case IRDEN_FORCE_DONE:
-            newStatus=IRDEN_FORCE_STATUS;
-        break;
+            newStatus = stIrdenForce;
+            break;
         case GELIO_FORCE_DONE:
-            newStatus=GELIO_FORCE_STATUS;
-        break;
+            newStatus = stGelioForce;
+            break;
     }
 
-    sub=code;
+    sub = code;
 
-    switch(sub){
+    switch(sub) {
         case AARD_EXEC_DONE:
-            newStatus=AARD_EXEC_STATUS;
-        break;
+            newStatus = stAardExec;
+            break;
         case IGNI_EXEC_DONE:
-            newStatus=IGNI_EXEC_STATUS;
-        break;
+            newStatus = stIgniExec;
+            break;
         case KVEN_EXEC_DONE:
-            newStatus=KVEN_EXEC_STATUS;
-        break;
+            newStatus = stKvenExec;
+            break;
         case IRDEN_EXEC_DONE:
-            newStatus=IRDEN_EXEC_STATUS;
-        break;
+            newStatus = stIrdenExec;
+            break;
         case GELIO_EXEC_DONE:
-            newStatus=GELIO_EXEC_STATUS;
-        break;
+            newStatus = stGelioExec;
+            break;
     }
-
     return newStatus;
-
-}
-
-static void execStatus(){
-    switch (signStatus){
-
-        case IDLE_STATUS:
-        case RESET_STATUS:
-            resetSign();
-        break;
-
-        case AARD_SOURCE_STATUS:
-        case IGNI_SOURCE_STATUS:
-        case KVEN_SOURCE_STATUS:
-        case IRDEN_SOURCE_STATUS:
-        case GELIO_SOURCE_STATUS:
-            Vibro.On(INIT_FORCE);
-        break;
-
-        case AARD_FORCE_STATUS:
-        case IGNI_FORCE_STATUS:
-        case KVEN_FORCE_STATUS:
-        case IRDEN_FORCE_STATUS:
-        case GELIO_FORCE_STATUS:
-            resetSign();
-            Vibro.On(CALLED_FORCE);
-        break;
-
-        case AARD_EXEC_STATUS:
-            BlueLed.On(LED_VALUE);
-            signExecForce();
-        break;
-
-        case IGNI_EXEC_STATUS:
-            RedLed.On(LED_VALUE);
-            signExecForce();
-        break;
-
-        case KVEN_EXEC_STATUS:
-            YellowLed.On(LED_VALUE);
-            signExecForce();
-        break;
-
-        case IRDEN_EXEC_STATUS:
-            GreenLed.On(LED_VALUE);
-            signExecForce();
-        break;
-
-        case GELIO_EXEC_STATUS:
-            UvLed.On(LED_VALUE);
-            signExecForce();
-        break;
-    }
-}
-
-void CheckTimer() {
-    systime_t Now = chTimeNow();
-    if((Now - Time) >= TMR_DELAY) {
-        Time = Now;
-        if (signStatus%3==0){
-            resetSign();
-        }
-    }
-}
-
-static void TmrReset() {
-    Time = chTimeNow();
 }
 
 // =============================== App Thread ==================================
@@ -265,249 +174,109 @@ static WORKING_AREA(waAppThread, 1024);
 static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
-    int16_t bestResult=9999;
-    int16_t result=0;
+    int16_t bestResult;
+    int16_t result = 0;
     uint32_t tmpCode = 0;
-    int8_t tmpStatus = -1;
     uint32_t newCode = 0;
-    int8_t newStatus = -1;
-//    int16_t chance=INIT_CHANCE;
-/*
- -1 - idle
- 0,1,2 - aard inited/forced/executed        blue
- 3,4,5 - geliotrop inited/forced/executed   violet
- 6,7,8 - igni inited/forced/executed        red
- 9,10,11 - irden inited/forced/executed     green
- 12,13,14 - kven inited/forced/executed     yellow
- */
-    TmrReset();
+    Status_t tmpStatus = stIdle;
+    uint32_t SignCodeNumb = 999999;
+    int32_t SignTimeoutCounter = 0;
 
+    /*
+    -1 - idle
+    0,1,2 - aard inited/forced/executed        blue
+    3,4,5 - geliotrop inited/forced/executed   violet
+    6,7,8 - igni inited/forced/executed        red
+    9,10,11 - irden inited/forced/executed     green
+    12,13,14 - kven inited/forced/executed     yellow
+    */
     while(1) {
         chThdSleepMilliseconds(9);
-        if(!App.Enabled) continue;  // Do not do anything
+        if(!App.Enabled) continue;  // Do nothing
 
-        timeToSleep=timeToSleep-1;
-//        Uart.Printf("%d\r\n",timeToSleep);
-        if (timeToSleep<0){
-            timeToSleep=0;
-//            Uart.Printf("Zzzz");
-#ifdef SLEEP_ENABLED
-            GoSleep();
-#endif
-        }
-
-        countdown=countdown-1;
-        if (countdown<0){
-            countdown=0;
-            signStatus=IDLE_STATUS;
-            resetSign();
-            SignCodeNumb=(SignCodeNumb*100)%1000000+99;
-        }
-
-        for(uint8_t i=0; i<ACC_CNT; i++) {
+        // ==== Read accelerations ====
+        bool AllOperational = true;
+        for(uint8_t i = 0; i < ACC_CNT; i++) {
+            Acc[i].ReadAccelerations();
             if(Acc[i].IsOperational) {
-                Acc[i].ReadAccelerations();
 //                Uart.Printf("%u %d %d %d; ", i, Acc[i].a[0], Acc[i].a[1], Acc[i].a[2]);
-                // Copy accelerations to vector
+                // Copy accelerations to vector. Also, filter is applied here, and acceleration change is checked.
                 Process.AddAcc(i, &Acc[i].a[0]);
-                bestResult=9999;
-                newCode=SignCodeNumb;
-                newStatus=signStatus;
-                for(uint8_t j=0; j<SUBSIGN_CNT; j++) {
-                    result=Process.IsSimilar(Subsign[j],hyperRadius[j]);
-
-                    if (result>-1){
-                        tmpCode=(SignCodeNumb*100)%1000000+j;
-                        tmpStatus=analize(tmpCode);
-                        if ((tmpStatus>-1)&&(result<bestResult)) {
-                             newCode=tmpCode;
-                             newStatus=tmpStatus;
-                             bestResult=result;
-                             Process.CurrentSubsign = j;
-                             countdown=initialCountdown;
-                             Uart.Printf("%d\r\n",j);
-                        }
-                    }
-
-                }
-                SignCodeNumb=newCode;
-                if (signStatus!=newStatus){
-                    signStatus=newStatus;
-                    execStatus();
-                }
-
-            }
+                // Prepare to compare
+                bestResult = 9999;
+                newCode = SignCodeNumb;
+                // *** Iterate all subsigns ***
+                chSysLock();    // Do not switch to other thread
+                for(uint8_t j = 0; j < SUBSIGN_CNT; j++) {
+                    // Check if similar
+                    result = Process.IsSimilar(Subsign[j], hyperRadius[j]);
+                    if(result > -1) {
+                        // Seems like similar
+                        tmpCode = (SignCodeNumb * 100) % 1000000 + j;
+                        tmpStatus = Analyze(tmpCode);
+                        if((tmpStatus != stIdle) and (result < bestResult)) {
+                            newCode = tmpCode;
+                            App.Status = tmpStatus;
+                            bestResult = result;
+                            Process.CurrentSubsign = j;
+                            SignTimeoutCounter = INITIAL_COUNTDOWN; // Reset timeout counter
+                            Uart.Printf("%d\r\n", j);
+                        } // if
+                    } // if result > -1
+                } // for
+                chSysUnlock();
+                SignCodeNumb = newCode;
+            } // if operational
             else {
                 Uart.Printf("Acc %u fail\r", i);
-                RedLed.On(LED_TOP);
-                YellowLed.On(LED_TOP);
+                // Try to rise from dead
                 Acc[i].Init();
+                if(!Acc[i].IsOperational) {
+                    AllOperational = false;
+                    chThdSleepMilliseconds(450);
+                }
             }
         } // for i
-        FirstTime = false;
 
-    //    counter=counter+1;
+        // Handle status depending on accelerometers state
+        if(!AllOperational) App.Status = stAccFail;
+        else if(App.Status == stAccFail) App.Status = stIdle;   // All operational
 
-    //    if (counter%10==0){
-    //      counter=0;
-    //      Process.PrintVect();
-    //    }
+        if(App.Status != stAccFail) {
+            // Signal that 'first after power-on' measurement completed
+            FirstTime = false;
+
+            // ==== Check if time to sleep ====
+            SleepTimeoutCounter--;
+            if(SleepTimeoutCounter < 0) {
+                SleepTimeoutCounter = 0;
+//                Uart.Printf("Zzz\r");
+                #ifdef SLEEP_ENABLED
+                GoSleep();
+                #endif
+            }
+
+            // ==== Check if sign timed out ====
+            SignTimeoutCounter--;
+            if(SignTimeoutCounter < 0) {
+                SignTimeoutCounter = 0;
+                App.Status = stIdle;    // Reset indication
+                SignCodeNumb = (SignCodeNumb * 100) % 1000000 + 99;
+            }
+        } // if not failure
+
+        //    counter=counter+1;
+        //    if (counter%10==0){
+        //      counter=0;
+        //      Process.PrintVect();
+        //    }
     } // while 1
-
-//
-//                IsSimilar=-1;
-//                for(uint8_t j=0; j<SUBSIGN_CNT; j++) {
-//                    if(Process.IsSimilar(Subsign[j],SubsignMask[j])) {
-////                        Process.CurrentSubsign = j;
-////                        Uart.Printf("Subs: %u\r", j);
-//                        //RedLed.On(54);
-//                        IsSimilar=j;
-//                    }
-//                }
-//
-//                if(IsSimilar != OldSim) {
-//                    Uart.Printf("S: %d\r", IsSimilar);
-//                    OldSim = IsSimilar;
-//                }
-//
-//                //if(!IsSimilar) RedLed.Off();
-//                switch (IsSimilar){
-//                    case 0:
-//                        resetSign();
-//                        Vibro.On(INIT_FORCE);
-//                        signStatus=0;
-//                        TmrReset();
-//                    break;
-//                    case 1:
-//                        if ((signStatus == 0)||(signStatus == 1)){
-//                            signStatus=1;
-//                            Vibro.On(CALLED_FORCE);
-//                        }else{
-//                            if ((signStatus == 3)||(signStatus == 4)){
-//                                signStatus=4;
-//                                Vibro.On(CALLED_FORCE);
-//                            }else{
-//                                if ((signStatus == 6)||(signStatus == 7)){
-//                                    signStatus=7;
-//                                    Vibro.On(CALLED_FORCE);
-//                                }else{
-//                                    if ((signStatus == 9)||(signStatus == 10)){
-//                                        signStatus=10;
-//                                        Vibro.On(CALLED_FORCE);
-//                                    }else{
-//                                        if ((signStatus == 12)||(signStatus == 13)){
-//                                            signStatus=13;
-//                                            Vibro.On(CALLED_FORCE);
-//                                        }else{
-//                                            resetSign();
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    break;
-//                    case 2:
-//                        if ((signStatus == 1)||(signStatus == 2)){
-//                            signStatus=2;
-//                            BlueLed.On(LED_TOP_BRT);
-//                            //chThdSleepMilliseconds(2000);
-//                            //resetSign();
-//                            chance=INIT_CHANCE;
-//                            signExecForce();
-//                        }else{
-//                            if ((signStatus == 7)||(signStatus == 8)){
-//                                signStatus=8;
-//                                RedLed.On(LED_TOP_BRT);
-//                                //chThdSleepMilliseconds(2000);
-//                                //resetSign();
-//                                chance=INIT_CHANCE;
-//                                signExecForce();
-//                            }else{
-//                                resetSign();
-//                            }
-//                        }
-//                    break;
-//                    case 3:
-//                        resetSign();
-//                        Vibro.On(INIT_FORCE);
-//                        signStatus=3;
-//                        TmrReset();
-//                    break;
-//                    case 4:
-//                        if ((signStatus == 4)||(signStatus == 5)){
-//                            signStatus=5;
-//                            UvLed.On(LED_TOP_BRT);
-//                            //chThdSleepMilliseconds(2000);
-//                            //resetSign();
-//                            chance=INIT_CHANCE;
-//                            signExecForce();
-//                        }else{
-//                            resetSign();
-//                        }
-//                    break;
-//                    case 5:
-//                        resetSign();
-//                        Vibro.On(INIT_FORCE);
-//                        signStatus=6;
-//                        TmrReset();
-//                    break;
-//                    case 6:
-//                        resetSign();
-//                        Vibro.On(INIT_FORCE);
-//                        signStatus=9;
-//                        TmrReset();
-//                    break;
-//                    case 7:
-//                        if ((signStatus == 10)||(signStatus == 11)){
-//                            signStatus=11;
-//                            GreenLed.On(LED_TOP_BRT);
-//                            //chThdSleepMilliseconds(2000);
-//                            //resetSign();
-//                            chance=INIT_CHANCE;
-//                            signExecForce();
-//                        }else{
-//                            if ((signStatus == 13)||(signStatus == 14)){
-//                                signStatus=14;
-//                                YellowLed.On(LED_TOP_BRT);
-//                                //chThdSleepMilliseconds(2000);
-//                                //resetSign();
-//                                chance=INIT_CHANCE;
-//                                signExecForce();
-//                            }else{
-//                                resetSign();
-//                            }
-//                        }
-//
-//                    break;
-//                    case 8:
-//                        resetSign();
-//                        Vibro.On(INIT_FORCE);
-//                        signStatus=12;
-//                        TmrReset();
-//                    break;
-//                    default:
-//                        if (((signStatus-2)%3==0)){
-//                            chance=chance-1;
-//                            if (chance<0) resetSign();
-//                        }
-//                    break;
-//                }
-//                CheckTimer();
-//
-//
-//            }
-//            //else Acc[i].Init();
-//        }
-//        //Process.PrintVect();
-//        GreenLed.Off();
-//    } // if enabled
     return 0;
 }
-
 
 // =============================== App class ===================================
 void App_t::Init() {
     Enabled = true;
-
+    Status = stIdle;
     chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, AppThread, NULL);
 }

@@ -90,6 +90,7 @@ public:
     void SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div);
     uint8_t SetupPLLDividers(uint8_t HsePreDiv, PllMul_t PllMul);
     void UpdateFreqValues();
+    void UpdateSysTimer();
     // Other clocks
     void SetupAdcClk(ADCDiv_t ADCDiv);
     void LsiEnable() {

@@ -7,6 +7,7 @@
 
 #include "clocking_f100.h"
 #include "stm32_rcc.h"
+#include "chconf.h"
 
 Clk_t Clk;
 
@@ -79,6 +80,12 @@ void Clk_t::UpdateFreqValues() {
     APB1FreqHz = AHBFreqHz >> tmp;
     tmp = APBPrescTable[(RCC->CFGR & RCC_CFGR_PPRE2) >> 8];
     APB2FreqHz = AHBFreqHz >> tmp;
+}
+
+// Update systick timer setting
+void Clk_t::UpdateSysTimer() {
+    SysTick->LOAD = AHBFreqHz / CH_FREQUENCY - 1;
+    SysTick->VAL = 0;
 }
 
 // ==== Common use ====

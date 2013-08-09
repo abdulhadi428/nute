@@ -23,13 +23,13 @@ void AccInit() {
     Acc[5].SetPortAndPins(GPIOC, 10, 11, 12);
 //    Acc[6].SetPortAndPins(GPIOB, 13, 14, 15);
     // Init
-    bool InitOk=true;
+//    bool InitOk=true;
     for(uint8_t i=0; i<ACC_CNT; i++) {
         Acc[i].Init();
         //if(!Acc[i].IsOperational) Uart.Printf("Acc %u init fail\r", i);
-        if(!Acc[i].IsOperational) InitOk = false;
+//        if(!Acc[i].IsOperational) InitOk = false;
     }
-    if(InitOk) Uart.Printf("Acc init ok\r");
+//    if(InitOk) Uart.Printf("Acc init ok\r");
 }
 
 
@@ -81,7 +81,7 @@ void SingleAcc_t::ReadAccelerations() {
     BufW[0] = ACC_REG_OUT_X_MSB;
     if(i2c.WriteReadBuf(ACC_ADDR, BufW, 1, BufR, 6) != 0) {
         IsOperational = false;
-        Uart.Printf("Fail\r");
+//        Uart.Printf("Fail\r");
     }
     // Convert received values to signed integers
     a[0] = Convert(BufR[0], BufR[1]);
@@ -191,7 +191,7 @@ uint8_t i2c_t::WriteBuf(uint8_t Addr, uint8_t *PW, uint16_t SzW) {
     WriteByte(Addr<<1);
     if(!IsAcked()) {
         Stop();
-        Uart.Printf("Addr NACK\r");
+//        Uart.Printf("Addr NACK\r");
         return 2;
     }
     // Write data
@@ -199,7 +199,7 @@ uint8_t i2c_t::WriteBuf(uint8_t Addr, uint8_t *PW, uint16_t SzW) {
         WriteByte(*PW++);
         if(!IsAcked()) {
             Stop();
-            Uart.Printf("NACK\r");
+//            Uart.Printf("NACK\r");
             return 3;
         }
     }
@@ -218,7 +218,7 @@ uint8_t i2c_t::WriteReadBuf(uint8_t Addr, uint8_t *PW, uint16_t SzW, uint8_t *PR
     WriteByte(Addr<<1);
     if(!IsAcked()) {
         Rslt = 2;
-        Uart.Printf("Addr NACK\r");
+//        Uart.Printf("Addr NACK\r");
         goto End;
     }
     chSysUnlock();
@@ -229,7 +229,7 @@ uint8_t i2c_t::WriteReadBuf(uint8_t Addr, uint8_t *PW, uint16_t SzW, uint8_t *PR
         WriteByte(*PW++);
         if(!IsAcked()) {
             Rslt = 3;
-            Uart.Printf("NACK\r");
+//            Uart.Printf("NACK\r");
             goto End;
         }
     }
@@ -242,7 +242,7 @@ uint8_t i2c_t::WriteReadBuf(uint8_t Addr, uint8_t *PW, uint16_t SzW, uint8_t *PR
     WriteByte((Addr<<1) | 0x01);
     if(!IsAcked()) {
         Rslt = 4;
-        Uart.Printf("Addr NACK\r");
+//        Uart.Printf("Addr NACK\r");
         goto End;
     }
     chSysUnlock();

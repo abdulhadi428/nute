@@ -10,8 +10,6 @@
 
 #include "kl_lib_f100.h"
 
-#define VIBRO_TOP   250
-
 extern PwmPin_t Vibro;
 
 void VibroInit();

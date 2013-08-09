@@ -10,13 +10,9 @@
 
 #include "kl_lib_f100.h"
 
-// Types
-struct Sign_t {
-
-};
-
 #define ACC_VECTOR_SZ   21
 
+// Sign sequences
 #define AARD_SOURCE_DONE 0
 #define AARD_FORCE_DONE 1
 #define AARD_EXEC_DONE 102
@@ -39,30 +35,6 @@ struct Sign_t {
 
 #define RESET_DONE 9
 
-#define IDLE_STATUS -1
-
-#define AARD_SOURCE_STATUS 0
-#define AARD_FORCE_STATUS 1
-#define AARD_EXEC_STATUS 2
-
-#define IGNI_SOURCE_STATUS 6
-#define IGNI_FORCE_STATUS 7
-#define IGNI_EXEC_STATUS 8
-
-#define KVEN_SOURCE_STATUS 12
-#define KVEN_FORCE_STATUS 13
-#define KVEN_EXEC_STATUS 14
-
-#define IRDEN_SOURCE_STATUS 9
-#define IRDEN_FORCE_STATUS 10
-#define IRDEN_EXEC_STATUS 11
-
-#define GELIO_SOURCE_STATUS 3
-#define GELIO_FORCE_STATUS 4
-#define GELIO_EXEC_STATUS 5
-
-#define RESET_STATUS 15
-
 // Data
 
 const int16_t Subsign[][ACC_VECTOR_SZ] = {
@@ -80,15 +52,15 @@ const int16_t Subsign[][ACC_VECTOR_SZ] = {
 };
 
 const int16_t hyperRadius[] = {
-    255,  //  sourceAard
-    343,  //  force
+    300,  ///255,  //  sourceAard
+    400,  ///343,  //  force
     364,  //  execAardIgni
     452,  //  sourceGelio
     353,  //  execGelio
     379,  //  sourceIgni
     333,  //  sourceIrden
     331,  //  execIrdenKven
-    300,    ///220,  //  sourceKven
+    300,  ///220,  //  sourceKven
     404,  //  reset
     572   //  fullInit
 };
@@ -116,10 +88,5 @@ const int16_t SubsignMask[][ACC_VECTOR_SZ] = {
 };
 
 #define SUBSIGN_CNT countof(Subsign)
-
-const Sign_t Aard = {
-
-};
-
 
 #endif /* SIGNS_H_ */

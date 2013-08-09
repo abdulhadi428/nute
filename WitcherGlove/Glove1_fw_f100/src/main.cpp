@@ -16,19 +16,24 @@
 #include "ManyLed.h"
 #include "vibro.h"
 
-/*
- * TODO:
- * - Charge indication
- */
+// TODO: Charge level indication
 
 //#define TESTING
 
 static inline void Init();
+static void SwitchOffEverything();
 
 #ifndef TESTING
 extern IWDG_t Iwdg;
-//static inline bool IsUsbPowered() { return  PinIsSet(GPIOA, 9); }
-//static inline bool IsCharging()   { return !PinIsSet(GPIOB, 2); }
+static void Indication();
+// Pins
+#define EXT_PWR_GPIO    GPIOA
+#define EXT_PWR_PIN     9
+#define CHARGING_GPIO   GPIOB
+#define CHARGING_PIN    2
+// ExtPwr & Charging
+static inline bool IsExtPwrOn()   { return  PinIsSet(EXT_PWR_GPIO, EXT_PWR_PIN); }
+static inline bool IsCharging() { return !PinIsSet(CHARGING_GPIO, CHARGING_PIN); }
 #endif
 
 // Application entry point.
@@ -36,51 +41,49 @@ int main() {
     // ==== Setup clock ====
     // 8/1 = 8 MHz core clock. APB1 & APB2 clock derive on AHB clock
     Clk.SetupBusDividers(ahbDiv1, apbDiv1, apbDiv1);
-    //if((ClkResult = Clk.SwitchToPLL()) == 0) Clk.HSIDisable();
     Clk.UpdateFreqValues();
 
-    // ==== Init OS ====
+    // Init OS
     halInit();
     chSysInit();
-    // ==== Init Hard & Soft ====
     Init();
-    // Report problem with clock if any
-    //if(ClkResult) Uart.Printf("Clock failure\r");
-#ifndef TESTING
-//    bool WasUsb=false;
-#endif
+
+    bool ExtPwrOn = false;
+
     while(TRUE) {
 #ifndef TESTING
-        chThdSleepMilliseconds(999);
-        // Detect power change
-//        if(!WasUsb and IsUsbPowered()) {
-//            BlueLed.On(4);
-//            WasUsb = true;
-//            App.Enabled = false;
-            // Lower CPU freq
-//            chSysLock();
-//            Clk.SetupBusDividers(ahbDiv64, apbDiv1, apbDiv1);
-//            Clk.UpdateFreqValues();
-//            Clk.UpdateSysTimer();
-//            chSysUnlock();
-//        }
-//        else if(WasUsb and !IsUsbPowered()) {
-//            BlueLed.Off();
-//            WasUsb = false;
-//             Speed-up CPU
-//            chSysLock();
-//            Clk.SetupBusDividers(ahbDiv4, apbDiv1, apbDiv1);
-//            Clk.UpdateFreqValues();
-//            Clk.UpdateSysTimer();
-//            chSysUnlock();
-//            App.Enabled = true;
-//        }
-
-        // Indicate charging
-//        if(IsUsbPowered()) {
-//            if(IsCharging()) GreenLed.On(4);
-//            else GreenLed.Off();
-//        }
+        Indication();
+        if(IsExtPwrOn()) {
+            // Detect power change
+            if(!ExtPwrOn) {
+                Uart.Printf("ExtPwrOn\r");
+                ExtPwrOn = true;
+                App.Enabled = false;
+                SwitchOffEverything();
+                // Lower CPU freq
+                chSysLock();
+                Clk.SetupBusDividers(ahbDiv8, apbDiv1, apbDiv1);
+                Clk.UpdateFreqValues();
+                Clk.UpdateSysTimer();
+                chSysUnlock();
+            }
+            App.Status = IsCharging()? stCharging : stChargeCompleted;
+        }
+        else {
+            if(ExtPwrOn) {
+                Uart.Printf("ExtPwrOff\r");
+                SwitchOffEverything();
+                ExtPwrOn = false;
+                // Increase CPU freq
+                chSysLock();
+                Clk.SetupBusDividers(ahbDiv1, apbDiv1, apbDiv1);
+                Clk.UpdateFreqValues();
+                Clk.UpdateSysTimer();
+                chSysUnlock();
+                App.Status = stIdle;
+                App.Enabled = true;
+            }
+        }
 #else
         chThdSleepMilliseconds(999);
         if(!Acc[0].IsOperational) {
@@ -92,16 +95,119 @@ int main() {
             Uart.Printf("%d %d %d\r", Acc[0].a[0], Acc[0].a[1], Acc[0].a[2]);
         }
 #endif
-    }
+    } // while 1
 }
 
+// ===================================== Indication ============================
+#define VIBRO_SOURCE    10
+#define VIBRO_FORCE     50
+#define VIBRO_EXEC      100
+#define VIBRO_HOLD      VIBRO_SOURCE
+
+#define LED_ON_DURATION         72
+#define LED_OFF_DURATION        72
+
+static inline void Blink(PwmPin_t *PLed) {
+    PLed->On(LED_TOP);
+    chThdSleepMilliseconds(LED_ON_DURATION);
+    PLed->Off();
+    chThdSleepMilliseconds(LED_OFF_DURATION);
+}
+
+static void Exec(PwmPin_t *PLed) {
+    Vibro.On(VIBRO_EXEC);
+    Blink(PLed);
+    Blink(PLed);
+    Vibro.Off();
+}
+static void Hold(PwmPin_t *PLed) {
+    Blink(PLed);
+}
+
+void SwitchOffEverything() {
+    GreenLed.Off();
+    RedLed.Off();
+    YellowLed.Off();
+    BlueLed.Off();
+    WhiteLed.Off();
+    Vibro.Off();
+}
+
+void Indication() {
+    switch(App.Status) {
+        case stIdle:
+        case stSignReset:
+            SwitchOffEverything();
+            chThdSleepMilliseconds(9);
+        break;
+
+        case stAardSrc:
+        case stIgniSrc:
+        case stKvenSrc:
+        case stIrdenSrc:
+        case stGelioSrc:
+            SwitchOffEverything();
+            Vibro.On(VIBRO_SOURCE);
+            chThdSleepMilliseconds(9);
+        break;
+
+        case stAardForce:
+        case stIgniForce:
+        case stKvenForce:
+        case stIrdenForce:
+        case stGelioForce:
+            SwitchOffEverything();
+            Vibro.On(VIBRO_FORCE);
+            chThdSleepMilliseconds(9);
+        break;
+
+        // Aard
+        case stAardExec: Exec(&BlueLed); App.Status = stAardHold; break;
+        case stAardHold: Hold(&BlueLed); break;
+        // Igni
+        case stIgniExec: Exec(&RedLed); App.Status = stIgniHold; break;
+        case stIgniHold: Hold(&RedLed); break;
+        // Kven
+        case stKvenExec: Exec(&YellowLed); App.Status = stKvenHold; break;
+        case stKvenHold: Hold(&YellowLed); break;
+        // Irden
+        case stIrdenExec: Exec(&GreenLed); App.Status = stIrdenHold; break;
+        case stIrdenHold: Hold(&GreenLed); break;
+        // Gelio
+        case stGelioExec: Exec(&WhiteLed); App.Status = stGelioHold; break;
+        case stGelioHold: Hold(&WhiteLed); break;
+
+        // ==== Device state ====
+        case stAccFail:
+            RedLed.On(LED_LOW);
+            YellowLed.On(LED_LOW);
+            chThdSleepMilliseconds(450);
+            break;
+
+        case stCharging:
+            GreenLed.Off();
+            BlueLed.On(LED_LOW);
+            chThdSleepMilliseconds(99);
+            BlueLed.Off();
+            chThdSleepMilliseconds(810);
+            break;
+
+        case stChargeCompleted:
+            BlueLed.Off();
+            GreenLed.On(LED_LOW);
+            chThdSleepMilliseconds(450);
+            break;
+    } // switch
+}
+
+// =============================== Init ========================================
 void Init() {
     JtagDisable();
     Uart.Init(USART2, 256000);
 #ifndef TESTING
     // Charging and powering
-    PinSetupIn(GPIOA, 9, pudPullDown);
-    PinSetupIn(GPIOB, 2, pudPullUp);
+    PinSetupIn(EXT_PWR_GPIO,  EXT_PWR_PIN,  pudPullDown);
+    PinSetupIn(CHARGING_GPIO, CHARGING_PIN, pudPullUp);
 
     LedsInit();
     VibroInit();
@@ -113,6 +219,7 @@ void Init() {
     }
     else Uart.Printf("W\r");
     AccInit();
+
     // Application init
     App.Init();
 #else
