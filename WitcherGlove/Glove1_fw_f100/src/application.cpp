@@ -168,7 +168,7 @@ static Status_t Analyze(uint32_t code) {
 }
 
 // =============================== App Thread ==================================
-static WORKING_AREA(waAppThread, 1024);
+static WORKING_AREA(waAppThread, 256);
 
 static msg_t AppThread(void *arg) {
     (void)arg;
@@ -277,5 +277,5 @@ static msg_t AppThread(void *arg) {
 void App_t::Init() {
     Enabled = true;
     Status = stIdle;
-    chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, AppThread, NULL);
+    chThdCreateStatic(waAppThread, sizeof(waAppThread), HIGHPRIO, AppThread, NULL);
 }

@@ -10,6 +10,12 @@
 #include <string.h>
 #include "tiny_sprintf.h"
 
+// ================================ DEBUG ======================================
+#if CH_DBG_ENABLED
+void chDbgPanic(const char *msg) {
+    Uart.Printf("%S\r", msg);
+}
+#endif
 // ================================ PWM pin ====================================
 void PwmPin_t::Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, uint16_t TopValue, bool Inverted) {
     PinSetupAlterFuncOutput(GPIO, N, omPushPull);
