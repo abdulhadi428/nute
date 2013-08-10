@@ -11,13 +11,11 @@
 
 #include "acc.h"
 #include "ManyLed.h"
-
 #include "signs.h"
-
 #include "vibro.h"
-
 #include <math.h>
 
+#define TRAIN_MODE  // uncomment this to output accelerations
 App_t App;
 
 #define TOLERANCE               1.2
@@ -30,12 +28,6 @@ App_t App;
 #define SLEEP_TIMEOUT_INITIAL   4
 #define STABLE_TOLERANCE        20
 // ==============================
-
-#define INIT_CHANCE 300
-
-//static bool newSign = false;
-
-//static int16_t counter = 0;  ///to remove
 
 // Sleep related
 IWDG_t Iwdg;
@@ -58,20 +50,22 @@ void GoSleep() {
 // =========================== Process_t =======================================
 class Process_t {
 private:
-    int16_t AccVector[ACC_VECTOR_SZ];
     void AperiodicFilter(int16_t T, int16_t *PrevValue, int16_t NewValue) {
         if(FirstTime) *PrevValue = NewValue;
         else *PrevValue = *PrevValue + ((NewValue - *PrevValue) / T);
         // Check if value changed. Reset SleepTimeoutCounter if yes.
         if(Abs(NewValue - *PrevValue) > STABLE_TOLERANCE) SleepTimeoutCounter = SLEEP_TIMEOUT;
     }
-    int16_t Abs(int16_t v) { return (v < 0)? -v : v; }
+    int16_t Abs(int16_t v) {
+        return (v < 0)? -v : v;
+    }
 public:
+    int16_t AccVector[ACC_VECTOR_SZ];
     uint8_t CurrentSubsign;
     void AddAcc(uint8_t ID, int16_t *PAcc);
     int16_t IsSimilar(const int16_t *PSign, const int16_t radius);
     void PrintVect() {
-        for(uint8_t i = 0; i < 21; i++) Uart.Printf("%d,", AccVector[i]);
+        for(uint8_t i = 0; i < 21; i++) Uart.Printf("%d,", 0xFF);//AccVector[i]);
         Uart.Printf("\r\n");
     }
 } Process;
@@ -97,6 +91,7 @@ int16_t Process_t::IsSimilar(const int16_t *PSign, const int16_t radius) {
     return result;
 }
 
+#ifndef TRAIN_MODE
 // Returns stIdle if no making sence sequence found
 static Status_t Analyze(uint32_t code) {
     uint32_t sub = 0;
@@ -166,13 +161,16 @@ static Status_t Analyze(uint32_t code) {
     }
     return newStatus;
 }
-
+#endif
 // =============================== App Thread ==================================
 static WORKING_AREA(waAppThread, 256);
 
 static msg_t AppThread(void *arg) {
     (void)arg;
     chRegSetThreadName("App");
+#ifdef TRAIN_MODE
+    uint32_t counter;
+#else
     int16_t bestResult;
     int16_t result = 0;
     uint32_t tmpCode = 0;
@@ -180,15 +178,8 @@ static msg_t AppThread(void *arg) {
     Status_t tmpStatus = stIdle;
     uint32_t SignCodeNumb = 999999;
     int32_t SignTimeoutCounter = 0;
+#endif
 
-    /*
-    -1 - idle
-    0,1,2 - aard inited/forced/executed        blue
-    3,4,5 - geliotrop inited/forced/executed   violet
-    6,7,8 - igni inited/forced/executed        red
-    9,10,11 - irden inited/forced/executed     green
-    12,13,14 - kven inited/forced/executed     yellow
-    */
     while(1) {
         chThdSleepMilliseconds(9);
         if(!App.Enabled) continue;  // Do nothing
@@ -201,11 +192,12 @@ static msg_t AppThread(void *arg) {
 //                Uart.Printf("%u %d %d %d; ", i, Acc[i].a[0], Acc[i].a[1], Acc[i].a[2]);
                 // Copy accelerations to vector. Also, filter is applied here, and acceleration change is checked.
                 Process.AddAcc(i, &Acc[i].a[0]);
+#ifndef TRAIN_MODE
                 // Prepare to compare
                 bestResult = 9999;
                 newCode = SignCodeNumb;
                 // *** Iterate all subsigns ***
-                chSysLock();    // Do not switch to other thread
+                chSysLock();// Do not switch to other thread
                 for(uint8_t j = 0; j < SUBSIGN_CNT; j++) {
                     // Check if similar
                     result = Process.IsSimilar(Subsign[j], hyperRadius[j]);
@@ -225,6 +217,7 @@ static msg_t AppThread(void *arg) {
                 } // for
                 chSysUnlock();
                 SignCodeNumb = newCode;
+#endif
             } // if operational
             else {
                 Uart.Printf("Acc %u fail\r", i);
@@ -239,7 +232,7 @@ static msg_t AppThread(void *arg) {
 
         // Handle status depending on accelerometers state
         if(!AllOperational) App.Status = stAccFail;
-        else if(App.Status == stAccFail) App.Status = stIdle;   // All operational
+        else if(App.Status == stAccFail) App.Status = stIdle; // All operational
 
         if(App.Status != stAccFail) {
             // Signal that 'first after power-on' measurement completed
@@ -250,11 +243,11 @@ static msg_t AppThread(void *arg) {
             if(SleepTimeoutCounter < 0) {
                 SleepTimeoutCounter = 0;
 //                Uart.Printf("Zzz\r");
-                #ifdef SLEEP_ENABLED
+#if defined SLEEP_ENABLED && !defined TRAIN_MODE
                 GoSleep();
-                #endif
+#endif
             }
-
+#ifndef TRAIN_MODE
             // ==== Check if sign timed out ====
             SignTimeoutCounter--;
             if(SignTimeoutCounter < 0) {
@@ -262,16 +255,20 @@ static msg_t AppThread(void *arg) {
                 App.Status = stIdle;    // Reset indication
                 SignCodeNumb = (SignCodeNumb * 100) % 1000000 + 99;
             }
+#endif
         } // if not failure
-
-        //    counter=counter+1;
-        //    if (counter%10==0){
-        //      counter=0;
-        //      Process.PrintVect();
-        //    }
+#ifdef TRAIN_MODE
+        counter++;
+        if(counter >= 10) {
+            counter=0;
+//            Process.PrintVect();
+            for(uint8_t i = 0; i < 21; i++) Uart.Printf("%d,", Process.AccVector[i]);
+            Uart.Printf("\r\n");
+        }
+#endif
     } // while 1
-    return 0;
-}
+        return 0;
+    }
 
 // =============================== App class ===================================
 void App_t::Init() {

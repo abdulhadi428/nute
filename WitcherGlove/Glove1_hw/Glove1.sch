@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 07/07/2013 21:27:00
+EESchema Schematic File Version 2  date 10/08/2013 13:14:56
 LIBS:Connectors_kl
 LIBS:display_kl
 LIBS:pcb_details
@@ -19,7 +19,7 @@ $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "7 jul 2013"
+Date "9 aug 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -2309,8 +2309,8 @@ Text Notes 2650 2350 0    60   ~ 0
 GREEN
 Text Notes 2600 2700 0    60   ~ 0
 YELLOW
-Text Notes 2850 2000 0    60   ~ 0
-UV
+Text Notes 2700 2000 0    60   ~ 0
+WHITE
 Text Notes 11050 2550 0    60   ~ 0
 BLUE
 $EndSCHEMATC

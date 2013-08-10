@@ -155,6 +155,7 @@ void DbgUart_t::Printf(const char *format, ...) {
     va_end(args);
     if(Cnt > UART_TXBUF_SIZE) Cnt = UART_TXBUF_SIZE;    // Shrink too long string
 
+
     if(IDmaIsIdle) {
         memcpy(TXBuf, UartBuf, Cnt);// Place string to buffer from beginning
         PWrite = TXBuf + Cnt;       // Prepare pointer for next time
@@ -167,6 +168,7 @@ void DbgUart_t::Printf(const char *format, ...) {
         dmaStreamEnable(PDMAStream);
     }
     else {
+        chSysLock();
         ICountToSendNext += Cnt;
         uint32_t BytesFree = UART_TXBUF_SIZE - (PWrite - TXBuf);
         if(Cnt < BytesFree) {   // Message fits in buffer, no splitting needed
@@ -179,7 +181,9 @@ void DbgUart_t::Printf(const char *format, ...) {
             if(Remainder) memcpy(TXBuf, &UartBuf[BytesFree], Remainder);
             PWrite = TXBuf + Remainder;
         }
+        chSysUnlock();
     } // if not idle
+
 }
 
 // ==== Init & DMA ====
