@@ -15,7 +15,7 @@
 #include "vibro.h"
 #include <math.h>
 
-#define TRAIN_MODE  // uncomment this to output accelerations
+//#define TRAIN_MODE  // uncomment this to output accelerations
 App_t App;
 
 #define TOLERANCE               1.2
