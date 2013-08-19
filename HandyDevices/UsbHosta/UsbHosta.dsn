@@ -1,0 +1,418 @@
+(pcb D:\Nute\HandyDevices\UsbHosta\UsbHosta.dsn
+  (parser
+    (string_quote ")
+    (space_in_quoted_tokens on)
+    (host_cad "KiCad's Pcbnew")
+    (host_version "(2013-05-16 BZR 4016)-stable")
+  )
+  (resolution um 10)
+  (unit um)
+  (structure
+    (layer F.Cu
+      (type signal)
+      (property
+        (index 0)
+      )
+    )
+    (layer B.Cu
+      (type signal)
+      (property
+        (index 1)
+      )
+    )
+    (boundary
+      (rect pcb 80000.3 -97925 324800 -148665)
+    )
+    (via "Via[0-1]_900:400_um" "Via[0-1]_900:0_um" "Via[0-1]_1800:1000_um")
+    (rule
+      (width 200)
+      (clearance 200.1)
+      (clearance 200.1 (type default_smd))
+      (clearance 50 (type smd_smd))
+    )
+  )
+  (placement
+    (component SO8E
+      (place DA3 107400 -135000 front 0 (PN TPS202X))
+      (place DA5 302000 -132800 front 0 (PN TPS202X))
+      (place DA2 253600 -130400 front 0 (PN TPS202X))
+      (place DA4 152600 -135800 front 0 (PN TPS202X))
+      (place DA1 211200 -128800 front 0 (PN TPS202X))
+    )
+    (component SIL1_SQUARE_4MM
+      (place XL2 206200 -144600 front 0 (PN CONN_1))
+      (place XL1 154400 -144400 front 0 (PN CONN_1))
+      (place XL3 106600 -143200 front 0 (PN CONN_1))
+      (place XL4 301200 -140800 front 0 (PN CONN_1))
+      (place XL5 254400 -140200 front 0 (PN CONN_1))
+    )
+    (component SIL1_ROUND_4MM
+      (place XL7 310000 -141600 front 0 (PN CONN_1))
+      (place XL8 213000 -144400 front 0 (PN CONN_1))
+      (place XL9 115200 -143600 front 0 (PN CONN_1))
+      (place XL10 262400 -139000 front 0 (PN CONN_1))
+      (place XL6 160800 -144400 front 0 (PN CONN_1))
+    )
+    (component RES_0603
+      (place R2 83400 -121800 front 0 (PN 1k))
+      (place R6 307800 -127800 front 0 (PN 1k))
+      (place R3 260000 -130400 front 0 (PN 1k))
+      (place R1 198800 -136800 front 0 (PN 1k))
+      (place R4 101600 -139600 front 0 (PN 1k))
+      (place R5 163800 -137800 front 0 (PN 1k))
+      (place C11 145600 -129200 front 0 (PN 0.1u))
+      (place C1 147400 -137000 front 0 (PN 0.1u))
+      (place C10 295600 -133400 front 0 (PN 0.1u))
+      (place C8 115000 -133800 front 0 (PN 0.1u))
+      (place C14 293600 -123600 front 0 (PN 0.1u))
+      (place C7 252400 -136400 front 0 (PN 0.1u))
+      (place C13 101800 -132000 front 0 (PN 0.1u))
+      (place C2 200600 -132200 front 0 (PN 0.1u))
+      (place C5 247400 -130200 front 0 (PN 0.1u))
+      (place C4 210400 -134400 front 0 (PN 0.1u))
+    )
+    (component "LED-5MM"
+      (place D3 264800 -125000 front 0 (PN LED))
+      (place D6 306400 -122400 front 0 (PN LED))
+      (place D1 205000 -136200 front 0 (PN LED))
+      (place D4 99400 -134400 front 0 (PN LED))
+      (place D5 158200 -133800 front 0 (PN LED))
+      (place D2 82800 -115800 front 0 (PN LED))
+    )
+    (component Hole3_5_out6mm
+      (place HOLE6 320600 -140000 front 0 (PN HOLE_METALLED))
+      (place HOLE4 197200 -145200 front 0 (PN HOLE_METALLED))
+      (place HOLE2 86800 -141800 front 0 (PN HOLE_METALLED))
+      (place HOLE5 200800 -107600 front 0 (PN HOLE_METALLED))
+      (place HOLE3 83200 -108600 front 0 (PN HOLE_METALLED))
+      (place HOLE1 321600 -104200 front 0 (PN HOLE_METALLED))
+    )
+    (component CAP_08xxR
+      (place C12 152200 -125400 front 0 (PN 1000u))
+      (place C9 106400 -126000 front 0 (PN 1000u))
+      (place C15 299800 -123000 front 0 (PN 1000u))
+      (place C3 200200 -125800 front 0 (PN 1000u))
+      (place C6 254000 -122600 front 0 (PN 1000u))
+    )
+    (component USB_A_X2
+      (place XL15 97200 -112000 front 0 (PN USB_A_X2))
+      (place XL16 117200 -112800 front 0 (PN USB_A_X2))
+      (place XL17 142200 -112200 front 0 (PN USB_A_X2))
+      (place XL18 162800 -112800 front 0 (PN USB_A_X2))
+      (place XL11 188800 -113000 front 0 (PN USB_A_X2))
+      (place XL12 212200 -113000 front 0 (PN USB_A_X2))
+      (place XL13 243800 -110000 front 0 (PN USB_A_X2))
+      (place XL14 263000 -109000 front 0 (PN USB_A_X2))
+      (place XL19 288600 -110200 front 0 (PN USB_A_X2))
+      (place XL20 307800 -109000 front 0 (PN USB_A_X2))
+    )
+  )
+  (library
+    (image SO8E
+      (outline (path signal 127  -2667 -1778  -2667 -1905))
+      (outline (path signal 127  -2667 -1905  2667 -1905))
+      (outline (path signal 127  2667 1905  -2667 1905))
+      (outline (path signal 127  -2667 1905  -2667 -1778))
+      (outline (path signal 127  -2667 508  -2159 508))
+      (outline (path signal 127  -2159 508  -2159 -508))
+      (outline (path signal 127  -2159 -508  -2667 -508))
+      (outline (path signal 127  2667 1905  2667 -1905))
+      (pin Oval[T]Pad_508x1501.14_um 8 -1905 2794)
+      (pin Rect[T]Pad_508x1501.14_um 1 -1905 -2794)
+      (pin Oval[T]Pad_508x1501.14_um 7 -635 2794)
+      (pin Oval[T]Pad_508x1501.14_um 6 635 2794)
+      (pin Oval[T]Pad_508x1501.14_um 5 1905 2794)
+      (pin Oval[T]Pad_508x1501.14_um 2 -635 -2794)
+      (pin Oval[T]Pad_508x1501.14_um 3 635 -2794)
+      (pin Oval[T]Pad_508x1501.14_um 4 1905 -2794)
+    )
+    (image SIL1_SQUARE_4MM
+      (outline (path signal 150  -2350 2350  2350 2350))
+      (outline (path signal 150  2350 2350  2350 -2350))
+      (outline (path signal 150  2350 -2350  -2350 -2350))
+      (outline (path signal 150  -2350 -2350  -2350 2350))
+      (pin Rect[A]Pad_4000x4000_um 1 0 0)
+    )
+    (image SIL1_ROUND_4MM
+      (outline (path signal 150  -2350 2350  2350 2350))
+      (outline (path signal 150  2350 2350  2350 -2350))
+      (outline (path signal 150  2350 -2350  -2350 -2350))
+      (outline (path signal 150  -2350 -2350  -2350 2350))
+      (pin Round[A]Pad_4000_um 1 0 0)
+    )
+    (image RES_0603
+      (outline (path signal 150  -1500 0  -1500 800))
+      (outline (path signal 150  -1500 800  1500 800))
+      (outline (path signal 150  1500 800  1500 -800))
+      (outline (path signal 150  1500 -800  -1500 -800))
+      (outline (path signal 150  -1500 -800  -1500 0))
+      (pin Rect[T]Pad_889x1016_um 1 -762 0)
+      (pin Rect[T]Pad_889x1016_um 2 762 0)
+    )
+    (image "LED-5MM"
+      (outline (path signal 203.2  2844.8 -1905  2844.8 1905))
+      (outline (path signal 76.2  2050.05 0  1962.15 -555.01  1707.04 -1055.69  1309.69 -1453.04
+            809.01 -1708.15  254 -1796.05  -301.01 -1708.15  -801.692 -1453.04
+            -1199.04 -1055.69  -1454.15 -555.01  -1542.05 0  -1454.15 555.01
+            -1199.04 1055.69  -801.692 1453.04  -301.01 1708.15  254 1796.05
+            809.01 1708.15  1309.69 1453.04  1707.04 1055.69  1962.15 555.01))
+      (pin Rect[A]Pad_1600x1600_um A -1270 0)
+      (pin Round[A]Pad_1600_um C 1270 0)
+    )
+    (image Hole3_5_out6mm
+      (pin Round[A]Pad_5999.48_um Hle 0 0)
+    )
+    (image CAP_08xxR
+      (outline (path signal 381  4000.5 0  3804.7 -1236.22  3236.47 -2351.43  2351.43 -3236.47
+            1236.22 -3804.7  0 -4000.5  -1236.22 -3804.7  -2351.43 -3236.47
+            -3236.47 -2351.43  -3804.7 -1236.22  -4000.5 0  -3804.7 1236.22
+            -3236.47 2351.43  -2351.43 3236.47  -1236.22 3804.7  0 4000.5
+            1236.22 3804.7  2351.43 3236.47  3236.47 2351.43  3804.7 1236.22))
+      (outline (path signal 381  -2499.36 1998.98  -1498.6 1998.98))
+      (outline (path signal 381  -1998.98 2499.36  -1998.98 1501.14))
+      (pin Rect[A]Pad_1500x1500_um 1 -1750 0)
+      (pin Round[A]Pad_1500_um 2 1750 0)
+    )
+    (image USB_A_X2
+      (outline (path signal 150  -7200 5600  -7200 10800))
+      (outline (path signal 150  -7200 10800  7200 10800))
+      (outline (path signal 150  7200 10800  7200 5600))
+      (outline (path signal 150  -7200 -6800  -7200 5600))
+      (outline (path signal 150  -7200 5600  7200 5600))
+      (outline (path signal 150  7200 5600  7200 -6800))
+      (outline (path signal 150  7200 -6800  -7200 -6800))
+      (pin Round[A]Pad_3600_um SHLD 6570 0)
+      (pin Round[A]Pad_3600_um SHLD@1 -6570 0)
+      (pin Rect[A]Pad_1600x1600_um 1 3500 -2710)
+      (pin Round[A]Pad_1600_um 2 1000 -2710)
+      (pin Round[A]Pad_1600_um 3 -1000 -2710)
+      (pin Round[A]Pad_1600_um 4 -3500 -2710)
+      (pin Round[A]Pad_3600_um SHLD@2 -6570 -5680)
+      (pin Round[A]Pad_3600_um SHLD@3 6570 -5680)
+      (pin Round[A]Pad_1600_um 5 3500 -5330)
+      (pin Round[A]Pad_1600_um 6 1000 -5330)
+      (pin Round[A]Pad_1600_um 7 -1000 -5330)
+      (pin Round[A]Pad_1600_um 8 -3500 -5330)
+    )
+    (padstack Round[A]Pad_1500_um
+      (shape (circle F.Cu 1500))
+      (shape (circle B.Cu 1500))
+      (attach off)
+    )
+    (padstack Round[A]Pad_1600_um
+      (shape (circle F.Cu 1600))
+      (shape (circle B.Cu 1600))
+      (attach off)
+    )
+    (padstack Round[A]Pad_3600_um
+      (shape (circle F.Cu 3600))
+      (shape (circle B.Cu 3600))
+      (attach off)
+    )
+    (padstack Round[A]Pad_4000_um
+      (shape (circle F.Cu 4000))
+      (shape (circle B.Cu 4000))
+      (attach off)
+    )
+    (padstack Round[A]Pad_5999.48_um
+      (shape (circle F.Cu 5999.48))
+      (shape (circle B.Cu 5999.48))
+      (attach off)
+    )
+    (padstack Oval[T]Pad_508x1501.14_um
+      (shape (path F.Cu 508  0 -496.57  0 496.57))
+      (attach off)
+    )
+    (padstack Rect[A]Pad_4000x4000_um
+      (shape (rect F.Cu -2000 -2000 2000 2000))
+      (shape (rect B.Cu -2000 -2000 2000 2000))
+      (attach off)
+    )
+    (padstack Rect[T]Pad_508x1501.14_um
+      (shape (rect F.Cu -254 -750.57 254 750.57))
+      (attach off)
+    )
+    (padstack Rect[T]Pad_889x1016_um
+      (shape (rect F.Cu -444.5 -508 444.5 508))
+      (attach off)
+    )
+    (padstack Rect[A]Pad_1500x1500_um
+      (shape (rect F.Cu -750 -750 750 750))
+      (shape (rect B.Cu -750 -750 750 750))
+      (attach off)
+    )
+    (padstack Rect[A]Pad_1600x1600_um
+      (shape (rect F.Cu -800 -800 800 800))
+      (shape (rect B.Cu -800 -800 800 800))
+      (attach off)
+    )
+    (padstack "Via[0-1]_900:400_um"
+      (shape (circle F.Cu 900))
+      (shape (circle B.Cu 900))
+      (attach off)
+    )
+    (padstack "Via[0-1]_900:0_um"
+      (shape (circle F.Cu 900))
+      (shape (circle B.Cu 900))
+      (attach off)
+    )
+    (padstack "Via[0-1]_1800:1000_um"
+      (shape (circle F.Cu 1800))
+      (shape (circle B.Cu 1800))
+      (attach off)
+    )
+  )
+  (network
+    (net +5V
+      (pins DA3-2 DA3-3 DA5-2 DA5-3 DA2-2 DA2-3 DA4-2 DA4-3 DA1-2 DA1-3 XL2-1 XL1-1
+        XL3-1 XL4-1 XL5-1 R2-1 R6-1 R3-1 R1-1 R4-1 R5-1 HOLE6-Hle HOLE4-Hle HOLE2-Hle
+        C1-1 C10-1 C7-1 C13-1 C4-1)
+    )
+    (net /OUT1
+      (pins DA3-8 DA3-7 DA3-6 C9-1 C8-1 XL15-1 XL15-5 XL16-1 XL16-5)
+    )
+    (net /OUT2
+      (pins DA4-8 DA4-7 DA4-6 C12-1 C11-1 XL17-1 XL17-5 XL18-1 XL18-5)
+    )
+    (net /OUT3
+      (pins DA1-8 DA1-7 DA1-6 C3-1 C2-1 XL11-1 XL11-5 XL12-1 XL12-5)
+    )
+    (net /OUT4
+      (pins DA2-8 DA2-7 DA2-6 C6-1 C5-1 XL13-1 XL13-5 XL14-1 XL14-5)
+    )
+    (net /OUT5
+      (pins DA5-8 DA5-7 DA5-6 C15-1 C14-1 XL19-1 XL19-5 XL20-1 XL20-5)
+    )
+    (net GND
+      (pins DA3-1 DA3-4 DA5-1 DA5-4 DA2-1 DA2-4 DA4-1 DA4-4 DA1-1 DA1-4 XL7-1 XL8-1
+        XL9-1 XL10-1 XL6-1 D2-C HOLE5-Hle HOLE3-Hle HOLE1-Hle C12-2 C9-2 C15-2 C3-2
+        C6-2 C11-2 C1-2 C10-2 C8-2 C14-2 C7-2 C13-2 C2-2 C5-2 C4-2 XL15-SHLD XL15-SHLD@1
+        XL15-4 XL15-SHLD@2 XL15-SHLD@3 XL15-8 XL16-SHLD XL16-SHLD@1 XL16-4 XL16-SHLD@2
+        XL16-SHLD@3 XL16-8 XL17-SHLD XL17-SHLD@1 XL17-4 XL17-SHLD@2 XL17-SHLD@3 XL17-8
+        XL18-SHLD XL18-SHLD@1 XL18-4 XL18-SHLD@2 XL18-SHLD@3 XL18-8 XL11-SHLD XL11-SHLD@1
+        XL11-4 XL11-SHLD@2 XL11-SHLD@3 XL11-8 XL12-SHLD XL12-SHLD@1 XL12-4 XL12-SHLD@2
+        XL12-SHLD@3 XL12-8 XL13-SHLD XL13-SHLD@1 XL13-4 XL13-SHLD@2 XL13-SHLD@3 XL13-8
+        XL14-SHLD XL14-SHLD@1 XL14-4 XL14-SHLD@2 XL14-SHLD@3 XL14-8 XL19-SHLD XL19-SHLD@1
+        XL19-4 XL19-SHLD@2 XL19-SHLD@3 XL19-8 XL20-SHLD XL20-SHLD@1 XL20-4 XL20-SHLD@2
+        XL20-SHLD@3 XL20-8)
+    )
+    (net "N-0000010"
+      (pins XL12-6 XL12-7)
+    )
+    (net "N-0000012"
+      (pins DA2-5 D3-C)
+    )
+    (net "N-0000013"
+      (pins R3-2 D3-A)
+    )
+    (net "N-0000014"
+      (pins XL19-2 XL19-3)
+    )
+    (net "N-0000015"
+      (pins XL19-6 XL19-7)
+    )
+    (net "N-0000016"
+      (pins XL20-2 XL20-3)
+    )
+    (net "N-0000017"
+      (pins R2-2 D2-A)
+    )
+    (net "N-0000018"
+      (pins XL20-6 XL20-7)
+    )
+    (net "N-000002"
+      (pins XL14-2 XL14-3)
+    )
+    (net "N-0000020"
+      (pins XL16-6 XL16-7)
+    )
+    (net "N-0000021"
+      (pins XL16-2 XL16-3)
+    )
+    (net "N-0000022"
+      (pins XL15-2 XL15-3)
+    )
+    (net "N-0000023"
+      (pins XL15-6 XL15-7)
+    )
+    (net "N-0000024"
+      (pins DA4-5 D5-C)
+    )
+    (net "N-0000025"
+      (pins R5-2 D5-A)
+    )
+    (net "N-0000027"
+      (pins DA3-5 D4-C)
+    )
+    (net "N-0000028"
+      (pins R4-2 D4-A)
+    )
+    (net "N-0000029"
+      (pins DA1-5 D1-C)
+    )
+    (net "N-000003"
+      (pins XL14-6 XL14-7)
+    )
+    (net "N-0000031"
+      (pins R1-2 D1-A)
+    )
+    (net "N-0000032"
+      (pins XL11-2 XL11-3)
+    )
+    (net "N-0000033"
+      (pins XL11-6 XL11-7)
+    )
+    (net "N-0000034"
+      (pins XL17-6 XL17-7)
+    )
+    (net "N-0000035"
+      (pins XL17-2 XL17-3)
+    )
+    (net "N-0000036"
+      (pins XL18-6 XL18-7)
+    )
+    (net "N-0000038"
+      (pins XL18-2 XL18-3)
+    )
+    (net "N-000004"
+      (pins XL13-2 XL13-3)
+    )
+    (net "N-000005"
+      (pins XL13-6 XL13-7)
+    )
+    (net "N-000006"
+      (pins R6-2 D6-A)
+    )
+    (net "N-000007"
+      (pins DA5-5 D6-C)
+    )
+    (net "N-000009"
+      (pins XL12-2 XL12-3)
+    )
+    (class kicad_default "" "N-0000010" "N-0000012" "N-0000013" "N-0000014"
+      "N-0000015" "N-0000016" "N-0000017" "N-0000018" "N-000002" "N-0000020"
+      "N-0000021" "N-0000022" "N-0000023" "N-0000024" "N-0000025" "N-0000027"
+      "N-0000028" "N-0000029" "N-000003" "N-0000031" "N-0000032" "N-0000033"
+      "N-0000034" "N-0000035" "N-0000036" "N-0000038" "N-000004" "N-000005"
+      "N-000006" "N-000007" "N-000009"
+      (circuit
+        (use_via Via[0-1]_900:400_um)
+      )
+      (rule
+        (width 200)
+        (clearance 200.1)
+      )
+    )
+    (class Wide +5V /OUT1 /OUT2 /OUT3 /OUT4 /OUT5 GND
+      (circuit
+        (use_via Via[0-1]_1800:1000_um)
+      )
+      (rule
+        (width 1800)
+        (clearance 200.1)
+      )
+    )
+  )
+  (wiring
+  )
+)
