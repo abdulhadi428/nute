@@ -1,0 +1,8 @@
+girandole-F_Cu.gtl       - GERBER-файл верхнего слоя платы
+girandole-B_Cu.gbl       - GERBER-файл нижнего слоя платы
+girandole-F_Mask.gts     - GERBER-файл маски верхнего слоя платы
+girandole-B_Mask.gbs     - GERBER-файл маски нижнего слоя платы 
+girandole-Edge_Cuts.gbr  - GERBER-файл контура платы
+girandole-F_SilkS.gto    - GERBER-файл шелкографии верхнего слоя платы
+girandole.drl            - файл листа сверловки
+other_formats.xls        - заполненная карта заказа с сайта
