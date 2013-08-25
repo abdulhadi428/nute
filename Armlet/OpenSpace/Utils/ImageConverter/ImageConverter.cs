@@ -135,22 +135,26 @@ namespace ImageConverter
             sz.Height = bmp.Height;
             sz.Width = bmp.Width;
             StringBuilder arrayData = new StringBuilder(sz.Height*sz.Width*15);
-            Color transparentColor = Color.Magenta;
+            Color transparentColor = cbxTrasparency.BackColor;
 
             for (int j = 0; j < sz.Height; j++)
             {
-                arrayData.Append(Environment.NewLine);
+                arrayData.Append(Environment.NewLine);  
                 for (int i = 0; i < sz.Width; i++)
                 {
                     Color currentColor = bmp.GetPixel(i, j);
-                    if (i == 0 && j == 0)
+                    if (i == 0 && j == 0 && cbxTrasparency.SelectedIndex==1)
                     {
                         //first pixel sets transparency
                         transparentColor = currentColor;
                     }
 
-
-                    bool transparent = currentColor.Equals(transparentColor);
+                    bool transparent = false;
+                    if (cbxTrasparency.SelectedIndex != 3)
+                    {
+                         transparent = currentColor.ToArgb() ==transparentColor.ToArgb();    
+                    }
+                    
                     int color = ConvertTo16BitColor(currentColor,transparent);
 
                     arrayData.AppendFormat("0x{0:X4}, ", color);
@@ -160,7 +164,7 @@ namespace ImageConverter
             //last comma
             arrayData.Remove(arrayData.Length - 2, 1);
             imagedata.AppendFormat("{2}const Color {0}Bitmap[]={{{1}{2}}};", imageName, arrayData, Environment.NewLine);
-
+            bmp.Dispose();
             return sz;
         }
 
@@ -173,7 +177,7 @@ namespace ImageConverter
 
             if (transparent)
             {
-                chA = 0x00;
+                chA = 0x0; //(0xFF >> 4) & 0x0F;
             }
 
             int color16 = (chA << 12) |
@@ -259,7 +263,7 @@ namespace ImageConverter
 
             if (colorPicker.ShowDialog() == DialogResult.OK)
             {
-                txt32bitColor.Text = string.Format("0x{0:X}",colorPicker.Color.ToArgb());
+                txt32bitColor.Text = string.Format("0x{0:X4}",colorPicker.Color.ToArgb());
             }
         }
 
@@ -291,10 +295,30 @@ namespace ImageConverter
 
         private void frmImageConverter_Load(object sender, EventArgs e)
         {
-            if (!Directory.Exists(txtFolder.Text))
+            if (Environment.GetCommandLineArgs().Length > 1 && Directory.Exists(Environment.GetCommandLineArgs()[1]))
+            {
+                txtFolder.Text = Environment.GetCommandLineArgs()[1];
+            }
+            else if (!Directory.Exists(txtFolder.Text))
             {
                 txtFolder.Text = Application.ExecutablePath;
             }
+
+            cbxTrasparency.SelectedIndex = 0;
         }
+
+        private void cbxTrasparency_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbxTrasparency.SelectedIndex == 2)
+            {
+                dlgTransparentColorPicker.ShowDialog();
+                cbxTrasparency.BackColor = dlgTransparentColorPicker.Color;
+            }
+            else
+            {
+                cbxTrasparency.BackColor = Color.White;
+            }
+        }
+
     }
 }

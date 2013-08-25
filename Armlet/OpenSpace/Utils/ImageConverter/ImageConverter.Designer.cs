@@ -31,6 +31,10 @@
             this.txtHContent = new System.Windows.Forms.TextBox();
             this.cmdBrowseDir = new System.Windows.Forms.Button();
             this.pnlTools = new System.Windows.Forms.Panel();
+            this.cbxTrasparency = new System.Windows.Forms.ComboBox();
+            this.chkSystemImages = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.cmdStart = new System.Windows.Forms.Button();
             this.pnlColor = new System.Windows.Forms.Panel();
             this.lbl16bit = new System.Windows.Forms.Label();
@@ -44,9 +48,8 @@
             this.colorPicker = new System.Windows.Forms.ColorDialog();
             this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.chkSystemImages = new System.Windows.Forms.CheckBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.dlgTransparentColorPicker = new System.Windows.Forms.ColorDialog();
             this.pnlTools.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -77,12 +80,14 @@
             // 
             // pnlTools
             // 
+            this.pnlTools.Controls.Add(this.cbxTrasparency);
             this.pnlTools.Controls.Add(this.chkSystemImages);
             this.pnlTools.Controls.Add(this.label2);
             this.pnlTools.Controls.Add(this.label1);
             this.pnlTools.Controls.Add(this.cmdStart);
             this.pnlTools.Controls.Add(this.pnlColor);
             this.pnlTools.Controls.Add(this.lbl16bit);
+            this.pnlTools.Controls.Add(this.label3);
             this.pnlTools.Controls.Add(this.lbl32bit);
             this.pnlTools.Controls.Add(this.txt16bitColor);
             this.pnlTools.Controls.Add(this.txt32bitColor);
@@ -95,6 +100,50 @@
             this.pnlTools.Name = "pnlTools";
             this.pnlTools.Size = new System.Drawing.Size(1369, 100);
             this.pnlTools.TabIndex = 7;
+            // 
+            // cbxTrasparency
+            // 
+            this.cbxTrasparency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxTrasparency.FormattingEnabled = true;
+            this.cbxTrasparency.Items.AddRange(new object[] {
+            "Img Alpha chanel",
+            "Top left color",
+            "Fixed Color"});
+            this.cbxTrasparency.Location = new System.Drawing.Point(446, 73);
+            this.cbxTrasparency.Name = "cbxTrasparency";
+            this.cbxTrasparency.Size = new System.Drawing.Size(173, 21);
+            this.cbxTrasparency.TabIndex = 16;
+            this.cbxTrasparency.SelectedIndexChanged += new System.EventHandler(this.cbxTrasparency_SelectedIndexChanged);
+            // 
+            // chkSystemImages
+            // 
+            this.chkSystemImages.AutoSize = true;
+            this.chkSystemImages.Location = new System.Drawing.Point(12, 74);
+            this.chkSystemImages.Name = "chkSystemImages";
+            this.chkSystemImages.Size = new System.Drawing.Size(94, 17);
+            this.chkSystemImages.TabIndex = 15;
+            this.chkSystemImages.Text = "SystemImages";
+            this.chkSystemImages.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label2.Location = new System.Drawing.Point(966, 77);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 16);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "images.cpp";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.Location = new System.Drawing.Point(169, 75);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(71, 16);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "images.h";
             // 
             // cmdStart
             // 
@@ -202,37 +251,14 @@
             this.splitContainer1.SplitterDistance = 638;
             this.splitContainer1.TabIndex = 8;
             // 
-            // label1
+            // label3
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(233, 77);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(71, 16);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "images.h";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label2.Location = new System.Drawing.Point(966, 77);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(89, 16);
-            this.label2.TabIndex = 14;
-            this.label2.Text = "images.cpp";
-            // 
-            // chkSystemImages
-            // 
-            this.chkSystemImages.AutoSize = true;
-            this.chkSystemImages.Checked = true;
-            this.chkSystemImages.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSystemImages.Location = new System.Drawing.Point(12, 74);
-            this.chkSystemImages.Name = "chkSystemImages";
-            this.chkSystemImages.Size = new System.Drawing.Size(94, 17);
-            this.chkSystemImages.TabIndex = 15;
-            this.chkSystemImages.Text = "SystemImages";
-            this.chkSystemImages.UseVisualStyleBackColor = true;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(372, 76);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(73, 13);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Trancparency";
             // 
             // frmImageConverter
             // 
@@ -276,6 +302,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox chkSystemImages;
+        private System.Windows.Forms.ComboBox cbxTrasparency;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ColorDialog dlgTransparentColorPicker;
     }
 }
 
