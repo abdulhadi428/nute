@@ -10,6 +10,20 @@ fresult OpenSpaceStatusBar::Init( Repositories* reps, Factories* facts)
 	fres = BaseInit(reps, facts);
 	ENSURESUCCESS(fres);
 
+	_batteryImagesCount =5;
+	_batteryImages[0] = battery_0;
+	_batteryImages[1] = battery_1;
+	_batteryImages[2] = battery_2;
+	_batteryImages[3] = battery_3;
+	_batteryImages[4] = battery_4;
+
+	_networkImagesCount =5;
+	_NetworkImages[0] = signal_0;
+	_NetworkImages[1] = signal_1;
+	_NetworkImages[2] = signal_2;
+	_NetworkImages[3] = signal_3;
+	_NetworkImages[4] = signal_4;
+
 	fres = CreateStatusBar();
 	ENSURESUCCESS(fres);
 
@@ -19,41 +33,34 @@ fresult OpenSpaceStatusBar::Init( Repositories* reps, Factories* facts)
 fresult OpenSpaceStatusBar::CreateStatusBar()
 {
 	fresult fres;
-	Size sbSz;
-	sbSz.Width = SCREENX;
-	sbSz.Height = 16;
 
-	Position sbPos;
-	sbPos.data = 0;
-	
-	fres = _Factories->GetPanelFactory()->GetPanel(sbSz, sbPos, 6,CL_HEADER_BACKGROUND, &_pnlBasePanel);
+	fres = StatusBarBase::CreateStatusBar();
 	ENSURESUCCESS(fres);
 
 	//TODO: img lists
-	PictureBox* pbxBattery;
 	Position pbxBatteryPos;
 	pbxBatteryPos.Left = 2;
 	pbxBatteryPos.Top = 2;
 
-	fres = _Factories->GetPictureBoxFactory()->GetPictureBox(pbxBatteryPos, battery_stub, &pbxBattery);
+	fres = AddBatteryLevel(pbxBatteryPos);
+	ENSURESUCCESS(fres);
+	
+	fres = _BatteryLevel->SetValue(0);
 	ENSURESUCCESS(fres);
 
-	_pnlBasePanel->SetControl(pbxBattery, 0);
-	ENSURESUCCESS(fres);
-
-	PictureBox* pbxNetwork;
 	Position pbxNetworkPos;
-	pbxNetworkPos.Left = pbxBatteryPos.Left + pbxBattery->GetSize().Width + 2;
+	pbxNetworkPos.Left = pbxBatteryPos.Left + _BatteryLevel->GetSize().Width + 2;
 	pbxNetworkPos.Top = pbxBatteryPos.Top;
 
-	fres = _Factories->GetPictureBoxFactory()->GetPictureBox(pbxNetworkPos, net_stub, &pbxNetwork);
+	fres = AddNetworkLevel(pbxNetworkPos);
 	ENSURESUCCESS(fres);
 
-	_pnlBasePanel->SetControl(pbxNetwork, 1);
+	fres = _NetworkLevel->SetValue(0);
 	ENSURESUCCESS(fres);
 
-	_headerMinLeft = pbxNetworkPos.Left + pbxNetwork->GetSize().Width + 2;
+	_headerMinLeft = pbxNetworkPos.Left + _NetworkLevel->GetSize().Width + 2;
 
+	Size sbSz = GetSize();
 	Size szHeader;
 	szHeader.Height = sbSz.Height;
 	szHeader.Width = sbSz.Width/2;
@@ -69,22 +76,17 @@ fresult OpenSpaceStatusBar::CreateStatusBar()
 	//Title
 	fres = tff->GetTextBox(posHeader, MAX_HEADER_TOTAL_LEN, &txtHeader);
 	ENSURESUCCESS(fres);
-	fres = _pnlBasePanel->SetControl(txtHeader, 3);
+	fres = _pnlBasePanel->AppendControl(txtHeader);
 	ENSURESUCCESS(fres);
 
 	//Subtitle
-	fres = tff->GetTextBox(posHeader, MAX_HEADER_TOTAL_LEN, &txtSubtitle);
+	tff->CurrentLines = 2;
+	fres = tff->GetTextBox(posHeader, MAX_HEADER_TOTAL_LEN*2, &txtSubtitle);
 	ENSURESUCCESS(fres);
-	fres = _pnlBasePanel->SetControl(txtSubtitle, 4);
-	ENSURESUCCESS(fres);
-
-	fres = tff->GetTextBox(posHeader, MAX_HEADER_TOTAL_LEN, &txtSubtitle2Line);
-	ENSURESUCCESS(fres);
-	txtSubtitle2Line->SetVisible(FALSE);
-	fres = _pnlBasePanel->SetControl(txtSubtitle2Line, 5);
+	fres = _pnlBasePanel->AppendControl(txtSubtitle);
 	ENSURESUCCESS(fres);
 
-
+	tff->CurrentLines = tff->DefaultLines;
 	tff->CurrentFrames = tff->DefaultFrames;
 	tff->CurrentTextFormatHandle = tff->DefaultTextFormatHandle;
 
@@ -100,14 +102,13 @@ fresult OpenSpaceStatusBar::SetTitle( char* szTitle, char* szSubtitle )
 	sword_t subtitleCrPos = -1;
 	subtitleCrPos = InStr(szSubtitle, "\n", 0);
 	sword_t subtitleLen = 0;
+	ubyte_t subtitleLines = 0;
 
 	TextField* txtChosenSubtitle = NULL;
 	if (subtitleCrPos == -1)
 	{
 		subtitleLen = Length(szSubtitle);
-		txtChosenSubtitle = txtSubtitle;
-		txtSubtitle2Line->SetVisible(FALSE);
-		txtSubtitle->SetVisible(TRUE);
+		subtitleLines = 1;
 	}
 	else
 	{
@@ -115,9 +116,7 @@ fresult OpenSpaceStatusBar::SetTitle( char* szTitle, char* szSubtitle )
 		sword_t line2Len = Length(szSubtitle) - subtitleCrPos;
 
 		subtitleLen = line1Len > line2Len?line1Len:line2Len;
-		txtChosenSubtitle = txtSubtitle2Line;
-		txtSubtitle2Line->SetVisible(TRUE);
-		txtSubtitle->SetVisible(FALSE);
+		subtitleLines = 2;
 	}
 
 	FAILIF(titleLen+subtitleLen > 13);
@@ -127,34 +126,52 @@ fresult OpenSpaceStatusBar::SetTitle( char* szTitle, char* szSubtitle )
 	fres =_Repositories->TextFormats->GetTextFormat(TF_HEADER, &tf);
 	ENSURESUCCESS(fres);
 
+	Size statusSz = _pnlBasePanel->GetSize();
+
+
 	//Positioning subtitle
-	ubyte_t subtitleWidth = 0;
-	Size sz = txtChosenSubtitle->GetSize();
-	subtitleWidth = subtitleLen*tf->Font.GlyphSize.Width;
+	ubyte_t subtitleWidth = subtitleLen*tf->Font.GlyphSize.Width;
+	Size sz ;
 	sz.Width = subtitleWidth;
 
-	fres = txtChosenSubtitle->SetSize(sz);
+
+	ubyte_t titleOriginTop = statusSz.Height/2;
+	ubyte_t titleOriginOffset = 0;
+	if (subtitleLines ==1)
+	{
+		titleOriginOffset = (tf->Font.GlyphSize.Height)/2;
+		sz.Height = tf->Font.GlyphSize.Height;
+	}
+	else
+	{
+		titleOriginOffset = tf->Font.GlyphSize.Height;
+		sz.Height = tf->Font.GlyphSize.Height*2;
+	}
+
+	fres = txtSubtitle->SetSize(sz);
 	ENSURESUCCESS(fres);
 
-	Position pos = txtChosenSubtitle->GetPosition();
+	Position pos;
 	pos.Left = SCREENX - sz.Width;
 
-	fres = txtChosenSubtitle->SetPosition(pos);
+	pos.Top = titleOriginTop - titleOriginOffset;
+
+	fres = txtSubtitle->SetPosition(pos);
 	ENSURESUCCESS(fres);
 
-	fres = txtChosenSubtitle->SetText(szSubtitle);
+	fres = txtSubtitle->SetText(szSubtitle);
 	ENSURESUCCESS(fres);
 	
 	//Positioning title
-	sz = txtHeader->GetSize();
-	subtitleWidth = titleLen*tf->Font.GlyphSize.Width;
-	sz.Width = subtitleWidth;
-
+	subtitleWidth = subtitleLen*tf->Font.GlyphSize.Width;
+	sz.Width = titleLen*tf->Font.GlyphSize.Width;
+	sz.Height = tf->Font.GlyphSize.Height;
 	fres = txtHeader->SetSize(sz);
 	ENSURESUCCESS(fres);
 
 	pos = txtHeader->GetPosition();
 	pos.Left = SCREENX - sz.Width - subtitleWidth;
+	pos.Top = titleOriginTop - tf->Font.GlyphSize.Height/2;
 
 	fres = txtHeader->SetPosition(pos);
 	
@@ -165,5 +182,24 @@ fresult OpenSpaceStatusBar::SetTitle( char* szTitle, char* szSubtitle )
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
+}
+
+fresult OpenSpaceStatusBar::GetBatteryImages( ImageHandle** o_batteryImages, ubyte_t* o_count )
+{
+	*o_batteryImages = _batteryImages;
+	*o_count = _batteryImagesCount;
+	return SUCCESS;
+}
+
+fresult OpenSpaceStatusBar::GetNetworkImages( ImageHandle** o_networkImages, ubyte_t* o_count )
+{
+	*o_networkImages = _NetworkImages;
+	*o_count = _batteryImagesCount;
+	return SUCCESS;
+}
+
+ubyte_t OpenSpaceStatusBar::GetControlsCount()
+{
+	return 5;
 }
 

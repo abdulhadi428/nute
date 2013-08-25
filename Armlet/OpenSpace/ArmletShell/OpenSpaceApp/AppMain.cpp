@@ -67,8 +67,7 @@ void AppMainThread(void* param)
 
 	
 
-        //MenuItemFactory* a = new MenuItemFactory();
-	RegisterButtonHandlers(AppOnButtonClick, AppOnButtonHold);
+	//MenuItemFactory* a = new MenuItemFactory();
 
 	//extern const unsigned short ArrowDownOrangeBitmap[];
 	//DrawBitmap_kel(0,0,24,24,(short*)ArrowDownOrangeBitmap);
@@ -99,7 +98,7 @@ void AppMainThread(void* param)
 
 bool __CALLBACK _QueryLustraTimerCallback(int elapsed)
 {
-        return true;
+	return true;
 	//return UI.OnLustraTimer();
 }
 
@@ -112,54 +111,36 @@ bool __CALLBACK _MedicineTimerTickCallback(int elapsed)
 
 bool __CALLBACK _QueryBatteryStatusTimerCallback(int elapsed)
 {
-        return true;
-	//return UI.OnBatteryTimer();
+	return true;
 }
 
 void _OnPillConnected( sword_t cure_id, sword_t charges )
 {
-        return;
+	return;
 	//UI.OnPillConnected(cure_id, charges);
 }
 
 void _OnSetPlayerName( char* name )
 {
-        return;
-	//UI.SetPlayerName(name);
+	return;
 }
 
 
 void _OnExplosion(sword_t roomId)
 {
-        return;
+	return;
 	//UI.OnExplosion(roomId);
 }
 
 void _OnServerMessage(char* msg)
 {
-        return;
+	return;
 	//UI.OnServerMessage(msg);
 }
 
 void _OnSetRegenerationRate(sword_t regenRate)
 {
-        return;
+	return;
 	//_medSetRegenerationRate(regenRate);
 }
 
-/*
-uword_t gx=0;
-uword_t gy=0;
-Color gc=0x0000;
-bool MoveBoxByTimer()
-{
-	DrawRect(gx,gy,30,30,0);
-	gc+=0x111;
-	if (gc>=0x1000) gc=0x0000;
-	gx+=15; gy+=5;
-	if (gx>SCREENX) gx-=SCREENX;
-	if (gy>SCREENY) gy-=SCREENY;
-	DrawRect(gx,gy,30,30,gc);
-	return false;
-}
-*/

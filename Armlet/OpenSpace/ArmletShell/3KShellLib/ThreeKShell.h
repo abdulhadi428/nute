@@ -21,8 +21,10 @@ namespace ThreeKShell {
 	#include "TextFieldFactory.h"
 
 	#include "SystemImagesLib.h"	//common images lib
-	#include "Image.h"
+	#include "PictureBox.h"
+	#include "ImageList.h"
 	#include "PictureBoxFactory.h"
+	#include "ImageListFactory.h"
 
 	//panels
 	#include "PanelBase.h"

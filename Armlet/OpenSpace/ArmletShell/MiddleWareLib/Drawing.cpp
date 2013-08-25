@@ -144,7 +144,11 @@ namespace ArmletShell {
 				uword_t py=y+j;
 				if (px >= SCREENX) break;
 				if (py >= SCREENY) return;
-				DrawPixel(px,py,bitmap[k++]);
+
+				//TODO: transparency hack
+				Color val = bitmap[k++];
+				if ((val&0xF000)==0x0000) continue;
+				DrawPixel(px,py,val); //no composing
 			}
 		}
 	}

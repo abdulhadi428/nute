@@ -15,6 +15,7 @@ class OpenSpaceApp : public ApplicationBase
 	OpenSpaceForms _openSpaceFormsInstance;
 
 	MainForm _mainFormInstance;
+	MedMainForm _medMainFormInstance;
 
 public:
 	OpenSpaceStatusBar* AppStatusBar; 

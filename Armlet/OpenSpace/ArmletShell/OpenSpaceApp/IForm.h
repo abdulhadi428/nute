@@ -10,6 +10,6 @@ public:
 	virtual fresult OnBeforeShow(IForm* prevFrom, bool_t reActivation){return GENERAL_ERROR;};
 	virtual fresult OnAfterShow(IForm* prevFrom, bool_t reActivation){return GENERAL_ERROR;};
 	virtual fresult OnLoad(){return GENERAL_ERROR;};
-
+	virtual fresult DoLayout(){return GENERAL_ERROR;};
 	virtual fresult Draw(){return GENERAL_ERROR;};
 };

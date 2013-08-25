@@ -24,6 +24,10 @@ fresult TextFieldFactory::ResetDefaults()
 	DefaultFrames = 3;
 	CurrentFrames = DefaultFrames;
 
+	DefaultLines = 1;
+	CurrentLines = DefaultLines;
+
+
 	return SUCCESS;
 }
 fresult TextFieldFactory::GetTextBox(Position pos, ubyte_t maxLineLen , TextField** o_tf)
@@ -35,7 +39,7 @@ fresult TextFieldFactory::GetTextBox(Position pos, ubyte_t maxLineLen , TextFiel
 	fres = _styles->TextFormats->GetTextFormat(CurrentTextFormatHandle, &tfmt);
 	ENSURESUCCESS(fres);
 
-	pxSize.Height = tfmt->Font.GlyphSize.Height;
+	pxSize.Height = tfmt->Font.GlyphSize.Height*CurrentLines;
 	pxSize.Width = maxLineLen*tfmt->Font.GlyphSize.Width;
 
 	return GetTextBox(pos, NULL, pxSize, TRUE, o_tf);

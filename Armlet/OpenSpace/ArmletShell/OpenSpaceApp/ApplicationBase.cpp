@@ -78,6 +78,9 @@ fresult ApplicationBase::InitFactories( Factories* factories )
 	fres = _pbxFactoryInstance.Init(_Render, _Repositories->Images);
 	ENSURESUCCESS(fres);
 
+	fres = _imglFactoryInstance.Init(_Render, _Repositories->Images);
+	ENSURESUCCESS(fres);
+
 	fres = _tfFactoryInstance.Init(_Render, _Repositories);
 	ENSURESUCCESS(fres);
 
@@ -87,7 +90,7 @@ fresult ApplicationBase::InitFactories( Factories* factories )
 	fres = _mnuFactoryInstance.Init(_Render, _Repositories, &_tfFactoryInstance, &_pbxFactoryInstance, &_pnlFactoryInstance, &_miFactoryInstance);	
 	ENSURESUCCESS(fres);
 
-	fres = _Factories->Init(&_pnlFactoryInstance, &_pbxFactoryInstance, &_tfFactoryInstance, &_miFactoryInstance, &_mnuFactoryInstance);
+	fres = _Factories->Init(&_pnlFactoryInstance, &_pbxFactoryInstance, &_imglFactoryInstance, &_tfFactoryInstance, &_miFactoryInstance, &_mnuFactoryInstance);
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
@@ -125,6 +128,9 @@ fresult ApplicationBase::BaseInit()
 	ENSURESUCCESS(fres);
 
 	fres = CreateForms();
+	ENSURESUCCESS(fres);
+
+	fres = _fmngrFormManagerInstance.LayoutForms();
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;

@@ -40,24 +40,33 @@ fresult FormManager::RegisterForm( IForm* frm )
 	ENSURESUCCESS(fres);
 	_registeredForms++;
 
-	fres = frm->OnLoad();
-	ENSURESUCCESS(fres);
-
 	return SUCCESS;
 }
 
 IForm* FormManager::GetForm( char* formName )
 {
 	IForm* foundFrm = NULL;
+	FormDescription* frmDescr = NULL;
+		
+	frmDescr = GetFormDescription(formName);
+	NULLIF(frmDescr == NULL);
+	foundFrm = frmDescr->FormObject;
+	return foundFrm;
+}
+
+FormDescription* FormManager::GetFormDescription( char* formName )
+{
+	FormDescription* foundFrmDescr = NULL;
 	for (int i=0; i < _registeredForms; i++)
 	{
 		if (StringEquals(_formsRepository[i].FormName, formName))
 		{
-			foundFrm = _formsRepository[i].FormObject;
+			foundFrmDescr = &_formsRepository[i];
+			break;
 		}
 	}
 
-	return foundFrm;
+	return foundFrmDescr;
 }
 
 fresult FormManager::ShowForm(char* name)
@@ -73,6 +82,8 @@ fresult FormManager::ShowForm(char* name)
 
 	IForm* frm = GetForm(name);
 	FAILIF(frm==NULL);
+	
+	_shownIndex++;
 
 	_formStack[_shownIndex] = frm;
 	_formStackLength++;
@@ -121,6 +132,32 @@ IForm* FormManager::GetCurrentForm()
 {
 	NULLIF(_shownIndex == -1);
 	return _formStack[_shownIndex];
+}
+
+fresult FormManager::GetOpenFormHandler( char* name, IMenuHandler** o_handler )
+{
+	FormDescription* frmDescr = GetFormDescription(name);
+	FAILIF (frmDescr==NULL);
+
+	*o_handler = (IMenuHandler*)&frmDescr->OpenFormHandler;
+	return SUCCESS;
+}
+
+fresult FormManager::LayoutForms()
+{
+	fresult fres;
+	for (ubyte_t i=0;i<_registeredForms;i++)
+	{
+		fres = _formsRepository[i].FormObject->DoLayout();
+		ENSURESUCCESS(fres);
+	}
+	for (ubyte_t i=0;i<_registeredForms;i++)
+	{
+		fres = _formsRepository[i].FormObject->OnLoad();
+		ENSURESUCCESS(fres);
+	}
+
+	return SUCCESS;
 }
 
 

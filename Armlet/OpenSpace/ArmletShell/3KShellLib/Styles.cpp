@@ -247,7 +247,59 @@ fresult Repositories::Init( ColorsRepository* colors, FontsRepository* fonts, Te
 	return SUCCESS;
 }
 
+fresult TextFormatsRepository::GetTextPxSize( TextFormatHandle tfh, const char* text, Size* o_sizePx)
+{
+	fresult fres;
+	TextFormat* tf = NULL;
+	fres = GetTextFormat(tfh, &tf);
+	ENSURESUCCESS(fres);
+
+	return GetTextPxSize(tf, text,  o_sizePx);
+}
+
+fresult TextFormatsRepository::GetTextPxSize(TextFormat* tf, const char* text, Size* o_sizePx)
+{
+	ubyte_t maxLineLen =0;
+	sword_t currnentLineStart =0;
+	sword_t prevLineStart =0;
+	sword_t textLen =Length(text);
+	ubyte_t textLines =1;
+	Size szResult;
+	szResult.data = 0;
+
+	do 
+	{
+		prevLineStart = currnentLineStart;
+		currnentLineStart = InStr(text, "\n", prevLineStart);
+
+		if (currnentLineStart != -1)
+		{
+			textLines++;
+			if (maxLineLen < currnentLineStart-prevLineStart)
+			{
+				maxLineLen = currnentLineStart-prevLineStart;
+			}
+		}
+		else
+		{
+			if (maxLineLen < textLen-prevLineStart)
+			{
+				maxLineLen = textLen-prevLineStart;
+			}
+			break;
+		}
+	} while (TRUE);
+
+	szResult.Width = maxLineLen*tf->Font.GlyphSize.Width;
+	szResult.Height = textLines*tf->Font.GlyphSize.Height;
+
+	*o_sizePx = szResult;
+	return SUCCESS;
+}
+
 #pragma endregion
 
 }
+
+
 

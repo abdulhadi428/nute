@@ -4,6 +4,7 @@ class OpenSpaceForms
 {
 public:
 	char* MainFormName;
+	char* MedMainFormName;
 	
 	fresult Init();
 };

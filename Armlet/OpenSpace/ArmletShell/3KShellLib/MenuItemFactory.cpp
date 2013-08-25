@@ -74,7 +74,7 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 		ubyte_t textLinesCount=1;
 		sword_t crIndex =0;
 		sword_t lastCrIndex=0;
-		ubyte_t maxLineLen =0;
+		sword_t maxLineLen =0;
 
 		//predict text size without WRAP
 		if (CurrentTextFieldHAutoSize || CurrentTextFieldVAutoSize)
@@ -229,12 +229,12 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 		else if (style == ImageLeft)
 		{
 			pbxPos.Left = pos.Left;
-			tfPos.Left = pbxPos.Left + pbxSize.Width;
+			tfPos.Left = pbxPos.Left + pbxSize.Width+1;
 		}
 		else if (style == ImageRight)
 		{
 			tfPos.Left = pos.Left;
-			pbxPos.Left = tfPos.Left + tfSize.Width;
+			pbxPos.Left = tfPos.Left + tfSize.Width+1;
 		}
 	}
 
@@ -291,10 +291,10 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 	}
 
 	//creating controls
-	TextField* tf;
-	PictureBox* pbx;
-	Panel* pnl;
-	IControl* drawingControl;
+	TextField* tf = NULL;
+	PictureBox* pbx = NULL;
+	Panel* pnl =NULL;
+	IControl* drawingControl=NULL;
 
 	if (hasText)
 	{
@@ -330,7 +330,6 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 	MenuItem* mi;
 	mi = allocMenuItem();
 	FAILIF(mi==NULL);
-
 
 	fres = mi->Init(tf, tfmt, pbx, drawingControl, handler, shrtcut);
 	ENSURESUCCESS(fres);

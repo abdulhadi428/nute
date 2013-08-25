@@ -14,7 +14,7 @@ fresult MainForm::Init( Repositories* reps, Factories* facts, char* name, FormMa
 
 fresult MainForm::DoLayout()
 {
-	ubyte_t controlsCount = 2;
+	ubyte_t controlsCount = 3;
 	
 	fresult fres;
 
@@ -38,11 +38,20 @@ fresult MainForm::DoLayout()
 	Panel* status = NULL;
 	fres = CreateInfoBar(&status);
 	ENSURESUCCESS(fres);
-
 	if (status!=NULL)
 	{
 		_FormPanel->SetControl(status, 1);
 	}
+
+
+	//test pbx
+	PictureBox* pbx = NULL;
+	Position pbxPos;
+	pbxPos.Left = SCREENX/2;
+	pbxPos.Top = SCREENY/2;
+	fres = _Factories->GetPictureBoxFactory()->GetPictureBox(pbxPos, big_arrow_left, &pbx);
+	ENSURESUCCESS(fres);
+	_FormPanel->SetControl(pbx, 2);
 	
 	_Menus = AllocMenus(1);
 	FAILIF(_Menus==NULL);
@@ -98,42 +107,43 @@ fresult MainForm::CreateMenu( IMenu** o_mnu )
 	//ItemOriginA
 	mis = &mf->Settings[ItemOriginA];
 	mis->Text = "Инфо";
-	mis->ImgHandle = menu_left;
+	mis->ImgHandle = small_arrow_left;
 	mis->Handler = NULL;
 	mis->Empty = FALSE;
 
 	//ItemOriginB
 	mis = &mf->Settings[ItemOriginB];
 	mis->Text = "Hard&Soft";
-	mis->ImgHandle = menu_left;
+	mis->ImgHandle = small_arrow_left;
 	mis->Handler = NULL;
 	mis->Empty = FALSE;
 
 	//ItemOriginС
 	mis = &mf->Settings[ItemOriginC];
 	mis->Text = "Психотерапия";
-	mis->ImgHandle = menu_left;
+	mis->ImgHandle = small_arrow_left;
 	mis->Handler = NULL;
 	mis->Empty = FALSE;
 
 	//ItemOriginX
 	mis = &mf->Settings[ItemOriginX];
 	mis->Text = "Медицина";
-	mis->ImgHandle = menu_right;
-	mis->Handler = NULL;
+	mis->ImgHandle = small_arrow_right;
+	fres = _FormManager->GetOpenFormHandler(_App->Forms->MedMainFormName, &mis->Handler);
+	ENSURESUCCESS(fres);
 	mis->Empty = FALSE;
 
 	//ItemOriginY
 	mis = &mf->Settings[ItemOriginY];
 	mis->Text = "Поведение";
-	mis->ImgHandle = menu_right;
+	mis->ImgHandle = small_arrow_right;
 	mis->Handler = NULL;
 	mis->Empty = FALSE;
 
 	//ItemOriginZ
 	mis = &mf->Settings[ItemOriginZ];
 	mis->Text = "Память";
-	mis->ImgHandle = menu_right;
+	mis->ImgHandle = small_arrow_right;
 	mis->Handler = NULL;
 	mis->Empty = FALSE;
 	
@@ -148,17 +158,13 @@ fresult MainForm::CreateMenu( IMenu** o_mnu )
 	mf->DefaultTextFormatHandle=mf->CurrentTextFormatHandle;
 	mf->DefaultEvenTextFormatHandle=mf->CurrentEvenTextFormatHandle;
 
-	_TitleText = "мама/";
-	_SubtitleText = "мыла\nраму";
+	_TitleText = NULL;
+	_SubtitleText = NULL;
 
 	*o_mnu = mnu;
 
 	return SUCCESS;
 }
 
-fresult MainForm::OnLoad()
-{
-	return DoLayout();
-}
 
 

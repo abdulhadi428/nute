@@ -41,7 +41,7 @@ fresult MenuItem::Deselect()
 	return SUCCESS;
 }
 					   
-fresult MenuItem::Init( TextField* tf, TextFormat* selFormat, Image* img, IControl* controlToDraw, IMenuHandler* handler, ButtonState accelerator)
+fresult MenuItem::Init( TextField* tf, TextFormat* selFormat, PictureBox* img, IControl* controlToDraw, IMenuHandler* handler, ButtonState accelerator)
 {
 	fresult fres;
 	fres = MenuItem::MenuItemBaseInit(controlToDraw, handler, accelerator);

@@ -11,6 +11,11 @@ namespace ArmletShell {
 		sword_t result = -1;
 		uword_t matchStart = 0;
 
+		if (string == NULL)
+		{
+			return -1;
+		}
+
 		while (string[index] != NULL)
 		{
 			matchIndex=0;

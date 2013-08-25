@@ -12,20 +12,6 @@ struct BitmapImage
 
 #define MAX_IMAGES 40
 
-/*
-class ImagesRepository
-{
-	BitmapImage* _images[MAX_IMAGES];
-	uword_t _imagesCount;
-	uword_t _usedImages;
-public:
-	ImagesRepository();
-
-	fresult RegisterImage(BitmapImage* bitmap);
-	BitmapImage* GetImageById(sword_t id);
-};
-*/
-
 class ImagesRepository_
 {
 	BitmapImage* _images;

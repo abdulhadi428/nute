@@ -158,7 +158,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Image.cpp"
+				RelativePath=".\ImageList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ImageListFactory.cpp"
 				>
 			</File>
 			<File
@@ -187,6 +191,10 @@
 			</File>
 			<File
 				RelativePath=".\PanelFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PictureBox.cpp"
 				>
 			</File>
 			<File
@@ -236,7 +244,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Image.h"
+				RelativePath=".\ImageList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ImageListFactory.h"
 				>
 			</File>
 			<File
@@ -293,6 +305,10 @@
 			</File>
 			<File
 				RelativePath=".\PanelFactory.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PictureBox.h"
 				>
 			</File>
 			<File

@@ -2,11 +2,14 @@
 
 namespace ThreeKShell {
 
-fresult Image::DrawArea( Position pos, Size size )
+fresult PictureBoxBase::DrawArea( Position pos, Size size )
 {
 	fresult fres = SUCCESS;
 
 	if(_bVisible == FALSE)
+		return SUCCESS;
+
+	if (_bitmap==NULL)
 		return SUCCESS;
 
 	Size sizeToDraw;

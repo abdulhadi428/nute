@@ -26,6 +26,9 @@ public:
 	ubyte_t DefaultFrames;
 	ubyte_t CurrentFrames;
 
+	ubyte_t DefaultLines;
+	ubyte_t CurrentLines;
+
 	fresult ResetDefaults();
 
 	fresult GetTextBox(Position pos, const char* text, TextField** o_tf);

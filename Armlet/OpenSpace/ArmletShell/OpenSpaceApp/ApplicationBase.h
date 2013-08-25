@@ -16,6 +16,7 @@ private:
 	//Factories private static alloc. Don't use them, access via _Factories
 	PanelFactory _pnlFactoryInstance;
 	PictureBoxFactory _pbxFactoryInstance;
+	ImageListFactory _imglFactoryInstance;
 	TextFieldFactory _tfFactoryInstance;
 	MenuItemFactory _miFactoryInstance;
 	MenuFactory _mnuFactoryInstance;

@@ -11,12 +11,12 @@ protected:
 	TextFormat _NotSelectedFormat;
 	TextFormat _SelectedFormat;
 
-	Image* _image;
+	PictureBoxBase* _image;
 
 public:
 
 	//controlToDraw use Panel containing both, if text item has both text and image
-	fresult Init(TextField* tf, TextFormat* selFormat, Image* img, IControl* controlToDraw, IMenuHandler* handler, ButtonState accelerator);
+	fresult Init(TextField* tf, TextFormat* selFormat, PictureBox* img, IControl* controlToDraw, IMenuHandler* handler, ButtonState accelerator);
 
 	fresult virtual Select();
 

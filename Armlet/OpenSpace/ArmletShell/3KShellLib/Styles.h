@@ -101,6 +101,9 @@ public:
 	fresult GetTextFormat( const TextFormatHandle id, TextFormat** o_textFormat);
 	
 	fresult CreateTextFormatByStyles(ubyte_t fontId, ubyte_t fgColorId, ubyte_t bgColorId, TextFormat* o_tf);
+
+	fresult GetTextPxSize( TextFormatHandle tfh, const char* text, Size* o_sizePx);
+	fresult GetTextPxSize(TextFormat* tf, const char* text, Size* o_sizePx);
 };
 
 typedef uword_t ImageHandle;

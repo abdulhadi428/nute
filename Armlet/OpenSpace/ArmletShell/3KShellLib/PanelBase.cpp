@@ -14,6 +14,7 @@ fresult PanelBase::SetControls(IControl** controls, ubyte_t count )
 			return GENERAL_ERROR;
 		}
 	}
+	_CurrentIndex = count-1;
 	
 	return SUCCESS;
 }
@@ -54,6 +55,7 @@ fresult PanelBase::BaseInit( Size size, Position position, IRender* renderer, IC
 	}
 
 	_ControlsCount = controlsCount;
+	_CurrentIndex = 0;
 	_Controls = controls;
 
 	_BgColor = _TRANSPARENT;
@@ -104,6 +106,15 @@ fresult PanelBase::DrawArea( Position pos, Size size )
 	return SUCCESS;
 }
 
-}
+fresult PanelBase::AppendControl( IControl* control )
+{
+	fresult fres;
+	FAILIF(! (_CurrentIndex < _ControlsCount));
+	fres = SetControl(control, _CurrentIndex);
+	ENSURESUCCESS(fres);
 
+	_CurrentIndex++;
+	return SUCCESS;
+}
+}
 

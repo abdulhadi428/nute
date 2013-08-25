@@ -8,6 +8,7 @@ protected:
 
 	IControl** _Controls;
 	ubyte_t _ControlsCount;
+	ubyte_t _CurrentIndex;
 	Color _BgColor;
 
 	//Initialization;
@@ -18,6 +19,7 @@ protected:
 	virtual fresult DrawArea( Position pos, Size size );
 public:
 	fresult SetControl( IControl* control, ubyte_t index );
+	fresult AppendControl(IControl* control); 
 	fresult SetColor(Color bgclr);
 
 };

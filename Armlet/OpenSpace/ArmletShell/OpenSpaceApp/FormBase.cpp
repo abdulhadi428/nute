@@ -3,8 +3,6 @@
 
 fresult FormBase::BaseInit( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, ApplicationBase* app )
 {
-	fresult fres;
-
 	FAILIF(reps==NULL);
 	FAILIF(facts==NULL);
 	FAILIF(name==NULL);
@@ -20,9 +18,6 @@ fresult FormBase::BaseInit( Repositories* reps, Factories* facts, char* name, Fo
 	_FormPanel = NULL;
 	_Menus = NULL;
 	_MenusCount = 0;
-
-	fres = DoLayout();
-	ENSURESUCCESS(fres);
 
 	return SUCCESS;
 }

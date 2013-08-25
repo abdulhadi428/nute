@@ -34,8 +34,3 @@ public:
 	TextFormat* GetFormatById(sbyte_t id);
 };
 
-//namespace Fonts {
-//	extern const ubyte_t Font_6x8_Data[256][6];
-//} //namespace
-
-//using namespace Fonts;

@@ -190,6 +190,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MedMainForm.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MedSymptoms.cpp"
 				>
 			</File>
@@ -285,6 +289,10 @@
 			</File>
 			<File
 				RelativePath=".\MedCures.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedMainForm.h"
 				>
 			</File>
 			<File

@@ -18,9 +18,10 @@ class FormManager
 
 protected:
 	
-
 public:
+	FormDescription* GetFormDescription( char* formName );
 	IForm* GetForm(char* formName);
+
 	IForm* GetCurrentForm();
 
 	fresult Init(ubyte_t formsCount, ubyte_t stackLength);
@@ -29,8 +30,8 @@ public:
 	fresult ShowForm(char* name);
 	fresult CloseForm(IForm* frm);
 
-	fresult GetOpenFormHandler(char* name, IMenuHandler** handler);
-
+	fresult GetOpenFormHandler(char* name, IMenuHandler** o_handler);
+	fresult LayoutForms();
 };
 
 class FormOpenDelegate : IMenuHandler

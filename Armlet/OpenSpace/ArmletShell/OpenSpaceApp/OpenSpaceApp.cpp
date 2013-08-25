@@ -110,7 +110,7 @@ fresult OpenSpaceApp::InitTextFormats( TextFormatsRepository* tfrep )
 
 fresult OpenSpaceApp::GetFormManagerParams( ubyte_t* formsCount, ubyte_t* shownStackLength )
 {
-	*formsCount =1;
+	*formsCount =2;
 	*shownStackLength = 5;
 	
 	return SUCCESS;
@@ -137,12 +137,18 @@ fresult OpenSpaceApp::CreateForms()
 
 	Forms = &_openSpaceFormsInstance;
 	
+	//med form
+	fres = _medMainFormInstance.Init(_Repositories, _Factories, Forms->MedMainFormName, _FormManager, this, Logic);
+	ENSURESUCCESS(fres);
+	fres = _FormManager->RegisterForm(&_medMainFormInstance);
+	ENSURESUCCESS(fres);
+
 	//main form
 	fres = _mainFormInstance.Init(_Repositories, _Factories, Forms->MainFormName, _FormManager, this, Logic);
 	ENSURESUCCESS(fres);
 	fres = _FormManager->RegisterForm(&_mainFormInstance);
 	ENSURESUCCESS(fres);
-	
+
 
 	_StartupFormName = Forms->MainFormName;
 
