@@ -11,6 +11,7 @@ namespace HonorLogic.ShipStatus
         bool SetSubsystemStatus(ShipSubsystemStatus subsystemStatus);
         List<ShipSubsystemStatus> GetAllSubsystemsStatus();
 
-        int PhysicalGateID { get; set; }
+        Guid ShipGuid { get; set; }
+        int[] PhysicalGateID { get; set; }
     }
 }
