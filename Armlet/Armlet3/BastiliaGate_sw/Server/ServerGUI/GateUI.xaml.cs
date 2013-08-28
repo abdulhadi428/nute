@@ -37,7 +37,13 @@ namespace ServerGUI
                 MessageBox.Show("Заряды должны быть от 0 до 1000");
                 return;
             }
-            Model.WritePill(((IPillType) PillTypeBox.SelectedItem).Id, charges);
+            var selectedPill = PillTypeBox.SelectedItem;
+            if (selectedPill == null)
+            {
+                MessageBox.Show("Нужно выбрать тип пилюли");
+                return;
+            }
+            Model.WritePill(((IPillType) selectedPill).Id, charges);
         }
 
         private void GateUI_OnLoaded(object sender, RoutedEventArgs e)
