@@ -52,7 +52,13 @@ namespace ServerGUI
 
         private IArmletInfo CurrentArmlet
         {
-            get { return ((ArmletWatcher)(ArmletGrid.SelectedItem)).Value; }
+            get { 
+                var selectemArmlet = ArmletGrid.SelectedItem;
+                if (selectemArmlet == null)
+                {
+                    return null;
+                }
+                return ((ArmletWatcher)selectemArmlet).Value; }
         }
 
         private void SendMessage_Click(object sender, RoutedEventArgs e)
@@ -110,7 +116,13 @@ namespace ServerGUI
 
         private void HitRoom_Click(object sender, RoutedEventArgs e)
         {
-            Model.SendRoomHit(byte.Parse(RoomComboBox.SelectedItem.ToString()));
+            var selectedRoom = RoomComboBox.SelectedItem;
+            if (selectedRoom == null)
+            {
+                MessageBox.Show("Выберите отсек!");
+                return;
+            }
+            Model.SendRoomHit(byte.Parse(selectedRoom.ToString()));
             
         }
 
