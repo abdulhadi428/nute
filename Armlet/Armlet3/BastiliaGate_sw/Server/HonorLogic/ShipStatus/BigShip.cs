@@ -13,14 +13,16 @@ namespace HonorLogic.ShipStatus
             return _shipType;
         }
 
-        public bool SetSubsystemStatus(int subsystemNum, RanmaSubsystemStatus ranmaStatus)
+        public bool SetSubsystemStatus(ShipSubsystemStatus ranmaStatus)
         {
             throw new NotImplementedException();
         }
 
-        public List<RanmaSubsystemStatus> GetAllSubsystemsStatus()
+        public List<ShipSubsystemStatus> GetAllSubsystemsStatus()
         {
             throw new NotImplementedException();
         }
+
+        public int PhysicalGateID { get; set; }
     }
 }

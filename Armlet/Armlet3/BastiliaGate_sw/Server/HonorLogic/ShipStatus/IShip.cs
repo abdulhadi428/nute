@@ -8,8 +8,8 @@ namespace HonorLogic.ShipStatus
     interface IShip
     {
         ShipType GetShipType();
-        bool SetSubsystemStatus(int subsystemNum, RanmaSubsystemStatus ranmaStatus);
-        List<RanmaSubsystemStatus> GetAllSubsystemsStatus();
+        bool SetSubsystemStatus(ShipSubsystemStatus subsystemStatus);
+        List<ShipSubsystemStatus> GetAllSubsystemsStatus();
 
         int PhysicalGateID { get; set; }
     }
