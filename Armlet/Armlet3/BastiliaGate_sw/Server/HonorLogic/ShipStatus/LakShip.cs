@@ -23,6 +23,8 @@ namespace HonorLogic.ShipStatus
             throw new NotImplementedException();
         }
 
+        public Guid ShipGuid { get; set; }
+
         public int[] PhysicalGateID { get; set; }
     }
 }
