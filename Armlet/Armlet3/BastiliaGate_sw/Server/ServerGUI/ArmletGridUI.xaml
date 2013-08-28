@@ -35,24 +35,6 @@
                     <Button x:Name="UpdateRegeneration" Click="UpdateRegeneration_Click" Content="Установить"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Установка замков" Visibility="Collapsed">
-                <StackPanel Orientation="Vertical">
-                    <UniformGrid Columns="3" x:Name="LockGrid">
-                        <CheckBox Tag="1" Content="1"/>
-                        <CheckBox Tag="2" Content="2"/>
-                        <CheckBox Tag="3" Content="3"/>
-                        <CheckBox Tag="4" Content="4"/>
-                        <CheckBox Tag="5" Content="5"/>
-                        <CheckBox Tag="6" Content="6"/>
-                        <CheckBox Tag="7" Content="7"/>
-                        <CheckBox Tag="8" Content="8"/>
-                        <CheckBox Tag="9" Content="9"/>
-                        <CheckBox Tag="10" Content="10"/>
-                    </UniformGrid>
-
-                    <Button x:Name="UpdateLockList" Click="UpdateLockList_OnClick" Content="Установить"/>
-                </StackPanel>
-            </GroupBox>
             <GroupBox Header="Взрыв отсека">
                 <WrapPanel>
                     <ComboBox IsEditable="False" x:Name="RoomComboBox">

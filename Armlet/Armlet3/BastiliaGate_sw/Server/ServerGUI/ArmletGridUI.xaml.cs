@@ -82,24 +82,6 @@ namespace ServerGUI
             Model.SetSetPlayerRegen(CurrentArmlet, (byte) RegenLevelComboBox.SelectedValue);
         }
 
-        private void UpdateLockList_OnClick(object sender, RoutedEventArgs e)
-        {
-                if (CurrentArmlet == null) //FIXME Disable button when nothing selected
-              {
-                MessageBox.Show("Выберите браслет!");
-                return;
-              }
-              
-            var list = (from object child in LockGrid.Children
-                        select child as CheckBox
-                        into checkBox 
-                        where checkBox != null && checkBox.IsChecked == true 
-                        select (byte) checkBox.Tag)
-                .ToArray();
-
-            Model.SendSetLockList(CurrentArmlet, list);
-        }
-
         private void SendAll_Click(object sender, RoutedEventArgs e)
         {
             var saveCursor = Cursor;
