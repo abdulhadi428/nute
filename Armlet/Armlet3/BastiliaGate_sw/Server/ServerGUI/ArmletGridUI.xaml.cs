@@ -1,10 +1,6 @@
 ﻿using System.Collections.ObjectModel;
- using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
- using System.Windows.Input;
+using System.Windows.Input;
  using HonorInterfaces;
 
 namespace ServerGUI
@@ -96,18 +92,6 @@ namespace ServerGUI
             {
                 Cursor = saveCursor;
             }
-        }
-
-        private void HitRoom_Click(object sender, RoutedEventArgs e)
-        {
-            var selectedRoom = RoomComboBox.SelectedItem;
-            if (selectedRoom == null)
-            {
-                MessageBox.Show("Выберите отсек!");
-                return;
-            }
-            Model.SendRoomHit(byte.Parse(selectedRoom.ToString()), 50);
-            
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

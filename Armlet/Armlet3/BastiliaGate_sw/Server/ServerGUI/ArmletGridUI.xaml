@@ -35,16 +35,6 @@
                     <Button x:Name="UpdateRegeneration" Click="UpdateRegeneration_Click" Content="Установить"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Взрыв отсека">
-                <WrapPanel>
-                    <ComboBox IsEditable="False" x:Name="RoomComboBox">
-                        <System:Byte>71</System:Byte>
-                        <System:Byte>72</System:Byte>
-                        <System:Byte>73</System:Byte>
-                    </ComboBox>
-                    <Button Click="HitRoom_Click" Content="Взрыв"/>
-                </WrapPanel>
-            </GroupBox>
             <serverGUI:GateTabControl x:Name="GateUI" x:FieldModifier="public" />
             <StackPanel Orientation="Vertical" x:Name="ShipStackPanel"></StackPanel>
         </StackPanel>
