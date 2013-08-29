@@ -6,7 +6,7 @@ namespace HonorInterfaces
     {
 
         byte Id { get; }
-        byte Room { get; }
+        string RoomName { get; }
         byte BloodLevel { get; }
         string Name { get; }
         string Status { get; }

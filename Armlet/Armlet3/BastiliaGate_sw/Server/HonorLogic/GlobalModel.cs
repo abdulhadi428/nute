@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HonorLogic.ShipStatus;
 using HonorLogic.Storage;
 using NetworkLevel.NetworkDeliveryLevel;
 using NetworkLevel.WCFServices;
@@ -225,6 +226,12 @@ namespace HonorLogic
         public IEnumerable<IShip> GetShips()
         {
             return _shipList.GetAll();
+        }
+
+        public string GetRoomName(byte room)
+        {
+            return _shipList.GetAll().Select(s => s.FindRoomName(room)).SingleOrDefault(s => s != null)
+                ??  ShipBase.GetDefaultRoomName(room);
         }
     }
 }

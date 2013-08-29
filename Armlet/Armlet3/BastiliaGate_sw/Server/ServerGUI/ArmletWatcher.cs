@@ -84,7 +84,7 @@ namespace ServerGUI
             BloodLevel = armletInfo.BloodLevel.ToString();
             Name = armletInfo.Name;
             Status = armletInfo.Status;
-            Room = armletInfo.Room.ToString();
+            Room = armletInfo.RoomName;
             Regen = armletInfo.Regen.ToString();
             ToxicLevel = armletInfo.Toxic.ToString();
         }

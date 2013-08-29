@@ -58,6 +58,15 @@ namespace HonorLogic
         }
 
         public byte Id { get; private set; }
+
+        public string RoomName
+        {
+            get
+            {
+                return _model.GetRoomName(Room);
+            }
+        }
+
         public byte Room { get; private set; }
         public byte BloodLevel { get; private set; }
         public string Name { get; private set; }

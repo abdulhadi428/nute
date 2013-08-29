@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using HonorInterfaces;
 using HonorLogic.Storage;
 
@@ -28,11 +27,15 @@ namespace HonorLogic.ShipStatus
         public IGlobalModel Model { get; set; }
         public string GetRoomName(byte roomsID)
         {
-            return FndRoomName(roomsID) ?? 
-             "Отсек " + roomsID;
+            return FindRoomName(roomsID) ?? GetDefaultRoomName(roomsID);
         }
 
-        private string FndRoomName(byte roomsID)
+        internal static string GetDefaultRoomName(byte roomsID)
+        {
+            return "Отсек " + roomsID;
+        }
+
+        internal string FindRoomName(byte roomsID)
         {
             return (from roomInfo in Rooms where roomInfo.Id == roomsID select roomInfo.Name).SingleOrDefault();
         }
