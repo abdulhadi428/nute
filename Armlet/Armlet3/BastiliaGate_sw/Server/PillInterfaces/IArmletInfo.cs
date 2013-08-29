@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PillInterfaces
+namespace HonorInterfaces
 {
     public interface IArmletInfo
     {

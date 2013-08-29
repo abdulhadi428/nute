@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace PillInterfaces
+namespace HonorInterfaces
 {
     public class GateNotConnectedException : Exception
     {

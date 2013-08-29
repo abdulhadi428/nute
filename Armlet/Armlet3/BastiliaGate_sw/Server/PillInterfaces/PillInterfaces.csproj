@@ -7,8 +7,8 @@
     <ProjectGuid>{A6E64BDB-F06E-42BD-B108-4D3ACA7289EB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PillInterfaces</RootNamespace>
-    <AssemblyName>PillInterfaces</AssemblyName>
+    <RootNamespace>HonorInterfaces</RootNamespace>
+    <AssemblyName>HonorInterfaces</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

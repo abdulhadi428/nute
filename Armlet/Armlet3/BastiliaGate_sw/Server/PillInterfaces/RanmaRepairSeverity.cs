@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PillInterfaces
+namespace HonorInterfaces
 {
     [Serializable]
     public enum RanmaRepairSeverity

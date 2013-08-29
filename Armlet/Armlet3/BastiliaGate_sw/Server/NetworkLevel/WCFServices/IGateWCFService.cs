@@ -8,6 +8,9 @@ namespace NetworkLevel.WCFServices
         public byte ArmletID { get; set; }
         public byte NewRoom { get; set; }
         public byte NewBlood { get; set; }
+        public byte NewToxin { get; set; }
+        public byte NewPulse { get; set; }
+        public byte NewTemp { get; set; }
     }
 
 

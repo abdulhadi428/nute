@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using NetworkLevel.WCFServices;
-using PillInterfaces;
+using HonorInterfaces;
 
 namespace HonorLogic
 {
@@ -64,11 +64,17 @@ namespace HonorLogic
         public string Status { get; private set; }
         public byte Regen { get; private set; }
         public byte Toxic { get; private set; }
+        public byte Pulse { get; private set; }
+        public byte Temp { get; private set; }
+
 
         public void Update(PlayerUpdate playerStatusUpdate)
         {
             BloodLevel = playerStatusUpdate.NewBlood;
             Room = playerStatusUpdate.NewRoom;
+            Toxic = playerStatusUpdate.NewToxin;
+            Pulse = playerStatusUpdate.NewPulse;
+            Temp = playerStatusUpdate.NewTemp;
             OnArmletUpdated();
         }
 

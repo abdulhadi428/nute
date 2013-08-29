@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace PillInterfaces
+namespace HonorInterfaces
 {
     [Serializable]
     public class RanmaSubsystemStatus

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 using HonorLogic.ShipStatus;
-using PillInterfaces;
+using HonorInterfaces;
 
 namespace ServerGUI
 {

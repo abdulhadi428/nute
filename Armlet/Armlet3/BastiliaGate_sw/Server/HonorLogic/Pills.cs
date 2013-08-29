@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using PillInterfaces;
+using HonorInterfaces;
 
 namespace HonorLogic
 {

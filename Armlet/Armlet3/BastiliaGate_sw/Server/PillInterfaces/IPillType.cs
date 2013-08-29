@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PillInterfaces
+namespace HonorInterfaces
 {
     public interface IPillType
     {

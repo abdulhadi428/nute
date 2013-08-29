@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PillInterfaces
+namespace HonorInterfaces
 {
     public interface IGateModel
     {

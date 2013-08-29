@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NetworkLevel.WCFServices;
-using PillInterfaces;
+using HonorInterfaces;
 
 namespace HonorLogic
 {
