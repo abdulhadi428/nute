@@ -9,7 +9,6 @@ namespace HonorLogic.ShipStatus
 {
     public static class RanmaSubsystemStatusFactory
     {
-        private static Random random = new Random();
         private static List<ushort> easyTables = new List<ushort>() {0x0303, 0x8228, 0x1111, 0xA0A0, 0x0AA0, 0xA6A6, 0x8800, 
                                                    0x8808, 0x0161, 0x6116, 0x1310, 0x1F10, 0x1810, 0x4941, 0x2332,
                                                    0x0F99, 0x909F, 0x4F7F, 0x0B0B, 0x7077};
@@ -21,13 +20,13 @@ namespace HonorLogic.ShipStatus
             switch (severity)
             {
                     case RanmaRepairSeverity.Easy:
-                        result = new RanmaSubsystemStatus(easyTables.Random(random));
+                        result = new RanmaSubsystemStatus(easyTables.RandomOrDefault());
                         break;
                     case RanmaRepairSeverity.Medium:
-                        result = new RanmaSubsystemStatus(mediumTables.Random(random));
+                        result = new RanmaSubsystemStatus(mediumTables.RandomOrDefault());
                         break;
                     case RanmaRepairSeverity.Hard:
-                        result = new RanmaSubsystemStatus(hardTables.Random(random));
+                        result = new RanmaSubsystemStatus(hardTables.RandomOrDefault());
                         break;
                 default:
                     return null;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HonorInterfaces;
 using HonorLogic.Storage;
+using HonorUtils;
 
 namespace HonorLogic.ShipStatus
 {
@@ -38,6 +39,24 @@ namespace HonorLogic.ShipStatus
         internal string FindRoomName(byte roomsID)
         {
             return (from roomInfo in Rooms where roomInfo.Id == roomsID select roomInfo.Name).SingleOrDefault();
+        }
+
+        public void HitRandomRoom(RanmaRepairSeverity severity)
+        {
+            Model.SendRoomHit(RoomsWithPeople.RandomOrDefault(), GetHitChanceFromSeverity(severity));
+        }
+
+        private byte GetHitChanceFromSeverity(RanmaRepairSeverity severity)
+        {
+            return (byte) (((byte) severity - 2)*25 + 50);
+        }
+
+        private IEnumerable<byte> RoomsWithPeople
+        {
+            get
+            {
+                return Rooms.Select(r => r.Id).Intersect(Model.RoomsWithPeople);
+            }
         }
 
         public event Action<ShipSubsystemStatus> SubsystemUpdated;

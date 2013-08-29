@@ -228,6 +228,14 @@ namespace HonorLogic
             return _shipList.GetAll();
         }
 
+        public IEnumerable<byte> RoomsWithPeople
+        {
+            get
+            {
+                return _armletList.GetAll().Select(a => a.Room).Distinct();
+            }
+        }
+
         public string GetRoomName(byte room)
         {
             return _shipList.GetAll().Select(s => s.FindRoomName(room)).SingleOrDefault(s => s != null)

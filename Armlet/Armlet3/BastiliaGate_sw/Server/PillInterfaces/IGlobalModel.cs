@@ -19,5 +19,6 @@ namespace HonorInterfaces
         void SendRoomHit(byte roomId, byte hitChance);
         void UpdateAllNames();
         IEnumerable<IShip> GetShips();
+        IEnumerable<byte> RoomsWithPeople { get; }
     }
 }

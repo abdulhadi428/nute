@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Media3D;
 using HonorInterfaces;
 
 namespace ServerGUI
@@ -62,6 +63,11 @@ namespace ServerGUI
             };
             button.Click += (o, args) => Ship.Model.SendRoomHit(roomsID, 50);
             HitStackPanel.Children.Add(button);
+        }
+
+        private void RandomHitClick(object sender, RoutedEventArgs e)
+        {
+            Ship.HitRandomRoom(RanmaRepairSeverity.Medium);
         }
     }
 }
