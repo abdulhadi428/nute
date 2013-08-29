@@ -18,5 +18,6 @@ namespace HonorInterfaces
         void SetSetPlayerRegen(IArmletInfo armlet, byte regen);
         void SendRoomHit(byte roomId, byte hitChance);
         void UpdateAllNames();
+        IEnumerable<IShip> GetShips();
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HonorInterfaces;
+using HonorLogic.Storage;
 
 namespace HonorLogic
 {
@@ -16,7 +17,8 @@ namespace HonorLogic
                 Id = a.ShipGuid,
                 Gates = a.PhysicalGateID.ToList(),
                 Name = a.Name,
-               Subsystems = a.GetAllSubsystemsStatus() 
+               Subsystems = a.GetAllSubsystemsStatus() ,
+               Rooms = a.ShipRoomsIDs
             }).ToList();
         }
     }

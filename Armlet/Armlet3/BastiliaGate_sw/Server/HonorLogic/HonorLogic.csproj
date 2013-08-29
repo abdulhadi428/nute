@@ -39,7 +39,7 @@
   <ItemGroup>
     <Compile Include="Armlet.cs" />
     <Compile Include="ArmletList.cs" />
-    <Compile Include="ArmletStorage.cs" />
+    <Compile Include="Storage\ArmletStorage.cs" />
     <Compile Include="GateModel.cs" />
     <Compile Include="GlobalModel.cs" />
     <Compile Include="MessageId.cs" />
@@ -50,6 +50,8 @@
     <Compile Include="ShipStatus\LakShip.cs" />
     <Compile Include="ShipStatus\BigShip.cs" />
     <Compile Include="ShipStatus\RanmaSubsystemStatus.cs" />
+    <Compile Include="Storage\ShipStorage.cs" />
+    <Compile Include="Storage\StorageBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HonorUtils\HonorUtils.csproj">

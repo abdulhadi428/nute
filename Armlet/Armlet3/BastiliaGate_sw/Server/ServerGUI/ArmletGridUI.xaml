@@ -46,8 +46,9 @@
                 </WrapPanel>
             </GroupBox>
             <serverGUI:GateTabControl x:Name="GateUI" x:FieldModifier="public" />
+            <StackPanel Orientation="Vertical" x:Name="ShipStackPanel"></StackPanel>
         </StackPanel>
-        <DataGrid x:Name="ArmletGrid" AutoGenerateColumns="False">
+        <DataGrid x:Name="ArmletGrid" AutoGenerateColumns="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Id}" ClipboardContentBinding="{x:Null}" Header="ИД"/>
                 <DataGridTextColumn Binding="{Binding Name}" ClipboardContentBinding="{x:Null}" Header="Имя"/>

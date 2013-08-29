@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using HonorLogic.Storage;
 using NetworkLevel.NetworkDeliveryLevel;
 using NetworkLevel.WCFServices;
 using HonorInterfaces;
@@ -219,6 +220,11 @@ namespace HonorLogic
                 SendCommand(armletInfo, MessageId.MSG_SET_PLAYER_NAME, armletInfo.Name);
                 SendPayload(armletInfo, CreatePayload(MessageId.MSG_SET_PLAYER_REGENERATION, new[] { armletInfo.Regen }));
             }
+        }
+
+        public IEnumerable<IShip> GetShips()
+        {
+            return _shipList.GetAll();
         }
     }
 }

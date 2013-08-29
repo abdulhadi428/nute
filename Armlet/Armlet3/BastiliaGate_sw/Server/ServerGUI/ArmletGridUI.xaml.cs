@@ -27,17 +27,19 @@ namespace ServerGUI
             {
                 return;
             }
+            
             foreach (var armletInfo in Model.GetArmlets())
             {
                 Source11.Add(new ArmletWatcher(armletInfo));
             }
             ArmletGrid.ItemsSource = Source11;
-            Task.Factory.StartNew(() =>
-                {
-                    Thread.Sleep(5000);
-              //      Model.UpdateAllNames();
-                });
 
+            foreach (var ship in Model.GetShips())
+            {
+                var shipUi = new ShipControl { Ship = ship};
+                ShipStackPanel.Children.Add(shipUi);
+            }
+            
         }
 
         private void UpdateName_OnClick(object sender, RoutedEventArgs e)

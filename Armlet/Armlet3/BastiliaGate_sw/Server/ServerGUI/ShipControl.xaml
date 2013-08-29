@@ -6,6 +6,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" Loaded="ShipControl_OnLoaded">
     <GroupBox x:Name="MainGroupBox">
-        <StackPanel Orientation="Vertical"></StackPanel>
+        <StackPanel Orientation="Vertical" x:Name="BoardStackPanel"></StackPanel>
     </GroupBox>
 </UserControl>

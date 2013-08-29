@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,12 +22,18 @@ namespace ServerGUI
         }
 
         public IShip Ship { get; set; }
-        private BoardGUI[] _boards;
+        private readonly List<BoardGUI> _boards = new List<BoardGUI>();
 
         private void ShipControl_OnLoaded(object sender, RoutedEventArgs e)
         {
-            _boards = new BoardGUI[Ship.BoardCount];
-
+            MainGroupBox.Header = Ship.Name;
+            foreach (var shipSubsystemStatuse in Ship.GetAllSubsystemsStatus())
+            {
+                var board = new BoardGUI();
+                _boards.Add(board);
+                BoardStackPanel.Children.Add(board);
+                board.Update(shipSubsystemStatuse);
+            }
         }
     }
 }
