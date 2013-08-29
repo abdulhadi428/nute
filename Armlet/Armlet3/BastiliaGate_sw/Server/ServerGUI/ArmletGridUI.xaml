@@ -8,6 +8,12 @@
              d:DesignHeight="451.128" d:DesignWidth="542.481"  Loaded="ArmletGridUI_OnLoaded"
              d:DataContext="{d:DesignInstance serverGUI:ArmletGridUI}">
     <DockPanel LastChildFill="True">
+        <DockPanel.Resources>
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="Margin" Value="2,2" />
+                <Setter Property="Padding" Value="5,5" />
+            </Style>
+        </DockPanel.Resources>
         <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
             <GroupBox Header="Установка имени" >
                 <WrapPanel Orientation="Horizontal">
