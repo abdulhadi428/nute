@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HonorInterfaces;
+using HonorUtils;
 
 namespace HonorLogic.ShipStatus
 {
@@ -20,13 +21,13 @@ namespace HonorLogic.ShipStatus
             switch (severity)
             {
                     case RanmaRepairSeverity.Easy:
-                        result = new RanmaSubsystemStatus(easyTables[random.Next(easyTables.Count - 1)]);
+                        result = new RanmaSubsystemStatus(easyTables.Random(random));
                         break;
                     case RanmaRepairSeverity.Medium:
-                        result = new RanmaSubsystemStatus(mediumTables[random.Next(mediumTables.Count - 1)]);
+                        result = new RanmaSubsystemStatus(mediumTables.Random(random));
                         break;
                     case RanmaRepairSeverity.Hard:
-                        result = new RanmaSubsystemStatus(hardTables[random.Next(hardTables.Count - 1)]);
+                        result = new RanmaSubsystemStatus(hardTables.Random(random));
                         break;
                 default:
                     return null;
