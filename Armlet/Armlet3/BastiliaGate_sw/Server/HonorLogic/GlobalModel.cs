@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NetworkLevel.NetworkDeliveryLevel;
 using NetworkLevel.WCFServices;
-using PillInterfaces;
+using HonorInterfaces;
 
 namespace HonorLogic
 {

@@ -32,5 +32,6 @@ namespace HonorLogic.ShipStatus
 
         public string Name { get; set; }
         public IGlobalModel Model { get; set; }
+        public List<int> ShipRoomsIDs { get; set; }
     }
 }
