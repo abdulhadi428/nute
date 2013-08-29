@@ -1,13 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;using HonorInterfaces;
+using System.Windows.Media.Media3D;
+using HonorInterfaces;
 
 namespace ServerGUI
 {
@@ -34,6 +29,20 @@ namespace ServerGUI
                 BoardStackPanel.Children.Add(board);
                 board.Update(shipSubsystemStatuse);
             }
+            foreach (var roomsID in Ship.ShipRoomsIDs)
+            {
+                CreateButton(roomsID);
+            }
+        }
+
+        private void CreateButton(byte roomsID)
+        {
+            var button = new Button()
+            {
+                Content = "Отсек " + roomsID
+            };
+            button.Click += (o, args) => Ship.Model.SendRoomHit(roomsID, 50);
+            HitStackPanel.Children.Add(button);
         }
     }
 }

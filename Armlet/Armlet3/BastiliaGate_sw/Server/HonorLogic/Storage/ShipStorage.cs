@@ -14,7 +14,7 @@ namespace HonorLogic.Storage
         public string Name { get; set; }
         public List<ShipSubsystemStatus> Subsystems { get; set; }
         public List<int> Gates { get; set; }
-        public List<int>  Rooms { get; set; }
+        public List<byte> Rooms { get; set; }
     }
 
     internal class ShipStorage
@@ -60,7 +60,7 @@ namespace HonorLogic.Storage
             ship.Name = obj == null ? id.ToString() : obj.Value.Name;
             ship.Model = model;
             ship.ShipGuid = id;
-            ship.ShipRoomsIDs = obj == null ? new List<int>() : obj.Value.Rooms;
+            ship.ShipRoomsIDs = obj == null ? new List<byte>() : obj.Value.Rooms;
             return ship;
         }
 
