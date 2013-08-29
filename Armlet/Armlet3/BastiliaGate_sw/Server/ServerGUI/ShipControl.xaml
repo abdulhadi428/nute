@@ -7,7 +7,7 @@
              d:DesignHeight="300" d:DesignWidth="300" Loaded="ShipControl_OnLoaded">
     <GroupBox x:Name="MainGroupBox">
         <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Vertical" x:Name="BoardStackPanel"></StackPanel>
+            <StackPanel Orientation="Horizontal" x:Name="BoardStackPanel"></StackPanel>
             <StackPanel Orientation="Horizontal" x:Name="HitStackPanel">
                 <Label>Взорвать</Label>
             </StackPanel>
