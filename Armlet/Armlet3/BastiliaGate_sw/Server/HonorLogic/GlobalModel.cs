@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using NetworkLevel.NetworkDeliveryLevel;
 using NetworkLevel.WCFServices;
 using PillInterfaces;
-using HonorLogic.ShipStatus;
 
 namespace HonorLogic
 {
@@ -20,16 +19,12 @@ namespace HonorLogic
         private readonly ShipStorage _shipStorage = new ShipStorage();
 
         private readonly IArmletDeliveryServece _armletService;
-        private readonly IGateDeliveryService _gateService;
         private readonly Lazy<GateModel>[] _gates;
 
-        private readonly Timer _timer;
 
-        
         public GlobalModel(IArmletDeliveryServece armletService, IGateDeliveryService gateService)
         {
             _armletService = armletService;
-            _gateService = gateService;
 
             _gates = new Lazy<GateModel>[Byte.MaxValue + 1];
             for (var gateIndex = 0; gateIndex <= Byte.MaxValue; gateIndex++)
@@ -40,20 +35,21 @@ namespace HonorLogic
 
             for (var armletIndex = 1; armletIndex <= 120; armletIndex++)
             {
-                _armletList.CreateIfNeeded((byte)armletIndex, (armletId) => _armletStorage.CreateObject(armletId, this));
+                _armletList.CreateIfNeeded((byte)armletIndex, armletId => _armletStorage.CreateObject(armletId, this));
             }
 
             foreach (var shipIdx in _shipStorage.Keys)
             {
-                _shipList.CreateIfNeeded(shipIdx, (id) => _shipStorage.CreateObject(id, this));
+                _shipList.CreateIfNeeded(shipIdx, id => _shipStorage.CreateObject(id, this));
             }
             
             _armletService.ArmletsStatusUpdate +=ArmletServiceArmletsStatusUpdate;
-            _gateService.GateConnected += OnNewGateOnline;
+            gateService.GateConnected += OnNewGateOnline;
             _armletService.ArmletSuccess += OnArmletListSuccess;
             _armletService.ArmletSendsData += _armletService_ArmletSendsData;
 
-            _timer = new Timer(SendHeartBeat, 0, 0, 1 * 1000);
+// ReSharper disable once ObjectCreationAsStatement
+            new Timer(SendHeartBeat, 0, 0, 1 * 1000);
         }
 
         private static void SendHeartBeat(object state)
@@ -204,10 +200,12 @@ namespace HonorLogic
             SendPayload(armlet, CreatePayload(MessageId.MSG_SET_PLAYER_REGENERATION, new[] {regen}));
         }
 
+/*
         public void SendSetLockList(IArmletInfo armlet, byte[] lockList)
         {
             SendPayload(armlet, CreatePayload(MessageId.MSG_UPDATE_LOCK_LIST, lockList));
         }
+*/
 
         public void SendRoomHit(byte roomId, byte hitChance)
         {
