@@ -14,7 +14,14 @@ namespace HonorLogic.Storage
         public string Name { get; set; }
         public List<ShipSubsystemStatus> Subsystems { get; set; }
         public List<int> Gates { get; set; }
-        public List<byte> Rooms { get; set; }
+        public List<RoomInfo> Rooms { get; set; }
+    }
+
+    [Serializable]
+    public struct RoomInfo
+    {
+        public byte Id { get; set; }
+        public string Name { get; set; }
     }
 
     internal class ShipStorage
@@ -43,12 +50,12 @@ namespace HonorLogic.Storage
             _storageBase.Save(pairs);
         }
 
-        public IShip CreateObject(Guid id, GlobalModel model)
+        public ShipBase CreateObject(Guid id, GlobalModel model)
         {
             var obj = _savedData.ContainsKey(id) ? (ShipStoredData?) _savedData[id] : null;
             var gates = obj == null ? new List<int> {71} : obj.Value.Gates;
             var big = gates.Count > 1;
-            var ship = big ? (IShip) new BigShip() : new LakShip();
+            var ship = big ? (ShipBase) new BigShip() : new LakShip();
             ship.PhysicalGateID = gates.ToArray();
             if (obj != null)
             {
@@ -60,7 +67,7 @@ namespace HonorLogic.Storage
             ship.Name = obj == null ? id.ToString() : obj.Value.Name;
             ship.Model = model;
             ship.ShipGuid = id;
-            ship.ShipRoomsIDs = obj == null ? new List<byte>() : obj.Value.Rooms;
+            ship.Rooms = obj == null ? new List<RoomInfo>() : obj.Value.Rooms;
             return ship;
         }
 

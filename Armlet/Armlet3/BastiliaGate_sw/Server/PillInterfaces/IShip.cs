@@ -9,7 +9,7 @@ namespace HonorInterfaces
         bool SetSubsystemStatus(ShipSubsystemStatus subsystemStatus);
         List<ShipSubsystemStatus> GetAllSubsystemsStatus();
 
-        List<byte> ShipRoomsIDs { get; set; }
+        List<byte> ShipRoomsIDs { get; }
 
         Guid ShipGuid { get; set; }
         int[] PhysicalGateID { get; set; }

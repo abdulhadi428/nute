@@ -8,7 +8,7 @@ using HonorLogic.Storage;
 
 namespace HonorLogic
 {
-    class ShipList : ObjectListBase<Guid, IShip>
+    class ShipList : ObjectListBase<Guid, ShipBase>
     {
         internal List<ShipStoredData> GetDataToStore()
         {
@@ -18,7 +18,7 @@ namespace HonorLogic
                 Gates = a.PhysicalGateID.ToList(),
                 Name = a.Name,
                Subsystems = a.GetAllSubsystemsStatus() ,
-               Rooms = a.ShipRoomsIDs
+               Rooms = a.Rooms
             }).ToList();
         }
     }
