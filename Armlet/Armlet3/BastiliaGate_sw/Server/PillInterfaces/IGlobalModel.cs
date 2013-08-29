@@ -17,7 +17,7 @@ namespace PillInterfaces
         void SendShowMessage(IArmletInfo armlet, string text);
         void SetSetPlayerRegen(IArmletInfo armlet, byte regen);
         void SendSetLockList(IArmletInfo armlet, byte[] lockList);
-        void SendRoomHit(byte roomId);
+        void SendRoomHit(byte roomId, byte hitChance);
         void UpdateAllNames();
     }
 }

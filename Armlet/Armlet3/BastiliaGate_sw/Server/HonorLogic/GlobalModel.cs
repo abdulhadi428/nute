@@ -209,9 +209,9 @@ namespace HonorLogic
             SendPayload(armlet, CreatePayload(MessageId.MSG_UPDATE_LOCK_LIST, lockList));
         }
 
-        public void SendRoomHit(byte roomId)
+        public void SendRoomHit(byte roomId, byte hitChance)
         {
-            SendPayloadToAll(CreatePayload(MessageId.MSG_ROOM_HIT, new[] {roomId}));
+            SendPayloadToAll(CreatePayload(MessageId.MSG_ROOM_HIT, new[] {roomId, hitChance}));
         }
 
         public void UpdateAllNames()

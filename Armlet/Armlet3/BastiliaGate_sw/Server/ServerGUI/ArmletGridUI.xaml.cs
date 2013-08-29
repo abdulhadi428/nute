@@ -104,7 +104,7 @@ namespace ServerGUI
                 MessageBox.Show("Выберите отсек!");
                 return;
             }
-            Model.SendRoomHit(byte.Parse(selectedRoom.ToString()));
+            Model.SendRoomHit(byte.Parse(selectedRoom.ToString()), 50);
             
         }
 
