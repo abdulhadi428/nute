@@ -4,9 +4,9 @@ using HonorInterfaces;
 
 namespace HonorLogic.ShipStatus
 {
-    public class BigShip: IShip
+    public class BigShip: ShipBase
     {
-        public int BoardCount
+        public override int BoardCount
         {
             get
             {
@@ -14,23 +14,15 @@ namespace HonorLogic.ShipStatus
             }
         }
 
-        public bool SetSubsystemStatus(ShipSubsystemStatus ranmaStatus)
+        public override bool SetSubsystemStatus(ShipSubsystemStatus ranmaStatus)
         {
             throw new NotImplementedException();
         }
 
-        public List<ShipSubsystemStatus> GetAllSubsystemsStatus()
+        public override List<ShipSubsystemStatus> GetAllSubsystemsStatus()
         {
             return new List<ShipSubsystemStatus>();
             throw new NotImplementedException();
         }
-
-        public Guid ShipGuid { get; set; }
-
-        public int[] PhysicalGateID { get; set; }
-
-        public string Name { get; set; }
-        public IGlobalModel Model { get; set; }
-        public List<byte> ShipRoomsIDs { get; set; }
     }
 }
