@@ -40,17 +40,13 @@ namespace HonorLogic
 
             for (var armletIndex = 1; armletIndex <= 120; armletIndex++)
             {
-                _armletList.CreateIfNeeded((byte) armletIndex, CreateArmlet);
+                _armletList.CreateIfNeeded((byte)armletIndex, (armletId) => _armletStorage.CreateObject(armletId, this));
             }
 
-            _shipList.CreateIfNeeded(new Guid(), (id) => new BigShip()
+            foreach (var shipIdx in _shipStorage.Keys)
             {
-                PhysicalGateID = new[] { 71, 72 }
-            });
-
-            SavePersistent();
-            
-            
+                _shipList.CreateIfNeeded(shipIdx, (id) => _shipStorage.CreateObject(id, this));
+            }
             
             _armletService.ArmletsStatusUpdate +=ArmletServiceArmletsStatusUpdate;
             _gateService.GateConnected += OnNewGateOnline;
@@ -100,11 +96,6 @@ namespace HonorLogic
             }
 
             OnArmletListUpdated();
-        }
-
-        private Armlet CreateArmlet(byte armletId)
-        {
-            return _armletStorage.CreateObject(armletId, this);
         }
         
         public IEnumerable<IArmletInfo> GetArmlets()

@@ -160,5 +160,10 @@ namespace HonorLogic
             ship.ShipGuid = id;
             return ship;
         }
+
+        public Guid[] Keys
+        {
+            get { return _savedData.Keys.ToArray(); }
+        }
     }
 }
