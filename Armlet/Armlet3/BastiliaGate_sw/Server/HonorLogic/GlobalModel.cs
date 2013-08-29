@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NetworkLevel.NetworkDeliveryLevel;
 using NetworkLevel.WCFServices;
 using PillInterfaces;
+using HonorLogic.ShipStatus;
 
 namespace HonorLogic
 {
@@ -14,6 +15,10 @@ namespace HonorLogic
     {
         private readonly ArmletStorage _armletStorage = new ArmletStorage();
         private readonly ArmletList _armletList = new ArmletList();
+        
+        private readonly ShipList _shipList = new ShipList();
+        private readonly ShipStorage _shipStorage = new ShipStorage();
+
         private readonly IArmletDeliveryServece _armletService;
         private readonly IGateDeliveryService _gateService;
         private readonly Lazy<GateModel>[] _gates;
@@ -37,6 +42,14 @@ namespace HonorLogic
             {
                 _armletList.CreateIfNeeded((byte) armletIndex, CreateArmlet);
             }
+
+            _shipList.CreateIfNeeded(new Guid(), (id) => new BigShip()
+            {
+                PhysicalGateID = new[] { 71, 72 }
+            });
+
+            SavePersistent();
+            
             
             
             _armletService.ArmletsStatusUpdate +=ArmletServiceArmletsStatusUpdate;
@@ -68,13 +81,13 @@ namespace HonorLogic
         {
             if (payload.Length > 3)
             {
-                _armletList.GetById(armletId).SetToxic(payload[3]);
+                _armletList.Get(armletId).SetToxic(payload[3]);
             }
         }
 
         private void OnArmletListSuccess(byte armletId)
         {
-            _armletList.GetById(armletId).SetStatus("Сообщение доставлено");
+            _armletList.Get(armletId).SetStatus("Сообщение доставлено");
             OnArmletListUpdated();
         }
 
@@ -91,12 +104,12 @@ namespace HonorLogic
 
         private Armlet CreateArmlet(byte armletId)
         {
-            return new Armlet(armletId, this, _armletStorage.GetName(armletId), _armletStorage.GetRegen(armletId));
+            return _armletStorage.CreateObject(armletId, this);
         }
         
         public IEnumerable<IArmletInfo> GetArmlets()
         {
-            return _armletList.Get();
+            return _armletList.GetAll();
         }
 
         public event Action ArmletListUpdated;
@@ -153,7 +166,14 @@ namespace HonorLogic
 
         public void SavePersistent()
         {
-            Task.Factory.StartNew(() => _armletStorage.SaveData(_armletList.GetDataToStore()));
+            //TODO coalesce save request
+            Task.Factory.StartNew(SaveTask);
+        }
+
+        private void SaveTask()
+        {
+            _armletStorage.SaveData(_armletList.GetDataToStore());
+            _shipStorage.SaveData(_shipList.GetDataToStore());
         }
 
         private static byte[] CreatePayload(MessageId messageId, IEnumerable<byte> data)

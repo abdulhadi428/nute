@@ -5,6 +5,7 @@ using System.Text;
 
 namespace HonorLogic.ShipStatus
 {
+    [Serializable]
     public enum RanmaRepairSeverity
     {
         Easy = 0,

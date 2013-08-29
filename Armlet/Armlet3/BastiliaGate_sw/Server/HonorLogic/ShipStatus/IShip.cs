@@ -13,5 +13,7 @@ namespace HonorLogic.ShipStatus
 
         Guid ShipGuid { get; set; }
         int[] PhysicalGateID { get; set; }
+        string Name { get; set; }
+        GlobalModel Model { get; set; }
     }
 }

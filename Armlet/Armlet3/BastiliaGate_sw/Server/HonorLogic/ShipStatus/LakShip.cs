@@ -26,5 +26,8 @@ namespace HonorLogic.ShipStatus
         public Guid ShipGuid { get; set; }
 
         public int[] PhysicalGateID { get; set; }
+
+        public string Name { get; set; }
+        public GlobalModel Model { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 
 namespace HonorLogic.ShipStatus
 {
+    [Serializable]
     public class ShipSubsystemStatus
     {
         public int SubSystemNum { get; set; }

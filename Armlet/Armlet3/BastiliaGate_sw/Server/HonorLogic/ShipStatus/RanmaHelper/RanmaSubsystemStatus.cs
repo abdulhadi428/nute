@@ -5,6 +5,7 @@ using System.Text;
 
 namespace HonorLogic.ShipStatus
 {
+    [Serializable]
     public class RanmaSubsystemStatus
     {
         private byte[] _bytes = { 0x03, 0x03 };
