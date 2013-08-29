@@ -53,6 +53,7 @@
     <Compile Include="ShipStatus\RanmaSubsystemStatus.cs" />
     <Compile Include="Storage\ShipStorage.cs" />
     <Compile Include="Storage\StorageBase.cs" />
+    <Compile Include="ShipStatus\RanmaSubsystemStatusFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HonorUtils\HonorUtils.csproj">

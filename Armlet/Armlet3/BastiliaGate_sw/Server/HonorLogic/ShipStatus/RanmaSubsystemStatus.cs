@@ -3,6 +3,7 @@ using System.Linq;
 
 namespace HonorInterfaces
 {
+    
     [Serializable]
     public class RanmaSubsystemStatus
     {
