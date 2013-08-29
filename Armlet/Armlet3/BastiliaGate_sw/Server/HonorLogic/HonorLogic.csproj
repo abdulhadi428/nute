@@ -47,13 +47,9 @@
     <Compile Include="Pills.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShipList.cs" />
-    <Compile Include="ShipStatus\IShip.cs" />
     <Compile Include="ShipStatus\LakShip.cs" />
-    <Compile Include="ShipStatus\RanmaHelper\RanmaRepairSeverity.cs" />
-    <Compile Include="ShipStatus\RanmaHelper\RanmaSubsystemStatus.cs" />
     <Compile Include="ShipStatus\BigShip.cs" />
-    <Compile Include="ShipStatus\ShipSubsystemStatus.cs" />
-    <Compile Include="ShipStatus\ShipType.cs" />
+    <Compile Include="ShipStatus\RanmaSubsystemStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HonorUtils\HonorUtils.csproj">

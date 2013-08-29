@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace HonorLogic.ShipStatus
+namespace PillInterfaces
 {
-    interface IShip
+    public interface IShip
     {
-        ShipType GetShipType();
+        int BoardCount { get; }
         bool SetSubsystemStatus(ShipSubsystemStatus subsystemStatus);
         List<ShipSubsystemStatus> GetAllSubsystemsStatus();
 
         Guid ShipGuid { get; set; }
         int[] PhysicalGateID { get; set; }
         string Name { get; set; }
-        GlobalModel Model { get; set; }
+        IGlobalModel Model { get; set; }
     }
 }

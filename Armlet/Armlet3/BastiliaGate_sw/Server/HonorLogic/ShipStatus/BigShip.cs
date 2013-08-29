@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using PillInterfaces;
 
 namespace HonorLogic.ShipStatus
 {
     public class BigShip: IShip
     {
-        private ShipType _shipType = ShipType.BigShip;
-        public ShipType GetShipType()
+        public int BoardCount
         {
-            return _shipType;
+            get
+            {
+                return 8;
+            }
         }
 
         public bool SetSubsystemStatus(ShipSubsystemStatus ranmaStatus)
@@ -29,6 +30,6 @@ namespace HonorLogic.ShipStatus
         public int[] PhysicalGateID { get; set; }
 
        public string Name { get; set; }
-        public GlobalModel Model { get; set; }
+        public IGlobalModel Model { get; set; }
     }
 }

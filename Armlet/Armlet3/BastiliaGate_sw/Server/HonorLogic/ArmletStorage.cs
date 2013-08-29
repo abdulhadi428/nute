@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using HonorLogic.ShipStatus;
+using PillInterfaces;
 
 namespace HonorLogic
 {
