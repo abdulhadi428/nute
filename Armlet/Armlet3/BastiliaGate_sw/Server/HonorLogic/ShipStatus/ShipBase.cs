@@ -31,6 +31,12 @@ namespace HonorLogic.ShipStatus
             return FindRoomName(roomsID) ?? GetDefaultRoomName(roomsID);
         }
 
+        public virtual void InitializeRanmaPlate()
+        {
+        }
+
+        public event Action<ShipSubsystemStatus> SubsystemUpdated;
+
         internal static string GetDefaultRoomName(byte roomsID)
         {
             return "Отсек " + roomsID;
@@ -59,6 +65,6 @@ namespace HonorLogic.ShipStatus
             }
         }
 
-        public event Action<ShipSubsystemStatus> SubsystemUpdated;
+        
     }
 }

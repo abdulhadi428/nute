@@ -5,16 +5,18 @@ namespace HonorInterfaces
 {
     
     [Serializable]
-    public class RanmaSubsystemStatus
+    public class RanmaSubsystemTable
     {
+        public byte subsystem;
         private byte[] _bytes = { 0x03, 0x03 };
 
         public byte[] Bytes
         {
             get { return _bytes; }
+            set { _bytes = value; }
         }
 
-        public RanmaSubsystemStatus(ushort logicTable)
+        public RanmaSubsystemTable(ushort logicTable)
         {
             var bytesBeforeEndianCheck = BitConverter.GetBytes(logicTable);
             if ( BitConverter.IsLittleEndian == false)

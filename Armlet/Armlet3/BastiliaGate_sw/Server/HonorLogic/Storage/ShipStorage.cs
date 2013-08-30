@@ -68,6 +68,7 @@ namespace HonorLogic.Storage
             ship.Model = model;
             ship.ShipGuid = id;
             ship.Rooms = obj == null ? new List<RoomInfo>() : obj.Value.Rooms;
+            ship.InitializeRanmaPlate();
             return ship;
         }
 

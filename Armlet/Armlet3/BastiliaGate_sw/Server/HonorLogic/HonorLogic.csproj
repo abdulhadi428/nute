@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Armlet.cs" />
     <Compile Include="ArmletList.cs" />
+    <Compile Include="ShipStatus\RanmaPlates\RanmaPlate.cs" />
     <Compile Include="ShipStatus\ShipBase.cs" />
     <Compile Include="Storage\ArmletStorage.cs" />
     <Compile Include="GateModel.cs" />
@@ -50,7 +51,7 @@
     <Compile Include="ShipList.cs" />
     <Compile Include="ShipStatus\LakShip.cs" />
     <Compile Include="ShipStatus\BigShip.cs" />
-    <Compile Include="ShipStatus\RanmaSubsystemStatus.cs" />
+    <Compile Include="ShipStatus\RanmaSubsystemTable.cs" />
     <Compile Include="Storage\ShipStorage.cs" />
     <Compile Include="Storage\StorageBase.cs" />
     <Compile Include="ShipStatus\RanmaSubsystemStatusFactory.cs" />

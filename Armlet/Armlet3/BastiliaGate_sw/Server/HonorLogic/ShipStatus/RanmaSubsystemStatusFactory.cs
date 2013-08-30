@@ -14,19 +14,19 @@ namespace HonorLogic.ShipStatus
                                                    0x0F99, 0x909F, 0x4F7F, 0x0B0B, 0x7077};
         private static List<ushort> mediumTables = new List<ushort>() { 0x0C0D };
         private static List<ushort> hardTables = new List<ushort>() { 0xDDFF };
-        public static RanmaSubsystemStatus GenerateRanmaSubsystemStatus(RanmaRepairSeverity severity)
+        public static RanmaSubsystemTable GenerateRanmaSubsystemStatus(RanmaRepairSeverity severity)
         {
-            RanmaSubsystemStatus result;
+            RanmaSubsystemTable result;
             switch (severity)
             {
                     case RanmaRepairSeverity.Easy:
-                        result = new RanmaSubsystemStatus(easyTables.RandomOrDefault());
+                        result = new RanmaSubsystemTable(easyTables.RandomOrDefault());
                         break;
                     case RanmaRepairSeverity.Medium:
-                        result = new RanmaSubsystemStatus(mediumTables.RandomOrDefault());
+                        result = new RanmaSubsystemTable(mediumTables.RandomOrDefault());
                         break;
                     case RanmaRepairSeverity.Hard:
-                        result = new RanmaSubsystemStatus(hardTables.RandomOrDefault());
+                        result = new RanmaSubsystemTable(hardTables.RandomOrDefault());
                         break;
                 default:
                     return null;
