@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Windows;
 using HonorInterfaces;
 
@@ -11,65 +9,102 @@ namespace ServerGUI
     {
 
         public static readonly DependencyProperty RegenProperty =
-            DependencyProperty.Register("Regen", typeof(string), typeof(ArmletWatcher), new PropertyMetadata(default(string)));
+            DependencyProperty.Register("Regen", typeof (string), typeof (ArmletWatcher),
+                new PropertyMetadata(default(string)));
 
         public string Regen
         {
-            get { return (string)GetValue(RegenProperty); }
-            set { SetValue(RegenProperty, value); }
+            get { return (string) GetValue(RegenProperty); }
+            private set { SetValue(RegenProperty, value); }
         }
-        
+
+        public static readonly DependencyProperty PoxinProperty =
+            DependencyProperty.Register("Poxin", typeof (string), typeof (ArmletWatcher),
+                new PropertyMetadata(default(string)));
+
+        public string Poxin
+        {
+            get { return (string) GetValue(PoxinProperty); }
+            set { SetValue(PoxinProperty, value); }
+        }
+
+        public static readonly DependencyProperty PulseProperty =
+            DependencyProperty.Register("Pulse", typeof (string), typeof (ArmletWatcher),
+                new PropertyMetadata(default(string)));
+
+
+        public string Pulse
+        {
+            get { return (string) GetValue(PulseProperty); }
+            private set { SetValue(PulseProperty, value); }
+        }
+
+        public static readonly DependencyProperty TempProperty =
+            DependencyProperty.Register("Temp", typeof (string), typeof (ArmletWatcher),
+                new PropertyMetadata(default(string)));
+
+        public string Temp
+        {
+            get { return (string) GetValue(TempProperty); }
+            private set { SetValue(TempProperty, value); }
+        }
+
         public static readonly DependencyProperty IdProperty =
-            DependencyProperty.Register("Id", typeof (string), typeof (ArmletWatcher), new PropertyMetadata(default(string)));
+            DependencyProperty.Register("Id", typeof (string), typeof (ArmletWatcher),
+                new PropertyMetadata(default(string)));
+
 
         public string Id
         {
             get { return (string) GetValue(IdProperty); }
-            set { SetValue(IdProperty, value); }
+            private set { SetValue(IdProperty, value); }
         }
 
         public static readonly DependencyProperty RoomProperty =
-            DependencyProperty.Register("Room", typeof (string), typeof (ArmletWatcher), new PropertyMetadata(default(string)));
+            DependencyProperty.Register("Room", typeof (string), typeof (ArmletWatcher),
+                new PropertyMetadata(default(string)));
 
         public string Room
         {
             get { return (string) GetValue(RoomProperty); }
-            set { SetValue(RoomProperty, value); }
+            private set { SetValue(RoomProperty, value); }
         }
 
         public static readonly DependencyProperty BloodLevelProperty =
-            DependencyProperty.Register("BloodLevel", typeof (string), typeof (ArmletWatcher), new PropertyMetadata(default(string)));
+            DependencyProperty.Register("BloodLevel", typeof (string), typeof (ArmletWatcher),
+                new PropertyMetadata(default(string)));
 
         public string BloodLevel
         {
             get { return (string) GetValue(BloodLevelProperty); }
-            set { SetValue(BloodLevelProperty, value); }
+            private set { SetValue(BloodLevelProperty, value); }
         }
 
         public static readonly DependencyProperty ToxicLevelProperty =
-            DependencyProperty.Register("ToxicLevel", typeof(string), typeof(ArmletWatcher), new PropertyMetadata(default(string)));
+            DependencyProperty.Register("ToxicLevel", typeof (string), typeof (ArmletWatcher),
+                new PropertyMetadata(default(string)));
 
         public string ToxicLevel
         {
-            get { return (string)GetValue(ToxicLevelProperty); }
-            set { SetValue(ToxicLevelProperty, value); }
+            get { return (string) GetValue(ToxicLevelProperty); }
+            private set { SetValue(ToxicLevelProperty, value); }
         }
 
         public static readonly DependencyProperty NameProperty =
-            DependencyProperty.Register("Name", typeof (string), typeof (ArmletWatcher), new PropertyMetadata(default(string)));
+            DependencyProperty.Register("Name", typeof (string), typeof (ArmletWatcher),
+                new PropertyMetadata(default(string)));
 
         public string Name
         {
             get { return (string) GetValue(NameProperty); }
-            set { SetValue(NameProperty, value); }
+            private set { SetValue(NameProperty, value); }
         }
 
         public static readonly DependencyProperty StatusProperty =
-            DependencyProperty.Register("Status", typeof (string), typeof (ArmletWatcher), new PropertyMetadata(default(string)));
+            DependencyProperty.Register("Status", typeof (string), typeof (ArmletWatcher),
+                new PropertyMetadata(default(string)));
 
-        private IArmletInfo _armletInfo;
-
-        public IArmletInfo Value {get { return _armletInfo; }}
+        public IArmletInfo Value { get; private set; }
 
         public ArmletWatcher(IArmletInfo armletInfo)
         {
@@ -79,20 +114,22 @@ namespace ServerGUI
 
         private void Update(IArmletInfo armletInfo)
         {
-            _armletInfo = armletInfo;
-            Id = armletInfo.Id.ToString() + " / " + armletInfo.Id.ToString("X2");
-            BloodLevel = armletInfo.BloodLevel.ToString();
+            Value = armletInfo;
+            Id = string.Format("{0}\n0x{1:X2}", armletInfo.Id, armletInfo.Id);
+            BloodLevel = armletInfo.BloodLevel.ToString(Thread.CurrentThread.CurrentCulture);
             Name = armletInfo.Name;
             Status = armletInfo.Status;
             Room = armletInfo.RoomName;
-            Regen = armletInfo.Regen.ToString();
-            ToxicLevel = armletInfo.Toxic.ToString();
+            Regen = armletInfo.Regen.ToString(Thread.CurrentThread.CurrentCulture);
+            ToxicLevel = armletInfo.Toxic.ToString(Thread.CurrentThread.CurrentCulture);
+            Pulse = armletInfo.Pulse.ToString(Thread.CurrentThread.CurrentCulture);
+            Temp = armletInfo.Temp.ToString(Thread.CurrentThread.CurrentCulture);
         }
 
         public string Status
         {
             get { return (string) GetValue(StatusProperty); }
-            set { SetValue(StatusProperty, value); }
+            private set { SetValue(StatusProperty, value); }
         }
     }
 }

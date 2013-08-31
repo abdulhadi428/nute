@@ -6,10 +6,10 @@ namespace HonorUtils
 {
     public static  class Utils
     {
-        private static readonly Random rnd = new Random();
-        public static byte[] ToByteArray(params int[] intArray)
+        private static readonly Random Rnd = new Random();
+        public static IEnumerable<byte> ToBytes(params int[] intArray)
         {
-            return intArray.SelectMany(BitConverter.GetBytes).ToArray();
+            return intArray.SelectMany(BitConverter.GetBytes);
         }
 
         public static T RandomOrDefault<T>(this ICollection<T> col)
@@ -19,7 +19,7 @@ namespace HonorUtils
 
         private static T GetRnd<T>(ICollection<T> col)
         {
-            var val = rnd.Next(col.Count - 1);
+            var val = Rnd.Next(col.Count - 1);
             return col.Skip(val).First();
         }
 

@@ -54,7 +54,7 @@ namespace ServerGUI
 
             UpdatePillOnline();
             UpdateGateOnline();
-            PillTypeBox.ItemsSource = Model.PillTypes;
+            PillTypeBox.ItemsSource = Model.PillTypes; //TODO Use declarative binding
         }
 
         private void UpdateGateOnline()

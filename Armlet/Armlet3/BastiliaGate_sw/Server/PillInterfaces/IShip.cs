@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace HonorInterfaces
 {
-    public interface IShip
+    public interface IShip : IDisposable
     {
-        int BoardCount { get; }
+        int SubsystemsCount { get; }
         bool SetSubsystemStatus(ShipSubsystemStatus subsystemStatus);
         List<ShipSubsystemStatus> GetAllSubsystemsStatus();
 

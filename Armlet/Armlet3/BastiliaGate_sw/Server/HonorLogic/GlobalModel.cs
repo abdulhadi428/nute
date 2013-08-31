@@ -63,9 +63,10 @@ namespace HonorLogic
                 {
                     gate.SendHeartbeat();
                 }
-                catch (Exception)
+// ReSharper disable once EmptyGeneralCatchClause
+                catch
                 {
-                    
+                    //Intentionally left blank
                 }
                 
             }

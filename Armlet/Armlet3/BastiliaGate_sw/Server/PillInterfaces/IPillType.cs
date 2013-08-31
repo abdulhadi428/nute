@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HonorInterfaces
+﻿namespace HonorInterfaces
 {
     public interface IPillType
     {

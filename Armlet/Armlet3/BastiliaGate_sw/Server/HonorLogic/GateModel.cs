@@ -111,7 +111,7 @@ namespace HonorLogic
         {
             try
             {
-                _service.SendPillWhite(_gateId, new [] { pillAddress}.Concat(Utils.ToByteArray(p, charges)).ToArray());
+                _service.SendPillWhite(_gateId, new [] { pillAddress}.Concat(Utils.ToBytes(p, charges)).ToArray());
             }
             catch (GateNotConnectedException)
             {
