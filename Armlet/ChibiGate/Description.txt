@@ -1,0 +1,3 @@
+Chibigate is a bridge between UART and pill-adjusted i2c bus. It has no radio.
+Hardware is built on Node project as mainboard, pill project as connector holder and
+ancient Usb2Com project.
