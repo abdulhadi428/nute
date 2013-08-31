@@ -382,6 +382,7 @@ uint8_t i2c_t::CmdWriteRead(uint8_t Addr,
 uint8_t i2c_t::CmdWriteWrite(uint8_t Addr,
         uint8_t *WPtr1, uint8_t WLength1,
         uint8_t *WPtr2, uint8_t WLength2) {
+//    Uart.Printf("i2cWW: %A; %A\r", WPtr1, WLength1, ' ', WPtr2, WLength2, ' ');
     if(IBusyWait() != OK) return FAILURE;
     // Clear flags
     ii2c->SR1 = 0;
@@ -418,6 +419,7 @@ uint8_t i2c_t::CmdWriteWrite(uint8_t Addr,
         chSysUnlock();
         dmaStreamDisable(PDmaTx);
     }
+    WaitBTF();
     SendStop();
     return OK;
 }
@@ -476,5 +478,12 @@ uint8_t i2c_t::WaitStop() {
     uint32_t RetryCnt = 450;
     while(RetryCnt--)
         if(ii2c->CR1 & I2C_CR1_STOP) return OK;
+    return TIMEOUT;
+}
+
+uint8_t i2c_t::WaitBTF() {
+    uint32_t RetryCnt = 450;
+    while(RetryCnt--)
+        if(ii2c->SR1 & I2C_SR1_BTF) return OK;
     return TIMEOUT;
 }

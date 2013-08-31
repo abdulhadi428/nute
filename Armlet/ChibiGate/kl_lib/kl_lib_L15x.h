@@ -428,6 +428,7 @@ private:
     uint8_t WaitAck();
     uint8_t WaitRx();
     uint8_t WaitStop();
+    uint8_t WaitBTF();
 public:
     bool Error;
     Thread *PRequestingThread;

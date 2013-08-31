@@ -97,6 +97,7 @@ uint8_t Pill_t::CheckIfConnected() {
 }
 
 uint8_t Pill_t::Write(uint8_t *Ptr, uint8_t Length) {
+//    Uart.Printf("Wr: %A\r", Ptr, Length, ' ');
     uint8_t WordAddress = PILL_START_ADDR;
     uint8_t Rslt = OK;
     // Write page by page
