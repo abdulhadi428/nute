@@ -297,8 +297,25 @@ static inline void SpiEnable (SPI_TypeDef *Spi) { Spi->CR1 |=  SPI_CR1_SPE; }
 static inline void SpiDisable(SPI_TypeDef *Spi) { Spi->CR1 &= ~SPI_CR1_SPE; }
 
 // =============================== I2C =========================================
+#define I2C_DMATX_MODE  STM32_DMA_CR_CHSEL(DmaChnl) |   \
+                        DMA_PRIORITY_LOW | \
+                        STM32_DMA_CR_MSIZE_BYTE | \
+                        STM32_DMA_CR_PSIZE_BYTE | \
+                        STM32_DMA_CR_MINC |     /* Memory pointer increase */ \
+                        STM32_DMA_CR_DIR_M2P |  /* Direction is memory to peripheral */ \
+                        STM32_DMA_CR_TCIE       /* Enable Transmission Complete IRQ */
+
+#define I2C_DMARX_MODE  STM32_DMA_CR_CHSEL(DmaChnl) |   \
+                        DMA_PRIORITY_LOW | \
+                        STM32_DMA_CR_MSIZE_BYTE | \
+                        STM32_DMA_CR_PSIZE_BYTE | \
+                        STM32_DMA_CR_MINC |         /* Memory pointer increase */ \
+                        STM32_DMA_CR_DIR_P2M |      /* Direction is peripheral to memory */ \
+                        STM32_DMA_CR_TCIE           /* Enable Transmission Complete IRQ */
+
 class i2c_t {
 private:
+    uint16_t DmaChnl;
     I2C_TypeDef *ii2c;
     GPIO_TypeDef *IPGpio;
     uint16_t ISclPin, ISdaPin;
@@ -323,7 +340,7 @@ private:
     uint8_t WaitAck();
     uint8_t WaitRx();
     uint8_t WaitStop();
-
+    uint8_t WaitBTF();
 public:
     bool Error;
     Thread *PRequestingThread;
