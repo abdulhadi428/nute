@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace HonorLogic.ShipStatus
+﻿namespace HonorLogic.ShipStatus
 {
     public class LakShip: ShipBase
     {
@@ -16,12 +14,6 @@ namespace HonorLogic.ShipStatus
         protected override int PlatesCount
         {
             get { return 1; }
-        }
-
-        protected override void SyncSubsystem(int i)
-        {
-            Debug.Assert(PlatesCount == 1);
-            //Doesn't need to sync plates
         }
     }
 }

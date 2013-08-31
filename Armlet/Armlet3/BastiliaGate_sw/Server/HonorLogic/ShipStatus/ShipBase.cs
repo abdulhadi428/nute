@@ -75,7 +75,7 @@ namespace HonorLogic.ShipStatus
         }
 
         private readonly Timer _plateCheckerTimer;
-        protected RanmaPlate[] RanmaPlates;
+        private RanmaPlate[] _ranmaPlates;
 
         protected ShipBase()
         {
@@ -99,7 +99,7 @@ namespace HonorLogic.ShipStatus
             var simulatorShouldBeNoticed = false;
             for (var i = 0; i < SubsystemsCount; i++)
             {
-                var newSeverity = ranmaPlate.plateStatusList.First(a => a.SubSystemNum == i).Severity;
+                var newSeverity = ranmaPlate.GetSubsystemSeverity(i);
                 var subsSytem = _subsystems.First(a => a.SubSystemNum == i);
                 if (subsSytem.Severity == newSeverity) continue;
                 subsSytem.Severity = newSeverity;
@@ -111,7 +111,7 @@ namespace HonorLogic.ShipStatus
 
         private void InitializeUpdatePlatesInfo()
         {
-            foreach (var bigShipRanmaPlate in RanmaPlates)
+            foreach (var bigShipRanmaPlate in _ranmaPlates)
             {
                 bigShipRanmaPlate.InitiateUpdatePlateInfo();
             }
@@ -120,7 +120,7 @@ namespace HonorLogic.ShipStatus
         private bool UpdateSubsystemsForPlates()
         {
             //TODO FIX ME WHy only first plate?
-            var ranmaPlate = RanmaPlates[0];
+            var ranmaPlate = _ranmaPlates[0];
             var simulatorShouldBeNoticed = UpdateSubsytemsForPlate(ranmaPlate);
             return simulatorShouldBeNoticed;
         }
@@ -133,21 +133,17 @@ namespace HonorLogic.ShipStatus
             _subsystems[ranmaStatus.SubSystemNum].Severity = ranmaStatus.Severity;
             if (ranmaStatus.Severity != RanmaRepairSeverity.Ready)
             {
-                var ranmaTable = RanmaSubsystemStatusFactory.GenerateRanmaSubsystemStatus(ranmaStatus.Severity);
-                foreach (var bigShipRanmaPlate in RanmaPlates)
-                {
-                    bigShipRanmaPlate.SetPlateSubsystemInfo(ranmaStatus.SubSystemNum, ranmaStatus.Severity, ranmaTable);
-                }
-                
+                SetSubsytemSeverityToAll(ranmaStatus.SubSystemNum, ranmaStatus.Severity);
             }
             //2) Известить рандира на симуляторе
             return true;
         }
 
+
         public void InitializeRanmaPlate()
         {
             Debug.Assert(PlatesCount == PhysicalGateID.Length);
-            RanmaPlates = PhysicalGateID.Select(gateId => new RanmaPlate(gateId, SubsystemsCount)).ToArray();
+            _ranmaPlates = PhysicalGateID.Select(gateId => new RanmaPlate(gateId, SubsystemsCount)).ToArray();
         }
 
         public void Dispose()
@@ -174,6 +170,24 @@ namespace HonorLogic.ShipStatus
             }
         }
 
-        protected abstract void SyncSubsystem(int i);
+        private void SetSubsytemSeverityToAll(int i, RanmaRepairSeverity ranmaRepairSeverity)
+        {
+            foreach (var ranmaPlate in _ranmaPlates)
+            {
+                ranmaPlate.SetSubsystemSeverity(i, ranmaRepairSeverity);
+            }
+        }
+
+        private void SyncSubsystem(int i)
+        {
+            var subsystemCopies = _ranmaPlates.Select(plate => plate.GetSubsystem(i)).ToArray();
+            var hasReadyPlate = subsystemCopies.Any(p => p.Severity == RanmaRepairSeverity.Ready);
+            var hasBrokenPlate = subsystemCopies.Any(p => p.Severity != RanmaRepairSeverity.Ready);
+
+            if (hasReadyPlate && hasBrokenPlate)
+            {
+                SetSubsytemSeverityToAll(i, RanmaRepairSeverity.Ready);
+            }
+        }
     }
 }
