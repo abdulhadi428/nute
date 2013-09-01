@@ -2,8 +2,7 @@
 {
     public class LakShip: ShipBase
     {
-
-        public override int SubsystemsCount
+        protected override int SubsystemsCount
         {
             get
             {

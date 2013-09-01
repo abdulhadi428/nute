@@ -34,9 +34,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
@@ -111,10 +108,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HonorLogic\HonorLogic.csproj">
-      <Project>{01C28F4B-A6C4-4C84-A756-E1DBD83A1F13}</Project>
-      <Name>HonorLogic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PillInterfaces\PillInterfaces.csproj">
       <Project>{a6e64bdb-f06e-42bd-b108-4d3aca7289eb}</Project>
       <Name>PillInterfaces</Name>

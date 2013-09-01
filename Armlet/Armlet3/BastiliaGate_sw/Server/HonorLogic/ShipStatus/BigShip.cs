@@ -1,12 +1,8 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using HonorInterfaces;
-
-namespace HonorLogic.ShipStatus
+﻿namespace HonorLogic.ShipStatus
 {
     public class BigShip: ShipBase
     {
-        public override int SubsystemsCount
+        protected override int SubsystemsCount
         {
             get { return 8; }
         }

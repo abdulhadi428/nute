@@ -15,10 +15,10 @@ namespace HonorLogic.ShipStatus
         public event Action OnlineChanged;
         private readonly List<ShipSubsystemStatus> _subsystems = new List<ShipSubsystemStatus>();
         public List<RoomInfo> Rooms { get; set; }
-        public abstract int SubsystemsCount { get; }
+        protected abstract int SubsystemsCount { get; }
         protected abstract int PlatesCount { get; }
 
-        public List<byte> ShipRoomsIDs
+        public IEnumerable<byte> ShipRoomsIDs
         {
             get
             {
@@ -134,10 +134,10 @@ namespace HonorLogic.ShipStatus
             return simulatorShouldBeNoticed;
         }
 
-        public bool SetSubsystemStatus(ShipSubsystemStatus ranmaStatus)
+        public void SetSubsystemStatus(ShipSubsystemStatus ranmaStatus)
         {
-            if (ranmaStatus.SubSystemNum >= SubsystemsCount) { return false; }
-            if (ranmaStatus.SubSystemNum < 0) { return false; }
+            Debug.Assert(ranmaStatus.SubSystemNum >= SubsystemsCount);
+            Debug.Assert(ranmaStatus.SubSystemNum < 0);
 
             _subsystems[ranmaStatus.SubSystemNum].Severity = ranmaStatus.Severity;
             if (ranmaStatus.Severity != RanmaRepairSeverity.Ready)
@@ -145,7 +145,6 @@ namespace HonorLogic.ShipStatus
                 SetSubsytemSeverityToAll(ranmaStatus.SubSystemNum, ranmaStatus.Severity);
             }
             //2) Известить рандира на симуляторе
-            return true;
         }
 
 

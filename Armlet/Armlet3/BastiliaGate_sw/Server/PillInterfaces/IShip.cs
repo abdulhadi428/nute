@@ -5,16 +5,13 @@ namespace HonorInterfaces
 {
     public interface IShip : IDisposable
     {
-        int SubsystemsCount { get; }
-        bool SetSubsystemStatus(ShipSubsystemStatus subsystemStatus);
+        void SetSubsystemStatus(ShipSubsystemStatus subsystemStatus);
         List<ShipSubsystemStatus> GetAllSubsystemsStatus();
 
-        List<byte> ShipRoomsIDs { get; }
+        IEnumerable<byte> ShipRoomsIDs { get; }
 
-        Guid ShipGuid { get; set; }
-        byte[] PhysicalGateID { get; set; }
-        string Name { get; set; }
-        IGlobalModel Model { get; set; }
+        string Name { get; }
+        IGlobalModel Model { get; }
 
         string GetRoomName(byte roomsID);
 
