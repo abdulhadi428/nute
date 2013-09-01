@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,8 +22,8 @@ namespace ServerGUI
 
         private void ShipControl_OnLoaded(object sender, RoutedEventArgs e)
         {
-            Ship.SubsystemUpdated += Ship_SubsystemUpdated;
-            Ship.OnlineChanged += Ship_OnlineChanged;
+            Ship.SubsystemUpdated += status => Dispatcher.BeginInvoke(new Action(() => Ship_SubsystemUpdated(status)));
+            Ship.OnlineChanged += () => Dispatcher.BeginInvoke(new Action(Ship_OnlineChanged));
             MainGroupBox.Header = Ship.Name;
             foreach (var shipSubsystemStatuse in Ship.GetAllSubsystemsStatus())
             {
