@@ -17,5 +17,6 @@ namespace HonorInterfaces
         void UpdateAllNames();
         IEnumerable<IShip> GetShips();
         IEnumerable<byte> RoomsWithPeople { get; }
+        bool IsShipGate(byte gateId);
     }
 }

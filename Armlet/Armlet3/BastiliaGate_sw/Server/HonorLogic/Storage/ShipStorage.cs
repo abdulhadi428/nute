@@ -64,7 +64,7 @@ namespace HonorLogic.Storage
             //        ship.SetSubsystemStatus(s);
             //    }
             //}
-            ship.Name = obj == null ? id.ToString() : obj.Value.Name;
+            ship.ShipName = obj == null ? id.ToString() : obj.Value.Name;
             ship.Model = model;
             ship.ShipGuid = id;
             ship.Rooms = (obj == null ? new List<RoomInfo>() : obj.Value.Rooms) ?? new List<RoomInfo>();

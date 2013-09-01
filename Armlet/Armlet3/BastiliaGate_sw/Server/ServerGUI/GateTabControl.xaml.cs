@@ -37,6 +37,10 @@ namespace ServerGUI
                 if (_gates.Contains(gateId)) return;
                 _gates.Add(gateId);
             }
+            if (Model.IsShipGate(gateId))
+            {
+                return;
+            }
             var gateUi = new GateUI {Model = Model.GetGateModel(gateId)};
             GatesTabControl.Items.Add(new TabItem {Content = gateUi, Header = "Gate " + gateId, IsSelected = true});
             

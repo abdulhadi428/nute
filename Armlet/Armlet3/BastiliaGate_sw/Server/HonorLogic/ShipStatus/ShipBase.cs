@@ -26,9 +26,18 @@ namespace HonorLogic.ShipStatus
             } 
         }
 
+        public string Name
+        {
+            get
+            {
+                return string.Format("{0} (гейт{1} {2})", ShipName, PhysicalGateID.Length > 1 ? "ы" : "",
+                    string.Join(", ", PhysicalGateID));
+            }
+        }
+
         public  Guid ShipGuid { get; set; }
         public  byte[] PhysicalGateID { get; set; }
-        public  string Name { get; set; }
+        public  string ShipName { get; set; }
         public IGlobalModel Model { get; set; }
         public string GetRoomName(byte roomsID)
         {

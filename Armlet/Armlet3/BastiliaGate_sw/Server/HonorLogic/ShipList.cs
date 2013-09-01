@@ -14,7 +14,7 @@ namespace HonorLogic
             { 
                 Id = a.ShipGuid,
                 Gates = a.PhysicalGateID.ToList(),
-                Name = a.Name,
+                Name = a.ShipName,
                Subsystems = a.GetAllSubsystemsStatus() ,
                Rooms = a.Rooms
             }).ToList();

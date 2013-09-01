@@ -7,7 +7,7 @@
              d:DesignHeight="300" d:DesignWidth="300" Loaded="ShipControl_OnLoaded">
     <GroupBox x:Name="MainGroupBox">
         <StackPanel Orientation="Vertical">
-            <Label x:Name="OnlineLabel"></Label>
+            <Label x:Name="GatesLabel" /> <Label x:Name="OnlineLabel"></Label>
             <StackPanel Orientation="Horizontal" x:Name="BoardStackPanel"></StackPanel>
             <StackPanel Orientation="Horizontal" x:Name="HitStackPanel">
                 <Label>Взорвать</Label>
