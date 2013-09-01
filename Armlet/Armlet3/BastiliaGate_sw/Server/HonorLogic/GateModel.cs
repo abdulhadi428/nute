@@ -1,6 +1,7 @@
  using System;
 using System.Collections.Generic;
  using System.Linq;
+ using System.Timers;
  using HonorUtils;
 using NetworkLevel.NetworkDeliveryLevel;
 using HonorInterfaces;
@@ -25,6 +26,10 @@ namespace HonorLogic
             _service.PillDataRead +=(id, data) => IfMe(id, () => RaisePillDataArrived(data));
             
             Online = true;
+            var timer = new Timer { AutoReset = true, Interval = 1000};
+            timer.Elapsed += (sender, e) => RefreshPillStatus();
+            
+            timer.Start();
         }
 
         private void RaisePillDataArrived(byte[] arg3)
