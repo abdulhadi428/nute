@@ -1,4 +1,5 @@
 ﻿using System;
+using HonorSerialportGateConsole.Properties;
 
 
 namespace HonorSerialportGateConsole
@@ -10,7 +11,7 @@ namespace HonorSerialportGateConsole
         {
             try
             {
-                using (var daemon = new HonorSerialportDaemon())
+                using (var daemon = new HonorSerialportDaemon(Settings.Default.HeartBeatTimeoutSeconds))
                 {
                     daemon.RunMailCycle();
                 }

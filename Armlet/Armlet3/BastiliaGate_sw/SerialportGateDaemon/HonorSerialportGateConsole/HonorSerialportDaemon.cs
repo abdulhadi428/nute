@@ -29,11 +29,11 @@ namespace HonorSerialportGateConsole
 
         private System.Timers.Timer UpdateLogTimer;
 
-        public HonorSerialportDaemon()
+        public HonorSerialportDaemon(int heartBeatTimeoutSeconds)
         {
             InitiateLog();
             sendThread = new Thread(SendToServer);
-            var instanceContext = new InstanceContext(new WCFCallbackHandler(this));
+            var instanceContext = new InstanceContext(new WCFCallbackHandler(this, heartBeatTimeoutSeconds));
             
 
             byte serverProvidedGateId;

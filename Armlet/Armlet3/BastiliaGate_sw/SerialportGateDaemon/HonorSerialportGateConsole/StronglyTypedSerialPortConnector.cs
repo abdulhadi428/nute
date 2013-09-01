@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.IO.Ports;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using HonorSerialportGateConsole.Interfaces;
 using HonorSerialportGateDaemon;
 
@@ -58,8 +54,10 @@ namespace HonorSerialportGateConsole
         {
             try
             {
+                LogClass.Write("Opening port " + portName + "...");
                 port.PortName = portName;
                 port.Open();
+                LogClass.Write("Port opened");
                 port.WriteLine("#01");
                 //port.ReadTimeout = 1000;
                 //var answer = port.ReadLine().Trim().Replace(",", "");
