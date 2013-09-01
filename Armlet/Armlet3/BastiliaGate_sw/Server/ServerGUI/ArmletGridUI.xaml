@@ -7,20 +7,23 @@
              mc:Ignorable="d" 
              d:DesignHeight="451.128" d:DesignWidth="1000"  Loaded="ArmletGridUI_OnLoaded"
              d:DataContext="{d:DesignInstance serverGUI:ArmletGridUI}">
-    <DockPanel LastChildFill="True">
+    <DockPanel LastChildFill="True" Height="Auto" Width="Auto">
         <DockPanel.Resources>
             <Style TargetType="{x:Type Button}">
                 <Setter Property="Margin" Value="2,2" />
                 <Setter Property="Padding" Value="5,5" />
             </Style>
         </DockPanel.Resources>
-        <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
+        <WrapPanel Orientation="Vertical" DockPanel.Dock="Top" MaxHeight="100">
             <GroupBox Header="Установка имени" >
+                <StackPanel Orientation="Vertical">
+                    <TextBox x:Name="NameTextBox"/>
                 <WrapPanel Orientation="Horizontal">
-                    <TextBox x:Name="NameTextBox" MinWidth="200"/>
+                    
                     <Button Click="UpdateName_OnClick" Content="Установить"/>
                     <Button Content="Установить всем" Click="Button_Click_1"/>
                 </WrapPanel>
+                    </StackPanel>
             </GroupBox>
             <GroupBox Header="Отсылка сообщения" >
                 <StackPanel Orientation="Vertical">
@@ -42,8 +45,11 @@
                 </StackPanel>
             </GroupBox>
             <serverGUI:GateTabControl x:Name="GateUI" x:FieldModifier="public" />
+
+        </WrapPanel>
+        <ScrollViewer DockPanel.Dock="Right">
             <StackPanel Orientation="Vertical" x:Name="ShipStackPanel"></StackPanel>
-        </StackPanel>
+        </ScrollViewer>
         <DataGrid x:Name="ArmletGrid" AutoGenerateColumns="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding (serverGUI:ArmletWatcher.Id)}" ClipboardContentBinding="{x:Null}" Header="ИД">
