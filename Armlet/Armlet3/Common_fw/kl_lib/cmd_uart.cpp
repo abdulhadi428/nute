@@ -11,6 +11,7 @@
 CmdUart_t Uart;
 
 void CmdUart_t::Printf(const char *format, ...) {
+    chSemWait(&ISemaphore);
     va_list args;
     va_start(args, format);
     uint32_t Cnt = tiny_vsprintf(SprintfBuf, UART_TXBUF_SIZE, format, args);
@@ -39,6 +40,8 @@ void CmdUart_t::Printf(const char *format, ...) {
         dmaStreamSetTransactionSize(UART_DMA, ITransSize);
         dmaStreamEnable(UART_DMA);
     }
+    // Release semaphore
+    chSemSignal(&ISemaphore);
 }
 
 // ================================= Thread ====================================
@@ -59,8 +62,7 @@ static inline bool IsDelimiter(uint8_t b) { return (b == ','); }
 static inline bool IsEnd(uint8_t b) { return (b == '\r') or (b == '\n'); }
 
 static WORKING_AREA(waUartRxThread, 512);
-static msg_t UartRxThread(void *arg) {
-    (void)arg;
+static void UartRxThread(void *arg) {
     chRegSetThreadName("UartRx");
     msg_t Msg;
     while(1) {
@@ -68,7 +70,6 @@ static msg_t UartRxThread(void *arg) {
         Msg = chIQGetTimeout(&Uart.iqueue, TIME_INFINITE);
         if(Msg >= Q_OK) Uart.IProcessByte((uint8_t)Msg);
     } // while 1
-    return 0;
 }
 
 void CmdUart_t::IProcessByte(uint8_t b) {
@@ -129,6 +130,7 @@ void CmdUart_t::Init(uint32_t ABaudrate) {
     PRead = TXBuf;
     IDmaIsIdle = true;
     IFullSlotsCount = 0;
+    chSemInit(&ISemaphore, 1);
     PinSetupAlterFunc(UART_GPIO, UART_TX_PIN, omPushPull, pudNone, UART_AF);
 
     // ==== USART configuration ====
@@ -167,7 +169,7 @@ void CmdUart_t::Init(uint32_t ABaudrate) {
     PinSetupAlterFunc(UART_GPIO, UART_RX_PIN,  omOpenDrain, pudPullUp, UART_AF);
 
     // Create and start thread
-    chThdCreateStatic(waUartRxThread, sizeof(waUartRxThread), NORMALPRIO, UartRxThread, NULL);
+    chThdCreateStatic(waUartRxThread, sizeof(waUartRxThread), NORMALPRIO, (tfunc_t)UartRxThread, NULL);
 #endif
     UART->CR1 |= USART_CR1_UE;       // Enable USART
 }

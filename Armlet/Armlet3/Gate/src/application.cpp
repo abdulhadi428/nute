@@ -25,8 +25,7 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length);
 
 // =============================== App Thread ==================================
 static WORKING_AREA(waAppThread, 128);
-static msg_t AppThread(void *arg) {
-    (void)arg;
+static void AppThread(void *arg) {
     chRegSetThreadName("App");
     // Register Radio evts
     uint32_t EvtMsk;
@@ -47,7 +46,6 @@ static msg_t AppThread(void *arg) {
             }
         }
     } // while 1
-    return 0;
 }
 
 //=========================== Command processing ===============================
@@ -130,7 +128,7 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
 
 // =============================== App init ====================================
 void AppInit() {
-    chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, AppThread, NULL);
+    chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, (tfunc_t)AppThread, NULL);
 }
 
 // ================================= Pin control ===============================

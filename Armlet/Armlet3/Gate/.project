@@ -91,16 +91,6 @@
 			<type>2</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Common_fw/kl_lib</locationURI>
 		</link>
-		<link>
-			<name>inc/pill.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Common_fw/pill.h</locationURI>
-		</link>
-		<link>
-			<name>src/pill.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Common_fw/pill.cpp</locationURI>
-		</link>
 	</linkedResources>
 	<variableList>
 		<variable>
