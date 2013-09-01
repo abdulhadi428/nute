@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.IO.Ports;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using HonorSerialportGateConsole.Interfaces;
+using HonorSerialportGateConsole.Properties;
 using HonorSerialportGateDaemon;
 
 namespace HonorSerialportGateConsole
@@ -40,12 +45,23 @@ namespace HonorSerialportGateConsole
        
         public void SearchForPortAndConnect()
         {
-            var portNames = SerialPort.GetPortNames().First();
-            TryOpenPort(portNames);
+            var defaultPortName = Settings.Default.DefaultComPortName;
+            LogClass.Write("Using default port name: " + defaultPortName);
+            if (!TryOpenPort(defaultPortName))
+            {
+                LogClass.Write("Default port failed. Using first encountered port");
+                var portNames = SerialPort.GetPortNames();
+                if (portNames.Length > 0)
+                {
+                    TryOpenPort(portNames.First());
+                }
+            }
             if (!port.IsOpen)
             {
+                LogClass.Write("COM port opening failed entirely. Aborting operations");
                 throw new Exception("Couldn't open port");
-            }     //TODO MAKE ERROR Enum
+            }
+            LogClass.Write("Com port opened! Starting reading and writing threads");
             readThread.Start();
             writeThread.Start();
         }
@@ -54,10 +70,8 @@ namespace HonorSerialportGateConsole
         {
             try
             {
-                LogClass.Write("Opening port " + portName + "...");
                 port.PortName = portName;
                 port.Open();
-                LogClass.Write("Port opened");
                 port.WriteLine("#01");
                 //port.ReadTimeout = 1000;
                 //var answer = port.ReadLine().Trim().Replace(",", "");
@@ -71,6 +85,7 @@ namespace HonorSerialportGateConsole
             }
             catch (Exception)
             {
+                LogClass.Write("Error at opening port named " + portName);
                 if (port.IsOpen)
                 {
                     port.Close();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="579f8894-3f81-475a-b271-234c26325e12" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
-    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateAsynchronousMethods>true</GenerateAsynchronousMethods>
     <EnableDataBinding>true</EnableDataBinding>
     <ExcludedTypes />
     <ImportXmlTypes>false</ImportXmlTypes>
@@ -18,13 +18,13 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="net.tcp://leo.local:8765/GateWcfService/mex" Protocol="mex" SourceId="1" />
+    <MetadataSource Address="net.tcp://localhost:8765/GateWcfService/mex" Protocol="mex" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="service1.wsdl" MetadataType="Wsdl" ID="3c2961cb-4d90-4009-8acd-2f28eaa80f2b" SourceId="1" SourceUrl="net.tcp://leo.local:8765/GateWcfService/mex" />
-    <MetadataFile FileName="service2.xsd" MetadataType="Schema" ID="8430e573-52d9-4b6d-912e-a2af2955bfea" SourceId="1" SourceUrl="net.tcp://leo.local:8765/GateWcfService/mex" />
-    <MetadataFile FileName="service21.xsd" MetadataType="Schema" ID="5f9b96cc-5c21-4d83-8c02-199e7dbf6210" SourceId="1" SourceUrl="net.tcp://leo.local:8765/GateWcfService/mex" />
-    <MetadataFile FileName="NetworkLevel.WCFServices1.xsd" MetadataType="Schema" ID="88dc64c4-02a5-4fe2-9e74-d4abcaa6e0e5" SourceId="1" SourceUrl="net.tcp://leo.local:8765/GateWcfService/mex" />
+    <MetadataFile FileName="service1.wsdl" MetadataType="Wsdl" ID="fe6d8525-f99a-4d96-898d-b9caf58adc2c" SourceId="1" SourceUrl="net.tcp://localhost:8765/GateWcfService/mex" />
+    <MetadataFile FileName="service2.xsd" MetadataType="Schema" ID="ad444eeb-4bf6-402f-8a93-e8daff7a9110" SourceId="1" SourceUrl="net.tcp://localhost:8765/GateWcfService/mex" />
+    <MetadataFile FileName="service3.xsd" MetadataType="Schema" ID="b9f46121-d6bb-497f-97dd-389b1ea5125a" SourceId="1" SourceUrl="net.tcp://localhost:8765/GateWcfService/mex" />
+    <MetadataFile FileName="NetworkLevel.WCFServices1.xsd" MetadataType="Schema" ID="151c97e9-8b6c-4fce-af1c-e6500af612d5" SourceId="1" SourceUrl="net.tcp://localhost:8765/GateWcfService/mex" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

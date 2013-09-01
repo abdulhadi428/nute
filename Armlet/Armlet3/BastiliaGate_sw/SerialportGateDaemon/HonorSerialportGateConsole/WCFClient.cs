@@ -15,26 +15,24 @@ namespace HonorSerialportGateConsole
 
     }
 
-    public class WCFCallbackHandler: IGateWCFServiceCallback, IDisposable
+    public class WCFCallbackHandler: ServerWCFService.IGateWCFServiceCallback
     {
-        private readonly HonorSerialportDaemon _daemon;
+        private HonorSerialportDaemon _daemon;
         private DateTime _lastHeartBeatTime = DateTime.Now;
-        private readonly Timer _timer;
-        private readonly int _heartBeatTimeoutSeconds;
+        private Timer _timer;
 
         private void WatchDog(object state)
         {
-            if (DateTime.Now.Subtract(_lastHeartBeatTime).TotalSeconds > _heartBeatTimeoutSeconds)
+            if (DateTime.Now.Subtract(_lastHeartBeatTime).TotalSeconds > 1000)
             {
                 Environment.Exit(1);
             }
         }
 
 
-        public WCFCallbackHandler(HonorSerialportDaemon daemon, int heartBeatTimeoutSeconds)
+        public WCFCallbackHandler(HonorSerialportDaemon daemon)
         {
             _daemon = daemon;
-            _heartBeatTimeoutSeconds = heartBeatTimeoutSeconds;
             _timer = new Timer(WatchDog, null, 15 *1000, 2*1000);
         }
 
@@ -132,14 +130,6 @@ namespace HonorSerialportGateConsole
         public void EndSendHeartbeat(IAsyncResult result)
         {
             throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-            if (_timer != null)
-            {
-                _timer.Dispose();
-            }
         }
     }
 }

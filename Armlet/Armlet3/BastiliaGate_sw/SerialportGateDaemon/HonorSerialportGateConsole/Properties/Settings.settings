@@ -6,10 +6,10 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="PreferedGateId" Type="System.String" Scope="User">
-      <Value Profile="(Default)">5</Value>
+      <Value Profile="(Default)">73</Value>
     </Setting>
-    <Setting Name="HeartBeatTimeoutSeconds" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
+    <Setting Name="DefaultComPortName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">COM4</Value>
     </Setting>
   </Settings>
 </SettingsFile>

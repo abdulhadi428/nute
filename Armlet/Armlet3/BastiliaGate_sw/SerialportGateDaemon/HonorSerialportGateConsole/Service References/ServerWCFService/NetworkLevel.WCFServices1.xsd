@@ -10,7 +10,10 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="ArmletID" type="xs:unsignedByte" />
       <xs:element minOccurs="0" name="NewBlood" type="xs:unsignedByte" />
+      <xs:element minOccurs="0" name="NewPulse" type="xs:unsignedByte" />
       <xs:element minOccurs="0" name="NewRoom" type="xs:unsignedByte" />
+      <xs:element minOccurs="0" name="NewTemp" type="xs:unsignedByte" />
+      <xs:element minOccurs="0" name="NewToxin" type="xs:unsignedByte" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="PlayerUpdate" nillable="true" type="tns:PlayerUpdate" />
