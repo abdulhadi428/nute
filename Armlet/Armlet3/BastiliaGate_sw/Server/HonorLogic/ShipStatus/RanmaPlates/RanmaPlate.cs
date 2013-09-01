@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HonorInterfaces;
+using NetworkLevel.NetworkDeliveryLevel;
 
 namespace HonorLogic.ShipStatus.RanmaPlates
 {
@@ -19,13 +20,20 @@ namespace HonorLogic.ShipStatus.RanmaPlates
                 _plateStatusList.Add(new ShipSubsystemStatus {Severity = RanmaRepairSeverity.Ready, SubSystemNum = i});
             }
 
-            NetworkLevel.NetworkDeliveryLevel.NetworkDelivery.GateDeliveryInstance.PillDataRead +=
+            NetworkDelivery.GateDeliveryInstance.PillDataRead +=
                         (id, data) => IfMe(id, () => PlateDataRead(data));
         }
 
         public void InitiateUpdatePlateInfo()  // Дергает вызов чтения 24-байтов с платы
         {
-            NetworkLevel.NetworkDeliveryLevel.NetworkDelivery.GateDeliveryInstance.SendPillRead((byte)_physicalGateId, new byte[]{0, 24});
+            try
+            {
+                NetworkDelivery.GateDeliveryInstance.SendPillRead((byte)_physicalGateId, new byte[] { 0, 24 });
+            }
+            catch
+            {
+            }
+            
         }
 
         private void PlateDataRead(byte[] data) // Вызывается в момент, когда произведено чтение байт с платы
@@ -51,7 +59,7 @@ namespace HonorLogic.ShipStatus.RanmaPlates
         public void SetSubsystemSeverity(int subSystemNum, RanmaRepairSeverity ranmaRepairSeverity)
         {
             _plateStatusList.First(a => a.SubSystemNum == subSystemNum).Severity = ranmaRepairSeverity;
-            NetworkLevel.NetworkDeliveryLevel.NetworkDelivery.GateDeliveryInstance.SendPillWhite((byte) _physicalGateId,
+            NetworkDelivery.GateDeliveryInstance.SendPillWhite((byte) _physicalGateId,
                 new byte[] {0, (byte) subSystemNum}.Concat(
                     RanmaSubsystemStatusFactory.GenerateRanmaSubsystemStatus(ranmaRepairSeverity).Bytes).ToArray());
         }
