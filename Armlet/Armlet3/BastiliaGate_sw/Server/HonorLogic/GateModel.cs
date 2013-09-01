@@ -12,7 +12,7 @@ namespace HonorLogic
     {
         private readonly IGateDeliveryService _service;
         private readonly byte _gateId;
-        private const byte MaxReadBytes = 16;
+        private const byte MaxReadBytes = 32;
 
         public GateModel(IGateDeliveryService service, byte gateId)
         {

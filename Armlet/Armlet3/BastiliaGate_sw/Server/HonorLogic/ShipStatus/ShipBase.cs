@@ -137,10 +137,8 @@ namespace HonorLogic.ShipStatus
 
         private bool UpdateSubsystemsForPlates()
         {
-            var ranmaPlate = _ranmaPlates.First();
             //Plates already synced, so use first
-            var simulatorShouldBeNoticed = UpdateSubsytemsForPlate(ranmaPlate);
-            return simulatorShouldBeNoticed;
+            return UpdateSubsytemsForPlate(_ranmaPlates.First());
         }
 
         public void SetSubsystemStatus(ShipSubsystemStatus ranmaStatus)
