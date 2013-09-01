@@ -81,7 +81,7 @@ namespace ServerGUI
         }
 
         private void SendAll_Click(object sender, RoutedEventArgs e)
-        {
+        {   
             var saveCursor = Cursor;
             try
             {

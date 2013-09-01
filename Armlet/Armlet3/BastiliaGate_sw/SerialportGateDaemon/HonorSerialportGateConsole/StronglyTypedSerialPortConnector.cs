@@ -36,7 +36,7 @@ namespace HonorSerialportGateConsole
                     Parity = Parity.None,
                     StopBits = StopBits.One,
                     WriteTimeout = 10000,
-                    ReadTimeout = SerialPort.InfiniteTimeout,
+                    ReadTimeout =1000,
                     ReadBufferSize = 1024*1024
                 };
             port.ErrorReceived += PortErrorReceived;
@@ -82,7 +82,7 @@ namespace HonorSerialportGateConsole
                 //    port.Close();
                 //    return false;
                 //}
-                port.ReadTimeout = SerialPort.InfiniteTimeout;
+                port.ReadTimeout = 1000;
                 return true;
             }
             catch (Exception)
@@ -107,11 +107,12 @@ namespace HonorSerialportGateConsole
                     while (inputQueue.TryDequeue(out result))
                     {
                         string commandString = result.ConvertToString();
-                        LogClass.WritePacket("Pipe -> Com: ", commandString);
+                        LogClass.Write("Pipe -> Com pending");
                         lock (_syncRoot)
                         {
                             port.WriteLine(commandString);
                         }
+                        LogClass.WritePacket("Pipe -> Com: ", commandString);
                     }
                     Thread.Sleep(1000);
 
@@ -130,11 +131,23 @@ namespace HonorSerialportGateConsole
             {
                 while (true)
                 {
-                    string message;
-                    lock (_syncRoot)
+                    while (!inputQueue.IsEmpty)
                     {
-                        message = port.ReadLine();
+                        Thread.Sleep(0);
                     }
+                    string message;
+                    try
+                    {
+                        lock (_syncRoot)
+                        {
+                            message = port.ReadLine();
+                        }
+                    }
+                    catch (TimeoutException)
+                    {
+                        continue;
+                    }
+                    
                     LogClass.WritePacket("COM -> Pipe: ", message);
                     outputQueue.Enqueue(message);
 
