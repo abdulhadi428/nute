@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Reflection;
+using System.Windows;
 using HonorLogic;
 using NetworkLevel.NetworkDeliveryLevel;
 
@@ -13,6 +14,7 @@ namespace HonorGateServer
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
+            Title = "HonorGateServer " + Assembly.GetEntryAssembly().GetName().Version;
             Application.Current.DispatcherUnhandledException  += Current_DispatcherUnhandledException;
             var globalModel = new GlobalModel(NetworkDelivery.ArmletDeliveryInstance, NetworkDelivery.GateDeliveryInstance);
             ArmletUI.Model = globalModel;
