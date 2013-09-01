@@ -12,7 +12,7 @@ namespace HonorInterfaces
         List<byte> ShipRoomsIDs { get; }
 
         Guid ShipGuid { get; set; }
-        int[] PhysicalGateID { get; set; }
+        byte[] PhysicalGateID { get; set; }
         string Name { get; set; }
         IGlobalModel Model { get; set; }
 
@@ -22,5 +22,6 @@ namespace HonorInterfaces
         void HitRandomRoom(RanmaRepairSeverity severity);
 
         bool IsOnline { get; }
+        event Action OnlineChanged;
     }
 }

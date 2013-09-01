@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Armlet.cs" />
     <Compile Include="ArmletList.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ShipStatus\RanmaPlates\RanmaPlate.cs" />
     <Compile Include="ShipStatus\ShipBase.cs" />
     <Compile Include="Storage\ArmletStorage.cs" />

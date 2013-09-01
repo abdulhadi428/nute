@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HonorInterfaces;
+using HonorLogic.Annotations;
 using HonorLogic.ShipStatus;
 using Newtonsoft.Json;
 
@@ -13,15 +14,15 @@ namespace HonorLogic.Storage
         public Guid Id { get; set; }
         public string Name { get; set; }
         public List<ShipSubsystemStatus> Subsystems { get; set; }
-        public List<int> Gates { get; set; }
+        public List<byte> Gates { get; set; }
         public List<RoomInfo> Rooms { get; set; }
     }
 
     [Serializable]
     public struct RoomInfo
     {
-        public byte Id { get; set; }
-        public string Name { get; set; }
+        public byte Id { get; [UsedImplicitly] set; }
+        public string Name { get; [UsedImplicitly] set; }
     }
 
     internal class ShipStorage
@@ -52,7 +53,7 @@ namespace HonorLogic.Storage
         public ShipBase CreateObject(Guid id, GlobalModel model)
         {
             var obj = _savedData.ContainsKey(id) ? (ShipStoredData?) _savedData[id] : null;
-            var gates = obj == null ? new List<int> {71} : obj.Value.Gates;
+            var gates = obj == null ? new List<byte> {71} : obj.Value.Gates;
             var big = gates.Count > 1;
             var ship = big ? (ShipBase) new BigShip() : new LakShip();
             ship.PhysicalGateID = gates.ToArray();

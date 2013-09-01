@@ -48,8 +48,8 @@ namespace ServerGUI
 
         private void GateUI_OnLoaded(object sender, RoutedEventArgs e)
         {
-            Model.PillOnlineChanged += () => Dispatcher.BeginInvoke(new Action(UpdatePillOnline));
-            Model.PillDataArrived += obj => Dispatcher.BeginInvoke(new Action(() => UpdatePillDataArrived(obj)));
+            Model.DeviceOnlineChanged += () => Dispatcher.BeginInvoke(new Action(UpdatePillOnline));
+            Model.DeviceDataArrived += obj => Dispatcher.BeginInvoke(new Action(() => UpdatePillDataArrived(obj)));
             Model.GateOnlineChanged += () => Dispatcher.BeginInvoke(new Action(UpdateGateOnline));
 
             UpdatePillOnline();
@@ -66,7 +66,7 @@ namespace ServerGUI
 
         private void UpdatePillOnline()
         {
-            PillGroupBox.Visibility = Model.PillOnline ? Visibility.Visible : Visibility.Collapsed;
+            PillGroupBox.Visibility = Model.DeviceOnline ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdatePillDataArrived(IEnumerable<byte> obj)

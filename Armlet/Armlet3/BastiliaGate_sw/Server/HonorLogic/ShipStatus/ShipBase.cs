@@ -12,6 +12,7 @@ namespace HonorLogic.ShipStatus
 {
     public abstract class ShipBase : IShip
     {
+        public event Action OnlineChanged;
         private readonly List<ShipSubsystemStatus> _subsystems = new List<ShipSubsystemStatus>();
         public List<RoomInfo> Rooms { get; set; }
         public abstract int SubsystemsCount { get; }
@@ -26,7 +27,7 @@ namespace HonorLogic.ShipStatus
         }
 
         public  Guid ShipGuid { get; set; }
-        public  int[] PhysicalGateID { get; set; }
+        public  byte[] PhysicalGateID { get; set; }
         public  string Name { get; set; }
         public IGlobalModel Model { get; set; }
         public string GetRoomName(byte roomsID)
@@ -55,8 +56,7 @@ namespace HonorLogic.ShipStatus
         {
             get
             {
-                //TODO Show correct status
-                return false;
+                return _ranmaPlates.All(p => p.Online   );
             }
         }
 
@@ -122,14 +122,14 @@ namespace HonorLogic.ShipStatus
         {
             foreach (var bigShipRanmaPlate in _ranmaPlates)
             {
-                bigShipRanmaPlate.InitiateUpdatePlateInfo();
+                bigShipRanmaPlate.Refresh();
             }
         }
 
         private bool UpdateSubsystemsForPlates()
         {
             var ranmaPlate = _ranmaPlates.First();
-            //Plates already synced, so used first
+            //Plates already synced, so use first
             var simulatorShouldBeNoticed = UpdateSubsytemsForPlate(ranmaPlate);
             return simulatorShouldBeNoticed;
         }
@@ -152,7 +152,23 @@ namespace HonorLogic.ShipStatus
         public void InitializeRanmaPlate()
         {
             Debug.Assert(PlatesCount == PhysicalGateID.Length);
-            _ranmaPlates = PhysicalGateID.Select(gateId => new RanmaPlate(gateId, SubsystemsCount)).ToArray();
+            _ranmaPlates = PhysicalGateID.Select(CreateRanmaPlate).ToArray();
+        }
+
+        private RanmaPlate CreateRanmaPlate(byte gateId)
+        {
+            var ranmaPlate = new RanmaPlate(SubsystemsCount, Model.GetGateModel(gateId));
+            ranmaPlate.OnlineChanged += RaiseOnlineChanged;
+            return ranmaPlate;
+        }
+
+        private void RaiseOnlineChanged()
+        {
+            var handler = OnlineChanged;
+            if (handler != null)
+            {
+                handler();
+            }
         }
 
         public void Dispose()

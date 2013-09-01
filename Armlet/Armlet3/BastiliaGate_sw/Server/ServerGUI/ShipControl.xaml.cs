@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Media3D;
 using HonorInterfaces;
 
 namespace ServerGUI
@@ -10,19 +9,20 @@ namespace ServerGUI
     /// <summary>
     /// Interaction logic for ShipControl.xaml
     /// </summary>
-    public partial class ShipControl : UserControl
+    public partial class ShipControl
     {
         public ShipControl()
         {
             InitializeComponent();
         }
 
-        public IShip Ship { get; set; }
+        public IShip Ship { private get; set; }
         private readonly List<BoardGUI> _boards = new List<BoardGUI>();
 
         private void ShipControl_OnLoaded(object sender, RoutedEventArgs e)
         {
             Ship.SubsystemUpdated += Ship_SubsystemUpdated;
+            Ship.OnlineChanged += Ship_OnlineChanged;
             MainGroupBox.Header = Ship.Name;
             foreach (var shipSubsystemStatuse in Ship.GetAllSubsystemsStatus())
             {
@@ -40,6 +40,13 @@ namespace ServerGUI
             {
                 CreateButton(roomsID);
             }
+            Ship_OnlineChanged();
+        }
+
+        void Ship_OnlineChanged()
+        {
+            OnlineLabel.Content = Ship.IsOnline ? "Онлайн" : "Оффлайн";
+            BoardStackPanel.IsEnabled = Ship.IsOnline;
         }
 
         void Ship_SubsystemUpdated(ShipSubsystemStatus obj)

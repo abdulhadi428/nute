@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using HonorInterfaces;
-using NetworkLevel.NetworkDeliveryLevel;
 
 namespace HonorLogic.ShipStatus.RanmaPlates
 {
@@ -10,30 +9,40 @@ namespace HonorLogic.ShipStatus.RanmaPlates
     {
         private static readonly byte[] RepairedTable = {0,0};
         private readonly List<ShipSubsystemStatus> _plateStatusList = new List<ShipSubsystemStatus>();
-        private readonly int _physicalGateId;  //id гейта, соответсвующего плате. Задается в конструкторе
+        private readonly IGateModel _gateModel;
 
-        public RanmaPlate(int gateId, int subsystemsCount)
+        public event Action OnlineChanged;
+
+        public RanmaPlate(int subsystemsCount, IGateModel gateModel)
         {
-            _physicalGateId = gateId;
-            for (int i = 0; i < subsystemsCount; i++)
+            _gateModel = gateModel;
+            for (var i = 0; i < subsystemsCount; i++)
             {
                 _plateStatusList.Add(new ShipSubsystemStatus {Severity = RanmaRepairSeverity.Ready, SubSystemNum = i});
             }
 
-            NetworkDelivery.GateDeliveryInstance.PillDataRead +=
-                        (id, data) => IfMe(id, () => PlateDataRead(data));
+            _gateModel.DeviceDataArrived += PlateDataRead;
+            _gateModel.DeviceOnlineChanged += GateModelDeviceOnlineChanged;
         }
 
-        public void InitiateUpdatePlateInfo()  // Дергает вызов чтения 24-байтов с платы
+        void GateModelDeviceOnlineChanged()
         {
-            try
+            Online = _gateModel.DeviceOnline;
+            RaiseOnlineChanged();
+        }
+
+        private void RaiseOnlineChanged()
+        {
+            var handler = OnlineChanged;
+            if (handler != null)
             {
-                NetworkDelivery.GateDeliveryInstance.SendPillRead((byte)_physicalGateId, new byte[] { 0, 24 });
+                handler();
             }
-            catch
-            {
-            }
-            
+        }
+
+        public void Refresh() // Дергает вызов чтения 24-байтов с платы
+        {
+            _gateModel.ReadPlate();
         }
 
         private void PlateDataRead(byte[] data) // Вызывается в момент, когда произведено чтение байт с платы
@@ -48,20 +57,12 @@ namespace HonorLogic.ShipStatus.RanmaPlates
             }
         }
 
-        private void IfMe(byte id, Action action)
-        {
-            if (_physicalGateId == id)
-            {
-                action();
-            }
-        }
-
         public void SetSubsystemSeverity(int subSystemNum, RanmaRepairSeverity ranmaRepairSeverity)
         {
             _plateStatusList.First(a => a.SubSystemNum == subSystemNum).Severity = ranmaRepairSeverity;
-            NetworkDelivery.GateDeliveryInstance.SendPillWhite((byte) _physicalGateId,
-                new byte[] {0, (byte) subSystemNum}.Concat(
-                    RanmaSubsystemStatusFactory.GenerateRanmaSubsystemStatus(ranmaRepairSeverity).Bytes).ToArray());
+
+            var repairTable = RanmaSubsystemStatusFactory.GenerateRanmaSubsystemStatus(ranmaRepairSeverity).Bytes;
+            _gateModel.WritePlate(0, subSystemNum, repairTable);
         }
 
         public RanmaRepairSeverity GetSubsystemSeverity(int i)
@@ -72,6 +73,11 @@ namespace HonorLogic.ShipStatus.RanmaPlates
         public ShipSubsystemStatus GetSubsystem(int i)
         {
             return _plateStatusList.First(a => a.SubSystemNum == i);
+        }
+
+        public bool Online
+        {
+            get; private set;
         }
     }
 }

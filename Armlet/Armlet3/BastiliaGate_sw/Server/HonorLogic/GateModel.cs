@@ -11,6 +11,7 @@ namespace HonorLogic
     {
         private readonly IGateDeliveryService _service;
         private readonly byte _gateId;
+        private const byte MaxReadBytes = 24;
 
         public GateModel(IGateDeliveryService service, byte gateId)
         {
@@ -40,9 +41,9 @@ namespace HonorLogic
                 SetPilStatus(false); // Error read, let's think offline
                 return;
             }
-            if (PillDataArrived != null)
+            if (DeviceDataArrived != null)
             {
-                PillDataArrived(arg3.Skip(2).ToArray());
+                DeviceDataArrived(arg3.Skip(2).ToArray());
             }
         }
 
@@ -52,17 +53,17 @@ namespace HonorLogic
         {
             lock (_syncRoot)
             {
-                if (status != PillOnline)
+                if (status != DeviceOnline)
                 {
-                    PillOnline = status;
-                    if (PillOnlineChanged != null)
+                    DeviceOnline = status;
+                    if (DeviceOnlineChanged != null)
                     {
-                        PillOnlineChanged();
+                        DeviceOnlineChanged();
                     }
                 }
                 if (status)
                 {
-                    ReadPill();
+                    ReadDevice();
                 }
             }
         }
@@ -88,12 +89,12 @@ namespace HonorLogic
             }
         }
 
-        public bool PillOnline { get; private set; }
+        public bool DeviceOnline { get; private set; }
 
         public bool Online { get; private set; }
-        public event Action PillOnlineChanged;
+        public event Action DeviceOnlineChanged;
         public event Action GateOnlineChanged;
-        public event Action<byte[]> PillDataArrived;
+        public event Action<byte[]> DeviceDataArrived;
 
         public void ActivatePin()
         {
@@ -109,9 +110,14 @@ namespace HonorLogic
 
         public void WritePill(int p, int charges, byte pillAddress = 0)
         {
+            WriteDevice(new[] {pillAddress}.Concat(Utils.ToBytes(p, charges)).ToArray());
+        }
+
+        private void WriteDevice(byte[] bytesToWrite)
+        {
             try
             {
-                _service.SendPillWhite(_gateId, new [] { pillAddress}.Concat(Utils.ToBytes(p, charges)).ToArray());
+                _service.SendPillWhite(_gateId, bytesToWrite);
             }
             catch (GateNotConnectedException)
             {
@@ -136,7 +142,12 @@ namespace HonorLogic
             }
         }
 
-        private void ReadPill(byte pillAddress = 0x00, byte length = 8)
+        public void ReadPlate()
+        {
+            ReadDevice();
+        }
+
+        private void ReadDevice(byte pillAddress = 0x00, byte length = MaxReadBytes)
         {
             try
             {
@@ -146,6 +157,12 @@ namespace HonorLogic
             {
                 SetOnline(false);
             }
+        }
+
+        public void WritePlate(byte pillAddress, int subSystemNum, byte[] repairTable)
+        {
+            WriteDevice(new [] {pillAddress, (byte) subSystemNum}.Concat(
+                repairTable).ToArray());
         }
     }
 }
