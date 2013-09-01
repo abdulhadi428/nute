@@ -40,7 +40,7 @@ namespace HonorLogic.ShipStatus.RanmaPlates
             }
         }
 
-        public void Refresh() // Дергает вызов чтения 24-байтов с платы
+        public void Refresh() // Дергает вызов чтения 16-байтов с платы
         {
             _gateModel.ReadPlate();
         }
