@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Configuration;
-using System.Text;
 using System.Threading;
 using System.Timers;
 using HonorSerialportGateConsole.Interfaces;
@@ -46,9 +44,9 @@ namespace HonorSerialportGateConsole
             {
                 WCFClient.Client = new GateWCFServiceClient(instanceContext, "NetTcpBindingEndpoint");
                 serverProvidedGateId = WCFClient.Client.RegisterGate(serverProvidedGateId);
-                LogClass.Write("Connection to server successfully established. This is now Gate № " + serverProvidedGateId);
-                Console.Title = "Gate # " + serverProvidedGateId + "Console";
-                inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new byte[] { serverProvidedGateId }));
+                LogClass.Write("Connection to server successfully established. This is now Gate №" + serverProvidedGateId);
+                SetConsoleTitle();
+                inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new[] { serverProvidedGateId }));
                 ((ICommunicationObject)WCFClient.Client).Faulted += HonorSerialportDaemon_Faulted;
                 ((ICommunicationObject)WCFClient.Client).Closed += HonorSerialportDaemon_Closed;
                 _sending = true;
@@ -128,7 +126,7 @@ namespace HonorSerialportGateConsole
 
         bool RetryConnection()
         {
-            LogClass.Write("Now retring to restore connection as Gate # " + serverProvidedGateId);
+            LogClass.Write("Now retring to restore connection as Gate #" + serverProvidedGateId);
 
             try
             {
@@ -141,13 +139,19 @@ namespace HonorSerialportGateConsole
                 return false;
             }
 
-            LogClass.Write("Connection to server successfully established. This is now Gate № " + serverProvidedGateId);
-            Console.Title = "Gate # " + serverProvidedGateId + "Console";
+            LogClass.Write("Connection to server successfully established. This is now Gate №" + serverProvidedGateId);
+            SetConsoleTitle();
             inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new byte[] { serverProvidedGateId }));
             ((ICommunicationObject)WCFClient.Client).Faulted += HonorSerialportDaemon_Faulted;
             ((ICommunicationObject)WCFClient.Client).Closed += HonorSerialportDaemon_Closed;
             return true;
         }
+
+        private void SetConsoleTitle()
+        {
+            Console.Title = string.Format("SerialportGateDaemon {0} Gate #{1}", Assembly.GetEntryAssembly().GetName().Version, serverProvidedGateId);
+        }
+
         #endregion
 
         #region InitLog
@@ -241,8 +245,6 @@ namespace HonorSerialportGateConsole
                         WCFClient.Client.PinSetAsync(payload);
                         break;
                 }
-
-                //LogClass.Write("Should send from gate to server this: " + outputCommandString);
             }
             if (Enum.IsDefined(typeof (ArmletToServerCommands), outputBytes[0]))
             {
@@ -279,7 +281,6 @@ namespace HonorSerialportGateConsole
                         }
                         break;
                 }
-//                LogClass.Write("Should send from armlet to server this: " + outputCommandString);
             }
             return false;
         }

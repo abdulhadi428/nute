@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 
 namespace HonorSerialportGateConsole
@@ -8,6 +9,7 @@ namespace HonorSerialportGateConsole
 
         static int Main()
         {
+            Console.WriteLine("SerialportGateDaemon " + Assembly.GetEntryAssembly().GetName().Version);
             try
             {
                 using (var daemon = new HonorSerialportDaemon())

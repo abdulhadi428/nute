@@ -37,7 +37,7 @@ namespace HonorSerialportGateConsole.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("73")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public string PreferedGateId {
             get {
                 return ((string)(this["PreferedGateId"]));
@@ -49,7 +49,7 @@ namespace HonorSerialportGateConsole.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("COM4")]
+        [global::System.Configuration.DefaultSettingValueAttribute("COM6")]
         public string DefaultComPortName {
             get {
                 return ((string)(this["DefaultComPortName"]));

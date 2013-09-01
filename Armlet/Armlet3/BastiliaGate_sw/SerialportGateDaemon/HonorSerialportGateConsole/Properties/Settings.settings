@@ -6,10 +6,10 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="PreferedGateId" Type="System.String" Scope="User">
-      <Value Profile="(Default)">73</Value>
+      <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="DefaultComPortName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">COM4</Value>
+      <Value Profile="(Default)">COM6</Value>
     </Setting>
   </Settings>
 </SettingsFile>
