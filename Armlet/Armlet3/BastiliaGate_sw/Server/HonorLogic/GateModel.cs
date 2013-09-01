@@ -22,7 +22,7 @@ namespace HonorLogic
             _service.GateConnected+= id => IfMe(id, () => SetOnline(true));
             _service.GateDisConnected += id => IfMe(id, () => SetOnline(false));
 
-            _service.PillConnectedStatus += (id, status) => SetPilStatus(status[0] == 0);
+            _service.PillConnectedStatus += (id, status) => SetPilStatus(status[1] == 0);
             _service.PillDataRead +=(id, data) => IfMe(id, () => RaisePillDataArrived(data));
             
             Online = true;
