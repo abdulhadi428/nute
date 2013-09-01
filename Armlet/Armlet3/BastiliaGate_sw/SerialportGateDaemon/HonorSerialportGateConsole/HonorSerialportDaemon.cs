@@ -10,23 +10,22 @@ using System.Timers;
 using HonorSerialportGateConsole.Interfaces;
 using HonorSerialportGateConsole.Properties;
 using HonorSerialportGateConsole.ServerWCFService;
-using HonorSerialportGateDaemon;
 
 
 namespace HonorSerialportGateConsole
 {
     public class HonorSerialportDaemon : IDisposable
     {
-        public  StronglyTypedSerialPortConnector TypedSerialPort;
-        private Thread sendThread;
+        private StronglyTypedSerialPortConnector TypedSerialPort;
+        private readonly Thread sendThread;
 
-        public  ConcurrentQueue<Command> inputMessageQueue = new ConcurrentQueue<Command>();
-        public  ConcurrentQueue<string> outputMessageQueue = new ConcurrentQueue<string>();
+        public readonly ConcurrentQueue<Command> inputMessageQueue = new ConcurrentQueue<Command>();
+        private readonly ConcurrentQueue<string> _outputMessageQueue = new ConcurrentQueue<string>();
 
         private  bool _sending = false;
-        private InstanceContext instanceContext;
+        private readonly InstanceContext instanceContext;
         private byte serverProvidedGateId;
-        public string RemoteAddress;
+        private string RemoteAddress;
 
         private System.Timers.Timer UpdateLogTimer;
 
@@ -42,62 +41,48 @@ namespace HonorSerialportGateConsole
 
             try
             {
-                WCFClient.Client = new GateWCFServiceClient(instanceContext, "NetTcpBindingEndpoint");
-                serverProvidedGateId = WCFClient.Client.RegisterGate(serverProvidedGateId);
-                LogClass.Write("Connection to server successfully established. This is now Gate №" + serverProvidedGateId);
-                SetConsoleTitle();
-                inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new[] { serverProvidedGateId }));
-                ((ICommunicationObject)WCFClient.Client).Faulted += HonorSerialportDaemon_Faulted;
-                ((ICommunicationObject)WCFClient.Client).Closed += HonorSerialportDaemon_Closed;
-                _sending = true;
+                ConnectToServer();
             }
             catch (EndpointNotFoundException)
             {
                 _sending = false;
                 WCFClient.Client = null;
-                LogClass.Write("Невозможно подсоединится к серверу: " + RemoteAddress);
-                LogClass.Write("Я тут еще раз попробую подключиться, а вы там, пожалуйста, проверьте, что у сервер работает и у меня указан правильный адрес :)");
+                LogClass.Write("Connection Failed");
                 LogClass.Write("");
                 while (!RetryConnection())
                 {
-                    LogClass.Write("Timeout is 5 seconds...");
+                    LogClass.Write("Retry in 5 secs..");
                     Thread.Sleep(5000);
                 }
                 _sending = true;
             }
-            //try
-            //{
-            //    WCFClient.Client = new GateWCFServiceClient(instanceContext, "NetTcpBindingEndpoint");
+        }
 
-            //    serverProvidedGateId = WCFClient.Client.RegisterGate(Byte.Parse(Settings.Default.PreferedGateId));
-            //}
-            //catch (EndpointNotFoundException)
-            //{
-            //    throw new Exception("Не возможно подсоединится к серверу");
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new Exception("Что-то пошло писец как плохо: " + ex.GetType() + " " + ex.Message);
-            //}
-
-            inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new byte[]{serverProvidedGateId}));
+        private void ConnectToServer()
+        {
+            LogClass.Write("Connect to " + RemoteAddress);
+            WCFClient.Client = new GateWCFServiceClient(instanceContext, "NetTcpBindingEndpoint");
+            serverProvidedGateId = WCFClient.Client.RegisterGate(serverProvidedGateId);
+            LogClass.Write("Connection to server successfully established. This is now Gate #" + serverProvidedGateId);
+            Console.Title = string.Format("SerialportGateDaemon {0} Gate #{1}", Assembly.GetEntryAssembly().GetName().Version, serverProvidedGateId);
+            ((ICommunicationObject) WCFClient.Client).Faulted += HonorSerialportDaemon_Faulted;
+            ((ICommunicationObject) WCFClient.Client).Closed += HonorSerialportDaemon_Closed;
+            inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new[] { serverProvidedGateId }));
+            _sending = true;
         }
 
         #region ReconnectLogic
+
         private void ResolveRemoteAddress()
         {
-            ClientSection clientSettings = ConfigurationManager.GetSection("system.serviceModel/client") as ClientSection;
+            var clientSettings =
+                (ClientSection) ConfigurationManager.GetSection("system.serviceModel/client");
 
-            RemoteAddress = null;
+            var endpoint =
+                clientSettings.Endpoints.Cast<ChannelEndpointElement>()
+                    .FirstOrDefault(e => e.Name == "NetTcpBindingEndpoint");
 
-            foreach (ChannelEndpointElement endpoint in clientSettings.Endpoints)
-            {
-                if (endpoint.Name == "NetTcpBindingEndpoint")
-                {
-                    RemoteAddress = endpoint.Address.ToString();
-                    break;
-                }
-            }
+            RemoteAddress = endpoint == null ? null : endpoint.Address.ToString();
         }
 
 
@@ -130,26 +115,14 @@ namespace HonorSerialportGateConsole
 
             try
             {
-                WCFClient.Client = new GateWCFServiceClient(instanceContext, "NetTcpBindingEndpoint");
-                serverProvidedGateId = WCFClient.Client.RegisterGate(serverProvidedGateId);
+               ConnectToServer();
             }
             catch (EndpointNotFoundException)
             {
-                LogClass.Write("Can't connect to server... Retrying indefinitly...");
+                LogClass.Write("Can't connect to server...");
                 return false;
             }
-
-            LogClass.Write("Connection to server successfully established. This is now Gate №" + serverProvidedGateId);
-            SetConsoleTitle();
-            inputMessageQueue.Enqueue(new ServerToGateCommand(ServerToGateCommands.SetGateNum, new byte[] { serverProvidedGateId }));
-            ((ICommunicationObject)WCFClient.Client).Faulted += HonorSerialportDaemon_Faulted;
-            ((ICommunicationObject)WCFClient.Client).Closed += HonorSerialportDaemon_Closed;
             return true;
-        }
-
-        private void SetConsoleTitle()
-        {
-            Console.Title = string.Format("SerialportGateDaemon {0} Gate #{1}", Assembly.GetEntryAssembly().GetName().Version, serverProvidedGateId);
         }
 
         #endregion
@@ -159,50 +132,54 @@ namespace HonorSerialportGateConsole
         {
             LogClass.SetVerbosity(Settings.Default.LogIsVerbose);
             UpdateLogTimer = new System.Timers.Timer(1000) { AutoReset = true };
-            UpdateLogTimer.Elapsed += new ElapsedEventHandler(UpdateLog_Elapsed);
+            UpdateLogTimer.Elapsed += UpdateLog_Elapsed;
             UpdateLogTimer.Start();
         }
         static void UpdateLog_Elapsed(object sender, ElapsedEventArgs e)
         {
-
-            lock (LogClass.Items)
+            do
             {
-                if (LogClass.Items.Count != 0)
+                string result;
+                var somethingToWrite = LogClass.Items.TryDequeue(out result);
+                if (!somethingToWrite)
                 {
-                    Console.WriteLine("\n" + string.Join("\n", LogClass.Items.ToArray()));
-                    LogClass.Items.Clear();
+                    return;
                 }
-            }
+                Console.WriteLine(result);
+            } while (true);
         }
 
 #endregion
 
        
-        public int RunMailCycle()
+        public void RunMainCycle()
         {
             LogClass.Write("Opening COM port");
             TypedSerialPort = new StronglyTypedSerialPortConnector(
-                inputMessageQueue, outputMessageQueue);
+                inputMessageQueue, _outputMessageQueue);
             TypedSerialPort.SearchForPortAndConnect();
 
             sendThread.Start();
             Console.ReadLine();
-            return 0;
         }
 
         private void SendToServer()
         {
             try
             {
-                while (_sending)
+                while (true)
                 {
                     bool tryDequeue = true;
                     while (tryDequeue)
                     {
                         string outputCommandString;
-                        tryDequeue = outputMessageQueue.TryDequeue(out outputCommandString);
+                        tryDequeue = _outputMessageQueue.TryDequeue(out outputCommandString);
                         if (tryDequeue)
                         {
+                            while (!_sending)
+                            {
+                                Thread.Sleep(1000);
+                            }
                             SendMessage(outputCommandString);
                         }
                     }
@@ -217,7 +194,7 @@ namespace HonorSerialportGateConsole
             }
         }
 
-        private static bool SendMessage(string outputCommandString)
+        private static void SendMessage(string outputCommandString)
         {
             var outputBytes =
                 Command.HexStringToByteArray(Command.SanitiseStringFromComas(outputCommandString));
@@ -229,9 +206,9 @@ namespace HonorSerialportGateConsole
                 switch (commandByte)
                 {
                     case (byte) GateToServerCommands.Ack:
-                        return true;
+                        return;
                     case (byte) GateToServerCommands.GateNumberSet:
-                        return true;
+                        return;
                     case (byte) GateToServerCommands.PillConnectedStatus:
                         WCFClient.Client.PillConnectionStatusAsync(payload);
                         break;
@@ -257,15 +234,15 @@ namespace HonorSerialportGateConsole
                         WCFClient.Client.TXCompletedAsync(payload);
                         break;
                     case (byte) ArmletToServerCommands.RXCompleted:
-                        byte armlet_id = outputBytes[1];
-                        byte data_count = outputBytes[2];
-                        if (data_count >= 2)
+                        byte armletID = outputBytes[1];
+                        byte dataCount = outputBytes[2];
+                        if (dataCount >= 2)
                         {
-                            WCFClient.Client.ArmlteStatusUpdateAsync(new PlayerUpdate[]
+                            WCFClient.Client.ArmlteStatusUpdateAsync(new[]
                                 {
                                     new PlayerUpdate
                                         {
-                                            ArmletID = armlet_id,
+                                            ArmletID = armletID,
                                             NewRoom = outputBytes[3],
                                             NewBlood = outputBytes[4],
                                             NewToxin = outputBytes [5],
@@ -274,15 +251,14 @@ namespace HonorSerialportGateConsole
                                         }
                                 });
                         }
-                        if (data_count > 2)
+                        if (dataCount > 2)
                         {
                             byte[] rxDataPaylod = outputBytes.Skip(2).ToArray();
-                            WCFClient.Client.ArmletSendsDataAsync(armlet_id, rxDataPaylod);
+                            WCFClient.Client.ArmletSendsDataAsync(armletID, rxDataPaylod);
                         }
                         break;
                 }
             }
-            return false;
         }
 
 

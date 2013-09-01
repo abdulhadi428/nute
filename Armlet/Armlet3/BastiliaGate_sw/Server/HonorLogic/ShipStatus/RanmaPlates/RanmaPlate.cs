@@ -51,8 +51,8 @@ namespace HonorLogic.ShipStatus.RanmaPlates
             var dataAfterRepair = data.Skip(16).ToArray();
             for (int i = 0; i <= 7; i++)
             {
-                byte[] subsystemData = data.Skip(i*2).Take(2).ToArray();
-                if (subsystemData.ToArray().Equals(RepairedTable))
+                byte[] subsystemData = dataAfterRepair.Skip(i * 4).Take(2).ToArray();
+                if (subsystemData.ToArray().SequenceEqual(RepairedTable))
                 {
                     _plateStatusList.First(a => a.SubSystemNum == i).Severity = RanmaRepairSeverity.Ready;
                 }

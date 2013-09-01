@@ -1,34 +1,31 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.IO.Ports;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using HonorSerialportGateConsole.Interfaces;
 using HonorSerialportGateConsole.Properties;
-using HonorSerialportGateDaemon;
 
 namespace HonorSerialportGateConsole
 {
     public class StronglyTypedSerialPortConnector  : IDisposable
     {
-        private static SerialPort port;
-        private static ConcurrentQueue<Command> inputQueue;
-        private static ConcurrentQueue<string> outputQueue; 
-        private static object _syncRoot = new object();
+        private readonly SerialPort _port;
+        private readonly ConcurrentQueue<Command> _inputQueue;
+        private readonly ConcurrentQueue<string> _outputQueue; 
+        private readonly object _syncRoot = new object();
 
-        private Thread readThread = new Thread(SerialPortRead);
-        private Thread writeThread = new Thread(WriteToSerialPort);
+        private readonly Thread _readThread;
+        private readonly Thread _writeThread;
 
 
-        public StronglyTypedSerialPortConnector(ConcurrentQueue<Command> _inputQuere, ConcurrentQueue<string> _outputQueue)
+        public StronglyTypedSerialPortConnector(ConcurrentQueue<Command> inputQuere, ConcurrentQueue<string> outputQueue)
         {
-            inputQueue = _inputQuere;
-            outputQueue = _outputQueue;
-            port = new SerialPort
+            _writeThread = new Thread(WriteToSerialPort);
+            _readThread = new Thread(SerialPortRead);
+            _inputQueue = inputQuere;
+            _outputQueue = outputQueue;
+            _port = new SerialPort
                 {
                     BaudRate = 115200,
                     DataBits = 8,
@@ -39,7 +36,7 @@ namespace HonorSerialportGateConsole
                     ReadTimeout =1000,
                     ReadBufferSize = 1024*1024
                 };
-            port.ErrorReceived += PortErrorReceived;
+            _port.ErrorReceived += PortErrorReceived;
         }
 
        
@@ -58,23 +55,23 @@ namespace HonorSerialportGateConsole
                     TryOpenPort(firstPortName);
                 }
             }
-            if (!port.IsOpen)
+            if (!_port.IsOpen)
             {
                 LogClass.Write("COM port opening failed entirely. Aborting operations");
                 throw new Exception("Couldn't open port");
             }
             LogClass.Write("Com port opened! Starting reading and writing threads");
-            readThread.Start();
-            writeThread.Start();
+            _readThread.Start();
+            _writeThread.Start();
         }
 
-        private static bool TryOpenPort(string portName)
+        private  bool TryOpenPort(string portName)
         {
             try
             {
-                port.PortName = portName;
-                port.Open();
-                port.WriteLine("#01");
+                _port.PortName = portName;
+                _port.Open();
+                _port.WriteLine("#01");
                 //port.ReadTimeout = 1000;
                 //var answer = port.ReadLine().Trim().Replace(",", "");
                 //if (answer != "#9000")
@@ -82,21 +79,21 @@ namespace HonorSerialportGateConsole
                 //    port.Close();
                 //    return false;
                 //}
-                port.ReadTimeout = 1000;
+                _port.ReadTimeout = 1000;
                 return true;
             }
             catch (Exception)
             {
                 LogClass.Write("Error at opening port named " + portName);
-                if (port.IsOpen)
+                if (_port.IsOpen)
                 {
-                    port.Close();
+                    _port.Close();
                 }
                 return false;
             }
         }
 
-        private static void WriteToSerialPort()
+        private void WriteToSerialPort()
         {
             try
             {
@@ -104,13 +101,13 @@ namespace HonorSerialportGateConsole
                 {
 
                     Command result;
-                    while (inputQueue.TryDequeue(out result))
+                    while (_inputQueue.TryDequeue(out result))
                     {
                         string commandString = result.ConvertToString();
                         LogClass.Write("Pipe -> Com pending");
                         lock (_syncRoot)
                         {
-                            port.WriteLine(commandString);
+                            _port.WriteLine(commandString);
                         }
                         LogClass.WritePacket("Pipe -> Com: ", commandString);
                     }
@@ -125,13 +122,13 @@ namespace HonorSerialportGateConsole
             }
         }
 
-        private static void SerialPortRead()
+        private void SerialPortRead()
         {
             try
             {
                 while (true)
                 {
-                    while (!inputQueue.IsEmpty)
+                    while (!_inputQueue.IsEmpty)
                     {
                         Thread.Sleep(0);
                     }
@@ -140,7 +137,7 @@ namespace HonorSerialportGateConsole
                     {
                         lock (_syncRoot)
                         {
-                            message = port.ReadLine();
+                            message = _port.ReadLine();
                         }
                     }
                     catch (TimeoutException)
@@ -149,7 +146,7 @@ namespace HonorSerialportGateConsole
                     }
                     
                     LogClass.WritePacket("COM -> Pipe: ", message);
-                    outputQueue.Enqueue(message);
+                    _outputQueue.Enqueue(message);
 
                 }
             }
@@ -168,9 +165,9 @@ namespace HonorSerialportGateConsole
 
         public void Dispose()
         {
-            if (port != null && port.IsOpen)
+            if (_port != null && _port.IsOpen)
             {
-                port.Close();
+                _port.Close();
             }
         }
     }

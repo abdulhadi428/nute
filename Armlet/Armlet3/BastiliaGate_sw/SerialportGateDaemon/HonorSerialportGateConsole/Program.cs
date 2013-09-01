@@ -14,7 +14,7 @@ namespace HonorSerialportGateConsole
             {
                 using (var daemon = new HonorSerialportDaemon())
                 {
-                    daemon.RunMailCycle();
+                    daemon.RunMainCycle();
                 }
                 return 0;
             }

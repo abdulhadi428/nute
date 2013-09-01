@@ -1,37 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Concurrent;
 
-namespace HonorSerialportGateDaemon
+namespace HonorSerialportGateConsole
 {
-    class LogClass
+    static class LogClass
     {
-        public static List<string> Items = new List<string>();
-        private static bool isVerbose = false;
+        public static readonly ConcurrentQueue<string> Items = new ConcurrentQueue<string>();
+        private static bool _isVerbose;
 
         public static void SetVerbosity(bool verbosityLevel)
         {
-            isVerbose = verbosityLevel;
+            _isVerbose = verbosityLevel;
         }
         public static void  Write(string v)
         {
-            lock (Items)
-            {
-                Items.Add(v);
-            }
+            Items.Enqueue(v);
         }
         public static void WritePacket(string h, string packet)
         {
-            if (isVerbose)
+            if (_isVerbose)
             {
                 Write(h + packet);
             }
         }
-        
-
-        
-
     }
 }
