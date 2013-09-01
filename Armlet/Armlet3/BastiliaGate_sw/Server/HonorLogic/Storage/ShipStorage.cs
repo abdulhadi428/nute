@@ -26,13 +26,12 @@ namespace HonorLogic.Storage
 
     internal class ShipStorage
     {
-        private readonly StorageBase<ShipStoredData> _storageBase;
         private readonly Dictionary<Guid, ShipStoredData> _savedData;
 
         public ShipStorage()
         {
-            _storageBase = new StorageBase<ShipStoredData>("ship");
-            var readJson = _storageBase.ReadJson();
+            var storageBase = new StorageBase<ShipStoredData>("ship");
+            var readJson = storageBase.ReadFile(".");
             if (readJson != null)
             {
                 _savedData =
@@ -45,10 +44,10 @@ namespace HonorLogic.Storage
             }
         }
 
-        public void SaveData(List<ShipStoredData> pairs)
-        {
-            _storageBase.Save(pairs);
-        }
+        //public void SaveData(List<ShipStoredData> pairs)
+        //{
+        //    _storageBase.Save(pairs);
+        //}
 
         public ShipBase CreateObject(Guid id, GlobalModel model)
         {
@@ -67,7 +66,7 @@ namespace HonorLogic.Storage
             ship.Name = obj == null ? id.ToString() : obj.Value.Name;
             ship.Model = model;
             ship.ShipGuid = id;
-            ship.Rooms = obj == null ? new List<RoomInfo>() : obj.Value.Rooms;
+            ship.Rooms = (obj == null ? new List<RoomInfo>() : obj.Value.Rooms) ?? new List<RoomInfo>();
             ship.InitializeRanmaPlate();
             return ship;
         }

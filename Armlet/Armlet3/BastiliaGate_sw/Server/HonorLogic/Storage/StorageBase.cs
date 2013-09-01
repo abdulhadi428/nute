@@ -14,17 +14,13 @@ namespace HonorLogic.Storage
         {
             return dir + @"\" + _infoClass + ".json";
         }
-        public string ReadJson()
-        {
-            return ReadFile(DefaultDir()) ?? ReadFile(".");
-        }
 
-        private static string DefaultDir()
+        public static string DefaultDir()
         {
             return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         }
 
-        private string ReadFile(string dir)
+        public string ReadFile(string dir)
         {
             try
             {

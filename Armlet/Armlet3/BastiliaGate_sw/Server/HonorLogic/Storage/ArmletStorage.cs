@@ -21,7 +21,7 @@ namespace HonorLogic.Storage
         public ArmletStorage()
         {
             _storageBase = new StorageBase<AStoredData>("armlet");
-            var readJson = _storageBase.ReadJson();
+            var readJson = _storageBase.ReadFile(StorageBase<AStoredData>.DefaultDir());
             if (readJson != null)
             {
                 _savedData =

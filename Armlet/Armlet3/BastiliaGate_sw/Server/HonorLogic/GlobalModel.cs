@@ -163,7 +163,7 @@ namespace HonorLogic
         private void SaveTask()
         {
             _armletStorage.SaveData(_armletList.GetDataToStore());
-            _shipStorage.SaveData(_shipList.GetDataToStore());
+            //_shipStorage.SaveData(_shipList.GetDataToStore());
         }
 
         private static byte[] CreatePayload(MessageId messageId, IEnumerable<byte> data)
