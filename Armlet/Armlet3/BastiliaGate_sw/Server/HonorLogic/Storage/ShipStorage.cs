@@ -57,13 +57,13 @@ namespace HonorLogic.Storage
             var big = gates.Count > 1;
             var ship = big ? (ShipBase) new BigShip() : new LakShip();
             ship.PhysicalGateID = gates.ToArray();
-            if (obj != null)
-            {
-                foreach (var s in obj.Value.Subsystems)
-                {
-                    ship.SetSubsystemStatus(s);
-                }
-            }
+            //if (obj != null)
+            //{
+            //    foreach (var s in obj.Value.Subsystems)
+            //    {
+            //        ship.SetSubsystemStatus(s);
+            //    }
+            //}
             ship.Name = obj == null ? id.ToString() : obj.Value.Name;
             ship.Model = model;
             ship.ShipGuid = id;
