@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
  using HonorInterfaces;
 
@@ -77,7 +78,8 @@ namespace ServerGUI
                 MessageBox.Show("Выберите браслет!");
                 return;
             }
-            Model.SetSetPlayerRegen(CurrentArmlet, (byte) RegenLevelComboBox.SelectedValue);
+            var button = (Button) sender;
+            Model.SetSetPlayerRegen(CurrentArmlet, byte.Parse(button.Content.ToString()));
         }
 
         private void SendAll_Click(object sender, RoutedEventArgs e)

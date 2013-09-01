@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:serverGUI="clr-namespace:ServerGUI"
-             xmlns:system="clr-namespace:System;assembly=mscorlib" x:Class="ServerGUI.ArmletGridUI"
+    x:Class="ServerGUI.ArmletGridUI"
              mc:Ignorable="d" 
              d:DesignHeight="451.128" d:DesignWidth="1000"  Loaded="ArmletGridUI_OnLoaded"
              d:DataContext="{d:DesignInstance serverGUI:ArmletGridUI}">
@@ -14,16 +14,25 @@
                 <Setter Property="Padding" Value="5,5" />
             </Style>
         </DockPanel.Resources>
-        <WrapPanel Orientation="Vertical" DockPanel.Dock="Top" MaxHeight="100">
+        <ScrollViewer DockPanel.Dock="Right">
+            <StackPanel Orientation="Vertical" x:Name="ShipStackPanel"></StackPanel>
+        </ScrollViewer>
+        <WrapPanel Orientation="Vertical" DockPanel.Dock="Top" MaxHeight="150">
             <GroupBox Header="Установка имени" >
                 <StackPanel Orientation="Vertical">
                     <TextBox x:Name="NameTextBox"/>
                 <WrapPanel Orientation="Horizontal">
-                    
                     <Button Click="UpdateName_OnClick" Content="Установить"/>
                     <Button Content="Установить всем" Click="Button_Click_1"/>
                 </WrapPanel>
                     </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Регенерация" >
+                <WrapPanel Orientation="Horizontal">
+                    <Button Click="UpdateRegeneration_Click" Content="1" />
+                    <Button Click="UpdateRegeneration_Click" Content="2" />
+                    <Button Click="UpdateRegeneration_Click" Content="3" />
+                </WrapPanel>
             </GroupBox>
             <GroupBox Header="Отсылка сообщения" >
                 <StackPanel Orientation="Vertical">
@@ -34,22 +43,11 @@
                     </WrapPanel>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Установка уровня регенерации" >
-                <StackPanel Orientation="Horizontal">
-                    <ComboBox x:Name="RegenLevelComboBox" IsEditable="False">
-                        <system:Byte>1</system:Byte>
-                        <system:Byte>2</system:Byte>
-                        <system:Byte>3</system:Byte>
-                    </ComboBox>
-                    <Button Click="UpdateRegeneration_Click" Content="Установить"/>
-                </StackPanel>
-            </GroupBox>
+            
             <serverGUI:GateTabControl x:Name="GateUI" x:FieldModifier="public" />
 
         </WrapPanel>
-        <ScrollViewer DockPanel.Dock="Right">
-            <StackPanel Orientation="Vertical" x:Name="ShipStackPanel"></StackPanel>
-        </ScrollViewer>
+
         <DataGrid x:Name="ArmletGrid" AutoGenerateColumns="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding (serverGUI:ArmletWatcher.Id)}" ClipboardContentBinding="{x:Null}" Header="ИД">
