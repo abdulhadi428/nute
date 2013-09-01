@@ -20,5 +20,7 @@ namespace HonorInterfaces
 
         event Action<ShipSubsystemStatus> SubsystemUpdated;
         void HitRandomRoom(RanmaRepairSeverity severity);
+
+        bool IsOnline { get; }
     }
 }

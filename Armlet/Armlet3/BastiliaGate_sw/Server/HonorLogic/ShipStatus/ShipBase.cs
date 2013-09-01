@@ -51,6 +51,15 @@ namespace HonorLogic.ShipStatus
             Model.SendRoomHit(RoomsWithPeople.RandomOrDefault(), GetHitChanceFromSeverity(severity));
         }
 
+        public bool IsOnline
+        {
+            get
+            {
+                //TODO Show correct status
+                return false;
+            }
+        }
+
         private byte GetHitChanceFromSeverity(RanmaRepairSeverity severity)
         {
             return (byte) (((byte) severity - 2)*25 + 50);
@@ -119,8 +128,8 @@ namespace HonorLogic.ShipStatus
 
         private bool UpdateSubsystemsForPlates()
         {
-            //TODO FIX ME WHy only first plate?
-            var ranmaPlate = _ranmaPlates[0];
+            var ranmaPlate = _ranmaPlates.First();
+            //Plates already synced, so used first
             var simulatorShouldBeNoticed = UpdateSubsytemsForPlate(ranmaPlate);
             return simulatorShouldBeNoticed;
         }
