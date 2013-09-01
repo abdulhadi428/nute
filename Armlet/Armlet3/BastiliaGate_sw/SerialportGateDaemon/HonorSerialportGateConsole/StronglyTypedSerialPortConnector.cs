@@ -49,11 +49,13 @@ namespace HonorSerialportGateConsole
             LogClass.Write("Using default port name: " + defaultPortName);
             if (!TryOpenPort(defaultPortName))
             {
-                LogClass.Write("Default port failed. Using first encountered port");
+               
                 var portNames = SerialPort.GetPortNames();
-                if (portNames.Length > 0)
+                var firstPortName = portNames.FirstOrDefault();
+                if (firstPortName != null)
                 {
-                    TryOpenPort(portNames.First());
+                    LogClass.Write("Default port failed. Using first encountered port " + firstPortName);
+                    TryOpenPort(firstPortName);
                 }
             }
             if (!port.IsOpen)
