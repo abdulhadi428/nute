@@ -145,8 +145,8 @@ namespace HonorLogic.ShipStatus
 
         public void SetSubsystemStatus(ShipSubsystemStatus ranmaStatus)
         {
-            Debug.Assert(ranmaStatus.SubSystemNum >= SubsystemsCount);
-            Debug.Assert(ranmaStatus.SubSystemNum < 0);
+            Debug.Assert(ranmaStatus.SubSystemNum < SubsystemsCount);
+            Debug.Assert(ranmaStatus.SubSystemNum >= 0);
 
             _subsystems[ranmaStatus.SubSystemNum].Severity = ranmaStatus.Severity;
             if (ranmaStatus.Severity != RanmaRepairSeverity.Ready)

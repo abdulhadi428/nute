@@ -28,7 +28,7 @@ namespace HonorLogic
 
         private void OnArmletUpdated()
         {
-            Action handler = ArmletUpdated;
+            var handler = ArmletUpdated;
             if (handler != null) handler();
         }
 

@@ -18,16 +18,6 @@ namespace ServerGUI
             private set { SetValue(RegenProperty, value); }
         }
 
-        public static readonly DependencyProperty PoxinProperty =
-            DependencyProperty.Register("Poxin", typeof (string), typeof (ArmletWatcher),
-                new PropertyMetadata(default(string)));
-
-        public string Poxin
-        {
-            get { return (string) GetValue(PoxinProperty); }
-            set { SetValue(PoxinProperty, value); }
-        }
-
         public static readonly DependencyProperty PulseProperty =
             DependencyProperty.Register("Pulse", typeof (string), typeof (ArmletWatcher),
                 new PropertyMetadata(default(string)));
