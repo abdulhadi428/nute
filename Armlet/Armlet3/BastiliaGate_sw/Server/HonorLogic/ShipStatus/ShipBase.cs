@@ -165,8 +165,6 @@ namespace HonorLogic.ShipStatus
 
         private void CheckPlateStatus()
         {
-            InitializeUpdatePlatesInfo();
-
             for (var i = 0; i < SubsystemsCount; i ++)
             {
                 SyncSubsystem(i);
@@ -177,6 +175,8 @@ namespace HonorLogic.ShipStatus
             {
                 //Надо бы сказать Рандиру
             }
+
+            InitializeUpdatePlatesInfo();
         }
 
         private void SetSubsytemSeverityToAll(int i, RanmaRepairSeverity ranmaRepairSeverity)

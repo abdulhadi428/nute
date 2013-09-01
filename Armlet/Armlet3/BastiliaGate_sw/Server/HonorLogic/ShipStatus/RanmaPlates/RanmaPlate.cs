@@ -40,10 +40,10 @@ namespace HonorLogic.ShipStatus.RanmaPlates
         {
             for (int i = 0; i <= 7; i++)
             {
-                byte[] subsystemData = data.Skip(i*3).Take(3).ToArray();
-                if (subsystemData.Skip(1).ToArray().Equals(RepairedTable))
+                byte[] subsystemData = data.Skip(i*2).Take(2).ToArray();
+                if (subsystemData.ToArray().Equals(RepairedTable))
                 {
-                    _plateStatusList.First(a => a.SubSystemNum == subsystemData[0]).Severity = RanmaRepairSeverity.Ready;
+                    _plateStatusList.First(a => a.SubSystemNum == i).Severity = RanmaRepairSeverity.Ready;
                 }
             }
         }
