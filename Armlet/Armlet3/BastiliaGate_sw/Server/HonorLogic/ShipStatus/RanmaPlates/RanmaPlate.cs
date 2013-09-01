@@ -59,7 +59,7 @@ namespace HonorLogic.ShipStatus.RanmaPlates
 
         public void SetSubsystemSeverity(int subSystemNum, RanmaRepairSeverity ranmaRepairSeverity)
         {
-            _plateStatusList.First(a => a.SubSystemNum == subSystemNum).Severity = ranmaRepairSeverity;
+            GetSubsystem(subSystemNum).Severity = ranmaRepairSeverity;
 
             var repairTable = RanmaSubsystemStatusFactory.GenerateRanmaSubsystemStatus(ranmaRepairSeverity).Bytes;
             _gateModel.WritePlate(0, subSystemNum, repairTable);
@@ -67,10 +67,10 @@ namespace HonorLogic.ShipStatus.RanmaPlates
 
         public RanmaRepairSeverity GetSubsystemSeverity(int i)
         {
-            return _plateStatusList.First(a => a.SubSystemNum == i).Severity;
+            return GetSubsystem(i).Severity;
         }
 
-        public ShipSubsystemStatus GetSubsystem(int i)
+        private ShipSubsystemStatus GetSubsystem(int i)
         {
             return _plateStatusList.First(a => a.SubSystemNum == i);
         }

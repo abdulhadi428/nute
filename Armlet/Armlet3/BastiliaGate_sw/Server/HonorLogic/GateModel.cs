@@ -26,7 +26,7 @@ namespace HonorLogic
             _service.PillDataRead +=(id, data) => IfMe(id, () => RaisePillDataArrived(data));
             
             Online = true;
-            var timer = new Timer { AutoReset = true, Interval = 1000};
+            var timer = new Timer { AutoReset = true, Interval = 10000};
             timer.Elapsed += (sender, e) => RefreshPillStatus();
             
             timer.Start();

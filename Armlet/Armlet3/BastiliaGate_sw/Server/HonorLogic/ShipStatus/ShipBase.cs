@@ -189,6 +189,10 @@ namespace HonorLogic.ShipStatus
 
         private void CheckPlateStatus()
         {
+            if (!IsOnline)
+            {
+                return;
+            }
             for (var i = 0; i < SubsystemsCount; i ++)
             {
                 SyncSubsystem(i);
@@ -213,9 +217,9 @@ namespace HonorLogic.ShipStatus
 
         private void SyncSubsystem(int i)
         {
-            var subsystemCopies = _ranmaPlates.Select(plate => plate.GetSubsystem(i)).ToArray();
-            var hasReadyPlate = subsystemCopies.Any(p => p.Severity == RanmaRepairSeverity.Ready);
-            var hasBrokenPlate = subsystemCopies.Any(p => p.Severity != RanmaRepairSeverity.Ready);
+            var severities = _ranmaPlates.Select(plate => plate.GetSubsystemSeverity(i)).ToArray();
+            var hasReadyPlate = severities.Any(p => p == RanmaRepairSeverity.Ready);
+            var hasBrokenPlate = severities.Any(p => p != RanmaRepairSeverity.Ready);
 
             if (hasReadyPlate && hasBrokenPlate)
             {
