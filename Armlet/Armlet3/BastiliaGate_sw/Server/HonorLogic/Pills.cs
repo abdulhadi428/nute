@@ -47,6 +47,13 @@ namespace HonorLogic
                 new PillType {Name = "Наногипс", Id = 12},
                 new PillType {Name = "Наноэкзоскелет", Id = 13},
                 new PillType {Name = "Волшебная таблетка (мастерская)", Id = 14},
+                new PillType {Name = "Пытка: ожог", Id = 20},
+                new PillType {Name = "Пытка: конечность", Id = 21},
+                new PillType {Name = "Пытка: глаз", Id = 22},
+                new PillType {Name = "Пытка: удушение", Id = 23},
+                new PillType {Name = "Смертельный яд", Id = 24},
+                new PillType {Name = "Пытка: утопление", Id = 25},
+                new PillType {Name = "Пытка: огонь", Id = 26},
             };
     }
 }
