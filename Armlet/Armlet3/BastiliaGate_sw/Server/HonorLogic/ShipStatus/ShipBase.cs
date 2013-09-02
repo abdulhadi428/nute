@@ -147,10 +147,9 @@ namespace HonorLogic.ShipStatus
             Debug.Assert(ranmaStatus.SubSystemNum >= 0);
 
             _subsystems[ranmaStatus.SubSystemNum].Severity = ranmaStatus.Severity;
-            if (ranmaStatus.Severity != RanmaRepairSeverity.Ready)
-            {
-                SetSubsytemSeverityToAll(ranmaStatus.SubSystemNum, ranmaStatus.Severity);
-            }
+            
+            SetSubsytemSeverityToAll(ranmaStatus.SubSystemNum, ranmaStatus.Severity);
+            
             //2) Известить рандира на симуляторе
         }
 
