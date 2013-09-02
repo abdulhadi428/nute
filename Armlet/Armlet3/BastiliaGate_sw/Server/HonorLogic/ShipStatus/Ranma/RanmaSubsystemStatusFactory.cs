@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using HonorInterfaces;
 using HonorUtils;
@@ -41,12 +40,13 @@ namespace HonorLogic.ShipStatus.Ranma
         public static RanmaRepairSeverity ToSeverity(this byte[] info)
         {
             var tableValue = info.MakeUInt16();
-            return Table.Single(t => t.Value.Contains(tableValue)).Key;
+            var singleOrDefault = Table.Where(t => t.Value.Contains(tableValue)).ToArray();
+            return !singleOrDefault.Any() ? RanmaRepairSeverity.NotDamaged : singleOrDefault.Single().Key;
         }
 
         public static ushort MakeUInt16(this byte[] info)
         {
-            if (BitConverter.IsLittleEndian == true)
+            if (BitConverter.IsLittleEndian)
             {
                 info = info.Reverse().ToArray();
             }
