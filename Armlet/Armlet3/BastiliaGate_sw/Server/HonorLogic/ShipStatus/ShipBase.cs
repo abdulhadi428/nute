@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using HonorInterfaces;
-using HonorLogic.ShipStatus.RanmaPlates;
+using HonorLogic.ShipStatus.Ranma;
 using HonorLogic.Storage;
 using HonorUtils;
 
@@ -103,7 +103,7 @@ namespace HonorLogic.ShipStatus
             //SubsystemsCount doesn't rely on dervied constructor status, so this is ok
             for (var i = 0; i < SubsystemsCount; i++)
             {
-                _subsystems.Add(new ShipSubsystemStatus {Severity = RanmaRepairSeverity.Ready, SubSystemNum = i});
+                _subsystems.Add(new ShipSubsystemStatus {Severity = RanmaRepairSeverity.NotDamaged, SubSystemNum = i});
             }
         }
 
@@ -117,10 +117,10 @@ namespace HonorLogic.ShipStatus
             var simulatorShouldBeNoticed = false;
             for (var i = 0; i < SubsystemsCount; i++)
             {
-                var newSeverity = ranmaPlate.GetSubsystemSeverity(i);
                 var subsSytem = _subsystems.First(a => a.SubSystemNum == i);
-                if (subsSytem.Severity == newSeverity) continue;
-                subsSytem.Severity = newSeverity;
+                if (subsSytem.Severity == ranmaPlate[i].Severity && subsSytem.RepairedStatus == ranmaPlate[i].RepairedStatus) continue;
+                subsSytem.Severity = ranmaPlate[i].Severity;
+                subsSytem.RepairedStatus = ranmaPlate[i].RepairedStatus;
                 InvokeSubsystemUpdated(subsSytem);
                 simulatorShouldBeNoticed = true;
             }
@@ -214,13 +214,13 @@ namespace HonorLogic.ShipStatus
 
         private void SyncSubsystem(int i)
         {
-            var severities = _ranmaPlates.Select(plate => plate.GetSubsystemSeverity(i)).ToArray();
-            var hasReadyPlate = severities.Any(p => p == RanmaRepairSeverity.Ready);
-            var hasBrokenPlate = severities.Any(p => p != RanmaRepairSeverity.Ready);
+            var severities = _ranmaPlates.Select(plate => plate[i].Severity).ToArray();
+            var hasReadyPlate = severities.Any(p => p == RanmaRepairSeverity.NotDamaged);
+            var hasBrokenPlate = severities.Any(p => p != RanmaRepairSeverity.NotDamaged);
 
             if (hasReadyPlate && hasBrokenPlate)
             {
-                SetSubsytemSeverityToAll(i, RanmaRepairSeverity.Ready);
+                SetSubsytemSeverityToAll(i, RanmaRepairSeverity.NotDamaged);
             }
         }
     }

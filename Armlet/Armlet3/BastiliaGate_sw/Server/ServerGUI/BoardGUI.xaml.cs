@@ -14,20 +14,22 @@ namespace ServerGUI
         }
         public void Update()
         {
-            StatusListBox.SelectedIndex = (int) Status.Severity;
+            DamageListBox.SelectedIndex = (int) Status.Severity;
+            StatusLabel.Content = Status.RepairedStatus.ToString("X4");
             UpdateBackground();
         }
 
         private void UpdateBackground()
         {
-            StatusListBox.Background = new SolidColorBrush(GetSeverityColor(Status.Severity));
+            DamageListBox.Background = new SolidColorBrush(GetSeverityColor(Status.Severity));
+            StatusLabel.Background = new SolidColorBrush(Status.RepairedStatus == 0 ? Colors.Green : Colors.Red);
         }
 
         private Color GetSeverityColor(RanmaRepairSeverity severity)
         {
             switch (severity)
             {
-                case RanmaRepairSeverity.Ready:
+                case RanmaRepairSeverity.NotDamaged:
                     return Colors.GreenYellow;
                 case RanmaRepairSeverity.Easy:
                     return Colors.Yellow;
@@ -40,9 +42,9 @@ namespace ServerGUI
             }
         }
 
-        private void StatusListBoxOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
+        private void DamageListBoxOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
         {
-            Status.Severity = (RanmaRepairSeverity) StatusListBox.SelectedIndex;
+            Status.Severity = (RanmaRepairSeverity) DamageListBox.SelectedIndex;
             if (StatusChanged != null)
             {
                 StatusChanged(this, EventArgs.Empty);
@@ -59,7 +61,7 @@ namespace ServerGUI
 
         private void BoardGUI_OnLoaded(object sender, RoutedEventArgs e)
         {
-            StatusListBox.SelectionChanged += StatusListBoxOnSelectionChanged;
+            DamageListBox.SelectionChanged += DamageListBoxOnSelectionChanged;
         }
     }
 }

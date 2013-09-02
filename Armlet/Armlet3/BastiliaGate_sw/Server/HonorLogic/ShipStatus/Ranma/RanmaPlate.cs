@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using HonorInterfaces;
 
-namespace HonorLogic.ShipStatus.RanmaPlates
+namespace HonorLogic.ShipStatus.Ranma
 {
     public class RanmaPlate
     {
-        private static readonly byte[] RepairedTable = {0,0};
         private readonly List<ShipSubsystemStatus> _plateStatusList = new List<ShipSubsystemStatus>();
         private readonly IGateModel _gateModel;
 
@@ -18,7 +17,7 @@ namespace HonorLogic.ShipStatus.RanmaPlates
             _gateModel = gateModel;
             for (var i = 0; i < subsystemsCount; i++)
             {
-                _plateStatusList.Add(new ShipSubsystemStatus {Severity = RanmaRepairSeverity.Ready, SubSystemNum = i});
+                _plateStatusList.Add(new ShipSubsystemStatus {Severity = RanmaRepairSeverity.NotDamaged, SubSystemNum = i});
             }
 
             _gateModel.DeviceDataArrived += PlateDataRead;
@@ -52,29 +51,27 @@ namespace HonorLogic.ShipStatus.RanmaPlates
             for (int i = 0; i <= 7; i++)
             {
                 byte[] subsystemData = dataAfterRepair.Skip(i * 4).Take(2).ToArray();
-                if (subsystemData.ToArray().SequenceEqual(RepairedTable))
-                {
-                    _plateStatusList.First(a => a.SubSystemNum == i).Severity = RanmaRepairSeverity.Ready;
-                }
+                var lastData = realData.Skip(i*4).Take(2).ToArray();
+
+                this[i].Severity = lastData.ToSeverity();
+                this[i].RepairedStatus = subsystemData.MakeUInt16();
             }
         }
 
         public void SetSubsystemSeverity(int subSystemNum, RanmaRepairSeverity ranmaRepairSeverity)
         {
-            GetSubsystem(subSystemNum).Severity = ranmaRepairSeverity;
+            this[subSystemNum].Severity = ranmaRepairSeverity;
 
             var repairTable = RanmaSubsystemStatusFactory.GenerateRanmaSubsystemStatus(ranmaRepairSeverity).Bytes;
             _gateModel.WritePlate(0, subSystemNum, repairTable);
         }
 
-        public RanmaRepairSeverity GetSubsystemSeverity(int i)
+        public ShipSubsystemStatus this[int index]
         {
-            return GetSubsystem(i).Severity;
-        }
-
-        private ShipSubsystemStatus GetSubsystem(int i)
-        {
-            return _plateStatusList.First(a => a.SubSystemNum == i);
+            get
+            {
+                return _plateStatusList.First(a => a.SubSystemNum == index);
+            }
         }
 
         public bool Online

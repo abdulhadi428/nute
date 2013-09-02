@@ -40,7 +40,7 @@
     <Compile Include="Armlet.cs" />
     <Compile Include="ArmletList.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="ShipStatus\RanmaPlates\RanmaPlate.cs" />
+    <Compile Include="ShipStatus\Ranma\RanmaPlate.cs" />
     <Compile Include="ShipStatus\ShipBase.cs" />
     <Compile Include="Storage\ArmletStorage.cs" />
     <Compile Include="GateModel.cs" />
@@ -52,10 +52,10 @@
     <Compile Include="ShipList.cs" />
     <Compile Include="ShipStatus\LakShip.cs" />
     <Compile Include="ShipStatus\BigShip.cs" />
-    <Compile Include="ShipStatus\RanmaSubsystemTable.cs" />
+    <Compile Include="ShipStatus\Ranma\RanmaSubsystemTable.cs" />
     <Compile Include="Storage\ShipStorage.cs" />
     <Compile Include="Storage\StorageBase.cs" />
-    <Compile Include="ShipStatus\RanmaSubsystemStatusFactory.cs" />
+    <Compile Include="ShipStatus\Ranma\RanmaSubsystemStatusFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HonorUtils\HonorUtils.csproj">
