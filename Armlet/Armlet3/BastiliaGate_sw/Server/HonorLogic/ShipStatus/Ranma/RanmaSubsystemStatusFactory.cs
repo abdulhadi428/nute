@@ -14,11 +14,15 @@ namespace HonorLogic.ShipStatus.Ranma
         {
             {RanmaRepairSeverity.NotDamaged, new ushort[] {0x0}},
             {
+                //RanmaRepairSeverity.Easy, new ushort[]
+                //{
+                //    0x0303, 0x8228, 0x1111, 0xA0A0, 0x0AA0, 0xA6A6, 0x8800,
+                //    0x8808, 0x0161, 0x6116, 0x1310, 0x1F10, 0x1810, 0x4941, 0x2332,
+                //    0x0F99, 0x909F, 0x4F7F, 0x0B0B, 0x7077
+                //}
                 RanmaRepairSeverity.Easy, new ushort[]
                 {
-                    0x0303, 0x8228, 0x1111, 0xA0A0, 0x0AA0, 0xA6A6, 0x8800,
-                    0x8808, 0x0161, 0x6116, 0x1310, 0x1F10, 0x1810, 0x4941, 0x2332,
-                    0x0F99, 0x909F, 0x4F7F, 0x0B0B, 0x7077
+                    0xFFFF
                 }
             },
             {
@@ -47,7 +51,7 @@ namespace HonorLogic.ShipStatus.Ranma
 
         public static ushort MakeUInt16(this byte[] info)
         {
-            if (BitConverter.IsLittleEndian == false)
+            if (BitConverter.IsLittleEndian == true)
             {
                 info = info.Reverse().ToArray();
             }

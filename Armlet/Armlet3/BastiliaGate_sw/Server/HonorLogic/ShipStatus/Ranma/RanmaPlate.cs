@@ -46,15 +46,20 @@ namespace HonorLogic.ShipStatus.Ranma
 
         private void PlateDataRead(byte[] data) // Вызывается в момент, когда произведено чтение байт с платы
         {
-            var realData = data.Take(16).ToArray();
-            var dataAfterRepair = data.Skip(16).ToArray();
-            for (int i = 0; i <= 7; i++)
+            foreach (var shipSubsystemStatuse in _plateStatusList)
             {
-                byte[] subsystemData = dataAfterRepair.Skip(i * 4).Take(2).ToArray();
-                var lastData = realData.Skip(i*4).Take(2).ToArray();
+                var offset = shipSubsystemStatuse.SubSystemNum*4;
 
-                this[i].Severity = lastData.ToSeverity();
-                this[i].RepairedStatus = subsystemData.MakeUInt16();
+                var subsystemData = data.Skip(offset + 2).Take(2).ToArray();
+                var lastData = data.Skip(offset).Take(2).ToArray();
+
+                var severity = lastData.ToSeverity();
+
+                shipSubsystemStatuse.Severity = severity;
+
+                shipSubsystemStatuse.RepairedStatus = severity == RanmaRepairSeverity.NotDamaged
+                    ? (ushort) 0
+                    : subsystemData.MakeUInt16();
             }
         }
 
