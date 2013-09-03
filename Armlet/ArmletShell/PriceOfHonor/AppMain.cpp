@@ -60,7 +60,11 @@ void AppMainThread(void* param)
 #ifdef _MSC_VER
 	for (int i=0; i<MaxCureId; i++) {
 		ArmletApi::WritePill(i,i+10);
-		ArmletApi::SetCureName(i, (char*)CureNames[i]);
+		ArmletApi::SetCureName(i, (char*)CureName[i]);
+	}
+	for (int i=0; i<MaxTortureId; i++) {
+		ArmletApi::WritePill(i+20,i+30);
+		ArmletApi::SetCureName(i+20, (char*)TortureName[i]);
 	}
 #endif
 

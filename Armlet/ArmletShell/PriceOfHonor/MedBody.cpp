@@ -18,18 +18,6 @@ namespace medicine {
 		"ожог",
 		"радиация"
 	};
-
-	const int BodyStructure[MaxTarget][MaxOrganType] = {						
-		{	0,	1,	2,	2	}, //LA
-		{	0,	1,	2,	2	}, //RA
-		{	0,	1,	2,	2	}, //LL
-		{	0,	1,	2,	2	}, //RL
-		{	0,	1,	4,	5	}, //Chest
-		{	0,	1,	6,	7	}, //Abdomen
-		{	0,	2,	8,	9	}, //Back
-		{	0,	2,	1,	3	}  //Head
-	};	
-
 /*
 	const SYMPTOM SymptomsByBodyStructure[MaxTarget*MaxOrganType][2] = 
 	{
@@ -85,7 +73,8 @@ namespace medicine {
 
 	SYMPTOM getDisfnSymptomByTargetOrgan(TARGET part, PART* pPart)
 	{
-		return SymptomsByPart[part][pPart->DisfnLevel];
+//		return SymptomsByPart[part][pPart->DisfnLevel];
+		return NoSymptom;
 	}
 
 	SYMPTOM getBloodLossSymptom(ubyte_t bloodCapacity)
@@ -113,9 +102,9 @@ namespace medicine {
 		Body.RegenerationLevel = RegenLow;
 		for (int i=0; i < MaxTarget; i++) {
 			Body.parts[i].Bleeding = 0;
-			Body.parts[i].DisfnLevel = NoDisfn;
-			Body.parts[i].PainLevel = NoPain;
-			Body.parts[i].CurrSeverity = None;
+			Body.parts[i].PainLevel = 0;
+			//for (int j=0; j < MaxDamageEffect; j++)
+			//	Body.parts[i].CurrSeverity[j] = None; TODO FIX
 		}
 		//Body.ToxinsCapacity = 5000;
 	}
@@ -133,15 +122,14 @@ namespace medicine {
 
 		for (int i=0; i<MaxTarget; i++) {
 			PPART part = &Body.parts[i];
-			DISFUNCTION_LEVEL lvl = part->DisfnLevel;
-			if ((lvl==1)||(lvl==2)) {
+			/*if ((lvl==1)||(lvl==2)) {
 				sym = getDisfnSymptomByTargetOrgan((TARGET)i,part);
 				if (sym!=-1) {
 					char* str = (char*)SymptomEffects[sym];
 					plus = ArmletApi::snprintf(buf,len,"%s\n",str);
 					buf += plus; len-=plus;
 				}
-			}
+			}*/
 		}
 	}
 
@@ -188,10 +176,8 @@ namespace medicine {
 	{
 		for (int i=0; i<MaxTarget; i++) {
 			DecreaseCategory(&Body.parts[i].CurrSeverity);
-			if (Body.parts[i].DisfnLevel > 0)
-				Body.parts[i].DisfnLevel = (DISFUNCTION_LEVEL)(Body.parts[i].DisfnLevel - 1);
 			if (Body.parts[i].PainLevel > 0)
-				Body.parts[i].PainLevel =  (PAIN_LEVEL)(Body.parts[i].PainLevel-1);
+				Body.parts[i].PainLevel =  (Body.parts[i].PainLevel-1);
 		}
 	}
 

@@ -3,23 +3,23 @@
 	#error _MED_
 #endif
 
-#define MaxWoundType	(MaxTarget+1+MaxExplosionEffect)
+#define MaxWoundType	(MaxTarget+1+3)
 
 typedef struct _WOUND_DESC {
 	unsigned short target;			//wound subtype
 	unsigned short severity;		//wound severity
-	PAIN_LEVEL PainLevel;
-	DISFUNCTION_LEVEL DisfnLevel;
-	int BloodLoss;
-	int Bleeding;
-	int ToxinsAdd;
-	int Toxinating;
+	DAMAGE_EFFECT de;				//damage effect 
+	int PainLevel;				//pain from wound
+	int BloodLoss;				//instant bloodloss
+	int Bleeding;				//bloodloos per tick
+	int ToxinsAdd;				//instant intoxication
+	int Toxinating;				//intoxication per tick
+	int NecroPoints;			//Amount of "DEAD" flesh
 	const char* message;
 } WOUND_DESC;
 
 extern WOUND_DESC WoundDescs[MaxWoundType][MaxDamageSeverity];
 extern const DAMAGE_SEVERITY	RandomSelectPerTenPercent[10];
-//extern const DAMAGE_SEVERITY	
 
 void InitWounds();
 DAMAGE_SEVERITY NextCategory(DAMAGE_SEVERITY* curr);
