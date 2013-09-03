@@ -37,10 +37,6 @@ namespace ServerGUI
                 BoardStackPanel.Children.Add(board);
                 board.Update();
             }
-            foreach (var roomsID in Ship.ShipRoomsIDs)
-            {
-                CreateButton(roomsID);
-            }
             Ship_OnlineChanged();
         }
 
@@ -63,19 +59,10 @@ namespace ServerGUI
             Ship.SetSubsystemStatus(board.Status);
         }
 
-        private void CreateButton(byte roomsID)
+        private void HitClick(object sender, RoutedEventArgs e)
         {
-            var button = new Button
-            {
-                Content = Ship.GetRoomName(roomsID)
-            };
-            button.Click += (o, args) => Ship.Model.SendRoomHit(roomsID, 50);
-            HitStackPanel.Children.Add(button);
-        }
-
-        private void RandomHitClick(object sender, RoutedEventArgs e)
-        {
-            Ship.HitRandomRoom(RanmaRepairSeverity.Medium);
+            var hitPower = byte.Parse(((Button) sender).Content.ToString());
+            Ship.DamageShip(hitPower);
         }
     }
 }

@@ -56,22 +56,12 @@ namespace HonorLogic.ShipStatus
             return (from roomInfo in Rooms where roomInfo.Id == roomsID select roomInfo.Name).SingleOrDefault();
         }
 
-        public void HitRandomRoom(RanmaRepairSeverity severity)
-        {
-            Model.SendRoomHit(RoomsWithPeople.RandomOrDefault(), GetHitChanceFromSeverity(severity));
-        }
-
         public bool IsOnline
         {
             get
             {
                 return _ranmaPlates.All(p => p.Online   );
             }
-        }
-
-        private byte GetHitChanceFromSeverity(RanmaRepairSeverity severity)
-        {
-            return (byte) (((byte) severity - 2)*25 + 50);
         }
 
         private IEnumerable<byte> RoomsWithPeople
@@ -226,7 +216,32 @@ namespace HonorLogic.ShipStatus
 
         public void DamageShip(byte damage)
         {
-            throw new NotImplementedException();
+            for (var i = 0; i < damage; i++)
+            {
+                DamageShip();
+            }
+            var targetRoom = RoomsWithPeople.RandomOrDefault();
+            if (targetRoom != null)
+            {
+                Model.SendRoomHit(targetRoom, (byte) ((damage - 2)*25 + 50), HitType.Random);
+            }
+
+        }
+
+        private void DamageShip()
+        {
+            var targetSubsystem = TargetSubsystems.Random();
+            targetSubsystem.Severity += 1;
+            SetSubsystemStatus(targetSubsystem);
+            
+        }
+
+        private IEnumerable<ShipSubsystemStatus> TargetSubsystems
+        {
+            get
+            {
+                return _subsystems.Where(s => s.Severity != RanmaRepairSeverity.Max);
+            }
         }
 
         public void RemoveShipFromMap()

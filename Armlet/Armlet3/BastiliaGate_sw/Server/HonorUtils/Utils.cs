@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HonorUtils.Annotations;
 
 namespace HonorUtils
 {
@@ -12,6 +13,7 @@ namespace HonorUtils
             return intArray.SelectMany(BitConverter.GetBytes);
         }
 
+        [CanBeNull]
         public static T RandomOrDefault<T>(this ICollection<T> col)
         {
             return col.Count == 0 ? default (T) : GetRnd(col);
@@ -23,6 +25,7 @@ namespace HonorUtils
             return col.Skip(val).First();
         }
 
+        [CanBeNull]
         public static T RandomOrDefault<T>(this IEnumerable<T> col)
         {
             return col.ToArray().RandomOrDefault();

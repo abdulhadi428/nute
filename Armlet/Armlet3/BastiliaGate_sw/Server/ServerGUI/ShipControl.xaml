@@ -10,8 +10,10 @@
             <Label x:Name="GatesLabel" /> <Label x:Name="OnlineLabel"></Label>
             <StackPanel Orientation="Horizontal" x:Name="BoardStackPanel"></StackPanel>
             <StackPanel Orientation="Horizontal" x:Name="HitStackPanel">
-                <Label>Взорвать</Label>
-                <Button Click="RandomHitClick">Случайный</Button>
+                <Label>Взрыв силой...</Label>
+                <Button Click="HitClick">1</Button>
+                <Button Click="HitClick">2</Button>
+                <Button Click="HitClick">3</Button>
             </StackPanel>
         </StackPanel>
     </GroupBox>

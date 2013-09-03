@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GateNotConnectedException.cs" />
+    <Compile Include="HitType.cs" />
     <Compile Include="IArmletInfo.cs" />
     <Compile Include="IGateModel.cs" />
     <Compile Include="IGlobalModel.cs" />

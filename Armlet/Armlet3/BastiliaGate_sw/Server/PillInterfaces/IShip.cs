@@ -16,7 +16,6 @@ namespace HonorInterfaces
         string GetRoomName(byte roomsID);
 
         event Action<ShipSubsystemStatus> SubsystemUpdated;
-        void HitRandomRoom(RanmaRepairSeverity severity);
 
         bool IsOnline { get; }
         event Action OnlineChanged;
