@@ -16,6 +16,7 @@
 // Pkt is left-adjusted.
 
 #define TRANSMIT_PERIOD_MS  999
+#define IR_ID_INCREASE      74
 
 ir_t ir;
 static inline void Init();
@@ -26,6 +27,8 @@ static EventListener EvtLstnrIrTxEnd;
 
 int main(void) {
     // ==== Init clock system ====
+    uint8_t ClkResult = Clk.SwitchToHSE();
+    if(ClkResult == 0) Clk.HSIDisable();
     Clk.SetupBusDividers(ahbDiv1, apbDiv1, apbDiv1);
     Clk.UpdateFreqValues();
     // ==== Init OS ====
@@ -33,17 +36,26 @@ int main(void) {
     chSysInit();
     // ==== Init Hard & Soft ====
     Init();
+    if(ClkResult != 0) Uart.Printf("Clk Failure\r");
+
     ir.RegisterEvtTxEnd(&EvtLstnrIrTxEnd, EVENT_MASK(0));
     while(TRUE) {
         uint16_t w = ID;
         w <<= 8;
         w |= 0x04;
         //Uart.Printf("%X\r", w);
-        ir.TransmitWord(w, dc100mA, 100);
+        ir.TransmitWord(w
+                #if IR_DAC
+                , dc1000mA
+                #endif
+                #if IR_PWM
+                , 100
+                #endif
+                );
         chEvtWaitAny(EVENT_MASK(0));
         // Transmission completed
-        //Uart.Printf("TxEnd\r");
         //GoSleep();
+        Uart.Printf("TxE\r");
         chThdSleepMilliseconds(999);
     }
 }
@@ -63,12 +75,11 @@ static inline uint8_t GetID() {
 void Init() {
     JtagDisable();
     Uart.Init(57600);
-    ir.Init();
-    ID = GetID();
+    ID = GetID() + IR_ID_INCREASE;
     ir.Init();
     // Set white and print info only when switch on, not after watcdog reset.
     if(!Iwdg.ResetOccured()) {
-        Uart.Printf("\rGirandole #%u  AHB=%u; APB1=%u; APB2=%u\r", ID, Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+        Uart.Printf("\rGirandole AHB=%u; APB1=%u; APB2=%u\rID: %u\rIR ID: %u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz, ID - IR_ID_INCREASE, ID);
         chThdSleepMilliseconds(999);    // Timeout to connect programmator
     }
     else Uart.Printf("W\r");

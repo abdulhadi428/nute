@@ -8,10 +8,12 @@
 #ifndef IR_H_
 #define IR_H_
 
-#include "inttypes.h"
 #include "hal.h"
 #include "ch.h"
 #include "kl_lib_f100.h"
+
+#define IR_DAC  TRUE
+//#define IR_PWM  TRUE
 
 #define IR_CARRIER_HZ       56000
 #define IR_BIT_CNT          14
@@ -34,7 +36,7 @@ struct IrChunk_t {
     uint8_t On;
     uint16_t Duration;
 };
-#define CHUNK_CNT   (1+1+(IR_BIT_CNT*2))
+#define CHUNK_CNT   (1+1+(IR_BIT_CNT*2))    // Header + bit count
 
 #define CARRIER_PERIOD_CNT  2
 #define SAMPLING_FREQ_HZ    (CARRIER_PERIOD_CNT*IR_CARRIER_HZ)
@@ -46,9 +48,10 @@ class ir_t {
 private:
     EventSource IEvtSrcTxEnd;
     IrChunk_t TxBuf[CHUNK_CNT], *PChunk; // Buffer of power values: header + all one's + 1 delay after
+    Timer_t ChunkTmr;
+#if IR_DAC
     uint16_t CarrierArr[CARRIER_PERIOD_CNT], ZeroArr[CARRIER_PERIOD_CNT];
-    Timer_t SamplingTmr, ChunkTmr, CarrierTmr;
-    uint16_t CarrierTmrPwr;
+    Timer_t SamplingTmr;
     inline void IDacCarrierDisable() {
         dmaStreamDisable(STM32_DMA1_STREAM3);
         dmaStreamSetMemory0(STM32_DMA1_STREAM3, ZeroArr);
@@ -59,10 +62,22 @@ private:
         dmaStreamSetMemory0(STM32_DMA1_STREAM3, CarrierArr);
         dmaStreamEnable(STM32_DMA1_STREAM3);
     }
+#endif
+#if IR_PWM
+    uint16_t CarrierTmrPwr;
+    Timer_t CarrierTmr;
+#endif
 public:
     bool Busy;
     void Init();
-    void TransmitWord(uint16_t wData, DacCurrent_t ACurrent, uint8_t PwmPercent);
+    void TransmitWord(uint16_t wData
+#if IR_DAC
+        , DacCurrent_t ACurrent
+#endif
+#if IR_PWM
+        , uint8_t PwmPercent
+#endif
+    );
     void RegisterEvtTxEnd(EventListener *PEvtLstnr, uint8_t EvtMask) { chEvtRegisterMask(&IEvtSrcTxEnd, PEvtLstnr, EvtMask); }
     // Inner use
     void IChunkTmrHandler();
