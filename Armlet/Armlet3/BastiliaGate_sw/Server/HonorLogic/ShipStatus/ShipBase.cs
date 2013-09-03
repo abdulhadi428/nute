@@ -218,22 +218,21 @@ namespace HonorLogic.ShipStatus
         {
             for (var i = 0; i < damage; i++)
             {
-                DamageShip();
+                DamageShipOnce();
             }
             var targetRoom = RoomsWithPeople.RandomOrDefault();
-            if (targetRoom != null)
+            if (targetRoom != 0)
             {
                 Model.SendRoomHit(targetRoom, (byte) ((damage - 2)*25 + 50), HitType.Random);
             }
 
         }
 
-        private void DamageShip()
+        private void DamageShipOnce()
         {
             var targetSubsystem = TargetSubsystems.Random();
             targetSubsystem.Severity += 1;
             SetSubsystemStatus(targetSubsystem);
-            
         }
 
         private IEnumerable<ShipSubsystemStatus> TargetSubsystems
@@ -248,5 +247,7 @@ namespace HonorLogic.ShipStatus
         {
             throw new NotImplementedException();
         }
+
+        public abstract string GetSubsystemName(int subSystemNum);
     }
 }

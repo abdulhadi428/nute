@@ -107,14 +107,8 @@ namespace ServerGUI
             try
             {
                 Cursor = Cursors.Wait;
-                if (Model.ConnectToSimulator())
-                {
-                    MessageBox.Show("Есть!");
-                }
-                else
-                {
-                    MessageBox.Show("Нет");
-                }
+                var connectResult = Model.ConnectToSimulator();
+                MessageBox.Show(connectResult ? "Есть!" : "Нет");
             }
             finally
             {

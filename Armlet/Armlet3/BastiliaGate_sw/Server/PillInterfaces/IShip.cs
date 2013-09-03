@@ -21,5 +21,6 @@ namespace HonorInterfaces
         event Action OnlineChanged;
         void DamageShip(byte damage);
         void RemoveShipFromMap();
+        string GetSubsystemName(int subSystemNum);
     }
 }

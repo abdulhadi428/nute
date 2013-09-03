@@ -12,6 +12,9 @@ namespace ServerGUI
         {
             get; set;
         }
+
+        public string SubsystemName { get; set; }
+
         public void Update()
         {
             DamageListBox.SelectedIndex = (int) Status.Severity;
@@ -62,6 +65,7 @@ namespace ServerGUI
         private void BoardGUI_OnLoaded(object sender, RoutedEventArgs e)
         {
             DamageListBox.SelectionChanged += DamageListBoxOnSelectionChanged;
+            SubsystemLabel.Content = SubsystemName;
         }
     }
 }

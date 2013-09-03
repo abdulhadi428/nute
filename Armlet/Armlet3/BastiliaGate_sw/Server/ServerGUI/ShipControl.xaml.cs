@@ -30,6 +30,7 @@ namespace ServerGUI
                 var board = new BoardGUI
                 {
                     Status = shipSubsystemStatuse,
+                    SubsystemName = Ship.GetSubsystemName(shipSubsystemStatuse.SubSystemNum)
                     
                 };
                 board.StatusChanged += board_StatusChanged;

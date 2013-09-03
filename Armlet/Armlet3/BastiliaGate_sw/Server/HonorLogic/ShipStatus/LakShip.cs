@@ -14,5 +14,12 @@
         {
             get { return 1; }
         }
+
+        private static readonly string[] Names = { "Атака", "Защита", "Импеллер", "Навигация", "Паруса", "Шлюзы", "Жизнеобеспечение", "Реактор" };
+
+        public override string GetSubsystemName(int subSystemNum)
+        {
+            return Names[subSystemNum];
+        }
     }
 }
