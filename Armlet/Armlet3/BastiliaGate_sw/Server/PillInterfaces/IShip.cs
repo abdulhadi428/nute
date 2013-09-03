@@ -20,5 +20,7 @@ namespace HonorInterfaces
 
         bool IsOnline { get; }
         event Action OnlineChanged;
+        void DamageShip(byte damage);
+        void RemoveShipFromMap();
     }
 }

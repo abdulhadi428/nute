@@ -223,5 +223,15 @@ namespace HonorLogic.ShipStatus
                 SetSubsytemSeverityToAll(i, RanmaRepairSeverity.NotDamaged);
             }
         }
+
+        public void DamageShip(byte damage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveShipFromMap()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
