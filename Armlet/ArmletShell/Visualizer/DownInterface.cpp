@@ -151,12 +151,16 @@ namespace LowLevel {
 
 	int GetPillCharges(int cure_id)
 	{
-		if ((cure_id < 0)||(cure_id > 14))
-			return 20;
+		if ((cure_id < 0)||(cure_id > 14)) {
+			if ((cure_id < 20)||(cure_id > 26))
+				return 20;
+			return TortureCharges[cure_id-20];
+		}
 		return CureCharges[cure_id];
 	}
 
 	SET_CURE_NAME_CALLBACL* SetCureName = 0;
 	UPDATE_CURRENT_CURE_CALLBACK* UpdateCurrentCure = 0;
+	UPDATE_CURRENT_CURE_CALLBACK* UpdateCurrentTorture = 0;
 
 } //namespace

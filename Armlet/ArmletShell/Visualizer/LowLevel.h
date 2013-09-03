@@ -28,7 +28,7 @@ namespace LowLevel {
 	//ARMLET emulation WritePill
 	//DownInterface GetPillCharges
 	extern int CureCharges[15];
-
+	extern int TortureCharges[7];
 	extern short NoncheId;
 
 }

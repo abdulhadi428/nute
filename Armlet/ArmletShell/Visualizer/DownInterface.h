@@ -41,4 +41,6 @@ namespace LowLevel {
 	extern SET_CURE_NAME_CALLBACL* SetCureName;						//for medicine emulation
 	typedef void (__stdcall UPDATE_CURRENT_CURE_CALLBACK)();
 	extern UPDATE_CURRENT_CURE_CALLBACK* UpdateCurrentCure;			//for medicine emulation
+	typedef void (__stdcall UPDATE_CURRENT_TORTURE_CALLBACK)();
+	extern UPDATE_CURRENT_TORTURE_CALLBACK* UpdateCurrentTorture;	//for medicine emulation
 } //namespace

@@ -15,6 +15,9 @@ namespace LowLevel {
 		20,20,20,20,20,
 		20,20,20,20,20
 	};
+	int TortureCharges[7] = {
+		1,2,3,4,5,6,7
+	};
 	short NoncheId = 1000;
 
 } //namespace
