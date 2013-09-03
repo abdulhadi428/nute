@@ -1,6 +1,7 @@
 #include "ThreeKShell.h"
 #include "To3KShell.h"
 #include "Honor2.h"
+#include "LogForm.h"
 
 fresult LogForm::CreateMenu( IMenu** o_mnu )
 {

@@ -27,7 +27,7 @@ public:
 	virtual fresult OnClick(IMenuItem* sender) { return Execute(sender);}
 };
 
-#define CREATE_PFM(R,T,F)					MenuHandlerFunctionPtr<T>* R = new MenuHandlerFunctionPtr<T>(&T::F)
-#define CREATE_DELEGATE(R,T,_this,F)		MenuHandlerDelegate<T>* R = new MenuHandlerDelegate<T>(_this,&T::F)
-#define CREATE_MENU_HANDLER_ANY(T,_this,F)	new MenuHandlerDelegate<T>(_this,&T::F)
-#define CREATE_MENU_HANDLER(T,F)			new MenuHandlerDelegate<T>(this,&T::F)
+#define CREATE_PFM(R,T,F)					MenuHandlerFunctionPtr<T>* R = 0; // new MenuHandlerFunctionPtr<T>(&T::F)
+#define CREATE_DELEGATE(R,T,_this,F)		MenuHandlerDelegate<T>* R = 0; // new MenuHandlerDelegate<T>(_this,&T::F)
+#define CREATE_MENU_HANDLER_ANY(T,_this,F)	0; // new MenuHandlerDelegate<T>(_this,&T::F)
+#define CREATE_MENU_HANDLER(T,F)			0; // new MenuHandlerDelegate<T>(this,&T::F)

@@ -5,12 +5,12 @@
 
 IForm** FormManager::allocFormsArray(ubyte_t count)
 {
-	return new IForm*[count];
+	return 0; // new IForm*[count];
 }
 
 FormDescription* FormManager::allocFormsDescription( ubyte_t count )
 {
-	return new FormDescription[count];
+	return 0; // new FormDescription[count];
 }
  
 fresult FormManager::Init( ubyte_t formsCount, ubyte_t stackLength )

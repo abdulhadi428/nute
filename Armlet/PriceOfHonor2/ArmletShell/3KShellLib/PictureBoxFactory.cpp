@@ -1,10 +1,13 @@
 #include "ThreeKShell.h"
+#include "kl_allocator.h"
 
 namespace ThreeKShell {
 
+static Alloc_t<PictureBox, 45> SPictureBoxArr;
+
 	PictureBox* PictureBoxFactory::AllocPictureBox()
 	{
-		return new PictureBox();
+		return SPictureBoxArr.Allocate(); // new PictureBox();
 	}
 
 	fresult PictureBoxFactory::Init( IRender* render, ImagesRepository* images )
@@ -39,7 +42,7 @@ namespace ThreeKShell {
 
 		fres = pbx->Init(sz, pos,_render);
 		ENSURESUCCESS(fres);
-		
+
 		//Get Image
 		BitmapImage* bmp = _images->GetImageById(imageId);
 		if(bmp==NULL)
@@ -61,7 +64,7 @@ namespace ThreeKShell {
 
 	fresult PictureBoxFactory::GetPictureBox(Size sz, Position pos, BitmapImage* bmp, PictureBox** o_pbx)
 	{
-		
+
 		fresult fres;
 		PictureBox* pbx = AllocPictureBox();
 		FAILIF(pbx==NULL);
@@ -77,4 +80,4 @@ namespace ThreeKShell {
 	}
 
 }
- 
+

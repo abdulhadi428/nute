@@ -2,7 +2,6 @@
 
 #define FIRMWARE_VERSION "0.9"
 
-
 void AppMainThread(void* param);
 
 
@@ -16,7 +15,7 @@ void _OnSetRegenerationRate(sword_t regenRate);
 //callbacks
 bool __CALLBACK _QueryLustraTimerCallback(int elapsed);
 bool __CALLBACK _MedicineTimerTickCallback(int elapsed);
-bool __CALLBACK _QuerySystemStatusTimerCallback(int elapsed);
+bool __CALLBACK _QueryBatteryStatusTimerCallback(int elapsed);
 
 
 //extern APP_TASK AppTasks[];

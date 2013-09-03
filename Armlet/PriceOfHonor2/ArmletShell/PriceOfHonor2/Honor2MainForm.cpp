@@ -20,34 +20,18 @@ fresult Honor2MainForm::DoLayout()
 
 	Size caSz;
 	caSz.Width = _App->GetDisplaySize().Width;
-	caSz.Height = _App->GetDisplaySize().Height - _App->GetStatusBarSize().Height;
+	caSz.Height = _App->GetDisplaySize().Height - 16;
 	_FormClientSize.data =  caSz.data;
 	
 	Position caPos;
-	caPos.Top = _App->GetStatusBarSize().Height;
+	caPos.Top = 16;
 	caPos.Left = 0;
 
 	fres = _Factories->GetPanelFactory()->GetPanel(caSz, caPos, controlsCount, CL_CONTROL_BACKGROUND, &_FormPanel);
 	ENSURESUCCESS(fres);
 
-	TextFieldFactory* tff = _Factories->GetTextFieldFactory();
-	tff->CurrentWrap = TRUE;
-	tff->CurrentFrames = 5;
-	tff->CurrentLines = 12;
-	
-	Position pos;
-	pos.Left = 26;
-	pos.Top = caPos.Top+2;
-	fres = tff->GetTextBox(pos, 18, &_txtStatus);
-	ENSURESUCCESS(fres);
-	fres = _FormPanel->AppendControl(_txtStatus);
-	ENSURESUCCESS(fres);
-
-	tff->CurrentWrap = tff->DefaultWrap;
-	tff->CurrentFrames = tff->DefaultFrames;
-	tff->CurrentLines = tff->DefaultLines;
-	tff->CurrentTextFormatHandle = tff->DefaultTextFormatHandle;
-
+	//get header
+	//no header on this form
 
 	_Menus = AllocMenus(1);
 	FAILIF(_Menus==NULL);
@@ -83,13 +67,11 @@ fresult Honor2MainForm::CreateMenu( IMenu** o_mnu )
 	//ItemOriginB
 	mis = &mf->Settings[ItemOriginB];
 	mis->ImgHandle = BlueArrowUp;
-	mis->Handler = CREATE_MENU_HANDLER(Honor2MainForm, Scroll);
 	mis->Empty = FALSE;
 
 	//ItemOriginÑ
 	mis = &mf->Settings[ItemOriginC];
 	mis->ImgHandle = BlueArrowDown;
-	mis->Handler = CREATE_MENU_HANDLER(Honor2MainForm, Scroll);
 	mis->Empty = FALSE;
 
 	//ItemOriginX
@@ -159,35 +141,5 @@ fresult Honor2MainForm::OnKnockOut( IMenuItem* Sender )
 	ENSURESUCCESS(fres);
 
 	//TODO: knockout
-	return SUCCESS;
-}
-
-fresult Honor2MainForm::SetStatus( char* statusText )
-{
-	fresult fres;
-
-	if (_txtStatus!=NULL)
-	{
-		fres = _txtStatus->SetText(statusText);
-		ENSURESUCCESS(fres);
-	}
-	return SUCCESS;
-}
-
-fresult Honor2MainForm::Scroll( IMenuItem* sender )
-{
-	fresult fres;
-	MenuItemBase* mi = (MenuItemBase*)sender;
-
-	if (mi->GetAccelerator()==BUTTON_A)
-	{
-		fres = _txtStatus->ScrollUp();
-	}
-	else
-	{
-		fres = _txtStatus->ScrollDown();
-	}
-	ENSURESUCCESS (fres);
-
 	return SUCCESS;
 }

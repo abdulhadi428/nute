@@ -1,4 +1,4 @@
-/*#include "ArmletShell.h"
+#include "ArmletShell.h"
 #include "UIDesigner.h"
 #include "MenuDelegate.h"
 #include "OpenSpaceImages.h"
@@ -177,7 +177,7 @@ fresult UIDesigner::InitMainFormMnu()
 		return fres;
 
 
-	//////////imgOpenLock////////////////////
+	/*//////////imgOpenLock////////////////////
 	//imgOpenLock
 	controlPosition.Top = 72;
 	controlPosition.Left = SCREENX - MENU_IMAGE_WIDTH-1;
@@ -187,7 +187,7 @@ fresult UIDesigner::InitMainFormMnu()
 		NULL, OnMainMnuOpenLockHandler, BUTTON_Z);
 	if (fres!=SUCCESS)
 		return fres;
-	
+	*/
 
 	//////////imgShowLogs////////////////////
 	//miShowLogs
@@ -937,9 +937,9 @@ fresult UIDesigner::InitImage(Image* img, Size imgControlSize, Position imgContr
 			if (fres !=SUCCESS)
 				return fres;
 		}
-		//fres = GetImageById(pictureId, &bitmap, &bitmapSize);
-		//if (fres !=SUCCESS)
-		///	return fres;
+		/*fres = GetImageById(pictureId, &bitmap, &bitmapSize);
+		if (fres !=SUCCESS)
+			return fres;*/
 
 	}
 
@@ -952,7 +952,7 @@ fresult UIDesigner::InitMenuItem(MenuItem* mi,
 								 TextField* tf, Size tfControlSize, Position tfControlPosition, ubyte_t textFormatId, char* buff, Size buffSize, const char* text, ubyte_t selTextFormatId,
 								 Image* img, Size imgControlSize, Position imgControlPosition, sbyte_t image_id,
 								 Panel* pnl,
-								int handler, ButtonState buttonAccel)
+								 /*MenuHandlers*/int handler, ButtonState buttonAccel)
 {
 	fresult fres;
 	IControl* drawControl = NULL;
@@ -1179,4 +1179,3 @@ fresult UIDesigner::OnLogFormMnuCleanLog( IMenuItem* sender )
 
 
 
-*/

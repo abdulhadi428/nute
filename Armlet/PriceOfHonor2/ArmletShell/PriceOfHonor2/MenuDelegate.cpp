@@ -1,4 +1,4 @@
-/*#include "ArmletShell.h"
+#include "ArmletShell.h"
 #include "MenuDelegate.h"
 
 fresult MenuDelegate::OnClick( IMenuItem* sender )
@@ -144,4 +144,3 @@ IMenuHandler* GetMenuHandler( MenuHandlers handler )
 {
 	return &g_MenuHandlers[handler];
 }
-*/

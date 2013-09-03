@@ -1,4 +1,4 @@
-/*#include "ArmletShell.h"
+#include "ArmletShell.h"
 #include "UserInterface.h"
 #include "OpenSpaceImages.h"
 #include "ArmletApi.h"
@@ -42,6 +42,9 @@ fresult UserInterface::Init()
 	_lastKnownLustraId = UNKNOWN_ID;
 	//Launch lustra query Timer
 	ArmletApi::RequestTimer(_QueryLustraTimerCallback, LUSTRA_POLL_TIME);
+
+	//launch battery status timer
+	ArmletApi::RequestTimer(_QueryBatteryStatusTimerCallback, BATTERYSTATUS_POLL_TIME);
 
 	//launch medicine
 	ArmletApi::RequestTimer(_MedicineTimerTickCallback, MED_TICK_TIME);
@@ -519,4 +522,3 @@ void UserInterface::LogError(char* message)
 
 	MessageBoxShow("Œÿ»¡ ¿!", message, RedCancel);
 }
-*/

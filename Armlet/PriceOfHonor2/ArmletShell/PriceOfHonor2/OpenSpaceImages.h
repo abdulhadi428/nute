@@ -1,7 +1,6 @@
 #pragma once
 
-#include "ThreeKShell.h"
-//extern ImagesRepository_ gImagesRepository;
+extern ImagesRepository_ gImagesRepository;
 
 #define NO_IMAGE -1
 #define battery_0 SYS_IMAGES_COUNT+0
@@ -59,4 +58,4 @@
 #define OrangeTarget SYS_IMAGES_COUNT + OS_IMAGES_COUNT+25
 #define RedCancel SYS_IMAGES_COUNT + OS_IMAGES_COUNT+26
 
-void FillAppSpecificImages(ImagesRepository* imagesrep);
+void FillAppSpecificImages(ImagesRepository* images);

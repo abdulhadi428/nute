@@ -12,7 +12,7 @@ fresult Honor2App::Init()
 
 	_Version = PriceOfHonor_VERSION ;
 	Logic = &_logicInstance;
-	fres = Logic->Init(this);
+	fres = Logic->Init();
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
@@ -173,27 +173,4 @@ fresult Honor2App::MsgBoxShow( ImageHandle mgsBoxIcon, char* title, char* text )
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
-}
-
-void Honor2App::LogError( char* errorText )
-{
-	bool_t logged = FALSE;
-	fresult fres;
-	if (_FormManager != NULL)
-	{
-		LogForm* logFrm = (LogForm*)_FormManager->GetForm(_honor2FormsInstance.LogFormName);
-		if (logFrm != NULL)
-		{
-			fres = logFrm->LogRecord(LogKindSystem, errorText);
-			if (fres == SUCCESS)
-			{
-				logged = TRUE;
-			}
-		}
-	}
-	
-	if (logged == FALSE)
-	{
-		ApplicationBase::LogError(errorText);
-	}
 }

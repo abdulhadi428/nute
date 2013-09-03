@@ -1,6 +1,14 @@
 #pragma once
 #include "Honor2FormBase.h"
 
+typedef enum _LOG_KINDS {
+	LogKindMessages,
+	LogKindSystem,
+	LogKindEvents,
+	LogKindMedSymptoms,
+	LogsCount
+} LogKinds;
+
 struct Log
 {
 	ImageHandle icon;

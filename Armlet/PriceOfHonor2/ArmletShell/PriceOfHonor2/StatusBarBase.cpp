@@ -1,19 +1,22 @@
 #include "ThreeKShell.h"
 #include "StatusBarBase.h"
-#include "ArmletApi.h"
 
-fresult StatusBarBase::BaseInit(Size sz, Repositories* reps, Factories* facts)
+fresult StatusBarBase::BaseInit( Repositories* reps, Factories* facts)
 {
 	_Repositories = reps;
 	_Factories = facts;
 	_Visible = TRUE;
-	_Size = sz; 
 	return SUCCESS;
 }
 
 Size StatusBarBase::GetSize()
 {
-	return _Size;
+	Size sz;
+
+	sz.Width = SCREENX;
+	sz.Height = 16;
+
+	return sz;
 }
 
 fresult StatusBarBase::SetHeaderText( char* headerText )
@@ -24,7 +27,6 @@ fresult StatusBarBase::SetHeaderText( char* headerText )
 	{
 		fres = _txtHeader->SetText(headerText);
 		ENSURESUCCESS(fres);
-		//TODO: remove draw
 		fres = _txtHeader->Draw();
 		ENSURESUCCESS(fres);
 	}
@@ -100,7 +102,7 @@ fresult StatusBarBase::CreateNetworkLevelControl( Position pos, ScaledValueImage
 	fres = GetNetworkImages(&images, &imgCount);
 	ENSURESUCCESS(fres);
 
-	fres = _Factories->GetImageListFactory()->GetScaledImageList(pos, images, 30, 115, imgCount, &network);
+	fres = _Factories->GetImageListFactory()->GetScaledImageList(pos, images, 0, 120, imgCount, &network);
 	ENSURESUCCESS(fres);
 
 	*o_networkLevel = network;
@@ -160,49 +162,4 @@ fresult StatusBarBase::SetVisible( bool_t visibileValue )
 bool_t StatusBarBase::GetVisible()
 {
 	return _Visible;
-}
-
-fresult StatusBarBase::SetBatteryLevel(ubyte_t level)
-{
-	fresult fres;
-	if (_BatteryLevel!=NULL)
-	{
-		fres =_BatteryLevel->SetValue(level);
-		ENSURESUCCESS(fres);
-	}
-	return SUCCESS;
-}
-
-fresult StatusBarBase::SetNetworkSignalStrength( sbyte_t dbLevel )
-{
-	fresult fres;
-	if (_NetworkLevel!=NULL)
-	{
-		fres =_NetworkLevel->SetValue(-dbLevel);
-		ENSURESUCCESS(fres);
-	}
-	return SUCCESS;
-}
-
-fresult StatusBarBase::SetTime( ubyte_t hours, ubyte_t minutes )
-{
-	fresult fres;
-
-	if (_txtClock !=NULL)
-	{
-		char time[6];
-		time[5] = 0;
-		//URGENTTODO: почему-то не работает, возвращает M
-		ArmletApi::snprintf(time, 4, "%d:%d", hours, minutes);
-
-		fres = _txtClock->SetText(time);
-		ENSURESUCCESS(fres);
-	}
-	return SUCCESS;
-}
-
-fresult StatusBarBase::AddClock( Position pos )
-{
-	//TODO:
-	return SUCCESS;
 }

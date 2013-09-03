@@ -77,7 +77,7 @@ fresult FormBase::Draw()
 IMenu** FormBase::AllocMenus( ubyte_t menusCount )
 {
 	_MenusCount = menusCount;
-	return new IMenu*[menusCount];
+	return 0; // new IMenu*[menusCount];
 }
 
 

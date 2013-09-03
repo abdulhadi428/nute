@@ -1,4 +1,4 @@
-/*#pragma once
+#pragma once
 #include "ThreeKShell.h"
 #include "Form_DEPRECATED.h"
 //#include "MenuDelegate.h"
@@ -486,4 +486,3 @@ public:
 	void _SystemOnButtonClick(uword_t button);
 	
 };
-*/

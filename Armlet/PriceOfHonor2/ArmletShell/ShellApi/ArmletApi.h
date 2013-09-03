@@ -62,7 +62,7 @@ namespace ArmletApi {
 
 	unsigned int __SYSCALL GetRandom(unsigned int max);					//returns random value in range [0..max]
 	int  __SYSCALL GetUpTime();											//return msces from armlet start
-	int __SYSCALL snprintf(char* buf, int bufSz, char* fmt,...);		//__SYSCALL sprintf support, 
+	int __SYSCALL snprintf(char* buf, int bufSz, char* fmt,...);		//__SYSCALL sprintf support,
 	bool __SYSCALL OpenFile(FILE* file, const char* filename, bool bCreate);	//__SYSCALL opens/create file
 	bool __SYSCALL CloseFile(FILE* file);								//__SYSCALL closes file
 

@@ -1,4 +1,4 @@
-/*#pragma once
+#pragma once
 #include "UIDesigner.h"
 #include "ThreeKShell.h"
 
@@ -44,4 +44,4 @@ extern MenuDelegate g_MenuHandlers[MenuHandlersLast];
 
 void InitMenuHandlerDelegates(UIDesigner* ui);
 
-IMenuHandler* GetMenuHandler(MenuHandlers handler);*/
+IMenuHandler* GetMenuHandler(MenuHandlers handler);

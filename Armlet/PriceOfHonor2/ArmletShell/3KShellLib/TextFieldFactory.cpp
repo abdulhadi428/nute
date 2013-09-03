@@ -1,6 +1,11 @@
 #include "ThreeKShell.h"
+#include "TextFieldFactory.h"
+#include "kl_allocator.h"
 
 namespace ThreeKShell {
+
+static Alloc_t<TextField, 45> STextFieldFactoryArr;
+static Alloc_t<char, 4500> SCharArr;
 
 fresult TextFieldFactory::Init(IRender* renderer, Repositories* styles)
 {
@@ -9,10 +14,10 @@ fresult TextFieldFactory::Init(IRender* renderer, Repositories* styles)
 	_renderer = renderer;
 	fres = ResetDefaults();
 	ENSURESUCCESS(fres);
-	
+
 	return SUCCESS;
 }
- 
+
 fresult TextFieldFactory::ResetDefaults()
 {
 	DefaultTextFormatHandle = TF_DEFAULT;
@@ -76,7 +81,7 @@ fresult TextFieldFactory::GetTextBox(Position pos, Size sizepx , TextField** o_t
 
 	buff = AllocBuffBySizePx(sizepx, tfmt, DefaultFrames, &buffSz);
 	FAILIF(buff==NULL);
-	
+
 	fres = GetTextBox(pos, NULL, sizepx, buff, buffSz, o_tf);
 
 	return fres;
@@ -95,11 +100,11 @@ fresult TextFieldFactory::GetTextBox(Position pos, const char* text, Size sizepx
 	{
 		pages = CurrentFrames;
 	}
-	
+
 	TextFormat *tfmt;
 	fres = _styles->TextFormats->GetTextFormat(CurrentTextFormatHandle, &tfmt);
 	ENSURESUCCESS(fres);
-	
+
 	char* buff;
 	Size buffSz;
 	buff = AllocBuffBySizePx(sizepx, tfmt, pages, &buffSz);
@@ -140,7 +145,7 @@ fresult TextFieldFactory::GetTextBox(Position pos, const char* text, Size sizepx
 
 char* TextFieldFactory::AllocBuffBySizePx( Size sizePx, const TextFormat* tf, ubyte_t pages, Size* o_buffSz)
 {
-	Size szTx;	
+	Size szTx;
 	szTx.Height = sizePx.Height / tf->Font.GlyphSize.Height;
 	szTx.Width = sizePx.Width / tf->Font.GlyphSize.Width;
 
@@ -164,14 +169,14 @@ char* TextFieldFactory::AllocBuffBySizeTx( Size sizeTx, ubyte_t pages, Size* o_b
 
 char* TextFieldFactory::allocBytes( uword_t io_len )
 {
-	char* res = new char[io_len];
+	char* res = SCharArr.Allocate(io_len); // new char[io_len];
 	StrPad(res, 0, 0, io_len);
-	
+
 	return res;
 }
 
 TextField* TextFieldFactory::allocTextField()
 {
-	return new TextField();
+	return STextFieldFactoryArr.Allocate();     //new TextField();
 }
 }
