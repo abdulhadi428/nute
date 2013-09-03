@@ -23,5 +23,7 @@ public:
 	fresult virtual Click();
 	fresult virtual SetSecondAccelarator(ButtonState button);
 
+	ButtonState GetAccelerator();
+
 	bool_t virtual CheckAccelerator(ButtonState button);
 };

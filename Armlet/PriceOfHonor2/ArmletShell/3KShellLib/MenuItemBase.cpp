@@ -2,8 +2,6 @@
 
 namespace ThreeKShell {
 
-//typedef fresult (__thiscall MenuItemBase::* MENU_IMET_BASE_BOOL_PTR_VOID)(void);
-//MENU_IMET_BASE_BOOL_PTR_VOID func = &MenuItemBase::Click;
 
 bool_t MenuItemBase::IsSelected()
 {
@@ -82,4 +80,9 @@ fresult MenuItemBase::SetSecondAccelarator( ButtonState button )
 	return SUCCESS;
 }
 
+}
+
+ButtonState MenuItemBase::GetAccelerator()
+{
+	return _Accelerator;
 }

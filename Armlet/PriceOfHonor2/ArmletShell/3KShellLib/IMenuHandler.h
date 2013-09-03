@@ -14,7 +14,7 @@ template<class T> class MenuHandlerFunctionPtr {
 	MENU_HANDLER_DELEGATE _handler;
 public:
 	MenuHandlerFunctionPtr(MENU_HANDLER_DELEGATE handler) {_handler = handler;}
-	int Execute(T* _this) {return (_this->*_handler)();}
+	fresult Execute(T* _this) {return (_this->*_handler)();}
 };
 
 template<class T> class MenuHandlerDelegate : public IMenuHandler {
@@ -23,8 +23,8 @@ template<class T> class MenuHandlerDelegate : public IMenuHandler {
 	T* _this;
 public:
 	MenuHandlerDelegate(T* __this,MENU_HANDLER_DELEGATE handler) {_handler = handler; _this=__this;}
-	int Execute() {return (_this->*_handler)();}
-	virtual int OnClick(void* sender) { return Execute();}
+	fresult Execute(IMenuItem* sender) {return (_this->*_handler)(sender);}
+	virtual fresult OnClick(IMenuItem* sender) { return Execute(sender);}
 };
 
 #define CREATE_PFM(R,T,F)					MenuHandlerFunctionPtr<T>* R = new MenuHandlerFunctionPtr<T>(&T::F)

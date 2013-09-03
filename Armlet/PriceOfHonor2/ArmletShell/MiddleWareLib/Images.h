@@ -10,7 +10,7 @@ struct BitmapImage
 	Color* Bitmap;
 };
 
-#define MAX_IMAGES 40
+#define MAX_IMAGES 60
 
 class ImagesRepository_
 {

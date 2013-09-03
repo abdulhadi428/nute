@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="MiddleWareLib"
-	ProjectGUID="{EAE728F3-D446-4B2F-9576-5EFC29977454}"
-	RootNamespace="MiddleWareLib"
+	Name="PriceOfHonor2App"
+	ProjectGUID="{ED6F4CE0-7FB0-4686-8904-5D1C34CC3ECE}"
+	RootNamespace="OpenSpaceApp"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\ShellApi;..\PriceOfHonor2"
+				AdditionalIncludeDirectories="..\ShellApi;..\MiddleWareLib;..\3KShellLib"
 				PreprocessorDefinitions="_ARMLET_"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -104,7 +104,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\ShellApi;..\OpenSpaceApp"
+				AdditionalIncludeDirectories="..\ShellApi;..\MiddleWareLib;..\3KShellLib"
 				PreprocessorDefinitions="_ARMLET_"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -150,35 +150,99 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\Buttons.cpp"
+				RelativePath=".\ApplicationBase.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Dimensions.cpp"
+				RelativePath=".\AppMain.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Drawing.cpp"
+				RelativePath=".\ColorSchema.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Fonts.cpp"
+				RelativePath=".\FormBase.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Images.cpp"
+				RelativePath=".\FormManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\KreylFont.cpp"
+				RelativePath=".\Honor2App.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MiddleWareLibMain.cpp"
+				RelativePath=".\Honor2FormBase.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\strlib.cpp"
+				RelativePath=".\Honor2Forms.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Honor2Logic.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Honor2MainForm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Honor2StatusBar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LogForm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Med.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MedBody.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MedCures.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MedSymptoms.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MedWounds.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuDelegate.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MsgBoxForm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NewWoundForm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceImages.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\StatusBarBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UIDesigner.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UserInterface.cpp"
 				>
 			</File>
 		</Filter>
@@ -188,43 +252,119 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\ArmletShell.h"
+				RelativePath=".\ApplicationBase.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Buttons.h"
+				RelativePath=".\AppMain.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Colors.h"
+				RelativePath=".\ColorSchema.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Dimensions.h"
+				RelativePath=".\FormBase.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Drawings.h"
+				RelativePath=".\FormManager.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Fonts.h"
+				RelativePath=".\Honor2.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Images.h"
+				RelativePath=".\Honor2App.h"
 				>
 			</File>
 			<File
-				RelativePath=".\MiddleInterface.h"
+				RelativePath=".\Honor2FormBase.h"
 				>
 			</File>
 			<File
-				RelativePath=".\strlib.h"
+				RelativePath=".\Honor2Forms.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Types.h"
+				RelativePath=".\Honor2Logic.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Honor2MainForm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Honor2StatusBar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IForm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LogForm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Med.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedBody.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedCures.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedSymptoms.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedTypes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedWounds.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MenuDelegate.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MsgBoxForm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NewWoundForm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenSpaceImages.h"
+				>
+			</File>
+			<File
+				RelativePath=".\StatusBarBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\To3KShell.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TZ.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UIDesigner.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UserInterface.h"
 				>
 			</File>
 		</Filter>
@@ -233,6 +373,34 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\Images\battery_stub.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\menu_down.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\menu_left.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\menu_right.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\net_stub.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\scroll_down.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Images\scroll_up.png"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

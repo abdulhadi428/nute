@@ -145,7 +145,7 @@ fresult TextFormatsRepository::ResetTextFormats()
 	fresult fres;
 	TextFormat deafult_tf;
 
-	fres = CreateTextFormatByStyles(FONT_DEFAULT, CL_WHITE, CL_BLACK, &deafult_tf);
+	fres = CreateTextFormatByStyles(FONT_DEFAULT, CL_BLACK, CL_WHITE, &deafult_tf);
 	ENSURESUCCESS(fres);
 
 	for (int i=0;i<TEXTFORMATS_COUNT;i++)

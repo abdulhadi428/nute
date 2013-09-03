@@ -51,7 +51,7 @@ public:
 		
 };
 
-typedef ubyte_t FontHandle;
+typedef sbyte_t FontHandle;
 
 #define FONTS_COUNT 5
 
@@ -75,7 +75,7 @@ public:
 
 };
 
-typedef ubyte_t TextFormatHandle;
+typedef sbyte_t TextFormatHandle;
 #define TEXTFORMATS_COUNT 15
 
 #define TF_DEFAULT			0
@@ -106,7 +106,7 @@ public:
 	fresult GetTextPxSize(TextFormat* tf, const char* text, Size* o_sizePx);
 };
 
-typedef uword_t ImageHandle;
+typedef sword_t ImageHandle;
 
 class ImagesRepository
 {

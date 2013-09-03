@@ -15,5 +15,6 @@ public:
 
 	virtual fresult Click() =0;
 
+	//TODO: wrong name
 	virtual bool_t CheckAccelerator(ButtonState button)=0;
 };

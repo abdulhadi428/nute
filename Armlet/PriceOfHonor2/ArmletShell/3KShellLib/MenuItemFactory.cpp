@@ -89,6 +89,8 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 			else
 			{
 				lastCrIndex = crIndex;
+				maxLineLen = crIndex;
+				textLinesCount++;
 				do 
 				{
 					crIndex = InStr(text, "\n", lastCrIndex);
@@ -99,6 +101,7 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 						{
 							maxLineLen = lastCrIndex - crIndex;
 						}
+						lastCrIndex++;
 					}
 					else
 					{
