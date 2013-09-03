@@ -210,9 +210,9 @@ namespace HonorLogic
         }
 */
 
-        public void SendRoomHit(byte roomId, byte hitChance)
+        public void SendRoomHit(byte roomId, byte hitChance , HitType hitType)
         {
-            SendPayloadToAll(CreatePayload(MessageId.MSG_ROOM_HIT, new[] {roomId, hitChance}));
+            SendPayloadToAll(CreatePayload(MessageId.MSG_ROOM_HIT, new[] {roomId, hitChance, (byte) hitType}));
         }
 
         public void UpdateAllNames()
