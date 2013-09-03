@@ -34,7 +34,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NetworkDeliveryLevel\ArmletDeliveryService.cs" />
@@ -43,7 +45,13 @@
     <Compile Include="NetworkDeliveryLevel\IArmletDeliveryServece.cs" />
     <Compile Include="NetworkDeliveryLevel\IGateDeliveryService.cs" />
     <Compile Include="NetworkDeliveryLevel\NetworkDelivery.cs" />
+    <Compile Include="NetworkDeliveryLevel\ShipDamageServiceCallback.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service References\ShipDamageService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="WCFServices\GateWcfService.cs" />
     <Compile Include="WCFServices\IGateWCFService.cs" />
   </ItemGroup>
@@ -52,6 +60,37 @@
       <Project>{A6E64BDB-F06E-42BD-B108-4D3ACA7289EB}</Project>
       <Name>PillInterfaces</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Service References\ShipDamageService\HonorInterfaces.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ShipDamageService\service.wsdl" />
+    <None Include="Service References\ShipDamageService\service.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ShipDamageService\service1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ShipDamageService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ShipDamageService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ShipDamageService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\ShipDamageService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

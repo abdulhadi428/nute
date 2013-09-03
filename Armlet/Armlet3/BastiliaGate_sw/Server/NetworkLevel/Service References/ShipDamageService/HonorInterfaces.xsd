@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/HonorInterfaces" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/HonorInterfaces" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="ArrayOfShipStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipStatus" nillable="true" type="tns:ShipStatus" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfShipStatus" nillable="true" type="tns:ArrayOfShipStatus" />
+  <xs:complexType name="ShipStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ShipGuid" type="ser:guid" />
+      <xs:element minOccurs="0" name="SubsystemStatuses" nillable="true" type="tns:ArrayOfShipSubsystemStatus" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ShipStatus" nillable="true" type="tns:ShipStatus" />
+  <xs:complexType name="ArrayOfShipSubsystemStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipSubsystemStatus" nillable="true" type="tns:ShipSubsystemStatus" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfShipSubsystemStatus" nillable="true" type="tns:ArrayOfShipSubsystemStatus" />
+  <xs:complexType name="ShipSubsystemStatus">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Severity" type="tns:RanmaRepairSeverity" />
+      <xs:element minOccurs="0" name="SubSystemNum" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ShipSubsystemStatus" nillable="true" type="tns:ShipSubsystemStatus" />
+  <xs:simpleType name="RanmaRepairSeverity">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Ready" />
+      <xs:enumeration value="Easy" />
+      <xs:enumeration value="Medium" />
+      <xs:enumeration value="Hard" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="RanmaRepairSeverity" nillable="true" type="tns:RanmaRepairSeverity" />
+</xs:schema>
