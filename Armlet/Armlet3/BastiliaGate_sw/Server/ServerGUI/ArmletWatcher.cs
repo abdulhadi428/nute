@@ -113,7 +113,7 @@ namespace ServerGUI
             Regen = armletInfo.Regen.ToString(Thread.CurrentThread.CurrentCulture);
             ToxicLevel = armletInfo.Toxic.ToString(Thread.CurrentThread.CurrentCulture);
             Pulse = armletInfo.Pulse.ToString(Thread.CurrentThread.CurrentCulture);
-            Temp = armletInfo.Temp.ToString(Thread.CurrentThread.CurrentCulture);
+            Temp = ( armletInfo.Temp / 10 + 30).ToString(Thread.CurrentThread.CurrentCulture);
         }
 
         public string Status
