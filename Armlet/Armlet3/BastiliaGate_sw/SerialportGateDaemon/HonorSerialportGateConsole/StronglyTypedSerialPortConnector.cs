@@ -12,8 +12,7 @@ namespace HonorSerialportGateConsole
     {
         private readonly SerialPort _port;
         private readonly ConcurrentQueue<Command> _inputQueue;
-        private readonly ConcurrentQueue<string> _outputQueue; 
-        private readonly object _syncRoot = new object();
+        private readonly ConcurrentQueue<string> _outputQueue;
 
         private readonly Thread _readThread;
         private readonly Thread _writeThread;
@@ -21,8 +20,8 @@ namespace HonorSerialportGateConsole
 
         public StronglyTypedSerialPortConnector(ConcurrentQueue<Command> inputQuere, ConcurrentQueue<string> outputQueue)
         {
-            _writeThread = new Thread(WriteToSerialPort);
-            _readThread = new Thread(SerialPortRead);
+            _writeThread = new Thread(WriteToSerialPort) {Name = "PortWriter"};
+            _readThread = new Thread(SerialPortRead) {Name = "PortReader"};
             _inputQueue = inputQuere;
             _outputQueue = outputQueue;
             _port = new SerialPort
@@ -72,13 +71,6 @@ namespace HonorSerialportGateConsole
                 _port.PortName = portName;
                 _port.Open();
                 _port.WriteLine("#01");
-                //port.ReadTimeout = 1000;
-                //var answer = port.ReadLine().Trim().Replace(",", "");
-                //if (answer != "#9000")
-                //{
-                //    port.Close();
-                //    return false;
-                //}
                 _port.ReadTimeout = 1000;
                 return true;
             }
@@ -99,16 +91,11 @@ namespace HonorSerialportGateConsole
             {
                 while (true)
                 {
-
                     Command result;
                     while (_inputQueue.TryDequeue(out result))
                     {
-                        string commandString = result.ConvertToString();
-                        LogClass.Write("Pipe -> Com pending");
-                        lock (_syncRoot)
-                        {
-                            _port.WriteLine(commandString);
-                        }
+                        var commandString = result.ConvertToString();
+                        _port.WriteLine(commandString);
                         LogClass.WritePacket("Pipe -> Com: ", commandString);
                     }
                     Thread.Sleep(1000);
@@ -128,17 +115,10 @@ namespace HonorSerialportGateConsole
             {
                 while (true)
                 {
-                    while (!_inputQueue.IsEmpty)
-                    {
-                        Thread.Sleep(0);
-                    }
                     string message;
                     try
                     {
-                        lock (_syncRoot)
-                        {
-                            message = _port.ReadLine();
-                        }
+                        message = _port.ReadLine();
                     }
                     catch (TimeoutException)
                     {

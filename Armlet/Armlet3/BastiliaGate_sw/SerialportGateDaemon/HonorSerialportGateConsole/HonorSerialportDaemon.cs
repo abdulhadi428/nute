@@ -32,7 +32,7 @@ namespace HonorSerialportGateConsole
         public HonorSerialportDaemon()
         {
             InitiateLog();
-            sendThread = new Thread(SendToServer);
+            sendThread = new Thread(SendToServer) {Name ="ThreadSender"};
             instanceContext = new InstanceContext(new WCFCallbackHandler(this));
 
             serverProvidedGateId = Byte.Parse(Settings.Default.PreferedGateId);

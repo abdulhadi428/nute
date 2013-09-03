@@ -85,9 +85,6 @@
     <None Include="Service References\ServerWCFService\service2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServerWCFService\service3.xsd">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
