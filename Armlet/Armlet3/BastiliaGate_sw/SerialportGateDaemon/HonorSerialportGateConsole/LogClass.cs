@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 
 namespace HonorSerialportGateConsole
 {
@@ -13,7 +14,7 @@ namespace HonorSerialportGateConsole
         }
         public static void  Write(string v)
         {
-            Items.Enqueue(v);
+            Items.Enqueue(DateTime.Now.ToLongTimeString() + ": " + v);
         }
         public static void WritePacket(string h, string packet)
         {
