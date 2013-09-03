@@ -34,4 +34,7 @@ public:
 	virtual fresult CreateForms();
 
 	fresult MsgBoxShow(ImageHandle mgsBoxIcon, char* title, char* text);
+
+	virtual void LogError( char* errorText );
+
 };

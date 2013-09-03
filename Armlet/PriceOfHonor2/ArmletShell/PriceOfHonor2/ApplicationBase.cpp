@@ -2,6 +2,7 @@
 #include "ArmletShell.h"
 #include "ThreeKShell.h"
 #include "To3KShell.h"
+#include "AppMain.h"
 
 #define DEFAULT_SHOWNFORMSSTACK_LENGTH 10
 
@@ -132,6 +133,9 @@ fresult ApplicationBase::BaseInit()
 	fres = _fmngrFormManagerInstance.LayoutForms();
 	ENSURESUCCESS(fres);
 
+	//launch battery status timer
+	ArmletApi::RequestTimer(_QuerySystemStatusTimerCallback, BATTERYSTATUS_POLL_TIME);
+
 	return SUCCESS;
 }
 
@@ -237,4 +241,48 @@ Position ApplicationBase::GetClientAreaPos()
 	pos.Top = statusBarSize.Height;
 
 	return pos;
+}
+
+void ApplicationBase::DoVibroAndBeep()
+{
+	ArmletApi::DoVibroAndBeep(DOVIBRO_TIME);
+}
+
+bool_t ApplicationBase::OnSystemTimer()
+{
+	fresult fres;
+
+	if (_StatusBar != NULL)
+	{
+
+		ubyte_t currBattery = ArmletApi::GetBatteryLevel();
+		fres =  _StatusBar->SetBatteryLevel(currBattery);
+		if (fres!=SUCCESS)	
+		{
+			LogError("Cant't set battery level");
+			return true;
+		}
+
+		int GateId=25;
+		int Level=-99;
+
+		ArmletApi::GetRadioStatus(&GateId, &Level);
+		//hint for level values
+		//-35 good
+		//-100 bad
+
+		fres = _StatusBar->SetNetworkSignalStrength(Level);
+		if (fres!=SUCCESS)	
+		{
+			LogError("Cant't set radio status level");
+			return true;
+		}
+	}
+
+	return true;
+}
+
+void ApplicationBase::LogError( char* errorText )
+{
+	DrawTextString(10,10,errorText,Length(errorText),WHITE,0);	
 }

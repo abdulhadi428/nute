@@ -4,8 +4,9 @@
 
 class Honor2MainForm : public Honor2FormBase
 {
-	fresult CreateMenu(IMenu** o_mnu);
+	TextField* _txtStatus;
 
+	fresult CreateMenu(IMenu** o_mnu);
 	fresult OnKnockOut(IMenuItem* Sender);
 
 public:
@@ -16,4 +17,7 @@ public:
 
 	virtual fresult OnBeforeShow( IForm* prevFrom, bool_t reActivation );
 
+	fresult SetStatus(char* statusText);
+
+	fresult Scroll(IMenuItem* sender);
 };
