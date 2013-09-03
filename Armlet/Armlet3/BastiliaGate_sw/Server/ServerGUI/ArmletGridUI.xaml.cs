@@ -100,5 +100,26 @@ namespace ServerGUI
         {
             Model.UpdateAllNames();
         }
+
+        private void ConnectClick(object sender, RoutedEventArgs e)
+        {
+            var saveCursor = Cursor;
+            try
+            {
+                Cursor = Cursors.Wait;
+                if (Model.ConnectToSimulator())
+                {
+                    MessageBox.Show("Есть!");
+                }
+                else
+                {
+                    MessageBox.Show("Нет");
+                }
+            }
+            finally
+            {
+                Cursor = saveCursor;
+            }
+        }
     }
 }

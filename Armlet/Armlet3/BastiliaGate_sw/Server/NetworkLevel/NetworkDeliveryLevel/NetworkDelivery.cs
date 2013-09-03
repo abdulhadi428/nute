@@ -26,7 +26,7 @@ namespace NetworkLevel.NetworkDeliveryLevel
             myServiceHost = new ServiceHost(typeof(GateWcfService));
             myServiceHost.Open();
         }
-        static bool ConnectToSimulator()
+        public static bool ConnectToSimulator()
         {
             try
             {

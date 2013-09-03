@@ -242,6 +242,11 @@ namespace HonorLogic
             return _shipList.GetAll().Any(s => s.PhysicalGateID.Contains(gateId));
         }
 
+        public bool ConnectToSimulator()
+        {
+            return NetworkDelivery.ConnectToSimulator();
+        }
+
         public string GetRoomName(byte room)
         {
             return _shipList.GetAll().Select(s => s.FindRoomName(room)).SingleOrDefault(s => s != null)

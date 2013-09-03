@@ -18,5 +18,6 @@ namespace HonorInterfaces
         IEnumerable<IShip> GetShips();
         IEnumerable<byte> RoomsWithPeople { get; }
         bool IsShipGate(byte gateId);
+        bool ConnectToSimulator();
     }
 }
