@@ -25,7 +25,7 @@ namespace ServerGUI
         private void UpdateBackground()
         {
             DamageListBox.Background = new SolidColorBrush(GetSeverityColor(Status.Severity));
-            StatusLabel.Background = new SolidColorBrush(Status.RepairedStatus == 0 ? Colors.Green : Colors.Red);
+            StatusLabel.Background = new SolidColorBrush(Status.Repaired ? Colors.Green : Colors.Red);
         }
 
         private Color GetSeverityColor(RanmaRepairSeverity severity)
