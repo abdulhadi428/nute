@@ -9,14 +9,14 @@ BUTTON_HANDLER* gHoldButtonHandler = NULL;
 void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER HoldButtonHandler)
 {
 	gClickButtonHandler = ClickButtonHandler;
-	gHoldButtonHandler = HoldButtonHandler;
+	//@KL gHoldButtonHandler = HoldButtonHandler;
 }
 
 namespace ArmletApi {
 
 	int tick = 0;
 	bool __CALLBACK TimerProc(int elapsed)
-	{		
+	{
 		if (tick<15) {
 			DrawPixel(40+2*tick,70,RED);
 			tick++;
@@ -31,7 +31,7 @@ namespace ArmletApi {
 		Clear(BLUE);
 		const char* str = "PRICE of HONOR!";
 		DrawTextString(40,60,str,Length(str),RED,BLUE);
-	
+
 		GetBatteryLevel();
 		SetScreenBrightness(100);
 		char buff[200];
@@ -44,7 +44,8 @@ namespace ArmletApi {
 		FILE log;
 		OpenFile(&log, "log.txt", true);
 		char* s = "log test";
-		WriteFile(&log, s, Length(s));	
+		WriteFile(&log, s, Length(s));
+
 		/*
 		//int i = 0;
 		//Color area[100];
@@ -56,12 +57,14 @@ namespace ArmletApi {
 		//AppendFile(&log, (char*)area, 100);
 		//DrawArea(5,5,area,100,10,10);
 		*/
+
 		RequestTimer(TimerProc,100);
 		int up = GetUpTime();
 		int rnd = GetRandom(50);
 		//SetCureName is checked in AppMainThread
 		//WritePill is checked in AppMainThread
 		//StartThread(AppMainThread,NULL);
+
 		return true; //TODO
 	}
 

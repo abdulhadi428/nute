@@ -3,16 +3,21 @@
 #include "ThreeKShell.h"
 #include "To3KShell.h"
 
+#include "kl_allocator.h"
+
 #define DEFAULT_SHOWNFORMSSTACK_LENGTH 10
+
+static Alloc_t<Repositories, 20> SRepositoriesArr;
+static Alloc_t<Factories, 30> SFactoriesArr;
 
 Repositories* ApplicationBase::AllocRepositories()
 {
-	return 0; // new Repositories();
+	return SRepositoriesArr.Allocate(); // new Repositories();
 }
 
 Factories* ApplicationBase::AllocFactories()
 {
-	return 0; // new Factories();
+	return SFactoriesArr.Allocate(); // new Factories();
 }
 
 fresult ApplicationBase::InitImages( ImagesRepository* imgrep )
@@ -73,7 +78,7 @@ fresult ApplicationBase::InitFactories( Factories* factories )
 
 	fres = _pnlFactoryInstance.Init(_Render, _Repositories);
 	ENSURESUCCESS(fres);
-	
+
 	fres = _pbxFactoryInstance.Init(_Render, _Repositories->Images);
 	ENSURESUCCESS(fres);
 
@@ -86,7 +91,7 @@ fresult ApplicationBase::InitFactories( Factories* factories )
 	fres = _miFactoryInstance.Init(_Render, _Repositories, &_tfFactoryInstance, &_pbxFactoryInstance, &_pnlFactoryInstance);
 	ENSURESUCCESS(fres);
 
-	fres = _mnuFactoryInstance.Init(_Render, _Repositories, &_tfFactoryInstance, &_pbxFactoryInstance, &_pnlFactoryInstance, &_miFactoryInstance);	
+	fres = _mnuFactoryInstance.Init(_Render, _Repositories, &_tfFactoryInstance, &_pbxFactoryInstance, &_pnlFactoryInstance, &_miFactoryInstance);
 	ENSURESUCCESS(fres);
 
 	fres = _Factories->Init(&_pnlFactoryInstance, &_pbxFactoryInstance, &_imglFactoryInstance, &_tfFactoryInstance, &_miFactoryInstance, &_mnuFactoryInstance);
@@ -113,7 +118,7 @@ fresult ApplicationBase::BaseInit()
 	ENSURESUCCESS(fres);
 
 	_FormManager = &_fmngrFormManagerInstance;
-	
+
 	ubyte_t formsCount = 0;
 	ubyte_t shownStackLength = DEFAULT_SHOWNFORMSSTACK_LENGTH;
 
@@ -179,7 +184,7 @@ fresult ApplicationBase::OnButtonEvent( ButtonState buttonState )
 	FAILIF(frm==NULL);
 	fres =  frm->OnButtonEvent(buttonState);
 	ENSURESUCCESS(fres);
-	
+
 	return SUCCESS;
 }
 

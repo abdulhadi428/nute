@@ -2,21 +2,25 @@
 #include "ArmletShell.h"
 
 #include "FormManager.h"
+#include "kl_allocator.h"
+
+static Alloc_t<IForm*, 30> SIFormPtrArr;
+static Alloc_t<FormDescription, 40> SFormDescriptionArr;
 
 IForm** FormManager::allocFormsArray(ubyte_t count)
 {
-	return 0; // new IForm*[count];
+	return SIFormPtrArr.Allocate(count); // new IForm*[count];
 }
 
 FormDescription* FormManager::allocFormsDescription( ubyte_t count )
 {
-	return 0; // new FormDescription[count];
+	return SFormDescriptionArr.Allocate(count); // new FormDescription[count];
 }
- 
+
 fresult FormManager::Init( ubyte_t formsCount, ubyte_t stackLength )
 {
 	fresult fres;
-	
+
 	_formsRepository = allocFormsDescription(formsCount);
 	FAILIF(_formsRepository == NULL);
 	_formsCount = formsCount;
@@ -37,7 +41,7 @@ fresult FormManager::RegisterForm( IForm* frm )
 {
 	fresult fres;
 	FAILIF(_registeredForms == _formsCount);
-	
+
 	_formsRepository[_registeredForms].FormObject = frm;
 	_formsRepository[_registeredForms].FormName = frm->GetName();
 	fres = _formsRepository[_registeredForms].OpenFormHandler.Init(this, frm->GetName());
@@ -51,7 +55,7 @@ IForm* FormManager::GetForm( char* formName )
 {
 	IForm* foundFrm = NULL;
 	FormDescription* frmDescr = NULL;
-		
+
 	frmDescr = GetFormDescription(formName);
 	NULLIF(frmDescr == NULL);
 	foundFrm = frmDescr->FormObject;
@@ -86,7 +90,7 @@ fresult FormManager::ShowForm(char* name)
 
 	IForm* frm = GetForm(name);
 	FAILIF(frm==NULL);
-	
+
 	_shownIndex++;
 
 	_formStack[_shownIndex] = frm;
@@ -111,7 +115,7 @@ fresult FormManager::CloseForm( IForm* frm)
 
 	//can't close the main form
 	FAILIF(_shownIndex == 0);
-	
+
 	//can close only last form in stack
 	FAILIF(frm != _formStack[_shownIndex]);
 

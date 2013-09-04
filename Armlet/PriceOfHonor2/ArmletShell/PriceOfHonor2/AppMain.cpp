@@ -31,18 +31,18 @@ void AppMainThread(void* param)
 	fresult fres = App.Init();
 	if (fres!=SUCCESS)
 	{
-		char* err = "Failed to init App";
-		DrawTextString(10,10,err,Length(err),0,0);	
+		const char* err = "Failed to init App";
+		DrawTextString(10,10,err,Length(err),0xFFF,0);
 		return;
 	}
-	
+
 	RegisterButtonHandlers(AppOnButtonClick, AppOnButtonHold);
 
 	fres = App.Start();
 	if (fres!=SUCCESS)
 	{
-		char* err = "Failed to Show main form";
-		DrawTextString(10,10,err,Length(err),0,0);	
+	    const char* err = "Failed to Show main form";
+		DrawTextString(10,10,err,Length(err),0xFFF,0);
 		return;
 	}
 }
@@ -52,9 +52,9 @@ void AppMainThread(void* param)
 void AppMainThread(void* param)
 {
 	App.Init();
-	
-	
-	
+
+
+
 
 	_medInit();
 #ifdef _MSC_VER
@@ -64,7 +64,7 @@ void AppMainThread(void* param)
 	}
 #endif
 
-	
+
 
 	//MenuItemFactory* a = 0; // new MenuItemFactory();
 
