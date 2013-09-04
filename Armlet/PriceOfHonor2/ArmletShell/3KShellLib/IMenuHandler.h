@@ -32,24 +32,23 @@ public:
 //#define CREATE_PFM(R,T,F) 				MenuHandlerFunctionPtr<T>* R = new MenuHandlerFunctionPtr<T>(&T::F)
 //#define CREATE_DELEGATE(R,T,_this,F)		MenuHandlerDelegate<T>* R = new MenuHandlerDelegate<T>(_this,&T::F)
 //#define CREATE_MENU_HANDLER_ANY(T,_this,F)	new MenuHandlerDelegate<T>(_this,&T::F)
-#define CREATE_MENU_HANDLER(T,F)	0
-
+//#define CREATE_MENU_HANDLER(T,F)				new MenuHandlerDelegate<T>(this,&T::F)
 
 #define MENU_HANDLER_DELEGATE_NAME(T) \
 	SMenuHandlerDelegate##T##Arr
-#define DECLARE_MENU_HANDLER_DELEGATES(T,N) \
+#define ALLOCATE_MENU_HANDLERS(T,N) \
 	static Alloc_t<MenuHandlerDelegate<T>, N> SMenuHandlerDelegate##T##Arr
-//return new MenuHandlerDelegate<T>(this,&T::F)
-//extern template<class T, class F> MenuHandlerDelegate<T>* CREATE_MENU_HANDLER();
 
-//DECLARE_MENU_HANDLER_DELEGATES(Honor2MainForm,20);
-//DECLARE_MENU_HANDLER_DELEGATES(LogForm,20);
-//DECLARE_MENU_HANDLER_DELEGATES(MsgBoxForm,20);
-//DECLARE_MENU_HANDLER_DELEGATES(NewWoundForm,20);
+#define DEFINE_MENU_HANDLER(T) \
+	typedef fresult (T::*MENU_HANDLER_DELEGATE##T)(IMenuItem* sender); \
+	MenuHandlerDelegate<T>* CreateMenuHandler##T( \
+		T* _this, \
+		MENU_HANDLER_DELEGATE##T F \
+	) \
+{ \
+	MenuHandlerDelegate<T>* R = MENU_HANDLER_DELEGATE_NAME(T).Allocate(); \
+	R->_MenuHandlerDelegate(_this,F); \
+	return R; \
+}
 
-//template<class T, class F> MenuHandlerDelegate<T>* CREATE_MENU_HANDLER()
-//{
-//	MenuHandlerDelegate<T>* R = MENU_HANDLER_DELEGATE_NAME(T).Allocate();
-//	R->_MenuHandlerDelegate(R,&T::F);
-//	return R;
-//}
+#define CREATE_MENU_HANDLER(T,F)	CreateMenuHandler##T(this,&T::F);

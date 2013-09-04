@@ -3,6 +3,8 @@
 #include "Honor2.h"
 #include "MsgBoxForm.h"
 
+ALLOCATE_MENU_HANDLERS(MsgBoxForm,20);
+DEFINE_MENU_HANDLER(MsgBoxForm);
 
 fresult MsgBoxForm::CreateMenu( IMenu** o_mnu )
 {

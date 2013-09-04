@@ -4,6 +4,9 @@
 #include "NewWoundForm.h"
 #include "med.h"
 
+ALLOCATE_MENU_HANDLERS(NewWoundForm,20);
+DEFINE_MENU_HANDLER(NewWoundForm);
+
 fresult NewWoundForm::CreateMenu( IMenu** o_mnu )
 {
 	fresult fres;

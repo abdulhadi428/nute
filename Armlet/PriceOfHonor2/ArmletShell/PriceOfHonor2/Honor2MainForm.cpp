@@ -3,6 +3,9 @@
 #include "Honor2.h"
 #include "Honor2MainForm.h"
 
+ALLOCATE_MENU_HANDLERS(Honor2MainForm,20);
+DEFINE_MENU_HANDLER(Honor2MainForm);
+
 //TODO: remove logic. it can't be inited yet!
 fresult Honor2MainForm::Init( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, Honor2App* app, Honor2Logic* logic )
 {

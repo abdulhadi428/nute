@@ -2,6 +2,9 @@
 #include "To3KShell.h"
 #include "Honor2.h"
 
+ALLOCATE_MENU_HANDLERS(LogForm,20);
+DEFINE_MENU_HANDLER(LogForm);
+
 fresult LogForm::CreateMenu( IMenu** o_mnu )
 {
 	fresult fres;

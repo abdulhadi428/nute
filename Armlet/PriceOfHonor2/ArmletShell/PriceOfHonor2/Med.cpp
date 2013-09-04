@@ -44,6 +44,9 @@ void _medOnMedTick(char** oSymptoms)
 	ubyte_t state[5];
 	state[0] = (Body.BloodCapacity);	// / 1000);
 	state[1] = (Body.ToxinsCapacity);	// / 1000);
+	state[2] = 50;
+	state[3] = 60;
+	state[4] = 70;
 	ArmletApi::SendAppState(state);
 
 	BodyCycle(buf1,sizeof(buf1)-1);
