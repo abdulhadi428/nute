@@ -1,4 +1,6 @@
-﻿namespace HonorLogic.ShipStatus
+﻿using System.Linq;
+
+namespace HonorLogic.ShipStatus
 {
     public class BigShip: ShipBase
     {
@@ -17,6 +19,11 @@
         public override string GetSubsystemName(int subSystemNum)
         {
             return Names[subSystemNum];
+        }
+
+        protected override bool IsReactorDamaged
+        {
+            get { return GetAllSubsystemsStatus().Single(s => s.SubSystemNum == 7).Repaired; }
         }
     }
 }

@@ -241,5 +241,31 @@ namespace HonorLogic.ShipStatus
         }
 
         public abstract string GetSubsystemName(int subSystemNum);
+
+        public void ApplyEffects()
+        {
+            ReactorEffect();
+        }
+
+        private void ReactorEffect()
+        {
+            if (IsReactorDamaged)
+            {
+                foreach (var reactorRoom in ReactorRooms)
+                {
+                    Model.SendRoomHit(reactorRoom, 10, HitType.Radiation);
+                }
+            }
+        }
+
+        protected abstract bool IsReactorDamaged { get; }
+
+        public IEnumerable<byte> ReactorRooms
+        {
+            get
+            {
+                return Rooms.Where(r => r.IsReactor).Select(r => r.Id);
+            }
+        }
     }
 }

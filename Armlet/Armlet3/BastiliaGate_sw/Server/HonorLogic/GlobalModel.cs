@@ -52,6 +52,8 @@ namespace HonorLogic
 
 // ReSharper disable once ObjectCreationAsStatement
             new Timer(SendHeartBeat, 0, 0, 1 * 1000);
+            // ReSharper disable once ObjectCreationAsStatement
+            new Timer(ApplyShipEffects, 0, 0, 60*1000);
         }
 
         private static void SendHeartBeat(object state)
@@ -239,7 +241,12 @@ namespace HonorLogic
 
         public bool IsShipGate(byte gateId)
         {
-            return _shipList.GetAll().Any(s => s.PhysicalGateID.Contains(gateId));
+            return Ships.Any(s => s.PhysicalGateID.Contains(gateId));
+        }
+
+        private IEnumerable<ShipBase> Ships
+        {
+            get { return _shipList.GetAll(); }
         }
 
         public bool ConnectToSimulator()
@@ -249,8 +256,16 @@ namespace HonorLogic
 
         public string GetRoomName(byte room)
         {
-            return _shipList.GetAll().Select(s => s.FindRoomName(room)).SingleOrDefault(s => s != null)
+            return Ships.Select(s => s.FindRoomName(room)).SingleOrDefault(s => s != null)
                 ??  ShipBase.GetDefaultRoomName(room);
+        }
+
+        private void ApplyShipEffects(object state)
+        {
+            foreach (var ship in Ships)
+            {
+                ship.ApplyEffects();
+            }
         }
     }
 }

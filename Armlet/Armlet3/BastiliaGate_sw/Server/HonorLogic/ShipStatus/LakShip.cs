@@ -21,5 +21,10 @@
         {
             return Names[subSystemNum];
         }
+
+        protected override bool IsReactorDamaged
+        {
+            get { return false; }
+        }
     }
 }
