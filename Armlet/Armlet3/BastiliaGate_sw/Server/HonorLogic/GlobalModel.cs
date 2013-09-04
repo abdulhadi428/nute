@@ -24,7 +24,7 @@ namespace HonorLogic
         private readonly Lazy<GateModel>[] _gates;
 
 
-        public GlobalModel(IArmletDeliveryServece armletService, IGateDeliveryService gateService, ShipDamageServiceCallback shipDamageService)
+        public GlobalModel(IArmletDeliveryServece armletService, IGateDeliveryService gateService, ShipDamageServiceObj shipDamageService)
         {
             _armletService = armletService;
 

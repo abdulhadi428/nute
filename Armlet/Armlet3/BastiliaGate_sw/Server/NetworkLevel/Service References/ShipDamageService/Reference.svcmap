@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="120c870a-2c6d-4ca8-a212-c8e8a200057f" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="bb06d5d6-8116-4eee-99f1-7211866f1a3a" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <EnableDataBinding>true</EnableDataBinding>
@@ -12,19 +12,19 @@
     <GenerateSerializableTypes>true</GenerateSerializableTypes>
     <Serializer>Auto</Serializer>
     <UseSerializerForFaults>true</UseSerializerForFaults>
-    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferenceAllAssemblies>false</ReferenceAllAssemblies>
     <ReferencedAssemblies />
     <ReferencedDataContractTypes />
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="net.tcp://localhost:8090/spaceDamage/mex" Protocol="mex" SourceId="1" />
+    <MetadataSource Address="net.tcp://localhost:8070/spaceDamage/mex" Protocol="mex" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="service.wsdl" MetadataType="Wsdl" ID="b4f5777f-3542-4187-818a-71031687d193" SourceId="1" SourceUrl="net.tcp://localhost:8090/spaceDamage/mex" />
-    <MetadataFile FileName="service.xsd" MetadataType="Schema" ID="ada06f8e-e275-4bbe-a3ae-548a3acf2096" SourceId="1" SourceUrl="net.tcp://localhost:8090/spaceDamage/mex" />
-    <MetadataFile FileName="service1.xsd" MetadataType="Schema" ID="d521af36-c31c-4f35-b9b8-0626de05bc07" SourceId="1" SourceUrl="net.tcp://localhost:8090/spaceDamage/mex" />
-    <MetadataFile FileName="HonorInterfaces.xsd" MetadataType="Schema" ID="c87c680f-af05-4bdd-abf6-faf1d532b170" SourceId="1" SourceUrl="net.tcp://localhost:8090/spaceDamage/mex" />
+    <MetadataFile FileName="service.wsdl" MetadataType="Wsdl" ID="58f3f396-f03c-4beb-84c8-d9bccb5f4782" SourceId="1" SourceUrl="net.tcp://localhost:8070/spaceDamage/mex" />
+    <MetadataFile FileName="service.xsd" MetadataType="Schema" ID="70df1404-87f7-4137-9096-4737dc65d134" SourceId="1" SourceUrl="net.tcp://localhost:8070/spaceDamage/mex" />
+    <MetadataFile FileName="service1.xsd" MetadataType="Schema" ID="82266ef9-f159-4b3c-ad42-d8b913885bb4" SourceId="1" SourceUrl="net.tcp://localhost:8070/spaceDamage/mex" />
+    <MetadataFile FileName="HonorInterfaces.xsd" MetadataType="Schema" ID="64a3a920-1352-4d5b-a36a-5775b7bf3f46" SourceId="1" SourceUrl="net.tcp://localhost:8070/spaceDamage/mex" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

@@ -167,7 +167,7 @@ namespace NetworkLevel.ShipDamageService {
     public interface IServerDamageContractCallback {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerDamageContract/DamageShip", ReplyAction="http://tempuri.org/IServerDamageContract/DamageShipResponse")]
-        bool DamageShip(System.Guid shipGuid, NetworkLevel.ShipDamageService.ShipSubsystemStatus subsystemStatus);
+        bool DamageShip(System.Guid shipGuid, byte byteSeverity);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerDamageContract/DestroyShip", ReplyAction="http://tempuri.org/IServerDamageContract/DestroyShipResponse")]
         bool DestroyShip(System.Guid shipGuid);

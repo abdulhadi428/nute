@@ -9,11 +9,11 @@ namespace NetworkLevel.NetworkDeliveryLevel
     public static class  NetworkDelivery
     {
         private static readonly ServiceHost myServiceHost = null;
-        private static InstanceContext instanceContext;
+       
 
         public static readonly IGateDeliveryService GateDeliveryInstance = new GateDeliveryService();
         public static readonly IArmletDeliveryServece ArmletDeliveryInstance = new ArmletDeliveryService();
-        public static readonly ShipDamageServiceCallback ShipDamageServiceInstance = new ShipDamageServiceCallback();
+        public static readonly ShipDamageServiceObj ShipDamageServiceInstance = new ShipDamageServiceObj();
         
 
 
@@ -29,17 +29,8 @@ namespace NetworkLevel.NetworkDeliveryLevel
         }
         public static bool ConnectToSimulator()
         {
-            try
-            {
-                instanceContext = new InstanceContext(new ShipDamageServiceCallback());
-                ShipDamageServiceCallback.ShipDamageClient = new ShipDamageService.ServerDamageContractClient(instanceContext, "NetTcpBinding_IServerDamageContract");
-                ShipDamageServiceCallback.ShipDamageClient.ServerConnect();
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
+            return ShipDamageServiceInstance.ConnectToSimulator();
+            
         }
     }
 }

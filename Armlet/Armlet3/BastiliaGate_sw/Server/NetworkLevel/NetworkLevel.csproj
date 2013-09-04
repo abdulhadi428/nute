@@ -46,6 +46,7 @@
     <Compile Include="NetworkDeliveryLevel\IGateDeliveryService.cs" />
     <Compile Include="NetworkDeliveryLevel\NetworkDelivery.cs" />
     <Compile Include="NetworkDeliveryLevel\ShipDamageServiceCallback.cs" />
+    <Compile Include="NetworkDeliveryLevel\ShipDamageServiceObj.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\ShipDamageService\Reference.cs">
       <AutoGen>True</AutoGen>

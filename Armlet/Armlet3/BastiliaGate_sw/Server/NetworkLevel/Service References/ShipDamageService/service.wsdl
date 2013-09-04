@@ -102,9 +102,9 @@
   </wsdl:binding>
   <wsdl:service name="ShipDamageService">
     <wsdl:port name="NetTcpBinding_IServerDamageContract" binding="tns:NetTcpBinding_IServerDamageContract">
-      <soap12:address location="net.tcp://localhost:8090/spaceDamage" />
+      <soap12:address location="net.tcp://localhost:8070/spaceDamage" />
       <wsa10:EndpointReference>
-        <wsa10:Address>net.tcp://localhost:8090/spaceDamage</wsa10:Address>
+        <wsa10:Address>net.tcp://localhost:8070/spaceDamage</wsa10:Address>
       </wsa10:EndpointReference>
     </wsdl:port>
   </wsdl:service>

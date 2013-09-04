@@ -28,7 +28,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="shipGuid" type="q2:guid" />
-        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/HonorInterfaces" minOccurs="0" name="subsystemStatus" nillable="true" type="q3:ShipSubsystemStatus" />
+        <xs:element minOccurs="0" name="byteSeverity" type="xs:unsignedByte" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -42,7 +42,7 @@
   <xs:element name="DestroyShip">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="shipGuid" type="q4:guid" />
+        <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/" minOccurs="0" name="shipGuid" type="q3:guid" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
