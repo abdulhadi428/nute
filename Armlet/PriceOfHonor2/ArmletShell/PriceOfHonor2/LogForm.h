@@ -1,14 +1,6 @@
 #pragma once
 #include "Honor2FormBase.h"
 
-typedef enum _LOG_KINDS {
-	LogKindMessages,
-	LogKindSystem,
-	LogKindEvents,
-	LogKindMedSymptoms,
-	LogsCount
-} LogKinds;
-
 struct Log
 {
 	ImageHandle icon;
@@ -34,11 +26,14 @@ class LogForm : public Honor2FormBase
 
 	virtual fresult OnBeforeShow( IForm* prevFrom, bool_t reActivation );
 
+	bool_t errorSet;
+
 public:
 	virtual fresult DoLayout();
 	fresult Init(Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, Honor2App* app, Honor2Logic* logic);
 
 	fresult LogRecord(LogKinds log, char* text);
+	fresult CleanLog(LogKinds log);
 	fresult SwitchToLog(LogKinds log);
 
 };

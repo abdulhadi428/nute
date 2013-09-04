@@ -8,7 +8,7 @@
 #ifndef KL_ALLOCATOR_H_
 #define KL_ALLOCATOR_H_
 
-#include <inttypes.h>
+typedef unsigned int uint32_t;
 
 template <typename T, uint32_t Sz>
 class Alloc_t {

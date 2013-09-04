@@ -5,7 +5,7 @@
 namespace ThreeKShell {
 
 static Alloc_t<TextField, 45> STextFieldFactoryArr;
-static Alloc_t<char, 4500> SCharArr;
+static Alloc_t<char, 18000> SCharArr;
 
 fresult TextFieldFactory::Init(IRender* renderer, Repositories* styles)
 {

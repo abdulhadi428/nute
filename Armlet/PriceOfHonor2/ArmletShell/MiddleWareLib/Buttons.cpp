@@ -11,10 +11,10 @@ namespace ArmletShell {
 	static array<int>^ ButtonHolded;
 	static array<Boolean>^ SkipButtonRelease;
 
-	ButtonTicks = gc0; // new array<Int64>(N_BUTTONS);
-	ButtonPressed = gc0; // new array<Boolean>(N_BUTTONS);
-	ButtonHolded = gc0; // new array<int>(N_BUTTONS);
-	SkipButtonRelease = gc0; // new array<Boolean>(N_BUTTONS);
+	ButtonTicks = gcnew array<Int64>(N_BUTTONS);
+	ButtonPressed = gcnew array<Boolean>(N_BUTTONS);
+	ButtonHolded = gcnew array<int>(N_BUTTONS);
+	SkipButtonRelease = gcnew array<Boolean>(N_BUTTONS);
 
 	void FormHelper::OnButtonPress(int button)
 	{

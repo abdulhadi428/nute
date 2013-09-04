@@ -1146,7 +1146,8 @@ const Color RedCancelBitmap[]={
 
 #pragma endregion
 
-BitmapImage _images[22+18];
+//TODOURGENT
+BitmapImage _images[50];
 
 
 void FillAppSpecificImages(ImagesRepository* images)
@@ -1442,6 +1443,7 @@ void FillAppSpecificImages(ImagesRepository* images)
 	images->RegisterImage(&_images[OS_IMAGES_COUNT+25]);
 
 	//RedCancel
+	sword_t a = OS_IMAGES_COUNT+26;
 	_images[OS_IMAGES_COUNT+26].ImageSize.Height = 24;
 	_images[OS_IMAGES_COUNT+26].ImageSize.Width  = 24;
 	_images[OS_IMAGES_COUNT+26].Bitmap = (Color*) RedCancelBitmap;

@@ -5,6 +5,8 @@
 #include "OpenSpaceImages.h"
 
 class Honor2App;
+class Honor2MainForm;
+class LogForm;
 #include "Honor2Logic.h"
 #include "Honor2StatusBar.h"
 

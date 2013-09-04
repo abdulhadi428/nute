@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "UIDesigner.h"
 #include "ArmletShell.h"
 #include "Med.h"
@@ -61,4 +61,4 @@ public:
 	fresult virtual OnWoundMnuRightLeg( IMenuItem* sender );
 #pragma	endregion
 
-};
+};*/

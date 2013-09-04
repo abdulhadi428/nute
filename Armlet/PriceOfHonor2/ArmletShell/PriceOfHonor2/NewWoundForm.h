@@ -8,9 +8,10 @@ class NewWoundForm : public Honor2FormBase
 	TextField* _txtWoundText;
 
 	fresult OnWound(IMenuItem* sender);
-
+	bool_t _woundSelected;
 public:
 	virtual fresult DoLayout();
 	fresult Init(Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, Honor2App* app, Honor2Logic* logic);
+	virtual fresult OnBeforeShow( IForm* prevFrom, bool_t reActivation );
 
 };

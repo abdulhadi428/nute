@@ -1,7 +1,6 @@
 #include "ThreeKShell.h"
 #include "To3KShell.h"
 #include "Honor2.h"
-#include "LogForm.h"
 
 fresult LogForm::CreateMenu( IMenu** o_mnu )
 {
@@ -132,6 +131,7 @@ const char* _logMsgTitle = "Сообщения";
 const char* _logSymptomsTitle = "Симптомы";
 const char* _logTimeEventsTitle = "События";
 const char* _logSystemTitle = "Система";
+const char* _logErrorsTitle = "Ошибки";
 
 
 fresult LogForm::Init(Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, Honor2App* app, Honor2Logic* logic )
@@ -158,9 +158,16 @@ fresult LogForm::Init(Repositories* reps, Factories* facts, char* name, FormMana
 	_logs[LogKindEvents].icon = BlueInfo;
 	_logs[LogKindEvents].title = (char*)_logTitle;
 	_logs[LogKindEvents].subtitle = (char*)	_logTimeEventsTitle;
-	_logs[LogKindEvents].logKind = LogKindSystem;
+	_logs[LogKindEvents].logKind = LogKindEvents;
+
+	_logs[LogKindErrors].icon = RedCancel;
+	_logs[LogKindErrors].title = (char*)_logTitle;
+	_logs[LogKindErrors].subtitle = (char*)	_logErrorsTitle;
+	_logs[LogKindErrors].logKind = LogKindErrors;
 
 	_currentLog =0;
+
+	errorSet = FALSE;
 
 	return SUCCESS;
 }
@@ -170,11 +177,14 @@ fresult LogForm::LogRecord( LogKinds log, char* text )
 	fresult fres;
 	FAILIF(! (log< LogsCount));
 
+	if (log == LogKindErrors)
+	{
+		errorSet = TRUE;
+	}
+
 	if (_logs[log].txtLogField !=NULL)
 	{
-		fres = _logs[log].txtLogField->AppendText("\n");
-		ENSURESUCCESS(fres);
-		_logs[log].txtLogField->AppendText(text);
+		fres = _logs[log].txtLogField->AppendText(text);
 		ENSURESUCCESS(fres);
 	}
 
@@ -231,6 +241,10 @@ fresult LogForm::CycleLogLeft( IMenuItem* Sender )
 		else
 		{
 			newLog =LogsCount-1;
+			if (newLog == LogKindErrors && errorSet!=TRUE)
+			{
+				newLog =LogsCount-2;
+			}
 		}
 		fres = SwitchToLog((LogKinds)newLog);
 		ENSURESUCCESS(fres);
@@ -247,6 +261,10 @@ fresult LogForm::CycleLogRight( IMenuItem* Sender )
 		if (_currentLog != LogsCount-1)
 		{
 			newLog = _currentLog+1;
+			if (newLog == LogKindErrors && errorSet!=TRUE)
+			{
+				newLog =0;
+			}
 		}
 		else
 		{
@@ -262,7 +280,7 @@ fresult LogForm::SwitchToLog( LogKinds log )
 {
 	fresult fres;
 
-	FAILIF(log < LogKindMessages || log >= LogsCount);
+	FAILIF(log < 0 || log >= LogsCount);
 
 	//check if form is active
 	BitmapImage* bmp = _Repositories->Images->GetImageById(_logs[log].icon);
@@ -307,7 +325,26 @@ fresult LogForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation )
 	fres = Honor2FormBase::OnBeforeShow(prevFrom, reActivation);
 	ENSURESUCCESS(fres);
 
-	fres = SwitchToLog(LogKindMessages);
+	fres = SwitchToLog(LogKindMedSymptoms);
 
 	return SUCCESS;
+}
+
+fresult LogForm::CleanLog( LogKinds log )
+{
+	fresult fres;
+	FAILIF(! (log< LogsCount));
+
+	if (_logs[log].txtLogField !=NULL)
+	{
+		fres = _logs[log].txtLogField->Clear();
+		ENSURESUCCESS(fres);
+	} 
+
+	if (log == LogKindErrors)
+	{
+		errorSet = FALSE;
+	}
+	return SUCCESS;
+		
 }

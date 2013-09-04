@@ -156,12 +156,19 @@ fresult NewWoundForm::Init( Repositories* reps, Factories* facts, char* name, Fo
 	fres = BaseInit(FALSE,reps,facts, name, frmmngr, app, logic);
 	ENSURESUCCESS(fres);
 
+	_woundSelected = FALSE;
+
 	return SUCCESS;
 }
 
 fresult NewWoundForm::OnWound( IMenuItem* sender )
 {
 	fresult fres;
+
+	if (_woundSelected)
+	{
+		return SUCCESS;
+	}
 
 	MenuItemBase* mi = (MenuItemBase*)sender;
 
@@ -197,13 +204,29 @@ fresult NewWoundForm::OnWound( IMenuItem* sender )
 		return GENERAL_ERROR;
 	}
 
-	char* text = _Logic->OnNewWound(trg);
+	char* text = _App->Logic->OnNewWound(trg);
 	fres = _txtWoundText->AppendText("\n");
 	fres = _txtWoundText->AppendText(text);
 	ENSURESUCCESS(fres);
 	fres = _txtWoundText->Draw();
 	ENSURESUCCESS(fres);
 
+	_woundSelected = TRUE;
+
+	return SUCCESS;
+}
+
+fresult NewWoundForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation )
+{
+	fresult fres = Honor2FormBase::OnBeforeShow(prevFrom, reActivation);
+	ENSURESUCCESS(fres);
+
+	if (reActivation == FALSE)
+	{
+		_woundSelected = FALSE;
+		fres = _txtWoundText->Clear();
+		ENSURESUCCESS(fres);
+	}
 	return SUCCESS;
 }
 

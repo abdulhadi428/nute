@@ -215,7 +215,7 @@ fresult TextFormatsRepository::CreateTextFormatByStyles( ubyte_t fontId, ubyte_t
 BitmapImage* ImagesRepository::GetImageById(ImageHandle id)
 {
 	NULLIF(id<0 || !(id < _usedImages));
-
+	//URGENTTODO: mem error on redcancel
 	return _images[id];
 }
 

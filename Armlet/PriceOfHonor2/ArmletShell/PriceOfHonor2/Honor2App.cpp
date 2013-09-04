@@ -1,5 +1,6 @@
 #include "ThreeKShell.h"
 #include "Honor2.h"
+#include "ArmletApi.h"
 
 #define PriceOfHonor_VERSION "0.01"
 
@@ -12,7 +13,7 @@ fresult Honor2App::Init()
 
 	_Version = PriceOfHonor_VERSION ;
 	Logic = &_logicInstance;
-	fres = Logic->Init();
+	fres = Logic->Init(this);
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
@@ -173,4 +174,65 @@ fresult Honor2App::MsgBoxShow( ImageHandle mgsBoxIcon, char* title, char* text )
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
+}
+
+void Honor2App::LogError( char* errorText )
+{
+	bool_t logged = FALSE;
+	fresult fres;
+	if (_FormManager != NULL)
+	{
+		fres = MsgBoxShow(RedCancel, "Îøèáêà",  errorText);
+		
+		LogForm* logFrm = (LogForm*)_FormManager->GetForm(_honor2FormsInstance.LogFormName);
+		if (logFrm != NULL)
+		{
+			fres = logFrm->LogRecord(LogKindErrors, errorText);
+			if (fres == SUCCESS)
+			{
+				logged = TRUE;
+			}
+		}
+	}
+	
+	if (logged == FALSE)
+	{
+		ApplicationBase::LogError(errorText);
+	}
+}
+
+bool_t Honor2App::OnSystemTimer()
+{
+	ApplicationBase::OnSystemTimer();
+	
+	//TODO: errors add macro for null
+	LogForm* logFrm = (LogForm*)_FormManager->GetForm(_honor2FormsInstance.LogFormName);
+	if (logFrm != NULL)
+	{
+		char buff[5];
+		buff[4] =0;
+		sword_t armletId = ArmletApi::GetArmletId();
+		ArmletApi::snprintf(buff, 4, "%d", armletId);
+
+		logFrm->CleanLog(LogKindSystem);
+		logFrm->LogRecord(LogKindSystem, "\nArmletId:");
+		logFrm->LogRecord(LogKindSystem, buff);
+
+		logFrm->LogRecord(LogKindSystem, "\nFirmware:");
+		logFrm->LogRecord(LogKindSystem, FIRMWARE_VERSION);
+
+		int gateId=0;
+		int level=-99;
+
+		ArmletApi::GetRadioStatus(&gateId, &level);
+				
+		ArmletApi::snprintf(buff, 4, "%d", gateId);
+		logFrm->LogRecord(LogKindSystem, "\nGate:");
+		logFrm->LogRecord(LogKindSystem, buff);
+		
+		ArmletApi::snprintf(buff, 4, "%d", level);
+		logFrm->LogRecord(LogKindSystem, "\nSignal: ");
+		logFrm->LogRecord(LogKindSystem, buff);
+	}
+	return TRUE;
 }
