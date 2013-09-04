@@ -33,6 +33,11 @@ typedef struct _PART {
 } PART, *PPART;
 
 typedef struct _BODY {
+	int HighPressure;	//TODO init with 120
+	int LowPressure;	//TODO init with 80
+	int Temperature;	//TODO init with 66	(30+Tm/10)
+	int Pulse;			//TODO init with 70
+
 	REGENERATION_LEVEL RegenerationLevel;	//R
 	int BloodCapacity;						//B
 	int ToxinsCapacity;						//T
