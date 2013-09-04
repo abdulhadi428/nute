@@ -38,6 +38,7 @@
             this.cmdStart = new System.Windows.Forms.Button();
             this.pnlColor = new System.Windows.Forms.Panel();
             this.lbl16bit = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.lbl32bit = new System.Windows.Forms.Label();
             this.txt16bitColor = new System.Windows.Forms.TextBox();
             this.txt32bitColor = new System.Windows.Forms.TextBox();
@@ -48,12 +49,17 @@
             this.colorPicker = new System.Windows.Forms.ColorDialog();
             this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.label3 = new System.Windows.Forms.Label();
             this.dlgTransparentColorPicker = new System.Windows.Forms.ColorDialog();
+            this.gbxCustomSettings = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.cbxOffsetName = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtAppImagesName = new System.Windows.Forms.TextBox();
             this.pnlTools.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.gbxCustomSettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtHContent
@@ -64,7 +70,7 @@
             this.txtHContent.Multiline = true;
             this.txtHContent.Name = "txtHContent";
             this.txtHContent.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtHContent.Size = new System.Drawing.Size(638, 355);
+            this.txtHContent.Size = new System.Drawing.Size(638, 388);
             this.txtHContent.TabIndex = 1;
             this.txtHContent.WordWrap = false;
             // 
@@ -80,6 +86,7 @@
             // 
             // pnlTools
             // 
+            this.pnlTools.Controls.Add(this.gbxCustomSettings);
             this.pnlTools.Controls.Add(this.cbxTrasparency);
             this.pnlTools.Controls.Add(this.chkSystemImages);
             this.pnlTools.Controls.Add(this.label2);
@@ -98,7 +105,7 @@
             this.pnlTools.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlTools.Location = new System.Drawing.Point(0, 0);
             this.pnlTools.Name = "pnlTools";
-            this.pnlTools.Size = new System.Drawing.Size(1369, 100);
+            this.pnlTools.Size = new System.Drawing.Size(1369, 190);
             this.pnlTools.TabIndex = 7;
             // 
             // cbxTrasparency
@@ -124,6 +131,7 @@
             this.chkSystemImages.TabIndex = 15;
             this.chkSystemImages.Text = "SystemImages";
             this.chkSystemImages.UseVisualStyleBackColor = true;
+            this.chkSystemImages.CheckedChanged += new System.EventHandler(this.chkSystemImages_CheckedChanged);
             // 
             // label2
             // 
@@ -139,7 +147,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label1.Location = new System.Drawing.Point(169, 75);
+            this.label1.Location = new System.Drawing.Point(280, 78);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(71, 16);
             this.label1.TabIndex = 14;
@@ -170,6 +178,15 @@
             this.lbl16bit.Size = new System.Drawing.Size(59, 13);
             this.lbl16bit.TabIndex = 11;
             this.lbl16bit.Text = "16 bit color";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(372, 76);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(73, 13);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Trancparency";
             // 
             // lbl32bit
             // 
@@ -230,14 +247,14 @@
             this.txtCPPContent.Multiline = true;
             this.txtCPPContent.Name = "txtCPPContent";
             this.txtCPPContent.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtCPPContent.Size = new System.Drawing.Size(727, 355);
+            this.txtCPPContent.Size = new System.Drawing.Size(727, 388);
             this.txtCPPContent.TabIndex = 1;
             this.txtCPPContent.WordWrap = false;
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 100);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 190);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -247,24 +264,62 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.txtCPPContent);
-            this.splitContainer1.Size = new System.Drawing.Size(1369, 355);
+            this.splitContainer1.Size = new System.Drawing.Size(1369, 388);
             this.splitContainer1.SplitterDistance = 638;
             this.splitContainer1.TabIndex = 8;
             // 
-            // label3
+            // gbxCustomSettings
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(372, 76);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(73, 13);
-            this.label3.TabIndex = 10;
-            this.label3.Text = "Trancparency";
+            this.gbxCustomSettings.Controls.Add(this.txtAppImagesName);
+            this.gbxCustomSettings.Controls.Add(this.cbxOffsetName);
+            this.gbxCustomSettings.Controls.Add(this.label5);
+            this.gbxCustomSettings.Controls.Add(this.label4);
+            this.gbxCustomSettings.Location = new System.Drawing.Point(13, 101);
+            this.gbxCustomSettings.Name = "gbxCustomSettings";
+            this.gbxCustomSettings.Size = new System.Drawing.Size(270, 83);
+            this.gbxCustomSettings.TabIndex = 17;
+            this.gbxCustomSettings.TabStop = false;
+            this.gbxCustomSettings.Text = "App Images Settings";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(8, 23);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Offset";
+            // 
+            // cbxOffsetName
+            // 
+            this.cbxOffsetName.FormattingEnabled = true;
+            this.cbxOffsetName.Location = new System.Drawing.Point(49, 20);
+            this.cbxOffsetName.Name = "cbxOffsetName";
+            this.cbxOffsetName.Size = new System.Drawing.Size(200, 21);
+            this.cbxOffsetName.TabIndex = 1;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(8, 48);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(35, 13);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Name";
+            // 
+            // txtAppImagesName
+            // 
+            this.txtAppImagesName.Location = new System.Drawing.Point(49, 45);
+            this.txtAppImagesName.Name = "txtAppImagesName";
+            this.txtAppImagesName.Size = new System.Drawing.Size(200, 20);
+            this.txtAppImagesName.TabIndex = 2;
+            this.txtAppImagesName.Text = "APP_IMAGES";
             // 
             // frmImageConverter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1369, 455);
+            this.ClientSize = new System.Drawing.Size(1369, 578);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.pnlTools);
             this.Name = "frmImageConverter";
@@ -277,6 +332,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
             this.splitContainer1.ResumeLayout(false);
+            this.gbxCustomSettings.ResumeLayout(false);
+            this.gbxCustomSettings.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -305,6 +362,11 @@
         private System.Windows.Forms.ComboBox cbxTrasparency;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ColorDialog dlgTransparentColorPicker;
+        private System.Windows.Forms.GroupBox gbxCustomSettings;
+        private System.Windows.Forms.TextBox txtAppImagesName;
+        private System.Windows.Forms.ComboBox cbxOffsetName;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label4;
     }
 }
 

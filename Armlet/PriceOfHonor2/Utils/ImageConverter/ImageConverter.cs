@@ -58,7 +58,17 @@ namespace ImageConverter
             hContent.AppendLine("#pragma once");
             hContent.AppendLine();
             if (chkSystemImages.Checked)
+            {
                 hContent.AppendFormat("#define SYS_IMAGES_COUNT {0}", imageIndex);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(txtAppImagesName.Text))
+                {
+                    hContent.AppendFormat("#define {1}_COUNT {0}", imageIndex, txtAppImagesName.Text);
+                }
+            }
+                
             hContent.AppendLine();
             hContent.AppendLine();
             hContent.AppendLine(defines.ToString());
@@ -78,7 +88,23 @@ namespace ImageConverter
             }
             else
             {
-                cppContent.AppendFormat("BitmapImage _images[{0}];", imageIndex);
+                if (!string.IsNullOrEmpty(txtAppImagesName.Text))
+                {
+                    string offset = string.Empty;
+                    if (!string.IsNullOrEmpty(cbxOffsetName.Text))
+                    {
+                        offset = string.Format("{0}+", cbxOffsetName.Text);
+                    }
+
+                    string arraySize = string.Format("{0}{1}_COUNT", offset, txtAppImagesName.Text);
+
+                    cppContent.AppendFormat("BitmapImage _images[{0}];", arraySize);
+                }
+                else
+                {
+                    cppContent.AppendFormat("BitmapImage _images[{0}];", imageIndex);
+                }
+                
                 cppContent.AppendLine();
             }
             
@@ -104,7 +130,13 @@ namespace ImageConverter
             }
             else
             {
-                defines.AppendFormat("#define {0} SYS_IMAGES_COUNT+{1}{2}", imageName, imageIndex, Environment.NewLine); 
+                string offset = string.Empty;
+                if (!string.IsNullOrEmpty(cbxOffsetName.Text))
+                {
+                    offset = string.Format(" + {0}", cbxOffsetName.Text);
+                }
+
+                defines.AppendFormat("#define {0} SYS_IMAGES_COUNT{3}+{1}{2}", imageName, imageIndex, Environment.NewLine, offset); 
             }
             
 
@@ -112,11 +144,17 @@ namespace ImageConverter
             {
                 Size sz = readImageData(filePath, imagedata, imageName);
 
+                string offset = string.Empty;
+                if (!string.IsNullOrEmpty(cbxOffsetName.Text))
+                {
+                    offset = string.Format("{0}+", cbxOffsetName.Text);
+                }
+
                 arrayInit.AppendFormat("    //{0}{1}", imageName, Environment.NewLine);
-                arrayInit.AppendFormat("    _images[{0}].ImageSize.Height = {1};{2}", imageIndex, sz.Height, Environment.NewLine);
-                arrayInit.AppendFormat("    _images[{0}].ImageSize.Width  = {1};{2}", imageIndex, sz.Width, Environment.NewLine);
-                arrayInit.AppendFormat("    _images[{0}].Bitmap = (Color*) {1}Bitmap;{2}", imageIndex, imageName, Environment.NewLine);
-                arrayInit.AppendFormat("    images->RegisterImage(&_images[{0}]);{1}", imageIndex, Environment.NewLine);
+                arrayInit.AppendFormat("    _images[{3}{0}].ImageSize.Height = {1};{2}", imageIndex, sz.Height, Environment.NewLine, offset);
+                arrayInit.AppendFormat("    _images[{3}{0}].ImageSize.Width  = {1};{2}", imageIndex, sz.Width, Environment.NewLine, offset);
+                arrayInit.AppendFormat("    _images[{3}{0}].Bitmap = (Color*) {1}Bitmap;{2}", imageIndex, imageName, Environment.NewLine, offset);
+                arrayInit.AppendFormat("    images->RegisterImage(&_images[{2}{0}]);{1}", imageIndex, Environment.NewLine, offset);
                 arrayInit.AppendLine();
             }
             catch
@@ -305,6 +343,7 @@ namespace ImageConverter
             }
 
             cbxTrasparency.SelectedIndex = 0;
+            gbxCustomSettings.Enabled = !chkSystemImages.Checked;
         }
 
         private void cbxTrasparency_SelectedIndexChanged(object sender, EventArgs e)
@@ -318,6 +357,11 @@ namespace ImageConverter
             {
                 cbxTrasparency.BackColor = Color.White;
             }
+        }
+
+        private void chkSystemImages_CheckedChanged(object sender, EventArgs e)
+        {
+            gbxCustomSettings.Enabled = !chkSystemImages.Checked;
         }
 
     }
