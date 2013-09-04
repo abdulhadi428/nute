@@ -16,7 +16,7 @@ namespace HonorGateServer
         {
             Title = "HonorGateServer " + Assembly.GetEntryAssembly().GetName().Version;
             Application.Current.DispatcherUnhandledException  += Current_DispatcherUnhandledException;
-            var globalModel = new GlobalModel(NetworkDelivery.ArmletDeliveryInstance, NetworkDelivery.GateDeliveryInstance);
+            var globalModel = new GlobalModel(NetworkDelivery.ArmletDeliveryInstance, NetworkDelivery.GateDeliveryInstance, NetworkDelivery.ShipDamageServiceInstance);
             ArmletUI.Model = globalModel;
             ArmletUI.GateUI.Model = globalModel;
         }

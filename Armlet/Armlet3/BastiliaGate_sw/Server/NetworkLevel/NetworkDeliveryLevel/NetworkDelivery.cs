@@ -13,7 +13,8 @@ namespace NetworkLevel.NetworkDeliveryLevel
 
         public static readonly IGateDeliveryService GateDeliveryInstance = new GateDeliveryService();
         public static readonly IArmletDeliveryServece ArmletDeliveryInstance = new ArmletDeliveryService();
-        public static ShipDamageService.ServerDamageContractClient ShipDamageClient;
+        public static readonly ShipDamageServiceCallback ShipDamageServiceInstance = new ShipDamageServiceCallback();
+        
 
 
         static NetworkDelivery()
@@ -31,8 +32,8 @@ namespace NetworkLevel.NetworkDeliveryLevel
             try
             {
                 instanceContext = new InstanceContext(new ShipDamageServiceCallback());
-                ShipDamageClient = new ShipDamageService.ServerDamageContractClient(instanceContext, "NetTcpBinding_IServerDamageContract");
-                ShipDamageClient.ServerConnect();
+                ShipDamageServiceCallback.ShipDamageClient = new ShipDamageService.ServerDamageContractClient(instanceContext, "NetTcpBinding_IServerDamageContract");
+                ShipDamageServiceCallback.ShipDamageClient.ServerConnect();
             }
             catch (Exception)
             {

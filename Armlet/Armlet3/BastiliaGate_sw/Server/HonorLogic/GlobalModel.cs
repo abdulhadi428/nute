@@ -24,7 +24,7 @@ namespace HonorLogic
         private readonly Lazy<GateModel>[] _gates;
 
 
-        public GlobalModel(IArmletDeliveryServece armletService, IGateDeliveryService gateService)
+        public GlobalModel(IArmletDeliveryServece armletService, IGateDeliveryService gateService, ShipDamageServiceCallback shipDamageService)
         {
             _armletService = armletService;
 
@@ -49,11 +49,24 @@ namespace HonorLogic
             gateService.GateConnected += OnNewGateOnline;
             _armletService.ArmletSuccess += OnArmletListSuccess;
             _armletService.ArmletSendsData += _armletService_ArmletSendsData;
+            shipDamageService.ShipDamaged += ShipDamageServiceOnShipDamaged;
+            shipDamageService.ShipDestroyed += ShipDamageServiceOnShipDestroyed;
+
 
 // ReSharper disable once ObjectCreationAsStatement
             new Timer(SendHeartBeat, 0, 0, 1 * 1000);
             // ReSharper disable once ObjectCreationAsStatement
             new Timer(ApplyShipEffects, 0, 0, 60*1000);
+        }
+
+        private void ShipDamageServiceOnShipDestroyed(Guid guid)
+        {
+            _shipList.GetShipByGuid(guid).DestroyShip();
+        }
+
+        private void ShipDamageServiceOnShipDamaged(Guid guid, byte b)
+        {
+            _shipList.GetShipByGuid(guid).DamageShip(b);
         }
 
         private static void SendHeartBeat(object state)

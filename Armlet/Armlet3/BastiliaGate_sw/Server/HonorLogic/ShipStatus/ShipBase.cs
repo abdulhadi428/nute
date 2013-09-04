@@ -141,7 +141,7 @@ namespace HonorLogic.ShipStatus
 
         private void SaveToSimulator()
         {
-            throw new NotImplementedException();
+            NetworkLevel.NetworkDeliveryLevel.NetworkDelivery.ShipDamageServiceInstance.SendToSimulator(this.ShipGuid, _subsystems);
         }
 
         private void SendSeverityToRanmaPlate(ShipSubsystemStatus ranmaStatus)
