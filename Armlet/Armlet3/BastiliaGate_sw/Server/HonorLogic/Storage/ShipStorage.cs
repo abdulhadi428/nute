@@ -23,6 +23,7 @@ namespace HonorLogic.Storage
     {
         public byte Id { get; [UsedImplicitly] set; }
         public string Name { get; [UsedImplicitly] set; }
+        public bool IsReactor { get; [UsedImplicitly] set; }
     }
 
     internal class ShipStorage
@@ -45,11 +46,6 @@ namespace HonorLogic.Storage
             }
         }
 
-        //public void SaveData(List<ShipStoredData> pairs)
-        //{
-        //    _storageBase.Save(pairs);
-        //}
-
         public ShipBase CreateObject(Guid id, GlobalModel model)
         {
             var obj = _savedData.ContainsKey(id) ? (ShipStoredData?) _savedData[id] : null;
@@ -57,13 +53,6 @@ namespace HonorLogic.Storage
             var big = gates.Count > 1;
             var ship = big ? (ShipBase) new BigShip() : new LakShip();
             ship.PhysicalGateID = gates.ToArray();
-            //if (obj != null)
-            //{
-            //    foreach (var s in obj.Value.Subsystems)
-            //    {
-            //        ship.SetSubsystemStatus(s);
-            //    }
-            //}
             ship.ShipName = obj == null ? id.ToString() : obj.Value.Name;
             ship.Model = model;
             ship.ShipGuid = id;

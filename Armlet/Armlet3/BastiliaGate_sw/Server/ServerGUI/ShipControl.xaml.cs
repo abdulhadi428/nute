@@ -57,7 +57,7 @@ namespace ServerGUI
         void board_StatusChanged(object sender, System.EventArgs e)
         {
             var board = (BoardGUI) sender;
-            Ship.SetSubsystemStatus(board.Status);
+            Ship.SetSubsystemStatusFromGUI(board.Status);
         }
 
         private void HitClick(object sender, RoutedEventArgs e)

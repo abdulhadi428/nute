@@ -5,7 +5,7 @@ namespace HonorInterfaces
 {
     public interface IShip : IDisposable
     {
-        void SetSubsystemStatus(ShipSubsystemStatus subsystemStatus);
+        void SetSubsystemStatusFromGUI(ShipSubsystemStatus subsystemStatus);
         List<ShipSubsystemStatus> GetAllSubsystemsStatus();
 
         IEnumerable<byte> ShipRoomsIDs { get; }
@@ -20,7 +20,7 @@ namespace HonorInterfaces
         bool IsOnline { get; }
         event Action OnlineChanged;
         void DamageShip(byte damage);
-        void RemoveShipFromMap();
+        void DestroyShip();
         string GetSubsystemName(int subSystemNum);
     }
 }
