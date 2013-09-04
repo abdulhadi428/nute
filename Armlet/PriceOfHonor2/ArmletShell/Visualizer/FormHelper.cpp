@@ -57,6 +57,7 @@ namespace Visualizer {
 		BIND_DELEGATE(Log);
 		BIND_DELEGATE(SetCureName);
 		BIND_DELEGATE(UpdateCurrentCure);
+		BIND_DELEGATE(UpdateCurrentTorture);
 	}
 
 } //namespace

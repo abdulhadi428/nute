@@ -30,7 +30,7 @@ void _medInit()
 	if (sz!=sizeof(BODY)) {
 		InitBody();
 	}
-	InitCureDescs();
+	InitCureAndTortureDescs();
 	InitWounds();
 }
 
@@ -42,11 +42,11 @@ void _medOnMedTick(char** oSymptoms)
 
 	//To server
 	ubyte_t state[5];
-	state[0] = (Body.BloodCapacity);	// / 1000);
-	state[1] = (Body.ToxinsCapacity);	// / 1000);
-	state[2] = 50;
-	state[3] = 60;
-	state[4] = 70;
+	state[0] = (Body.BloodCapacity);	//0..200
+	state[1] = (Body.ToxinsCapacity);	//0..200
+	state[2] = (Body.Pulse);			//40..150
+	state[3] = (Body.Temperature);		//0..150 i.e. 30-45
+	state[4] = 0;
 	ArmletApi::SendAppState(state);
 
 	BodyCycle(buf1,sizeof(buf1)-1);
@@ -62,6 +62,20 @@ void _medAfterWoundUpdate(char** oSymptoms)
 //simple healing
 char* _medOnPillConnected(ubyte_t cureId)
 {
+	if ((cureId>=20)&&(cureId<=26))
+	{
+		TORTURE_ID torture_id = (TORTURE_ID)(cureId-20);
+		switch  (torture_id) {
+		default:
+			break;
+		}
+		if (Body.PainReduction==2) {
+			return (char*)TortureDesc[torture_id].EffectNoPain;
+		} else {
+			return (char*)TortureDesc[torture_id].Effect;
+		}
+	}
+
 	CURE_ID cure_id = (CURE_ID)cureId;
 	switch (cureId) {
 		case Analgetic:
@@ -113,7 +127,7 @@ char* _medOnPillConnected(ubyte_t cureId)
 		default:
 			break;
 	}
-	return (char*)CureDescs[cureId].Effect;
+	return (char*)CureDesc[cureId].Effect;
 }
 
 #pragma region forUI
@@ -123,7 +137,7 @@ char* _medOnPillConnected(ubyte_t cureId)
 char* _medOnExplosion()
 {
 	int Target = ArmletApi::GetRandom(MaxTarget);
-	int DamageSeverity = IncreaseCategory(&Body.parts[Target].CurrSeverity);
+	int DamageSeverity = IncreaseCategory(&Body.parts[Target].CurrSeverity);	//TODO FIX
 	int ExplosionType = ArmletApi::GetRandom(2);
 	if (ExplosionType == 1)
 		ExplosionType = 2; //skip scorch
@@ -141,7 +155,7 @@ char* _medOnExplosion()
 char* _medOnKnockout ()
 {
 	int Target = ArmletApi::GetRandom(MaxTarget);
-	int DamageSeverity = IncreaseCategory(&Body.parts[Target].CurrSeverity);
+	int DamageSeverity = IncreaseCategory(&Body.parts[Target].CurrSeverity);	//TODO FIX
 	ApplyWound(MaxTarget,DamageSeverity,&Body.parts[Target]);
 	const char* msg =  WoundDescs[MaxTarget][DamageSeverity].message;
 //temp
@@ -155,7 +169,7 @@ char* _medOnKnockout ()
 
 char* _medNewWound(ubyte_t place)
 {
-	int DamageSeverity = IncreaseCategory(&Body.parts[place].CurrSeverity);
+	int DamageSeverity = IncreaseCategory(&Body.parts[place].CurrSeverity);	//TODO FIX
 	ApplyWound(place,DamageSeverity,&Body.parts[place]);
 	const char* msg =  WoundDescs[place][DamageSeverity].message;
 //temp

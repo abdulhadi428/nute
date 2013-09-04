@@ -61,9 +61,13 @@ namespace ArmletApi {
 	//writes cure to pill
 	bool __SYSCALL WritePill(int cure_id, int charges)
 	{
-		ArmletKernel::LowLog("Cure %d was written %d charges", cure_id, charges);
-		if ((cure_id < 0)||(cure_id > 14))
+		ArmletKernel::LowLog("Cure/Torture %d was written %d charges", cure_id, charges);
+		if ((cure_id < 0)||(cure_id > 14)) {
+			if ((cure_id < 20)||(cure_id > 26))
 			return false;
+			ArmletKernel::TortureCharges[cure_id-20] = charges;
+			KernelApi::UpdateCurrentTorture();
+		}
 		ArmletKernel::CureCharges[cure_id] = charges;
 		KernelApi::UpdateCurrentCure();
 		return true;

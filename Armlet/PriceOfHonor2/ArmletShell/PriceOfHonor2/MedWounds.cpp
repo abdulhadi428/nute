@@ -158,8 +158,7 @@ COMPILE_TIME_CHECK(sizeof(WoundEffects)/sizeof(char*)==MaxWoundType*MaxDamageSev
 
 const DAMAGE_SEVERITY RandomSelectPerTenPercent[10] =
 { //for random number from 0..9
-	//Graze, Graze, Graze, Graze, 
-	Light, Light, Light, Light,		//40% царапина
+	Graze, Graze, Graze, Graze,		//40% царапина
 	Light, Light, Light,			//30% неопасное
 	Insidious, Insidious,			//20% коварное
 	Serious							//10% опасное
@@ -168,46 +167,47 @@ COMPILE_TIME_CHECK(sizeof(RandomSelectPerTenPercent)/sizeof(DAMAGE_SEVERITY)==10
 
 DAMAGE_EFFECT WoundToDamageEffect[MaxWoundType] =
 { 
-	Rupture, Rupture, Rupture, Rupture,
-	Rupture, Rupture, Rupture, Rupture,
-	Blow, Blow, Thermal, Radiation
+	Rupture, Rupture, Rupture, Rupture,	//LimbShot
+	Rupture, Rupture, Rupture, Rupture,	//other shots
+	Blow,								//KnockOut
+	Blow, Thermal, Radiation			//Explosion
 };
 
 int sdeToPain[MaxDamageEffect][MaxDamageSeverity] = {
-	{1,1,1,2,3},
-	{1,1,1,2,3},
-	{0,0,0,0,0},
-	{0,0,0,0,0},
-};
-int sdeToDisfnLevel[MaxDamageEffect][MaxDamageSeverity] = {
-	{0,0,1,1,2},
-	{0,0,1,1,2},
-	{0,0,1,1,2},
-	{0,0,1,1,2},
+	{1,1,1,2,3}, //Rupture
+	{0,0,0,1,2}, //Blow
+	{1,2,2,3,3}, //Thermal
+	{0,0,0,0,0}, //Radiation
 };
 int sdeToBloodLoss[MaxDamageEffect][MaxDamageSeverity] = {
-	{5/*000*/,8/*000*/,10/*000*/,20/*000*/,50/*000*/}, //Rupture
-	{5/*000*/,8/*000*/,10/*000*/,20/*000*/,50/*000*/}, //Blow
-	{0,0,0,0,0},	//Thermal - FEATURE CUT
-	{10,10,20,30,40},	//Radiation
+	{5/*000*/,10/*000*/,10/*000*/,30/*000*/,50/*000*/}, //Rupture
+	{0/*000*/, 5/*000*/, 5/*000*/,15/*000*/,30/*000*/}, //Blow
+	{0,0,0,0,0},		//Thermal
+	{0,0,0,0,0},		//Radiation
 };
 int sdeToBleeding[MaxDamageEffect][MaxDamageSeverity] = {
-	{0,1/*000*/,1/*000*/,5/*000*/,10/*000*/},
-	{0,1/*000*/,1/*000*/,5/*000*/,10/*000*/},
-	{0,0,0,0,0},
+	{0,1/*000*/,1/*000*/,5/*000*/,10/*000*/},	//Rupture
+	{0,0/*000*/,1/*000*/,5/*000*/,10/*000*/},	//Blow
+	{0,0,0,0,0},	//Thermal
 	{0,0,0,0,0},	//Radiation
 };
 int sdeToToxinsAdd[MaxDamageEffect][MaxDamageSeverity] = {
-	{0,0,0,0,0},
-	{0,0,0,0,0},
-	{0,0,0,0,0},
+	{0,0,0,0,0},	//Rupture
+	{0,0,0,0,0},	//Blow
+	{0,0,0,0,0},	//Thermal
 	{2/*000*/,5/*000*/,10/*000*/,15/*000*/,25/*000*/},	//Radiation
 };
 int sdeToToxinating[MaxDamageEffect][MaxDamageSeverity] = {
-	{0,0,0,0,0},
-	{0,0,0,0,0},
-	{0,0,0,0,0},
+	{0,0,0,0,0},	//Rupture
+	{0,0,0,0,0},	//Blow
+	{0,0,0,0,0},	//Thermal
 	{0,1/*000*/,1/*000*/,5/*000*/,10/*000*/},	//Radiation
+};
+int sdeToNecroPoints[MaxDamageEffect][MaxDamageSeverity] = {
+	{0,1,10,10,20},	//Rupture
+	{0,1,10,10,20},	//Blow
+	{1,10,20,30,40},//Thermal
+	{1,1,10,50,60},	//Radiation
 };
 
 WOUND_DESC WoundDescs[MaxWoundType][MaxDamageSeverity];
@@ -222,13 +222,14 @@ void InitWounds()
 		WoundDescs[i][j].message = WoundEffects[i][j];
 		
 		DAMAGE_EFFECT de = WoundToDamageEffect[i];
+		WoundDescs[i][j].de = de;
 
-		WoundDescs[i][j].PainLevel = (PAIN_LEVEL)sdeToPain[de][j];
-		WoundDescs[i][j].DisfnLevel = (DISFUNCTION_LEVEL)sdeToDisfnLevel[de][j];
+		WoundDescs[i][j].PainLevel = sdeToPain[de][j];
 		WoundDescs[i][j].BloodLoss = sdeToBloodLoss[de][j];
 		WoundDescs[i][j].Bleeding = sdeToBleeding[de][j];
 		WoundDescs[i][j].ToxinsAdd = sdeToToxinsAdd[de][j];
 		WoundDescs[i][j].Toxinating = sdeToToxinating[de][j];
+		WoundDescs[i][j].NecroPoints = sdeToNecroPoints[de][j];
 	}
 }
 
@@ -271,10 +272,14 @@ DAMAGE_SEVERITY IncreaseCategory(DAMAGE_SEVERITY* curr) {*curr = IncreaseCategor
 
 void ApplyWound(int wound,int ds, PPART part)
 {
+	DAMAGE_EFFECT de = WoundDescs[wound][ds].de;
+	part->CurrSeverity/*[de]*/ = (DAMAGE_SEVERITY)ds; //TODO FIX
+	part->PainLevel = WoundDescs[wound][ds].PainLevel;
 	Body.BloodCapacity -= WoundDescs[wound][ds].BloodLoss;
 	part->Bleeding = WoundDescs[wound][ds].Bleeding;
-	part->DisfnLevel = WoundDescs[wound][ds].DisfnLevel;
-	part->PainLevel = WoundDescs[wound][ds].PainLevel;
+	Body.ToxinsCapacity += WoundDescs[wound][ds].ToxinsAdd;
+	part->Toxinating = WoundDescs[wound][ds].Toxinating;
+	part->NecroPoints += WoundDescs[wound][ds].NecroPoints;
 	part->RemainingTicks = MED_MEGA_TICK;
 }
 

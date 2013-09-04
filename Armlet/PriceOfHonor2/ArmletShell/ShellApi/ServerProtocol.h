@@ -11,6 +11,7 @@ typedef enum _MSG_ID
 	MSG_SET_PLAYER_NAME = 3,
 	MSG_SET_PLAYER_REGENERATION = 4,
 	MSG_ROOM_HIT = 8,
+	MSG_TIME = 9,
 	MSG_TASK_COMPLETED = 64,
 	MSG_TASK_COMPLETION_CONFIRMED = 65,
 } MSG_ID;
@@ -57,7 +58,16 @@ typedef struct _SRV_SET_PLAYER_REGENERATION {
 typedef struct _SRV_ROOM_HIT {
 	SRV_TO_ARMLET_HEADER header;
 	room_t room_id;
+	unsigned char probability;		//0..100
+	unsigned char explosion_type;	//0..3
 } SRV_ROOM_HIT;
+
+//MSG_TIME
+typedef struct _SRV_TIME {
+	SRV_TO_ARMLET_HEADER header;
+	unsigned char hours;
+	unsigned char minutes;
+} SRV_TIME;
 
 //MSG_TASK_COMPLETION_CONFIRMED
 typedef struct _SRV_TASK_COMPLETION_CONFIRMED {

@@ -11,15 +11,16 @@ namespace medicine {
 	#include "MedBody.h"
 	#undef _MED_
 
-	void _medAfterWoundUpdate(char** oSymptoms);
-	void _medOnMedTick(char** oSymptoms);
-	char* _medOnKnockout();
-	char* _medOnPillConnected(ubyte_t cureId);
-	char* _medOnExplosion();
-	char* _medNewWound(ubyte_t place);
-	void _medSetRegenerationRate(sword_t);
 	void _medInit();
+	void _medSetRegenerationRate(sword_t);
 
+	char* _medNewWound(ubyte_t place);
+	char* _medOnKnockout();
+	char* _medOnExplosion();//(ubyte_t power);
+	char* _medOnPillConnected(ubyte_t cureId);
+
+	void _medOnMedTick(char** oSymptoms);			//Symptoms, Parameters, Feelings
+	void _medAfterWoundUpdate(char** oSymptoms);	//+TimeLog
 }
 
 using namespace medicine;

@@ -4,6 +4,7 @@
 
 namespace ArmletKernel {
 	extern int CureCharges[15];
+	extern int TortureCharges[7];
 	extern bool bLustraInRange;
 	extern unsigned char LastLustraId;
 	extern unsigned char CurrentLockId;

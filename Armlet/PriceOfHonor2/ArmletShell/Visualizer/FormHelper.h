@@ -32,11 +32,13 @@ namespace Visualizer {
 	private delegate void LogDelegate(char* msg);
 	private delegate void SetCureNameDelegate(int cure_id, char* name);
 	private delegate void UpdateCurrentCureDelegate();
+	private delegate void UpdateCurrentTortureDelegate();
 
 	DECLARE_MANAGED_CALLBACK_TYPE(Vibro);
 	DECLARE_MANAGED_CALLBACK_TYPE(Log);
 	DECLARE_MANAGED_CALLBACK_TYPE(SetCureName);
 	DECLARE_MANAGED_CALLBACK_TYPE(UpdateCurrentCure);
+	DECLARE_MANAGED_CALLBACK_TYPE(UpdateCurrentTorture);
 
 	ref class MainForm;
 	public ref class FormHelper
@@ -48,6 +50,7 @@ namespace Visualizer {
 		DECLARE_MANAGED_CALLBACK_VAR(Log);
 		DECLARE_MANAGED_CALLBACK_VAR(SetCureName);
 		DECLARE_MANAGED_CALLBACK_VAR(UpdateCurrentCure);
+		DECLARE_MANAGED_CALLBACK_VAR(UpdateCurrentTorture);
 	//calls to LowLevel unmanaged
 	public:
 		static void SetPlayerName(String^ name);

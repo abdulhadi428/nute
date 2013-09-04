@@ -37,6 +37,7 @@ namespace Visualizer {
 			//
 			 bKeysToButtons = true;
 			 currCure=0;
+			 currTorture=20;
 			 FormHelper::Init(this);
 		}
 
@@ -76,6 +77,7 @@ namespace Visualizer {
 	private: System::Windows::Forms::TabPage^  tabPage3;
 	private: System::Windows::Forms::TabPage^  tabPage4;
 	private: System::Windows::Forms::TabPage^  tabPage5;
+	private: System::Windows::Forms::TabPage^  tabPage6;
 	//TAB PAGE 1
 	private: System::Windows::Forms::GroupBox^  groupBoxServer;
 	private: System::Windows::Forms::TextBox^  textBoxPlayerName;
@@ -128,6 +130,18 @@ namespace Visualizer {
 	private: System::Windows::Forms::Button^  buttonNextMedTick;
 	private: System::Windows::Forms::Button^  buttonConnectPill;
 	//TAB PAGE 5
+	private: System::Windows::Forms::GroupBox^  groupBoxPills2;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture26;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture25;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture24;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture23;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture22;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture21;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture20;
+	private: System::Windows::Forms::Label^  labelPills2Charges;
+	private: System::Windows::Forms::NumericUpDown^  numericUpDownPills2Charges;
+	private: System::Windows::Forms::Button^  buttonConnectPill2;
+	//TAB PAGE 6
 	private: System::Windows::Forms::TextBox^  LogWindow;
 
 	private: System::ComponentModel::IContainer^  components;
@@ -138,6 +152,7 @@ namespace Visualizer {
 		/// </summary>
 		bool bKeysToButtons;
 		int currCure;
+		int currTorture;
 		bool bVibrating;
 		bool bVibratingReverseDirection;
 		 int RemainignVibrationTicks;
@@ -152,6 +167,11 @@ namespace Visualizer {
 				return;
 			numericUpDownPillsCharges->Value = charges;
 		}
+		void UpdateCurrentTortureCharges(int charges) {
+			if ((charges < 0)||(charges>99))
+				return;
+			numericUpDownPills2Charges->Value = charges;
+		}
 	public:
 		void Vibro() {
 			bVibrating = true;
@@ -159,6 +179,9 @@ namespace Visualizer {
 		}
 		void UpdateCurrentCure() {
 			UpdateCurrentCureCharges(KernelApi::GetPillCharges(currCure));
+		}
+		void UpdateCurrentTorture() {
+			UpdateCurrentTortureCharges(KernelApi::GetPillCharges(currTorture));
 		}
 		void Log(String^ message) {
 			LogWindow->Text += (message + "\r\n");
@@ -220,6 +243,27 @@ namespace Visualizer {
 					break;
 				case 14:
 					radioButtonCure14->Text = name;
+					break;
+				case 20:
+					radioButtonTorture20->Text = name;
+					break;
+				case 21:
+					radioButtonTorture21->Text = name;
+					break;
+				case 22:
+					radioButtonTorture22->Text = name;
+					break;
+				case 23:
+					radioButtonTorture23->Text = name;
+					break;
+				case 24:
+					radioButtonTorture24->Text = name;
+					break;
+				case 25:
+					radioButtonTorture25->Text = name;
+					break;
+				case 26:
+					radioButtonTorture26->Text = name;
 					break;
 			}
 		}
@@ -298,6 +342,18 @@ namespace Visualizer {
 			this->numericUpDownPillsCharges = (gcnew System::Windows::Forms::NumericUpDown());
 			this->buttonConnectPill = (gcnew System::Windows::Forms::Button());
 			this->tabPage5 = (gcnew System::Windows::Forms::TabPage());
+			this->groupBoxPills2 = (gcnew System::Windows::Forms::GroupBox());
+			this->radioButtonTorture26 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture25 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture24 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture23 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture22 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture21 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture20 = (gcnew System::Windows::Forms::RadioButton());
+			this->labelPills2Charges = (gcnew System::Windows::Forms::Label());
+			this->numericUpDownPills2Charges = (gcnew System::Windows::Forms::NumericUpDown());
+			this->buttonConnectPill2 = (gcnew System::Windows::Forms::Button());
+			this->tabPage6 = (gcnew System::Windows::Forms::TabPage());
 			this->LogWindow = (gcnew System::Windows::Forms::TextBox());
 			this->groupBoxMain->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->Screen))->BeginInit();
@@ -313,6 +369,9 @@ namespace Visualizer {
 			this->groupBoxPills->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDownPillsCharges))->BeginInit();
 			this->tabPage5->SuspendLayout();
+			this->groupBoxPills2->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDownPills2Charges))->BeginInit();
+			this->tabPage6->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// timerRender
@@ -544,6 +603,7 @@ namespace Visualizer {
 			this->tabControl1->Controls->Add(this->tabPage3);
 			this->tabControl1->Controls->Add(this->tabPage4);
 			this->tabControl1->Controls->Add(this->tabPage5);
+			this->tabControl1->Controls->Add(this->tabPage6);
 			this->tabControl1->Location = System::Drawing::Point(12, 256);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 4;
@@ -767,10 +827,10 @@ namespace Visualizer {
 			// tabPage3
 			// 
 			this->tabPage3->Controls->Add(this->groupBoxRooms);
-			this->tabPage3->Location = System::Drawing::Point(4, 24);
+			this->tabPage3->Location = System::Drawing::Point(4, 22);
 			this->tabPage3->Name = L"tabPage3";
 			this->tabPage3->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage3->Size = System::Drawing::Size(410, 241);
+			this->tabPage3->Size = System::Drawing::Size(410, 243);
 			this->tabPage3->TabIndex = 2;
 			this->tabPage3->Text = L"Отсеки";
 			this->tabPage3->UseVisualStyleBackColor = true;
@@ -1168,14 +1228,158 @@ namespace Visualizer {
 			// 
 			// tabPage5
 			// 
-			this->tabPage5->Controls->Add(this->LogWindow);
-			this->tabPage5->Location = System::Drawing::Point(4, 22);
+			this->tabPage5->Controls->Add(this->groupBoxPills2);
+			this->tabPage5->Location = System::Drawing::Point(4, 24);
 			this->tabPage5->Name = L"tabPage5";
 			this->tabPage5->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage5->Size = System::Drawing::Size(410, 243);
-			this->tabPage5->TabIndex = 4;
-			this->tabPage5->Text = L"Log";
+			this->tabPage5->Size = System::Drawing::Size(410, 241);
+			this->tabPage5->TabIndex = 5;
+			this->tabPage5->Text = L"Пилюли (Пытки)";
 			this->tabPage5->UseVisualStyleBackColor = true;
+			// 
+			// groupBoxPills2
+			// 
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture26);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture25);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture24);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture23);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture22);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture21);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture20);
+			this->groupBoxPills2->Controls->Add(this->labelPills2Charges);
+			this->groupBoxPills2->Controls->Add(this->numericUpDownPills2Charges);
+			this->groupBoxPills2->Controls->Add(this->buttonConnectPill2);
+			this->groupBoxPills2->Location = System::Drawing::Point(7, 7);
+			this->groupBoxPills2->Name = L"groupBoxPills2";
+			this->groupBoxPills2->Size = System::Drawing::Size(397, 228);
+			this->groupBoxPills2->TabIndex = 0;
+			this->groupBoxPills2->TabStop = false;
+			this->groupBoxPills2->Text = L"Пилюли пыток / Заряды";
+			// 
+			// radioButtonTorture26
+			// 
+			this->radioButtonTorture26->AutoSize = true;
+			this->radioButtonTorture26->Location = System::Drawing::Point(6, 170);
+			this->radioButtonTorture26->Name = L"radioButtonTorture26";
+			this->radioButtonTorture26->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture26->TabIndex = 23;
+			this->radioButtonTorture26->TabStop = true;
+			this->radioButtonTorture26->Text = L"Пытка 26";
+			this->radioButtonTorture26->UseVisualStyleBackColor = true;
+			this->radioButtonTorture26->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture26_CheckedChanged);
+			// 
+			// radioButtonTorture25
+			// 
+			this->radioButtonTorture25->AutoSize = true;
+			this->radioButtonTorture25->Location = System::Drawing::Point(7, 146);
+			this->radioButtonTorture25->Name = L"radioButtonTorture25";
+			this->radioButtonTorture25->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture25->TabIndex = 22;
+			this->radioButtonTorture25->TabStop = true;
+			this->radioButtonTorture25->Text = L"Пытка 25";
+			this->radioButtonTorture25->UseVisualStyleBackColor = true;
+			this->radioButtonTorture25->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture25_CheckedChanged);
+			// 
+			// radioButtonTorture24
+			// 
+			this->radioButtonTorture24->AutoSize = true;
+			this->radioButtonTorture24->Location = System::Drawing::Point(7, 121);
+			this->radioButtonTorture24->Name = L"radioButtonTorture24";
+			this->radioButtonTorture24->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture24->TabIndex = 21;
+			this->radioButtonTorture24->TabStop = true;
+			this->radioButtonTorture24->Text = L"Пытка 24";
+			this->radioButtonTorture24->UseVisualStyleBackColor = true;
+			this->radioButtonTorture24->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture24_CheckedChanged);
+			// 
+			// radioButtonTorture23
+			// 
+			this->radioButtonTorture23->AutoSize = true;
+			this->radioButtonTorture23->Location = System::Drawing::Point(7, 96);
+			this->radioButtonTorture23->Name = L"radioButtonTorture23";
+			this->radioButtonTorture23->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture23->TabIndex = 20;
+			this->radioButtonTorture23->TabStop = true;
+			this->radioButtonTorture23->Text = L"Пытка 23";
+			this->radioButtonTorture23->UseVisualStyleBackColor = true;
+			this->radioButtonTorture23->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture23_CheckedChanged);
+			// 
+			// radioButtonTorture22
+			// 
+			this->radioButtonTorture22->AutoSize = true;
+			this->radioButtonTorture22->Location = System::Drawing::Point(7, 71);
+			this->radioButtonTorture22->Name = L"radioButtonTorture22";
+			this->radioButtonTorture22->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture22->TabIndex = 19;
+			this->radioButtonTorture22->TabStop = true;
+			this->radioButtonTorture22->Text = L"Пытка 22";
+			this->radioButtonTorture22->UseVisualStyleBackColor = true;
+			this->radioButtonTorture22->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture22_CheckedChanged);
+			// 
+			// radioButtonTorture21
+			// 
+			this->radioButtonTorture21->AutoSize = true;
+			this->radioButtonTorture21->Location = System::Drawing::Point(7, 46);
+			this->radioButtonTorture21->Name = L"radioButtonTorture21";
+			this->radioButtonTorture21->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture21->TabIndex = 18;
+			this->radioButtonTorture21->TabStop = true;
+			this->radioButtonTorture21->Text = L"Пытка 21";
+			this->radioButtonTorture21->UseVisualStyleBackColor = true;
+			this->radioButtonTorture21->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture21_CheckedChanged);
+			// 
+			// radioButtonTorture20
+			// 
+			this->radioButtonTorture20->AutoSize = true;
+			this->radioButtonTorture20->Location = System::Drawing::Point(7, 21);
+			this->radioButtonTorture20->Name = L"radioButtonTorture20";
+			this->radioButtonTorture20->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture20->TabIndex = 17;
+			this->radioButtonTorture20->TabStop = true;
+			this->radioButtonTorture20->Text = L"Пытка 20";
+			this->radioButtonTorture20->UseVisualStyleBackColor = true;
+			this->radioButtonTorture20->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture20_CheckedChanged);
+			// 
+			// labelPills2Charges
+			// 
+			this->labelPills2Charges->AutoSize = true;
+			this->labelPills2Charges->Location = System::Drawing::Point(260, 174);
+			this->labelPills2Charges->Name = L"labelPills2Charges";
+			this->labelPills2Charges->Size = System::Drawing::Size(131, 15);
+			this->labelPills2Charges->TabIndex = 16;
+			this->labelPills2Charges->Text = L"Число зарядов {0..99}";
+			// 
+			// numericUpDownPills2Charges
+			// 
+			this->numericUpDownPills2Charges->Location = System::Drawing::Point(337, 197);
+			this->numericUpDownPills2Charges->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {99, 0, 0, 0});
+			this->numericUpDownPills2Charges->Name = L"numericUpDownPills2Charges";
+			this->numericUpDownPills2Charges->Size = System::Drawing::Size(54, 21);
+			this->numericUpDownPills2Charges->TabIndex = 15;
+			this->numericUpDownPills2Charges->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {50, 0, 0, 0});
+			this->numericUpDownPills2Charges->Leave += gcnew System::EventHandler(this, &MainForm::numericUpDownPills2Charges_Leave);
+			this->numericUpDownPills2Charges->Enter += gcnew System::EventHandler(this, &MainForm::numericUpDownPills2Charges_Enter);
+			// 
+			// buttonConnectPill2
+			// 
+			this->buttonConnectPill2->Location = System::Drawing::Point(185, 195);
+			this->buttonConnectPill2->Name = L"buttonConnectPill2";
+			this->buttonConnectPill2->Size = System::Drawing::Size(146, 23);
+			this->buttonConnectPill2->TabIndex = 14;
+			this->buttonConnectPill2->Text = L"Connect Pill";
+			this->buttonConnectPill2->UseVisualStyleBackColor = true;
+			this->buttonConnectPill2->Click += gcnew System::EventHandler(this, &MainForm::buttonConnectPill2_Click);
+			// 
+			// tabPage6
+			// 
+			this->tabPage6->Controls->Add(this->LogWindow);
+			this->tabPage6->Location = System::Drawing::Point(4, 22);
+			this->tabPage6->Name = L"tabPage6";
+			this->tabPage6->Padding = System::Windows::Forms::Padding(3);
+			this->tabPage6->Size = System::Drawing::Size(410, 243);
+			this->tabPage6->TabIndex = 4;
+			this->tabPage6->Text = L"Log";
+			this->tabPage6->UseVisualStyleBackColor = true;
 			// 
 			// LogWindow
 			// 
@@ -1229,7 +1433,11 @@ namespace Visualizer {
 			this->groupBoxPills->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDownPillsCharges))->EndInit();
 			this->tabPage5->ResumeLayout(false);
-			this->tabPage5->PerformLayout();
+			this->groupBoxPills2->ResumeLayout(false);
+			this->groupBoxPills2->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDownPills2Charges))->EndInit();
+			this->tabPage6->ResumeLayout(false);
+			this->tabPage6->PerformLayout();
 			this->ResumeLayout(false);
 
 		}
@@ -1283,6 +1491,12 @@ private: System::Void numericUpDownPillsCharges_Enter(System::Object^  sender, S
 private: System::Void numericUpDownPillsCharges_Leave(System::Object^  sender, System::EventArgs^  e) {
 			 bKeysToButtons = true;
 		 }
+private: System::Void numericUpDownPills2Charges_Enter(System::Object^  sender, System::EventArgs^  e) {
+			 bKeysToButtons = false;
+		 }
+private: System::Void numericUpDownPills2Charges_Leave(System::Object^  sender, System::EventArgs^  e) {
+			 bKeysToButtons = true;
+		 }	 
 //BUTTONS and BUTTONS accelerator keys (Press/Release)
 private: System::Void MainForm_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 			 if (bKeysToButtons) 
@@ -1457,7 +1671,7 @@ private: System::Void buttonRoom14Explosion_Click(System::Object^  sender, Syste
 private: System::Void buttonRoom0Explosion_Click(System::Object^  sender, System::EventArgs^  e) {
 			 Callouts::Explosion(0);
 		 }
-//PILLS(CURES)
+//PILLS(CURES & TORTURES)
 private: System::Void radioButtonCure0_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure0->Checked)
 				 currCure = 0;
@@ -1540,6 +1754,46 @@ private: System::Void buttonConnectPill_Click(System::Object^  sender, System::E
 		 }
 private: System::Void buttonNextMedTick_Click(System::Object^  sender, System::EventArgs^  e) {
 			 Callouts::NextMedTick();
+		 }
+private: System::Void radioButtonTorture20_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture20->Checked)
+				currTorture = 20;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture21_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture21->Checked)
+				currTorture = 21;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture22_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture22->Checked)
+				currTorture = 22;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture23_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture23->Checked)
+				currTorture = 23;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture24_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture24->Checked)
+				currTorture = 24;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture25_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture25->Checked)
+				currTorture = 25;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture26_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture26->Checked)
+				currTorture = 26;
+			UpdateCurrentTorture();
+		 }
+private: System::Void buttonConnectPill2_Click(System::Object^  sender, System::EventArgs^  e) {
+			 Callouts::OnPillConnect(
+				 currTorture, 
+				 (int)numericUpDownPills2Charges->Value);
 		 }
 }; //class
 

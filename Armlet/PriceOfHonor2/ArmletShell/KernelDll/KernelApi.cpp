@@ -7,11 +7,16 @@ namespace KernelApi {
 	__LOWVAR LOG_CALLBACK* Log = 0;
 	__LOWVAR SET_CURE_NAME_CALLBACK* SetCureName = 0;
 	__LOWVAR UPDATE_CURRENT_CURE_CALLBACK* UpdateCurrentCure = 0;
+	__LOWVAR UPDATE_CURRENT_TORTURE_CALLBACK* UpdateCurrentTorture = 0;
+
 
 	int __LOWCALL GetPillCharges(int cure_id)
 	{
-		if ((cure_id < 0)||(cure_id > 14))
-			return 20;
+		if ((cure_id < 0)||(cure_id > 14)) {
+			if ((cure_id < 20)||(cure_id > 26))
+				return 20;
+			return ArmletKernel::TortureCharges[cure_id-20];
+		}
 		return ArmletKernel::CureCharges[cure_id];
 	}
 

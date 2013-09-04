@@ -12,6 +12,8 @@ namespace KernelApi {
 	extern __LOWVAR SET_CURE_NAME_CALLBACK* SetCureName;
 	typedef void (__stdcall UPDATE_CURRENT_CURE_CALLBACK)();
 	extern __LOWVAR UPDATE_CURRENT_CURE_CALLBACK* UpdateCurrentCure;
+	typedef void (__stdcall UPDATE_CURRENT_TORTURE_CALLBACK)();
+	extern __LOWVAR UPDATE_CURRENT_TORTURE_CALLBACK* UpdateCurrentTorture;	//for medicine emulation
 
 	int __LOWCALL GetPillCharges(int cure_id);
 	void __LOWCALL LustraInRange(bool bInRange);

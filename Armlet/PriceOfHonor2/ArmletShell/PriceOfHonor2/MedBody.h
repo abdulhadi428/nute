@@ -7,12 +7,6 @@ extern const char* TargetNames[MaxWoundType];
 
 /*
 typedef struct _ORGAN {
-	//From damage effect
-	PAIN_LEVEL PainLevel;
-	DISFUNCTION_LEVEL DisfnLevel;		//D
-	int Bleeding;						//B-=X, per tick		//кровотечение
-	int Toxinating;						//T+=X, per tick		//токсинация
-
 	//From organ initializer
 	int DefOxygenUse;					//O-=X, per tick		//метаболизм
 	int DefDetox;						//T-=X, per tick		//детоксикация
@@ -29,15 +23,21 @@ typedef struct _ORGAN {
 */
 
 typedef struct _PART {
+	DAMAGE_SEVERITY CurrSeverity;//TODO FIX [MaxDamageEffect];	//stored by damage effect
 	//From damage effect
-	PAIN_LEVEL PainLevel;
-	DAMAGE_SEVERITY CurrSeverity;
+	int PainLevel;
 	int RemainingTicks;
-	DISFUNCTION_LEVEL DisfnLevel;		//D
 	int Bleeding;						//B-=X, per tick		//кровотечение
+	int Toxinating;						//T+=X, per tick		//интоксикация
+	int NecroPoints;
 } PART, *PPART;
 
 typedef struct _BODY {
+	int HighPressure;	//TODO init with 120
+	int LowPressure;	//TODO init with 80
+	int Temperature;	//TODO init with 66	(30+Tm/10)
+	int Pulse;			//TODO init with 70
+
 	REGENERATION_LEVEL RegenerationLevel;	//R
 	int BloodCapacity;						//B
 	int ToxinsCapacity;						//T

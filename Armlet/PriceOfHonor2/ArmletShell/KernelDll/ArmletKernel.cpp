@@ -12,6 +12,9 @@ namespace ArmletKernel {
 		20,20,20,20,20,
 		20,20,20,20,20
 	};
+	int TortureCharges[7] = {
+		1,2,3,4,5,6,7
+	};
 	bool bLustraInRange = false;
 	unsigned char LastLustraId = UNKNOWN_ID;
 	unsigned char CurrentLockId = UNKNOWN_ID;
