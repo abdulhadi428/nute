@@ -82,7 +82,7 @@ fresult Honor2StatusBar::CreateStatusBar()
 	Position posRoom;
 	posRoom.Top =1;
 	posRoom.Left = posClock.Left - 2 - 3*6;
-	fres = tff->GetTextBox(posRoom, "R01", &_txtRoomId);
+	fres = tff->GetTextBox(posRoom, "   ", &_txtRoomId);
 	ENSURESUCCESS(fres);
 	fres = _pnlBasePanel->AppendControl(_txtRoomId);
 	ENSURESUCCESS(fres);
@@ -92,7 +92,7 @@ fresult Honor2StatusBar::CreateStatusBar()
 	fres = _pnlBasePanel->AppendControl(_txtClock);
 	ENSURESUCCESS(fres);
 
-	SetTime(24,50);
+	SetTime(00,00);
 
 	//PlayerName
 	Position posPlayerName;
@@ -144,9 +144,9 @@ fresult Honor2StatusBar::SetRoom( sword_t room )
 		else if (room == 0)
 			ArmletApi::snprintf(sRoom, 4, "---");
 		else if ((room>0)&&(room<90))
-			ArmletApi::snprintf(sRoom, 4, "r%d", room);
+			ArmletApi::snprintf(sRoom, 4, "R%d", room);
 		else 
-			ArmletApi::snprintf(sRoom, 4, "r99");
+			ArmletApi::snprintf(sRoom, 4, "R99");
 
 		fres = _txtRoomId->SetText(sRoom);
 		ENSURESUCCESS(fres);

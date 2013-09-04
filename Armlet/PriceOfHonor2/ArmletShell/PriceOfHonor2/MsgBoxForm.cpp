@@ -182,6 +182,19 @@ fresult MsgBoxForm::HideMessageBox( IMenuItem* sender )
 	return SUCCESS;
 }
 
+MessageBoxContent* MsgBoxForm::GetCurrentMessage()
+{
+	if (_currentMessageIndex == -1)
+	{
+		return NULL;
+	}
+	else
+	{
+		return &_messages[_currentMessageIndex];
+	}
+
+}
+
 
 
 

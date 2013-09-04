@@ -27,10 +27,15 @@ fresult Honor2FormBase::BaseInit(bool_t showHeader, Repositories* reps, Factorie
 	if (_ShowHeader)
 	{
 		_pnlPanelHeader->SetVisible(TRUE);
+		fres = _App->AppStatusBar->SetVisible(FALSE);
 	}
 	else
 	{
 		fres = _App->AppStatusBar->SetVisible(TRUE);
+		if (_pnlPanelHeader != NULL)
+		{
+			_pnlPanelHeader->SetVisible(FALSE);
+		}
 	}
 	return SUCCESS;
  }

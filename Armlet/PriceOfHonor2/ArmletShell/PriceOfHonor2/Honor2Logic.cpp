@@ -111,7 +111,6 @@ void Honor2Logic::OnExposion(sword_t roomId)
 			return;
 		}
 
-
 		fres = ShowMessage("В отсеке взрыв!", BlueHealth, explosionResult, TRUE);
 		if (fres!=SUCCESS)	
 		{
@@ -151,9 +150,12 @@ fresult Honor2Logic::ShowMessage( char* title, ImageHandle iconHandle, char* tex
 {
 	fresult fres;
 
+	if (wakeUp)
+		_App->DoVibroAndBeep();
+
 	fres = _App->MsgBoxShow(iconHandle, title, text);
 	ENSURESUCCESS(fres);
-	
+
 	return SUCCESS;
 }
 
@@ -218,9 +220,35 @@ void Honor2Logic::OnLustraTimer()
 			//check if we had a good room no longer that specified time
 			if (currTime - _lastKnownDiscoveryTime > MAX_LUSTRA_WAIT_TIME)
 			{
-				_App->DoVibroAndBeep();
-				ShowMessage("Потеря связи!", BlueExclamation, "Срочно покажи браслет системе безопасности отсека!", TRUE);
+				//check not to show msg recursive
+				IForm* frm = _App->GetFormManager()->GetCurrentForm();
+				bool_t needShowMsg = TRUE;
+				char* title = "Потеря связи!";
+				if (frm!=NULL)
+				{
+					if (frm->GetName()==_App->Forms->MsgBoxFormName)
+					{
+						MsgBoxForm* msgBoxFrm = (MsgBoxForm*)frm;
+						MessageBoxContent* msgBoxContent = NULL;
+						msgBoxContent = msgBoxFrm->GetCurrentMessage();
+						if (msgBoxContent != NULL)
+						{
+							if (StringEquals(msgBoxContent->title, title))
+							{
+								//suppress msg
+								needShowMsg = FALSE;
+							}
+						}
+					}
+				}
+				
+				if (needShowMsg == TRUE)
+				{
+					_App->DoVibroAndBeep();
+					ShowMessage(title, BlueExclamation, "Срочно покажи браслет системе безопасности отсека!", TRUE);
+				}
 
+				//URGENT:
 				if(_lastLoggedTime ==-1 || currTime - _lastKnownRoomId)
 				{
 					//AppendLog(LOG_EVENT, "\n Нет активного отсека!");
@@ -280,7 +308,30 @@ fresult Honor2Logic::ReportError( char* errorText )
 
 void Honor2Logic::OnNewMessage( char* messageText )
 {
+	fresult fres;
+
+	fres = ShowMessage("Новое сообщение!", BlueMail, messageText, FALSE);
+	if (fres!=SUCCESS)
+	{
+		ReportError("Can't Show message");
+		return;
+	}
+
+	_App->DoVibroAndBeep();
+
+	fres = AppendLog(LogKindMessages, "\n");
+	if (fres!=SUCCESS)
+	{
+		ReportError("Can't append Log");
+		return;
+	}	
 	
+	fres = AppendLog(LogKindMessages, messageText);
+	if (fres!=SUCCESS)
+	{
+		ReportError("Can't append Log");
+		return;
+	}
 }
 
 sword_t Honor2Logic::GetRoomIdFromLustraId( sword_t lustraId )

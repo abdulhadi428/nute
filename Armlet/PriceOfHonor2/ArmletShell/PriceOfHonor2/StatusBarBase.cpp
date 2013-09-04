@@ -193,7 +193,7 @@ fresult StatusBarBase::SetTime( ubyte_t hours, ubyte_t minutes )
 		char time[6];
 		time[5] = 0;
 		//URGENTTODO: почему-то не работает, возвращает M
-		ArmletApi::snprintf(time, 4, "%d:%d", hours, minutes);
+		ArmletApi::snprintf(time, 5, "%02d:%02d", hours, minutes);
 
 		fres = _txtClock->SetText(time);
 		ENSURESUCCESS(fres);

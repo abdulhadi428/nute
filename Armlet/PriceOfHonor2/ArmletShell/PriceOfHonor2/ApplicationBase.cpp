@@ -284,6 +284,16 @@ bool_t ApplicationBase::OnSystemTimer()
 			LogError("Cant't set radio status level");
 			return true;
 		}
+		
+		if (_StatusBar->GetVisible() == TRUE)
+		{
+			fres = _StatusBar->Draw();
+			if (fres!=SUCCESS)	
+			{
+				LogError("Cant't draw status");
+				return true;
+			}
+		}
 	}
 
 	return true;
@@ -305,6 +315,16 @@ fresult ApplicationBase::RedrawCurrentForm()
 
 	fres = _FormManager->GetCurrentForm()->Draw();
 	ENSURESUCCESS(fres);
+
+	if (_StatusBar->GetVisible() == TRUE)
+	{
+		fres = _StatusBar->Draw();
+		if (fres!=SUCCESS)	
+		{
+			LogError("Cant't draw status");
+			return true;
+		}
+	}
 
 	return SUCCESS;
 }

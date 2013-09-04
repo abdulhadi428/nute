@@ -301,7 +301,7 @@ fresult LogForm::SwitchToLog( LogKinds log )
 		TextField* tf = _logs[i].txtLogField;
 		if (tf !=NULL)
 		{
-			if (i==_currentLog)
+			if (i==log)
 			{
 				tf->SetVisible(TRUE);
 			}

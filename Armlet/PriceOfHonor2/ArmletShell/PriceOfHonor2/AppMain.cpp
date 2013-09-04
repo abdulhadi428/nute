@@ -38,8 +38,19 @@ void AppMainThread(void* param)
 		DrawTextString(10,10,err,Length(err),WHITE,0);	
 		return;
 	}
-}
 
+	//some crap for visualizer
+#ifdef _MSC_VER
+	for (int i=0; i<MaxCureId; i++) {
+		ArmletApi::WritePill(i,i+10);
+		ArmletApi::SetCureName(i, (char*)CureName[i]);
+	}
+	for (int i=0; i<MaxTortureId; i++) {
+		ArmletApi::WritePill(i+20,i+30);
+		ArmletApi::SetCureName(i+20, (char*)TortureName[i]);
+	}
+#endif
+}
 
 bool __CALLBACK _QueryLustraTimerCallback(int elapsed)
 {
@@ -72,19 +83,15 @@ void _OnSetPlayerName( char* name )
 
 void _OnExplosion(sword_t roomId)
 {
-	return;
-	//UI.OnExplosion(roomId);
+	return App.Logic->OnExposion(roomId);
 }
 
 void _OnServerMessage(char* msg)
 {
-	return;
-	//UI.OnServerMessage(msg);
+	return App.Logic->OnNewMessage(msg);
 }
 
 void _OnSetRegenerationRate(sword_t regenRate)
 {
-	return;
-	//_medSetRegenerationRate(regenRate);
+	return App.Logic->SetRegenRate(regenRate);
 }
-
