@@ -19,5 +19,10 @@ namespace HonorLogic
                Rooms = a.Rooms
             }).ToList();
         }
+
+        public ShipBase GetShipByGuid(Guid id)
+        {
+            return GetAll().Single(s => s.ShipGuid == id);
+        }
     }
 }

@@ -102,21 +102,6 @@ namespace HonorLogic.ShipStatus
             return _subsystems;
         }
 
-        private bool UpdateSubsytemsForPlate(RanmaPlate ranmaPlate)
-        {
-            var simulatorShouldBeNoticed = false;
-            for (var i = 0; i < SubsystemsCount; i++)
-            {
-                var subsSytem = _subsystems.First(a => a.SubSystemNum == i);
-                if (subsSytem.Severity == ranmaPlate[i].Severity && subsSytem.RepairedStatus == ranmaPlate[i].RepairedStatus) continue;
-                subsSytem.Severity = ranmaPlate[i].Severity;
-                subsSytem.RepairedStatus = ranmaPlate[i].RepairedStatus;
-                InvokeSubsystemUpdated(subsSytem);
-                simulatorShouldBeNoticed = true;
-            }
-            return simulatorShouldBeNoticed;
-        }
-
         private void InitializeUpdatePlatesInfo()
         {
             foreach (var bigShipRanmaPlate in _ranmaPlates)
@@ -127,20 +112,43 @@ namespace HonorLogic.ShipStatus
 
         private bool UpdateSubsystemsForPlates()
         {
-            //Plates already synced, so use first
-            return UpdateSubsytemsForPlate(_ranmaPlates.First());
+            var simulatorShouldBeNoticed = false;
+            for (var i = 0; i < SubsystemsCount; i++)
+            {
+                var subsystem = _subsystems.First(a => a.SubSystemNum == i);
+                var severityFromPlate = _ranmaPlates.First()[i].Severity;
+                var repairedStatusFromPlate = _ranmaPlates.Any(plate => plate[i].Repaired);
+
+                if (subsystem.Severity == severityFromPlate && subsystem.Repaired == repairedStatusFromPlate)
+                    continue;
+                subsystem.Severity = severityFromPlate;
+                subsystem.RepairedStatus = _ranmaPlates.First()[i].RepairedStatus;
+                InvokeSubsystemUpdated(subsystem);
+                simulatorShouldBeNoticed = true;
+            }
+            return simulatorShouldBeNoticed;
         }
 
-        public void SetSubsystemStatus(ShipSubsystemStatus ranmaStatus)
+        public void SetSubsystemStatusFromGUI(ShipSubsystemStatus ranmaStatus)
         {
             Debug.Assert(ranmaStatus.SubSystemNum < SubsystemsCount);
             Debug.Assert(ranmaStatus.SubSystemNum >= 0);
 
+            SendSeverityToRanmaPlate(ranmaStatus);
+
+            SaveToSimulator();
+        }
+
+        private void SaveToSimulator()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SendSeverityToRanmaPlate(ShipSubsystemStatus ranmaStatus)
+        {
             _subsystems[ranmaStatus.SubSystemNum].Severity = ranmaStatus.Severity;
-            
+
             SetSubsytemSeverityToAll(ranmaStatus.SubSystemNum, ranmaStatus.Severity);
-            
-            //2) Известить рандира на симуляторе
         }
 
 
@@ -180,15 +188,11 @@ namespace HonorLogic.ShipStatus
             {
                 return;
             }
-            for (var i = 0; i < SubsystemsCount; i ++)
-            {
-                SyncSubsystem(i);
-            }
 
             var simulatorShouldBeNoticed = UpdateSubsystemsForPlates();
             if (simulatorShouldBeNoticed)
             {
-                //Надо бы сказать Рандиру
+                SaveToSimulator();
             }
 
             InitializeUpdatePlatesInfo();
@@ -202,37 +206,25 @@ namespace HonorLogic.ShipStatus
             }
         }
 
-        private void SyncSubsystem(int i)
-        {
-            var severities = _ranmaPlates.Select(plate => plate[i].Severity).ToArray();
-            var hasReadyPlate = severities.Any(p => p == RanmaRepairSeverity.NotDamaged);
-            var hasBrokenPlate = severities.Any(p => p != RanmaRepairSeverity.NotDamaged);
-
-            if (hasReadyPlate && hasBrokenPlate)
-            {
-                SetSubsytemSeverityToAll(i, RanmaRepairSeverity.NotDamaged);
-            }
-        }
-
         public void DamageShip(byte damage)
         {
             for (var i = 0; i < damage; i++)
             {
                 DamageShipOnce();
             }
+            SaveToSimulator();
             var targetRoom = RoomsWithPeople.RandomOrDefault();
             if (targetRoom != 0)
             {
                 Model.SendRoomHit(targetRoom, (byte) ((damage - 2)*25 + 50), HitType.Random);
             }
-
         }
 
         private void DamageShipOnce()
         {
             var targetSubsystem = TargetSubsystems.Random();
             targetSubsystem.Severity += 1;
-            SetSubsystemStatus(targetSubsystem);
+            SendSeverityToRanmaPlate(targetSubsystem);
         }
 
         private IEnumerable<ShipSubsystemStatus> TargetSubsystems
@@ -243,7 +235,7 @@ namespace HonorLogic.ShipStatus
             }
         }
 
-        public void RemoveShipFromMap()
+        public void DestroyShip()
         {
             throw new NotImplementedException();
         }
