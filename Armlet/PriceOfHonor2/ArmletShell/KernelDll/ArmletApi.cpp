@@ -117,7 +117,6 @@ namespace ArmletApi {
 		ArmletKernel::LowLog("PROTOCOL: receive MSG_TASK_COMPLETED with arm_msg_num %d for srv_msg_num %d",
 			header->arm_msg_num, pkt->srv_msg_num, pkt->bResult);
 		return; 
-		//TODO timer/list helper
 	}
 
 	void __SYSCALL SendAppState(unsigned char packet[APP_STATE_LEN]) {

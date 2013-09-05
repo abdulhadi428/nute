@@ -10,8 +10,9 @@
 	//APP_STATE in each datagram
 	#define APP_STATE_LEN	5
 
-	//medicine tick duration, 1min (set 3-5 secs to speedup)
-	#define MED_TICK_TIME 60*1000
+	//medicine tick duration, 3 second (20 times per med tick)
+	#define BREATH_TICK_TIME 3000
+	#define BREATH_TICKS_PER_MED_TICK 20
 
 	//IDS
 	#define UNKNOWN_ID	255

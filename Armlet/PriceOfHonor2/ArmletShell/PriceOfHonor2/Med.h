@@ -20,7 +20,7 @@ namespace medicine {
 	char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType);//(ubyte_t power);
 	char* _medOnPillConnected(ubyte_t cureId);
 
-	void _medOnMedTick();
+	void _medOnMedTick(bool bBreathOnly);
 	
 	//called after previous 4 events and on med tick
 	//1100 char max

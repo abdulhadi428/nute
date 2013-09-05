@@ -192,7 +192,8 @@ fresult LogForm::LogRecord( LogKinds log, char* text )
 	}
 
 	//check if form is active
-	if (ArmletShell::StringEquals(_FormManager->GetCurrentForm()->GetName(), GetName()))
+	IForm* CurrForm = _FormManager->GetCurrentForm();
+	if ((CurrForm!=NULL)&&(ArmletShell::StringEquals(_FormManager->GetCurrentForm()->GetName(), GetName())))
 	{
 		//if current log is active
 		if (log == _currentLog)

@@ -31,7 +31,18 @@ fresult Honor2Logic::Init( Honor2App* app )
 	ArmletApi::RequestTimer(_QueryLustraTimerCallback, LUSTRA_POLL_TIME);
 
 	//launch medicine
-	ArmletApi::RequestTimer(_MedicineTimerTickCallback, MED_TICK_TIME);
+	ArmletApi::RequestTimer(_MedicineTimerTickCallback, BREATH_TICK_TIME);
+
+	//update strings in case of armlet restart
+	char* medstatus;
+	char* diagnostics;
+	char* medEvents;
+	_medUpdateStrings(&medstatus, &diagnostics, &medEvents);
+	fresult fres = SetMedStatus(medstatus, diagnostics, medEvents);
+	if (fres!=SUCCESS)	
+	{
+		ReportError("Cant't set status!");
+	}
 
 	return SUCCESS;
 }
@@ -321,24 +332,34 @@ fresult Honor2Logic::SetRoom( sword_t room )
 	return SUCCESS;
 }
 
+static int BreathTicks = 0;
 void Honor2Logic::OnMedTick()
 {
 	fresult fres;
+	bool bBreathOnly = true;
 
-	_medOnMedTick();
-	
-	char* medstatus;
-	char* diagnostics;
-	char* medEvents;
-	_medUpdateStrings(&medstatus, &diagnostics, &medEvents);
-	fres = SetMedStatus(medstatus, diagnostics, medEvents);
-	if (fres!=SUCCESS)	
-	{
-		ReportError("Cant't set status!");
-		return;
+	BreathTicks++;
+	if (BreathTicks==BREATH_TICKS_PER_MED_TICK) {
+		BreathTicks=0;
+		bBreathOnly=false;
 	}
 
-	fres = _App->RedrawCurrentForm();
+	_medOnMedTick(bBreathOnly);
+	
+	if (!bBreathOnly) {
+		char* medstatus;
+		char* diagnostics;
+		char* medEvents;
+		_medUpdateStrings(&medstatus, &diagnostics, &medEvents);
+		fres = SetMedStatus(medstatus, diagnostics, medEvents);
+		if (fres!=SUCCESS)	
+		{
+			ReportError("Cant't set status!");
+			return;
+		}
+
+		fres = _App->RedrawCurrentForm();
+	}
 }
 
 fresult Honor2Logic::ReportError( char* errorText )

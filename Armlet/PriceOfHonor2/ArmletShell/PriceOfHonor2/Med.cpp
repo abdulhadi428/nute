@@ -35,8 +35,20 @@ void _medInit()
 }
 
 char buf1[6*1024];
-void _medOnMedTick()
+void _medOnMedTick(bool bBreathOnly)
 {	
+	if (!bBreathOnly)
+		BodyCycle(buf1,sizeof(buf1)-1);
+	//*oSymptoms=buf1;
+}
+
+void _medUpdateStrings(char** Symptoms, char** Diagnostics, char** MedLog)
+{
+	GatherDescs(buf1, sizeof(buf1)-1);
+	*MedLog = "[23:59] подстрелили!\n[00:00] сделали укол!\n[00:03] пытали!\n[00:12]взрыв, тебя не задело!\n[00:17]йо-йо\n";
+	*Diagnostics = "Температура: 36.6\nПульс:120\nДавление:неизвестно\n\nСостояние: среднее\nПравая рука:болит\nТошнота\n";
+	*Symptoms = buf1;
+
 	//save
 	ArmletApi::WriteFile(&MedFile,(char*)&Body,sizeof(BODY));
 
@@ -48,17 +60,6 @@ void _medOnMedTick()
 	state[3] = (Body.Temperature);		//0..150 i.e. 30-45
 	state[4] = 0;
 	ArmletApi::SendAppState(state);
-
-	BodyCycle(buf1,sizeof(buf1)-1);
-	//*oSymptoms=buf1;
-}
-
-void _medUpdateStrings(char** Symptoms, char** Diagnostics, char** MedLog)
-{
-	GatherDescs(buf1, sizeof(buf1)-1);
-	*MedLog = buf1;
-	*Diagnostics = buf1;
-	*Symptoms = buf1;
 }
 
 //simple healing

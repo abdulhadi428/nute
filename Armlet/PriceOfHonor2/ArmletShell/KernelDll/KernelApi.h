@@ -22,6 +22,7 @@ namespace KernelApi {
 	extern __LOWVAR UPDATE_APP_STATE_CALLBACK* UpdateAppState;
 
 	int __LOWCALL GetPillCharges(int pill_id);
+	void __LOWCALL SetPillCharges(int pill_id, int charges); //only for visualizer
 	void __LOWCALL LustraInRange(bool bInRange);
 	void __LOWCALL SetCurrentLustra(int lustra_id);
 	void __LOWCALL SetCurrentLock(int lock_id);

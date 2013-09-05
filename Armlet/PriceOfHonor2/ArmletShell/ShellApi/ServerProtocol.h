@@ -1,6 +1,6 @@
 #pragma once
 
-#define CUSTOM_MESSAGE_LEN	140
+#define CUSTOM_MESSAGE_MAX_LEN	140
 
 namespace ServerProtocol {
 

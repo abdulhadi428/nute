@@ -47,9 +47,6 @@ void TestArmletSyscalls() {
 	TestGetUpTime();
 	TestFiles();
 }
-
-#else
-	void TestArmletSyscalls() {}
 #endif
 
 static int lh = 23;
@@ -92,7 +89,6 @@ int __stdcall DllMain(void* hinstDLL, unsigned long fdwReason, void* lpvReserved
 	switch (fdwReason)
 	{
 	case 1://DLL_PROCESS_ATTACH
-		TestArmletSyscalls();
 		ArmletApi::RequestTimer(UpdateKernelProc,1000);
 		ArmletApi::RequestTimer(UpdateTimeProc,60*1000);
         break;

@@ -41,7 +41,7 @@ namespace ArmletApi {
 		DrawPixel(1,1,WHITE);
 		DoVibroAndBeep(500);
 		ubyte_t l = GetLustraId();
-		SendRadioPacket(NULL,0);
+		//SendRadioPacket(NULL,0);
 		uword_t a = GetArmletId();
 		FILE log;
 		OpenFile(&log, "log.txt", true);
@@ -72,18 +72,18 @@ namespace ArmletApi {
 
 	void __CALLOUT CriticalError(char* error)
 	{
-		//TODO
+		//NOT IMPLEMENTED
 	}
 
 	void __NOCALL  Log(char* fmt, ...)
 	{
-		//TODO
+		//NOT IMPLEMENTED
 	}
 
 	//__CALLOUT for  button
 	void __CALLOUT OnButtonPress(int button_id)
 	{
-		; //TODO
+		; //NOT IMPLEMENTED, needed for holds only
 	}
 
 	//__CALLOUT for button
@@ -115,6 +115,8 @@ namespace ArmletApi {
 				{
 					SRV_STRING* pkt = (SRV_STRING*)packet;
 					int size = len - sizeof(SRV_STRING);
+					if (size >= CUSTOM_MESSAGE_MAX_LEN)
+						size = CUSTOM_MESSAGE_MAX_LEN;
 					if (pkt->string[size]!=0)
 						pkt->string[size]=0;
 					_OnServerMessage(&pkt->string[0]);
@@ -124,6 +126,8 @@ namespace ArmletApi {
 				{
 					SRV_STRING* pkt = (SRV_STRING*)packet;
 					int size = len - sizeof(SRV_STRING);
+					if (size >= CUSTOM_MESSAGE_MAX_LEN)
+						size = CUSTOM_MESSAGE_MAX_LEN;
 					if (pkt->string[size]!=0)
 						pkt->string[size]=0;
 					_OnSetPlayerName(&pkt->string[0]);
@@ -163,7 +167,9 @@ namespace ArmletApi {
 	//internal emulation
 	void __CALLOUT NextMedTick()
 	{
-		_MedicineTimerTickCallback(MED_TICK_TIME);
+		for (int i=0; i<BREATH_TICKS_PER_MED_TICK; i++) {
+			_MedicineTimerTickCallback(BREATH_TICK_TIME);
+		}
 	}
 #endif
 

@@ -912,10 +912,10 @@ namespace Visualizer {
 			this->tabPage3->Controls->Add(this->groupBoxExplosionType);
 			this->tabPage3->Controls->Add(this->groupBoxKernel);
 			this->tabPage3->Controls->Add(this->groupBoxRooms);
-			this->tabPage3->Location = System::Drawing::Point(4, 22);
+			this->tabPage3->Location = System::Drawing::Point(4, 24);
 			this->tabPage3->Name = L"tabPage3";
 			this->tabPage3->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage3->Size = System::Drawing::Size(410, 243);
+			this->tabPage3->Size = System::Drawing::Size(410, 241);
 			this->tabPage3->TabIndex = 2;
 			this->tabPage3->Text = L"Отсеки";
 			this->tabPage3->UseVisualStyleBackColor = true;
@@ -1002,6 +1002,7 @@ namespace Visualizer {
 			// 
 			this->KernelParamLustraId->Location = System::Drawing::Point(76, 41);
 			this->KernelParamLustraId->Name = L"KernelParamLustraId";
+			this->KernelParamLustraId->ReadOnly = true;
 			this->KernelParamLustraId->Size = System::Drawing::Size(54, 21);
 			this->KernelParamLustraId->TabIndex = 39;
 			// 
@@ -1019,6 +1020,7 @@ namespace Visualizer {
 			this->KernelParamBatteryLevel->AcceptsReturn = true;
 			this->KernelParamBatteryLevel->Location = System::Drawing::Point(118, 88);
 			this->KernelParamBatteryLevel->Name = L"KernelParamBatteryLevel";
+			this->KernelParamBatteryLevel->ReadOnly = true;
 			this->KernelParamBatteryLevel->Size = System::Drawing::Size(100, 21);
 			this->KernelParamBatteryLevel->TabIndex = 37;
 			// 
@@ -1035,6 +1037,7 @@ namespace Visualizer {
 			// 
 			this->KernelParamTime->Location = System::Drawing::Point(139, 41);
 			this->KernelParamTime->Name = L"KernelParamTime";
+			this->KernelParamTime->ReadOnly = true;
 			this->KernelParamTime->Size = System::Drawing::Size(79, 21);
 			this->KernelParamTime->TabIndex = 35;
 			// 
@@ -1051,6 +1054,7 @@ namespace Visualizer {
 			// 
 			this->KernelParamRadioLevel->Location = System::Drawing::Point(9, 88);
 			this->KernelParamRadioLevel->Name = L"KernelParamRadioLevel";
+			this->KernelParamRadioLevel->ReadOnly = true;
 			this->KernelParamRadioLevel->Size = System::Drawing::Size(100, 21);
 			this->KernelParamRadioLevel->TabIndex = 33;
 			// 
@@ -1067,6 +1071,7 @@ namespace Visualizer {
 			// 
 			this->KernelParamArmletId->Location = System::Drawing::Point(9, 41);
 			this->KernelParamArmletId->Name = L"KernelParamArmletId";
+			this->KernelParamArmletId->ReadOnly = true;
 			this->KernelParamArmletId->Size = System::Drawing::Size(54, 21);
 			this->KernelParamArmletId->TabIndex = 31;
 			// 
@@ -1116,6 +1121,8 @@ namespace Visualizer {
 			this->numericUpDownExplosionProbability->Size = System::Drawing::Size(55, 21);
 			this->numericUpDownExplosionProbability->TabIndex = 0;
 			this->numericUpDownExplosionProbability->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {50, 0, 0, 0});
+			this->numericUpDownExplosionProbability->Leave += gcnew System::EventHandler(this, &MainForm::numericUpDownExplosionProbability_Leave);
+			this->numericUpDownExplosionProbability->Enter += gcnew System::EventHandler(this, &MainForm::numericUpDownExplosionProbability_Enter);
 			// 
 			// radioButtonLustra15
 			// 
@@ -1476,6 +1483,7 @@ namespace Visualizer {
 			this->numericUpDownPillsCharges->Size = System::Drawing::Size(54, 21);
 			this->numericUpDownPillsCharges->TabIndex = 12;
 			this->numericUpDownPillsCharges->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {50, 0, 0, 0});
+			this->numericUpDownPillsCharges->ValueChanged += gcnew System::EventHandler(this, &MainForm::numericUpDownPillsCharges_ValueChanged);
 			this->numericUpDownPillsCharges->Leave += gcnew System::EventHandler(this, &MainForm::numericUpDownPillsCharges_Leave);
 			this->numericUpDownPillsCharges->Enter += gcnew System::EventHandler(this, &MainForm::numericUpDownPillsCharges_Enter);
 			// 
@@ -1492,10 +1500,10 @@ namespace Visualizer {
 			// tabPage5
 			// 
 			this->tabPage5->Controls->Add(this->groupBoxPills2);
-			this->tabPage5->Location = System::Drawing::Point(4, 24);
+			this->tabPage5->Location = System::Drawing::Point(4, 22);
 			this->tabPage5->Name = L"tabPage5";
 			this->tabPage5->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage5->Size = System::Drawing::Size(410, 241);
+			this->tabPage5->Size = System::Drawing::Size(410, 243);
 			this->tabPage5->TabIndex = 5;
 			this->tabPage5->Text = L"Пытки и Параметры";
 			this->tabPage5->UseVisualStyleBackColor = true;
@@ -1532,6 +1540,7 @@ namespace Visualizer {
 			// 
 			this->ParamValue4->Location = System::Drawing::Point(263, 150);
 			this->ParamValue4->Name = L"ParamValue4";
+			this->ParamValue4->ReadOnly = true;
 			this->ParamValue4->Size = System::Drawing::Size(100, 21);
 			this->ParamValue4->TabIndex = 35;
 			// 
@@ -1548,6 +1557,7 @@ namespace Visualizer {
 			// 
 			this->ParamValue3->Location = System::Drawing::Point(263, 110);
 			this->ParamValue3->Name = L"ParamValue3";
+			this->ParamValue3->ReadOnly = true;
 			this->ParamValue3->Size = System::Drawing::Size(100, 21);
 			this->ParamValue3->TabIndex = 33;
 			// 
@@ -1564,6 +1574,7 @@ namespace Visualizer {
 			// 
 			this->ParamValue2->Location = System::Drawing::Point(263, 69);
 			this->ParamValue2->Name = L"ParamValue2";
+			this->ParamValue2->ReadOnly = true;
 			this->ParamValue2->Size = System::Drawing::Size(100, 21);
 			this->ParamValue2->TabIndex = 31;
 			// 
@@ -1580,6 +1591,7 @@ namespace Visualizer {
 			// 
 			this->ParamValue1->Location = System::Drawing::Point(263, 28);
 			this->ParamValue1->Name = L"ParamValue1";
+			this->ParamValue1->ReadOnly = true;
 			this->ParamValue1->Size = System::Drawing::Size(100, 21);
 			this->ParamValue1->TabIndex = 29;
 			// 
@@ -1703,6 +1715,7 @@ namespace Visualizer {
 			this->numericUpDownPills2Charges->Size = System::Drawing::Size(54, 21);
 			this->numericUpDownPills2Charges->TabIndex = 15;
 			this->numericUpDownPills2Charges->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {50, 0, 0, 0});
+			this->numericUpDownPills2Charges->ValueChanged += gcnew System::EventHandler(this, &MainForm::numericUpDownPills2Charges_ValueChanged);
 			this->numericUpDownPills2Charges->Leave += gcnew System::EventHandler(this, &MainForm::numericUpDownPills2Charges_Leave);
 			this->numericUpDownPills2Charges->Enter += gcnew System::EventHandler(this, &MainForm::numericUpDownPills2Charges_Enter);
 			// 
@@ -1851,6 +1864,12 @@ private: System::Void numericUpDownPills2Charges_Enter(System::Object^  sender, 
 private: System::Void numericUpDownPills2Charges_Leave(System::Object^  sender, System::EventArgs^  e) {
 			 bKeysToButtons = true;
 		 }	 
+private: System::Void numericUpDownExplosionProbability_Enter(System::Object^  sender, System::EventArgs^  e) {
+			 bKeysToButtons = false;
+		 }
+private: System::Void numericUpDownExplosionProbability_Leave(System::Object^  sender, System::EventArgs^  e) {
+			 bKeysToButtons = true;
+		 }
 
 //BUTTONS and BUTTONS accelerator keys (Press/Release)
 private: System::Void MainForm_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
@@ -2176,6 +2195,14 @@ private: System::Void buttonConnectPill2_Click(System::Object^  sender, System::
 		 }
 private: System::Void buttonNextMedTick2_Click(System::Object^  sender, System::EventArgs^  e) {
 			Callouts::NextMedTick();
+		 }
+
+//MISC
+private: System::Void numericUpDownPillsCharges_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+			 KernelApi::SetPillCharges(currCure, (int)numericUpDownPillsCharges->Value);
+		 }
+private: System::Void numericUpDownPills2Charges_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+			 KernelApi::SetPillCharges(currTorture, (int)numericUpDownPills2Charges->Value);
 		 }
 }; //class
 
