@@ -53,7 +53,7 @@ void _medOnMedTick()
 	//*oSymptoms=buf1;
 }
 
-void _medAfterWoundUpdate(char** MedLog, char** Diagnostics, char** Symptoms)
+void _medUpdateStrings(char** Symptoms, char** Diagnostics, char** MedLog)
 {
 	GatherDescs(buf1, sizeof(buf1)-1);
 	*MedLog = buf1;

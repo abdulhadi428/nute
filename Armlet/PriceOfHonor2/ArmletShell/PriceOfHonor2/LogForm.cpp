@@ -131,8 +131,8 @@ fresult LogForm::DoLayout()
 
 const char* _logTitle = "Лог событий";
 const char* _logMsgTitle = "Сообщения";
-const char* _logSymptomsTitle = "Симптомы";
-const char* _logTimeEventsTitle = "События";
+const char* _logDiagnosticsTitle = "Диагностика";
+const char* _logTimeEventsTitle = "Медицинские события";
 const char* _logSystemTitle = "Система";
 const char* _logErrorsTitle = "Ошибки";
 
@@ -148,10 +148,10 @@ fresult LogForm::Init(Repositories* reps, Factories* facts, char* name, FormMana
 	_logs[LogKindMessages].subtitle = (char*)_logMsgTitle;
 	_logs[LogKindMessages].logKind = LogKindMessages;
 
-	_logs[LogKindMedSymptoms].icon = BlueHealth;
-	_logs[LogKindMedSymptoms].title = (char*)_logTitle;
-	_logs[LogKindMedSymptoms].subtitle = (char*)_logSymptomsTitle;
-	_logs[LogKindMedSymptoms].logKind = LogKindMedSymptoms;
+	_logs[LogKindMedDiagnostics].icon = BlueHeart;
+	_logs[LogKindMedDiagnostics].title = (char*)_logTitle;
+	_logs[LogKindMedDiagnostics].subtitle = (char*)_logDiagnosticsTitle;
+	_logs[LogKindMedDiagnostics].logKind = LogKindMedDiagnostics;
 
 	_logs[LogKindSystem].icon = BlueRss;
 	_logs[LogKindSystem].title = (char*)_logTitle;
@@ -333,7 +333,7 @@ fresult LogForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation, FormShowRes
 	fres = Honor2FormBase::OnBeforeShow(prevFrom, reActivation, results);
 	ENSURESUCCESS(fres);
 
-	fres = SwitchToLog(LogKindMedSymptoms);
+	fres = SwitchToLog(LogKindMedDiagnostics);
 
 	return SUCCESS;
 }

@@ -38,7 +38,19 @@ fresult Honor2Logic::Init( Honor2App* app )
 
 char* Honor2Logic::OnNewWound( TARGET trg )
 {
-	return _medNewWound(trg);
+	fresult fres;
+	
+	char* woundText = _medNewWound(trg);
+
+	char* medstatus;
+	char* diagnostics;
+	char* medEvents;
+	_medUpdateStrings(&medstatus, &diagnostics, &medEvents);
+	fres = SetMedStatus(medstatus, diagnostics, medEvents);
+	NULLIF(fres!=SUCCESS);
+
+	return woundText;
+
 }
 
 
@@ -49,8 +61,10 @@ fresult Honor2Logic::OnKnockout()
 	char* knockoutResult = _medOnKnockout();
 
 	char* medstatus;
-	_medAfterWoundUpdate(&medstatus);
-	fres = SetMainStatus(medstatus);
+	char* diagnostics;
+	char* medEvents;
+	_medUpdateStrings(&medstatus, &diagnostics, &medEvents);
+	fres = SetMedStatus(medstatus, diagnostics, medEvents);
 	ENSURESUCCESS(fres);
 
 	fres = _App->MsgBoxShow(BlueHealth, "Нокаут!", knockoutResult);
@@ -81,6 +95,18 @@ void Honor2Logic::OnPillConnected(sword_t cure_id, sword_t charges)
 		//Call medicine
 		char* str = _medOnPillConnected((CURE_ID)cure_id);
 
+		char* medstatus;
+		char* diagnostics;
+		char* medEvents;
+		_medUpdateStrings(&medstatus, &diagnostics, &medEvents);
+		fres = SetMedStatus(medstatus, diagnostics, medEvents);
+		if (fres!=SUCCESS)	
+		{
+			ReportError("Cant't set status!");
+			return;
+		}
+		
+
 		fres=ShowMessage("Препарат применен!" , BlueHealth, str , FALSE);
 		if (fres!=SUCCESS)	
 		{
@@ -93,7 +119,7 @@ void Honor2Logic::OnPillConnected(sword_t cure_id, sword_t charges)
 			ReportError("Cant't write pill!");
 			return;
 		}
-	}	
+	}
 }
 
 void Honor2Logic::OnExposion(sword_t roomId, ubyte_t probability, ubyte_t explosionType)
@@ -103,8 +129,10 @@ void Honor2Logic::OnExposion(sword_t roomId, ubyte_t probability, ubyte_t explos
 	{
 		char* explosionResult = _medOnExplosion(probability, explosionType);
 		char* medstatus;
-		_medAfterWoundUpdate(&medstatus);
-		fres = SetMainStatus(medstatus);
+		char* diagnostics;
+		char* medEvents;
+		_medUpdateStrings(&medstatus, &diagnostics, &medEvents);
+		fres = SetMedStatus(medstatus, diagnostics, medEvents);
 		if (fres!=SUCCESS)	
 		{
 			ReportError("Cant't set status!");
@@ -182,7 +210,7 @@ fresult Honor2Logic::ResetLog( LogKinds log, char* message )
 }
 
 
-fresult Honor2Logic::SetMainStatus( char* mainStatus )
+fresult Honor2Logic::SetMedStatus( char* mainStatus ,  char* diagnostics, char* medEvents)
 {
 	fresult fres;
 
@@ -191,6 +219,12 @@ fresult Honor2Logic::SetMainStatus( char* mainStatus )
 		fres = _mainForm->SetStatus(mainStatus);
 		ENSURESUCCESS(fres);
 	}
+
+	fres = ResetLog(LogKindMedDiagnostics, diagnostics);
+	ENSURESUCCESS(fres);
+
+	fres = ResetLog(LogKindEvents, medEvents);
+	ENSURESUCCESS(fres);
 
 	return SUCCESS;
 }
@@ -291,11 +325,18 @@ void Honor2Logic::OnMedTick()
 {
 	fresult fres;
 
-	char* symptoms;
-	char* medLog;
-
-	_medOnMedTick(&medLog);
-	fres = SetMainStatus(medLog);
+	_medOnMedTick();
+	
+	char* medstatus;
+	char* diagnostics;
+	char* medEvents;
+	_medUpdateStrings(&medstatus, &diagnostics, &medEvents);
+	fres = SetMedStatus(medstatus, diagnostics, medEvents);
+	if (fres!=SUCCESS)	
+	{
+		ReportError("Cant't set status!");
+		return;
+	}
 
 	fres = _App->RedrawCurrentForm();
 }

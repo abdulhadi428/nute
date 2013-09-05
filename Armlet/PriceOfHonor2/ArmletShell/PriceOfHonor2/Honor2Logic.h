@@ -4,7 +4,7 @@
 #define FIRMWARE_VERSION "1.1"
 
 typedef enum _LOG_KINDS {
-	LogKindMedSymptoms,
+	LogKindMedDiagnostics,
 	LogKindEvents,
 	LogKindMessages,
 	LogKindSystem,
@@ -40,7 +40,7 @@ protected:
 	fresult ShowMessage(char* title, ImageHandle iconHandle, char* text, bool_t wakeUp);
 	fresult AppendLog(LogKinds log, char* message);
 	fresult ResetLog( LogKinds log, char* message );
-	fresult SetMainStatus(char* mainStatus);
+	fresult SetMedStatus(char* mainStatus ,  char* diagnostics, char* medEvents);
 	fresult ReportError(char* errorText);
 
 	fresult SetRoom( sword_t room );

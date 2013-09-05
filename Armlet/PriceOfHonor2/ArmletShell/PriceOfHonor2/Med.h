@@ -23,7 +23,8 @@ namespace medicine {
 	void _medOnMedTick();
 	
 	//called after previous 4 events and on med tick
-	void _medUpdateStrings(char** MedLog, char** Diagnostics, char** Symptoms);
+	//1100 char max
+	void _medUpdateStrings(char** Symptoms, char** Diagnostics, char** MedLog);
 }
 
 using namespace medicine;
