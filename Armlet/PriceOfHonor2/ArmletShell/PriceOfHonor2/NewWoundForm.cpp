@@ -7,6 +7,20 @@
 ALLOCATE_MENU_HANDLERS(NewWoundForm,20);
 DEFINE_MENU_HANDLER(NewWoundForm);
 
+#define WOUND_CHECK_TITLE "В тебя попали!"
+
+
+fresult NewWoundForm::Init( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, Honor2App* app, Honor2Logic* logic )
+{
+	fresult fres;
+	fres = BaseInit(TRUE,reps,facts, name, frmmngr, app, logic);
+	ENSURESUCCESS(fres);
+
+	_woundSelected = FALSE;
+	_target =  UnknownTarget;
+
+		return SUCCESS;
+}
 fresult NewWoundForm::CreateMenu( IMenu** o_mnu )
 {
 	fresult fres;
@@ -153,17 +167,6 @@ fresult NewWoundForm::DoLayout()
 	return SUCCESS;
 }
 
-fresult NewWoundForm::Init( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, Honor2App* app, Honor2Logic* logic )
-{
-	fresult fres;
-	fres = BaseInit(FALSE,reps,facts, name, frmmngr, app, logic);
-	ENSURESUCCESS(fres);
-
-	_woundSelected = FALSE;
-
-	return SUCCESS;
-}
-
 fresult NewWoundForm::OnWound( IMenuItem* sender )
 {
 	fresult fres;
@@ -207,14 +210,9 @@ fresult NewWoundForm::OnWound( IMenuItem* sender )
 		return GENERAL_ERROR;
 	}
 
-	char* text = _App->Logic->OnNewWound(trg);
-	fres = _txtWoundText->AppendText("\n");
-	fres = _txtWoundText->AppendText(text);
-	ENSURESUCCESS(fres);
-	fres = _txtWoundText->Draw();
-	ENSURESUCCESS(fres);
+	_target =  trg;
 
-	_woundSelected = TRUE;
+	fres = _App->MsgBoxShow(TRUE, BlueQuestion, WOUND_CHECK_TITLE, "В тебя попали! Уверен ли ты что тебя действительно зацепило или же просто порвало одежду?");
 
 	return SUCCESS;
 }
@@ -228,8 +226,46 @@ fresult NewWoundForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation, FormSh
 	{
 		_woundSelected = FALSE;
 		fres = _txtWoundText->Clear();
+		_target =  UnknownTarget;
 		ENSURESUCCESS(fres);
 	}
+	return SUCCESS;
+}
+
+fresult NewWoundForm::OnAfterShow( IForm* prevFrom, bool_t reActivation, FormShowResults results )
+{
+	fresult fres;
+
+	if (reActivation == TRUE)
+	{
+		//handle msgbox to confirm knockout!
+		if (prevFrom !=NULL)
+		{
+			if(StringEquals(prevFrom->GetName(), _App->Forms->MsgBoxFormName))
+			{
+				MsgBoxForm* msgBoxForm = (MsgBoxForm*)prevFrom;
+				MessageBoxContent* msgBoxData = msgBoxForm->GetLastYesNoDialog();
+				if (msgBoxData !=NULL)
+				{
+					if (StringEquals(msgBoxData->title, WOUND_CHECK_TITLE))
+					{
+						if (results == fsrOK)
+						{
+							//Now it's a target!
+							char* text = _App->Logic->OnNewWound(_target);
+							fres = _txtWoundText->AppendText(text);
+							ENSURESUCCESS(fres);
+							fres = _txtWoundText->Draw();
+							ENSURESUCCESS(fres);
+
+							_woundSelected = TRUE;	
+						}
+					}
+				}
+			}
+		}
+	}
+
 	return SUCCESS;
 }
 

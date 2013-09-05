@@ -187,7 +187,6 @@ fresult Honor2MainForm::OnAfterShow( IForm* prevFrom, bool_t reActivation, FormS
 	}
 
 	return SUCCESS;
-
 }
 
 
