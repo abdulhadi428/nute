@@ -20,11 +20,10 @@ namespace medicine {
 	char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType);//(ubyte_t power);
 	char* _medOnPillConnected(ubyte_t cureId);
 
+	void _medOnMedTick();
+	
 	//called after previous 4 events and on med tick
-	//void _medUpdateStrings(char** MedLog, char** Diagnostics, char** Symptoms);
-
-	void _medOnMedTick(char** oSymptoms);			//Symptoms, Parameters, Feelings
-	void _medAfterWoundUpdate(char** oSymptoms);	//todo remove
+	void _medUpdateStrings(char** MedLog, char** Diagnostics, char** Symptoms);
 }
 
 using namespace medicine;

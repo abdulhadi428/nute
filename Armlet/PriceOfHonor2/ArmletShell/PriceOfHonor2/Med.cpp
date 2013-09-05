@@ -35,7 +35,7 @@ void _medInit()
 }
 
 char buf1[6*1024];
-void _medOnMedTick(char** oSymptoms)
+void _medOnMedTick()
 {	
 	//save
 	ArmletApi::WriteFile(&MedFile,(char*)&Body,sizeof(BODY));
@@ -50,13 +50,15 @@ void _medOnMedTick(char** oSymptoms)
 	ArmletApi::SendAppState(state);
 
 	BodyCycle(buf1,sizeof(buf1)-1);
-	*oSymptoms=buf1;
+	//*oSymptoms=buf1;
 }
 
-void _medAfterWoundUpdate(char** oSymptoms)
+void _medAfterWoundUpdate(char** MedLog, char** Diagnostics, char** Symptoms)
 {
 	GatherDescs(buf1, sizeof(buf1)-1);
-	*oSymptoms = buf1;
+	*MedLog = buf1;
+	*Diagnostics = buf1;
+	*Symptoms = buf1;
 }
 
 //simple healing
