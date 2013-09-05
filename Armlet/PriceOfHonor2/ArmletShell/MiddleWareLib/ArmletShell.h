@@ -17,6 +17,8 @@ namespace ArmletShell {
 	#include "Images.h"				//common images API
 #undef _NAMESPACE_PROTECT_
 
+	char* GetTime();
+
 }
 
 using namespace ArmletShell;

@@ -15,9 +15,6 @@ void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER Hol
 namespace ArmletApi {
 
 	char _hhmm_time[6] = "xx:xx";
-	char* GetTime() {
-		return _hhmm_time;
-	}
 
 	int tick = 0;
 	bool __CALLBACK TimerProc(int elapsed)
@@ -171,3 +168,9 @@ namespace ArmletApi {
 #endif
 
 } //namespace
+
+namespace ArmletShell {
+	char* GetTime() {
+		return ArmletApi::_hhmm_time;
+	}
+}
