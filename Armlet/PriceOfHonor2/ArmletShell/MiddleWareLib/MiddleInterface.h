@@ -6,6 +6,10 @@ void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER Hol
 extern BUTTON_HANDLER* gClickButtonHandler;
 extern BUTTON_HANDLER* gHoldButtonHandler;
 
+namespace ArmletApi {
+	char* GetTime();
+}
+
 //draw pixel alpha channel support in MiddleWare
 
 /*
