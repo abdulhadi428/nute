@@ -96,12 +96,12 @@ void Honor2Logic::OnPillConnected(sword_t cure_id, sword_t charges)
 	}	
 }
 
-void Honor2Logic::OnExposion(sword_t roomId)
+void Honor2Logic::OnExposion(sword_t roomId, ubyte_t probability, ubyte_t explosionType)
 {
 	fresult fres;
 	if (roomId==_lastKnownRoomId)
 	{
-		char* explosionResult = _medOnExplosion();
+		char* explosionResult = _medOnExplosion(probability, explosionType);
 		char* medstatus;
 		_medAfterWoundUpdate(&medstatus);
 		fres = SetMainStatus(medstatus);
@@ -153,6 +153,8 @@ fresult Honor2Logic::ShowMessage( char* title, ImageHandle iconHandle, char* tex
 	if (wakeUp)
 		_App->DoVibroAndBeep();
 
+	//copy message
+
 	fres = _App->MsgBoxShow(iconHandle, title, text);
 	ENSURESUCCESS(fres);
 
@@ -162,8 +164,6 @@ fresult Honor2Logic::ShowMessage( char* title, ImageHandle iconHandle, char* tex
 fresult Honor2Logic::AppendLog( LogKinds log, char* message )
 {
 	fresult fres;
-	fres = _logForm->LogRecord(log, "\n");
-	ENSURESUCCESS(fres);
 	fres = _logForm->LogRecord(log, message);
 	ENSURESUCCESS(fres);
 
@@ -319,19 +319,18 @@ void Honor2Logic::OnNewMessage( char* messageText )
 
 	_App->DoVibroAndBeep();
 
-	fres = AppendLog(LogKindMessages, "\n");
-	if (fres!=SUCCESS)
-	{
-		ReportError("Can't append Log");
-		return;
-	}	
-	
 	fres = AppendLog(LogKindMessages, messageText);
 	if (fres!=SUCCESS)
 	{
 		ReportError("Can't append Log");
 		return;
 	}
+	fres = AppendLog(LogKindMessages, "\n");
+	if (fres!=SUCCESS)
+	{
+		ReportError("Can't append Log");
+		return;
+	}	
 }
 
 sword_t Honor2Logic::GetRoomIdFromLustraId( sword_t lustraId )

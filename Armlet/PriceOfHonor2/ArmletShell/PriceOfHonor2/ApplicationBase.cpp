@@ -285,6 +285,18 @@ bool_t ApplicationBase::OnSystemTimer()
 			return true;
 		}
 		
+		//get time
+		char* timeString = ArmletShell::GetTime();
+
+		fres = _StatusBar->SetTime(timeString);
+		if (fres!=SUCCESS)	
+		{
+			LogError("Cant't set time");
+			return true;
+		}
+
+
+
 		if (_StatusBar->GetVisible() == TRUE)
 		{
 			fres = _StatusBar->Draw();

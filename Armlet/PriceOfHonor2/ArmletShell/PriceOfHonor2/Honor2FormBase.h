@@ -19,7 +19,7 @@ protected:
 	Size _FormClientSize;
 
 	fresult BaseInit(bool_t showHeader, Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, Honor2App* app, Honor2Logic* logic);
-	virtual fresult OnBeforeShow( IForm* prevFrom, bool_t reActivation );
+	virtual fresult OnBeforeShow( IForm* prevFrom, bool_t reActivation, FormShowResults results);
 
 	//creates and itinializes 	_HeaderIcon, _HeaderTitle, _HeaderSubTitle;
 	virtual fresult CreateHeader(ImageHandle headerIconHandle, char* headerTitleText, char* headerSubtitleText);

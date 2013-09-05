@@ -43,6 +43,6 @@ public:
 	
 	//in -db
 	virtual fresult SetNetworkSignalStrength(sbyte_t dbLevel);
-	virtual fresult SetTime(ubyte_t hours, ubyte_t minutes);
+	virtual fresult SetTime(char* timeString);
 
 };

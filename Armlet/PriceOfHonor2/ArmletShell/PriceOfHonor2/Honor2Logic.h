@@ -28,7 +28,6 @@ class Honor2Logic
 	Honor2MainForm* _mainForm;
 	LogForm* _logForm;
 
-
 	uword_t _armletId;
 	sword_t _lastKnownLustraId;
 	sword_t _lastKnownRoomId;
@@ -66,6 +65,6 @@ public:
 	void SetRegenRate(ubyte_t regenRate);
 	void SetPlayerName(char* playerName);
 	void OnNewMessage(char* messageText);
-	void OnExposion(sword_t roomId);
+	void OnExposion(sword_t roomId, ubyte_t probability, ubyte_t explosionType);
 
 };

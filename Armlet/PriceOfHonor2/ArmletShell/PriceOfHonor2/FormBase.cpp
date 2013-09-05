@@ -44,12 +44,12 @@ fresult FormBase::OnButtonEvent( ButtonState key )
 	return SUCCESS;
 }
 
-fresult FormBase::OnBeforeShow( IForm* prevFrom, bool_t reActivation )
+fresult FormBase::OnBeforeShow( IForm* prevFrom, bool_t reActivation, FormShowResults results )
 {
 	return SUCCESS;
 }
 
-fresult FormBase::OnAfterShow( IForm* prevFrom, bool_t reActivation )
+fresult FormBase::OnAfterShow( IForm* prevFrom, bool_t reActivation, FormShowResults results )
 {
 	return SUCCESS;
 }

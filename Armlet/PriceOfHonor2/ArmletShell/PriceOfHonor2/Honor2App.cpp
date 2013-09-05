@@ -165,12 +165,17 @@ fresult Honor2App::CreateForms()
 
 fresult Honor2App::MsgBoxShow( ImageHandle mgsBoxIcon, char* title, char* text )
 {
+	return MsgBoxShow(FALSE, mgsBoxIcon, title, text);
+}
+
+fresult Honor2App::MsgBoxShow( bool yesNoDialog, ImageHandle mgsBoxIcon, char* title, char* text )
+{
 	fresult fres;
 
 	MsgBoxForm* frm = (MsgBoxForm* )_FormManager->GetForm(_honor2FormsInstance.MsgBoxFormName);
 	FAILIF(frm==NULL);
 
-	fres = frm->ShowMessage(title, mgsBoxIcon, text);
+	fres = frm->ShowMessage(yesNoDialog, title, mgsBoxIcon, text);
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;

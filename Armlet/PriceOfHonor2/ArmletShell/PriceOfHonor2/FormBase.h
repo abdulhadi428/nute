@@ -17,13 +17,12 @@ protected:
     IMenu** AllocMenus(ubyte_t menusCount);
 	fresult BaseInit(Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, ApplicationBase* app);
 
-
 public:
 	virtual char* GetName();
 	virtual fresult DoLayout(){return SUCCESS;};	
 	virtual fresult OnButtonEvent(ButtonState key);
-	virtual fresult OnBeforeShow(IForm* prevFrom, bool_t reActivation);
-	virtual fresult OnAfterShow(IForm* prevFrom, bool_t reActivation);
+	virtual fresult OnBeforeShow(IForm* prevFrom, bool_t reActivation, FormShowResults results);
+	virtual fresult OnAfterShow(IForm* prevFrom, bool_t reActivation, FormShowResults results);
 	virtual fresult OnLoad();
 
 	virtual fresult Draw();

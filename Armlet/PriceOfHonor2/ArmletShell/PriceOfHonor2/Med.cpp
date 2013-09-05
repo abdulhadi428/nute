@@ -134,7 +134,7 @@ char* _medOnPillConnected(ubyte_t cureId)
 //temp
 //char _buf[201];
 
-char* _medOnExplosion()
+char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType)
 {
 	int Target = ArmletApi::GetRandom(MaxTarget);
 	int DamageSeverity = IncreaseCategory(&Body.parts[Target].CurrSeverity);	//TODO FIX

@@ -6,6 +6,10 @@
 ALLOCATE_MENU_HANDLERS(Honor2MainForm,20);
 DEFINE_MENU_HANDLER(Honor2MainForm);
 
+#define KNOCKOUT_CHECK_TITLE "Сильный удар!"
+#define KNOCKOUT_CHECK_TEXT "Ну неужели удар был так силен, что вы действительно потеряли сознание?"
+
+
 //TODO: remove logic. it can't be inited yet!
 fresult Honor2MainForm::Init( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, Honor2App* app, Honor2Logic* logic )
 {
@@ -137,10 +141,10 @@ ubyte_t Honor2MainForm::FormControlsCount()
 	return 1;
 }
 
-fresult Honor2MainForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation )
+fresult Honor2MainForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation , FormShowResults results)
 {
 	fresult fres;
-	fres = Honor2FormBase::OnBeforeShow(prevFrom, reActivation);
+	fres = Honor2FormBase::OnBeforeShow(prevFrom, reActivation, results);
 	ENSURESUCCESS(fres);
 
 	if (!_App->AppStatusBar->GetVisible())
@@ -149,7 +153,41 @@ fresult Honor2MainForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation )
 	}
 	fres = _App->AppStatusBar->Draw();
 	ENSURESUCCESS(fres);
+
 	return SUCCESS;
+}
+
+fresult Honor2MainForm::OnAfterShow( IForm* prevFrom, bool_t reActivation, FormShowResults results )
+{
+	fresult fres;
+	
+	if (reActivation == TRUE)
+	{
+		//handle msgbox to confirm knockout!
+		if (prevFrom !=NULL)
+		{
+			if(StringEquals(prevFrom->GetName(), _App->Forms->MsgBoxFormName))
+			{
+				MsgBoxForm* msgBoxForm = (MsgBoxForm*)prevFrom;
+				MessageBoxContent* msgBoxData = msgBoxForm->GetLastYesNoDialog();
+				if (msgBoxData !=NULL)
+				{
+					if (StringEquals(msgBoxData->title, KNOCKOUT_CHECK_TITLE))
+					{
+						if (results == fsrOK)
+						{
+							//Now it's a knockout!
+							fres = _App->Logic->OnKnockout();
+							ENSURESUCCESS(fres);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return SUCCESS;
+
 }
 
 
@@ -157,7 +195,7 @@ fresult Honor2MainForm::OnKnockOut( IMenuItem* Sender )
 {
 	fresult fres;
 
-	fres = _App->Logic->OnKnockout();
+	fres = _App->MsgBoxShow(TRUE, BlueQuestion,KNOCKOUT_CHECK_TITLE, KNOCKOUT_CHECK_TEXT);
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
@@ -189,6 +227,9 @@ fresult Honor2MainForm::Scroll( IMenuItem* sender )
 		fres = _txtStatus->ScrollDown();
 	}
 	ENSURESUCCESS(fres);
+	_txtStatus->Draw();
+	ENSURESUCCESS(fres);
 
 	return SUCCESS;
 }
+

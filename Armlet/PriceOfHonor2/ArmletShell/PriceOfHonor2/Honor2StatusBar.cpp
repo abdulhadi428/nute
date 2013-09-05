@@ -92,8 +92,6 @@ fresult Honor2StatusBar::CreateStatusBar()
 	fres = _pnlBasePanel->AppendControl(_txtClock);
 	ENSURESUCCESS(fres);
 
-	SetTime(00,00);
-
 	//PlayerName
 	Position posPlayerName;
 	posPlayerName.Top =1;

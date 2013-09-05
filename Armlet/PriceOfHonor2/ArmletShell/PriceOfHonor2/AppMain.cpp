@@ -93,5 +93,5 @@ void _OnServerMessage(char* msg)
 
 void _OnSetRegenerationRate(sword_t regenRate)
 {
-	return App.Logic->SetRegenRate(regenRate);
+	return App.Logic->SetRegenRate((ubyte_t)regenRate);
 }

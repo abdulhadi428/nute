@@ -219,9 +219,9 @@ fresult NewWoundForm::OnWound( IMenuItem* sender )
 	return SUCCESS;
 }
 
-fresult NewWoundForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation )
+fresult NewWoundForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation, FormShowResults results)
 {
-	fresult fres = Honor2FormBase::OnBeforeShow(prevFrom, reActivation);
+	fresult fres = Honor2FormBase::OnBeforeShow(prevFrom, reActivation, results);
 	ENSURESUCCESS(fres);
 
 	if (reActivation == FALSE)

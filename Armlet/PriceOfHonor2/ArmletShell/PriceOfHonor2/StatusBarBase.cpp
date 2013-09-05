@@ -184,18 +184,13 @@ fresult StatusBarBase::SetNetworkSignalStrength( sbyte_t dbLevel )
 	return SUCCESS;
 }
 
-fresult StatusBarBase::SetTime( ubyte_t hours, ubyte_t minutes )
+fresult StatusBarBase::SetTime( char* timeString )
 {
 	fresult fres;
 
 	if (_txtClock !=NULL)
 	{
-		char time[6];
-		time[5] = 0;
-		//URGENTTODO: почему-то не работает, возвращает M
-		ArmletApi::snprintf(time, 5, "%02d:%02d", hours, minutes);
-
-		fres = _txtClock->SetText(time);
+		fres = _txtClock->SetText(timeString);
 		ENSURESUCCESS(fres);
 	}
 	return SUCCESS;

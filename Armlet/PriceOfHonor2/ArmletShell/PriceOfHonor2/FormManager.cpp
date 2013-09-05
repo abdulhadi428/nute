@@ -31,8 +31,12 @@ fresult FormManager::Init( ubyte_t formsCount, ubyte_t stackLength )
 	_formStackLength = stackLength;
 	_shownIndex = -1;
 
-	fres = _formCloseDelegateInstance.Init(this);
-	ENSURESUCCESS(fres);
+
+	for (ubyte_t i = 0;i < FormShowResultsCount;i++)
+	{
+		fres = _formCloseDelegateInstance[i].Init(this, (FormShowResults)i);
+		ENSURESUCCESS(fres);
+	}
 
 	return SUCCESS;
 }
@@ -96,19 +100,19 @@ fresult FormManager::ShowForm(char* name)
 	_formStack[_shownIndex] = frm;
 	_formStackLength++;
 
-	fres = frm->OnBeforeShow(prevForm, FALSE);
+	fres = frm->OnBeforeShow(prevForm, FALSE, fsrNone);
 	ENSURESUCCESS(fres);
 
 	fres = frm->Draw();
 	ENSURESUCCESS(fres);
 
-	fres = frm->OnAfterShow(prevForm, FALSE);
+	fres = frm->OnAfterShow(prevForm, FALSE, fsrNone);
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
 }
 
-fresult FormManager::CloseForm( IForm* frm)
+fresult FormManager::CloseForm( IForm* frm,  FormShowResults result)
 {
 	fresult fres;
 	FAILIF(_shownIndex == -1);
@@ -124,13 +128,13 @@ fresult FormManager::CloseForm( IForm* frm)
 
 	IForm* frmToShow = _formStack[_shownIndex];
 
-	fres = frmToShow->OnBeforeShow(frm, TRUE);
+	fres = frmToShow->OnBeforeShow(frm, TRUE, result);
 	ENSURESUCCESS(fres);
 
-	fres = frmToShow->Draw();
+	fres = _formStack[_shownIndex]->Draw();
 	ENSURESUCCESS(fres);
 
-	fres = frmToShow->OnAfterShow(frm, TRUE);
+	fres = _formStack[_shownIndex]->OnAfterShow(frm, TRUE, result);
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
@@ -168,11 +172,20 @@ fresult FormManager::LayoutForms()
 	return SUCCESS;
 }
 
-fresult FormManager::GetCloseFormHandler( IMenuHandler** o_handler )
+fresult FormManager::GetCloseFormHandler( IMenuHandler** o_handler)
 {
-	*o_handler = (IMenuHandler*)&_formCloseDelegateInstance;
+	return GetCloseFormHandler(o_handler, fsrNone);
+}
+
+fresult FormManager::GetCloseFormHandler( IMenuHandler** o_handler, FormShowResults result )
+{
+	FAILIF(!(result<FormShowResultsCount));
+	
+	*o_handler = (IMenuHandler*)&_formCloseDelegateInstance[result];
 	return SUCCESS;
 }
+
+
 
 
 fresult FormOpenDelegate::OnClick( IMenuItem* sender )
@@ -192,16 +205,17 @@ fresult FormOpenDelegate::Init( FormManager* frmmngr, char* formName )
 }
 
 
-fresult FormCloseDelegate::Init( FormManager* frmmngr )
+fresult FormCloseDelegate::Init( FormManager* frmmngr, FormShowResults result)
 {
 	_formManager = frmmngr;
+	_result = result;
 	return SUCCESS;
 }
 
 fresult FormCloseDelegate::OnClick( IMenuItem* sender )
 {
 	fresult fres;
-	fres =_formManager->CloseForm(_formManager->GetCurrentForm());
+	fres =_formManager->CloseForm(_formManager->GetCurrentForm(), _result);
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;

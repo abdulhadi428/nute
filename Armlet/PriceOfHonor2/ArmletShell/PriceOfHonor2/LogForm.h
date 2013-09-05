@@ -24,7 +24,7 @@ class LogForm : public Honor2FormBase
 	fresult CycleLogLeft(IMenuItem* Sender);
 	fresult CycleLogRight(IMenuItem* Sender);
 
-	virtual fresult OnBeforeShow( IForm* prevFrom, bool_t reActivation );
+	virtual fresult OnBeforeShow( IForm* prevFrom, bool_t reActivation, FormShowResults results);
 
 	bool_t errorSet;
 

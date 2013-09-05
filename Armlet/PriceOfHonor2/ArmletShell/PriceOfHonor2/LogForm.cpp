@@ -215,6 +215,9 @@ fresult LogForm::ScrollUp( IMenuItem* Sender )
 	{
 		fres = _logs[_currentLog].txtLogField->ScrollUp();
 		ENSURESUCCESS(fres);
+		_logs[_currentLog].txtLogField->Draw();
+		ENSURESUCCESS(fres);
+
 	}
 	return SUCCESS;
 }
@@ -225,6 +228,8 @@ fresult LogForm::ScrollDown( IMenuItem* Sender )
 	if (_logs[_currentLog].txtLogField !=NULL)
 	{
 		fres = _logs[_currentLog].txtLogField->ScrollDown();
+		ENSURESUCCESS(fres);
+		_logs[_currentLog].txtLogField->Draw();
 		ENSURESUCCESS(fres);
 	}
 	return SUCCESS;
@@ -322,10 +327,10 @@ fresult LogForm::SwitchToLog( LogKinds log )
 	return SUCCESS;
 }
 
-fresult LogForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation )
+fresult LogForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation, FormShowResults results )
 {
 	fresult fres;
-	fres = Honor2FormBase::OnBeforeShow(prevFrom, reActivation);
+	fres = Honor2FormBase::OnBeforeShow(prevFrom, reActivation, results);
 	ENSURESUCCESS(fres);
 
 	fres = SwitchToLog(LogKindMedSymptoms);

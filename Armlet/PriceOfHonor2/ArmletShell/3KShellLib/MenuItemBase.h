@@ -7,6 +7,8 @@ class MenuItemBase : public  IMenuItem
 protected:
 	IControl* _underLyningControl;
 	bool_t _IsSelected;
+	bool_t _IsVisible;
+	bool_t _IsEnabled;
 
 	IMenuHandler* _OnClickHandler;
 	ButtonState _Accelerator;
@@ -26,4 +28,14 @@ public:
 	ButtonState GetAccelerator();
 
 	bool_t virtual CheckAccelerator(ButtonState button);
+
+	virtual fresult SetVisible( bool_t val );
+
+	virtual bool_t GetVisible();
+
+	virtual fresult SetEnabled( bool_t val );
+
+	virtual bool_t GetEnabled();
+
+
 };

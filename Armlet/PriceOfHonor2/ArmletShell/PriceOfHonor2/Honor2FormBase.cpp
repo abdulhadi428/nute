@@ -21,7 +21,7 @@ fresult Honor2FormBase::BaseInit(bool_t showHeader, Repositories* reps, Factorie
 	return FormBase::BaseInit(reps, facts, name, frmmngr, app);
 }
 
- fresult Honor2FormBase::OnBeforeShow( IForm* prevFrom, bool_t reActivation )
+ fresult Honor2FormBase::OnBeforeShow( IForm* prevFrom, bool_t reActivation , FormShowResults results)
 {
 	fresult fres;
 	if (_ShowHeader)

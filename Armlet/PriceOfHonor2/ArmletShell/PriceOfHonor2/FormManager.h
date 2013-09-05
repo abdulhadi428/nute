@@ -18,8 +18,9 @@ class FormCloseDelegate : IMenuHandler
 {
 	FormManager* _formManager;
 	char* _formName;
+	FormShowResults _result;
 public: 
-	fresult Init (FormManager* frmmngr);
+	fresult Init (FormManager* frmmngr, FormShowResults result);
 
 	virtual fresult OnClick( IMenuItem* sender );
 
@@ -35,7 +36,8 @@ struct FormDescription
 class FormManager
 {
 	FormDescription* _formsRepository;
-	FormCloseDelegate _formCloseDelegateInstance;
+
+	FormCloseDelegate _formCloseDelegateInstance[FormShowResultsCount];
 
 	ubyte_t _formsCount;
 	ubyte_t _registeredForms;
@@ -59,10 +61,11 @@ public:
 	fresult RegisterForm(IForm* frm);
 	
 	fresult ShowForm(char* name);
-	fresult CloseForm(IForm* frm);
+	fresult CloseForm(IForm* frm, FormShowResults result);
 
 	fresult GetOpenFormHandler(char* name, IMenuHandler** o_handler);
 	fresult GetCloseFormHandler(IMenuHandler** o_handler);
+	fresult GetCloseFormHandler(IMenuHandler** o_handler, FormShowResults result);
 	fresult LayoutForms();
 };
 

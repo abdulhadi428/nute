@@ -15,9 +15,12 @@ public:
 
 	virtual ubyte_t FormControlsCount();
 
-	virtual fresult OnBeforeShow( IForm* prevFrom, bool_t reActivation );
+	virtual fresult OnBeforeShow( IForm* prevFrom, bool_t reActivation , FormShowResults results);
 
 	fresult SetStatus(char* statusText);
 
 	fresult Scroll(IMenuItem* sender);
+
+	virtual fresult OnAfterShow( IForm* prevFrom, bool_t reActivation, FormShowResults results );
+
 };
