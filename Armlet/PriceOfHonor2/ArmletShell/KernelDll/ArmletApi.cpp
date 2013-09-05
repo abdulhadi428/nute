@@ -121,8 +121,8 @@ namespace ArmletApi {
 	}
 
 	void __SYSCALL SendAppState(unsigned char packet[APP_STATE_LEN]) {
-		UNREFERENCED_PARAMETER(packet);
-		return; //TODO implement
+		KernelApi::UpdateAppState(packet[0],packet[1],packet[2],packet[3]);
+		return;
 	}
 
 	void __SYSCALL GetRadioStatus(int* gate_id, int* signal_level)
@@ -138,9 +138,9 @@ namespace ArmletApi {
 	}
 
 	//SPECIAL PLATFORM DEPENDENT
-	void __SYSCALL SetCureName(int cure_id, char* name)
+	void __SYSCALL SetPillName(int pill_id, char* name)
 	{
-		KernelApi::SetCureName(cure_id, name);
+		KernelApi::SetPillName(pill_id, name);
 	}
 
 } //namespace

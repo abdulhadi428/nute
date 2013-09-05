@@ -15,16 +15,12 @@
 #ifdef _PC_VISUALIZER_
 	#define __CALLOUT __declspec(dllimport) __cdecl		//Visualizer calls ApplicationDll
 	#define __LOWCALL __declspec(dllimport) __cdecl		//Visualizer calls KernelDll
-	#define	__LOWCALLBACK __declspec(dllimport)			//Visualizer called by KernelDll, pfn
-	#define	__LOWCALLOUT __declspec(dllimport)			//ApplicationDll CALLOUT will be invoked by Visualizer for KernelDll 
-	#define __LOWVAR  __declspec(dllimport)				//todo remove
+	#define __LOWVAR  __declspec(dllimport)				//pfn to Visualizer for KernelDll
 #endif
 #ifdef _PC_KERNEL_
-	#define	__LOWCALLBACK __declspec(dllexport)			//KernelDll calls Visualizer callback, pfn
-	#define	__LOWCALLOUT __declspec(dllexport)			//KernelDll calls ApplicationDll (through callback to Visualizer), pfn
 	#define __LOWCALL __declspec(dllexport) __cdecl		//KernelDll called by Visualizer
 	#define __SYSCALL __declspec(dllexport) __cdecl		//KernelDll called by ApplicationDll
-	#define __LOWVAR  __declspec(dllexport)				//todo remove 
+	#define __LOWVAR  __declspec(dllexport)				//pfn to Visualizer for KernelDll
 #endif
 #ifdef _ARMLET_
 	#define __NOCALL __cdecl							//implemented by ApplicationDll

@@ -27,7 +27,7 @@ namespace ArmletApi {
 	void __CALLOUT CriticalError(char* error);							//critical error __CALLOUT (kernel calls shell to display aka "bsod")
 	void __CALLOUT OnButtonPress(int button_id);						//__CALLOUT for button
 	void __CALLOUT OnButtonRelease(int button_id);						//__CALLOUT for button
-	void __CALLOUT OnPillConnect(int cure_id, int charges);				//__CALLOUT cure/pill
+	void __CALLOUT OnPillConnect(int pill_id, int charges);				//__CALLOUT cure/torture
 	void __CALLOUT OnRadioPacket(unsigned char* packet, int len);		//__CALLOUT for radio transport
 	//SPECIAL PLATFORM DEPENDENT
 	#ifdef _MSC_VER
@@ -73,7 +73,7 @@ namespace ArmletApi {
 	bool __SYSCALL RequestTimer(TIMER_PROC* timerProc, int period);		//__SYSCALL, period in msecs
 	//SPECIAL PLATFORM DEPENDENT
 	#ifdef _MSC_VER
-		void __SYSCALL SetCureName(int cure_id, char* name);			//visualizer only __SYSCALL
+		void __SYSCALL SetPillName(int pill_id, char* name);			//visualizer only __SYSCALL
 	#endif
 #endif
 

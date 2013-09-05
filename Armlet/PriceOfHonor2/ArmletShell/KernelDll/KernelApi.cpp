@@ -5,10 +5,12 @@ namespace KernelApi {
 
 	__LOWVAR VIBRO_CALLBACK* Vibro = 0;
 	__LOWVAR LOG_CALLBACK* Log = 0;
-	__LOWVAR SET_CURE_NAME_CALLBACK* SetCureName = 0;
+	__LOWVAR SET_PILL_NAME_CALLBACK* SetPillName = 0;
 	__LOWVAR UPDATE_CURRENT_CURE_CALLBACK* UpdateCurrentCure = 0;
 	__LOWVAR UPDATE_CURRENT_TORTURE_CALLBACK* UpdateCurrentTorture = 0;
 
+	__LOWVAR UPDATE_KERNEL_CALLBACK* UpdateKernel = 0;
+	__LOWVAR UPDATE_APP_STATE_CALLBACK* UpdateAppState = 0;
 
 	int __LOWCALL GetPillCharges(int cure_id)
 	{

@@ -34,9 +34,9 @@ namespace Callouts {
 	}
 
 	//ARMLET emulation	OnPillConnect
-	void OnPillConnect(int cure_id, int charges)
+	void OnPillConnect(int pill_id, int charges)
 	{
-		ArmletApi::OnPillConnect(cure_id, charges);
+		ArmletApi::OnPillConnect(pill_id, charges);
 	}
 
 	//SERVER EMULATION
@@ -50,7 +50,6 @@ namespace Callouts {
 		packet->header.msg_type = MSG_SET_PLAYER_NAME;
 		packet->header.srv_msg_num = NoncheId++;
 		memcpy(packet->string,name, size+1);
-		//TODO timer/list helper
 		ArmletApi::OnRadioPacket((unsigned char*)packet,full_size);
 		memset(packet,0,full_size);
 		free(packet);
@@ -65,7 +64,6 @@ namespace Callouts {
 		packet->header.msg_type = MSG_SET_PLAYER_REGENERATION;
 		packet->header.srv_msg_num = NoncheId++;
 		packet->level = (unsigned char)level;
-		//TODO timer/list helper
 		ArmletApi::OnRadioPacket((unsigned char*)packet,full_size);
 		memset(packet,0,full_size);
 		free(packet);
@@ -90,14 +88,13 @@ namespace Callouts {
 		packet->header.msg_type = MSG_SHOW_MESSAGE;
 		packet->header.srv_msg_num = NoncheId++;
 		memcpy(packet->string,msg, size+1);
-		//TODO timer/list helper
 		ArmletApi::OnRadioPacket((unsigned char*)packet,full_size);
 		memset(packet,0,full_size);
 		free(packet);
 	}
 
 	//SERVER EMULATION
-	void Explosion(int room_id)
+	void Explosion(int room_id, int probability, int explosion_type)
 	{
 		int full_size = sizeof(SRV_ROOM_HIT);
 
@@ -105,7 +102,23 @@ namespace Callouts {
 		packet->header.msg_type = MSG_ROOM_HIT;
 		packet->header.srv_msg_num = NoncheId++;
 		packet->room_id = (unsigned char)room_id;
-		//TODO timer/list helper
+		packet->probability = (unsigned char)probability;
+		packet->explosion_type = (unsigned char)explosion_type;
+		ArmletApi::OnRadioPacket((unsigned char*)packet,full_size);
+		memset(packet,0,full_size);
+		free(packet);
+	}
+
+	//GATE EMULATION
+	void NewTime(int hours, int minutes)
+	{
+		int full_size = sizeof(SRV_TIME);
+
+		SRV_TIME* packet = (SRV_TIME*)malloc(full_size);
+		packet->header.msg_type = MSG_TIME;
+		packet->header.srv_msg_num = NoncheId++;
+		packet->hours = (unsigned char)hours;
+		packet->minutes = (unsigned char)minutes;
 		ArmletApi::OnRadioPacket((unsigned char*)packet,full_size);
 		memset(packet,0,full_size);
 		free(packet);
