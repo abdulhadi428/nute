@@ -14,6 +14,11 @@ void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER Hol
 
 namespace ArmletApi {
 
+	char _hhmm_time[6] = "xx:xx";
+	char* GetTime() {
+		return _hhmm_time;
+	}
+
 	int tick = 0;
 	bool __CALLBACK TimerProc(int elapsed)
 	{
@@ -142,7 +147,10 @@ namespace ArmletApi {
 			case MSG_TIME:
 				{
 					SRV_TIME* pkt = (SRV_TIME*)packet;
-					_OnNewTime(pkt->hours,pkt->minutes); //new minute
+					_hhmm_time[0]= '0'+pkt->hours/10;
+					_hhmm_time[1]= '0'+pkt->hours%10;
+					_hhmm_time[3]= '0'+pkt->minutes/10;
+					_hhmm_time[4]= '0'+pkt->minutes%10;
 				}
 				break;
 			default:
