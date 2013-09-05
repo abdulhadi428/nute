@@ -1,7 +1,7 @@
 #pragma once
 #include "med.h"
 
-#define FIRMWARE_VERSION "1.5"
+#define FIRMWARE_VERSION "1.6"
 
 typedef enum _LOG_KINDS {
 	LogKindMedDiagnostics,
