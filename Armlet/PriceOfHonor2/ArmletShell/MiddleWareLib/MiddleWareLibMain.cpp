@@ -136,7 +136,13 @@ namespace ArmletApi {
 			case MSG_ROOM_HIT:
 				{
 					SRV_ROOM_HIT* pkt = (SRV_ROOM_HIT*)packet;
-					_OnExplosion(pkt->room_id);
+					_OnExplosion(pkt->room_id,pkt->probability,pkt->explosion_type);
+				}
+				break;
+			case MSG_TIME:
+				{
+					SRV_TIME* pkt = (SRV_TIME*)packet;
+					_OnNewTime(pkt->hours,pkt->minutes); //new minute
 				}
 				break;
 			default:

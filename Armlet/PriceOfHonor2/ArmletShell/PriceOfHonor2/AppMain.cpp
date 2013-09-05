@@ -43,11 +43,11 @@ void AppMainThread(void* param)
 #ifdef _MSC_VER
 	for (int i=0; i<MaxCureId; i++) {
 		ArmletApi::WritePill(i,i+10);
-		ArmletApi::SetCureName(i, (char*)CureName[i]);
+		ArmletApi::SetPillName(i, (char*)CureName[i]);
 	}
 	for (int i=0; i<MaxTortureId; i++) {
 		ArmletApi::WritePill(i+20,i+30);
-		ArmletApi::SetCureName(i+20, (char*)TortureName[i]);
+		ArmletApi::SetPillName(i+20, (char*)TortureName[i]);
 	}
 #endif
 }
@@ -81,9 +81,9 @@ void _OnSetPlayerName( char* name )
 }
 
 
-void _OnExplosion(sword_t roomId)
+void _OnExplosion(sword_t roomId, ubyte_t probability, ubyte_t explosionType)
 {
-	return App.Logic->OnExposion(roomId);
+	return App.Logic->OnExposion(roomId, probability, explosionType);
 }
 
 void _OnServerMessage(char* msg)
