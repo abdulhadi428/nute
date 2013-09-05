@@ -141,10 +141,10 @@ fresult Honor2StatusBar::SetRoom( sword_t room )
 			ArmletApi::snprintf(sRoom, 4, "???");
 		else if (room == 0)
 			ArmletApi::snprintf(sRoom, 4, "---");
-		else if ((room>0)&&(room<90))
-			ArmletApi::snprintf(sRoom, 4, "R%d", room);
+		else if ((room>0)&&(room<99))
+			ArmletApi::snprintf(sRoom, 4, "R%02d", room);
 		else 
-			ArmletApi::snprintf(sRoom, 4, "R99");
+			ArmletApi::snprintf(sRoom, 4, "%03d", room);
 
 		fres = _txtRoomId->SetText(sRoom);
 		ENSURESUCCESS(fres);

@@ -8,7 +8,7 @@
 static const int _gZeroRoomLustras[ZERO_ROOM_LUSTRAS_COUNT] = {12,15};
 #else
 #define ZERO_ROOM_LUSTRAS_COUNT 1
-static const int _gZeroRoomLustras[ZERO_ROOM_LUSTRAS_COUNT] = {72};
+static const int _gZeroRoomLustras[ZERO_ROOM_LUSTRAS_COUNT] = {85,113};
 #endif
 
 fresult Honor2Logic::Init( Honor2App* app )
@@ -258,7 +258,7 @@ void Honor2Logic::OnLustraTimer()
 		if (_lastKnownRoomId == 0)
 		{
 			//zero room, all is ok
-			//		AppendLog(LOG_EVENT, "продолжаем быть в 0 комнате");
+			SetRoom(0);
 		}
 		else
 		{
@@ -286,21 +286,20 @@ void Honor2Logic::OnLustraTimer()
 						}
 					}
 				}
-				
-				if (needShowMsg == TRUE)
+	
+				if (
+					(_lastLoggedTime ==-1) || 
+					(currTime - _lastLoggedTime > MAX_LUSTRA_WAIT_TIME)
+					)
 				{
 					_App->DoVibroAndBeep();
-					ShowMessage(title, BlueExclamation, "Срочно покажи браслет системе безопасности отсека!", TRUE);
-				}
-
-				//URGENT:
-				if(_lastLoggedTime ==-1 || currTime - _lastKnownRoomId)
-				{
-					//AppendLog(LOG_EVENT, "\n Нет активного отсека!");
+					if (needShowMsg == TRUE)
+					{					
+						ShowMessage(title, BlueExclamation, "Срочно покажи браслет системе безопасности отсека!", TRUE);
+					}
+					SetRoom(currRoomId);
 					_lastLoggedTime = currTime;
 				}
-				SetRoom(currRoomId);
-				//AppendLog(LOG_EVENT, "продолжаем не видеть");
 			}
 		}
 	}

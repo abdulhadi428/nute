@@ -1,7 +1,7 @@
 #pragma once
 #include "med.h"
 
-#define FIRMWARE_VERSION "1.6"
+#define FIRMWARE_VERSION "1.7"
 
 typedef enum _LOG_KINDS {
 	LogKindMedDiagnostics,
@@ -31,8 +31,8 @@ class Honor2Logic
 	uword_t _armletId;
 	sword_t _lastKnownLustraId;
 	sword_t _lastKnownRoomId;
-	sword_t _lastKnownDiscoveryTime;
-	sword_t _lastLoggedTime;
+	int _lastKnownDiscoveryTime;
+	int _lastLoggedTime;
 
 	sword_t GetRoomIdFromLustraId(sword_t lustraId);
 

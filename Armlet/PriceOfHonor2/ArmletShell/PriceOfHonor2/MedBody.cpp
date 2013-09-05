@@ -97,6 +97,9 @@ namespace medicine {
 	{
 		StrPad((char*)&Body,0,0,sizeof(BODY));
 		Body.BloodCapacity = 200/*000*/;
+		Body.ToxinsCapacity = 5;
+		Body.Pulse = 95;
+		Body.Temperature = 34;
 		Body.BleedingFactor = 1;
 		Body.PainReduction = 0;
 		Body.RegenerationLevel = RegenLow;

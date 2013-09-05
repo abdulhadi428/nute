@@ -139,11 +139,20 @@ char* _medOnPillConnected(ubyte_t cureId)
 
 char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType)
 {
+	ubyte_t chance = ArmletApi::GetRandom(100);
+	if (chance > probability) {
+		return "Ты слышишь сильный грохот. Но вроде бы все обошлось!";
+	}
+
+	int ExplosionType;
 	int Target = ArmletApi::GetRandom(MaxTarget);
 	int DamageSeverity = IncreaseCategory(&Body.parts[Target].CurrSeverity);	//TODO FIX
-	int ExplosionType = ArmletApi::GetRandom(2);
-	if (ExplosionType == 1)
-		ExplosionType = 2; //skip scorch
+
+	if (explosionType==0)
+		ExplosionType = ArmletApi::GetRandom(2);
+	else
+		ExplosionType = explosionType - 1;
+
 	ApplyWound(MaxTarget+1+ExplosionType,DamageSeverity,&Body.parts[Target]);
 	const char* msg =  WoundDescs[MaxTarget+1+ExplosionType][DamageSeverity].message;
 //temp
