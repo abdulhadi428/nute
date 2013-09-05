@@ -14,13 +14,17 @@ namespace medicine {
 	void _medInit();
 	void _medSetRegenerationRate(sword_t);
 
+	//return 1 strings - into msg box (or into wound form)
 	char* _medNewWound(ubyte_t place);
 	char* _medOnKnockout();
 	char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType);//(ubyte_t power);
 	char* _medOnPillConnected(ubyte_t cureId);
 
+	//called after previous 4 events and on med tick
+	//void _medUpdateStrings(char** MedLog, char** Diagnostics, char** Symptoms);
+
 	void _medOnMedTick(char** oSymptoms);			//Symptoms, Parameters, Feelings
-	void _medAfterWoundUpdate(char** oSymptoms);	//+TimeLog
+	void _medAfterWoundUpdate(char** oSymptoms);	//todo remove
 }
 
 using namespace medicine;

@@ -125,10 +125,13 @@ namespace ArmletApi {
 		return;
 	}
 
-	void __SYSCALL GetRadioStatus(int* gate_id, int* signal_level)
+	void __SYSCALL GetRadioStatus(int* gate_id, int* signal_level) //-20..-120
 	{
 		*gate_id = 3;
-		*signal_level = -35;
+		
+		unsigned char p = (unsigned char)(100 - (GetUpTime() / 1000)); //1% per sec
+		if (p>100) p = 100;
+		*signal_level = -120+p;
 		return;
 	}
 
