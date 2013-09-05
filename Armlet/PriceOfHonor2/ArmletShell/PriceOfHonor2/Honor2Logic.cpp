@@ -289,7 +289,7 @@ void Honor2Logic::OnLustraTimer()
 	
 				if (
 					(_lastLoggedTime ==-1) || 
-					(currTime - _lastLoggedTime > MAX_LUSTRA_WAIT_TIME)
+					(currTime - _lastLoggedTime > MAX_LUSTRA_WAIT_PERIOD)
 					)
 				{
 					_App->DoVibroAndBeep();
