@@ -81,7 +81,7 @@ fresult Honor2StatusBar::CreateStatusBar()
 	//Title
 	Position posRoom;
 	posRoom.Top =1;
-	posRoom.Left = posClock.Left - 2 - 3*6;
+	posRoom.Left = posClock.Left - 4 - 3*6;
 	fres = tff->GetTextBox(posRoom, "   ", &_txtRoomId);
 	ENSURESUCCESS(fres);
 	fres = _pnlBasePanel->AppendControl(_txtRoomId);
