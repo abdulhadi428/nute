@@ -32,10 +32,11 @@ class Honor2Logic
 	uword_t _armletId;
 	sword_t _lastKnownLustraId;
 	sword_t _lastKnownRoomId;
+	sword_t _lastKnownLustraIdIsOut;
 	int _lastKnownDiscoveryTime;
 	int _lastLoggedTime;
 
-	sword_t GetRoomIdFromLustraId(sword_t lustraId);
+	bool IsOutLustraId(sword_t lustraId);
 
 protected:
 	fresult ShowMessage(char* title, ImageHandle iconHandle, char* text, bool_t wakeUp);

@@ -1222,7 +1222,7 @@ namespace Visualizer {
 			this->buttonRoom0Explosion->Name = L"buttonRoom0Explosion";
 			this->buttonRoom0Explosion->Size = System::Drawing::Size(142, 23);
 			this->buttonRoom0Explosion->TabIndex = 11;
-			this->buttonRoom0Explosion->Text = L" ¬зрыв в отсеке 0";
+			this->buttonRoom0Explosion->Text = L" ¬зрыв в отсеке 15";
 			this->buttonRoom0Explosion->UseVisualStyleBackColor = true;
 			this->buttonRoom0Explosion->Click += gcnew System::EventHandler(this, &MainForm::buttonRoom0Explosion_Click);
 			// 
@@ -2050,7 +2050,7 @@ private: System::Void buttonRoom14Explosion_Click(System::Object^  sender, Syste
 			 Callouts::Explosion(14,(int)numericUpDownExplosionProbability->Value,currExplosionType);
 		 }
 private: System::Void buttonRoom0Explosion_Click(System::Object^  sender, System::EventArgs^  e) {
-			 Callouts::Explosion(0,(int)numericUpDownExplosionProbability->Value,currExplosionType);
+			 Callouts::Explosion(15,(int)numericUpDownExplosionProbability->Value,currExplosionType);
 		 }
 private: System::Void radioButtonExplosion0_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			if (radioButtonExplosion0->Checked)

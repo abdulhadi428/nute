@@ -25,8 +25,9 @@ fresult Honor2Logic::Init( Honor2App* app )
 
 	//init lustra
 	_lastKnownDiscoveryTime = ArmletApi::GetUpTime();
-	_lastKnownRoomId =0;
+	_lastKnownRoomId = UNKNOWN_ID;
 	_lastKnownLustraId = UNKNOWN_ID;
+	_lastKnownLustraIdIsOut = true;
 	//Launch lustra query Timer
 	ArmletApi::RequestTimer(_QueryLustraTimerCallback, LUSTRA_POLL_TIME);
 
@@ -245,9 +246,8 @@ void Honor2Logic::OnLustraTimer()
 	
 	//Query current lustraid
 	ubyte_t currLustraId = ArmletApi::GetLustraId();
-	sword_t currRoomId = GetRoomIdFromLustraId(currLustraId); 
+	bool isOutLustra = IsOutLustraId(currLustraId); 
 	int currTime = ArmletApi::GetUpTime();
-
 
 	//char strBuff[40];
 	//ArmletApi::snprintf(strBuff, 40, "t:%d, r:%d", currTime,currLustraId);
@@ -255,7 +255,7 @@ void Honor2Logic::OnLustraTimer()
 
 	if(currLustraId == UNKNOWN_ID)
 	{
-		if (_lastKnownRoomId == 0)
+		if (_lastKnownLustraIdIsOut)
 		{
 			//zero room, all is ok
 			SetRoom(0);
@@ -297,7 +297,7 @@ void Honor2Logic::OnLustraTimer()
 					{					
 						ShowMessage(title, BlueExclamation, "Срочно покажи браслет системе безопасности отсека!", TRUE);
 					}
-					SetRoom(currRoomId);
+					SetRoom(UNKNOWN_ID);
 					_lastLoggedTime = currTime;
 				}
 			}
@@ -308,12 +308,10 @@ void Honor2Logic::OnLustraTimer()
 		//good lustra
 		_lastLoggedTime = -1;
 		_lastKnownDiscoveryTime = currTime;
-		if ((currRoomId!= _lastKnownRoomId)||(currLustraId != _lastKnownLustraId))
-		{
-			SetRoom(currRoomId);
-		}
-		_lastKnownRoomId = currRoomId;
+		SetRoom(currLustraId);
 		_lastKnownLustraId = currLustraId;
+		_lastKnownRoomId = currLustraId;
+		_lastKnownLustraIdIsOut = isOutLustra;
 	}
 	return;
 }
@@ -394,18 +392,12 @@ void Honor2Logic::OnNewMessage( char* messageText )
 	}	
 }
 
-sword_t Honor2Logic::GetRoomIdFromLustraId( sword_t lustraId )
+bool Honor2Logic::IsOutLustraId( sword_t lustraId )
 {
-	sword_t roomId=lustraId;
-
 	for(ubyte_t i=0; i< ZERO_ROOM_LUSTRAS_COUNT; i++)
 	{
 		if(lustraId == _gZeroRoomLustras[i])
-		{
-			roomId = 0;
-			break;
-		}
+			return true;
 	}
-
-	return roomId;
+	return false;
 }
