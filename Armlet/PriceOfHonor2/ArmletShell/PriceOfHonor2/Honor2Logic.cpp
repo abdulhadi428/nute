@@ -7,8 +7,8 @@
 #define ZERO_ROOM_LUSTRAS_COUNT 2
 static const int _gZeroRoomLustras[ZERO_ROOM_LUSTRAS_COUNT] = {12,15};
 #else
-#define ZERO_ROOM_LUSTRAS_COUNT 2
-static const int _gZeroRoomLustras[ZERO_ROOM_LUSTRAS_COUNT] = {85,113};
+#define ZERO_ROOM_LUSTRAS_COUNT 7
+static const int _gZeroRoomLustras[ZERO_ROOM_LUSTRAS_COUNT] = {120, 113, 85, 92, 114, 102, 121};
 #endif
 
 fresult Honor2Logic::Init( Honor2App* app )

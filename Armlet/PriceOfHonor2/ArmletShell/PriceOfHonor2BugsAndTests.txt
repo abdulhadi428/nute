@@ -1,5 +1,5 @@
 BUG: Server messages requires /n; not /n/r - WONTFIX
 BUG: redraw timer - WONTFIX
-BUG: #of logs
+BUG: med event log - DROPPEd
 
 === === ===
