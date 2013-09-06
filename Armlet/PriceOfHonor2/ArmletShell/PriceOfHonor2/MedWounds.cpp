@@ -61,7 +61,7 @@ const char* WoundEffects[MaxWoundType][MaxDamageSeverity] = {
     //    неопасное 
     "Похоже, тебя подстрелили! Боль в груди.",
     //    коварное 
-	"Выстрел задел лишь вскользь. Острая боль в груди.",
+	"Выстрел задел лишь вскользь. Боль в груди.",
     //    опасное
     "Похоже, тебя подстрелили! Острая боль в груди.",
     //    критическое
@@ -73,7 +73,7 @@ const char* WoundEffects[MaxWoundType][MaxDamageSeverity] = {
     //    неопасное 
     "Похоже, тебя подстрелили! Боль в животе.",
     //    коварное 
-    "Выстрел задел лишь вскользь. Острая боль в животе.",
+    "Выстрел задел лишь вскользь. Боль в животе.",
     //    опасное
     "Похоже, тебя подстрелили! Острая боль в животе.",
     //    критическое
@@ -85,7 +85,7 @@ const char* WoundEffects[MaxWoundType][MaxDamageSeverity] = {
     //    неопасное 
     "Похоже, тебя подстрелили! Боль в спине.",
     //    коварное 
-    "Выстрел задел лишь вскользь. Острая боль в спине.",
+    "Выстрел задел лишь вскользь. Боль в спине.",
     //    опасное
     "Похоже, тебя подстрелили! Острая боль в спине.",
     //    критическое
@@ -96,9 +96,9 @@ const char* WoundEffects[MaxWoundType][MaxDamageSeverity] = {
     //царапина
     "Выстрел задел лишь вскользь, почти не больно.",
     //    неопасное
-    "Похоже, тебя подстрелили! У тебя здоровенная рана. Болит.",
+    "Похоже, тебя подстрелили! У тебя здоровенная рана. Голова раскалывается.",
     //    коварное
-    "Выстрел задел лишь вскользь, почти не больно.",
+    "Выстрел задел лишь вскользь, голова раскалывается.",
     //    опасное
     "Похоже, тебя серьезно подстрелили! У тебя здоровенная рана. Очень больно. Кровь застилает глаза и почти ничего не видно. Как минимум - ужасный шрам на всю жизнь!",
     //    критическое
@@ -165,18 +165,18 @@ const DAMAGE_SEVERITY RandomSelectPerTenPercent[10] =
 };
 COMPILE_TIME_CHECK(sizeof(RandomSelectPerTenPercent)/sizeof(DAMAGE_SEVERITY)==10);
 
-DAMAGE_EFFECT WoundToDamageEffect[MaxWoundType] =
+const DAMAGE_EFFECT WoundToDamageEffect[MaxWoundType] =
 { 
-	Rupture, Rupture, Rupture, Rupture,	//LimbShot
-	Rupture, Rupture, Rupture, Rupture,	//other shots
-	Blow,								//KnockOut
-	Blow, Thermal, Radiation			//Explosion
+	RuptureLimb, RuptureLimb, RuptureLimb, RuptureLimb,	//LimbShot
+	Rupture, Rupture, Rupture, Rupture,					//other shots
+	Blow,												//KnockOut
+	Blow, Thermal, Radiation							//Explosion
 };
 
 int sdeToPain[MaxDamageEffect][MaxDamageSeverity] = {
 	{1,1,1,2,3}, //RuptureLimb
 	{1,2,2,3,3}, //Rupture
-	{0,1,1,2,2}, //Blow
+	{0,1,1,2,3}, //Blow
 	{1,2,1,3,4}, //Thermal
 	{0,0,0,0,0}, //Radiation
 };
@@ -195,24 +195,25 @@ int sdeToBleeding[MaxDamageEffect][MaxDamageSeverity] = {
 	{0,0,0,0,0},	//Radiation
 };
 int sdeToToxinsAdd[MaxDamageEffect][MaxDamageSeverity] = {
+	{0,0,0,0,0},	//RuptureLimb
 	{0,0,0,0,0},	//Rupture
 	{0,0,0,0,0},	//Blow
-	{0,1,1,10,15},	//Thermal
-	{2/*000*/,5/*000*/,10/*000*/,15/*000*/,30/*000*/},	//Radiation
+	{0,5,5,10,15},	//Thermal
+	{5/*000*/,10/*000*/,10/*000*/,20/*000*/,30/*000*/},	//Radiation
 };
 int sdeToToxinating[MaxDamageEffect][MaxDamageSeverity] = {
 	{0,0,0,0,0},	//RuptureLimb
 	{0,0,0,0,0},	//Rupture
 	{0,0,0,0,0},	//Blow
-	{0,0,0,3,7},	//Thermal
+	{0,1,2,3,5},	//Thermal
 	{0,1/*000*/,1/*000*/,5/*000*/,10/*000*/},	//Radiation
 };
 int sdeToNecroPoints[MaxDamageEffect][MaxDamageSeverity] = {
-	{0,5,5,10,15},	//RuptureLimb
-	{0,5,5,10,15},	//Rupture
-	{0,5,5,10,15},	//Blow
-	{1,5,10,20,30},	//Thermal
-	{1,5,10,30,50},	//Radiation
+	{0,5,15,15,25},		//RuptureLimb
+	{0,10,25,25,40},	//Rupture
+	{0,5,10,10,15},		//Blow
+	{0,20,30,45,60},	//Thermal
+	{0,20,30,45,60},	//Radiation
 };
 
 WOUND_DESC WoundDescs[MaxWoundType][MaxDamageSeverity];
@@ -222,9 +223,10 @@ void InitWounds()
 	for (int i=0;i<MaxWoundType;i++)
 		for(int j=0;j<MaxDamageSeverity;j++)
 	{
+		WoundDescs[i][j].message = WoundEffects[i][j];
+
 		WoundDescs[i][j].target = (TARGET)i;
 		WoundDescs[i][j].severity = (DAMAGE_SEVERITY)j;
-		WoundDescs[i][j].message = WoundEffects[i][j];
 		
 		DAMAGE_EFFECT de = WoundToDamageEffect[i];
 		WoundDescs[i][j].de = de;
@@ -277,14 +279,24 @@ DAMAGE_SEVERITY IncreaseCategory(DAMAGE_SEVERITY* curr) {*curr = IncreaseCategor
 
 void ApplyWound(int wound,int ds, PPART part)
 {
-	DAMAGE_EFFECT de = WoundDescs[wound][ds].de;
-	part->CurrSeverity/*[de]*/ = (DAMAGE_SEVERITY)ds; //TODO FIX
-	part->PainLevel = WoundDescs[wound][ds].PainLevel;
-	Body.BloodCapacity -= WoundDescs[wound][ds].BloodLoss;
-	part->Bleeding = WoundDescs[wound][ds].Bleeding;
-	Body.ToxinsCapacity += WoundDescs[wound][ds].ToxinsAdd;
-	part->Toxinating = WoundDescs[wound][ds].Toxinating;
-	part->NecroPoints += WoundDescs[wound][ds].NecroPoints;
+	if (part->CurrSeverity <= (DAMAGE_SEVERITY)ds)
+	{
+		part->CurrSeverity = (DAMAGE_SEVERITY)ds;			
+		DAMAGE_EFFECT de = WoundDescs[wound][ds].de;
+
+		Body.BloodCapacity -= WoundDescs[wound][ds].BloodLoss;
+		part->Bleeding += WoundDescs[wound][ds].Bleeding;
+		Body.ToxinsCapacity += WoundDescs[wound][ds].ToxinsAdd;
+		part->Toxinating += WoundDescs[wound][ds].Toxinating;
+		part->NecroPoints += WoundDescs[wound][ds].NecroPoints;
+	}
+
+	int pl = WoundDescs[wound][ds].PainLevel;
+	if (part->PainLevel < pl)
+	{
+		part->PainLevel = pl;
+	}
+
 	part->RemainingTicks = MED_MEGA_TICK;
 }
 

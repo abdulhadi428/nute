@@ -67,31 +67,12 @@ void InitCureAndTortureDescs();
 typedef struct _CURE_ACTION {
 	int RemainingTicks;
 	bool IsUsing;
+	int CumulativeValue;
 } CURE_ACTION;
-
-typedef struct _CURE_SIDE_EFFECT {
-	bool AnalgeticPainReduction;
-	bool AntispasmodicBlockSudorogi;
-	bool AntispasmodicHeadPain;
-	bool AntispasmodicBleedingIncrease;
-	int PyrecticTemperatureDecrease;
-	bool AspiratorBreath;
-	bool CoagulationFactorBleedingBlocked;
-	int SyntheticBloodTemperature;
-	bool AntibioticBlockNecroPoints;
-	int AbsorberLowPressure;
-
-	bool AnestheticsPainReduction;
-	bool AnestheticsPressure;
-	int PlasterNanoPackHigPressure;
-	bool NanoExoFrame;
-} CURE_SIDE_EFFECT;
 
 extern CURE_ACTION CureAction [MaxCureId];
 extern int TortureSecondUsage[MaxTortureId];
-extern CURE_SIDE_EFFECT CureSideEffect;
 
 void InitCureActions();
-
 void ProcessCureUsage(CURE_ID cure_id, bool bStarting);
 void ProcessTortureUsage(TORTURE_ID torture_id);

@@ -158,10 +158,10 @@ fresult LogForm::Init(Repositories* reps, Factories* facts, char* name, FormMana
 	_logs[LogKindSystem].subtitle = (char*)_logSystemTitle;
 	_logs[LogKindSystem].logKind = LogKindSystem;
 
-	_logs[LogKindEvents].icon = BlueInfo;
-	_logs[LogKindEvents].title = (char*)_logTitle;
-	_logs[LogKindEvents].subtitle = (char*)	_logTimeEventsTitle;
-	_logs[LogKindEvents].logKind = LogKindEvents;
+	//_logs[LogKindEvents].icon = BlueInfo;
+	//_logs[LogKindEvents].title = (char*)_logTitle;
+	//_logs[LogKindEvents].subtitle = (char*)	_logTimeEventsTitle;
+	//_logs[LogKindEvents].logKind = LogKindEvents;
 
 	_logs[LogKindErrors].icon = RedCancel;
 	_logs[LogKindErrors].title = (char*)_logTitle;

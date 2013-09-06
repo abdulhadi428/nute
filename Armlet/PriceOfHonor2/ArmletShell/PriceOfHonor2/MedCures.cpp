@@ -1,3 +1,4 @@
+#include "ArmletApi.h"
 #include "ArmletShell.h"
 #include "Med.h"
 
@@ -10,15 +11,14 @@ namespace medicine {
 		"Аспиратор",					//common	//15 min
 		"Коагулятор",					//common	//inst/15 min
 		"Искусственная кровь",			//med		//inst/15 min
-
 		"Искусственная кожа",			//med		//inst
-		"Миорелаксант",					//med		//inst
+		"Миорелаксант",					//med		//inst/15 min
 		"Нанопак стволовых клеток",		//med		//inst with delay
 		"Местный наркоз",				//med		//15 min
 		"Антибиотик",					//common	//inst with delay
-		"Абсорбент",					//med		//inst/15min
-		"Наногипс",						//med		//inst with delay
-		"Наноэкзоскелет",				//med		//15 min
+		"Абсорбент",					//med		//15min/inst/inst with delay
+		"Наногипс",						//med		//inst
+		"Наноэкзоскелет",				//med		//inst
 		"Панацея"						//MG		//inst
 	};
 
@@ -95,9 +95,8 @@ namespace medicine {
 		}
 	}
 
-	CURE_ACTION CureAction [MaxCureId];
+	CURE_ACTION CureAction[MaxCureId];
 	int TortureSecondUsage[MaxTortureId];
-	CURE_SIDE_EFFECT CureSideEffect;
 
 	void InitCureActions()
 	{
@@ -108,14 +107,18 @@ namespace medicine {
 		for (int i=0; i<MaxTortureId; i++) {
 			TortureSecondUsage[i] = 0;
 		}
-		for (int i=0; i<sizeof(CureSideEffect); i++)
-			((char*)&CureSideEffect)[i] = 0;
 	}
 
 	void ProcessCureUsage(CURE_ID cure_id, bool bStarting)
 	{
 		CureAction[cure_id].IsUsing = bStarting;
 		CureAction[cure_id].RemainingTicks = bStarting ? 15 : 0; //minutes
+		if (bStarting) 
+			CureAction[cure_id].CumulativeValue += 1;
+		else {
+			if (CureAction[cure_id].CumulativeValue != 0)
+				CureAction[cure_id].CumulativeValue -= 1;
+		}
 
 		switch (cure_id) {
 			case Analgetic:
@@ -123,39 +126,27 @@ namespace medicine {
 				//Снимает слабую и умеренную боль. 
 				//Не действует на ожоги и радиационные поражении.
 				//Побочно - может вызывать галлюцинации.
-				CureSideEffect.AnalgeticPainReduction = bStarting;
 				break;
 			case Antispasmodic:
 				//Спазмолитик
 				//Прекращает судороги и дрожь конечностей.
 				//Побочно - вызывает головную боль.
 				//Если применено при позе эмбриона => то расчесал нахуй все => категория ожога увеличивается
-//FUCK			if (bStarting)
-//						if (Body.HaveBoxerPose) IncreaseScorches();
-				CureSideEffect.AntispasmodicBlockSudorogi = bStarting;
-				CureSideEffect.AntispasmodicHeadPain = bStarting;
-				CureSideEffect.AntispasmodicBleedingIncrease = bStarting;
+				if (bStarting)
+					if (Body.Symptom[BoxerPose]) IncreaseThermal();
 				break;
 			case Pyretic:
 				//Жаропонижающее
-				//Понижает температуру пациента.
+				//Понижает температуру пациента (кумулятивно)
 				//(Следствие) Снижает давление и пульс, может вызвать тремор.
-				if (bStarting) 
-					CureSideEffect.PyrecticTemperatureDecrease += 1;
-				else {
-					if (CureSideEffect.PyrecticTemperatureDecrease != 0)
-						CureSideEffect.PyrecticTemperatureDecrease -= 1;
-				}
 				break;
 			case Aspirator:
 				//Аспиратор
 				//Облегчает дыхание пациента (при любых причинах затрудненности дыхания)
-				CureSideEffect.AspiratorBreath = bStarting;
 				break;
 			case CoagulationFactor:
 				//Коагулятор
 				//Останавливает кровотечение, как скрытое, так и открытое. Возможны побочные эффекты.
-				CureSideEffect.CoagulationFactorBleedingBlocked = bStarting;
 				if (bStarting) {
 					IncreaseBloodCapacity(
 						5*(Body.RegenerationLevel-1),false); //leave same ToxinsCapacity
@@ -163,95 +154,78 @@ namespace medicine {
 				break;
 			case SyntheticBlood:
 				//Искусственная кровь
-				//Быстро восполняет кровопотерю пациента. Побочно - повышает температуру.
+				//Быстро восполняет кровопотерю пациента. Побочно - повышает температуру (кумулятивно).
 				if (bStarting) { //inst
 					IncreaseBloodCapacity(
 						20+10*Body.RegenerationLevel,true); //reduce ToxinsCapacity by value
 				}
-				if (bStarting) 
-					CureSideEffect.SyntheticBloodTemperature += 1;
-				else {
-					if (CureSideEffect.SyntheticBloodTemperature != 0)
-						CureSideEffect.SyntheticBloodTemperature -= 1;
-				}
 				break;
-//HERE
 			case Leatherette:
 				//Искусственная кожа
 				//Восстанавливает поврежденные кожные покровы - лечит ожоги. 
 				//Не применяется к пациентам, находящимся в данный момент в “позе эмбриона”. 
 				//Побочно - вызывает небольшую единовременную потерю крови.
-			//CureActions[cure_id].RemainingTicks = 0; //inst
-			//if (bStarting)
-			//		if (Body.HaveBoxerPose) InсreaseCategoryForScorches();
-			//DecreaseCategoryForScorches();
-			//BloodLoss(?);
+				CureAction[cure_id].IsUsing = false;
+				CureAction[cure_id].RemainingTicks = 0; //inst
+				if (Body.Symptom[BoxerPose]) 
+					IncreaseThermal();
+				else 
+					DecreaseThermal();
+				DecreaseBloodCapacity(25,true);
 				break;
 			case Myorelaxant:
 				//Миорелаксант
 				//Прекращает судороги, дрожь конечностей, разгибает “позу эмбриона”. 
 				//Возможны побочные эффекты.
-			//CureActions[cure_id].RemainingTicks = 0; //inst
-			//Body.HaveBoxerPose = false;
-			//CureEffects.MyorelaxantBlockSudorogi //remove sudorogi & tremor
-			//if (Body.HaveSeriousDamageSeverity)
-			//	Body.BreathStopped = true;
+				if (bStarting) { //inst effect
+					Body.Symptom[BoxerPose] = false;
+					if (HaveSeriousOrCritical())
+						Body.Symptom[BreathStop] = true;
+				}
 				break;
 			case VisceraNanoPack:
 				//Нанопак стволовых клеток
 				//Излечивает ожоги и следы воздействия радиации, оказывает пролонгированное 
 				//куративное воздействие. Побочно - повышает температуру.
-			//decrease category of Radiation/Thermal;temperature+=
-			//inst delay 15
-			//	if (...)
-			//		BodyDecreaseCategory();
+				if (!bStarting) {//inst delay
+					DecreaseNecropoints(VisceraNanoPack);
+					if (!Body.Symptom[BoxerPose])
+						DecreaseThermal();
+					DecreaseRadiation();
+				}
 				break;
 			case Anesthetics:
 				//Местный наркоз
 				//Сильное обезболивающее, позволяет снять мощные болевые эффекты 
 				//(в том числе, болевые последствия пыток). Побочно - оказывает влияние на кровяное давление.
-				CureSideEffect.AnestheticsPainReduction = bStarting;
-				CureSideEffect.AnestheticsPressure = bStarting;
 				break;
 			case Antibiotic:
 				//Антибиотик
 				//Лечит воспалительные процессы. Воспаление может возобновиться. 
 				//Побочно - увеличивает общую интоксикацию.
-				CureSideEffect.AntibioticBlockNecroPoints = bStarting;
-//FUCK each tick remove NecroPoint and add some Toxins
+				if (!bStarting) {//inst delay effect
+					DecreaseNecropoints(Antibiotic);
+				}
 				break;
 			case Absorber:
 				//Абсорбент
 				//Понижает интоксикацию, способствует выведению токсинов из организма.
 				//Побочно - понижает кровяное давление.
-				if (bStarting) 
-					CureSideEffect.AbsorberLowPressure += 1;
-				else {
-					if (CureSideEffect.AbsorberLowPressure != 0)
-						CureSideEffect.AbsorberLowPressure -= 1;
-				}
-//FUCK			DecreaseToxinsCapacity(50);
+				DecreaseToxinsCapacity(25); //inst and delay inst effect
 				break;
 			case PlasterNanoPack:
 				//Наногипс
 				//Излечивает переломы, раздробления и осколочные повреждения тканей и 
 				//внутренних органов, в том числе растворяет и/или выводит инородные тела (осколки). 
 				//Побочно - повышает кровяное давление.
-				if (bStarting) 
-					CureSideEffect.PlasterNanoPackHigPressure += 1;
-				else {
-					if (CureSideEffect.PlasterNanoPackHigPressure != 0)
-						CureSideEffect.PlasterNanoPackHigPressure -= 1;
-				}
-//FUCK each tick remove NecroPoint for FRAGMENT
+				DecreaseNecropoints(PlasterNanoPack); //inst/inst with delay
 				break;
 			case NanoExoFrame:
 				//Наноэкзоскелет
 				//Позволяет в случае необходимости перемещаться и действовать пациенту со средней 
 				//и тяжелой степенями тяжести повреждений. При этом движения приобретают характерную “деревянность”. 
 				//Отрицательно сказывается на темпах выздоровления в целом.
-				CureSideEffect.NanoExoFrame = true;
-				CureAction[cure_id].RemainingTicks = 0;
+				CureAction[cure_id].RemainingTicks = 0; //inst
 				Body.RegenerationLevel = NoRegen;
 				break;
 			case MagicCure:
@@ -272,25 +246,31 @@ namespace medicine {
 
 		switch  (torture_id) {
 			case ColdTorture:		//"Пытка холодом"
-				//Scorch
+				_medOnExplosion(100,2);
 				break;
 			case CrumblingTorture:	//"Пытка раздроблением конечности"
-				//LimbParalyze & Blow(Serious)
+				{
+					int Target = ArmletApi::GetRandom(RightLegTarget);
+					Body.Symptom[LimbParalyze] = true;
+					ApplyWound(Target,Serious,&Body.Part[Target][Blow]);
+				}
 				break;
 			case EyeSqueezingTorture://"Пытка выдавлиаванием глаза"
-				//HeadShot(Serious)
+				ApplyWound(HeadTarget,Serious,&Body.Part[HeadTarget][Blow]);
 				break;
 			case SuffocationTorture://"Пытка удушьем"
-				//Blow(Insideous) ;BreathStop on repeat
+				if (bNonFirstUsage)
+					Body.Symptom[BreathStop] = true;
 				break;
 			case PoisonTorture:		//"Укол смертельного яда"
-				//Death
+				Body.Symptom[DeathTrauma] = true;
 				break;
 			case DrowingTorture:	//"Пытка утоплением"
-				//Blow(Insideous); BreathStop on repeat
+				if (bNonFirstUsage)
+					Body.Symptom[BreathStop] = true;
 				break;
 			case FireTorture:		//"Пытка огнем"
-				//Scorh
+				_medOnExplosion(100,2);
 				break;
 			default:
 				break;

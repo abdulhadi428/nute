@@ -22,20 +22,14 @@ namespace medicine {
 	};
 */
 
-	SYMPTOM getBloodLossSymptom(ubyte_t bloodCapacity)
+	void InitPart(PART* Part)
 	{
-		if(bloodCapacity > 160/*000*/)
-			return NoSymptom;
-		else if (bloodCapacity > 120/*000*/)
-			return NoSymptom;
-		else if (bloodCapacity > 80/*000*/)
-			return NoSymptom;
-		else if (bloodCapacity > 40/*000*/)
-			return NoSymptom;
-		else if (bloodCapacity > 0)
-			return NoSymptom;
-		else 
-			return DeathTrauma;
+		Part->CurrSeverity = None;
+		Part->RemainingTicks = 0;
+		Part->PainLevel = 0;
+		Part->Bleeding = 0;
+		Part->Toxinating = 0;
+		Part->NecroPoints = 0;
 	}
 
 	void InitBody()
@@ -52,68 +46,50 @@ namespace medicine {
 		Body.BloodCapacity = 200;
 		Body.ToxinsCapacity = 5;
 
-		Body.BleedingFactor = 1;
-		Body.PainReduction = 0;
+		Body.MaxPain = 0;
+		for (int i=0; i < MaxSymptom; i++)
+			Body.Symptom[i] = false;
 		for (int i=0; i < MaxTarget; i++) {
-			Body.parts[i].Bleeding = 0;
-			Body.parts[i].PainLevel = 0;
-			//for (int j=0; j < MaxDamageEffect; j++)
-			//	Body.parts[i].CurrSeverity[j] = None; TODO FIX
-		}
-		//Body.ToxinsCapacity = 5000;
+		for (int j=0; j < MaxDamageEffect; j++) {
+			InitPart(&Body.Part[i][j]);
+		}}
 	}
 
-	void GatherDescs(char* buf, int len)
+	int GetPartPain(int pain, DAMAGE_EFFECT de, DAMAGE_SEVERITY ds)
 	{
-		StrPad(buf,0,0,len);
-		int plus;
-			SYMPTOM sym = getBloodLossSymptom(Body.BloodCapacity);
-			if (sym!=-1) {
-				char* str = (char*)SymptomEffects[sym];
-				plus = ArmletApi::snprintf(buf,len,"%s\n",str);
-				buf += plus; len-=plus;
+		if (CureAction[Anesthetics].IsUsing) {
+			pain -= 2;
+			if (pain < 0)
+				pain = 0;
+			return pain;
+		}
+		if (CureAction[Analgetic].IsUsing) {
+			if (ds == Insidious) 
+				Body.Symptom[Hallucination] = true;
+			if ((de == Thermal)||(de == Radiation)) {
+				return pain;
 			}
-
-		for (int i=0; i<MaxTarget; i++) {
-			PPART part = &Body.parts[i];
-			/*if ((lvl==1)||(lvl==2)) {
-				sym = getDisfnSymptomByTargetOrgan((TARGET)i,part);
-				if (sym!=-1) {
-					char* str = (char*)SymptomEffects[sym];
-					plus = ArmletApi::snprintf(buf,len,"%s\n",str);
-					buf += plus; len-=plus;
-				}
-			}*/
+			pain -= 1;
+			if (pain < 0)
+				pain = 0;
+			return pain;
 		}
 	}
 
-	void BodyCycle(char* buf, int len) //TODO -inline
+	void BodyCycle()
 	{
-		GatherDescs(buf,len);
-		/*
-		//Get Oxygen
-		Body->OxygenDelivered = 50000;	//TODO modify by trauma
-		//Oxygen delivery
-		if (Body->OxygenDelivered > Body->BloodCapacity) {
-			Body->OxygenDelivered = Body->BloodCapacity;
-		}
-		//Toxins delivery
-		Body->ToxinsDelivered = Body->ToxinsCapacity;
-		if (Body->ToxinsDelivered > Body->BloodCapacity / 2)
-			Body->ToxinsDelivered = Body->BloodCapacity / 2;
-		Body->ToxinsCapacity -= Body->ToxinsDelivered;
-		Body->OxygenDelivered -= Body->ToxinsDelivered;
-		//Organ Cycle
-		Body->ToxinsCapacity -= Body->ToxinsDelivered;
-		//
-		*/
-//		int plus;
-//		plus = ArmletApi::snprintf(buf,len,"%s=%d\n","BloodCapacity",Body.BloodCapacity);
-//		buf += plus; len-=plus;
 		for (int i=0; i<MaxTarget; i++) {
-			PPART part = &Body.parts[i];
-			Body.BloodCapacity -= 
-				part->Bleeding / Body.BleedingFactor;
+		for (int j=0; j < MaxDamageEffect; j++)
+		{
+			PPART part = &Body.Part[i][j];
+			
+			Body.BloodCapacity -= part->Bleeding;
+			Body.ToxinsCapacity += part->Toxinating;
+
+			int pain = GetPartPain(part->PainLevel,(DAMAGE_EFFECT)j,part->CurrSeverity);
+			if (Body.MaxPain < pain)
+				Body.MaxPain = pain;
+
 			if (Body.BloodCapacity < 0)
 				Body.BloodCapacity = 0;
 			
@@ -122,20 +98,31 @@ namespace medicine {
 				part->RemainingTicks = MED_MEGA_TICK;
 				NextCategory(&part->CurrSeverity);
 			}
-
-		}
+		}}
 	}
 
 	void BodyDecreaseCategory()
 	{
 		for (int i=0; i<MaxTarget; i++) {
-			DecreaseCategory(&Body.parts[i].CurrSeverity);
-			if (Body.parts[i].PainLevel > 0)
-				Body.parts[i].PainLevel =  (Body.parts[i].PainLevel-1);
-		}
+		for (int j=0; j<MaxDamageEffect; j++) {
+			DecreaseCategory(&Body.Part[i][j].CurrSeverity);
+			if (Body.Part[i][j].PainLevel > 0)
+				Body.Part[i][j].PainLevel =  (Body.Part[i][j].PainLevel-1);
+		}}
 	}
 
 }
+
+void IncreaseBloodCapacity(int val, bool bReduceToxinsCapacity);
+void DecreaseBloodCapacity(int val, bool bIncreaseToxinsCapacity);
+void DecreaseToxinsCapacity(int val);
+
+void IncreaseThermal();
+void DecreaseThermal();
+void DecreaseRadiation();
+bool HaveSeriousOrCritical();
+
+void DecreaseNecropoints(CURE_ID cure_id);
 
 //FEATURE CUT
 /*
@@ -209,6 +196,35 @@ void IncreaseBloodCapacity(int val, bool bReduceToxinsCapacity)
 	if (Body.ToxinsCapacity < 0) {
 		Body.ToxinsCapacity = 0;
 	}
+}
+
+void DecreaseBloodCapacity(int val, bool bIncreaseToxinsCapacity)
+{
+}
+
+void DecreaseToxinsCapacity(int val)
+{
+}
+
+void IncreaseThermal()
+{
+}
+
+void DecreaseThermal()
+{
+}
+
+void DecreaseRadiation()
+{
+}
+
+bool HaveSeriousOrCritical()
+{
+	return true;
+}
+
+void DecreaseNecropoints(CURE_ID cure_id)
+{
 }
 
 }

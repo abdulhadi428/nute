@@ -20,6 +20,7 @@ typedef struct _WOUND_DESC {
 
 extern WOUND_DESC WoundDescs[MaxWoundType][MaxDamageSeverity];
 extern const DAMAGE_SEVERITY	RandomSelectPerTenPercent[10];
+extern const DAMAGE_EFFECT WoundToDamageEffect[MaxWoundType];
 
 void InitWounds();
 DAMAGE_SEVERITY NextCategory(DAMAGE_SEVERITY* curr);

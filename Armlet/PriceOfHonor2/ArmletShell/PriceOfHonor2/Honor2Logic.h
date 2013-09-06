@@ -5,7 +5,7 @@
 
 typedef enum _LOG_KINDS {
 	LogKindMedDiagnostics,
-	LogKindEvents,
+	//LogKindEvents,
 	LogKindMessages,
 	LogKindSystem,
 	LogKindErrors,

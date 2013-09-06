@@ -3,46 +3,62 @@
 	#error _MED_
 #endif
 
+//both rpg symptom and diag feeling
+typedef enum _PAIN {
+	NoPain = 0,
+    //Боль 1
+    Pain1 = 1,
+    //Боль 2 (отыгрыш)
+    Pain2 = 2,
+    //Боль 3 (отыгрыш)
+    Pain3 = 3,
+    //Боль 4 (отыгрыш)
+    Pain4 = 4,
+    //Болевой шок
+    PainShock = 5,
+	//Без сознания
+	PainUncon = 6,
+	MaxPain = 7
+} PAIN;
+
+typedef enum _FEELING {
+	NoFeeling = -1,
+    //Тошнота
+    Funny = 0,
+    //Головокружение
+    HeadSpin = 1,
+    //Озноб
+    Shake = 2,
+    //Общая слабость
+    GeneralWeak = 3,
+    //Восприятие нарушено
+    ConentrationLoss = 4,
+	MaxFeeling = 5
+} FEELING;
+
 typedef enum _SYMPTOM {
 	NoSymptom = -1,
-    //Боль 1
-    Pain1 = 0,
-    //Боль 2 (отыгрыш)
-    Pain2 = 1,
-    //Боль 3 (отыгрыш)
-    Pain3 = 2,
-    //Боль 4 (отыгрыш)
-    Pain4 = 3,
-    //Болевой шок
-    PainShock = 4,
     //Зрительные галлюцинации (отыгрыш)
-    Hallucination = 5,
-    //Тошнота
-    Funny = 6,
+    Hallucination = 0,
     //Судороги (отыгрыш)
-    Seizure = 7,
-    //Без сознания (отыгрыш)
-    Unconciuous = 8,
-    //Головокружение
-    HeadSpin = 9,
+    Seizure = 1,
     //Поза боксера (отыгрыш)
-    BoxerPose = 10,
-    //Остановка дыхания (отыгрыш)
-    BreathStop = 11,
-    //Озноб
-    Shake = 12,
-    //Восприятие нарушено
-    ConentrationLoss = 13,
+    BoxerPose = 2,
     //Мелкая моторика нарушена (отыгрыш)
-    HandShake = 14,
+    HandShake = 3,
     //Паралич конечности (отыгрыш)
-    LimbParalyze = 15,
-    //Общая слабость
-    GeneralWeak = 16,
+    LimbParalyze = 4,
+    //Остановка дыхания (отыгрыш)
+    BreathStop = 5,
+    //Без сознания (отыгрыш)
+    Unconciuous = 6,
     //Смерть (отыгрыш)
-    DeathTrauma = 17,
+    DeathTrauma = 7,
     //last
-    MaxSymptom = 18,
+    MaxSymptom = 8
 } SYMPTOM;
 
-extern const char* SymptomEffects[MaxSymptom];
+extern const char* PainDesc[MaxPain];
+extern const char* BleedingDesc[4];
+extern const char* FeelingDesc[MaxFeeling];
+extern const char* SymptomDesc[MaxSymptom];

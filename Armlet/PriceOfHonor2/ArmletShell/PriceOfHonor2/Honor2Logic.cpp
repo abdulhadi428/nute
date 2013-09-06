@@ -234,8 +234,8 @@ fresult Honor2Logic::SetMedStatus( char* mainStatus ,  char* diagnostics, char* 
 	fres = ResetLog(LogKindMedDiagnostics, diagnostics);
 	ENSURESUCCESS(fres);
 
-	fres = ResetLog(LogKindEvents, medEvents);
-	ENSURESUCCESS(fres);
+	//fres = ResetLog(LogKindEvents, medEvents);
+	//ENSURESUCCESS(fres);
 
 	return SUCCESS;
 }

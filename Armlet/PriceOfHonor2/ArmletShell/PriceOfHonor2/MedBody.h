@@ -5,25 +5,11 @@
 
 //extern const char* TargetNames[MaxWoundType];
 
-/*
-	//From organ initializer
-	int DefOxygenUse;					//O-=X, per tick		//метаболизм
-	int DefDetox;						//T-=X, per tick		//детоксикация
-	int DefBloodRegen;					//B+=X, per tick		//регенерация крови
-	int DefRestore;						//P-=X, per tick		//восстановление
-
-	//Local toxin capacity
-	int PoisonCapacity;					//NECRO POINTS
-
-	//Traumas[]
-	int TraumaPainLevel;
-*/
-
 typedef struct _PART {
-	DAMAGE_SEVERITY CurrSeverity;//TODO FIX [MaxDamageEffect];	//stored by damage effect
+	DAMAGE_SEVERITY CurrSeverity;		//stored by damage effect
+	int RemainingTicks;
 	//From damage effect
 	int PainLevel;
-	int RemainingTicks;
 	int Bleeding;						//B-=X, per tick		//кровотечение
 	int Toxinating;						//T+=X, per tick		//интоксикация
 	int NecroPoints;
@@ -43,27 +29,25 @@ typedef struct _BODY {
 //MAIN PARAMETERS
 	int BloodCapacity;						//B
 	int ToxinsCapacity;						//T
-	//int ToxinsDelivered;					//TT = min(B/2,T)
-	//int OxygenDelivered;					//OO = min(B-TT,O)
-	//int CO2_Delivered;						//CC
-	int PainReduction;
-	//bool BodySymptoms[MaxSymptom];
-	//Factors
-	int BleedingFactor;
-	//int BloodRegenFactor;
-	//int ToxinatingFactor;
-	PART parts[MaxTarget];
-} BODY, *PBODY; //TODO MOVE
-
-//Target by severity/damage
-//	int BloodLoss;						//B-=X, once			//кровопотеря
-//	int Toxins;							//T-=X, once			//токины	
+//CALCULATED PARAMETERS
+	int MaxPain;
+	bool Symptom[MaxSymptom];
+//PARTS
+	PART Part[MaxTarget][MaxDamageEffect];
+} BODY, *PBODY;
 
 extern BODY Body;
 
 void InitBody();
-void BodyCycle(char* buf, int len);
-void BodyDecreaseCategory();
-void GatherDescs(char* buf, int len);
+void BodyCycle();
 
 void IncreaseBloodCapacity(int val, bool bReduceToxinsCapacity);
+void DecreaseBloodCapacity(int val, bool bIncreaseToxinsCapacity);
+void DecreaseToxinsCapacity(int val);
+
+void IncreaseThermal();
+void DecreaseThermal();
+void DecreaseRadiation();
+bool HaveSeriousOrCritical();
+
+void DecreaseNecropoints(CURE_ID cure_id);
