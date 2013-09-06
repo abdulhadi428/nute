@@ -4,6 +4,8 @@
 
 namespace medicine {
 
+//temp
+/*
 	const char* TargetNames[MaxWoundType] = {
 		"левая рука",
 		"правая рука",
@@ -18,77 +20,20 @@ namespace medicine {
 		"ожог",
 		"радиация"
 	};
-/*
-	const SYMPTOM SymptomsByBodyStructure[MaxTarget*MaxOrganType][2] = 
-	{
-{NoSymptom,NoSymptom},
-{HandWeak1,HandWeak2},
-{Pain2,BoneBreak},
-{PulsePain,BloodLossInner},
-{NoSymptom,NoSymptom},
-{HandWeak1,HandWeak2},
-{Pain2,BoneBreak},
-{PulsePain,BloodLossInner},
-{NoSymptom,NoSymptom},
-{LegWeak1,HandWeak2},
-{Pain2,BoneBreak},
-{PulsePain,BloodLossInner},
-{NoSymptom,NoSymptom},
-{LegWeak1,LegWeak2},
-{Pain2,BoneBreak},
-{PulsePain,BloodLossInner},
-{NoSymptom,NoSymptom},
-{SharpPain,BonePartPain},
-{CoughStrong,BlodThroat},
-{HardBreathe,Infarct},
-{NoSymptom,NoSymptom},
-{GeneralWeak,BloodLossInner},
-{Puke,FunnyStrong},
-{BackPain1,Spasm},
-{NoSymptom,NoSymptom},
-{BackPain2,TorsoParalyze},
-{BloodLossMed,BloodLossInner},
-{Pain2,ButtonFail},
-{NoSymptom,NoSymptom},
-{HeadShake1,FunnyStrong},
-{NeckParalyze,Faint},
-{ConcinuousMess,Insult}
-	};
-
-	COMPILE_TIME_CHECK(sizeof(SymptomsByBodyStructure)/sizeof(SYMPTOM)==MaxTarget*MaxOrganType*2);
 */
-
-	const SYMPTOM SymptomsByPart[MaxTarget][2] = 
-	{
-{HandWeak1,HandWeak2},
-{HandWeak1,HandWeak2},
-{LegWeak1,HandWeak2},
-{LegWeak1,LegWeak2},
-{HardBreathe,CoughStrong},
-{Puke,BloodLossInner},
-{PulsePain,TorsoParalyze},
-{ConcinuousMess,Unconciuous}
-	};
-	COMPILE_TIME_CHECK(sizeof(SymptomsByPart)/sizeof(SYMPTOM)==MaxTarget*2);
-
-	SYMPTOM getDisfnSymptomByTargetOrgan(TARGET part, PART* pPart)
-	{
-//		return SymptomsByPart[part][pPart->DisfnLevel];
-		return NoSymptom;
-	}
 
 	SYMPTOM getBloodLossSymptom(ubyte_t bloodCapacity)
 	{
 		if(bloodCapacity > 160/*000*/)
 			return NoSymptom;
 		else if (bloodCapacity > 120/*000*/)
-			return BloodLossLight;
+			return NoSymptom;
 		else if (bloodCapacity > 80/*000*/)
-			return BloodLossMed;
+			return NoSymptom;
 		else if (bloodCapacity > 40/*000*/)
-			return BloodLossStrong;
+			return NoSymptom;
 		else if (bloodCapacity > 0)
-			return BloodLossCritical;
+			return NoSymptom;
 		else 
 			return DeathTrauma;
 	}
@@ -96,13 +41,19 @@ namespace medicine {
 	void InitBody()
 	{
 		StrPad((char*)&Body,0,0,sizeof(BODY));
-		Body.BloodCapacity = 200/*000*/;
+//DIAG PARAMETERS
+		Body.RegenerationLevel = RegenLow;
+		Body.HighPressure = 120;				
+		Body.LowPressure = 80;					
+		Body.Temperature = 66;
+		Body.Pulse = 60;
+		Body.VisibleBleeding = 0;
+//MAIN PARAMETERS
+		Body.BloodCapacity = 200;
 		Body.ToxinsCapacity = 5;
-		Body.Pulse = 95;
-		Body.Temperature = 34;
+
 		Body.BleedingFactor = 1;
 		Body.PainReduction = 0;
-		Body.RegenerationLevel = RegenLow;
 		for (int i=0; i < MaxTarget; i++) {
 			Body.parts[i].Bleeding = 0;
 			Body.parts[i].PainLevel = 0;
@@ -188,10 +139,6 @@ namespace medicine {
 
 //FEATURE CUT
 /*
-int DisfnFactor(DISFUNCTION_LEVEL disfn_level)
-{
-	return 1;
-}
 
 void OrganCycle(PBODY Body, PORGAN Organ)	//TODO remove inline
 {
@@ -248,3 +195,20 @@ PoisonCheck		if (P==20) P==0; IncreaseDisfunction
 */
 
 //ArmletApi::snprintf(buf1,100,"12345678901234567890123456");
+
+namespace medicine {
+
+void IncreaseBloodCapacity(int val, bool bReduceToxinsCapacity)
+{
+	Body.BloodCapacity += val;
+	if (Body.BloodCapacity >= 200) {
+		val-= (Body.BloodCapacity-200);
+		Body.BloodCapacity = 200;
+	}
+	Body.ToxinsCapacity -= val;
+	if (Body.ToxinsCapacity < 0) {
+		Body.ToxinsCapacity = 0;
+	}
+}
+
+}

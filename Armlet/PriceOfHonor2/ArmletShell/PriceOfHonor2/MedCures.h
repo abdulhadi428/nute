@@ -3,26 +3,26 @@
 	#error _MED_
 #endif
 
-#pragma region cure_id
+#pragma region pill_id
 // When this list updated, update server list 
 // /Armlet/Armlet3/BastiliaGate_sw/Server/HonorLogic/Pills.cs
 //Лекарства
 typedef enum _CURE_ID {
 	UnknownCure = -1,
-	Analgetic = 0,			//"Общее обезболивающее" 
-	Antispasmodic = 1,		//"Спазмолитик"
-	Pyretic = 2,			//"Жаропонижающее"
-	Aspirator =3,			//"Аспиратор"
-	CoagulationFactor =4,	//"Коагулятор"
-	SyntheticBlood =5,		//"Искусственная кровь"
-	Leatherette =6,			//"Искусственная кожа"
-	Myorelaxant =7,			//"Миорелаксант"
-	VisceraNanoPack =8,		//"Нанопак стволовых клеток"
-	Anesthetics =9,			//"Местный наркоз"
-	Antibiotic =10,			//"Антибиотик"
-	Absorber =11,			//"Абсорбент"
-	PlasterNanoPack =12,	//"Наногипс"
-	NanoExoFrame =13,		//"Наноэкзоскелет"
+	Analgetic = 0,			//"Общее обезболивающее"		+
+	Antispasmodic = 1,		//"Спазмолитик"					? block low PRESSURE
+	Pyretic = 2,			//"Жаропонижающее"				Temperature
+	Aspirator =3,			//"Аспиратор"					=
+	CoagulationFactor =4,	//"Коагулятор"					+
+	SyntheticBlood =5,		//"Искусственная кровь"			+
+	Leatherette =6,			//"Искусственная кожа"			+
+	Myorelaxant =7,			//"Миорелаксант"				+?
+	VisceraNanoPack =8,		//"Нанопак стволовых клеток"	NecroPoits
+	Anesthetics =9,			//"Местный наркоз"				+
+	Antibiotic =10,			//"Антибиотик"					prevents NecroPoints (when Categories) PERITONIT
+	Absorber =11,			//"Абсорбент"					+
+	PlasterNanoPack =12,	//"Наногипс"					FRAGMENT (Rupture&Blow)
+	NanoExoFrame =13,		//"Наноэкзоскелет"				?
 	MagicCure =14,			//"Панацея"
 	MaxCureId = 15
 } CURE_ID;
@@ -63,3 +63,35 @@ extern const char* TortureName[];
 extern TORTURE_DESC TortureDesc[MaxTortureId];
 
 void InitCureAndTortureDescs();
+
+typedef struct _CURE_ACTION {
+	int RemainingTicks;
+	bool IsUsing;
+} CURE_ACTION;
+
+typedef struct _CURE_SIDE_EFFECT {
+	bool AnalgeticPainReduction;
+	bool AntispasmodicBlockSudorogi;
+	bool AntispasmodicHeadPain;
+	bool AntispasmodicBleedingIncrease;
+	int PyrecticTemperatureDecrease;
+	bool AspiratorBreath;
+	bool CoagulationFactorBleedingBlocked;
+	int SyntheticBloodTemperature;
+	bool AntibioticBlockNecroPoints;
+	int AbsorberLowPressure;
+
+	bool AnestheticsPainReduction;
+	bool AnestheticsPressure;
+	int PlasterNanoPackHigPressure;
+	bool NanoExoFrame;
+} CURE_SIDE_EFFECT;
+
+extern CURE_ACTION CureAction [MaxCureId];
+extern int TortureSecondUsage[MaxTortureId];
+extern CURE_SIDE_EFFECT CureSideEffect;
+
+void InitCureActions();
+
+void ProcessCureUsage(CURE_ID cure_id, bool bStarting);
+void ProcessTortureUsage(TORTURE_ID torture_id);

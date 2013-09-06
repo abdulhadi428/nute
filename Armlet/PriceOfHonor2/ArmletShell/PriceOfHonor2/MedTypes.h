@@ -40,11 +40,12 @@ typedef enum _TARGET {
 #pragma region damage_effect
 //Повреждающие воздействия
 typedef enum _DAMAGE_EFFECT {
-	Rupture = 0,		//разрывное воздействие
-	Blow = 1,			//ударное воздействие
-	Radiation = 2,		//радиационное воздействие
-	Thermal = 3,		//термическое воздействие
-	MaxDamageEffect = 4
+	RuptureLimb = 0,	//разрывное воздействие в конечность
+	Rupture = 1,		//разрывное воздействие
+	Blow = 2,			//ударное воздействие
+	Radiation = 3,		//радиационное воздействие
+	Thermal = 4,		//термическое воздействие
+	MaxDamageEffect = 5
 } DAMAGE_EFFECT;
 #pragma endregion
 

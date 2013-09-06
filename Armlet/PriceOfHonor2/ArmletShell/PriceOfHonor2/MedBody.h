@@ -3,10 +3,9 @@
 	#error _MED_
 #endif
 
-extern const char* TargetNames[MaxWoundType];
+//extern const char* TargetNames[MaxWoundType];
 
 /*
-typedef struct _ORGAN {
 	//From organ initializer
 	int DefOxygenUse;					//O-=X, per tick		//метаболизм
 	int DefDetox;						//T-=X, per tick		//детоксикация
@@ -14,12 +13,10 @@ typedef struct _ORGAN {
 	int DefRestore;						//P-=X, per tick		//восстановление
 
 	//Local toxin capacity
-	int PoisonCapacity;					//P
+	int PoisonCapacity;					//NECRO POINTS
 
 	//Traumas[]
 	int TraumaPainLevel;
-	bool OrganSymptoms[MaxSymptom];
-} ORGAN, *PORGAN;
 */
 
 typedef struct _PART {
@@ -33,12 +30,17 @@ typedef struct _PART {
 } PART, *PPART;
 
 typedef struct _BODY {
-	int HighPressure;	//TODO init with 120
-	int LowPressure;	//TODO init with 80
-	int Temperature;	//TODO init with 66	(30+Tm/10)
-	int Pulse;			//TODO init with 70
-
-	REGENERATION_LEVEL RegenerationLevel;	//R
+//DIAG PARAMETERS
+	REGENERATION_LEVEL RegenerationLevel;	//R, hidden 1..3;0 if NanoExoFrame
+	int HighPressure;	//diag	//120-105-90-75-60	//200-150-100-50-0
+	int LowPressure;	//diag	// 80- 70-60-50-40	//200-150-100-50-0
+	int Temperature;	//diag	// 30-45, showed as 30+T/10	T=0..150
+	int Pulse;			//diag	//40-59 замедленный, 60-80 норма, 81-150 повышенный	
+								//  norm is (50+10*R)
+								//	чем выше метаболизм (например жар) тем ниже
+								//	чем меньше кислорода (напримр интоксикация) тем выше
+	int VisibleBleeding;//diag	//0..3 - no,low,med,high
+//MAIN PARAMETERS
 	int BloodCapacity;						//B
 	int ToxinsCapacity;						//T
 	//int ToxinsDelivered;					//TT = min(B/2,T)
@@ -63,3 +65,5 @@ void InitBody();
 void BodyCycle(char* buf, int len);
 void BodyDecreaseCategory();
 void GatherDescs(char* buf, int len);
+
+void IncreaseBloodCapacity(int val, bool bReduceToxinsCapacity);

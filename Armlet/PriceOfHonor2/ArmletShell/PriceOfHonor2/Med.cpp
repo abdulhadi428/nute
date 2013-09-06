@@ -31,23 +31,57 @@ void _medInit()
 		InitBody();
 	}
 	InitCureAndTortureDescs();
+	InitCureActions();
 	InitWounds();
 }
 
-char buf1[6*1024];
+char buf1[2*1024];
+char buf2[2*1024];
 void _medOnMedTick(bool bBreathOnly)
 {	
-	if (!bBreathOnly)
+	if (!bBreathOnly) {
+		//process cures
+		for (int i=0; i<MaxCureId; i++) {
+			if ((CureAction[i].IsUsing)&&(CureAction[i].RemainingTicks>0)) {
+				if (0==--CureAction[i].RemainingTicks)
+					ProcessCureUsage((CURE_ID)i, false);
+			}
+		}
+		//process tortures
+		for (int i=0; i<MaxTortureId; i++) {
+			if (TortureSecondUsage[i]>0) {
+				TortureSecondUsage[i]--;
+			}
+		}
+
 		BodyCycle(buf1,sizeof(buf1)-1);
-	//*oSymptoms=buf1;
+	}
 }
 
 void _medUpdateStrings(char** Symptoms, char** Diagnostics, char** MedLog)
 {
+//1100 char max
 	GatherDescs(buf1, sizeof(buf1)-1);
-	*MedLog = "[23:59] подстрелили!\n[00:00] сделали укол!\n[00:03] пытали!\n[00:12]взрыв, тебя не задело!\n[00:17]йо-йо\n";
-	*Diagnostics = "Температура: 36.6\nПульс:120\nДавление:неизвестно\n\nСостояние: среднее\nПравая рука:болит\nТошнота\n";
+
+	ArmletApi::snprintf(buf2, sizeof(buf2)-1, 
+		"Температура: %d.%d\nДавление: %d/%d\nПульс: %d\n\n", 
+		30+Body.Temperature/10,Body.Temperature%10, Body.HighPressure, Body.LowPressure, Body.Pulse);
+	//"Температура: 36.6\nПульс:120\n\nСостояние: среднее\nПравая рука:болит\nТошнота\n";
+
+	*MedLog = "Ваша лицензия пользования Индивидуальным Наручным Устройством не поддерживает режим учета медицинских событий. Обратитесь к ближайшему дистрибьютеру!";
+	*Diagnostics = buf2; 
 	*Symptoms = buf1;
+
+	//for Temperature & Pulse
+	//"В голове у тебя бешено молотит пульс, тело кажется тяжелым и неповоротливым, во рту пересохло.",
+    //"Сердце у тебя в груди бьется медленно и тяжело, каждый удар отзывается во всем теле.",
+    //"Тебе жарко, одежда душит тебя.",
+    //"Тебе холодно, тебя бьет дрожь, зубы стучат.",
+
+//show all symptoms
+//show diagnostics
+//DROP med log - 
+//	
 
 	//save
 	ArmletApi::WriteFile(&MedFile,(char*)&Body,sizeof(BODY));
@@ -63,74 +97,27 @@ void _medUpdateStrings(char** Symptoms, char** Diagnostics, char** MedLog)
 }
 
 //simple healing
-char* _medOnPillConnected(ubyte_t cureId)
+char* _medOnPillConnected(ubyte_t pill_id)
 {
-	if ((cureId>=20)&&(cureId<=26))
+	if ((pill_id>=20)&&(pill_id<=26))
 	{
-		TORTURE_ID torture_id = (TORTURE_ID)(cureId-20);
-		switch  (torture_id) {
-		default:
-			break;
-		}
-		if (Body.PainReduction==2) {
+		TORTURE_ID torture_id = (TORTURE_ID)(pill_id-20);
+		ProcessTortureUsage(torture_id);
+		if (CureSideEffect.AnestheticsPainReduction) {
 			return (char*)TortureDesc[torture_id].EffectNoPain;
 		} else {
 			return (char*)TortureDesc[torture_id].Effect;
 		}
 	}
 
-	CURE_ID cure_id = (CURE_ID)cureId;
-	switch (cureId) {
-		case Analgetic:
-			Body.PainReduction = 1;
-			break;
-		case Antispasmodic:
-			//block spasms
-			//foreach organ Muscle disfuntion +
-			break;
-		case Pyretic:
-			//perception+, temperature-
-			//bleeding+
-			break;
-		case Aspirator:
-			//can breath even if NoBreaath
-			//chest disfunction
-			break;
-		case CoagulationFactor:
-			//bleeding-
-			//toxication+
-			//TT=B/4
-			Body.BleedingFactor = 3;
-			break;
-		case SyntheticBlood:
-			Body.BloodCapacity += Body.RegenerationLevel * 10; //depends on regen
-			break;
-		case Leatherette:
-		case Myorelaxant:
-		case Antibiotic:
-		case NanoExoFrame:
-			//FEATURE CUT
-			break;
-		case VisceraNanoPack:
-			BodyDecreaseCategory();
-			break;
-		case Anesthetics:
-			Body.PainReduction = 2;
-			//Def
-			break;
-		case Absorber:
-			//ToxCapacity-
-			break;
-		case PlasterNanoPack:
-			//smth- smth+
-			break;
-		case MagicCure:
-			InitBody();
-			break;
-		default:
-			break;
+	if ((pill_id>=0)&&(pill_id<=15))
+	{
+		CURE_ID cure_id = (CURE_ID)pill_id;
+		ProcessCureUsage(cure_id, true);
+		return (char*)CureDesc[cure_id].Effect;
 	}
-	return (char*)CureDesc[cureId].Effect;
+
+	return "Неизвестно, что сделал этот препарат с тобой!";
 }
 
 #pragma region forUI

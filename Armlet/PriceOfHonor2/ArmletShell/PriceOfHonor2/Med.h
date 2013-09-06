@@ -18,7 +18,7 @@ namespace medicine {
 	char* _medNewWound(ubyte_t place);
 	char* _medOnKnockout();
 	char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType);//(ubyte_t power);
-	char* _medOnPillConnected(ubyte_t cureId);
+	char* _medOnPillConnected(ubyte_t pill_id);
 
 	void _medOnMedTick(bool bBreathOnly);
 	
