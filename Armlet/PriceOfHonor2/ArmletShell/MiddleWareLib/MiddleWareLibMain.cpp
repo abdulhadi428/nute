@@ -93,13 +93,13 @@ namespace ArmletApi {
 			(*gClickButtonHandler)((ubyte_t)button_id);
 	}
 
-	//__CALLOUT cure/pill
-	void __CALLOUT OnPillConnect(int cure_id, int charges)
+	//__CALLOUT cure/torture
+	void __CALLOUT OnPillConnect(int pill_id, int charges)
 	{
-		//Log("Cure %d was connected, charges %d",cure_id, charges);
+		//Log("Pill %d was connected, charges %d",cure_id, charges);
 		DoVibroAndBeep(500);
 		//UI CALL:
-		_OnPillConnected(cure_id, charges);
+		_OnPillConnected(pill_id, charges);
 	}
 
 	//__CALLOUT for radio transport

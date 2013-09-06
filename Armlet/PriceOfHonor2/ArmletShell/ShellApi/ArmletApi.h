@@ -45,7 +45,7 @@ namespace ArmletApi {
 					int sx, int sy);									//__SYSCALL draws an area of pixels
 	void __SYSCALL DoVibroAndBeep(int msecs);							//__SYSCALL performs vibration for duration
 
-	bool __SYSCALL WritePill(int cure_id, int charges);					//__SYSCALL writes cure to pill
+	bool __SYSCALL WritePill(int pill_id, int charges);					//__SYSCALL writes cure to pill
 
 	unsigned char __SYSCALL GetLustraId();								//__SYSCALL returns lustra id (UNKNOWN_ID=none)
 	unsigned short __SYSCALL GetArmletId();

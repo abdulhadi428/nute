@@ -55,7 +55,7 @@ public:
 
 
 	//System callouts
-	void OnPillConnected( sword_t cure_id, sword_t charges );
+	void OnPillConnected( ubyte_t pill_id, sword_t charges );
 
 	//timers
 	void OnLustraTimer();

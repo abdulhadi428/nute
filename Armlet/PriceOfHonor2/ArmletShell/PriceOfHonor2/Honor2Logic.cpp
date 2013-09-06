@@ -7,7 +7,7 @@
 #define ZERO_ROOM_LUSTRAS_COUNT 2
 static const int _gZeroRoomLustras[ZERO_ROOM_LUSTRAS_COUNT] = {12,15};
 #else
-#define ZERO_ROOM_LUSTRAS_COUNT 1
+#define ZERO_ROOM_LUSTRAS_COUNT 2
 static const int _gZeroRoomLustras[ZERO_ROOM_LUSTRAS_COUNT] = {85,113};
 #endif
 
@@ -87,7 +87,7 @@ fresult Honor2Logic::OnKnockout()
 	return SUCCESS;
 }
 
-void Honor2Logic::OnPillConnected(sword_t cure_id, sword_t charges)
+void Honor2Logic::OnPillConnected(ubyte_t pill_id, sword_t charges)
 {
 	fresult fres;
 
@@ -104,7 +104,7 @@ void Honor2Logic::OnPillConnected(sword_t cure_id, sword_t charges)
 	else
 	{
 		//Call medicine
-		char* str = _medOnPillConnected((CURE_ID)cure_id);
+		char* str = _medOnPillConnected(pill_id);
 
 		char* medstatus;
 		char* diagnostics;
@@ -125,7 +125,7 @@ void Honor2Logic::OnPillConnected(sword_t cure_id, sword_t charges)
 			return;
 		}
 
-		if(!ArmletApi::WritePill(cure_id, charges-1))
+		if(!ArmletApi::WritePill(pill_id, charges-1))
 		{
 			ReportError("Cant't write pill!");
 			return;

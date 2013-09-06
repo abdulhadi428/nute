@@ -70,9 +70,9 @@ bool __CALLBACK _QuerySystemStatusTimerCallback(int elapsed)
 	return App.OnSystemTimer();
 }
 
-void _OnPillConnected( sword_t cure_id, sword_t charges )
+void _OnPillConnected( ubyte_t pill_id, sword_t charges )
 {
-	return App.Logic->OnPillConnected(cure_id, charges);
+	return App.Logic->OnPillConnected(pill_id, charges);
 }
 
 void _OnSetPlayerName( char* name )

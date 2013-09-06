@@ -58,17 +58,17 @@ namespace ArmletApi {
 		KernelApi::Vibro();
 	}
 
-	//writes cure to pill
-	bool __SYSCALL WritePill(int cure_id, int charges)
+	//writes charges to pill
+	bool __SYSCALL WritePill(int pill_id, int charges)
 	{
-		ArmletKernel::LowLog("Cure/Torture %d was written %d charges", cure_id, charges);
-		if ((cure_id < 0)||(cure_id > 14)) {
-			if ((cure_id < 20)||(cure_id > 26))
+		ArmletKernel::LowLog("Cure/Torture %d was written %d charges", pill_id, charges);
+		if ((pill_id < 0)||(pill_id > 14)) {
+			if ((pill_id < 20)||(pill_id > 26))
 			return false;
-			ArmletKernel::TortureCharges[cure_id-20] = charges;
+			ArmletKernel::TortureCharges[pill_id-20] = charges;
 			KernelApi::UpdateCurrentTorture();
 		}
-		ArmletKernel::CureCharges[cure_id] = charges;
+		ArmletKernel::CureCharges[pill_id] = charges;
 		KernelApi::UpdateCurrentCure();
 		return true;
 	}
