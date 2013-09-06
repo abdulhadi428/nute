@@ -178,8 +178,7 @@ namespace medicine {
 				//Прекращает судороги, дрожь конечностей, разгибает “позу эмбриона”. 
 				//Возможны побочные эффекты.
 				if (bStarting) { //inst effect
-					Body.Symptom[BoxerPose] = false;
-					if (HaveSeriousOrCritical())
+					if ((Body.HasSerious)||(Body.HasCritical))
 						Body.Symptom[BreathStop] = true;
 				}
 				break;
@@ -192,6 +191,7 @@ namespace medicine {
 					if (!Body.Symptom[BoxerPose])
 						DecreaseThermal();
 					DecreaseRadiation();
+					Body.Symptom[LimbParalyze] = false;
 				}
 				break;
 			case Anesthetics:
@@ -252,11 +252,11 @@ namespace medicine {
 				{
 					int Target = ArmletApi::GetRandom(RightLegTarget);
 					Body.Symptom[LimbParalyze] = true;
-					ApplyWound(Target,Serious,&Body.Part[Target][Blow]);
+					ApplyWound(Target,Serious,&Body.Part[Target][Blow],true);
 				}
 				break;
 			case EyeSqueezingTorture://"Пытка выдавлиаванием глаза"
-				ApplyWound(HeadTarget,Serious,&Body.Part[HeadTarget][Blow]);
+				ApplyWound(HeadTarget,Serious,&Body.Part[HeadTarget][Blow],true);
 				break;
 			case SuffocationTorture://"Пытка удушьем"
 				if (bNonFirstUsage)

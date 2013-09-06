@@ -24,6 +24,7 @@ namespace medicine {
 
 	void InitPart(PART* Part)
 	{
+		Part->wound = UnknownTarget;
 		Part->CurrSeverity = None;
 		Part->RemainingTicks = 0;
 		Part->PainLevel = 0;
@@ -46,7 +47,7 @@ namespace medicine {
 		Body.BloodCapacity = 200;
 		Body.ToxinsCapacity = 5;
 
-		Body.MaxPain = 0;
+		Body.PainLevel = 0;
 		for (int i=0; i < MaxSymptom; i++)
 			Body.Symptom[i] = false;
 		for (int i=0; i < MaxTarget; i++) {
@@ -64,8 +65,6 @@ namespace medicine {
 			return pain;
 		}
 		if (CureAction[Analgetic].IsUsing) {
-			if (ds == Insidious) 
-				Body.Symptom[Hallucination] = true;
 			if ((de == Thermal)||(de == Radiation)) {
 				return pain;
 			}
@@ -76,155 +75,161 @@ namespace medicine {
 		}
 	}
 
+	void IncreaseBloodCapacity(int val, bool bReduceToxinsCapacity)
+	{
+		Body.BloodCapacity += val;
+		if (Body.BloodCapacity >= 200) {
+			val-= (Body.BloodCapacity-200);
+			Body.BloodCapacity = 200;
+		}
+		if (bReduceToxinsCapacity)
+			DecreaseToxinsCapacity(val);
+	}
+
+	void DecreaseBloodCapacity(int val, bool bIncreaseToxinsCapacity)
+	{
+			Body.BloodCapacity -= val;
+			if (Body.BloodCapacity <= 0) {
+				Body.BloodCapacity = 0;
+				Body.Symptom[DeathTrauma] = true;
+				return;
+			}
+			if (bIncreaseToxinsCapacity) {
+				IncreaseToxinsCapacity(val);
+			}
+	}
+
+	void DecreaseToxinsCapacity(int val)
+	{
+		Body.ToxinsCapacity -= val;
+		if (Body.ToxinsCapacity < 0) {
+			Body.ToxinsCapacity = 0;
+		}
+		if (Body.BloodCapacity - Body.ToxinsCapacity > 0) {
+				Body.Symptom[Unconciuous] = false;
+		}
+	}
+
+	void IncreaseToxinsCapacity(int val)
+	{
+		Body.ToxinsCapacity += val;
+		if (Body.BloodCapacity - Body.ToxinsCapacity < 0) {
+				Body.Symptom[Unconciuous] = true;
+		}
+	}
+
 	void BodyCycle()
 	{
+		int TotalBleeding = 0;
+
+		Body.HasInsidious = false;
+		Body.HasSerious = false;
+		Body.HasCritical = false;
+
+		//for (int i=0; i < MaxSymptom; i++)
+		//	Body.Symptom[i] = false;
+		//for (int i=0; i < MaxFeeling; i++)
+		//	Body.Feeling[i] = false;
+
 		for (int i=0; i<MaxTarget; i++) {
 		for (int j=0; j < MaxDamageEffect; j++)
 		{
 			PPART part = &Body.Part[i][j];
-			
-			Body.BloodCapacity -= part->Bleeding;
-			Body.ToxinsCapacity += part->Toxinating;
+		
+			if (part->CurrSeverity == Insidious) 
+				Body.HasInsidious = true;
+			if (part->CurrSeverity == Serious) 
+				Body.HasSerious = true;
+			if (part->CurrSeverity == Critical) 
+				Body.HasCritical = true;
 
 			int pain = GetPartPain(part->PainLevel,(DAMAGE_EFFECT)j,part->CurrSeverity);
-			if (Body.MaxPain < pain)
-				Body.MaxPain = pain;
+			if (Body.PainLevel < pain)
+				Body.PainLevel = pain;
 
-			if (Body.BloodCapacity < 0)
-				Body.BloodCapacity = 0;
-			
+			TotalBleeding += part->Bleeding;
+			DecreaseBloodCapacity(part->Bleeding,false);
+			IncreaseToxinsCapacity(part->Toxinating);
+
+			//FUCK process NecroPoint
+		
 			part->RemainingTicks--;
 			if (part->RemainingTicks == 0) {
-				part->RemainingTicks = MED_MEGA_TICK;
-				NextCategory(&part->CurrSeverity);
+				part->RemainingTicks = MED_MEGA_TICK;				
+				DAMAGE_SEVERITY ds = NextCategory(part->CurrSeverity);
+				ApplyWound(part->wound,ds,part,(ds > part->CurrSeverity) ? true : false);
+			}
+
+			//boxer pose
+			if ((part->wound == Thermal)&&(part->CurrSeverity >= Serious)&&(!CureAction[Myorelaxant].IsUsing)) {
+				Body.Symptom[BoxerPose] = true;
+			} else {
+				Body.Symptom[BoxerPose] = false;
+			}
+			//can breath
+			if (CureAction[Aspirator].IsUsing)
+				Body.Symptom[BreathStop] = false;
+		}}
+
+		//process pressures
+		//process temperature
+		//process pulse
+		//TotalBleeding => VisibleBleeding
+		//make natural BloodCapacityIncrease depending on VisibleBleeding
+		DecreaseToxinsCapacity(2*Body.RegenerationLevel);
+		
+		//process feelings
+		//process symptoms
+		
+		if ((Body.HasInsidious)&&(Body.Symptom[Analgetic])) {
+			Body.Symptom[Hallucination] = true;
+		} else {
+			Body.Symptom[Hallucination] = false;
+		}
+
+		//clear all other symptoms
+		if (Body.Symptom[DeathTrauma]) {
+			for (int i=0; i<MaxSymptom; i++)
+				Body.Symptom[i] = false;
+			Body.Symptom[DeathTrauma] = true;
+		}
+	}
+
+	void BodyChangeCategory(DAMAGE_EFFECT _de, bool bIncrease)
+	{
+		for (int i=0; i<MaxTarget; i++) {
+		for (int j=0; j<MaxDamageEffect; j++) {
+			PPART part = &Body.Part[i][j];
+			DAMAGE_EFFECT de = WoundToDamageEffect[part->wound];
+			if (de == _de) {
+				ApplyWound(
+					part->wound, 
+					bIncrease ? IncreaseCategory(part->CurrSeverity)
+						: DecreaseCategory(part->CurrSeverity), 
+					part,
+					bIncrease ? true : false);
 			}
 		}}
 	}
 
-	void BodyDecreaseCategory()
+	void IncreaseThermal()
 	{
-		for (int i=0; i<MaxTarget; i++) {
-		for (int j=0; j<MaxDamageEffect; j++) {
-			DecreaseCategory(&Body.Part[i][j].CurrSeverity);
-			if (Body.Part[i][j].PainLevel > 0)
-				Body.Part[i][j].PainLevel =  (Body.Part[i][j].PainLevel-1);
-		}}
+		BodyChangeCategory(Thermal,true);
 	}
 
-}
-
-void IncreaseBloodCapacity(int val, bool bReduceToxinsCapacity);
-void DecreaseBloodCapacity(int val, bool bIncreaseToxinsCapacity);
-void DecreaseToxinsCapacity(int val);
-
-void IncreaseThermal();
-void DecreaseThermal();
-void DecreaseRadiation();
-bool HaveSeriousOrCritical();
-
-void DecreaseNecropoints(CURE_ID cure_id);
-
-//FEATURE CUT
-/*
-
-void OrganCycle(PBODY Body, PORGAN Organ)	//TODO remove inline
-{
-	//Bleeding; B-=X
-	Body->BloodCapacity -= Organ->Bleeding*Body->BleedingFactor;
-	//Blood regeneration; B+=X						//TODO modify by trauma/disfn
-	Body->BloodCapacity += Organ->DefBloodRegen*DisfnFactor(Organ->DisfnLevel)*Body->BloodRegenFactor;
-	//Toxication internal; P+=X
-	Organ->PoisonCapacity += Organ->Toxinating*Body->ToxinatingFactor;
-	//Metabolism; CC += X; OO-=X					//TODO modify by trauma/disfn
-	if (Body->OxygenDelivered > Organ->DefOxygenUse) {
-		Body->CO2_Delivered += Organ->DefOxygenUse;
-		Body->OxygenDelivered -= Organ->DefOxygenUse;
-	} else { //no OO poison check
-		Organ->PoisonCapacity += (Organ->DefOxygenUse - Body->OxygenDelivered);
-		Body->CO2_Delivered += Body->OxygenDelivered;
-		Body->OxygenDelivered = 0;
+	void DecreaseThermal()
+	{
+		BodyChangeCategory(Thermal,false);
 	}
-	//Detoxication									//TODO modify by trauma/disfn		
-	if (Body->ToxinsDelivered > 0) {
-		Body->ToxinsDelivered -= Organ->DefDetox;
+
+	void DecreaseRadiation()
+	{
+		BodyChangeCategory(Radiation,false);
 	}
-	if (Body->ToxinsDelivered < 0) {
-		Body->ToxinsDelivered = 0;
+
+	void DecreaseNecropoints(CURE_ID cure_id)
+	{
+
 	}
-	//Restore										//TODO modify by cures/truma/disfn
-	if (Organ->Bleeding > Organ->DefRestore) {
-		Organ->Bleeding -= Organ->DefRestore;
-		Organ->PoisonCapacity += Organ->DefRestore*100; //TODO
-	} else {
-		//...
-	}
-	if (Organ->Toxinating > Organ->DefRestore) {
-		Organ->Toxinating -= Organ->DefRestore;
-		Organ->PoisonCapacity += Organ->DefRestore*100; //TODO
-	} else {
-		//...
-	}
-}
-
-void OrganCycle2() //TODO -inline
-{
-	//Unpoisoning
-	//if (Body->Toxin
-	//Unpoisoning
-	//if (Organ->PosionCapacity < Body->OxygenDelivered
-}
-*/
-/*
-Poisoning A		if (T>B) P++			
-Unpoisoning		P--			
-PoisonCheck		if (P==20) P==0; IncreaseDisfunction			
-				if (P==-20) P=0; DecreaseDisfunction			
-*/
-
-//ArmletApi::snprintf(buf1,100,"12345678901234567890123456");
-
-namespace medicine {
-
-void IncreaseBloodCapacity(int val, bool bReduceToxinsCapacity)
-{
-	Body.BloodCapacity += val;
-	if (Body.BloodCapacity >= 200) {
-		val-= (Body.BloodCapacity-200);
-		Body.BloodCapacity = 200;
-	}
-	Body.ToxinsCapacity -= val;
-	if (Body.ToxinsCapacity < 0) {
-		Body.ToxinsCapacity = 0;
-	}
-}
-
-void DecreaseBloodCapacity(int val, bool bIncreaseToxinsCapacity)
-{
-}
-
-void DecreaseToxinsCapacity(int val)
-{
-}
-
-void IncreaseThermal()
-{
-}
-
-void DecreaseThermal()
-{
-}
-
-void DecreaseRadiation()
-{
-}
-
-bool HaveSeriousOrCritical()
-{
-	return true;
-}
-
-void DecreaseNecropoints(CURE_ID cure_id)
-{
-}
 
 }

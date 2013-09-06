@@ -19,6 +19,51 @@ void GatherSymptoms(char* buf, int len)
 			pos += Length(SymptomDesc[i]);
 		}
 	}
+
+	if ((Body.PainLevel>=Pain2)&&(Body.PainLevel<=Pain4)) {
+		ArmletApi::snprintf(buf+pos,len-pos,"%s\n",PainDesc[Body.PainLevel]);
+		pos += Length(PainDesc[Body.PainLevel])+1;
+	}
+
+}
+
+void GatherDiagnostics(char* buf, int len)
+{
+	StrPad(buf,0,0,len);
+	int pos=0;
+
+	ArmletApi::snprintf(buf+pos,len-pos,"Давление: %d/%d\n",Body.HighPressure,Body.LowPressure);
+	pos = Length(buf);
+	ArmletApi::snprintf(buf+pos,len-pos,"Температура: %d.%d\n",30+Body.Temperature/10,Body.Temperature%10);
+	pos = Length(buf);
+    //"Тебе жарко, одежда душит тебя.",
+    //"Тебе холодно, тебя бьет дрожь, зубы стучат.",
+	ArmletApi::snprintf(buf+pos,len-pos,"Пульс: %d\n\n",Body.Pulse);
+	pos = Length(buf);
+	//"В голове у тебя бешено молотит пульс, тело кажется тяжелым и неповоротливым, во рту пересохло.",
+    //"Сердце у тебя в груди бьется медленно и тяжело, каждый удар отзывается во всем теле.",
+			
+	if ((Body.VisibleBleeding>0)&&(Body.VisibleBleeding<=3)) {
+		ArmletApi::snprintf(buf+pos,len-pos,"%s\n\n",BleedingDesc[Body.VisibleBleeding]);
+		pos += Length(BleedingDesc[Body.VisibleBleeding])+2;
+	}
+
+	//no feelings with theese symptoms
+	if ((Body.Symptom[BreathStop])||(Body.Symptom[Unconciuous])||(Body.Symptom[DeathTrauma])) {
+		return;
+	}
+
+	if ((Body.PainLevel>NoPain)&&(Body.PainLevel<=PainShock)) {
+		ArmletApi::snprintf(buf+pos,len-pos,"%s\n",PainDesc[Body.PainLevel]);
+		pos += Length(PainDesc[Body.PainLevel])+1;
+	}
+
+	for (int i=0; i<MaxFeeling; i++) {
+		if (Body.Feeling[i]) {
+			ArmletApi::snprintf(buf+pos,len-pos,"%s\n",FeelingDesc[i]);
+			pos += Length(FeelingDesc[i])+1;
+		}
+	}
 }
 
 void _medSetRegenerationRate(sword_t regenRate)
@@ -71,27 +116,16 @@ char buf2[1001];
 void _medUpdateStrings(char** Symptoms, char** Diagnostics, char** MedLog)
 {
 	GatherSymptoms(buf1,1000);
+	GatherDiagnostics(buf2,1000);
 
-	ArmletApi::snprintf(buf2, sizeof(buf2)-1, 
-		"Температура: %d.%d\nДавление: %d/%d\nПульс: %d\n\n", 
-		30+Body.Temperature/10,Body.Temperature%10, Body.HighPressure, Body.LowPressure, Body.Pulse);
-	//"Температура: 36.6\nПульс:120\n\nСостояние: среднее\nПравая рука:болит\nТошнота\n";
-
-	*MedLog = "Ваша лицензия пользования Индивидуальным Наручным Устройством не поддерживает режим учета медицинских событий. Обратитесь к ближайшему дистрибьютеру!";
+	*MedLog = "Ваша лицензия пользования Индивидуальным Наручным Устройством не поддерживает режим учета медицинских событий.";
 	*Diagnostics = buf2; 
 	*Symptoms = buf1;
-
-	//FUCK
-	//for Temperature & Pulse
-	//"В голове у тебя бешено молотит пульс, тело кажется тяжелым и неповоротливым, во рту пересохло.",
-    //"Сердце у тебя в груди бьется медленно и тяжело, каждый удар отзывается во всем теле.",
-    //"Тебе жарко, одежда душит тебя.",
-    //"Тебе холодно, тебя бьет дрожь, зубы стучат.",
 
 	//save
 	ArmletApi::WriteFile(&MedFile,(char*)&Body,sizeof(BODY));
 
-	//To server
+	//to server
 	ubyte_t state[5];
 	state[0] = (Body.BloodCapacity);	//0..200
 	state[1] = (Body.ToxinsCapacity);	//0..200
@@ -101,13 +135,14 @@ void _medUpdateStrings(char** Symptoms, char** Diagnostics, char** MedLog)
 	ArmletApi::SendAppState(state);
 }
 
-//simple healing
+//cures and tortures
 char* _medOnPillConnected(ubyte_t pill_id)
 {
 	if ((pill_id>=20)&&(pill_id<=26))
 	{
 		TORTURE_ID torture_id = (TORTURE_ID)(pill_id-20);
 		ProcessTortureUsage(torture_id);
+		//was torture blocked?
 		if (CureAction[Anesthetics].IsUsing) {
 			return (char*)TortureDesc[torture_id].EffectNoPain;
 		} else {
@@ -138,11 +173,11 @@ char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType)
 	else
 		ExplosionType = explosionType - 1;
 
-	DAMAGE_EFFECT de = WoundToDamageEffect[MaxTarget+1+ExplosionType];
 	int Target = ArmletApi::GetRandom(MaxTarget);
-	int DamageSeverity = IncreaseCategory(&Body.Part[Target][de].CurrSeverity);
-
-	ApplyWound(MaxTarget+1+ExplosionType,DamageSeverity,&Body.Part[Target][de]);
+	DAMAGE_EFFECT de = WoundToDamageEffect[MaxTarget+1+ExplosionType];
+	PPART part = &Body.Part[Target][de];
+	int DamageSeverity = IncreaseCategory(part->CurrSeverity);
+	ApplyWound(MaxTarget+1+ExplosionType,DamageSeverity,part,true);
 	const char* msg =  WoundDescs[MaxTarget+1+ExplosionType][DamageSeverity].message;
 //temp
 //	ArmletApi::snprintf(_buf,200,"%s-%d\n%s",
@@ -155,8 +190,9 @@ char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType)
 char* _medOnKnockout ()
 {
 	int Target = ArmletApi::GetRandom(MaxTarget);
-	int DamageSeverity = IncreaseCategory(&Body.Part[Target][Blow].CurrSeverity);
-	ApplyWound(MaxTarget,DamageSeverity,&Body.Part[Target][Blow]);
+	PPART part = &Body.Part[Target][Blow];
+	int DamageSeverity = IncreaseCategory(part->CurrSeverity);
+	ApplyWound(MaxTarget,DamageSeverity,part,true);
 	const char* msg =  WoundDescs[MaxTarget][DamageSeverity].message;
 //temp
 //	ArmletApi::snprintf(_buf,200,"%s-%d\n%s",
@@ -166,15 +202,16 @@ char* _medOnKnockout ()
 	return (char*)msg;
 }
 
-char* _medNewWound(ubyte_t place)
+char* _medNewWound(ubyte_t Target)
 {
 	DAMAGE_EFFECT de = Rupture;
-	if (place<=RightLegTarget)
+	if (Target<=RightLegTarget)
 		de = RuptureLimb;
 
-	int DamageSeverity = IncreaseCategory(&Body.Part[place][de].CurrSeverity);
-	ApplyWound(place,DamageSeverity,&Body.Part[place][de]);
-	const char* msg =  WoundDescs[place][DamageSeverity].message;
+	PPART part = &Body.Part[Target][de];
+	int DamageSeverity = IncreaseCategory(part->CurrSeverity);
+	ApplyWound(Target,DamageSeverity,part,true);
+	const char* msg =  WoundDescs[Target][DamageSeverity].message;
 //temp
 //	ArmletApi::snprintf(_buf,200,"%s-%d\n%s",
 //		TargetNames[place],
@@ -185,21 +222,3 @@ char* _medNewWound(ubyte_t place)
 }
 
 } //namespace
-
-/*
-	char* getBleeding()
-	{
-		if(bloodCapacity > 160)
-			return NoSymptom;
-		else if (bloodCapacity > 120)
-			return NoSymptom;
-		else if (bloodCapacity > 80)
-			return NoSymptom;
-		else if (bloodCapacity > 40)
-			return NoSymptom;
-		else if (bloodCapacity > 0)
-			return NoSymptom;
-		else 
-			return DeathTrauma;
-	}
-*/

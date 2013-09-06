@@ -273,28 +273,34 @@ DAMAGE_SEVERITY IncreaseCategory(DAMAGE_SEVERITY curr)
 	return None;
 }
 
-DAMAGE_SEVERITY NextCategory(DAMAGE_SEVERITY* curr) {*curr = NextCategory(*curr); return *curr;}
-DAMAGE_SEVERITY DecreaseCategory(DAMAGE_SEVERITY* curr) {*curr = DecreaseCategory(*curr); return *curr;}
-DAMAGE_SEVERITY IncreaseCategory(DAMAGE_SEVERITY* curr) {*curr = IncreaseCategory(*curr); return *curr;}
-
-void ApplyWound(int wound,int ds, PPART part)
+void ApplyWound(int wound, int ds, PPART part, bool bIncrease)
 {
-	if (part->CurrSeverity <= (DAMAGE_SEVERITY)ds)
-	{
-		part->CurrSeverity = (DAMAGE_SEVERITY)ds;			
-		DAMAGE_EFFECT de = WoundDescs[wound][ds].de;
-
+	if (part->CurrSeverity == None) {
 		Body.BloodCapacity -= WoundDescs[wound][ds].BloodLoss;
-		part->Bleeding += WoundDescs[wound][ds].Bleeding;
 		Body.ToxinsCapacity += WoundDescs[wound][ds].ToxinsAdd;
-		part->Toxinating += WoundDescs[wound][ds].Toxinating;
 		part->NecroPoints += WoundDescs[wound][ds].NecroPoints;
 	}
 
-	int pl = WoundDescs[wound][ds].PainLevel;
-	if (part->PainLevel < pl)
-	{
-		part->PainLevel = pl;
+	if (bIncrease) {
+		if (part->CurrSeverity < (DAMAGE_SEVERITY)ds) {
+			part->wound = wound;
+			part->CurrSeverity = (DAMAGE_SEVERITY)ds;			
+		}
+		part->Bleeding += WoundDescs[wound][ds].Bleeding;
+		part->Toxinating += WoundDescs[wound][ds].Toxinating;
+		part->NecroPoints += WoundDescs[wound][ds].NecroPoints;
+
+		int pl = WoundDescs[wound][ds].PainLevel;
+		if (part->PainLevel < pl)
+			part->PainLevel = pl;
+	} else {
+		part->wound = wound;
+		part->CurrSeverity = (DAMAGE_SEVERITY)ds;			
+		DAMAGE_EFFECT de = WoundDescs[wound][ds].de;
+
+		part->Bleeding = WoundDescs[wound][ds].Bleeding;
+		part->Toxinating = WoundDescs[wound][ds].Toxinating;
+		part->PainLevel = WoundDescs[wound][ds].PainLevel;;
 	}
 
 	part->RemainingTicks = MED_MEGA_TICK;

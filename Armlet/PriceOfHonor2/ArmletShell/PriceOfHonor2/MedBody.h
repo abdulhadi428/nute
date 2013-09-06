@@ -6,6 +6,7 @@
 //extern const char* TargetNames[MaxWoundType];
 
 typedef struct _PART {
+	int wound;
 	DAMAGE_SEVERITY CurrSeverity;		//stored by damage effect
 	int RemainingTicks;
 	//From damage effect
@@ -30,8 +31,13 @@ typedef struct _BODY {
 	int BloodCapacity;						//B
 	int ToxinsCapacity;						//T
 //CALCULATED PARAMETERS
-	int MaxPain;
+	int PainLevel;
+	bool Feeling[MaxFeeling];
 	bool Symptom[MaxSymptom];
+
+	bool HasInsidious;
+	bool HasSerious;
+	bool HasCritical;
 //PARTS
 	PART Part[MaxTarget][MaxDamageEffect];
 } BODY, *PBODY;
@@ -44,10 +50,10 @@ void BodyCycle();
 void IncreaseBloodCapacity(int val, bool bReduceToxinsCapacity);
 void DecreaseBloodCapacity(int val, bool bIncreaseToxinsCapacity);
 void DecreaseToxinsCapacity(int val);
+void IncreaseToxinsCapacity(int val);
 
 void IncreaseThermal();
 void DecreaseThermal();
 void DecreaseRadiation();
-bool HaveSeriousOrCritical();
 
 void DecreaseNecropoints(CURE_ID cure_id);

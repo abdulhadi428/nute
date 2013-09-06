@@ -23,7 +23,7 @@ extern const DAMAGE_SEVERITY	RandomSelectPerTenPercent[10];
 extern const DAMAGE_EFFECT WoundToDamageEffect[MaxWoundType];
 
 void InitWounds();
-DAMAGE_SEVERITY NextCategory(DAMAGE_SEVERITY* curr);
-DAMAGE_SEVERITY DecreaseCategory(DAMAGE_SEVERITY* curr);
-DAMAGE_SEVERITY IncreaseCategory(DAMAGE_SEVERITY* curr);
-void ApplyWound(int wound,int  ds, struct _PART* part);
+DAMAGE_SEVERITY NextCategory(DAMAGE_SEVERITY curr);
+DAMAGE_SEVERITY DecreaseCategory(DAMAGE_SEVERITY curr);
+DAMAGE_SEVERITY IncreaseCategory(DAMAGE_SEVERITY curr);
+void ApplyWound(int wound,int  ds, struct _PART* part, bool bIncreaseOnly);

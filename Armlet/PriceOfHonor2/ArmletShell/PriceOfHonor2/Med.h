@@ -15,7 +15,7 @@ namespace medicine {
 	void _medSetRegenerationRate(sword_t);
 
 	//return 1 strings - into msg box (or into wound form)
-	char* _medNewWound(ubyte_t place);
+	char* _medNewWound(ubyte_t Target);
 	char* _medOnKnockout();
 	char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType);//(ubyte_t power);
 	char* _medOnPillConnected(ubyte_t pill_id);

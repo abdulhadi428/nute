@@ -22,7 +22,6 @@ typedef enum _PAIN {
 } PAIN;
 
 typedef enum _FEELING {
-	NoFeeling = -1,
     //Тошнота
     Funny = 0,
     //Головокружение
@@ -37,7 +36,6 @@ typedef enum _FEELING {
 } FEELING;
 
 typedef enum _SYMPTOM {
-	NoSymptom = -1,
     //Зрительные галлюцинации (отыгрыш)
     Hallucination = 0,
     //Судороги (отыгрыш)
