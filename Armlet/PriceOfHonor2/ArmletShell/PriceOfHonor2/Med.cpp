@@ -177,7 +177,7 @@ char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType)
 	DAMAGE_EFFECT de = WoundToDamageEffect[MaxTarget+1+ExplosionType];
 	PPART part = &Body.Part[Target][de];
 	int DamageSeverity = IncreaseCategory(part->CurrSeverity);
-	ApplyWound(MaxTarget+1+ExplosionType,DamageSeverity,part,true);
+	ApplyWound(MaxTarget+1+ExplosionType,DamageSeverity,part);
 	const char* msg =  WoundDescs[MaxTarget+1+ExplosionType][DamageSeverity].message;
 //temp
 //	ArmletApi::snprintf(_buf,200,"%s-%d\n%s",
@@ -192,7 +192,7 @@ char* _medOnKnockout ()
 	int Target = ArmletApi::GetRandom(MaxTarget);
 	PPART part = &Body.Part[Target][Blow];
 	int DamageSeverity = IncreaseCategory(part->CurrSeverity);
-	ApplyWound(MaxTarget,DamageSeverity,part,true);
+	ApplyWound(MaxTarget,DamageSeverity,part);
 	const char* msg =  WoundDescs[MaxTarget][DamageSeverity].message;
 //temp
 //	ArmletApi::snprintf(_buf,200,"%s-%d\n%s",
@@ -210,7 +210,7 @@ char* _medNewWound(ubyte_t Target)
 
 	PPART part = &Body.Part[Target][de];
 	int DamageSeverity = IncreaseCategory(part->CurrSeverity);
-	ApplyWound(Target,DamageSeverity,part,true);
+	ApplyWound(Target,DamageSeverity,part);
 	const char* msg =  WoundDescs[Target][DamageSeverity].message;
 //temp
 //	ArmletApi::snprintf(_buf,200,"%s-%d\n%s",

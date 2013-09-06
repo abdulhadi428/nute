@@ -130,7 +130,6 @@ namespace medicine {
 			case Antispasmodic:
 				//Спазмолитик
 				//Прекращает судороги и дрожь конечностей.
-				//Побочно - вызывает головную боль.
 				//Если применено при позе эмбриона => то расчесал нахуй все => категория ожога увеличивается
 				if (bStarting)
 					if (Body.Symptom[BoxerPose]) IncreaseThermal();
@@ -158,6 +157,7 @@ namespace medicine {
 				if (bStarting) { //inst
 					IncreaseBloodCapacity(
 						20+10*Body.RegenerationLevel,true); //reduce ToxinsCapacity by value
+					StopRupturesAndBlows();
 				}
 				break;
 			case Leatherette:
@@ -252,11 +252,11 @@ namespace medicine {
 				{
 					int Target = ArmletApi::GetRandom(RightLegTarget);
 					Body.Symptom[LimbParalyze] = true;
-					ApplyWound(Target,Serious,&Body.Part[Target][Blow],true);
+					ApplyWound(Target,Serious,&Body.Part[Target][Blow]);
 				}
 				break;
 			case EyeSqueezingTorture://"Пытка выдавлиаванием глаза"
-				ApplyWound(HeadTarget,Serious,&Body.Part[HeadTarget][Blow],true);
+				ApplyWound(HeadTarget,Serious,&Body.Part[HeadTarget][Blow]);
 				break;
 			case SuffocationTorture://"Пытка удушьем"
 				if (bNonFirstUsage)

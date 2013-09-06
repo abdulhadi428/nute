@@ -73,6 +73,7 @@ namespace medicine {
 				pain = 0;
 			return pain;
 		}
+		return pain;
 	}
 
 	void IncreaseBloodCapacity(int val, bool bReduceToxinsCapacity)
@@ -148,8 +149,9 @@ namespace medicine {
 				Body.PainLevel = pain;
 
 			TotalBleeding += part->Bleeding;
-			DecreaseBloodCapacity(part->Bleeding,false);
-			IncreaseToxinsCapacity(part->Toxinating);
+			if (!CureAction[CoagulationFactor].IsUsing)
+				DecreaseBloodCapacity(part->Bleeding,false);
+			IncreaseToxinsCapacity(part->Toxinating); //FUCK - what should block this?
 
 			//FUCK process NecroPoint
 		
@@ -157,7 +159,7 @@ namespace medicine {
 			if (part->RemainingTicks == 0) {
 				part->RemainingTicks = MED_MEGA_TICK;				
 				DAMAGE_SEVERITY ds = NextCategory(part->CurrSeverity);
-				ApplyWound(part->wound,ds,part,(ds > part->CurrSeverity) ? true : false);
+				ApplyWound(part->wound,ds,part);
 			}
 
 			//boxer pose
@@ -172,7 +174,15 @@ namespace medicine {
 		}}
 
 		//process pressures
+		int PressureAdjust = 
+			CureAction[PlasterNanoPack].CumulativeValue
+			- CureAction[Absorber].CumulativeValue
+			- CureAction[Anesthetics].CumulativeValue;
 		//process temperature
+		int TemperatureAdjust = 
+			CureAction[VisceraNanoPack].CumulativeValue
+			+ CureAction[SyntheticBlood].CumulativeValue
+			- CureAction[Pyretic].CumulativeValue;
 		//process pulse
 		//TotalBleeding => VisibleBleeding
 		//make natural BloodCapacityIncrease depending on VisibleBleeding
@@ -206,8 +216,7 @@ namespace medicine {
 					part->wound, 
 					bIncrease ? IncreaseCategory(part->CurrSeverity)
 						: DecreaseCategory(part->CurrSeverity), 
-					part,
-					bIncrease ? true : false);
+					part);
 			}
 		}}
 	}
@@ -227,9 +236,15 @@ namespace medicine {
 		BodyChangeCategory(Radiation,false);
 	}
 
+	void StopRupturesAndBlows()
+	{
+		BodyChangeCategory(RuptureLimb,false);
+		BodyChangeCategory(Rupture,false);
+		BodyChangeCategory(Blow,false);
+	}
+
 	void DecreaseNecropoints(CURE_ID cure_id)
 	{
 
 	}
-
 }

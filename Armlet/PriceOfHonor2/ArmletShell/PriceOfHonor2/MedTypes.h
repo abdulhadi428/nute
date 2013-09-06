@@ -43,8 +43,8 @@ typedef enum _DAMAGE_EFFECT {
 	RuptureLimb = 0,	//разрывное воздействие в конечность
 	Rupture = 1,		//разрывное воздействие
 	Blow = 2,			//ударное воздействие
-	Radiation = 3,		//радиационное воздействие
-	Thermal = 4,		//термическое воздействие
+	Thermal = 3,		//термическое воздействие
+	Radiation = 4,		//радиационное воздействие
 	MaxDamageEffect = 5
 } DAMAGE_EFFECT;
 #pragma endregion

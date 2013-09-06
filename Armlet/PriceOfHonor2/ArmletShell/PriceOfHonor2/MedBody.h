@@ -55,5 +55,7 @@ void IncreaseToxinsCapacity(int val);
 void IncreaseThermal();
 void DecreaseThermal();
 void DecreaseRadiation();
+void StopRupturesAndBlows();
 
 void DecreaseNecropoints(CURE_ID cure_id);
+

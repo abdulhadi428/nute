@@ -180,17 +180,19 @@ int sdeToPain[MaxDamageEffect][MaxDamageSeverity] = {
 	{1,2,1,3,4}, //Thermal
 	{0,0,0,0,0}, //Radiation
 };
+COMPILE_TIME_CHECK(sizeof(sdeToPain)/sizeof(int)==MaxDamageEffect*MaxDamageSeverity);
+
 int sdeToBloodLoss[MaxDamageEffect][MaxDamageSeverity] = {
-	{1/*000*/,5/*000*/,5/*000*/,10/*000*/,30/*000*/}, //RuptureLimb
-	{5/*000*/,10/*000*/,10/*000*/,30/*000*/,50/*000*/}, //Rupture
-	{0/*000*/, 1/*000*/, 1/*000*/,5/*000*/,15/*000*/}, //Blow
+	{1, 5, 5,10,30},	//RuptureLimb
+	{5,10,10,30,50},	//Rupture
+	{0, 1, 1,5,15},		//Blow
 	{0,0,0,0,0},		//Thermal
 	{0,0,0,0,0},		//Radiation
 };
 int sdeToBleeding[MaxDamageEffect][MaxDamageSeverity] = {
-	{0,1/*000*/,1/*000*/,5/*000*/,10/*000*/},	//RuptureLimb
-	{0,1/*000*/,1/*000*/,5/*000*/,10/*000*/},	//Rupture
-	{0,0/*000*/,1/*000*/,3/*000*/,7/*000*/},	//Blow
+	{0,1,1,5,10},	//RuptureLimb
+	{0,1,1,5,10},	//Rupture
+	{0,0,1,3,7},	//Blow
 	{0,0,0,0,0},	//Thermal
 	{0,0,0,0,0},	//Radiation
 };
@@ -199,14 +201,14 @@ int sdeToToxinsAdd[MaxDamageEffect][MaxDamageSeverity] = {
 	{0,0,0,0,0},	//Rupture
 	{0,0,0,0,0},	//Blow
 	{0,5,5,10,15},	//Thermal
-	{5/*000*/,10/*000*/,10/*000*/,20/*000*/,30/*000*/},	//Radiation
+	{5,10,10,20,30},//Radiation
 };
 int sdeToToxinating[MaxDamageEffect][MaxDamageSeverity] = {
 	{0,0,0,0,0},	//RuptureLimb
 	{0,0,0,0,0},	//Rupture
 	{0,0,0,0,0},	//Blow
 	{0,1,2,3,5},	//Thermal
-	{0,1/*000*/,1/*000*/,5/*000*/,10/*000*/},	//Radiation
+	{0,1,1,5,10},	//Radiation
 };
 int sdeToNecroPoints[MaxDamageEffect][MaxDamageSeverity] = {
 	{0,5,15,15,25},		//RuptureLimb
@@ -273,35 +275,28 @@ DAMAGE_SEVERITY IncreaseCategory(DAMAGE_SEVERITY curr)
 	return None;
 }
 
-void ApplyWound(int wound, int ds, PPART part, bool bIncrease)
+void ApplyWound(int wound, int ds, PPART part)
 {
-	if (part->CurrSeverity == None) {
-		Body.BloodCapacity -= WoundDescs[wound][ds].BloodLoss;
-		Body.ToxinsCapacity += WoundDescs[wound][ds].ToxinsAdd;
-		part->NecroPoints += WoundDescs[wound][ds].NecroPoints;
+	if (ds==None) {
+		part->wound = UnknownTarget;
+		part->CurrSeverity = None;
+		part->RemainingTicks = 0;
+		part->PainLevel = 0;
+		part->Bleeding = 0;
+		part->Toxinating = 0;
+		return;
 	}
 
-	if (bIncrease) {
-		if (part->CurrSeverity < (DAMAGE_SEVERITY)ds) {
-			part->wound = wound;
-			part->CurrSeverity = (DAMAGE_SEVERITY)ds;			
-		}
-		part->Bleeding += WoundDescs[wound][ds].Bleeding;
-		part->Toxinating += WoundDescs[wound][ds].Toxinating;
-		part->NecroPoints += WoundDescs[wound][ds].NecroPoints;
+	part->wound = wound;
+	part->CurrSeverity = (DAMAGE_SEVERITY)ds;			
 
-		int pl = WoundDescs[wound][ds].PainLevel;
-		if (part->PainLevel < pl)
-			part->PainLevel = pl;
-	} else {
-		part->wound = wound;
-		part->CurrSeverity = (DAMAGE_SEVERITY)ds;			
-		DAMAGE_EFFECT de = WoundDescs[wound][ds].de;
+	Body.BloodCapacity -= WoundDescs[wound][ds].BloodLoss;
+	Body.ToxinsCapacity += WoundDescs[wound][ds].ToxinsAdd;
+	part->NecroPoints += WoundDescs[wound][ds].NecroPoints;
 
-		part->Bleeding = WoundDescs[wound][ds].Bleeding;
-		part->Toxinating = WoundDescs[wound][ds].Toxinating;
-		part->PainLevel = WoundDescs[wound][ds].PainLevel;;
-	}
+	part->Bleeding = WoundDescs[wound][ds].Bleeding;
+	part->Toxinating = WoundDescs[wound][ds].Toxinating;
+	part->PainLevel = WoundDescs[wound][ds].PainLevel;
 
 	part->RemainingTicks = MED_MEGA_TICK;
 }

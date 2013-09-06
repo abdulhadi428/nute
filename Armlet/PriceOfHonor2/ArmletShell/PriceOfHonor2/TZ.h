@@ -1,4 +1,6 @@
-//UNUSED???
+process BreathStop
+
+//UNUSED
 typedef enum _SYMPTOM {
     //Судороги (отыгрыш)
     Seizure = 1,
@@ -24,17 +26,8 @@ typedef enum _FEELING {
 /*
 typedef struct _CURE_SIDE_EFFECT {
 	bool AntispasmodicBlockSudorogi; +Myorelaxant
-	bool AntispasmodicHeadPain;
-	bool AntispasmodicBleedingIncrease;
 	int PyrecticTemperatureDecrease; //(Следствие) Снижает давление и пульс, может вызвать тремор.
-	int VisceraNanoPackTemperatureIncrease;
-	bool CoagulationFactorBleedingBlocked;
-	int SyntheticBloodTemperature;
 	bool AntibioticIncreaseToxication;	//FUCK each tick remove NecroPoint and add some Toxins
-	int AbsorberLowPressure; (cumulative)
-	bool AnestheticsPressure;
-
-	int PlasterNanoPackHigPressure;
 	bool NanoExoFrame;
 } CURE_SIDE_EFFECT;
 */
@@ -44,11 +37,6 @@ Perception depend on Temperature
 					//temperature-=; pulse-; pressure-;					//15 min
 					//temperature--=; pulse--; pressure--; tremorOn
 				//(Следствие) Снижает давление и пульс, может вызвать тремор.
-
-наногипс повышает давление
-[04.09.2013 1:19:56] aleksko_sw: абсорбент понижает
-[04.09.2013 1:20:05] Ольга Захарова: ок
-[04.09.2013 1:20:21] aleksko_sw: местный наркоз рандомно влияет на давление
 
 Кровяное давление. На него оказывают влияние потеря крови, стресс и побочные эффекты лекарств.
 Нормальное (120/80 - нет потери крови)
