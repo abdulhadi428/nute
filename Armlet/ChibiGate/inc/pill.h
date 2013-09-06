@@ -26,7 +26,7 @@
 #define PILL_SDA_PIN        11
 
 #define PILL_I2C            I2C2
-#define PILL_I2C_BITRATE_HZ 200000
+#define PILL_I2C_BITRATE_HZ 400000
 #define PILL_DMATX          STM32_DMA1_STREAM4
 #define PILL_DMARX          STM32_DMA1_STREAM5
 
