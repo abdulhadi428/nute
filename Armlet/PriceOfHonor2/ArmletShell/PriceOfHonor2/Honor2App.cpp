@@ -238,6 +238,13 @@ bool_t Honor2App::OnSystemTimer()
 		ArmletApi::snprintf(buff, 4, "%d", level);
 		logFrm->LogRecord(LogKindSystem, "\nSignal: ");
 		logFrm->LogRecord(LogKindSystem, buff);
+
+
+		ubyte_t currLustraId = ArmletApi::GetLustraId();
+		ArmletApi::snprintf(buff, 4, "%d", currLustraId);
+		logFrm->LogRecord(LogKindSystem, "\nLustra:");
+		logFrm->LogRecord(LogKindSystem, buff);
+
 	}
 	return TRUE;
 }
