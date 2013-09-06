@@ -7,6 +7,13 @@ namespace medicine {
 
 ArmletApi::FILE MedFile;
 BODY Body;
+int TickFromFirstWound;//HACK
+static char* HackMsg; //HACK
+
+int HackRegsurplus;
+int HackLastBloodlevel;
+char* hackDiagBloodlevel = "";
+char* HackRegenString = "";
 
 void GatherSymptoms(char* buf, int len)
 {
@@ -31,6 +38,12 @@ void GatherDiagnostics(char* buf, int len)
 {
 	StrPad(buf,0,0,len);
 	int pos=0;
+
+	ArmletApi::snprintf(buf+pos,len-pos,"Состояние: %s\n",hackDiagBloodlevel);
+	pos = Length(buf);
+	ArmletApi::snprintf(buf+pos,len-pos,"Динамика: %s\n",HackRegenString);
+	pos = Length(buf);
+	return;
 
 	ArmletApi::snprintf(buf+pos,len-pos,"Давление: %d/%d\n",Body.HighPressure,Body.LowPressure);
 	pos = Length(buf);
@@ -93,6 +106,103 @@ void _medInit()
 void _medOnMedTick(bool bBreathOnly)
 {	
 	if (!bBreathOnly) {
+
+		HackMsg = 0;
+		hackDiagBloodlevel = 0;
+		HackRegenString = 0;
+
+		if (TickFromFirstWound!=-1)
+			TickFromFirstWound++;
+
+		if (Body.BloodCapacity < 200) {
+			Body.BloodCapacity = Body.BloodCapacity + Body.RegenerationLevel + 1;
+			if (Body.BloodCapacity > 200)	
+				Body.BloodCapacity = 200;
+		}
+
+		if (Body.BloodCapacity == 200) {
+			HackMsg = "Ты здоров, отлично себя чувствуешь.";
+			InitBody();
+			hackDiagBloodlevel = "A";
+			HackRegenString = "Z";
+			return;
+		} else if (Body.BloodCapacity > 190) {
+			HackMsg = "Все-таки потеря крови просто так не проходит. Ты чувствуешь себя усталым. Рана болит.";
+			hackDiagBloodlevel = "J";
+		} else if (Body.BloodCapacity > 150) {
+			HackMsg = "Тебе плохо. У тебя кружится голова. Лучше всего ты чувствуешь себя лежа. Рана пульсирует болью.";
+			hackDiagBloodlevel = "Q";
+		} else if (Body.BloodCapacity > 100) {
+			HackMsg = "Тебе очень плохо. Похоже это серьезно и просто так все не обойдется. Надо срочно найти врача, чтобы он сделал хоть что-нибудь. Очень больно.";
+			hackDiagBloodlevel = "F";
+		} else if (Body.BloodCapacity >  75) {
+			HackMsg = "Тебе очень плохо. Становится страшно, похоже, что это конец. Кровотечение усиливается. ГОСПОДИ ПОМОГИТЕ МНЕ КТО_НИБУДЬ!";
+			hackDiagBloodlevel = "S";
+		} else if (Body.BloodCapacity >  50) {
+			HackMsg = "Вроде бы даже уже не больно. Ты можещь только лежать. Хочется закрыть глаза. Тебе холодно, не хочется шевелиться или что-то делать. Похоже пора прощаться";
+			hackDiagBloodlevel = "B";
+		} else if (Body.BloodCapacity >  20) {
+			HackMsg = "Ты потерял сознание.";
+		} else if (Body.BloodCapacity >   0) {
+			HackMsg = "Ты потерял сознание.";
+			if (TickFromFirstWound>15) {
+				HackMsg = "Боль, страх и беспокойство покидают тебя. Ты мертв. Rest In Peace.";
+			}
+		}
+		
+		int HackRegenValue =  Body.BloodCapacity - HackLastBloodlevel;
+
+		if (HackRegenValue > 5)
+		{
+			HackRegenString = "D";
+		} 
+		else if (HackRegenValue > 0)
+		{
+			HackRegenString = "T";
+		}
+		else if (HackRegenValue == 0)
+		{
+			if (Body.BloodCapacity < 200)
+				Body.BloodCapacity++;
+			
+			HackRegenString = "T";
+		}
+		else if (HackRegenValue > -5)
+		{
+			HackRegenString = "W";
+		}
+		else if (HackRegenValue > -10)
+		{
+			HackRegenString = "J";
+		}
+		else if (HackRegenValue > -15)
+		{
+			HackRegenString = "E";
+		}
+		else
+		{
+			HackRegenString = "П";
+		}
+
+		HackLastBloodlevel = Body.BloodCapacity;
+
+		if (TickFromFirstWound!=0) 
+		{
+			if (TickFromFirstWound%5==0)
+			{
+				if (Body.BloodCapacity<150) {
+					Body.Part[RightLegTarget][Radiation].Bleeding += 10;
+				}
+			}
+		}
+
+		if ((CureAction[Analgetic].IsUsing)&&(!CureAction[Anesthetics].IsUsing))
+			HackRegsurplus = 5;
+		if ((CureAction[Anesthetics].IsUsing))
+			HackRegsurplus = 10;
+
+		IncreaseBloodCapacity(HackRegsurplus, false);
+
 		//process cures
 		for (int i=0; i<MaxCureId; i++) {
 			if ((CureAction[i].IsUsing)&&(CureAction[i].RemainingTicks>0)) {
@@ -120,7 +230,7 @@ void _medUpdateStrings(char** Symptoms, char** Diagnostics, char** MedLog)
 
 	*MedLog = "Ваша лицензия пользования Индивидуальным Наручным Устройством не поддерживает режим учета медицинских событий.";
 	*Diagnostics = buf2; 
-	*Symptoms = buf1;
+	*Symptoms = HackMsg; //buf1;
 
 	//save
 	ArmletApi::WriteFile(&MedFile,(char*)&Body,sizeof(BODY));
@@ -154,6 +264,8 @@ char* _medOnPillConnected(ubyte_t pill_id)
 	{
 		CURE_ID cure_id = (CURE_ID)pill_id;
 		ProcessCureUsage(cure_id, true);
+		if (cure_id==MagicCure)
+			_medOnMedTick(false);
 		return (char*)CureDesc[cure_id].Effect;
 	}
 
@@ -167,6 +279,9 @@ char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType)
 		return "Ты слышишь сильный грохот. Но вроде бы все обошлось!";
 	}
 
+	if (TickFromFirstWound==-1)
+		TickFromFirstWound=0;
+
 	int ExplosionType;
 	if (explosionType==0)
 		ExplosionType = ArmletApi::GetRandom(2);
@@ -179,6 +294,9 @@ char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType)
 	int DamageSeverity = IncreaseCategory(part->CurrSeverity);
 	ApplyWound(MaxTarget+1+ExplosionType,DamageSeverity,part);
 	const char* msg =  WoundDescs[MaxTarget+1+ExplosionType][DamageSeverity].message;
+
+	_medOnMedTick(false);
+
 //temp
 //	ArmletApi::snprintf(_buf,200,"%s-%d\n%s",
 //		TargetNames[MaxTarget],
@@ -189,11 +307,17 @@ char* _medOnExplosion(ubyte_t probability, ubyte_t explosionType)
 
 char* _medOnKnockout ()
 {
+	if (TickFromFirstWound==-1)
+		TickFromFirstWound=0;
+
 	int Target = ArmletApi::GetRandom(MaxTarget);
 	PPART part = &Body.Part[Target][Blow];
 	int DamageSeverity = IncreaseCategory(part->CurrSeverity);
 	ApplyWound(MaxTarget,DamageSeverity,part);
 	const char* msg =  WoundDescs[MaxTarget][DamageSeverity].message;
+
+	_medOnMedTick(false);
+
 //temp
 //	ArmletApi::snprintf(_buf,200,"%s-%d\n%s",
 //		TargetNames[MaxTarget],
@@ -204,6 +328,9 @@ char* _medOnKnockout ()
 
 char* _medNewWound(ubyte_t Target)
 {
+	if (TickFromFirstWound==-1)
+		TickFromFirstWound=0;
+
 	DAMAGE_EFFECT de = Rupture;
 	if (Target<=RightLegTarget)
 		de = RuptureLimb;
@@ -212,6 +339,9 @@ char* _medNewWound(ubyte_t Target)
 	int DamageSeverity = IncreaseCategory(part->CurrSeverity);
 	ApplyWound(Target,DamageSeverity,part);
 	const char* msg =  WoundDescs[Target][DamageSeverity].message;
+
+	_medOnMedTick(false);
+
 //temp
 //	ArmletApi::snprintf(_buf,200,"%s-%d\n%s",
 //		TargetNames[place],

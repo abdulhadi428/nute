@@ -35,6 +35,9 @@ namespace medicine {
 
 	void InitBody()
 	{
+		TickFromFirstWound = -1;
+		HackRegsurplus = 0;
+
 		StrPad((char*)&Body,0,0,sizeof(BODY));
 //DIAG PARAMETERS
 		Body.RegenerationLevel = RegenLow;

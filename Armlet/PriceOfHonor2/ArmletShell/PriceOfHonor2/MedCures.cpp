@@ -23,7 +23,7 @@ namespace medicine {
 	};
 
 	const char* CureEffect[] = {
-		"Тебе сделали укол... Кончик языка немеет.",
+"На рану прыснули из какого-то баллончика. Боль отступает, становится легче.", //"Тебе сделали укол... Кончик языка немеет.",
 		"Тебе сделали укол... Движения стали четкими и плавными.",
 		"Тебе сделали укол... Чувствуешь легкий озноб.",
 		"Дышать стало сильно легче...",
@@ -32,7 +32,7 @@ namespace medicine {
 		"Приятно холодящая тонкая пыль оседает на твоих ранах пленкой...",
 		"Тебе сделали укол... Все тело расслабляется, движения стали 'вялыми'.",
 		"Тебе сделали укол... Тебя словно колят иголками изнутри.",
-		"Тебе сделали укол... Место укола совсем не чувствуется.",
+"На рану наложили наноактивный бинт. Становится легче.", //"Тебе сделали укол... Место укола совсем не чувствуется.",
 		"Ты выпил таблетку...",
 		"Ты жуешь невкусную массу, пахнущую резиной...",
 		"Тебе сделали укол... пара капель пасты быстро затвердела и отвалилась.",
@@ -156,8 +156,10 @@ namespace medicine {
 				//Быстро восполняет кровопотерю пациента. Побочно - повышает температуру (кумулятивно).
 				if (bStarting) { //inst
 					IncreaseBloodCapacity(
-						20+10*Body.RegenerationLevel,true); //reduce ToxinsCapacity by value
-					StopRupturesAndBlows();
+						20+5*Body.RegenerationLevel,true); //reduce ToxinsCapacity by value
+					if (Body.BloodCapacity > 151)
+						Body.BloodCapacity = 152;
+					//StopRupturesAndBlows();
 				}
 				break;
 			case Leatherette:
@@ -192,6 +194,7 @@ namespace medicine {
 						DecreaseThermal();
 					DecreaseRadiation();
 					Body.Symptom[LimbParalyze] = false;
+					StopRupturesAndBlows();
 				}
 				break;
 			case Anesthetics:

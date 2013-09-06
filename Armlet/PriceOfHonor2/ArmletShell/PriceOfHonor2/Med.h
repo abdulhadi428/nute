@@ -25,6 +25,10 @@ namespace medicine {
 	//called after previous 4 events and on med tick
 	//1100 char max
 	void _medUpdateStrings(char** Symptoms, char** Diagnostics, char** MedLog);
+
+	extern int TickFromFirstWound; //HACK
+	extern int HackLastBloodlevel;
+	extern int HackRegsurplus;
 }
 
 using namespace medicine;

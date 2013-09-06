@@ -183,18 +183,18 @@ int sdeToPain[MaxDamageEffect][MaxDamageSeverity] = {
 COMPILE_TIME_CHECK(sizeof(sdeToPain)/sizeof(int)==MaxDamageEffect*MaxDamageSeverity);
 
 int sdeToBloodLoss[MaxDamageEffect][MaxDamageSeverity] = {
-	{1, 5, 5,10,30},	//RuptureLimb
-	{5,10,10,30,50},	//Rupture
-	{0, 1, 1,5,15},		//Blow
-	{0,0,0,0,0},		//Thermal
-	{0,0,0,0,0},		//Radiation
+	{10, 15, 20, 25, 40},	//RuptureLimb
+	{20, 25, 30, 35, 50},	//Rupture
+	{0, 1, 1, 5, 15},		//Blow
+	{10, 15, 20, 25, 40},		//Thermal
+	{20, 25, 30, 35, 50},		//Radiation
 };
 int sdeToBleeding[MaxDamageEffect][MaxDamageSeverity] = {
-	{0,1,1,5,10},	//RuptureLimb
-	{0,1,1,5,10},	//Rupture
-	{0,0,1,3,7},	//Blow
-	{0,0,0,0,0},	//Thermal
-	{0,0,0,0,0},	//Radiation
+	{0,1,5,7,10},	//RuptureLimb
+	{0,1,5,7,10},	//Rupture
+	{0,0,3,5,7},	//Blow
+	{0,0,3,5,7},	//Thermal
+	{0,1,5,7,10},	//Radiation
 };
 int sdeToToxinsAdd[MaxDamageEffect][MaxDamageSeverity] = {
 	{0,0,0,0,0},	//RuptureLimb
