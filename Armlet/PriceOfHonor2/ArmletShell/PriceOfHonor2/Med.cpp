@@ -145,7 +145,7 @@ void _medOnMedTick(bool bBreathOnly)
 			HackMsg = "Ты потерял сознание.";
 		} else if (Body.BloodCapacity >   0) {
 			HackMsg = "Ты потерял сознание.";
-			if (TickFromFirstWound>15) {
+			if ((TickFromFirstWound>30) && (Body.BloodCapacity <=1)) {
 				HackMsg = "Боль, страх и беспокойство покидают тебя. Ты мертв. Rest In Peace.";
 			}
 		}
