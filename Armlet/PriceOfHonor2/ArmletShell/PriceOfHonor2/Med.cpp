@@ -142,8 +142,10 @@ void _medOnMedTick(bool bBreathOnly)
 			HackMsg = "Вроде бы даже уже не больно. Ты можещь только лежать. Хочется закрыть глаза. Тебе холодно, не хочется шевелиться или что-то делать. Похоже пора прощаться";
 			hackDiagBloodlevel = "B";
 		} else if (Body.BloodCapacity >  20) {
+			hackDiagBloodlevel = "L";
 			HackMsg = "Ты потерял сознание.";
 		} else if (Body.BloodCapacity >   0) {
+			hackDiagBloodlevel = "I";
 			HackMsg = "Ты потерял сознание.";
 			if ((TickFromFirstWound>30) && (Body.BloodCapacity <=1)) {
 				HackMsg = "Боль, страх и беспокойство покидают тебя. Ты мертв. Rest In Peace.";
