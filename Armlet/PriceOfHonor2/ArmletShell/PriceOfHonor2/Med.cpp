@@ -188,10 +188,11 @@ void _medOnMedTick(bool bBreathOnly)
 
 		if (TickFromFirstWound!=0) 
 		{
-			if (TickFromFirstWound%5==0)
+			if (TickFromFirstWound%10==0)
 			{
-				if (Body.BloodCapacity<150) {
-					Body.Part[RightLegTarget][Radiation].Bleeding += 10;
+				if (Body.BloodCapacity<120) {
+					if ((Body.Part[RightLegTarget][Radiation].Bleeding < 15))
+					Body.Part[RightLegTarget][Radiation].Bleeding += 3;
 				}
 			}
 		}
