@@ -7,13 +7,20 @@ typedef sword_t ButtonState;
 class IMenuItem
 {
 public:
-	virtual fresult Draw() =0;
-	virtual bool_t IsSelected()=0;
+	virtual fresult Draw() {return GENERAL_ERROR;};
+	virtual bool_t IsSelected() {return FALSE;};
 
-	virtual fresult Select() =0;
-	virtual fresult Deselect() =0;
+	virtual fresult Select() {return GENERAL_ERROR;};
+	virtual fresult Deselect() {return GENERAL_ERROR;};
 
-	virtual fresult Click() =0;
+	virtual fresult SetVisible(bool_t val) {return GENERAL_ERROR;};
+	virtual bool_t GetVisible() {return FALSE;};
 
-	virtual bool_t CheckAccelerator(ButtonState button)=0;
+	virtual fresult SetEnabled(bool_t val) {return GENERAL_ERROR;};
+	virtual bool_t GetEnabled() {return FALSE;};
+
+	virtual fresult Click() {return GENERAL_ERROR;};
+
+	//TODO: wrong name
+	virtual bool_t CheckAccelerator(ButtonState button){return FALSE;};
 };

@@ -27,7 +27,7 @@ namespace ArmletApi {
 	void __CALLOUT CriticalError(char* error);							//critical error __CALLOUT (kernel calls shell to display aka "bsod")
 	void __CALLOUT OnButtonPress(int button_id);						//__CALLOUT for button
 	void __CALLOUT OnButtonRelease(int button_id);						//__CALLOUT for button
-	void __CALLOUT OnPillConnect(int cure_id, int charges);				//__CALLOUT cure/pill
+	void __CALLOUT OnPillConnect(int pill_id, int charges);				//__CALLOUT cure/torture
 	void __CALLOUT OnRadioPacket(unsigned char* packet, int len);		//__CALLOUT for radio transport
 	//SPECIAL PLATFORM DEPENDENT
 	#ifdef _MSC_VER
@@ -45,7 +45,7 @@ namespace ArmletApi {
 					int sx, int sy);									//__SYSCALL draws an area of pixels
 	void __SYSCALL DoVibroAndBeep(int msecs);							//__SYSCALL performs vibration for duration
 
-	bool __SYSCALL WritePill(int cure_id, int charges);					//__SYSCALL writes cure to pill
+	bool __SYSCALL WritePill(int pill_id, int charges);					//__SYSCALL writes cure to pill
 
 	unsigned char __SYSCALL GetLustraId();								//__SYSCALL returns lustra id (UNKNOWN_ID=none)
 	unsigned short __SYSCALL GetArmletId();
@@ -62,7 +62,7 @@ namespace ArmletApi {
 
 	unsigned int __SYSCALL GetRandom(unsigned int max);					//returns random value in range [0..max]
 	int  __SYSCALL GetUpTime();											//return msces from armlet start
-	int __SYSCALL snprintf(char* buf, int bufSz, char* fmt,...);		//__SYSCALL sprintf support, 
+	int __SYSCALL snprintf(char* buf, int bufSz, char* fmt,...);		//__SYSCALL sprintf support,
 	bool __SYSCALL OpenFile(FILE* file, const char* filename, bool bCreate);	//__SYSCALL opens/create file
 	bool __SYSCALL CloseFile(FILE* file);								//__SYSCALL closes file
 
@@ -73,7 +73,7 @@ namespace ArmletApi {
 	bool __SYSCALL RequestTimer(TIMER_PROC* timerProc, int period);		//__SYSCALL, period in msecs
 	//SPECIAL PLATFORM DEPENDENT
 	#ifdef _MSC_VER
-		void __SYSCALL SetCureName(int cure_id, char* name);			//visualizer only __SYSCALL
+		void __SYSCALL SetPillName(int pill_id, char* name);			//visualizer only __SYSCALL
 	#endif
 #endif
 

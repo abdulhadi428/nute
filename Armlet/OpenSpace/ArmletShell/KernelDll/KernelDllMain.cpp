@@ -1,6 +1,8 @@
 #define TEST_ARMLET_SYSCALLS
 #ifdef TEST_ARMLET_SYSCALLS
 #include "ArmletApi.h"
+#include "KernelApi.h"
+#include "ServerProtocol.h"
 #include "Windows.h"
 
 void TestGetRandom()
@@ -45,10 +47,38 @@ void TestArmletSyscalls() {
 	TestGetUpTime();
 	TestFiles();
 }
-
-#else
-	void TestArmletSyscalls() {}
 #endif
+
+static int lh = 23;
+static int lm = 59;
+static unsigned short NoncheId = 2000;
+
+bool __CALLBACK UpdateKernelProc(int elapsed)
+{
+	int gate_id, signal_level;
+	ArmletApi::GetRadioStatus(&gate_id,&signal_level);
+	KernelApi::UpdateKernel(
+		ArmletApi::GetArmletId(),
+		ArmletApi::GetLustraId(),
+		ArmletApi::GetBatteryLevel(),
+		gate_id,
+		signal_level,
+		lh,
+		lm,
+		ArmletApi::GetUpTime());
+	return true;
+}
+
+bool __CALLBACK UpdateTimeProc(int elapsed)
+{
+	lm++; 
+	if (lm==60) {
+		lm=0;lh++;
+		if (lh==24)
+			lh=0;
+	}
+	return true;
+}
 
 extern "C" __declspec(dllexport) 
 int __stdcall DllMain(void* hinstDLL, unsigned long fdwReason, void* lpvReserved)
@@ -59,7 +89,8 @@ int __stdcall DllMain(void* hinstDLL, unsigned long fdwReason, void* lpvReserved
 	switch (fdwReason)
 	{
 	case 1://DLL_PROCESS_ATTACH
-		TestArmletSyscalls();
+		ArmletApi::RequestTimer(UpdateKernelProc,1000);
+		ArmletApi::RequestTimer(UpdateTimeProc,60*1000);
         break;
 	case 0://DLL_PROCESS_DETACH:
         break;

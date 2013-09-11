@@ -1,10 +1,7 @@
 #include "ArmletApi.h"
 #include "ArmletShell.h"
 #include "AppMain.h"
-#include "UserInterface.h"
 #include "Med.h"
-
-extern UserInterface UI;
 
 namespace medicine {
 

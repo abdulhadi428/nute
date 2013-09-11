@@ -35,7 +35,6 @@ namespace ArmletApi {
 
 	int  __SYSCALL GetUpTime()
 	{
-		//HAVE UPTIME BUG IN EMULATION!!!
 		static time_t startTime = 0; 
 		if (startTime == 0) {
 			startTime = time(NULL);
@@ -78,6 +77,8 @@ namespace ArmletApi {
 		memcpy(&hFile, file, sizeof(FILE));
 		if (len < 0) return 0;
 
+		SetFilePointer(hFile,0,0,FILE_BEGIN);
+
 		BOOL res = ::ReadFile( hFile, buf, len, &retlen, NULL);
 		if (res) return retlen;
 		return 0;
@@ -103,7 +104,7 @@ namespace ArmletApi {
 	//__SYSCALL return length written
 	int __SYSCALL AppendFile(FILE* file, char* buf, int len)
 	{
-DWORD retlen;
+		DWORD retlen;
 		COMPILE_TIME_CHECK(sizeof(FILE)==sizeof(HANDLE));
 		HANDLE hFile;
 		memcpy(&hFile, file, sizeof(FILE));

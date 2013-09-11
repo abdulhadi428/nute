@@ -1,13 +1,15 @@
 #include "ThreeKShell.h"
+#include "kl_allocator.h"
 
 namespace ThreeKShell {
 
+static Alloc_t<MenuItem, 45> SMenuItemArr;
 
 MenuItem* MenuItemFactory::allocMenuItem()
 {
-	return new MenuItem();
+	return SMenuItemArr.Allocate(); // new MenuItem();
 }
-	
+
 fresult MenuItemFactory::Init( IRender* render, Repositories* reps, TextFieldFactory* tfFactory, PictureBoxFactory* pbxFactory, PanelFactory* pnlFactory )
 {
 	fresult fres;
@@ -34,7 +36,7 @@ fresult MenuItemFactory::Init( IRender* render, Repositories* reps, TextFieldFac
 	Size defaultSz;
 	defaultSz.Width = 5*tf->Font.GlyphSize.Width;
 	defaultSz.Height = DefaultTextLines*tf->Font.GlyphSize.Height;
-	
+
 	DefaultTextFieldSize = defaultSz;
 	CurrentTextFieldSize = DefaultTextFieldSize;
 
@@ -89,16 +91,19 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 			else
 			{
 				lastCrIndex = crIndex;
-				do 
+				maxLineLen = crIndex;
+				textLinesCount++;
+				do
 				{
 					crIndex = InStr(text, "\n", lastCrIndex);
 					if (crIndex != -1)
 					{
-						textLinesCount++;				
+						textLinesCount++;
 						if (maxLineLen < crIndex-lastCrIndex)
 						{
 							maxLineLen = lastCrIndex - crIndex;
 						}
+						lastCrIndex++;
 					}
 					else
 					{
@@ -125,7 +130,7 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 		{
 			tfSize.Height = CurrentTextFieldSize.Height;
 		}
-	
+
 		//Get Width
 		if (CurrentTextFieldHAutoSize)
 		{
@@ -180,8 +185,8 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 			break;
 		}
 	}
-		
-	//calculate mi pos	
+
+	//calculate mi pos
 	Position pos;
 	Position tfPos;
 	Position pbxPos;
@@ -300,14 +305,14 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 	{
 		_tfFactory->CurrentTextFormatHandle = tfmtHandle;
 		_tfFactory->CurrentWrap = FALSE;
-		fres = _tfFactory->GetTextBox(tfPos, text, tfSize, true, &tf); 
+		fres = _tfFactory->GetTextBox(tfPos, text, tfSize, true, &tf);
 		//restore fmt
 		_tfFactory->CurrentTextFormatHandle = _tfFactory->DefaultTextFormatHandle;
 		_tfFactory->CurrentWrap = _tfFactory->DefaultWrap;
 		ENSURESUCCESS(fres);
 		drawingControl = tf;
 	}
-	
+
 	if (hasImage)
 	{
 		fres = _pbxFactory->GetPictureBox(pbxSize, pbxPos, bmp, &pbx);
@@ -333,7 +338,7 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 
 	fres = mi->Init(tf, tfmt, pbx, drawingControl, handler, shrtcut);
 	ENSURESUCCESS(fres);
-	
+
 	//Set result
 	*o_mi = mi;
 	return SUCCESS;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="OpenSpaceApp"
 	ProjectGUID="{ED6F4CE0-7FB0-4686-8904-5D1C34CC3ECE}"
 	RootNamespace="OpenSpaceApp"
@@ -202,10 +202,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MenuDelegate.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\OpenSpaceApp.cpp"
 				>
 			</File>
@@ -231,14 +227,6 @@
 			</File>
 			<File
 				RelativePath=".\StatusBarBase.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\UIDesigner.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\UserInterface.cpp"
 				>
 			</File>
 		</Filter>
@@ -308,10 +296,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MenuDelegate.h"
-				>
-			</File>
-			<File
 				RelativePath=".\OpenSpace.h"
 				>
 			</File>
@@ -349,14 +333,6 @@
 			</File>
 			<File
 				RelativePath=".\TZ.h"
-				>
-			</File>
-			<File
-				RelativePath=".\UIDesigner.h"
-				>
-			</File>
-			<File
-				RelativePath=".\UserInterface.h"
 				>
 			</File>
 		</Filter>

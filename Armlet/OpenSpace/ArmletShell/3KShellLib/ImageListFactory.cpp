@@ -1,26 +1,31 @@
 #include "ThreeKShell.h"
+#include "kl_allocator.h"
 
+static Alloc_t<ImageList, 20> SImageListArr;
+static Alloc_t<sword_t, 99> SSwordtArr;
+static Alloc_t<ScaledValueImageList, 20> SScaledValueImageListArr;
+static Alloc_t<BitmapImage*, 45> SBitmapImagePtrArr;
 
 ImageList* ImageListFactory::AllocImageList()
 {
-	return new ImageList();
+	return SImageListArr.Allocate(); // new ImageList();
 }
 
 sword_t* ImageListFactory::AllocSwordArray( ubyte_t len )
 {
-	return new sword_t[len];
+	return SSwordtArr.Allocate(len); // new sword_t[len];
 }
 
 
 ScaledValueImageList* ImageListFactory::AllocScaledValueImageList()
 {
-	return new ScaledValueImageList();
+	return SScaledValueImageListArr.Allocate(); // new ScaledValueImageList();
 }
 
 
 BitmapImage** ImageListFactory::AllocBitmapArray( ubyte_t len )
 {
-	return new BitmapImage*[len];
+	return SBitmapImagePtrArr.Allocate(len); // new BitmapImage*[len];
 }
 
 
@@ -40,11 +45,11 @@ fresult ImageListFactory::GetImageList( Position pos, ImageHandle* Images, ubyte
 
 	Size sz;
 	BitmapImage** bmps;
-	
+
 	//convert handles to bimaps
 	fres = CreateBitmapArrayFromHandles(Images, imgCount, &sz, &bmps);
 	ENSURESUCCESS(fres);
-	
+
 
 	fres = imgl->Init(bmps, imgCount, sz, pos, _render);
 	ENSURESUCCESS(fres);

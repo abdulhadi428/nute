@@ -30,13 +30,20 @@ namespace Visualizer {
 
 	private delegate void VibroDelegate();
 	private delegate void LogDelegate(char* msg);
-	private delegate void SetCureNameDelegate(int cure_id, char* name);
+	private delegate void SetPillNameDelegate(int pill_id, char* name);
 	private delegate void UpdateCurrentCureDelegate();
+	private delegate void UpdateCurrentTortureDelegate();
+	private delegate void UpdateKernelDelegate(int armlet_id, int lustra_id, int battery_level,
+			int gate_id, int signal_level, int hours, int minutes, int uptime);
+	private delegate void UpdateAppStateDelegate(int blood, int toxins, int pulse, int temperature);
 
 	DECLARE_MANAGED_CALLBACK_TYPE(Vibro);
 	DECLARE_MANAGED_CALLBACK_TYPE(Log);
-	DECLARE_MANAGED_CALLBACK_TYPE(SetCureName);
+	DECLARE_MANAGED_CALLBACK_TYPE(SetPillName);
 	DECLARE_MANAGED_CALLBACK_TYPE(UpdateCurrentCure);
+	DECLARE_MANAGED_CALLBACK_TYPE(UpdateCurrentTorture);
+	DECLARE_MANAGED_CALLBACK_TYPE(UpdateKernel);
+	DECLARE_MANAGED_CALLBACK_TYPE(UpdateAppState);
 
 	ref class MainForm;
 	public ref class FormHelper
@@ -46,8 +53,12 @@ namespace Visualizer {
 		static void BindDelegates();
 		DECLARE_MANAGED_CALLBACK_VAR(Vibro);
 		DECLARE_MANAGED_CALLBACK_VAR(Log);
-		DECLARE_MANAGED_CALLBACK_VAR(SetCureName);
+		DECLARE_MANAGED_CALLBACK_VAR(SetPillName);
 		DECLARE_MANAGED_CALLBACK_VAR(UpdateCurrentCure);
+		DECLARE_MANAGED_CALLBACK_VAR(UpdateCurrentTorture);
+		DECLARE_MANAGED_CALLBACK_VAR(UpdateKernel);
+		DECLARE_MANAGED_CALLBACK_VAR(UpdateAppState);
+
 	//calls to LowLevel unmanaged
 	public:
 		static void SetPlayerName(String^ name);

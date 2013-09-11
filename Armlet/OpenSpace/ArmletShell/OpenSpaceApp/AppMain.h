@@ -7,7 +7,7 @@ void AppMainThread(void* param);
 
 void _OnPillConnected(sword_t cure_id, sword_t charges);
 void _OnSetPlayerName(char* name);
-void _OnExplosion(sword_t roomId);
+void _OnExplosion(sword_t roomId, sword_t crap, sword_t crap1);
 void _OnServerMessage(char* msg);
 void _OnSetRegenerationRate(sword_t regenRate);
 

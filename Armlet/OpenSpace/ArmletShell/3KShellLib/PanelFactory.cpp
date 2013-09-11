@@ -1,23 +1,27 @@
 #include "ThreeKShell.h"
+#include "kl_allocator.h"
 
 namespace ThreeKShell {
 
+static Alloc_t<IControl*, 45> SIControlPtrArr;
+static Alloc_t<Panel, 45> SPanelArr;
+
 	IControl** PanelFactory::AllocControlArray( ubyte_t controlsCount )
 	{
-		IControl** ctrls = new IControl*[controlsCount];
+		IControl** ctrls = SIControlPtrArr.Allocate(controlsCount); // new IControl*[controlsCount];
 		NULLIF(ctrls==NULL);
 
 		for (ubyte_t i=0; i < controlsCount;i++)
 		{
 			ctrls[i] = NULL;
 		}
-		
+
 		return ctrls;
 	}
 
 	Panel* PanelFactory::AllocPanel()
 	{
-		return new Panel();
+		return SPanelArr.Allocate(); // new Panel();
 	}
 
 	fresult PanelFactory::GetPanel( Size sz, Position pos, ubyte_t controlsCount, Panel** o_pnl )
@@ -28,7 +32,7 @@ namespace ThreeKShell {
 	fresult PanelFactory::GetPanel(Size sz, Position pos, ubyte_t controlsCount, ColorHandle clrhandle,  Panel** o_pnl)
 	{
 		fresult fres;
-		
+
 		IControl** controls;
 		if (controlsCount==0)
 		{
@@ -42,7 +46,7 @@ namespace ThreeKShell {
 
 		Panel* pnl = AllocPanel();
 		FAILIF(pnl==NULL);
-		
+
 		fres = pnl->Init(sz,pos,_render, controls, controlsCount);
 		ENSURESUCCESS(fres);
 

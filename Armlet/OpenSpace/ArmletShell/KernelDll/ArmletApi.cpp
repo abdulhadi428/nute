@@ -58,13 +58,17 @@ namespace ArmletApi {
 		KernelApi::Vibro();
 	}
 
-	//writes cure to pill
-	bool __SYSCALL WritePill(int cure_id, int charges)
+	//writes charges to pill
+	bool __SYSCALL WritePill(int pill_id, int charges)
 	{
-		ArmletKernel::LowLog("Cure %d was written %d charges", cure_id, charges);
-		if ((cure_id < 0)||(cure_id > 14))
+		ArmletKernel::LowLog("Cure/Torture %d was written %d charges", pill_id, charges);
+		if ((pill_id < 0)||(pill_id > 14)) {
+			if ((pill_id < 20)||(pill_id > 26))
 			return false;
-		ArmletKernel::CureCharges[cure_id] = charges;
+			ArmletKernel::TortureCharges[pill_id-20] = charges;
+			KernelApi::UpdateCurrentTorture();
+		}
+		ArmletKernel::CureCharges[pill_id] = charges;
 		KernelApi::UpdateCurrentCure();
 		return true;
 	}
@@ -113,18 +117,20 @@ namespace ArmletApi {
 		ArmletKernel::LowLog("PROTOCOL: receive MSG_TASK_COMPLETED with arm_msg_num %d for srv_msg_num %d",
 			header->arm_msg_num, pkt->srv_msg_num, pkt->bResult);
 		return; 
-		//TODO timer/list helper
 	}
 
 	void __SYSCALL SendAppState(unsigned char packet[APP_STATE_LEN]) {
-		UNREFERENCED_PARAMETER(packet);
-		return; //TODO implement
+		KernelApi::UpdateAppState(packet[0],packet[1],packet[2],packet[3]);
+		return;
 	}
 
-	void __SYSCALL GetRadioStatus(int* gate_id, int* signal_level)
+	void __SYSCALL GetRadioStatus(int* gate_id, int* signal_level) //-20..-120
 	{
 		*gate_id = 3;
-		*signal_level = -35;
+		
+		unsigned char p = (unsigned char)(100 - (GetUpTime() / 1000)); //1% per sec
+		if (p>100) p = 100;
+		*signal_level = -120+p;
 		return;
 	}
 
@@ -134,9 +140,9 @@ namespace ArmletApi {
 	}
 
 	//SPECIAL PLATFORM DEPENDENT
-	void __SYSCALL SetCureName(int cure_id, char* name)
+	void __SYSCALL SetPillName(int pill_id, char* name)
 	{
-		KernelApi::SetCureName(cure_id, name);
+		KernelApi::SetPillName(pill_id, name);
 	}
 
 } //namespace

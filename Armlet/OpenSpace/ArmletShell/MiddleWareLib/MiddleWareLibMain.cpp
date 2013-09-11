@@ -9,14 +9,16 @@ BUTTON_HANDLER* gHoldButtonHandler = NULL;
 void RegisterButtonHandlers(BUTTON_HANDLER ClickButtonHandler,BUTTON_HANDLER HoldButtonHandler)
 {
 	gClickButtonHandler = ClickButtonHandler;
-	gHoldButtonHandler = HoldButtonHandler;
+	//@KL gHoldButtonHandler = HoldButtonHandler;
 }
 
 namespace ArmletApi {
 
+	char _hhmm_time[6] = "xx:xx";
+
 	int tick = 0;
 	bool __CALLBACK TimerProc(int elapsed)
-	{		
+	{
 		if (tick<15) {
 			DrawPixel(40+2*tick,70,RED);
 			tick++;
@@ -31,7 +33,7 @@ namespace ArmletApi {
 		Clear(BLUE);
 		const char* str = "PRICE of HONOR!";
 		DrawTextString(40,60,str,Length(str),RED,BLUE);
-	
+
 		GetBatteryLevel();
 		SetScreenBrightness(100);
 		char buff[200];
@@ -39,12 +41,13 @@ namespace ArmletApi {
 		DrawPixel(1,1,WHITE);
 		DoVibroAndBeep(500);
 		ubyte_t l = GetLustraId();
-		SendRadioPacket(NULL,0);
+		//SendRadioPacket(NULL,0);
 		uword_t a = GetArmletId();
 		FILE log;
 		OpenFile(&log, "log.txt", true);
 		char* s = "log test";
-		WriteFile(&log, s, Length(s));	
+		WriteFile(&log, s, Length(s));
+
 		/*
 		//int i = 0;
 		//Color area[100];
@@ -56,29 +59,31 @@ namespace ArmletApi {
 		//AppendFile(&log, (char*)area, 100);
 		//DrawArea(5,5,area,100,10,10);
 		*/
+
 		RequestTimer(TimerProc,100);
 		int up = GetUpTime();
 		int rnd = GetRandom(50);
 		//SetCureName is checked in AppMainThread
 		//WritePill is checked in AppMainThread
 		//StartThread(AppMainThread,NULL);
+
 		return true; //TODO
 	}
 
 	void __CALLOUT CriticalError(char* error)
 	{
-		//TODO
+		//NOT IMPLEMENTED
 	}
 
 	void __NOCALL  Log(char* fmt, ...)
 	{
-		//TODO
+		//NOT IMPLEMENTED
 	}
 
 	//__CALLOUT for  button
 	void __CALLOUT OnButtonPress(int button_id)
 	{
-		; //TODO
+		; //NOT IMPLEMENTED, needed for holds only
 	}
 
 	//__CALLOUT for button
@@ -88,13 +93,13 @@ namespace ArmletApi {
 			(*gClickButtonHandler)((ubyte_t)button_id);
 	}
 
-	//__CALLOUT cure/pill
-	void __CALLOUT OnPillConnect(int cure_id, int charges)
+	//__CALLOUT cure/torture
+	void __CALLOUT OnPillConnect(int pill_id, int charges)
 	{
-		//Log("Cure %d was connected, charges %d",cure_id, charges);
+		//Log("Pill %d was connected, charges %d",cure_id, charges);
 		DoVibroAndBeep(500);
 		//UI CALL:
-		_OnPillConnected(cure_id, charges);
+		_OnPillConnected(pill_id, charges);
 	}
 
 	//__CALLOUT for radio transport
@@ -110,6 +115,8 @@ namespace ArmletApi {
 				{
 					SRV_STRING* pkt = (SRV_STRING*)packet;
 					int size = len - sizeof(SRV_STRING);
+					if (size >= CUSTOM_MESSAGE_MAX_LEN)
+						size = CUSTOM_MESSAGE_MAX_LEN;
 					if (pkt->string[size]!=0)
 						pkt->string[size]=0;
 					_OnServerMessage(&pkt->string[0]);
@@ -119,6 +126,8 @@ namespace ArmletApi {
 				{
 					SRV_STRING* pkt = (SRV_STRING*)packet;
 					int size = len - sizeof(SRV_STRING);
+					if (size >= CUSTOM_MESSAGE_MAX_LEN)
+						size = CUSTOM_MESSAGE_MAX_LEN;
 					if (pkt->string[size]!=0)
 						pkt->string[size]=0;
 					_OnSetPlayerName(&pkt->string[0]);
@@ -133,7 +142,16 @@ namespace ArmletApi {
 			case MSG_ROOM_HIT:
 				{
 					SRV_ROOM_HIT* pkt = (SRV_ROOM_HIT*)packet;
-					_OnExplosion(pkt->room_id);
+					_OnExplosion(pkt->room_id,pkt->probability,pkt->explosion_type);
+				}
+				break;
+			case MSG_TIME:
+				{
+					SRV_TIME* pkt = (SRV_TIME*)packet;
+					_hhmm_time[0]= '0'+pkt->hours/10;
+					_hhmm_time[1]= '0'+pkt->hours%10;
+					_hhmm_time[3]= '0'+pkt->minutes/10;
+					_hhmm_time[4]= '0'+pkt->minutes%10;
 				}
 				break;
 			default:
@@ -149,8 +167,16 @@ namespace ArmletApi {
 	//internal emulation
 	void __CALLOUT NextMedTick()
 	{
-		_MedicineTimerTickCallback(MED_TICK_TIME);
+		for (int i=0; i<BREATH_TICKS_PER_MED_TICK; i++) {
+			_MedicineTimerTickCallback(BREATH_TICK_TIME);
+		}
 	}
 #endif
 
 } //namespace
+
+namespace ArmletShell {
+	char* GetTime() {
+		return ArmletApi::_hhmm_time;
+	}
+}

@@ -126,7 +126,7 @@ void _OnSetPlayerName( char* name )
 }
 
 
-void _OnExplosion(sword_t roomId)
+void _OnExplosion(sword_t roomId, sword_t crap, sword_t crap1)
 {
 	return;
 	//UI.OnExplosion(roomId);

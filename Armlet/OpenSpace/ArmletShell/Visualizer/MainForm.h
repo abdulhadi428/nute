@@ -37,6 +37,9 @@ namespace Visualizer {
 			//
 			 bKeysToButtons = true;
 			 currCure=0;
+			 currTorture=20;
+			 currExplosionType=0;
+			 last_mins = 0;
 			 FormHelper::Init(this);
 		}
 
@@ -76,6 +79,7 @@ namespace Visualizer {
 	private: System::Windows::Forms::TabPage^  tabPage3;
 	private: System::Windows::Forms::TabPage^  tabPage4;
 	private: System::Windows::Forms::TabPage^  tabPage5;
+	private: System::Windows::Forms::TabPage^  tabPage6;
 	//TAB PAGE 1
 	private: System::Windows::Forms::GroupBox^  groupBoxServer;
 	private: System::Windows::Forms::TextBox^  textBoxPlayerName;
@@ -106,6 +110,26 @@ namespace Visualizer {
 	private: System::Windows::Forms::Button^  buttonRoom13Explosion;
 	private: System::Windows::Forms::Button^  buttonRoom14Explosion;
 	private: System::Windows::Forms::Button^  buttonRoom0Explosion;
+
+	private: System::Windows::Forms::GroupBox^  groupBoxKernel;
+	private: System::Windows::Forms::TextBox^  KernelParamBatteryLevel;
+	private: System::Windows::Forms::Label^  KernelLabel5;
+	private: System::Windows::Forms::TextBox^  KernelParamRadioLevel;
+	private: System::Windows::Forms::Label^  KernelLabel4;
+	private: System::Windows::Forms::TextBox^  KernelParamTime;
+	private: System::Windows::Forms::Label^  KernelLabel3;
+	private: System::Windows::Forms::TextBox^  KernelParamLustraId;
+	private: System::Windows::Forms::Label^  KernelLabel2;
+	private: System::Windows::Forms::TextBox^  KernelParamArmletId;
+	private: System::Windows::Forms::Label^  KernelLabel1;
+
+	private: System::Windows::Forms::GroupBox^  groupBoxExplosionType;
+	private: System::Windows::Forms::RadioButton^  radioButtonExplosion2;
+	private: System::Windows::Forms::RadioButton^  radioButtonExplosion1;
+	private: System::Windows::Forms::RadioButton^  radioButtonExplosion0;
+	private: System::Windows::Forms::NumericUpDown^  numericUpDownExplosionProbability;
+	private: System::Windows::Forms::RadioButton^  radioButtonExplosion3;
+	private: System::Windows::Forms::Label^  ExplosionProbabilityLabel;
 	//TAB PAGE 4
 	private: System::Windows::Forms::GroupBox^  groupBoxPills;
 	private: System::Windows::Forms::RadioButton^  radioButtonCure14;
@@ -128,6 +152,27 @@ namespace Visualizer {
 	private: System::Windows::Forms::Button^  buttonNextMedTick;
 	private: System::Windows::Forms::Button^  buttonConnectPill;
 	//TAB PAGE 5
+	private: System::Windows::Forms::GroupBox^  groupBoxPills2;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture26;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture25;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture24;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture23;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture22;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture21;
+	private: System::Windows::Forms::RadioButton^  radioButtonTorture20;
+	private: System::Windows::Forms::Label^  labelPills2Charges;
+	private: System::Windows::Forms::NumericUpDown^  numericUpDownPills2Charges;
+	private: System::Windows::Forms::Button^  buttonConnectPill2;
+	private: System::Windows::Forms::Button^  buttonNextMedTick2;
+	private: System::Windows::Forms::TextBox^  ParamValue4;
+	private: System::Windows::Forms::Label^  ParamLabel4;
+	private: System::Windows::Forms::TextBox^  ParamValue3;
+	private: System::Windows::Forms::Label^  ParamLabel3;
+	private: System::Windows::Forms::TextBox^  ParamValue2;
+	private: System::Windows::Forms::Label^  ParamLabel2;
+	private: System::Windows::Forms::TextBox^  ParamValue1;
+	private: System::Windows::Forms::Label^  ParamLabel1;	
+	//TAB PAGE 6
 	private: System::Windows::Forms::TextBox^  LogWindow;
 
 	private: System::ComponentModel::IContainer^  components;
@@ -138,6 +183,9 @@ namespace Visualizer {
 		/// </summary>
 		bool bKeysToButtons;
 		int currCure;
+		int currTorture;
+		int currExplosionType;
+		int last_mins;
 		bool bVibrating;
 		bool bVibratingReverseDirection;
 		 int RemainignVibrationTicks;
@@ -152,6 +200,11 @@ namespace Visualizer {
 				return;
 			numericUpDownPillsCharges->Value = charges;
 		}
+		void UpdateCurrentTortureCharges(int charges) {
+			if ((charges < 0)||(charges>99))
+				return;
+			numericUpDownPills2Charges->Value = charges;
+		}
 	public:
 		void Vibro() {
 			bVibrating = true;
@@ -159,6 +212,9 @@ namespace Visualizer {
 		}
 		void UpdateCurrentCure() {
 			UpdateCurrentCureCharges(KernelApi::GetPillCharges(currCure));
+		}
+		void UpdateCurrentTorture() {
+			UpdateCurrentTortureCharges(KernelApi::GetPillCharges(currTorture));
 		}
 		void Log(String^ message) {
 			LogWindow->Text += (message + "\r\n");
@@ -169,13 +225,13 @@ namespace Visualizer {
 			String^ message = gcnew String(msg);
 			Log(message);
 		}
-		void SetCureName(int cure_id, char* _name)
+		void SetPillName(int pill_id, char* _name)
 		{
 			String^ name = gcnew String(_name);
-			SetCureName(cure_id, name);
+			SetPillName(pill_id, name);
 		}
-		void SetCureName(int cure_id, String^ name) {
-			switch (cure_id) {
+		void SetPillName(int pill_id, String^ name) {
+			switch (pill_id) {
 				case 0:
 					radioButtonCure0->Text = name;
 					break;
@@ -221,7 +277,48 @@ namespace Visualizer {
 				case 14:
 					radioButtonCure14->Text = name;
 					break;
+				case 20:
+					radioButtonTorture20->Text = name;
+					break;
+				case 21:
+					radioButtonTorture21->Text = name;
+					break;
+				case 22:
+					radioButtonTorture22->Text = name;
+					break;
+				case 23:
+					radioButtonTorture23->Text = name;
+					break;
+				case 24:
+					radioButtonTorture24->Text = name;
+					break;
+				case 25:
+					radioButtonTorture25->Text = name;
+					break;
+				case 26:
+					radioButtonTorture26->Text = name;
+					break;
 			}
+		}
+		void UpdateKernel(int armlet_id, int lustra_id, int battery_level,
+			int gate_id, int signal_level, int hours, int minutes, int uptime)
+		{
+			KernelParamArmletId->Text = armlet_id.ToString();	
+			KernelParamLustraId->Text = lustra_id.ToString();
+			KernelParamBatteryLevel->Text = battery_level.ToString();
+			KernelParamRadioLevel->Text = String::Format("G{0}:Db{1}",gate_id,signal_level);	
+			KernelParamTime->Text = String::Format("{0}:{1}/{2}",hours,minutes,uptime);
+			if (minutes!=last_mins) {
+				Callouts::NewTime(hours,minutes);
+				last_mins = minutes;
+			}
+		}
+		void UpdateAppState(int blood, int toxins, int pulse, int temperature)
+		{
+			ParamValue1->Text = blood.ToString();			//BloodCapacity
+			ParamValue2->Text = toxins.ToString();			//ToxinsCapacity
+			ParamValue3->Text = pulse.ToString();			//Pulse
+			ParamValue4->Text = (30+temperature/10).ToString();	//Temperature
 		}
 
 #pragma region Windows Form Designer generated code
@@ -265,7 +362,25 @@ namespace Visualizer {
 			this->checkBoxLock2 = (gcnew System::Windows::Forms::CheckBox());
 			this->checkBoxLock1 = (gcnew System::Windows::Forms::CheckBox());
 			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
+			this->groupBoxExplosionType = (gcnew System::Windows::Forms::GroupBox());
+			this->radioButtonExplosion3 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonExplosion2 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonExplosion1 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonExplosion0 = (gcnew System::Windows::Forms::RadioButton());
+			this->groupBoxKernel = (gcnew System::Windows::Forms::GroupBox());
+			this->KernelParamLustraId = (gcnew System::Windows::Forms::TextBox());
+			this->KernelLabel2 = (gcnew System::Windows::Forms::Label());
+			this->KernelParamBatteryLevel = (gcnew System::Windows::Forms::TextBox());
+			this->KernelLabel5 = (gcnew System::Windows::Forms::Label());
+			this->KernelParamTime = (gcnew System::Windows::Forms::TextBox());
+			this->KernelLabel3 = (gcnew System::Windows::Forms::Label());
+			this->KernelParamRadioLevel = (gcnew System::Windows::Forms::TextBox());
+			this->KernelLabel4 = (gcnew System::Windows::Forms::Label());
+			this->KernelParamArmletId = (gcnew System::Windows::Forms::TextBox());
+			this->KernelLabel1 = (gcnew System::Windows::Forms::Label());
 			this->groupBoxRooms = (gcnew System::Windows::Forms::GroupBox());
+			this->ExplosionProbabilityLabel = (gcnew System::Windows::Forms::Label());
+			this->numericUpDownExplosionProbability = (gcnew System::Windows::Forms::NumericUpDown());
 			this->radioButtonLustra15 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButtonLustra12 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButtonLustra14 = (gcnew System::Windows::Forms::RadioButton());
@@ -298,6 +413,27 @@ namespace Visualizer {
 			this->numericUpDownPillsCharges = (gcnew System::Windows::Forms::NumericUpDown());
 			this->buttonConnectPill = (gcnew System::Windows::Forms::Button());
 			this->tabPage5 = (gcnew System::Windows::Forms::TabPage());
+			this->groupBoxPills2 = (gcnew System::Windows::Forms::GroupBox());
+			this->ParamValue4 = (gcnew System::Windows::Forms::TextBox());
+			this->ParamLabel4 = (gcnew System::Windows::Forms::Label());
+			this->ParamValue3 = (gcnew System::Windows::Forms::TextBox());
+			this->ParamLabel3 = (gcnew System::Windows::Forms::Label());
+			this->ParamValue2 = (gcnew System::Windows::Forms::TextBox());
+			this->ParamLabel2 = (gcnew System::Windows::Forms::Label());
+			this->ParamValue1 = (gcnew System::Windows::Forms::TextBox());
+			this->ParamLabel1 = (gcnew System::Windows::Forms::Label());
+			this->buttonNextMedTick2 = (gcnew System::Windows::Forms::Button());
+			this->radioButtonTorture26 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture25 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture24 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture23 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture22 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture21 = (gcnew System::Windows::Forms::RadioButton());
+			this->radioButtonTorture20 = (gcnew System::Windows::Forms::RadioButton());
+			this->labelPills2Charges = (gcnew System::Windows::Forms::Label());
+			this->numericUpDownPills2Charges = (gcnew System::Windows::Forms::NumericUpDown());
+			this->buttonConnectPill2 = (gcnew System::Windows::Forms::Button());
+			this->tabPage6 = (gcnew System::Windows::Forms::TabPage());
 			this->LogWindow = (gcnew System::Windows::Forms::TextBox());
 			this->groupBoxMain->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->Screen))->BeginInit();
@@ -308,11 +444,17 @@ namespace Visualizer {
 			this->tabPage2->SuspendLayout();
 			this->groupBoxLocks->SuspendLayout();
 			this->tabPage3->SuspendLayout();
+			this->groupBoxExplosionType->SuspendLayout();
+			this->groupBoxKernel->SuspendLayout();
 			this->groupBoxRooms->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDownExplosionProbability))->BeginInit();
 			this->tabPage4->SuspendLayout();
 			this->groupBoxPills->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDownPillsCharges))->BeginInit();
 			this->tabPage5->SuspendLayout();
+			this->groupBoxPills2->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDownPills2Charges))->BeginInit();
+			this->tabPage6->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// timerRender
@@ -544,6 +686,7 @@ namespace Visualizer {
 			this->tabControl1->Controls->Add(this->tabPage3);
 			this->tabControl1->Controls->Add(this->tabPage4);
 			this->tabControl1->Controls->Add(this->tabPage5);
+			this->tabControl1->Controls->Add(this->tabPage6);
 			this->tabControl1->Location = System::Drawing::Point(12, 256);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 4;
@@ -766,6 +909,8 @@ namespace Visualizer {
 			// 
 			// tabPage3
 			// 
+			this->tabPage3->Controls->Add(this->groupBoxExplosionType);
+			this->tabPage3->Controls->Add(this->groupBoxKernel);
 			this->tabPage3->Controls->Add(this->groupBoxRooms);
 			this->tabPage3->Location = System::Drawing::Point(4, 24);
 			this->tabPage3->Name = L"tabPage3";
@@ -775,8 +920,174 @@ namespace Visualizer {
 			this->tabPage3->Text = L"Отсеки";
 			this->tabPage3->UseVisualStyleBackColor = true;
 			// 
+			// groupBoxExplosionType
+			// 
+			this->groupBoxExplosionType->Controls->Add(this->radioButtonExplosion3);
+			this->groupBoxExplosionType->Controls->Add(this->radioButtonExplosion2);
+			this->groupBoxExplosionType->Controls->Add(this->radioButtonExplosion1);
+			this->groupBoxExplosionType->Controls->Add(this->radioButtonExplosion0);
+			this->groupBoxExplosionType->Location = System::Drawing::Point(246, 126);
+			this->groupBoxExplosionType->Name = L"groupBoxExplosionType";
+			this->groupBoxExplosionType->Size = System::Drawing::Size(161, 112);
+			this->groupBoxExplosionType->TabIndex = 2;
+			this->groupBoxExplosionType->TabStop = false;
+			this->groupBoxExplosionType->Text = L"Тип взрыва";
+			// 
+			// radioButtonExplosion3
+			// 
+			this->radioButtonExplosion3->AutoSize = true;
+			this->radioButtonExplosion3->Location = System::Drawing::Point(6, 87);
+			this->radioButtonExplosion3->Name = L"radioButtonExplosion3";
+			this->radioButtonExplosion3->Size = System::Drawing::Size(82, 19);
+			this->radioButtonExplosion3->TabIndex = 4;
+			this->radioButtonExplosion3->Text = L"Радиация";
+			this->radioButtonExplosion3->UseVisualStyleBackColor = true;
+			this->radioButtonExplosion3->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonExplosion3_CheckedChanged);
+			// 
+			// radioButtonExplosion2
+			// 
+			this->radioButtonExplosion2->AutoSize = true;
+			this->radioButtonExplosion2->Location = System::Drawing::Point(6, 66);
+			this->radioButtonExplosion2->Name = L"radioButtonExplosion2";
+			this->radioButtonExplosion2->Size = System::Drawing::Size(99, 19);
+			this->radioButtonExplosion2->TabIndex = 3;
+			this->radioButtonExplosion2->Text = L"Термальный";
+			this->radioButtonExplosion2->UseVisualStyleBackColor = true;
+			this->radioButtonExplosion2->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonExplosion2_CheckedChanged);
+			// 
+			// radioButtonExplosion1
+			// 
+			this->radioButtonExplosion1->AutoSize = true;
+			this->radioButtonExplosion1->Location = System::Drawing::Point(6, 43);
+			this->radioButtonExplosion1->Name = L"radioButtonExplosion1";
+			this->radioButtonExplosion1->Size = System::Drawing::Size(113, 19);
+			this->radioButtonExplosion1->TabIndex = 2;
+			this->radioButtonExplosion1->Text = L"Ударная волна";
+			this->radioButtonExplosion1->UseVisualStyleBackColor = true;
+			this->radioButtonExplosion1->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonExplosion1_CheckedChanged);
+			// 
+			// radioButtonExplosion0
+			// 
+			this->radioButtonExplosion0->AutoSize = true;
+			this->radioButtonExplosion0->Checked = true;
+			this->radioButtonExplosion0->Location = System::Drawing::Point(6, 21);
+			this->radioButtonExplosion0->Name = L"radioButtonExplosion0";
+			this->radioButtonExplosion0->Size = System::Drawing::Size(88, 19);
+			this->radioButtonExplosion0->TabIndex = 1;
+			this->radioButtonExplosion0->TabStop = true;
+			this->radioButtonExplosion0->Text = L"Случайный";
+			this->radioButtonExplosion0->UseVisualStyleBackColor = true;
+			this->radioButtonExplosion0->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonExplosion0_CheckedChanged);
+			// 
+			// groupBoxKernel
+			// 
+			this->groupBoxKernel->Controls->Add(this->KernelParamLustraId);
+			this->groupBoxKernel->Controls->Add(this->KernelLabel2);
+			this->groupBoxKernel->Controls->Add(this->KernelParamBatteryLevel);
+			this->groupBoxKernel->Controls->Add(this->KernelLabel5);
+			this->groupBoxKernel->Controls->Add(this->KernelParamTime);
+			this->groupBoxKernel->Controls->Add(this->KernelLabel3);
+			this->groupBoxKernel->Controls->Add(this->KernelParamRadioLevel);
+			this->groupBoxKernel->Controls->Add(this->KernelLabel4);
+			this->groupBoxKernel->Controls->Add(this->KernelParamArmletId);
+			this->groupBoxKernel->Controls->Add(this->KernelLabel1);
+			this->groupBoxKernel->Location = System::Drawing::Point(0, 126);
+			this->groupBoxKernel->Name = L"groupBoxKernel";
+			this->groupBoxKernel->Size = System::Drawing::Size(239, 119);
+			this->groupBoxKernel->TabIndex = 1;
+			this->groupBoxKernel->TabStop = false;
+			this->groupBoxKernel->Text = L"Параметры ядра браслета";
+			// 
+			// KernelParamLustraId
+			// 
+			this->KernelParamLustraId->Location = System::Drawing::Point(76, 41);
+			this->KernelParamLustraId->Name = L"KernelParamLustraId";
+			this->KernelParamLustraId->ReadOnly = true;
+			this->KernelParamLustraId->Size = System::Drawing::Size(54, 21);
+			this->KernelParamLustraId->TabIndex = 39;
+			// 
+			// KernelLabel2
+			// 
+			this->KernelLabel2->AutoSize = true;
+			this->KernelLabel2->Location = System::Drawing::Point(73, 23);
+			this->KernelLabel2->Name = L"KernelLabel2";
+			this->KernelLabel2->Size = System::Drawing::Size(56, 15);
+			this->KernelLabel2->TabIndex = 38;
+			this->KernelLabel2->Text = L"Lustra ID";
+			// 
+			// KernelParamBatteryLevel
+			// 
+			this->KernelParamBatteryLevel->AcceptsReturn = true;
+			this->KernelParamBatteryLevel->Location = System::Drawing::Point(118, 88);
+			this->KernelParamBatteryLevel->Name = L"KernelParamBatteryLevel";
+			this->KernelParamBatteryLevel->ReadOnly = true;
+			this->KernelParamBatteryLevel->Size = System::Drawing::Size(100, 21);
+			this->KernelParamBatteryLevel->TabIndex = 37;
+			// 
+			// KernelLabel5
+			// 
+			this->KernelLabel5->AutoSize = true;
+			this->KernelLabel5->Location = System::Drawing::Point(115, 70);
+			this->KernelLabel5->Name = L"KernelLabel5";
+			this->KernelLabel5->Size = System::Drawing::Size(120, 15);
+			this->KernelLabel5->TabIndex = 36;
+			this->KernelLabel5->Text = L"УровеньБатарейки";
+			// 
+			// KernelParamTime
+			// 
+			this->KernelParamTime->Location = System::Drawing::Point(139, 41);
+			this->KernelParamTime->Name = L"KernelParamTime";
+			this->KernelParamTime->ReadOnly = true;
+			this->KernelParamTime->Size = System::Drawing::Size(79, 21);
+			this->KernelParamTime->TabIndex = 35;
+			// 
+			// KernelLabel3
+			// 
+			this->KernelLabel3->AutoSize = true;
+			this->KernelLabel3->Location = System::Drawing::Point(136, 23);
+			this->KernelLabel3->Name = L"KernelLabel3";
+			this->KernelLabel3->Size = System::Drawing::Size(45, 15);
+			this->KernelLabel3->TabIndex = 34;
+			this->KernelLabel3->Text = L"Время";
+			// 
+			// KernelParamRadioLevel
+			// 
+			this->KernelParamRadioLevel->Location = System::Drawing::Point(9, 88);
+			this->KernelParamRadioLevel->Name = L"KernelParamRadioLevel";
+			this->KernelParamRadioLevel->ReadOnly = true;
+			this->KernelParamRadioLevel->Size = System::Drawing::Size(100, 21);
+			this->KernelParamRadioLevel->TabIndex = 33;
+			// 
+			// KernelLabel4
+			// 
+			this->KernelLabel4->AutoSize = true;
+			this->KernelLabel4->Location = System::Drawing::Point(6, 70);
+			this->KernelLabel4->Name = L"KernelLabel4";
+			this->KernelLabel4->Size = System::Drawing::Size(106, 15);
+			this->KernelLabel4->TabIndex = 32;
+			this->KernelLabel4->Text = L"Уровень сигнала";
+			// 
+			// KernelParamArmletId
+			// 
+			this->KernelParamArmletId->Location = System::Drawing::Point(9, 41);
+			this->KernelParamArmletId->Name = L"KernelParamArmletId";
+			this->KernelParamArmletId->ReadOnly = true;
+			this->KernelParamArmletId->Size = System::Drawing::Size(54, 21);
+			this->KernelParamArmletId->TabIndex = 31;
+			// 
+			// KernelLabel1
+			// 
+			this->KernelLabel1->AutoSize = true;
+			this->KernelLabel1->Location = System::Drawing::Point(6, 23);
+			this->KernelLabel1->Name = L"KernelLabel1";
+			this->KernelLabel1->Size = System::Drawing::Size(57, 15);
+			this->KernelLabel1->TabIndex = 30;
+			this->KernelLabel1->Text = L"Armlet ID";
+			// 
 			// groupBoxRooms
 			// 
+			this->groupBoxRooms->Controls->Add(this->ExplosionProbabilityLabel);
+			this->groupBoxRooms->Controls->Add(this->numericUpDownExplosionProbability);
 			this->groupBoxRooms->Controls->Add(this->radioButtonLustra15);
 			this->groupBoxRooms->Controls->Add(this->radioButtonLustra12);
 			this->groupBoxRooms->Controls->Add(this->radioButtonLustra14);
@@ -789,10 +1100,29 @@ namespace Visualizer {
 			this->groupBoxRooms->Controls->Add(this->checkBoxNoLustra);
 			this->groupBoxRooms->Location = System::Drawing::Point(0, 0);
 			this->groupBoxRooms->Name = L"groupBoxRooms";
-			this->groupBoxRooms->Size = System::Drawing::Size(410, 238);
+			this->groupBoxRooms->Size = System::Drawing::Size(410, 124);
 			this->groupBoxRooms->TabIndex = 0;
 			this->groupBoxRooms->TabStop = false;
 			this->groupBoxRooms->Text = L"Люстра / Отсек";
+			// 
+			// ExplosionProbabilityLabel
+			// 
+			this->ExplosionProbabilityLabel->AutoSize = true;
+			this->ExplosionProbabilityLabel->Location = System::Drawing::Point(249, 101);
+			this->ExplosionProbabilityLabel->Name = L"ExplosionProbabilityLabel";
+			this->ExplosionProbabilityLabel->Size = System::Drawing::Size(87, 15);
+			this->ExplosionProbabilityLabel->TabIndex = 19;
+			this->ExplosionProbabilityLabel->Text = L"Вероятность:";
+			// 
+			// numericUpDownExplosionProbability
+			// 
+			this->numericUpDownExplosionProbability->Location = System::Drawing::Point(345, 99);
+			this->numericUpDownExplosionProbability->Name = L"numericUpDownExplosionProbability";
+			this->numericUpDownExplosionProbability->Size = System::Drawing::Size(55, 21);
+			this->numericUpDownExplosionProbability->TabIndex = 0;
+			this->numericUpDownExplosionProbability->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {50, 0, 0, 0});
+			this->numericUpDownExplosionProbability->Leave += gcnew System::EventHandler(this, &MainForm::numericUpDownExplosionProbability_Leave);
+			this->numericUpDownExplosionProbability->Enter += gcnew System::EventHandler(this, &MainForm::numericUpDownExplosionProbability_Enter);
 			// 
 			// radioButtonLustra15
 			// 
@@ -892,14 +1222,14 @@ namespace Visualizer {
 			this->buttonRoom0Explosion->Name = L"buttonRoom0Explosion";
 			this->buttonRoom0Explosion->Size = System::Drawing::Size(142, 23);
 			this->buttonRoom0Explosion->TabIndex = 11;
-			this->buttonRoom0Explosion->Text = L" Взрыв в отсеке 0";
+			this->buttonRoom0Explosion->Text = L" Взрыв в отсеке 15";
 			this->buttonRoom0Explosion->UseVisualStyleBackColor = true;
 			this->buttonRoom0Explosion->Click += gcnew System::EventHandler(this, &MainForm::buttonRoom0Explosion_Click);
 			// 
 			// checkBoxNoLustra
 			// 
 			this->checkBoxNoLustra->AutoSize = true;
-			this->checkBoxNoLustra->Location = System::Drawing::Point(15, 137);
+			this->checkBoxNoLustra->Location = System::Drawing::Point(15, 100);
 			this->checkBoxNoLustra->Name = L"checkBoxNoLustra";
 			this->checkBoxNoLustra->Size = System::Drawing::Size(177, 19);
 			this->checkBoxNoLustra->TabIndex = 10;
@@ -915,7 +1245,7 @@ namespace Visualizer {
 			this->tabPage4->Padding = System::Windows::Forms::Padding(3);
 			this->tabPage4->Size = System::Drawing::Size(410, 243);
 			this->tabPage4->TabIndex = 3;
-			this->tabPage4->Text = L"Пилюли";
+			this->tabPage4->Text = L"Лекарства";
 			this->tabPage4->UseVisualStyleBackColor = true;
 			// 
 			// groupBoxPills
@@ -1153,6 +1483,7 @@ namespace Visualizer {
 			this->numericUpDownPillsCharges->Size = System::Drawing::Size(54, 21);
 			this->numericUpDownPillsCharges->TabIndex = 12;
 			this->numericUpDownPillsCharges->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {50, 0, 0, 0});
+			this->numericUpDownPillsCharges->ValueChanged += gcnew System::EventHandler(this, &MainForm::numericUpDownPillsCharges_ValueChanged);
 			this->numericUpDownPillsCharges->Leave += gcnew System::EventHandler(this, &MainForm::numericUpDownPillsCharges_Leave);
 			this->numericUpDownPillsCharges->Enter += gcnew System::EventHandler(this, &MainForm::numericUpDownPillsCharges_Enter);
 			// 
@@ -1168,14 +1499,246 @@ namespace Visualizer {
 			// 
 			// tabPage5
 			// 
-			this->tabPage5->Controls->Add(this->LogWindow);
+			this->tabPage5->Controls->Add(this->groupBoxPills2);
 			this->tabPage5->Location = System::Drawing::Point(4, 22);
 			this->tabPage5->Name = L"tabPage5";
 			this->tabPage5->Padding = System::Windows::Forms::Padding(3);
 			this->tabPage5->Size = System::Drawing::Size(410, 243);
-			this->tabPage5->TabIndex = 4;
-			this->tabPage5->Text = L"Log";
+			this->tabPage5->TabIndex = 5;
+			this->tabPage5->Text = L"Пытки и Параметры";
 			this->tabPage5->UseVisualStyleBackColor = true;
+			// 
+			// groupBoxPills2
+			// 
+			this->groupBoxPills2->Controls->Add(this->ParamValue4);
+			this->groupBoxPills2->Controls->Add(this->ParamLabel4);
+			this->groupBoxPills2->Controls->Add(this->ParamValue3);
+			this->groupBoxPills2->Controls->Add(this->ParamLabel3);
+			this->groupBoxPills2->Controls->Add(this->ParamValue2);
+			this->groupBoxPills2->Controls->Add(this->ParamLabel2);
+			this->groupBoxPills2->Controls->Add(this->ParamValue1);
+			this->groupBoxPills2->Controls->Add(this->ParamLabel1);
+			this->groupBoxPills2->Controls->Add(this->buttonNextMedTick2);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture26);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture25);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture24);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture23);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture22);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture21);
+			this->groupBoxPills2->Controls->Add(this->radioButtonTorture20);
+			this->groupBoxPills2->Controls->Add(this->labelPills2Charges);
+			this->groupBoxPills2->Controls->Add(this->numericUpDownPills2Charges);
+			this->groupBoxPills2->Controls->Add(this->buttonConnectPill2);
+			this->groupBoxPills2->Location = System::Drawing::Point(7, 7);
+			this->groupBoxPills2->Name = L"groupBoxPills2";
+			this->groupBoxPills2->Size = System::Drawing::Size(397, 228);
+			this->groupBoxPills2->TabIndex = 0;
+			this->groupBoxPills2->TabStop = false;
+			this->groupBoxPills2->Text = L"Пилюли пыток / Заряды";
+			// 
+			// ParamValue4
+			// 
+			this->ParamValue4->Location = System::Drawing::Point(263, 150);
+			this->ParamValue4->Name = L"ParamValue4";
+			this->ParamValue4->ReadOnly = true;
+			this->ParamValue4->Size = System::Drawing::Size(100, 21);
+			this->ParamValue4->TabIndex = 35;
+			// 
+			// ParamLabel4
+			// 
+			this->ParamLabel4->AutoSize = true;
+			this->ParamLabel4->Location = System::Drawing::Point(260, 132);
+			this->ParamLabel4->Name = L"ParamLabel4";
+			this->ParamLabel4->Size = System::Drawing::Size(84, 15);
+			this->ParamLabel4->TabIndex = 34;
+			this->ParamLabel4->Text = L"Температура";
+			// 
+			// ParamValue3
+			// 
+			this->ParamValue3->Location = System::Drawing::Point(263, 110);
+			this->ParamValue3->Name = L"ParamValue3";
+			this->ParamValue3->ReadOnly = true;
+			this->ParamValue3->Size = System::Drawing::Size(100, 21);
+			this->ParamValue3->TabIndex = 33;
+			// 
+			// ParamLabel3
+			// 
+			this->ParamLabel3->AutoSize = true;
+			this->ParamLabel3->Location = System::Drawing::Point(260, 92);
+			this->ParamLabel3->Name = L"ParamLabel3";
+			this->ParamLabel3->Size = System::Drawing::Size(41, 15);
+			this->ParamLabel3->TabIndex = 32;
+			this->ParamLabel3->Text = L"Пульс";
+			// 
+			// ParamValue2
+			// 
+			this->ParamValue2->Location = System::Drawing::Point(263, 69);
+			this->ParamValue2->Name = L"ParamValue2";
+			this->ParamValue2->ReadOnly = true;
+			this->ParamValue2->Size = System::Drawing::Size(100, 21);
+			this->ParamValue2->TabIndex = 31;
+			// 
+			// ParamLabel2
+			// 
+			this->ParamLabel2->AutoSize = true;
+			this->ParamLabel2->Location = System::Drawing::Point(260, 51);
+			this->ParamLabel2->Name = L"ParamLabel2";
+			this->ParamLabel2->Size = System::Drawing::Size(104, 15);
+			this->ParamLabel2->TabIndex = 30;
+			this->ParamLabel2->Text = L"Кол-во токсинов";
+			// 
+			// ParamValue1
+			// 
+			this->ParamValue1->Location = System::Drawing::Point(263, 28);
+			this->ParamValue1->Name = L"ParamValue1";
+			this->ParamValue1->ReadOnly = true;
+			this->ParamValue1->Size = System::Drawing::Size(100, 21);
+			this->ParamValue1->TabIndex = 29;
+			// 
+			// ParamLabel1
+			// 
+			this->ParamLabel1->AutoSize = true;
+			this->ParamLabel1->Location = System::Drawing::Point(260, 10);
+			this->ParamLabel1->Name = L"ParamLabel1";
+			this->ParamLabel1->Size = System::Drawing::Size(84, 15);
+			this->ParamLabel1->TabIndex = 28;
+			this->ParamLabel1->Text = L"Кол-во крови";
+			// 
+			// buttonNextMedTick2
+			// 
+			this->buttonNextMedTick2->Location = System::Drawing::Point(19, 195);
+			this->buttonNextMedTick2->Name = L"buttonNextMedTick2";
+			this->buttonNextMedTick2->Size = System::Drawing::Size(146, 23);
+			this->buttonNextMedTick2->TabIndex = 27;
+			this->buttonNextMedTick2->Text = L"Next Med Tick";
+			this->buttonNextMedTick2->UseVisualStyleBackColor = true;
+			this->buttonNextMedTick2->Click += gcnew System::EventHandler(this, &MainForm::buttonNextMedTick2_Click);
+			// 
+			// radioButtonTorture26
+			// 
+			this->radioButtonTorture26->AutoSize = true;
+			this->radioButtonTorture26->Location = System::Drawing::Point(6, 170);
+			this->radioButtonTorture26->Name = L"radioButtonTorture26";
+			this->radioButtonTorture26->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture26->TabIndex = 23;
+			this->radioButtonTorture26->TabStop = true;
+			this->radioButtonTorture26->Text = L"Пытка 26";
+			this->radioButtonTorture26->UseVisualStyleBackColor = true;
+			this->radioButtonTorture26->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture26_CheckedChanged);
+			// 
+			// radioButtonTorture25
+			// 
+			this->radioButtonTorture25->AutoSize = true;
+			this->radioButtonTorture25->Location = System::Drawing::Point(7, 146);
+			this->radioButtonTorture25->Name = L"radioButtonTorture25";
+			this->radioButtonTorture25->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture25->TabIndex = 22;
+			this->radioButtonTorture25->TabStop = true;
+			this->radioButtonTorture25->Text = L"Пытка 25";
+			this->radioButtonTorture25->UseVisualStyleBackColor = true;
+			this->radioButtonTorture25->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture25_CheckedChanged);
+			// 
+			// radioButtonTorture24
+			// 
+			this->radioButtonTorture24->AutoSize = true;
+			this->radioButtonTorture24->Location = System::Drawing::Point(7, 121);
+			this->radioButtonTorture24->Name = L"radioButtonTorture24";
+			this->radioButtonTorture24->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture24->TabIndex = 21;
+			this->radioButtonTorture24->TabStop = true;
+			this->radioButtonTorture24->Text = L"Пытка 24";
+			this->radioButtonTorture24->UseVisualStyleBackColor = true;
+			this->radioButtonTorture24->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture24_CheckedChanged);
+			// 
+			// radioButtonTorture23
+			// 
+			this->radioButtonTorture23->AutoSize = true;
+			this->radioButtonTorture23->Location = System::Drawing::Point(7, 96);
+			this->radioButtonTorture23->Name = L"radioButtonTorture23";
+			this->radioButtonTorture23->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture23->TabIndex = 20;
+			this->radioButtonTorture23->TabStop = true;
+			this->radioButtonTorture23->Text = L"Пытка 23";
+			this->radioButtonTorture23->UseVisualStyleBackColor = true;
+			this->radioButtonTorture23->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture23_CheckedChanged);
+			// 
+			// radioButtonTorture22
+			// 
+			this->radioButtonTorture22->AutoSize = true;
+			this->radioButtonTorture22->Location = System::Drawing::Point(7, 71);
+			this->radioButtonTorture22->Name = L"radioButtonTorture22";
+			this->radioButtonTorture22->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture22->TabIndex = 19;
+			this->radioButtonTorture22->TabStop = true;
+			this->radioButtonTorture22->Text = L"Пытка 22";
+			this->radioButtonTorture22->UseVisualStyleBackColor = true;
+			this->radioButtonTorture22->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture22_CheckedChanged);
+			// 
+			// radioButtonTorture21
+			// 
+			this->radioButtonTorture21->AutoSize = true;
+			this->radioButtonTorture21->Location = System::Drawing::Point(7, 46);
+			this->radioButtonTorture21->Name = L"radioButtonTorture21";
+			this->radioButtonTorture21->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture21->TabIndex = 18;
+			this->radioButtonTorture21->TabStop = true;
+			this->radioButtonTorture21->Text = L"Пытка 21";
+			this->radioButtonTorture21->UseVisualStyleBackColor = true;
+			this->radioButtonTorture21->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture21_CheckedChanged);
+			// 
+			// radioButtonTorture20
+			// 
+			this->radioButtonTorture20->AutoSize = true;
+			this->radioButtonTorture20->Location = System::Drawing::Point(7, 21);
+			this->radioButtonTorture20->Name = L"radioButtonTorture20";
+			this->radioButtonTorture20->Size = System::Drawing::Size(80, 19);
+			this->radioButtonTorture20->TabIndex = 17;
+			this->radioButtonTorture20->TabStop = true;
+			this->radioButtonTorture20->Text = L"Пытка 20";
+			this->radioButtonTorture20->UseVisualStyleBackColor = true;
+			this->radioButtonTorture20->CheckedChanged += gcnew System::EventHandler(this, &MainForm::radioButtonTorture20_CheckedChanged);
+			// 
+			// labelPills2Charges
+			// 
+			this->labelPills2Charges->AutoSize = true;
+			this->labelPills2Charges->Location = System::Drawing::Point(260, 174);
+			this->labelPills2Charges->Name = L"labelPills2Charges";
+			this->labelPills2Charges->Size = System::Drawing::Size(131, 15);
+			this->labelPills2Charges->TabIndex = 16;
+			this->labelPills2Charges->Text = L"Число зарядов {0..99}";
+			// 
+			// numericUpDownPills2Charges
+			// 
+			this->numericUpDownPills2Charges->Location = System::Drawing::Point(337, 197);
+			this->numericUpDownPills2Charges->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {99, 0, 0, 0});
+			this->numericUpDownPills2Charges->Name = L"numericUpDownPills2Charges";
+			this->numericUpDownPills2Charges->Size = System::Drawing::Size(54, 21);
+			this->numericUpDownPills2Charges->TabIndex = 15;
+			this->numericUpDownPills2Charges->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {50, 0, 0, 0});
+			this->numericUpDownPills2Charges->ValueChanged += gcnew System::EventHandler(this, &MainForm::numericUpDownPills2Charges_ValueChanged);
+			this->numericUpDownPills2Charges->Leave += gcnew System::EventHandler(this, &MainForm::numericUpDownPills2Charges_Leave);
+			this->numericUpDownPills2Charges->Enter += gcnew System::EventHandler(this, &MainForm::numericUpDownPills2Charges_Enter);
+			// 
+			// buttonConnectPill2
+			// 
+			this->buttonConnectPill2->Location = System::Drawing::Point(185, 195);
+			this->buttonConnectPill2->Name = L"buttonConnectPill2";
+			this->buttonConnectPill2->Size = System::Drawing::Size(146, 23);
+			this->buttonConnectPill2->TabIndex = 14;
+			this->buttonConnectPill2->Text = L"Connect Pill";
+			this->buttonConnectPill2->UseVisualStyleBackColor = true;
+			this->buttonConnectPill2->Click += gcnew System::EventHandler(this, &MainForm::buttonConnectPill2_Click);
+			// 
+			// tabPage6
+			// 
+			this->tabPage6->Controls->Add(this->LogWindow);
+			this->tabPage6->Location = System::Drawing::Point(4, 22);
+			this->tabPage6->Name = L"tabPage6";
+			this->tabPage6->Padding = System::Windows::Forms::Padding(3);
+			this->tabPage6->Size = System::Drawing::Size(410, 243);
+			this->tabPage6->TabIndex = 4;
+			this->tabPage6->Text = L"Log";
+			this->tabPage6->UseVisualStyleBackColor = true;
 			// 
 			// LogWindow
 			// 
@@ -1222,14 +1785,23 @@ namespace Visualizer {
 			this->groupBoxLocks->ResumeLayout(false);
 			this->groupBoxLocks->PerformLayout();
 			this->tabPage3->ResumeLayout(false);
+			this->groupBoxExplosionType->ResumeLayout(false);
+			this->groupBoxExplosionType->PerformLayout();
+			this->groupBoxKernel->ResumeLayout(false);
+			this->groupBoxKernel->PerformLayout();
 			this->groupBoxRooms->ResumeLayout(false);
 			this->groupBoxRooms->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDownExplosionProbability))->EndInit();
 			this->tabPage4->ResumeLayout(false);
 			this->groupBoxPills->ResumeLayout(false);
 			this->groupBoxPills->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDownPillsCharges))->EndInit();
 			this->tabPage5->ResumeLayout(false);
-			this->tabPage5->PerformLayout();
+			this->groupBoxPills2->ResumeLayout(false);
+			this->groupBoxPills2->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->numericUpDownPills2Charges))->EndInit();
+			this->tabPage6->ResumeLayout(false);
+			this->tabPage6->PerformLayout();
 			this->ResumeLayout(false);
 
 		}
@@ -1241,6 +1813,7 @@ private: System::Void MainForm_Load(System::Object^  sender, System::EventArgs^ 
 private: System::Void MainForm_Shown(System::Object^  sender, System::EventArgs^  e) {
 			 Callouts::ArmletMain();
 		 }
+
 //TIMER - main output event
 private: System::Void Render_Tick(System::Object^  sender, System::EventArgs^  e) {
 			 FormHelper::RenderScreen();
@@ -1259,11 +1832,13 @@ private: System::Void Render_Tick(System::Object^  sender, System::EventArgs^  e
 					bVibrating = false;
 			 }
 		 }
+
 //LOG fix
 private: System::Void LogWindow_VisibleChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (LogWindow->Visible)
 				 ScrollLogToEnd();
 		 }
+
 //check ACTIVE CONTROL to disable BUTTONS accelerator keys
 private: System::Void textBoxPlayerName_Enter(System::Object^  sender, System::EventArgs^  e) {
 			 bKeysToButtons = false;
@@ -1283,6 +1858,19 @@ private: System::Void numericUpDownPillsCharges_Enter(System::Object^  sender, S
 private: System::Void numericUpDownPillsCharges_Leave(System::Object^  sender, System::EventArgs^  e) {
 			 bKeysToButtons = true;
 		 }
+private: System::Void numericUpDownPills2Charges_Enter(System::Object^  sender, System::EventArgs^  e) {
+			 bKeysToButtons = false;
+		 }
+private: System::Void numericUpDownPills2Charges_Leave(System::Object^  sender, System::EventArgs^  e) {
+			 bKeysToButtons = true;
+		 }	 
+private: System::Void numericUpDownExplosionProbability_Enter(System::Object^  sender, System::EventArgs^  e) {
+			 bKeysToButtons = false;
+		 }
+private: System::Void numericUpDownExplosionProbability_Leave(System::Object^  sender, System::EventArgs^  e) {
+			 bKeysToButtons = true;
+		 }
+
 //BUTTONS and BUTTONS accelerator keys (Press/Release)
 private: System::Void MainForm_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 			 if (bKeysToButtons) 
@@ -1354,6 +1942,7 @@ private: System::Void buttonR_MouseUp(System::Object^  sender, System::Windows::
 private: System::Void buttonR_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 			 Callouts::OnButtonPress(BUTTON_R);
 		 }
+
 //REGENERATION LEVEL
 private: System::Void radioButtonRegenerationLevel1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			bool b = radioButtonRegenerationLevel1->Checked;
@@ -1370,14 +1959,17 @@ private: System::Void radioButtonRegenerationLevel3_CheckedChanged(System::Objec
  			if (b)
 				Callouts::SetRegenerationLevel(3);
 		 }
+
 //PLAYER NAME
 private: System::Void buttonSetPlayerName_Click(System::Object^  sender, System::EventArgs^  e) {
 			 FormHelper::SetPlayerName(textBoxPlayerName->Text);
 		 }
+
 //SEND MESSAGE
 private: System::Void buttonServerMessage_Click(System::Object^  sender, System::EventArgs^  e) {
 			 FormHelper::SendMessage(textBoxServerMessage->Text);
 		 }
+
 //LOCKS
 private: System::Void checkBoxLock1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			Callouts::SetLockAccess(1,checkBoxLock1->Checked);
@@ -1408,6 +2000,7 @@ private: System::Void radioButtonLockNo_CheckedChanged(System::Object^  sender, 
  			if (b)
 				KernelApi::SetCurrentLock(0);
 		 }
+
 //ROOMS
 private: System::Void radioButtonLustra10_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 bool b = radioButtonLustra10->Checked;
@@ -1448,16 +2041,35 @@ private: System::Void radioButtonLustra15_CheckedChanged(System::Object^  sender
 private: System::Void checkBoxNoLustra_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 				KernelApi::LustraInRange(!checkBoxNoLustra->Checked);
 		 }
+
+//EXPLOSIONS
 private: System::Void buttonRoom13Explosion_Click(System::Object^  sender, System::EventArgs^  e) {
-			 Callouts::Explosion(13);
+			 Callouts::Explosion(13,(int)numericUpDownExplosionProbability->Value,currExplosionType);
 		 }
 private: System::Void buttonRoom14Explosion_Click(System::Object^  sender, System::EventArgs^  e) {
-			 Callouts::Explosion(14);
+			 Callouts::Explosion(14,(int)numericUpDownExplosionProbability->Value,currExplosionType);
 		 }
 private: System::Void buttonRoom0Explosion_Click(System::Object^  sender, System::EventArgs^  e) {
-			 Callouts::Explosion(0);
+			 Callouts::Explosion(15,(int)numericUpDownExplosionProbability->Value,currExplosionType);
 		 }
-//PILLS(CURES)
+private: System::Void radioButtonExplosion0_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonExplosion0->Checked)
+				 currExplosionType = 0;
+		 }
+private: System::Void radioButtonExplosion1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonExplosion1->Checked)
+				 currExplosionType = 1;
+		 }
+private: System::Void radioButtonExplosion2_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonExplosion2->Checked)
+				 currExplosionType = 2;
+		 }
+private: System::Void radioButtonExplosion3_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonExplosion3->Checked)
+				 currExplosionType = 3;
+		 }
+	 
+//PILLS(CURES & TORTURES)
 private: System::Void radioButtonCure0_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if (radioButtonCure0->Checked)
 				 currCure = 0;
@@ -1540,6 +2152,57 @@ private: System::Void buttonConnectPill_Click(System::Object^  sender, System::E
 		 }
 private: System::Void buttonNextMedTick_Click(System::Object^  sender, System::EventArgs^  e) {
 			 Callouts::NextMedTick();
+		 }
+private: System::Void radioButtonTorture20_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture20->Checked)
+				currTorture = 20;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture21_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture21->Checked)
+				currTorture = 21;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture22_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture22->Checked)
+				currTorture = 22;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture23_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture23->Checked)
+				currTorture = 23;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture24_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture24->Checked)
+				currTorture = 24;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture25_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture25->Checked)
+				currTorture = 25;
+			UpdateCurrentTorture();
+		 }
+private: System::Void radioButtonTorture26_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+			if (radioButtonTorture26->Checked)
+				currTorture = 26;
+			UpdateCurrentTorture();
+		 }
+private: System::Void buttonConnectPill2_Click(System::Object^  sender, System::EventArgs^  e) {
+			 Callouts::OnPillConnect(
+				 currTorture, 
+				 (int)numericUpDownPills2Charges->Value);
+		 }
+private: System::Void buttonNextMedTick2_Click(System::Object^  sender, System::EventArgs^  e) {
+			Callouts::NextMedTick();
+		 }
+
+//MISC
+private: System::Void numericUpDownPillsCharges_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+			 KernelApi::SetPillCharges(currCure, (int)numericUpDownPillsCharges->Value);
+		 }
+private: System::Void numericUpDownPills2Charges_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+			 KernelApi::SetPillCharges(currTorture, (int)numericUpDownPills2Charges->Value);
 		 }
 }; //class
 

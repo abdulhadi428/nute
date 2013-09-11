@@ -22,7 +22,7 @@ namespace Visualizer {
 		for (int y=0; y<SCREENY; y++)
 		for (int x=0; x<SCREENX; x++)
 		{
-			unsigned short val = KernelApi::VideoMemory[SCREENX*y+x]; //TODO GetVideoPixel(x,y)
+			unsigned short val = KernelApi::VideoMemory[SCREENX*y+x];
 			unsigned char r = (val & 0xF00) >> 8;
 			unsigned char g = (val & 0xF0) >> 4;
 			unsigned char b = val & 0xF;
@@ -55,8 +55,11 @@ namespace Visualizer {
 	void FormHelper::BindDelegates() {
 		BIND_DELEGATE(Vibro);
 		BIND_DELEGATE(Log);
-		BIND_DELEGATE(SetCureName);
+		BIND_DELEGATE(SetPillName);
 		BIND_DELEGATE(UpdateCurrentCure);
+		BIND_DELEGATE(UpdateCurrentTorture);
+		BIND_DELEGATE(UpdateKernel);
+		BIND_DELEGATE(UpdateAppState);
 	}
 
 } //namespace

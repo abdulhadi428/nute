@@ -71,7 +71,15 @@ public:
 
 	virtual fresult Draw() 
 	{
-		return DrawArea(_Position, _Size);
+		if (_bVisible == TRUE)
+		{
+			return DrawArea(_Position, _Size);
+		}
+		else
+		{
+			return SUCCESS;
+		}
+		
 	}
 
 };

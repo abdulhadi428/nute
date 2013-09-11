@@ -10,7 +10,7 @@ Setting Text
 Setting Format
  1. Text is a padded with 0x0 rectangular text area
  2. Dimensions considered to be TextSize
- 
+
 Setting Size:
  1. Size is viewable area of the text (i.e. "window" of the text currently shown on screen)
  2. Scroll position is a Top, Left origin in Text
@@ -30,7 +30,7 @@ class TextField : public ScrollableControlBase
 {
 
 private:
-	
+
 	Size _textBuffSizeTx;
 	uword_t _buffLength;
 	char* _textBuff;
@@ -44,7 +44,7 @@ private:
 
 	Position _textBuffCarretPositionTx;
 	TextFormat _Format;
-	
+
 	bool_t _WordWrap;
 	Position _ScrollPositionTx;
 	ubyte_t _lastUsedLine;
@@ -52,19 +52,19 @@ private:
 	//Gets linear index in lines Buff by x,y
 	//doesn't check bounds
 	sword_t GetBuffIndex(Position pos);
-	
+
 	fresult PutCharToBuff( Position pos, char charToPut);
 
-	//Gets Line staring at specified poubyte_t. 
+	//Gets Line staring at specified poubyte_t.
 	//it returns poubyte_ter to the original buff, so it MUST be treated as const
 	//NOTE:
 	//If required length exceeds textSize.Width - returns GENERAL_WARNING and length is set to actual length
 	fresult GetLineAtXY( Position pos, ubyte_t* ioLength, char** oLine);
 
-	fresult TextField::AppendText(const char* text, uword_t sz);
+	fresult AppendText(const char* text, uword_t sz);
 
 public:
-	
+
 
 	//getters
 	TextFormat* GetTextFormat();
@@ -85,7 +85,7 @@ public:
 
 	//clears the data
 	fresult Clear();
-	
+
 	//Setting the text;
 	fresult SetText(const char* text);
 
@@ -97,7 +97,7 @@ public:
 
 	//Setting the scroll window position ubyte_telligently (try find best fit if it will go off TextSize limits)
 	// returns:
-	//  SUCCESS: 
+	//  SUCCESS:
 	//       - if position fits well
 	//  GENERAL_WARNING
 	//       - if position was adjusted to fit in TextSize (*positon parameter will contain adjusted values)
@@ -108,7 +108,7 @@ public:
 	fresult Init(Size size, Position position, char* buff, Size buffSize, IRender* renderer);
 
 	//Logic
-	
+
 	//renders control partially to screen
 	virtual fresult DrawArea(Position pos, Size size);
 

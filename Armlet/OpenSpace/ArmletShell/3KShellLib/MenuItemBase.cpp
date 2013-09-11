@@ -2,8 +2,6 @@
 
 namespace ThreeKShell {
 
-//typedef fresult (__thiscall MenuItemBase::* MENU_IMET_BASE_BOOL_PTR_VOID)(void);
-//MENU_IMET_BASE_BOOL_PTR_VOID func = &MenuItemBase::Click;
 
 bool_t MenuItemBase::IsSelected()
 {
@@ -32,13 +30,19 @@ fresult MenuItemBase::Click()
 	}
 	return SUCCESS;
 }
-
-
 fresult MenuItemBase::Draw()
 {
 	if (_underLyningControl !=NULL)
 	{
-		return _underLyningControl->Draw();
+		if (_IsVisible==TRUE)
+		{
+			return _underLyningControl->Draw();
+		}
+		else
+		{
+			return SUCCESS;
+		}
+
 	}
 	else
 	{
@@ -48,10 +52,13 @@ fresult MenuItemBase::Draw()
 
 bool_t MenuItemBase::CheckAccelerator(ButtonState button)
 {
-	if (button==_Accelerator || button==_Accelerator2)
+	if (_IsEnabled == TRUE)
 	{
-		Click();
-		return TRUE;
+		if (button==_Accelerator || button==_Accelerator2)
+		{
+			Click();
+			return TRUE;
+		}
 	}
 	return FALSE;
 }
@@ -68,10 +75,12 @@ fresult MenuItemBase::MenuItemBaseInit( IControl* _control, IMenuHandler* handle
 		_OnClickHandler = NULL;
 	}
 
+	_IsSelected = FALSE;
+	_IsVisible = TRUE;
+	_IsEnabled = TRUE;
+
 	_Accelerator = accelerator;
-
 	_Accelerator2 = -1;
-
 
 	return SUCCESS;
 }
@@ -82,4 +91,34 @@ fresult MenuItemBase::SetSecondAccelarator( ButtonState button )
 	return SUCCESS;
 }
 
+ButtonState MenuItemBase::GetAccelerator()
+{
+	return _Accelerator;
+}
+
+fresult MenuItemBase::SetVisible( bool_t val )
+{
+	_IsVisible = val;
+	if (_underLyningControl != NULL)
+	{
+		_underLyningControl->SetVisible(val);
+	}
+	return SUCCESS;
+}
+
+bool_t MenuItemBase::GetVisible()
+{
+	return _IsVisible;
+}
+
+fresult MenuItemBase::SetEnabled( bool_t val )
+{
+	_IsEnabled = val;
+	return SUCCESS;
+}
+
+bool_t MenuItemBase::GetEnabled()
+{
+	return _IsEnabled;
+}
 }

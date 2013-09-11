@@ -1,4 +1,5 @@
 #include "ThreeKShell.h"
+#include "kl_allocator.h"
 
 namespace ThreeKShell {
 
@@ -14,14 +15,14 @@ namespace ThreeKShell {
 
 #define MENU_ITEM_A_TOP   MENU_ITEM_ROW_1_TOP
 #define	MENU_ITEM_A_LEFT  MENU_ITEM_H_SCREENBORDER_OFFSET
-#define MENU_ITEM_B_TOP	  MENU_ITEM_ROW_3_TOP	
+#define MENU_ITEM_B_TOP	  MENU_ITEM_ROW_3_TOP
 #define	MENU_ITEM_B_LEFT  MENU_ITEM_H_SCREENBORDER_OFFSET
-#define MENU_ITEM_C_TOP	  MENU_ITEM_ROW_5_TOP	
+#define MENU_ITEM_C_TOP	  MENU_ITEM_ROW_5_TOP
 #define	MENU_ITEM_C_LEFT  MENU_ITEM_H_SCREENBORDER_OFFSET
 
 #define MENU_ITEM_X_TOP	  MENU_ITEM_ROW_2_TOP
 #define	MENU_ITEM_X_LEFT  SCREENX-MENU_ITEM_H_SCREENBORDER_OFFSET
-#define MENU_ITEM_Y_TOP	  MENU_ITEM_ROW_4_TOP	
+#define MENU_ITEM_Y_TOP	  MENU_ITEM_ROW_4_TOP
 #define	MENU_ITEM_Y_LEFT  SCREENX-MENU_ITEM_H_SCREENBORDER_OFFSET
 #define MENU_ITEM_Z_TOP   MENU_ITEM_ROW_6_TOP
 #define	MENU_ITEM_Z_LEFT  SCREENX-MENU_ITEM_H_SCREENBORDER_OFFSET
@@ -29,19 +30,22 @@ namespace ThreeKShell {
 #define MENU_ITEM_L_TOP	  SCREENY - MENU_ITEM_V_SCREENBORDER_OFFSET
 #define	MENU_ITEM_L_LEFT  33
 #define MENU_ITEM_E_TOP   SCREENY - MENU_ITEM_V_SCREENBORDER_OFFSET
-#define	MENU_ITEM_E_LEFT  96
+#define	MENU_ITEM_E_LEFT  80
 #define MENU_ITEM_R_TOP   SCREENY - MENU_ITEM_V_SCREENBORDER_OFFSET
 #define	MENU_ITEM_R_LEFT  129
+
+static Alloc_t<IMenuItem*, 45> SIMenuItemPtrArr;
+static Alloc_t<ScatteredMenu, 20> SScatteredMenuArr;
 
 IMenuItem** MenuFactory::allocMenuItems( ubyte_t count )
 {
 	NULLIF(!(count>0));
-	return new IMenuItem*[count];
+	return SIMenuItemPtrArr.Allocate(count); // new IMenuItem*[count];
 }
 
 ScatteredMenu* MenuFactory::allocMenu()
 {
-	return new ScatteredMenu(); 
+	return SScatteredMenuArr.Allocate(); // new ScatteredMenu();
 }
 
 fresult MenuFactory::Init( IRender* render, Repositories* reps, TextFieldFactory* tfFactory, PictureBoxFactory* pbxFactory, PanelFactory* pnlFactory, MenuItemFactory* miFactory )
@@ -81,7 +85,7 @@ fresult MenuFactory::ClearSettings()
 		Position orgn;
 		switch (i)
 		{
-			case ItemOriginA: 
+			case ItemOriginA:
 				orgn.Top =	MENU_ITEM_A_TOP;
 				orgn.Left = MENU_ITEM_A_LEFT;
 			break;
@@ -97,7 +101,7 @@ fresult MenuFactory::ClearSettings()
 				orgn.Top =	MENU_ITEM_X_TOP;
 				orgn.Left = MENU_ITEM_X_LEFT;
 			break;
-			case ItemOriginY: 
+			case ItemOriginY:
 				orgn.Top =	MENU_ITEM_Y_TOP;
 				orgn.Left = MENU_ITEM_Y_LEFT;
 			break;
@@ -113,7 +117,7 @@ fresult MenuFactory::ClearSettings()
 				orgn.Top =	MENU_ITEM_E_TOP;
 				orgn.Left = MENU_ITEM_E_LEFT;
 			break;
-			case ItemOriginR: 
+			case ItemOriginR:
 				orgn.Top =	MENU_ITEM_R_TOP;
 				orgn.Left = MENU_ITEM_R_LEFT;
 			break;
@@ -219,12 +223,12 @@ fresult MenuFactory::GetMenu( MenuKinds kind, IMenu** o_mnu )
 				{
 					shrtcut = BUTTON_X;
 					tfmt = etfmt;
-				} 
+				}
 				else if (i == ItemOriginY)
 				{
 					shrtcut = BUTTON_Y;
 					tfmt = etfmt;
-				} 
+				}
 				else if (i ==ItemOriginZ)
 				{
 					shrtcut = BUTTON_Z;
@@ -248,11 +252,11 @@ fresult MenuFactory::GetMenu( MenuKinds kind, IMenu** o_mnu )
 				if (i == ItemOriginL)
 				{
 					shrtcut = BUTTON_L;
-				} 
+				}
 				else if (i == ItemOriginE)
 				{
 					shrtcut = BUTTON_E;
-				} 
+				}
 				else if (i ==ItemOriginR)
 				{
 					shrtcut = BUTTON_R;
