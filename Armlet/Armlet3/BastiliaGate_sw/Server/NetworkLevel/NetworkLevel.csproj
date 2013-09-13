@@ -67,14 +67,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Service References\ShipDamageService\HonorInterfaces.xsd">
+    <None Include="Service References\ShipDamageService\HonorInterfaces1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ShipDamageService\service.wsdl" />
-    <None Include="Service References\ShipDamageService\service.xsd">
+    <None Include="Service References\ShipDamageService\service1.wsdl" />
+    <None Include="Service References\ShipDamageService\service2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ShipDamageService\service1.xsd">
+    <None Include="Service References\ShipDamageService\service21.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

@@ -7,8 +7,9 @@
              d:DesignHeight="85" Width="59">
     <StackPanel Orientation="Vertical">
         <Label x:Name="SubsystemLabel" />
-        <Label x:Name="StatusLabel"></Label>
-    <ListBox x:Name="DamageListBox">
+        <Label x:Name="RealStatusLabel">FFFF</Label>
+        <Label x:Name="EffictivesStatusLabel">FFFF</Label>
+        <ListBox x:Name="DamageListBox">
             <ListBoxItem>ОК</ListBoxItem>
             <ListBoxItem>Слабо</ListBoxItem>
             <ListBoxItem>Средне</ListBoxItem>

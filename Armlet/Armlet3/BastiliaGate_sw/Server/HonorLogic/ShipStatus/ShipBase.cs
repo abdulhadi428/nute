@@ -12,6 +12,7 @@ namespace HonorLogic.ShipStatus
 {
     public abstract class ShipBase : IShip
     {
+        private static bool[] FirstLineOfDefenceMask = { true, true, true, false, false, true, true, false };
         public event Action OnlineChanged;
         private readonly List<ShipSubsystemStatus> _subsystems = new List<ShipSubsystemStatus>();
         public List<RoomInfo> Rooms { get; set; }
@@ -44,6 +45,11 @@ namespace HonorLogic.ShipStatus
             return FindRoomName(roomsID) ?? GetDefaultRoomName(roomsID);
         }
 
+        public void DamageRoom(byte roomID, byte percentage, byte hit_type)
+        {
+            Model.SendRoomHit(roomID, percentage, (HitType)hit_type);
+        }
+
         public event Action<ShipSubsystemStatus> SubsystemUpdated;
 
         internal static string GetDefaultRoomName(byte roomsID)
@@ -72,6 +78,11 @@ namespace HonorLogic.ShipStatus
             }
         }
 
+        private IEnumerable<IArmletInfo> PeopleOnThisShip
+        {
+            get { return Model.PeopleIDsInCertainRooms(Rooms.Select(r => r.Id)); }
+        }
+
         private void InvokeSubsystemUpdated(ShipSubsystemStatus subsSytem)
         {
 //Дергаем ивент для ГУЯ
@@ -93,7 +104,12 @@ namespace HonorLogic.ShipStatus
             //SubsystemsCount doesn't rely on dervied constructor status, so this is ok
             for (var i = 0; i < SubsystemsCount; i++)
             {
-                _subsystems.Add(new ShipSubsystemStatus {Severity = RanmaRepairSeverity.NotDamaged, SubSystemNum = i});
+                _subsystems.Add(new ShipSubsystemStatus
+                    {
+                        Severity = RanmaRepairSeverity.NotDamaged,
+                        SubSystemNum = i,
+                        IsFirstLineOfDefence = FirstLineOfDefenceMask[i]
+                    });
             }
         }
 
@@ -120,13 +136,24 @@ namespace HonorLogic.ShipStatus
                 var repairedStatusFromPlate = _ranmaPlates.Any(plate => plate[i].Repaired);
 
                 if (subsystem.Severity == severityFromPlate && subsystem.Repaired == repairedStatusFromPlate)
+                {
+                    subsystem.EffectiveTable = GetEffectiveTable(repairedStatusFromPlate, i);
                     continue;
+                };
+
                 subsystem.Severity = severityFromPlate;
-                subsystem.RepairedStatus = _ranmaPlates.First()[i].RepairedStatus;
+                subsystem.EffectiveTable = GetEffectiveTable(repairedStatusFromPlate, i);
+
+                subsystem.RealTable = _ranmaPlates.First()[i].RealTable;
                 InvokeSubsystemUpdated(subsystem);
                 simulatorShouldBeNoticed = true;
             }
             return simulatorShouldBeNoticed;
+        }
+
+        private ushort GetEffectiveTable(bool repairedStatusFromPlate, int i)
+        {
+            return repairedStatusFromPlate ? (ushort) 0 : _ranmaPlates.First()[i].EffectiveTable;
         }
 
         public void SetSubsystemStatusFromGUI(ShipSubsystemStatus ranmaStatus)
@@ -147,6 +174,7 @@ namespace HonorLogic.ShipStatus
         private void SendSeverityToRanmaPlate(ShipSubsystemStatus ranmaStatus)
         {
             _subsystems[ranmaStatus.SubSystemNum].Severity = ranmaStatus.Severity;
+            _subsystems[ranmaStatus.SubSystemNum].EffectiveTable = 0x1111;
 
             SetSubsytemSeverityToAll(ranmaStatus.SubSystemNum, ranmaStatus.Severity);
         }
@@ -198,68 +226,168 @@ namespace HonorLogic.ShipStatus
             InitializeUpdatePlatesInfo();
         }
 
-        private void SetSubsytemSeverityToAll(int i, RanmaRepairSeverity ranmaRepairSeverity)
+        private void SetSubsytemSeverityToAll(int subSystemNum, RanmaRepairSeverity ranmaRepairSeverity)
         {
+            var repairTable = RanmaSubsystemStatusFactory.GenerateRanmaSubsystemStatus(ranmaRepairSeverity).Bytes;
             foreach (var ranmaPlate in _ranmaPlates)
             {
-                ranmaPlate.SetSubsystemSeverity(i, ranmaRepairSeverity);
+                ranmaPlate.SetSubsystemSeverity(subSystemNum, ranmaRepairSeverity, repairTable);
             }
         }
 
         public void DamageShip(byte damage)
         {
-            for (var i = 0; i < damage; i++)
+            
+            ShipSubsystemStatus subSystemToDamage;
+            
+            //Выбираем какую подсистему поразить
+            if (ShipIsUnderFrontLineProtection)   //Если "передние" системы попрежнему держатся, то выбираем из них
             {
-                DamageShipOnce();
+                subSystemToDamage = _subsystems.Where(a => a.IsFirstLineOfDefence == true).Random();
             }
-            SaveToSimulator();
+            else                                //Ну а если нет - то выбираем из любых
+            {
+                subSystemToDamage = _subsystems.Random();
+            }
+
+            byte reducedDamage = damage;
+            if (!subSystemToDamage.IsFirstLineOfDefence)  //Если мы мочим "прикрытые" системы, то damage равен самой пробитой системе из передних
+            {
+                reducedDamage = Math.Min(damage, _subsystems.Where(a => a.IsFirstLineOfDefence == true).Select(a => (byte) a.ResultSeverity).Max());
+            }
+
+            byte finalDamage = Math.Max(reducedDamage, (byte) subSystemToDamage.Severity);
+            subSystemToDamage.Severity = (RanmaRepairSeverity)finalDamage;
+            SendSeverityToRanmaPlate(subSystemToDamage);
+           
+            
+            
             var targetRoom = RoomsWithPeople.RandomOrDefault();
             if (targetRoom != 0)
             {
-                Model.SendRoomHit(targetRoom, (byte) ((damage - 2)*25 + 50), HitType.Random);
+                byte hitProbability = 0;
+                if (damage == 1) hitProbability = 10;
+                if (damage == 2) hitProbability = 20;
+                if (damage == 3) hitProbability = 50;
+                Model.SendRoomHit(targetRoom, hitProbability, HitType.Random);
             }
-        }
 
-        private void DamageShipOnce()
-        {
-            var targetSubsystem = TargetSubsystems.Random();
-            targetSubsystem.Severity += 1;
-            SendSeverityToRanmaPlate(targetSubsystem);
-        }
-
-        private IEnumerable<ShipSubsystemStatus> TargetSubsystems
-        {
-            get
+            var shipPeople = PeopleOnThisShip.ToArray();
+            if (shipPeople.Any())
             {
-                return _subsystems.Where(s => s.Severity != RanmaRepairSeverity.Max);
+                foreach (var armletInfo in shipPeople)
+                {
+                    Model.SendShowMessage(armletInfo,
+                                      "Ощутимо тряхнуло! Кажется в корабль влетела ракета!");
+                }
             }
+
+            SaveToSimulator();
         }
+
+       
+
+       
 
         public void DestroyShip()
         {
-            throw new NotImplementedException();
+            DamageShip(3);
+            
         }
 
         public abstract string GetSubsystemName(int subSystemNum);
 
-        public void ApplyEffects()
+        public void ApplyEffects() // Regulat ship effects
         {
             ReactorEffect();
+            LifeSupportEffect();
         }
 
         private void ReactorEffect()
         {
-            if (IsReactorDamaged)
+            if (_subsystems.Count == 8)
             {
+                byte hitProbability = 0;
+                switch (_subsystems[7].ResultSeverity)
+                {
+                    case (RanmaRepairSeverity.NotDamaged):
+                        hitProbability = 1;
+                        break;
+                    case (RanmaRepairSeverity.Easy):
+                        hitProbability = 2;
+                        break;
+                    case (RanmaRepairSeverity.Medium):
+                        hitProbability = 3;
+                        break;
+                    case (RanmaRepairSeverity.Hard):
+                        hitProbability = 4;
+                        break;
+                }
+                
                 foreach (var reactorRoom in ReactorRooms)
                 {
-                    Model.SendRoomHit(reactorRoom, 10, HitType.Radiation);
+                    Model.SendRoomHit(reactorRoom, hitProbability, HitType.Radiation);
+                }
+                if (IsReactorDamaged)
+                {
+                    var shipPeople = PeopleOnThisShip.ToArray();
+                    if (shipPeople.Any())
+                    {
+                        Model.SendShowMessage(shipPeople.Random(),
+                                              "Ты услышал странный шум от реактора, кажется с ним что-то не так.");
+                    }
                 }
             }
         }
 
-        protected abstract bool IsReactorDamaged { get; }
+        private void HitOneRandomRoomWithPeople(byte probability)
+        {
+            var targetRoom = RoomsWithPeople.RandomOrDefault();
+            Model.SendRoomHit(targetRoom, probability, HitType.Random);
+        }
+        private void LifeSupportEffect()
+        {
+            switch (_subsystems[4].ResultSeverity)
+            {
+                
+                case (RanmaRepairSeverity.Easy):
+                    HitOneRandomRoomWithPeople(1);
+                    break;
+                case (RanmaRepairSeverity.Medium):
+                    HitOneRandomRoomWithPeople(1);
+                    HitOneRandomRoomWithPeople(1);
+                    break;
+                case (RanmaRepairSeverity.Hard):
+                    HitOneRandomRoomWithPeople(1);
+                    HitOneRandomRoomWithPeople(1);
+                    HitOneRandomRoomWithPeople(1);
+                    break;
+            }
 
+            if (_subsystems[4].ResultSeverity != RanmaRepairSeverity.NotDamaged)
+            {
+                var shipPeople = PeopleOnThisShip.ToArray();
+                if (shipPeople.Any())
+                {
+                    Model.SendShowMessage(PeopleOnThisShip.Random(),
+                                          "Ты сообразил, что с системой жизнеобеспечения что-то явно не так! Надо что-то делать!");
+                }
+            }
+
+        }
+
+        protected abstract bool IsReactorDamaged { get; }
+        protected bool ShipIsUnderFrontLineProtection
+        {
+            get
+            {
+                return
+                    GetAllSubsystemsStatus()
+                        .Where(a => a.IsFirstLineOfDefence == true)
+                        .All(a => a.ResultSeverity == RanmaRepairSeverity.NotDamaged);
+            }
+        }
+        
         public IEnumerable<byte> ReactorRooms
         {
             get

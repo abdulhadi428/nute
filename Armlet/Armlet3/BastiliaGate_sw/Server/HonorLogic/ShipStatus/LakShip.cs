@@ -6,7 +6,7 @@
         {
             get
             {
-                return 4;
+                return 5;
             }
         }
 
@@ -15,7 +15,7 @@
             get { return 1; }
         }
 
-        private static readonly string[] Names = { "Атака", "Защита", "Импеллер", "Навигация", "Паруса", "Шлюзы", "Жизнеобеспечение", "Реактор" };
+        private static readonly string[] Names = { "Атака", "Защита", "Импеллер", "Навигация", "Жизнеобеспечение", "Шлюзы", "Паруса", "Реактор" };
 
         public override string GetSubsystemName(int subSystemNum)
         {

@@ -22,13 +22,14 @@ namespace HonorLogic
             _service.GateConnected+= id => IfMe(id, () => SetOnline(true));
             _service.GateDisConnected += id => IfMe(id, () => SetOnline(false));
 
-            _service.PillConnectedStatus += (id, status) => SetPilStatus(status[1] == 0);
+            _service.PillConnectedStatus += (id, status) => IfMe(id, () => SetPilStatus(status[1] == 0));
             _service.PillDataRead +=(id, data) => IfMe(id, () => RaisePillDataArrived(data));
             
             Online = true;
+
+            
             var timer = new Timer { AutoReset = true, Interval = 10000};
             timer.Elapsed += (sender, e) => RefreshPillStatus();
-            
             timer.Start();
         }
 
@@ -68,6 +69,7 @@ namespace HonorLogic
                 }
                 if (status)
                 {
+                    //Уберем лишнее чтение сразу после проверки статуса
                     ReadDevice();
                 }
             }
@@ -81,7 +83,7 @@ namespace HonorLogic
             }
         }
 
-        private void SetOnline(bool online)
+        public void SetOnline(bool online)
         {
             Online = online;
             if (GateOnlineChanged != null)

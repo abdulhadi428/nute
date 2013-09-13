@@ -28,6 +28,7 @@ namespace HonorSerialportGateConsole
         private string RemoteAddress;
 
         private System.Timers.Timer UpdateLogTimer;
+        private System.Threading.Timer HourUpdateTimer;
 
         public HonorSerialportDaemon()
         {
@@ -38,6 +39,7 @@ namespace HonorSerialportGateConsole
             serverProvidedGateId = Byte.Parse(Settings.Default.PreferedGateId);
 
             ResolveRemoteAddress();
+            HourUpdateTimer = new System.Threading.Timer (SendHourUpdate, 0, 0, 1 * 30000);
 
             try
             {
@@ -58,6 +60,21 @@ namespace HonorSerialportGateConsole
             }
         }
 
+        private  void SendHourUpdate(object state)
+        {
+            for (byte i = 1; i <= 120; i++)
+            {
+                var hourCommand = new ServerToArmletCommand(ServerToArmletCommands.SendDataToArmlet,
+                                                            new byte[]
+                                                                {
+                                                                    i, 9, 0, 0, Convert.ToByte(DateTime.Now.Hour),
+                                                                    Convert.ToByte(DateTime.Now.Minute)
+                                                                });
+                inputMessageQueue.Enqueue(hourCommand);
+            }
+        }
+
+        #region Connection Handling
         private void ConnectToServer()
         {
             LogClass.Write("Connect to " + RemoteAddress);
@@ -71,7 +88,7 @@ namespace HonorSerialportGateConsole
             _sending = true;
         }
 
-        #region ReconnectLogic
+       
 
         private void ResolveRemoteAddress()
         {
@@ -194,10 +211,21 @@ namespace HonorSerialportGateConsole
             }
         }
 
+        
         private static void SendMessage(string outputCommandString)
         {
-            var outputBytes =
-                Command.HexStringToByteArray(Command.SanitiseStringFromComas(outputCommandString));
+            byte[] outputBytes;
+            try
+            {
+                outputBytes =
+                    Command.HexStringToByteArray(Command.SanitiseStringFromComas(outputCommandString));
+            }
+            catch (System.FormatException exc)
+            {
+                LogClass.Write("Error parsing output from COM port, + " + exc.Message);
+                return;
+            }
+            
             if (Enum.IsDefined(typeof (GateToServerCommands), outputBytes[0]))
             {
                 byte commandByte = outputBytes[0];

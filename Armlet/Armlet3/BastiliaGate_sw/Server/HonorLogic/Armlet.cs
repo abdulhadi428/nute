@@ -5,7 +5,7 @@ using HonorInterfaces;
 
 namespace HonorLogic
 {
-    class Armlet : IArmletInfo
+    public class Armlet : IArmletInfo
     {
         private readonly GlobalModel _model;
 
@@ -63,7 +63,11 @@ namespace HonorLogic
         {
             get
             {
-                return _model.GetRoomName(Room);
+                var roomFromArmlet = _model.GetRoomName(Room);
+                if (roomFromArmlet == "Отсек 255") return "Неизвестный отсек";
+                else return roomFromArmlet;
+
+               
             }
         }
 

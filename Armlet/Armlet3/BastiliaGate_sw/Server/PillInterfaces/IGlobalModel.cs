@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+
 namespace HonorInterfaces
 {
     public interface IGlobalModel
@@ -8,6 +9,7 @@ namespace HonorInterfaces
         IEnumerable<IArmletInfo> GetArmlets();
         event Action ArmletListUpdated;
         event Action<byte> NewGateOnline;
+        event Action SimulatorDisconnected;
         IGateModel GetGateModel(byte gateId);
         void SendMessageToAll(string text);
         void SendSetName(string text, IArmletInfo armletId);
@@ -19,5 +21,7 @@ namespace HonorInterfaces
         IEnumerable<byte> RoomsWithPeople { get; }
         bool IsShipGate(byte gateId);
         bool ConnectToSimulator();
+        IEnumerable<HonorInterfaces.IArmletInfo> PeopleIDsInCertainRooms(IEnumerable<byte> RoomIDs);
+
     }
 }

@@ -20,6 +20,11 @@ namespace HonorLogic
             }).ToList();
         }
 
+        public bool HasShipWithThisGuid(Guid id)
+        {
+            return GetAll().Any(s => s.ShipGuid == id);
+        }
+
         public ShipBase GetShipByGuid(Guid id)
         {
             return GetAll().Single(s => s.ShipGuid == id);

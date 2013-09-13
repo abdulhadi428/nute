@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using HonorInterfaces;
 
 namespace HonorLogic.ShipStatus
 {
@@ -14,7 +15,7 @@ namespace HonorLogic.ShipStatus
             get { return 2; }
         }
 
-        private static readonly string[] Names = {"Атака", "Защита", "Импеллер", "Навигация", "Паруса", "Шлюзы", "Жизнеобеспечение", "Реактор"};
+        private static readonly string[] Names = { "Атака", "Защита", "Импеллер", "Навигация", "Жизнеобеспечение", "Шлюзы", "Паруса", "Реактор" };
 
         public override string GetSubsystemName(int subSystemNum)
         {
@@ -23,7 +24,9 @@ namespace HonorLogic.ShipStatus
 
         protected override bool IsReactorDamaged
         {
-            get { return GetAllSubsystemsStatus().Single(s => s.SubSystemNum == 7).Repaired; }
+            get { return !GetAllSubsystemsStatus().Single(s => s.SubSystemNum == 7).Repaired; }
         }
+
+        
     }
 }

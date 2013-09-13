@@ -25,6 +25,7 @@ namespace HonorSerialportGateConsole
         {
             if (DateTime.Now.Subtract(_lastHeartBeatTime).TotalSeconds > 1000)
             {
+                LogClass.Write("Watchdog had lost it's temper!. Killing myself");
                 Environment.Exit(1);
             }
         }

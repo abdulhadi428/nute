@@ -17,6 +17,7 @@ namespace ServerGUI
             InitializeComponent();
         }
 
+        public ArmletGridUI parent;
         public IShip Ship { private get; set; }
         private readonly List<BoardGUI> _boards = new List<BoardGUI>();
 
@@ -38,8 +39,23 @@ namespace ServerGUI
                 BoardStackPanel.Children.Add(board);
                 board.Update();
             }
+            foreach (var shipRoomsID in Ship.ShipRoomsIDs)
+            {
+                var button = new Button
+                    {
+                        Content = Ship.GetRoomName(shipRoomsID),
+                    };
+                byte id = shipRoomsID; //Access to local closure. C# 5.0 will fix it
+                button.Click += (o, args) => ClickRoomHit(id);
+                HitStackPanel.Children.Add(button);
+            }
             Ship_OnlineChanged();
         }
+
+        public void ClickRoomHit(byte shipRoomsId)
+        {
+            Ship.DamageRoom(shipRoomsId, (byte) (parent.RoomHit_Percentage.SelectedIndex + 1), (byte) (parent.RoomHit_Type.SelectedIndex + 1));
+        } 
 
         void Ship_OnlineChanged()
         {

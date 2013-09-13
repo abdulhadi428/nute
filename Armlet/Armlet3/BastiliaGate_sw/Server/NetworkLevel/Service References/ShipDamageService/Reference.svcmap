@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="bb06d5d6-8116-4eee-99f1-7211866f1a3a" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
-    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateAsynchronousMethods>true</GenerateAsynchronousMethods>
     <EnableDataBinding>true</EnableDataBinding>
     <ExcludedTypes />
     <ImportXmlTypes>false</ImportXmlTypes>
@@ -18,13 +18,13 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="net.tcp://localhost:8070/spaceDamage/mex" Protocol="mex" SourceId="1" />
+    <MetadataSource Address="net.tcp://172.16.0.46:8070/spaceDamage/mex" Protocol="mex" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="service.wsdl" MetadataType="Wsdl" ID="58f3f396-f03c-4beb-84c8-d9bccb5f4782" SourceId="1" SourceUrl="net.tcp://localhost:8070/spaceDamage/mex" />
-    <MetadataFile FileName="service.xsd" MetadataType="Schema" ID="70df1404-87f7-4137-9096-4737dc65d134" SourceId="1" SourceUrl="net.tcp://localhost:8070/spaceDamage/mex" />
-    <MetadataFile FileName="service1.xsd" MetadataType="Schema" ID="82266ef9-f159-4b3c-ad42-d8b913885bb4" SourceId="1" SourceUrl="net.tcp://localhost:8070/spaceDamage/mex" />
-    <MetadataFile FileName="HonorInterfaces.xsd" MetadataType="Schema" ID="64a3a920-1352-4d5b-a36a-5775b7bf3f46" SourceId="1" SourceUrl="net.tcp://localhost:8070/spaceDamage/mex" />
+    <MetadataFile FileName="service1.wsdl" MetadataType="Wsdl" ID="367b254d-cb7b-4b24-866b-433acbe600a0" SourceId="1" SourceUrl="net.tcp://172.16.0.46:8070/spaceDamage/mex" />
+    <MetadataFile FileName="service2.xsd" MetadataType="Schema" ID="6e995bc1-b5b6-4436-88e9-a8ee312f9c0d" SourceId="1" SourceUrl="net.tcp://172.16.0.46:8070/spaceDamage/mex" />
+    <MetadataFile FileName="service21.xsd" MetadataType="Schema" ID="8683d502-295d-4c0a-8d27-d6ceee408b3e" SourceId="1" SourceUrl="net.tcp://172.16.0.46:8070/spaceDamage/mex" />
+    <MetadataFile FileName="HonorInterfaces1.xsd" MetadataType="Schema" ID="7212b590-8c76-4e86-bcce-f48100303937" SourceId="1" SourceUrl="net.tcp://172.16.0.46:8070/spaceDamage/mex" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

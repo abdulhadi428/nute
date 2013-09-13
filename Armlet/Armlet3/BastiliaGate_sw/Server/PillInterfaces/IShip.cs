@@ -14,6 +14,7 @@ namespace HonorInterfaces
         IGlobalModel Model { get; }
 
         string GetRoomName(byte roomsID);
+        void DamageRoom(byte roomID, byte percentage, byte hit_type);
 
         event Action<ShipSubsystemStatus> SubsystemUpdated;
 

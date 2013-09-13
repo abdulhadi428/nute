@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Threading;
+using HonorInterfaces;
 using NetworkLevel.WCFServices;
 
 namespace NetworkLevel.NetworkDeliveryLevel
@@ -28,24 +31,49 @@ namespace NetworkLevel.NetworkDeliveryLevel
 
         public void DeliverToSingleArmlet(byte armletId, byte[] payload)
         {
-            foreach (var callback in GateConnectionPool.GateConnections.Values.ToArray())
+            var gatesToPutOffline = new List<byte>();
+            foreach (var callback in GateConnectionPool.GateConnections.ToArray())
             {
-                callback.SendToArmlet(armletId, payload);
+                try
+                {
+                    callback.Value.SendToArmlet(armletId, payload);
+                }
+                catch (CommunicationException )
+                {
+                    gatesToPutOffline.Add(callback.Key);
+                    //throw;
+                }
+            }
+            if (gatesToPutOffline.Any())
+            {
+                throw new GateNotConnectedException(gatesToPutOffline.ToArray());
             }
         }
 
 
         public void DeliverToArmlets(byte[] armletIds, byte[] payload)
         {
-            foreach (var callback in GateConnectionPool.GateConnections.Values.ToArray())
+            var gatesToPutOffline = new List<byte>();
+            foreach (var callback in GateConnectionPool.GateConnections.ToArray())
             {
-                foreach (var armletId in armletIds)
+                try
                 {
-                    callback.SendToArmlet(armletId, payload);
-                    Thread.Sleep(20);
+                    foreach (var armletId in armletIds)
+                    {
+                        callback.Value.SendToArmlet(armletId, payload);
+                        Thread.Sleep(20);
+                    }
+                }
+                catch (CommunicationException)
+                {
+                    gatesToPutOffline.Add(callback.Key);
+                    //throw;
                 }
             }
-
+            if (gatesToPutOffline.Any())
+            {
+                throw new GateNotConnectedException(gatesToPutOffline.ToArray());
+            }
         }
 
         public event Action<PlayerUpdate[]> ArmletsStatusUpdate;

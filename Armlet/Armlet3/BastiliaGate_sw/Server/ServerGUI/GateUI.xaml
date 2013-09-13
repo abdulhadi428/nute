@@ -6,7 +6,7 @@
              mc:Ignorable="d" d:DesignWidth="250"
              
              Loaded="GateUI_OnLoaded">
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical" MinWidth="250" MinHeight="131">
             
                 <Button Click="UpdateButton_Click">Обновить</Button>
                 <Button Click="ActivatePin_OnClick">Активировать маячок </Button>

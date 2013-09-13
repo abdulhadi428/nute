@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ServiceModel;
 using NetworkLevel.WCFServices;
 using HonorInterfaces;
 
@@ -13,9 +14,16 @@ namespace NetworkLevel.NetworkDeliveryLevel
             {
                 throw new GateNotConnectedException(gate_id);
             }
-           callbackChannel.CheckIfPillConnected(data);
+            try
+            {
+                callbackChannel.CheckIfPillConnected(data);
+            }
+            catch (CommunicationException  exception)
+            {
+                throw new GateNotConnectedException(gate_id, exception);
+            }  
         }
-        
+
         public void SendPillWhite(byte gate_id, byte[] data)
         {
             IGateWCFServiceCallback callbackChannel;
@@ -23,9 +31,16 @@ namespace NetworkLevel.NetworkDeliveryLevel
             {
                 throw new GateNotConnectedException(gate_id);
             }
-            callbackChannel.SendPillWrite(data);
+            try
+            {
+                callbackChannel.SendPillWrite(data);
+            }
+            catch (CommunicationException  exception)
+            {
+                throw new GateNotConnectedException(gate_id, exception);
+            }            
         }
-        
+
         public void SendPillRead(byte gate_id, byte[] data)
         {
             IGateWCFServiceCallback callbackChannel;
@@ -33,7 +48,14 @@ namespace NetworkLevel.NetworkDeliveryLevel
             {
                 throw new GateNotConnectedException(gate_id);
             }
-            callbackChannel.SendPillRead(data);
+            try
+            {
+                callbackChannel.SendPillRead(data);
+            }
+            catch (CommunicationException  exception)
+            {
+                throw new GateNotConnectedException(gate_id, exception);
+            }    
         }
         
         public void SendPinSignal(byte gate_id, byte[] data)
@@ -43,7 +65,14 @@ namespace NetworkLevel.NetworkDeliveryLevel
             {
                 throw new Exception("Gate with id " + gate_id + " is not connected");
             }
-            callbackChannel.SendPinSignal(data);
+            try
+            {
+                callbackChannel.SendPinSignal(data);
+            }
+            catch (CommunicationException  exception)
+            {
+                throw new GateNotConnectedException(gate_id, exception);
+            }    
         }
 
         public event Action<byte> GateConnected;

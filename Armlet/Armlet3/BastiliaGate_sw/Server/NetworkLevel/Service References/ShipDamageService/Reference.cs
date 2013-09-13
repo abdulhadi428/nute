@@ -87,7 +87,7 @@ namespace NetworkLevel.ShipDamageService {
         private NetworkLevel.ShipDamageService.RanmaRepairSeverity SeverityField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int SubSystemNumField;
+        private NetworkLevel.ShipDamageService.RandirSubsytsem SubSystemField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -113,14 +113,14 @@ namespace NetworkLevel.ShipDamageService {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int SubSystemNum {
+        public NetworkLevel.ShipDamageService.RandirSubsytsem SubSystem {
             get {
-                return this.SubSystemNumField;
+                return this.SubSystemField;
             }
             set {
-                if ((this.SubSystemNumField.Equals(value) != true)) {
-                    this.SubSystemNumField = value;
-                    this.RaisePropertyChanged("SubSystemNum");
+                if ((this.SubSystemField.Equals(value) != true)) {
+                    this.SubSystemField = value;
+                    this.RaisePropertyChanged("SubSystem");
                 }
             }
         }
@@ -152,25 +152,74 @@ namespace NetworkLevel.ShipDamageService {
         Hard = 3,
     }
     
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="RandirSubsytsem", Namespace="http://schemas.datacontract.org/2004/07/HonorInterfaces")]
+    public enum RandirSubsytsem : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Attack = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Defense = 1,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Wedge = 2,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Navigation = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Life = 4,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Gate = 5,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Sails = 6,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Reactor = 7,
+    }
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ShipDamageService.IServerDamageContract", CallbackContract=typeof(NetworkLevel.ShipDamageService.IServerDamageContractCallback), SessionMode=System.ServiceModel.SessionMode.Required)]
     public interface IServerDamageContract {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerDamageContract/ServerConnect", ReplyAction="http://tempuri.org/IServerDamageContract/ServerConnectResponse")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServerDamageContract/ServerConnect")]
         void ServerConnect();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerDamageContract/SetAllSubsystemsStatuses", ReplyAction="http://tempuri.org/IServerDamageContract/SetAllSubsystemsStatusesResponse")]
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, AsyncPattern=true, Action="http://tempuri.org/IServerDamageContract/ServerConnect")]
+        System.IAsyncResult BeginServerConnect(System.AsyncCallback callback, object asyncState);
+        
+        void EndServerConnect(System.IAsyncResult result);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServerDamageContract/SetAllSubsystemsStatuses")]
         void SetAllSubsystemsStatuses(NetworkLevel.ShipDamageService.ShipStatus[] shipStatuses);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, AsyncPattern=true, Action="http://tempuri.org/IServerDamageContract/SetAllSubsystemsStatuses")]
+        System.IAsyncResult BeginSetAllSubsystemsStatuses(NetworkLevel.ShipDamageService.ShipStatus[] shipStatuses, System.AsyncCallback callback, object asyncState);
+        
+        void EndSetAllSubsystemsStatuses(System.IAsyncResult result);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public interface IServerDamageContractCallback {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerDamageContract/DamageShip", ReplyAction="http://tempuri.org/IServerDamageContract/DamageShipResponse")]
-        bool DamageShip(System.Guid shipGuid, byte byteSeverity);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServerDamageContract/DamageShip")]
+        void DamageShip(System.Guid shipGuid, byte byteSeverity);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerDamageContract/DestroyShip", ReplyAction="http://tempuri.org/IServerDamageContract/DestroyShipResponse")]
-        bool DestroyShip(System.Guid shipGuid);
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, AsyncPattern=true, Action="http://tempuri.org/IServerDamageContract/DamageShip")]
+        System.IAsyncResult BeginDamageShip(System.Guid shipGuid, byte byteSeverity, System.AsyncCallback callback, object asyncState);
+        
+        void EndDamageShip(System.IAsyncResult result);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IServerDamageContract/DestroyShip")]
+        void DestroyShip(System.Guid shipGuid);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, AsyncPattern=true, Action="http://tempuri.org/IServerDamageContract/DestroyShip")]
+        System.IAsyncResult BeginDestroyShip(System.Guid shipGuid, System.AsyncCallback callback, object asyncState);
+        
+        void EndDestroyShip(System.IAsyncResult result);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -180,6 +229,18 @@ namespace NetworkLevel.ShipDamageService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class ServerDamageContractClient : System.ServiceModel.DuplexClientBase<NetworkLevel.ShipDamageService.IServerDamageContract>, NetworkLevel.ShipDamageService.IServerDamageContract {
+        
+        private BeginOperationDelegate onBeginServerConnectDelegate;
+        
+        private EndOperationDelegate onEndServerConnectDelegate;
+        
+        private System.Threading.SendOrPostCallback onServerConnectCompletedDelegate;
+        
+        private BeginOperationDelegate onBeginSetAllSubsystemsStatusesDelegate;
+        
+        private EndOperationDelegate onEndSetAllSubsystemsStatusesDelegate;
+        
+        private System.Threading.SendOrPostCallback onSetAllSubsystemsStatusesCompletedDelegate;
         
         public ServerDamageContractClient(System.ServiceModel.InstanceContext callbackInstance) : 
                 base(callbackInstance) {
@@ -201,12 +262,104 @@ namespace NetworkLevel.ShipDamageService {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
+        public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> ServerConnectCompleted;
+        
+        public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> SetAllSubsystemsStatusesCompleted;
+        
         public void ServerConnect() {
             base.Channel.ServerConnect();
         }
         
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginServerConnect(System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginServerConnect(callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public void EndServerConnect(System.IAsyncResult result) {
+            base.Channel.EndServerConnect(result);
+        }
+        
+        private System.IAsyncResult OnBeginServerConnect(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            return this.BeginServerConnect(callback, asyncState);
+        }
+        
+        private object[] OnEndServerConnect(System.IAsyncResult result) {
+            this.EndServerConnect(result);
+            return null;
+        }
+        
+        private void OnServerConnectCompleted(object state) {
+            if ((this.ServerConnectCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.ServerConnectCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void ServerConnectAsync() {
+            this.ServerConnectAsync(null);
+        }
+        
+        public void ServerConnectAsync(object userState) {
+            if ((this.onBeginServerConnectDelegate == null)) {
+                this.onBeginServerConnectDelegate = new BeginOperationDelegate(this.OnBeginServerConnect);
+            }
+            if ((this.onEndServerConnectDelegate == null)) {
+                this.onEndServerConnectDelegate = new EndOperationDelegate(this.OnEndServerConnect);
+            }
+            if ((this.onServerConnectCompletedDelegate == null)) {
+                this.onServerConnectCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnServerConnectCompleted);
+            }
+            base.InvokeAsync(this.onBeginServerConnectDelegate, null, this.onEndServerConnectDelegate, this.onServerConnectCompletedDelegate, userState);
+        }
+        
         public void SetAllSubsystemsStatuses(NetworkLevel.ShipDamageService.ShipStatus[] shipStatuses) {
             base.Channel.SetAllSubsystemsStatuses(shipStatuses);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginSetAllSubsystemsStatuses(NetworkLevel.ShipDamageService.ShipStatus[] shipStatuses, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginSetAllSubsystemsStatuses(shipStatuses, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public void EndSetAllSubsystemsStatuses(System.IAsyncResult result) {
+            base.Channel.EndSetAllSubsystemsStatuses(result);
+        }
+        
+        private System.IAsyncResult OnBeginSetAllSubsystemsStatuses(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            NetworkLevel.ShipDamageService.ShipStatus[] shipStatuses = ((NetworkLevel.ShipDamageService.ShipStatus[])(inValues[0]));
+            return this.BeginSetAllSubsystemsStatuses(shipStatuses, callback, asyncState);
+        }
+        
+        private object[] OnEndSetAllSubsystemsStatuses(System.IAsyncResult result) {
+            this.EndSetAllSubsystemsStatuses(result);
+            return null;
+        }
+        
+        private void OnSetAllSubsystemsStatusesCompleted(object state) {
+            if ((this.SetAllSubsystemsStatusesCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.SetAllSubsystemsStatusesCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void SetAllSubsystemsStatusesAsync(NetworkLevel.ShipDamageService.ShipStatus[] shipStatuses) {
+            this.SetAllSubsystemsStatusesAsync(shipStatuses, null);
+        }
+        
+        public void SetAllSubsystemsStatusesAsync(NetworkLevel.ShipDamageService.ShipStatus[] shipStatuses, object userState) {
+            if ((this.onBeginSetAllSubsystemsStatusesDelegate == null)) {
+                this.onBeginSetAllSubsystemsStatusesDelegate = new BeginOperationDelegate(this.OnBeginSetAllSubsystemsStatuses);
+            }
+            if ((this.onEndSetAllSubsystemsStatusesDelegate == null)) {
+                this.onEndSetAllSubsystemsStatusesDelegate = new EndOperationDelegate(this.OnEndSetAllSubsystemsStatuses);
+            }
+            if ((this.onSetAllSubsystemsStatusesCompletedDelegate == null)) {
+                this.onSetAllSubsystemsStatusesCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnSetAllSubsystemsStatusesCompleted);
+            }
+            base.InvokeAsync(this.onBeginSetAllSubsystemsStatusesDelegate, new object[] {
+                        shipStatuses}, this.onEndSetAllSubsystemsStatusesDelegate, this.onSetAllSubsystemsStatusesCompletedDelegate, userState);
         }
     }
 }

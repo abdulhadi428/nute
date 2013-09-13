@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -33,10 +34,21 @@ namespace ServerGUI
 
             foreach (var ship in Model.GetShips())
             {
-                var shipUi = new ShipControl { Ship = ship};
+                var shipUi = new ShipControl { Ship = ship, parent = this};
                 ShipStackPanel.Children.Add(shipUi);
             }
-            
+            for (int i = 3; i <= 100; i++)
+            {
+                RoomHit_Percentage.Items.Add(new ComboBoxItem() {Content = i.ToString()});
+            }
+            Model.SimulatorDisconnected += () => Dispatcher.BeginInvoke(new Action(ModelOnSimulatorDisconnected));
+            ShaybaKill.Click += (o, args) => ((ShipControl)ShipStackPanel.Children[0]).ClickRoomHit(77);
+        }
+
+        private void ModelOnSimulatorDisconnected()
+        {
+            SimulatorLinkLabel.Content = "Нет связи";
+            SimulatorLinkLabel.FontSize = 30;
         }
 
         private void UpdateName_OnClick(object sender, RoutedEventArgs e)
@@ -108,7 +120,8 @@ namespace ServerGUI
             {
                 Cursor = Cursors.Wait;
                 var connectResult = Model.ConnectToSimulator();
-                MessageBox.Show(connectResult ? "Есть!" : "Нет");
+                SimulatorLinkLabel.Content = (connectResult ? "Есть связь" : "Нет связи");
+                SimulatorLinkLabel.FontSize = 15;
             }
             finally
             {

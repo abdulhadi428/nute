@@ -21,12 +21,19 @@ namespace HonorLogic
         private readonly ShipStorage _shipStorage = new ShipStorage();
 
         private readonly IArmletDeliveryServece _armletService;
+        private readonly IGateDeliveryService _gateDeliveryService;
+        private readonly ShipDamageServiceObj _shipDamageService;
         private readonly Lazy<GateModel>[] _gates;
+
+        private Timer heartBeat_timer;
+        private Timer effectTimer;
 
 
         public GlobalModel(IArmletDeliveryServece armletService, IGateDeliveryService gateService, ShipDamageServiceObj shipDamageService)
         {
             _armletService = armletService;
+            _gateDeliveryService = gateService;
+            _shipDamageService = shipDamageService;
 
             _gates = new Lazy<GateModel>[Byte.MaxValue + 1];
             for (var gateIndex = 0; gateIndex <= Byte.MaxValue; gateIndex++)
@@ -51,22 +58,92 @@ namespace HonorLogic
             _armletService.ArmletSendsData += _armletService_ArmletSendsData;
             shipDamageService.ShipDamaged += ShipDamageServiceOnShipDamaged;
             shipDamageService.ShipDestroyed += ShipDamageServiceOnShipDestroyed;
+            shipDamageService.SimulatorDisconnectedEvent  += ShipDamageServiceOnSimulatorDisconnectedEvent;
 
 
 // ReSharper disable once ObjectCreationAsStatement
-            new Timer(SendHeartBeat, 0, 0, 1 * 1000);
+            heartBeat_timer = new Timer(SendHeartBeat, 0, 0, 1 * 1000);
             // ReSharper disable once ObjectCreationAsStatement
-            new Timer(ApplyShipEffects, 0, 0, 60*1000);
+            effectTimer = new Timer(ApplyShipEffects, 0, 0, 60*1000);
+        }
+
+        private void ShipDamageServiceOnSimulatorDisconnectedEvent()
+        {
+            var handler = SimulatorDisconnected;
+            if (handler != null) handler();
         }
 
         private void ShipDamageServiceOnShipDestroyed(Guid guid)
         {
-            _shipList.GetShipByGuid(guid).DestroyShip();
+            if (_shipList.HasShipWithThisGuid(guid))
+            {
+                _shipList.GetShipByGuid(guid).DestroyShip();
+            }
+           
         }
 
         private void ShipDamageServiceOnShipDamaged(Guid guid, byte b)
         {
-            _shipList.GetShipByGuid(guid).DamageShip(b);
+            if (_shipList.HasShipWithThisGuid(guid))
+            {
+                _shipList.GetShipByGuid(guid).DamageShip(b);
+            }
+            else
+            {
+                _shipDamageService.SendToSimulator(guid,
+                                                   new List<ShipSubsystemStatus>
+                                                       {
+                                                           new ShipSubsystemStatus()
+                                                               {
+                                                                   SubSystemNum = 0,
+                                                                   EffectiveTable = 0xAAAA,
+                                                                   Severity = RanmaRepairSeverity.Hard
+                                                               },
+                                                            new ShipSubsystemStatus()
+                                                               {
+                                                                   SubSystemNum = 1,
+                                                                   EffectiveTable = 0xAAAA,
+                                                                   Severity = RanmaRepairSeverity.Hard
+                                                               },
+                                                            new ShipSubsystemStatus()
+                                                               {
+                                                                   SubSystemNum = 2,
+                                                                   EffectiveTable = 0xAAAA,
+                                                                   Severity = RanmaRepairSeverity.Hard
+                                                               },
+                                                            new ShipSubsystemStatus()
+                                                               {
+                                                                   SubSystemNum = 3,
+                                                                   EffectiveTable = 0xAAAA,
+                                                                   Severity = RanmaRepairSeverity.Hard
+                                                               },
+                                                             new ShipSubsystemStatus()
+                                                               {
+                                                                   SubSystemNum = 4,
+                                                                   EffectiveTable = 0xAAAA,
+                                                                   Severity = RanmaRepairSeverity.Hard
+                                                               },
+                                                             new ShipSubsystemStatus()
+                                                               {
+                                                                   SubSystemNum = 5,
+                                                                   EffectiveTable = 0xAAAA,
+                                                                   Severity = RanmaRepairSeverity.Hard
+                                                               },
+                                                              new ShipSubsystemStatus()
+                                                               {
+                                                                   SubSystemNum = 6,
+                                                                   EffectiveTable = 0xAAAA,
+                                                                   Severity = RanmaRepairSeverity.Hard
+                                                               },
+                                                            new ShipSubsystemStatus()
+                                                               {
+                                                                   SubSystemNum = 7,
+                                                                   EffectiveTable = 0xAAAA,
+                                                                   Severity = RanmaRepairSeverity.Hard
+                                                               }
+
+                                                       });
+            }
         }
 
         private static void SendHeartBeat(object state)
@@ -119,6 +196,7 @@ namespace HonorLogic
 
         public event Action ArmletListUpdated;
         public event Action<byte> NewGateOnline;
+        public event Action SimulatorDisconnected;
 
         public void SendMessageToAll(string text)
         {
@@ -155,7 +233,18 @@ namespace HonorLogic
         {
             armlet.SetStatus("Отправляется сообщение");
             OnArmletListUpdated();
-            _armletService.DeliverToSingleArmlet(armlet.Id, payload);
+            try
+            {
+                _armletService.DeliverToSingleArmlet(armlet.Id, payload);
+            }
+            catch (GateNotConnectedException exc)
+            {
+                foreach (var gateId in exc.GateId)
+                {
+                    _gates[gateId].Value.SetOnline(false);
+                }
+            }
+           
         }
 
         private void SendPayloadToAll(byte[] payload)
@@ -166,7 +255,17 @@ namespace HonorLogic
                 armletInfo.SetStatus("Отправляется сообщение");
             }
             OnArmletListUpdated();
-            _armletService.DeliverToArmlets(armlets.Select(armlet => armlet.Id).ToArray(), payload);
+            try
+            {
+                _armletService.DeliverToArmlets(armlets.Select(armlet => armlet.Id).ToArray(), payload);
+            }
+            catch (GateNotConnectedException exc)
+            {
+                foreach (var gateId in exc.GateId)
+                {
+                    _gates[gateId].Value.SetOnline(false);
+                }
+            }
         }
 
         public void SavePersistent()
@@ -266,6 +365,17 @@ namespace HonorLogic
         {
             return NetworkDelivery.ConnectToSimulator();
         }
+
+        public IEnumerable<IArmletInfo> PeopleIDsInCertainRooms(IEnumerable<byte> RoomIDs)
+        {
+            return _armletList.GetAll().Where(a => RoomIDs.Contains(a.Room));
+        }
+
+        
+
+        
+
+        
 
         public string GetRoomName(byte room)
         {

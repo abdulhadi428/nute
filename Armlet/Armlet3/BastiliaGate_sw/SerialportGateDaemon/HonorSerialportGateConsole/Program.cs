@@ -9,7 +9,7 @@ namespace HonorSerialportGateConsole
 
         static int Main()
         {
-            Console.WriteLine("SerialportGateDaemon " + Assembly.GetEntryAssembly().GetName().Version);
+                Console.WriteLine("SerialportGateDaemon " + Assembly.GetEntryAssembly().GetName().Version);
             try
             {
                 using (var daemon = new HonorSerialportDaemon())
@@ -20,8 +20,9 @@ namespace HonorSerialportGateConsole
             }
             catch (Exception exc)
             {
-                
+                LogClass.Write(exc.Message);
                 Console.WriteLine(exc.ToString());
+                LogClass.Write("Global Try-Catch triggered. Killing myself");
                 return 1;
             }
             

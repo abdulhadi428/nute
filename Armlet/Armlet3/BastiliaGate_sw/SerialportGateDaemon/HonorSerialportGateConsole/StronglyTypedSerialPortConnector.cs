@@ -26,7 +26,7 @@ namespace HonorSerialportGateConsole
             _outputQueue = outputQueue;
             _port = new SerialPort
                 {
-                    BaudRate = 115200,
+                    BaudRate = 256000,
                     DataBits = 8,
                     Handshake = Handshake.None,
                     Parity = Parity.None,
@@ -74,9 +74,9 @@ namespace HonorSerialportGateConsole
                 _port.ReadTimeout = 1000;
                 return true;
             }
-            catch (Exception)
+            catch (Exception exc )
             {
-                LogClass.Write("Error at opening port named " + portName);
+                LogClass.Write("Error at opening port named " + portName + " With text: " + exc.Message);
                 if (_port.IsOpen)
                 {
                     _port.Close();

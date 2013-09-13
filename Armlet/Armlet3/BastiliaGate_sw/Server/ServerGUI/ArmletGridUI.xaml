@@ -14,8 +14,26 @@
                 <Setter Property="Padding" Value="5,5" />
             </Style>
         </DockPanel.Resources>
+        
         <ScrollViewer DockPanel.Dock="Right">
-            <StackPanel Orientation="Vertical" x:Name="ShipStackPanel"></StackPanel>
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <ComboBox Name="RoomHit_Percentage">
+                        <ComboBoxItem>1</ComboBoxItem>
+                        <ComboBoxItem>2</ComboBoxItem>
+                    </ComboBox>
+                    <ComboBox Name="RoomHit_Type">
+                        <ComboBoxItem>01 - Удар</ComboBoxItem>
+                        <ComboBoxItem>02 - Ожег</ComboBoxItem>
+                        <ComboBoxItem>03 - Радиация</ComboBoxItem>
+                    </ComboBox>
+                    <Button Name="ShaybaKill">Взорвать Шайбу 77</Button>
+                </StackPanel>
+                <WrapPanel Orientation="Horizontal" x:Name="ShipStackPanel" MaxWidth="700">
+                    
+                </WrapPanel>
+            </StackPanel>
+            
         </ScrollViewer>
         <WrapPanel Orientation="Vertical" DockPanel.Dock="Top" MaxHeight="150">
             <GroupBox Header="Установка имени" >
@@ -36,19 +54,23 @@
             </GroupBox>
             <GroupBox Header="Отсылка сообщения" >
                 <StackPanel Orientation="Vertical">
-                    <TextBox x:Name="MessageTextBox" MinWidth="200" MinHeight="50"/>
+                    <TextBox x:Name="MessageTextBox" MinWidth="150" MinHeight="50"/>
                     <WrapPanel>
                         <Button MaxWidth="100" Click="SendMessage_Click" Content="Отослать"/>
                         <Button MaxWidth="100" Click="SendAll_Click" Content="Отослать Всем"/>
                     </WrapPanel>
                 </StackPanel>
             </GroupBox>
-            <Button Click="ConnectClick">Подключиться к симулятору</Button>
+            <StackPanel Orientation="Horizontal">
+                <Label Name="SimulatorLinkLabel">Нет связи</Label>
+                <Button Click="ConnectClick">Подкл. симулятор</Button>
+            </StackPanel>
+            
             <serverGUI:GateTabControl x:Name="GateUI" x:FieldModifier="public" />
 
         </WrapPanel>
 
-        <DataGrid x:Name="ArmletGrid" AutoGenerateColumns="False" IsReadOnly="True">
+        <DataGrid x:Name="ArmletGrid" AutoGenerateColumns="False" IsReadOnly="True" >
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding (serverGUI:ArmletWatcher.Id)}" ClipboardContentBinding="{x:Null}" Header="ИД">
                     <DataGridTextColumn.ElementStyle>

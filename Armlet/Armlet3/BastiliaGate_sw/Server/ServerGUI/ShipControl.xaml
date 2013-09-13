@@ -8,13 +8,13 @@
     <GroupBox x:Name="MainGroupBox">
         <StackPanel Orientation="Vertical">
             <Label x:Name="GatesLabel" /> <Label x:Name="OnlineLabel"></Label>
-            <StackPanel Orientation="Horizontal" x:Name="BoardStackPanel"></StackPanel>
-            <StackPanel Orientation="Horizontal" x:Name="HitStackPanel">
+            <WrapPanel Orientation="Horizontal" MaxWidth="310" x:Name="BoardStackPanel"></WrapPanel>
+            <WrapPanel Orientation="Horizontal" MaxWidth="310" x:Name="HitStackPanel">
                 <Label>Взрыв силой...</Label>
                 <Button Click="HitClick">1</Button>
                 <Button Click="HitClick">2</Button>
                 <Button Click="HitClick">3</Button>
-            </StackPanel>
+            </WrapPanel>
         </StackPanel>
     </GroupBox>
 </UserControl>

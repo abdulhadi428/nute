@@ -56,18 +56,19 @@ namespace HonorLogic.ShipStatus.Ranma
                 var severity = lastData.ToSeverity();
 
                 shipSubsystemStatuse.Severity = severity;
+                shipSubsystemStatuse.RealTable = lastData.MakeUInt16();
 
-                shipSubsystemStatuse.RepairedStatus = severity == RanmaRepairSeverity.NotDamaged
+                shipSubsystemStatuse.EffectiveTable = severity == RanmaRepairSeverity.NotDamaged
                     ? (ushort) 0
                     : subsystemData.MakeUInt16();
             }
         }
 
-        public void SetSubsystemSeverity(int subSystemNum, RanmaRepairSeverity ranmaRepairSeverity)
+        public void SetSubsystemSeverity(int subSystemNum, RanmaRepairSeverity ranmaRepairSeverity, byte[] repairTable)
         {
             this[subSystemNum].Severity = ranmaRepairSeverity;
 
-            var repairTable = RanmaSubsystemStatusFactory.GenerateRanmaSubsystemStatus(ranmaRepairSeverity).Bytes;
+           
             _gateModel.WritePlate(0, subSystemNum, repairTable);
         }
 

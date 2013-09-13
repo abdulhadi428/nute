@@ -18,14 +18,18 @@ namespace ServerGUI
         public void Update()
         {
             DamageListBox.SelectedIndex = (int) Status.Severity;
-            StatusLabel.Content = Status.RepairedStatus.ToString("X4");
+            RealStatusLabel.Content = Status.RealTable.ToString("X4");
+            EffictivesStatusLabel.Content = Status.EffectiveTable.ToString("X4");
             UpdateBackground();
         }
 
         private void UpdateBackground()
         {
-            DamageListBox.Background = new SolidColorBrush(GetSeverityColor(Status.Severity));
-            StatusLabel.Background = new SolidColorBrush(Status.Repaired ? Colors.Green : Colors.Red);
+            var damageColor = GetSeverityColor(Status.Severity);
+            DamageListBox.Background = new SolidColorBrush(damageColor);
+            var color = Status.Repaired ? Colors.Green : Colors.Red;
+            RealStatusLabel.Background = new SolidColorBrush(damageColor);
+            EffictivesStatusLabel.Background = new SolidColorBrush(color);
         }
 
         private Color GetSeverityColor(RanmaRepairSeverity severity)
