@@ -50,7 +50,7 @@ fresult MenuItemBase::Draw()
 	}
 }
 
-bool_t MenuItemBase::CheckAccelerator(ButtonState button)
+bool_t MenuItemBase::ProcessKey(ButtonState button)
 {
 	if (_IsEnabled == TRUE)
 	{

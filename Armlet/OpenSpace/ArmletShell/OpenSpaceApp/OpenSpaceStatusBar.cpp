@@ -4,10 +4,10 @@
 #define MAX_HEADER_TOTAL_LEN 13
 #define TITLE_MAX_OFFSET
 
-fresult OpenSpaceStatusBar::Init( Repositories* reps, Factories* facts)
+fresult OpenSpaceStatusBar::Init(Size sz, Repositories* reps, Factories* facts)
 {
 	fresult fres;
-	fres = BaseInit(reps, facts);
+	fres = BaseInit(sz, reps, facts);
 	ENSURESUCCESS(fres);
 
 	_batteryImagesCount =5;
@@ -37,7 +37,6 @@ fresult OpenSpaceStatusBar::CreateStatusBar()
 	fres = StatusBarBase::CreateStatusBar();
 	ENSURESUCCESS(fres);
 
-	//TODO: img lists
 	Position pbxBatteryPos;
 	pbxBatteryPos.Left = 2;
 	pbxBatteryPos.Top = 2;
@@ -45,20 +44,20 @@ fresult OpenSpaceStatusBar::CreateStatusBar()
 	fres = AddBatteryLevel(pbxBatteryPos);
 	ENSURESUCCESS(fres);
 	
-	fres = _BatteryLevel->SetValue(0);
+	fres = _imglBatteryLevel->SetValue(0);
 	ENSURESUCCESS(fres);
 
 	Position pbxNetworkPos;
-	pbxNetworkPos.Left = pbxBatteryPos.Left + _BatteryLevel->GetSize().Width + 2;
+	pbxNetworkPos.Left = pbxBatteryPos.Left + _imglBatteryLevel->GetSize().Width + 2;
 	pbxNetworkPos.Top = pbxBatteryPos.Top;
 
 	fres = AddNetworkLevel(pbxNetworkPos);
 	ENSURESUCCESS(fres);
 
-	fres = _NetworkLevel->SetValue(0);
+	fres = _imglNetworkLevel->SetValue(0);
 	ENSURESUCCESS(fres);
 
-	_headerMinLeft = pbxNetworkPos.Left + _NetworkLevel->GetSize().Width + 2;
+	_headerMinLeft = pbxNetworkPos.Left + _imglNetworkLevel->GetSize().Width + 2;
 
 	Size sbSz = GetSize();
 	Size szHeader;

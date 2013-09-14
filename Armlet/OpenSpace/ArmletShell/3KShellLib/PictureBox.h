@@ -44,8 +44,6 @@ public:
 
 };
 
-
-//TODO: Rename To ImageBox
 class PictureBox : public PictureBoxBase
 {
 public:
@@ -66,10 +64,5 @@ public:
 		FAILIF(bmp==NULL);
 		return PictureBoxBase::SetImageInternal(bmp);
 	}
-
-};
-
-class Image : public PictureBox
-{
 
 };

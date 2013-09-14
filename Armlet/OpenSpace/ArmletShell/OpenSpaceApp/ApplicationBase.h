@@ -1,5 +1,9 @@
 #pragma  once
 
+#define DOVIBRO_TIME 500
+#define BATTERYSTATUS_POLL_TIME 4*1000
+
+
 class ApplicationBase
 {
 private:
@@ -58,5 +62,15 @@ public:
 	virtual Position GetClientAreaPos();
 
 	virtual fresult Start();
-	fresult OnButtonEvent(ButtonState buttonState);
+	virtual fresult OnButtonEvent(ButtonState buttonState);
+	virtual bool_t OnSystemTimer();
+	
+	virtual void LogError(char* errorText);
+	
+	FormManager* GetFormManager();
+
+	fresult RedrawCurrentForm(); 
+
+	//api access
+	void DoVibroAndBeep();
 };

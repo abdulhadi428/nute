@@ -14,7 +14,7 @@ class OpenSpaceStatusBar : public StatusBarBase
 	ubyte_t _headerMinLeft;
 
 public:
-	fresult Init(Repositories* reps, Factories* facts);
+	fresult Init(Size sz, Repositories* reps, Factories* facts);
 	fresult SetTitle(char* szTitle, char* szSubtitle);
 
 	virtual fresult GetBatteryImages( ImageHandle** o_batteryImages, ubyte_t* o_count );

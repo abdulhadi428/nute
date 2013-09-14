@@ -6,7 +6,7 @@ fresult PictureBoxBase::DrawArea( Position pos, Size size )
 {
 	fresult fres = SUCCESS;
 
-	if(_bVisible == FALSE)
+	if(Visible == FALSE)
 		return SUCCESS;
 
 	if (_bitmap==NULL)

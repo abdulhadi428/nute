@@ -12,7 +12,7 @@ void _medSetRegenerationRate(sword_t regenRate)
 {
 	if ((regenRate<1)||(regenRate>3)) return;
 	Body.RegenerationLevel = (REGENERATION_LEVEL)regenRate;
-	return;
+	return; 
 }
 
 void _medInit()

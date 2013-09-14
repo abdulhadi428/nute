@@ -22,5 +22,5 @@ public:
 	virtual fresult Click() {return GENERAL_ERROR;};
 
 	//TODO: wrong name
-	virtual bool_t CheckAccelerator(ButtonState button){return FALSE;};
+	virtual bool_t ProcessKey(ButtonState button){return FALSE;};
 };

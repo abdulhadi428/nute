@@ -1,19 +1,23 @@
 #include "ArmletApi.h"
 #include "ArmletShell.h"
 #include "ThreeKShell.h"
-#include "OpenSpace.h"
+#include "To3KShell.h"
+#include "AppMain.h"
+#include "kl_allocator.h"
 
-#define DEFAULT_FORMS_COUNT 0
 #define DEFAULT_SHOWNFORMSSTACK_LENGTH 10
+
+static Alloc_t<Repositories, 20> SRepositoriesArr;
+static Alloc_t<Factories, 30> SFactoriesArr;
 
 Repositories* ApplicationBase::AllocRepositories()
 {
-	return new Repositories();
+	return SRepositoriesArr.Allocate(); // new Repositories();
 }
 
 Factories* ApplicationBase::AllocFactories()
 {
-	return new Factories();
+	return SFactoriesArr.Allocate(); // new Factories();
 }
 
 fresult ApplicationBase::InitImages( ImagesRepository* imgrep )
@@ -74,7 +78,7 @@ fresult ApplicationBase::InitFactories( Factories* factories )
 
 	fres = _pnlFactoryInstance.Init(_Render, _Repositories);
 	ENSURESUCCESS(fres);
-	
+
 	fres = _pbxFactoryInstance.Init(_Render, _Repositories->Images);
 	ENSURESUCCESS(fres);
 
@@ -87,7 +91,7 @@ fresult ApplicationBase::InitFactories( Factories* factories )
 	fres = _miFactoryInstance.Init(_Render, _Repositories, &_tfFactoryInstance, &_pbxFactoryInstance, &_pnlFactoryInstance);
 	ENSURESUCCESS(fres);
 
-	fres = _mnuFactoryInstance.Init(_Render, _Repositories, &_tfFactoryInstance, &_pbxFactoryInstance, &_pnlFactoryInstance, &_miFactoryInstance);	
+	fres = _mnuFactoryInstance.Init(_Render, _Repositories, &_tfFactoryInstance, &_pbxFactoryInstance, &_pnlFactoryInstance, &_miFactoryInstance);
 	ENSURESUCCESS(fres);
 
 	fres = _Factories->Init(&_pnlFactoryInstance, &_pbxFactoryInstance, &_imglFactoryInstance, &_tfFactoryInstance, &_miFactoryInstance, &_mnuFactoryInstance);
@@ -114,8 +118,8 @@ fresult ApplicationBase::BaseInit()
 	ENSURESUCCESS(fres);
 
 	_FormManager = &_fmngrFormManagerInstance;
-	
-	ubyte_t formsCount = DEFAULT_FORMS_COUNT;
+
+	ubyte_t formsCount = 0;
 	ubyte_t shownStackLength = DEFAULT_SHOWNFORMSSTACK_LENGTH;
 
 	fres = GetFormManagerParams(&formsCount, &shownStackLength);
@@ -133,6 +137,9 @@ fresult ApplicationBase::BaseInit()
 	fres = _fmngrFormManagerInstance.LayoutForms();
 	ENSURESUCCESS(fres);
 
+	//launch battery status timer
+	ArmletApi::RequestTimer(_QuerySystemStatusTimerCallback, BATTERYSTATUS_POLL_TIME);
+
 	return SUCCESS;
 }
 
@@ -143,7 +150,7 @@ fresult ApplicationBase::CreateForms()
 
 fresult ApplicationBase::GetFormManagerParams( ubyte_t* formsCount, ubyte_t* shownStackLength )
 {
-	*formsCount = DEFAULT_FORMS_COUNT;
+	*formsCount = 0;
 	*shownStackLength = DEFAULT_SHOWNFORMSSTACK_LENGTH;
 
 	return SUCCESS;
@@ -179,8 +186,11 @@ fresult ApplicationBase::OnButtonEvent( ButtonState buttonState )
 	IForm* frm = _FormManager->GetCurrentForm();
 	FAILIF(frm==NULL);
 	fres =  frm->OnButtonEvent(buttonState);
-	ENSURESUCCESS(fres);
-	
+	if (fres!=SUCCESS)
+	{
+		LogError("Ошибка при обработке кнопки!");
+	}
+
 	return SUCCESS;
 }
 
@@ -238,4 +248,95 @@ Position ApplicationBase::GetClientAreaPos()
 	pos.Top = statusBarSize.Height;
 
 	return pos;
+}
+
+void ApplicationBase::DoVibroAndBeep()
+{
+	ArmletApi::DoVibroAndBeep(DOVIBRO_TIME);
+}
+
+bool_t ApplicationBase::OnSystemTimer()
+{
+	fresult fres;
+
+	if (_StatusBar != NULL)
+	{
+
+		ubyte_t currBattery = ArmletApi::GetBatteryLevel();
+		fres =  _StatusBar->SetBatteryLevel(currBattery);
+		if (fres!=SUCCESS)	
+		{
+			LogError("Cant't set battery level");
+			return true;
+		}
+
+		int GateId=25;
+		int Level=-99;
+
+		ArmletApi::GetRadioStatus(&GateId, &Level);
+		//hint for level values
+		//-35 good
+		//-100 bad
+
+		fres = _StatusBar->SetNetworkSignalStrength(Level);
+		if (fres!=SUCCESS)	
+		{
+			LogError("Cant't set radio status level");
+			return true;
+		}
+		
+		//get time
+		char* timeString = ArmletShell::GetTime();
+
+		fres = _StatusBar->SetTime(timeString);
+		if (fres!=SUCCESS)	
+		{
+			LogError("Cant't set time");
+			return true;
+		}
+
+
+
+		if (_StatusBar->GetVisible() == TRUE)
+		{
+			fres = _StatusBar->Draw();
+			if (fres!=SUCCESS)	
+			{
+				LogError("Cant't draw status");
+				return true;
+			}
+		}
+	}
+
+	return true;
+}
+
+void ApplicationBase::LogError( char* errorText )
+{
+	DrawTextString(10,10,errorText,Length(errorText),WHITE,0);	
+}
+
+FormManager* ApplicationBase::GetFormManager()
+{
+	return _FormManager;
+}
+
+fresult ApplicationBase::RedrawCurrentForm()
+{
+	fresult fres;
+
+	fres = _FormManager->GetCurrentForm()->Draw();
+	ENSURESUCCESS(fres);
+
+	if (_StatusBar->GetVisible() == TRUE)
+	{
+		fres = _StatusBar->Draw();
+		if (fres!=SUCCESS)	
+		{
+			LogError("Cant't draw status");
+			return true;
+		}
+	}
+
+	return SUCCESS;
 }

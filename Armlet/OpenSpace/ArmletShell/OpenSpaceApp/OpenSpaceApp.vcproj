@@ -158,10 +158,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\AppSpecificImages.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\ColorSchema.cpp"
 				>
 			</File>
@@ -241,10 +237,6 @@
 			</File>
 			<File
 				RelativePath=".\AppMain.h"
-				>
-			</File>
-			<File
-				RelativePath=".\AppSpecificImages.h"
 				>
 			</File>
 			<File

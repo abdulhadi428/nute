@@ -119,7 +119,13 @@ fresult OpenSpaceApp::GetFormManagerParams( ubyte_t* formsCount, ubyte_t* shownS
 fresult OpenSpaceApp::CreateStatusBar()
 {
 	fresult fres;
-	fres = _OSStatusBarInstance.Init(_Repositories, _Factories);
+	Size statusBarSize;
+	Size clSz = GetClientAreaSize();
+
+	statusBarSize.Height = 16;
+	statusBarSize.Width = clSz.Width;
+
+	fres = _OSStatusBarInstance.Init(statusBarSize, _Repositories, _Factories);
 	ENSURESUCCESS(fres);
 	
 	_StatusBar = &_OSStatusBarInstance;

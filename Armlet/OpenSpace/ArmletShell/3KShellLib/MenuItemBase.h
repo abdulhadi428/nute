@@ -27,7 +27,7 @@ public:
 
 	ButtonState GetAccelerator();
 
-	bool_t virtual CheckAccelerator(ButtonState button);
+	bool_t virtual ProcessKey(ButtonState button);
 
 	virtual fresult SetVisible( bool_t val );
 

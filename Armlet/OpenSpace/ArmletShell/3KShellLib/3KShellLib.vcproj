@@ -232,10 +232,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Form_DEPRECATED.h"
-				>
-			</File>
-			<File
 				RelativePath=".\GraphicRenderer.h"
 				>
 			</File>

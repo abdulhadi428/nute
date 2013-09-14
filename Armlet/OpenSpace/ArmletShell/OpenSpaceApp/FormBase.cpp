@@ -1,5 +1,9 @@
 #include "ThreeKShell.h"
 #include "To3KShell.h"
+#include "kl_allocator.h"
+
+static Alloc_t<IMenu*, 30> SIMenuPtrArr;
+
 
 fresult FormBase::BaseInit( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, ApplicationBase* app )
 {
@@ -40,12 +44,12 @@ fresult FormBase::OnButtonEvent( ButtonState key )
 	return SUCCESS;
 }
 
-fresult FormBase::OnBeforeShow( IForm* prevFrom, bool_t reActivation )
+fresult FormBase::OnBeforeShow( IForm* prevFrom, bool_t reActivation, FormShowResults results )
 {
 	return SUCCESS;
 }
 
-fresult FormBase::OnAfterShow( IForm* prevFrom, bool_t reActivation )
+fresult FormBase::OnAfterShow( IForm* prevFrom, bool_t reActivation, FormShowResults results )
 {
 	return SUCCESS;
 }
@@ -77,7 +81,7 @@ fresult FormBase::Draw()
 IMenu** FormBase::AllocMenus( ubyte_t menusCount )
 {
 	_MenusCount = menusCount;
-	return new IMenu*[menusCount];
+	return SIMenuPtrArr.Allocate(menusCount); // new IMenu*[menusCount];
 }
 
 

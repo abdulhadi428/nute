@@ -402,7 +402,7 @@ fresult TextField::DrawArea(Position pos, Size size )
 {
 	fresult fres = SUCCESS;
 
-	if (!_bVisible)
+	if (!Visible)
 	{
 		return SUCCESS;
 	}

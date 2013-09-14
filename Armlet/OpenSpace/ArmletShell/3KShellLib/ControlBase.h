@@ -9,8 +9,7 @@ class ControlBase : public IControl
 protected:
 	Position _Position;
 	Size _Size;
-	//TODO: rename
-	bool_t _bVisible;
+	bool_t Visible;
 	ubyte_t _ZOrder;
 	IRender* _render;
 
@@ -19,7 +18,7 @@ protected:
 		_Size = size;
 		_Position = position;
 		_render = render;
-		_bVisible = TRUE;
+		Visible = TRUE;
 
 		return SUCCESS;
 	}
@@ -43,13 +42,13 @@ public:
 
 	virtual bool_t GetVisible()
 	{
-		return _bVisible;
+		return Visible;
 	}
 
 
 	virtual void SetVisible( bool_t visible )
 	{
-		_bVisible = visible;
+		Visible = visible;
 	};
 
 	virtual void SetZOrder( ubyte_t ZOrder )
@@ -71,7 +70,7 @@ public:
 
 	virtual fresult Draw() 
 	{
-		if (_bVisible == TRUE)
+		if (Visible == TRUE)
 		{
 			return DrawArea(_Position, _Size);
 		}
