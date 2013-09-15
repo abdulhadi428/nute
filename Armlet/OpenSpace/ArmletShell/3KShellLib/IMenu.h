@@ -5,18 +5,18 @@
 class IMenu
 {
 public:
-	virtual ubyte_t  GetSelectedItemIndex()=0;
+	virtual sbyte_t  GetSelectedItemIndex() {return -1;};
 
-	virtual IMenuItem*  GetItem(ubyte_t index) =0;
+	virtual IMenuItem*  GetItem(ubyte_t index) {return NULL;};
 
-	virtual void SetMustHaveSelected(bool_t mustHaveSelected) = 0;
-	virtual bool_t GetMustHaveSelected() = 0;
+	virtual void SetMustHaveSelected(bool_t mustHaveSelected) {return;};
+	virtual bool_t GetMustHaveSelected() {return FALSE;};
 
-	virtual bool_t ProcessButton(ButtonState key) =0;
+	virtual fresult ProcessButton(ButtonState key, bool* found) {return GENERAL_ERROR;};
 	
-	virtual fresult  SelectItem(ubyte_t index)=0;
-	virtual fresult  SelectNext()=0;
-	virtual fresult  SelectPrevious()=0;
+	virtual fresult  SelectItem(ubyte_t index) {return GENERAL_ERROR;};
+	virtual fresult  SelectNext() {return GENERAL_ERROR;};
+	virtual fresult  SelectPrevious(){return GENERAL_ERROR;};
 
-	virtual fresult  Draw()=0;
+	virtual fresult  Draw(){return GENERAL_ERROR;};
 };

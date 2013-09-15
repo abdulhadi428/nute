@@ -34,6 +34,20 @@ namespace ThreeKShell {
 #define MENU_ITEM_R_TOP   SCREENY - MENU_ITEM_V_SCREENBORDER_OFFSET
 #define	MENU_ITEM_R_LEFT  129
 
+
+
+#define MENU_ITEM_A_NAME "A"
+#define MENU_ITEM_B_NAME "B"
+#define MENU_ITEM_C_NAME "C"
+#define MENU_ITEM_X_NAME "X"
+#define MENU_ITEM_Y_NAME "Y"
+#define	MENU_ITEM_Z_NAME "Z"
+#define	MENU_ITEM_L_NAME "L"
+#define	MENU_ITEM_E_NAME "E"
+#define	MENU_ITEM_R_NAME "R"
+
+
+
 static Alloc_t<IMenuItem*, 45> SIMenuItemPtrArr;
 static Alloc_t<ScatteredMenu, 20> SScatteredMenuArr;
 
@@ -88,38 +102,47 @@ fresult MenuFactory::ClearSettings()
 			case ItemOriginA:
 				orgn.Top =	MENU_ITEM_A_TOP;
 				orgn.Left = MENU_ITEM_A_LEFT;
+				Settings[i].Name = MENU_ITEM_A_NAME;
 			break;
 			case ItemOriginB:
 				orgn.Top =	MENU_ITEM_B_TOP;
 				orgn.Left = MENU_ITEM_B_LEFT;
+				Settings[i].Name = MENU_ITEM_B_NAME;
 			break;
 			case ItemOriginC:
 				orgn.Top =	MENU_ITEM_C_TOP;
 				orgn.Left = MENU_ITEM_C_LEFT;
+				Settings[i].Name = MENU_ITEM_C_NAME;
 			break;
 			case ItemOriginX:
 				orgn.Top =	MENU_ITEM_X_TOP;
 				orgn.Left = MENU_ITEM_X_LEFT;
+				Settings[i].Name = MENU_ITEM_X_NAME;
 			break;
 			case ItemOriginY:
 				orgn.Top =	MENU_ITEM_Y_TOP;
 				orgn.Left = MENU_ITEM_Y_LEFT;
+				Settings[i].Name = MENU_ITEM_Y_NAME;
 			break;
 			case ItemOriginZ:
 				orgn.Top =	MENU_ITEM_Z_TOP;
 				orgn.Left = MENU_ITEM_Z_LEFT;
+				Settings[i].Name = MENU_ITEM_Z_NAME;
 			break;
 			case ItemOriginL:
 				orgn.Top =	MENU_ITEM_L_TOP;
 				orgn.Left = MENU_ITEM_L_LEFT;
+				Settings[i].Name = MENU_ITEM_L_NAME;
 			break;
 			case ItemOriginE:
 				orgn.Top =	MENU_ITEM_E_TOP;
 				orgn.Left = MENU_ITEM_E_LEFT;
+				Settings[i].Name = MENU_ITEM_E_NAME;
 			break;
 			case ItemOriginR:
 				orgn.Top =	MENU_ITEM_R_TOP;
 				orgn.Left = MENU_ITEM_R_LEFT;
+				Settings[i].Name = MENU_ITEM_R_NAME;
 			break;
 		default:
 			return GENERAL_ERROR;
@@ -278,7 +301,15 @@ fresult MenuFactory::GetMenu( MenuKinds kind, IMenu** o_mnu )
 			}
 
 			_miFactory->CurrentTextFormatHandle = tfmt;
-			fres = _miFactory->GetMenuItem(Settings[i].ScreenOrigin, align, style, Settings[i].ImgHandle, Settings[i].Text, shrtcut, Settings[i].Handler, &mi);
+			fres = _miFactory->GetMenuItem(Settings[i].ScreenOrigin, 
+											align,
+											style, 
+											Settings[i].ImgHandle, 
+											Settings[i].Text, 
+											shrtcut, 
+											Settings[i].Handler, 
+											Settings[i].Name, 
+											&mi);
 			ENSURESUCCESS(fres);
 			_miFactory->CurrentTextFormatHandle = _miFactory->DefaultTextFormatHandle;
 			menuItems[currItemIndex] = mi;

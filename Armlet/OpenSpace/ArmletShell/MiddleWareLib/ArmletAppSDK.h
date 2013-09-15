@@ -4,7 +4,7 @@
 
 extern const unsigned char Font_6x8_Data[256][6];
 
-namespace ArmletShell {
+namespace ArmletAppSDK {
 
 #define _NAMESPACE_PROTECT_
 	#include "Types.h"				//common types
@@ -21,5 +21,5 @@ namespace ArmletShell {
 
 }
 
-using namespace ArmletShell;
+using namespace ArmletAppSDK;
 using namespace ServerProtocol;

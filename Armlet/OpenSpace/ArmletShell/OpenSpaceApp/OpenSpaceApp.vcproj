@@ -158,10 +158,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ColorSchema.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\FormBase.cpp"
 				>
 			</File>
@@ -240,15 +236,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ColorSchema.h"
-				>
-			</File>
-			<File
 				RelativePath=".\FormBase.h"
 				>
 			</File>
 			<File
 				RelativePath=".\FormManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IDialogForm.h"
 				>
 			</File>
 			<File

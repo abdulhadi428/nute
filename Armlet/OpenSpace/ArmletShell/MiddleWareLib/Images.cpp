@@ -1,6 +1,6 @@
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 
-namespace ArmletShell {
+namespace ArmletAppSDK {
 
 //old rep
 fresult ImagesRepository_::Init( BitmapImage* images, sword_t imagesCount )

@@ -38,7 +38,7 @@ protected:
 	}
 
 public:
-	virtual ubyte_t  GetSelectedItemIndex() 
+	virtual sbyte_t  GetSelectedItemIndex() 
 	{
 		return _SelectedIndex;
 	};
@@ -55,24 +55,24 @@ public:
 		}
 	};
 
-	virtual bool_t ProcessButton( ButtonState key ) 
+	virtual fresult ProcessButton( ButtonState key, bool* found) 
 	{
-		bool_t itemClicked = FALSE;
+		fresult fres;
+
+		*found = FALSE;
+
 		for (int i=0; i<_ItemsCount; i++)
 		{
-			itemClicked = _Items[i]->ProcessKey(key);
-			if (itemClicked == TRUE)
+			
+			fres = _Items[i]->ProcessKey(key, found);
+			ENSURESUCCESS(fres);
+			if (*found == TRUE)
 			{
 				break;
 			}
 		}
 		
-		if (itemClicked)
-		{
-			return TRUE;
-		}
-
-		return FALSE;
+		return SUCCESS;
 	};
 
 	virtual fresult  SelectItem( ubyte_t index );

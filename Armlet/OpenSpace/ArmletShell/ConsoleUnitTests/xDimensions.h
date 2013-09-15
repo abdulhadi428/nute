@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 
 class xDimensions
 {

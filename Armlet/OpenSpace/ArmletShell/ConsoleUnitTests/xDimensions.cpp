@@ -1,6 +1,6 @@
 #include "xDimensions.h"
 #include <iostream>
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 
 void xDimensions::doTests()
 {

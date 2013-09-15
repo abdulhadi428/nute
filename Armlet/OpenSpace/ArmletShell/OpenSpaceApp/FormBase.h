@@ -3,6 +3,7 @@
 class FormBase : public IForm
 {
 	ApplicationBase* _AppBase;
+	ScatteredMenu _mnuInstance;
 protected:
 
 	Repositories* _Repositories;
@@ -11,20 +12,21 @@ protected:
 
 	Panel* _FormPanel;
 	char* _Name;
-	IMenu** _Menus;
-	ubyte_t _MenusCount;
- 
-    IMenu** AllocMenus(ubyte_t menusCount);
-	fresult BaseInit(Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, ApplicationBase* app);
+	IMenu* _Menu;
 
+	bool _IsDialog;
+ 
+	fresult BaseInit(Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, ApplicationBase* app);
 
 public:
 	virtual char* GetName();
 	virtual fresult DoLayout(){return SUCCESS;};	
-	virtual fresult OnButtonEvent(ButtonState key);
-	virtual fresult OnBeforeShow(IForm* prevFrom, bool_t reActivation, FormShowResults results);
-	virtual fresult OnAfterShow(IForm* prevFrom, bool_t reActivation, FormShowResults results);
+	virtual fresult OnButtonEvent(ButtonState key, bool* found);
+	virtual fresult OnAfterDialogShown(IForm* prevFrom, char* dialogName, FormShowResults results, bool* needRedraw);
+	virtual fresult OnBeforeShown(IForm* prevFrom, bool_t reActivation, FormShowResults formShowResult);
+	virtual fresult OnAfterShown(IForm* prevFrom, bool_t reActivation, FormShowResults formShowResult);
 	virtual fresult OnLoad();
+	bool_t IsDialog();
 
 	virtual fresult Draw();
 };

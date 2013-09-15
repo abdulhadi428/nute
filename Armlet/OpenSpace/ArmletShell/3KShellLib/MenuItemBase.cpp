@@ -50,22 +50,25 @@ fresult MenuItemBase::Draw()
 	}
 }
 
-bool_t MenuItemBase::ProcessKey(ButtonState button)
+fresult MenuItemBase::ProcessKey(ButtonState button, bool* found)
 {
+	fresult fres;
 	if (_IsEnabled == TRUE)
 	{
 		if (button==_Accelerator || button==_Accelerator2)
 		{
-			Click();
-			return TRUE;
+			fres = Click();
+			*found = TRUE;
+			return fres;
 		}
 	}
-	return FALSE;
+	*found = FALSE;
+	return SUCCESS;
 }
 
-fresult MenuItemBase::MenuItemBaseInit( IControl* _control, IMenuHandler* handler, ButtonState accelerator )
+fresult MenuItemBase::MenuItemBaseInit(char* name, IControl* control, IMenuHandler* handler, ButtonState accelerator )
 {
-	_underLyningControl = _control;
+	_underLyningControl = control;
 	if (handler!=NULL)
 	{
 		_OnClickHandler = handler;
@@ -78,6 +81,8 @@ fresult MenuItemBase::MenuItemBaseInit( IControl* _control, IMenuHandler* handle
 	_IsSelected = FALSE;
 	_IsVisible = TRUE;
 	_IsEnabled = TRUE;
+
+	_Name = name;
 
 	_Accelerator = accelerator;
 	_Accelerator2 = -1;
@@ -121,4 +126,12 @@ bool_t MenuItemBase::GetEnabled()
 {
 	return _IsEnabled;
 }
+
+
+
+char* MenuItemBase::GetName()
+{
+	return _Name;
+}
+
 }

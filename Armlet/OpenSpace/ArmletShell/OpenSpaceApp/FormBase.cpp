@@ -1,9 +1,5 @@
 #include "ThreeKShell.h"
 #include "To3KShell.h"
-#include "kl_allocator.h"
-
-static Alloc_t<IMenu*, 30> SIMenuPtrArr;
-
 
 fresult FormBase::BaseInit( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, ApplicationBase* app )
 {
@@ -20,8 +16,9 @@ fresult FormBase::BaseInit( Repositories* reps, Factories* facts, char* name, Fo
 	_AppBase = app;
 	
 	_FormPanel = NULL;
-	_Menus = NULL;
-	_MenusCount = 0;
+	_Menu = &_mnuInstance;
+	_IsDialog = FALSE;
+
 
 	return SUCCESS;
 }
@@ -31,25 +28,17 @@ char* FormBase::GetName()
 	return _Name;
 }
 
-fresult FormBase::OnButtonEvent( ButtonState key )
+fresult FormBase::OnButtonEvent( ButtonState key, bool* found)
 {
-	for (int i =0; i< _MenusCount ; i++)
-	{
-		if (!_Menus[i]->ProcessButton(key))
-		{
-			break;
-		}
-	}
-
-	return SUCCESS;
+	return _Menu->ProcessButton(key, found);
 }
 
-fresult FormBase::OnBeforeShow( IForm* prevFrom, bool_t reActivation, FormShowResults results )
+fresult FormBase::OnBeforeShown( IForm* prevFrom, bool_t reActivation, FormShowResults formShowResult )
 {
 	return SUCCESS;
 }
 
-fresult FormBase::OnAfterShow( IForm* prevFrom, bool_t reActivation, FormShowResults results )
+fresult FormBase::OnAfterShown( IForm* prevFrom, bool_t reActivation, FormShowResults formShowResult )
 {
 	return SUCCESS;
 }
@@ -69,19 +58,21 @@ fresult FormBase::Draw()
 		ENSURESUCCESS(fres);
 	}
 
-	for (int i =0; i< _MenusCount ; i++)
-	{
-		fres = _Menus[i]->Draw();
-		ENSURESUCCESS(fres);
-	}
+	fres = _Menu->Draw();
+	ENSURESUCCESS(fres);
 
 	return SUCCESS;
 }
 
-IMenu** FormBase::AllocMenus( ubyte_t menusCount )
+bool_t FormBase::IsDialog()
 {
-	_MenusCount = menusCount;
-	return SIMenuPtrArr.Allocate(menusCount); // new IMenu*[menusCount];
+	return _IsDialog;
+}
+
+fresult FormBase::OnAfterDialogShown( IForm* prevFrom, char* dialogName, FormShowResults results, bool* needRedraw )
+{
+	*needRedraw = TRUE;
+	return SUCCESS;
 }
 
 

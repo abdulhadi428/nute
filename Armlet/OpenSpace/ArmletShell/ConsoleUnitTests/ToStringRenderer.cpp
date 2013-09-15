@@ -1,7 +1,7 @@
 #include "ToStringRenderer.h"
 #include "TextHelper.h"
 #include "PlatformAPI.h"
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 #include "defs.h"
 
 fresult ToStringRenderer::DrawString( Position pospx, const char* str, uword_t length, TextFormat* format)

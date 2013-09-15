@@ -35,13 +35,15 @@ protected:
 	virtual Repositories* AllocRepositories(); 
 	virtual Factories* AllocFactories(); 
 	
-	char* _StartupFormName;
 	Repositories* _Repositories;
 	Factories* _Factories;
 	FormManager* _FormManager;
 	
 	StatusBarBase* _StatusBar;
 	char* _Version;
+
+	IDialogForm* _DialogForm;
+	char* _StartupFormName;
 	
 	fresult BaseInit();
 	
@@ -62,7 +64,7 @@ public:
 	virtual Position GetClientAreaPos();
 
 	virtual fresult Start();
-	virtual fresult OnButtonEvent(ButtonState buttonState);
+	virtual fresult OnButtonEvent(ButtonState buttonState, bool* menuKeyFound);
 	virtual bool_t OnSystemTimer();
 	
 	virtual void LogError(char* errorText);
@@ -70,6 +72,10 @@ public:
 	FormManager* GetFormManager();
 
 	fresult RedrawCurrentForm(); 
+
+	//messages
+	fresult ShowMessage(ImageHandle icon, char* title, char* text);
+	fresult ShowYNMessage(char* dialogName, ImageHandle icon, char* title, char* text);
 
 	//api access
 	void DoVibroAndBeep();

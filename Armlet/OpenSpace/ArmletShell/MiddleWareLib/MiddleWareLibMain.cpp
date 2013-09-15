@@ -1,5 +1,5 @@
 #include "ArmletApi.h"
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 #include "MiddleInterface.h"
 #include "AppMain.h"
 
@@ -175,7 +175,7 @@ namespace ArmletApi {
 
 } //namespace
 
-namespace ArmletShell {
+namespace ArmletAppSDK {
 	char* GetTime() {
 		return ArmletApi::_hhmm_time;
 	}

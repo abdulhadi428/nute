@@ -1,5 +1,5 @@
 #pragma once
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 
 //adds add string to src. returns newly allocated string
 char* StringAdd(const char* src, const char* add);

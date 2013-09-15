@@ -1,6 +1,6 @@
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 
-namespace ArmletShell {
+namespace ArmletAppSDK {
 
 } //namespace
 

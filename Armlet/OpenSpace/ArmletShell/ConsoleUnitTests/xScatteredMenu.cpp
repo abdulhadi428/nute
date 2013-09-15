@@ -5,7 +5,7 @@
 #include "ToStringRenderer.h"
 #include "IMenuItem.h"
 #include "MenuItem.h"
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 #include "defs.h"
 using namespace ThreeKShell;
 

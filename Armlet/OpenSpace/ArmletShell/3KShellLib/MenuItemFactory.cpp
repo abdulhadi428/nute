@@ -46,10 +46,14 @@ fresult MenuItemFactory::Init( IRender* render, Repositories* reps, TextFieldFac
 	DefaultTextFieldHAutoSize = TRUE;
 	CurrentTextFieldHAutoSize = DefaultTextFieldHAutoSize;
 
+	DefaultTextToImageOffset = 1;
+	CurrentTextToImageOffset = DefaultTextToImageOffset;
+
 	return SUCCESS;
 }
 
-fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuItemStyles style, ImageHandle himg, char* text, ButtonState shrtcut, IMenuHandler* handler, IMenuItem** o_mi)
+
+fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuItemStyles style, ImageHandle himg, char* text, ButtonState shrtcut, IMenuHandler* handler, char* name, IMenuItem** o_mi)
 {
 	fresult fres;
 
@@ -173,14 +177,14 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 		case ImageLeft:
 		case ImageRight:
 			//width = summ, height = greater
-			sz.Width = tfSize.Width + pbxSize.Width;
+			sz.Width = tfSize.Width + pbxSize.Width + CurrentTextToImageOffset;
 			sz.Height = tfSize.Height > pbxSize.Height?tfSize.Height:pbxSize.Height;
 			break;
 		case ImageTop:
 		case ImageBottom:
 		default:
 			//height = summ, width = greater
-			sz.Height = pbxSize.Height + tfSize.Height;
+			sz.Height = pbxSize.Height + tfSize.Height + CurrentTextToImageOffset;
 			sz.Width = tfSize.Width > pbxSize.Width?tfSize.Width:pbxSize.Width;
 			break;
 		}
@@ -205,7 +209,7 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 			pos.Left = origin.Left;
 	}
 
-	//position control 's left
+	//position controls's left
 	if (style == TextOnly)
 	{
 		tfPos.Left = pos.Left;
@@ -234,12 +238,12 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 		else if (style == ImageLeft)
 		{
 			pbxPos.Left = pos.Left;
-			tfPos.Left = pbxPos.Left + pbxSize.Width+1;
+			tfPos.Left = pbxPos.Left + pbxSize.Width+CurrentTextToImageOffset;
 		}
 		else if (style == ImageRight)
 		{
 			tfPos.Left = pos.Left;
-			pbxPos.Left = tfPos.Left + tfSize.Width+1;
+			pbxPos.Left = tfPos.Left + tfSize.Width+CurrentTextToImageOffset;
 		}
 	}
 
@@ -286,12 +290,12 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 		else if (style == ImageTop)
 		{
 			pbxPos.Top = pos.Top;
-			tfPos.Top = pbxPos.Top + pbxSize.Height;
+			tfPos.Top = pbxPos.Top + pbxSize.Height + CurrentTextToImageOffset;
 		}
 		else if (style == ImageBottom)
 		{
 			tfPos.Top = pos.Top;
-			pbxPos.Top = tfPos.Top + tfSize.Height;
+			pbxPos.Top = tfPos.Top + tfSize.Height + CurrentTextToImageOffset;
 		}
 	}
 
@@ -336,7 +340,7 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 	mi = allocMenuItem();
 	FAILIF(mi==NULL);
 
-	fres = mi->Init(tf, tfmt, pbx, drawingControl, handler, shrtcut);
+	fres = mi->Init(name,tf, tfmt, pbx, drawingControl, handler, shrtcut);
 	ENSURESUCCESS(fres);
 
 	//Set result

@@ -1,5 +1,5 @@
 #include "ArmletApi.h"
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 #include "MiddleInterface.h"
 #include "ThreeKShell.h"
 
@@ -9,13 +9,15 @@ OpenSpaceApp App;
 
 void AppOnButtonClick(ubyte_t button)
 {
-	App.OnButtonEvent(button);
+	bool menuFound=FALSE;
+	App.OnButtonEvent(button, &menuFound);
 	return;
 }
 
 void AppOnButtonHold(ubyte_t button)
 {
-	App.OnButtonEvent(button);
+	bool menuFound=FALSE;
+	App.OnButtonEvent(button, &menuFound);
 	return;
 }
 
@@ -57,6 +59,7 @@ bool __CALLBACK _MedicineTimerTickCallback(int elapsed)
 
 bool __CALLBACK _QuerySystemStatusTimerCallback(int elapsed)
 {
+	App.OnSystemTimer();
 	return true;
 }
 

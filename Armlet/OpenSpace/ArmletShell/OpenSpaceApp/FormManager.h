@@ -49,6 +49,8 @@ class FormManager
 	FormDescription* allocFormsDescription(ubyte_t count);
 	IForm** allocFormsArray(ubyte_t count);
 
+	fresult ActivateForm(IForm* frm, IForm* prevForm, bool_t isReactivation, FormShowResults prevFormShowResult);
+
 protected:
 	
 public:
@@ -61,7 +63,7 @@ public:
 	fresult RegisterForm(IForm* frm);
 	
 	fresult ShowForm(char* name);
-	fresult CloseForm(IForm* frm, FormShowResults result);
+	fresult CloseForm(IForm* frm, FormShowResults formShowResult);
 
 	fresult GetOpenFormHandler(char* name, IMenuHandler** o_handler);
 	fresult GetCloseFormHandler(IMenuHandler** o_handler);

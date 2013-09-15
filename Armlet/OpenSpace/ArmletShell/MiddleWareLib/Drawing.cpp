@@ -1,4 +1,4 @@
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 #include "ArmletApi.h"
 
 using namespace ArmletApi;
@@ -33,7 +33,7 @@ void DrawGlyph(int x, int y, unsigned char index,
 {
     for (int vert = 0; vert < 6; vert++)
     {
-		int vertValue = /*ArmletShell::Fonts::*/Font_6x8_Data[index][vert];
+		int vertValue = /*ArmletAppSDK::Fonts::*/Font_6x8_Data[index][vert];
         for (int i = 0; i < 8; i++)
         {
             int mask = 1 << i;
@@ -81,7 +81,7 @@ void Show_Glyphs(int dx, int dy, int cx,int cy,
 	}
 }
 
-namespace ArmletShell {
+namespace ArmletAppSDK {
 
 	//Video device - __FUTURE:
 	//Simulated video memory - 160x128x16xARGB

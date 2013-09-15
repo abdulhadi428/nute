@@ -26,7 +26,7 @@ fresult TextFieldFactory::ResetDefaults()
 	DefaultWrap = true;
 	CurrentWrap = DefaultWrap;
 
-	DefaultFrames = 3;
+	DefaultFrames = 1;
 	CurrentFrames = DefaultFrames;
 
 	DefaultLines = 1;
@@ -87,19 +87,24 @@ fresult TextFieldFactory::GetTextBox(Position pos, Size sizepx , TextField** o_t
 	return fres;
 }
 
-fresult TextFieldFactory::GetTextBox(Position pos, const char* text, Size sizepx, bool_t noScroll, TextField** o_tf)
+fresult TextFieldFactory::GetTextBox(Position pos, Size sizeTx, ubyte_t frames, TextField** o_tf)
 {
 	fresult fres;
+	TextFormat* tfmt;
+	Size pxSize;
 
-	ubyte_t pages;
-	if (noScroll==TRUE)
-	{
-		pages = 1;
-	}
-	else
-	{
-		pages = CurrentFrames;
-	}
+	fres = _styles->TextFormats->GetTextFormat(CurrentTextFormatHandle, &tfmt);
+	ENSURESUCCESS(fres);
+
+	pxSize.Height = sizeTx.Height*tfmt->Font.GlyphSize.Height;
+	pxSize.Width = sizeTx.Width*tfmt->Font.GlyphSize.Width;
+	
+	return GetTextBox(pos, NULL, pxSize, frames, o_tf);
+}
+
+fresult TextFieldFactory::GetTextBox(Position pos, const char* text, Size sizepx, ubyte_t frames, TextField** o_tf)
+{
+	fresult fres;
 
 	TextFormat *tfmt;
 	fres = _styles->TextFormats->GetTextFormat(CurrentTextFormatHandle, &tfmt);
@@ -107,7 +112,7 @@ fresult TextFieldFactory::GetTextBox(Position pos, const char* text, Size sizepx
 
 	char* buff;
 	Size buffSz;
-	buff = AllocBuffBySizePx(sizepx, tfmt, pages, &buffSz);
+	buff = AllocBuffBySizePx(sizepx, tfmt, frames, &buffSz);
 	FAILIF(buff==NULL);
 
 
@@ -158,7 +163,7 @@ char* TextFieldFactory::AllocBuffBySizeTx( Size sizeTx, ubyte_t pages, Size* o_b
 	buffSz.Height = sizeTx.Height*pages;
 	buffSz.Width = sizeTx.Width;
 
-	char* buff = allocBytes(sizeTx.Height*sizeTx.Width*pages);
+	char* buff = allocBytes(sizeTx.Height*sizeTx.Width*pages+1);
 	if (buff==NULL)
 	{
 		 o_buffSz->data=0;

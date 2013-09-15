@@ -3,8 +3,8 @@
 #include "TextHelper.h"
 #include <iostream>
 #include "PlatformAPI.h"
-#include "ArmletShell.h"
-using namespace ArmletShell;
+#include "ArmletAppSDK.h"
+using namespace ArmletAppSDK;
 
 void xTestStringHelpers::doTests()
 {

@@ -1,7 +1,7 @@
 #include "ThreeKShell.h"
 #include "OpenSpace.h"
 
-#define MAX_HEADER_TOTAL_LEN 13
+#define MAX_HEADER_TOTAL_LEN 20
 #define TITLE_MAX_OFFSET
 
 fresult OpenSpaceStatusBar::Init(Size sz, Repositories* reps, Factories* facts)
@@ -44,9 +44,6 @@ fresult OpenSpaceStatusBar::CreateStatusBar()
 	fres = AddBatteryLevel(pbxBatteryPos);
 	ENSURESUCCESS(fres);
 	
-	fres = _imglBatteryLevel->SetValue(0);
-	ENSURESUCCESS(fres);
-
 	Position pbxNetworkPos;
 	pbxNetworkPos.Left = pbxBatteryPos.Left + _imglBatteryLevel->GetSize().Width + 2;
 	pbxNetworkPos.Top = pbxBatteryPos.Top;
@@ -54,12 +51,16 @@ fresult OpenSpaceStatusBar::CreateStatusBar()
 	fres = AddNetworkLevel(pbxNetworkPos);
 	ENSURESUCCESS(fres);
 
-	fres = _imglNetworkLevel->SetValue(0);
+	Size sbSz = GetSize();
+
+	Position clockPos;
+	clockPos.Left = sbSz.Width - 5*6-1;
+	clockPos.Top = (sbSz.Height - 8)/2;
+	fres = AddClock(clockPos);
 	ENSURESUCCESS(fres);
 
 	_headerMinLeft = pbxNetworkPos.Left + _imglNetworkLevel->GetSize().Width + 2;
 
-	Size sbSz = GetSize();
 	Size szHeader;
 	szHeader.Height = sbSz.Height;
 	szHeader.Width = sbSz.Width/2;
@@ -73,16 +74,19 @@ fresult OpenSpaceStatusBar::CreateStatusBar()
 	tff->CurrentFrames = 1;
 
 	//Title
-	fres = tff->GetTextBox(posHeader, MAX_HEADER_TOTAL_LEN, &txtHeader);
+	fres = tff->GetTextBox(posHeader, MAX_HEADER_TOTAL_LEN, &_txtHeader);
 	ENSURESUCCESS(fres);
-	fres = _pnlBasePanel->AppendControl(txtHeader);
+	fres = _pnlBasePanel->AppendControl(_txtHeader);
 	ENSURESUCCESS(fres);
 
 	//Subtitle
 	tff->CurrentLines = 2;
-	fres = tff->GetTextBox(posHeader, MAX_HEADER_TOTAL_LEN*2, &txtSubtitle);
+	Size pxSize;
+	pxSize.Width = MAX_HEADER_TOTAL_LEN;
+	pxSize.Height = 2;
+	fres = tff->GetTextBox(posHeader, pxSize, 1, &_txtSubtitle);
 	ENSURESUCCESS(fres);
-	fres = _pnlBasePanel->AppendControl(txtSubtitle);
+	fres = _pnlBasePanel->AppendControl(_txtSubtitle);
 	ENSURESUCCESS(fres);
 
 	tff->CurrentLines = tff->DefaultLines;
@@ -103,7 +107,6 @@ fresult OpenSpaceStatusBar::SetTitle( char* szTitle, char* szSubtitle )
 	sword_t subtitleLen = 0;
 	ubyte_t subtitleLines = 0;
 
-	TextField* txtChosenSubtitle = NULL;
 	if (subtitleCrPos == -1)
 	{
 		subtitleLen = Length(szSubtitle);
@@ -118,7 +121,7 @@ fresult OpenSpaceStatusBar::SetTitle( char* szTitle, char* szSubtitle )
 		subtitleLines = 2;
 	}
 
-	FAILIF(titleLen+subtitleLen > 13);
+	FAILIF(titleLen+subtitleLen > MAX_HEADER_TOTAL_LEN);
 
 	//get tf
 	TextFormat* tf = NULL;
@@ -147,34 +150,34 @@ fresult OpenSpaceStatusBar::SetTitle( char* szTitle, char* szSubtitle )
 		sz.Height = tf->Font.GlyphSize.Height*2;
 	}
 
-	fres = txtSubtitle->SetSize(sz);
+	fres = _txtSubtitle->SetSize(sz);
 	ENSURESUCCESS(fres);
 
 	Position pos;
-	pos.Left = SCREENX - sz.Width;
+	pos.Left = _Size.Width - sz.Width-1;
 
 	pos.Top = titleOriginTop - titleOriginOffset;
 
-	fres = txtSubtitle->SetPosition(pos);
+	fres = _txtSubtitle->SetPosition(pos);
 	ENSURESUCCESS(fres);
 
-	fres = txtSubtitle->SetText(szSubtitle);
+	fres = _txtSubtitle->SetText(szSubtitle);
 	ENSURESUCCESS(fres);
 	
 	//Positioning title
 	subtitleWidth = subtitleLen*tf->Font.GlyphSize.Width;
 	sz.Width = titleLen*tf->Font.GlyphSize.Width;
 	sz.Height = tf->Font.GlyphSize.Height;
-	fres = txtHeader->SetSize(sz);
+	fres = _txtHeader->SetSize(sz);
 	ENSURESUCCESS(fres);
 
-	pos = txtHeader->GetPosition();
+	pos = _txtHeader->GetPosition();
 	pos.Left = SCREENX - sz.Width - subtitleWidth;
 	pos.Top = titleOriginTop - tf->Font.GlyphSize.Height/2;
 
-	fres = txtHeader->SetPosition(pos);
+	fres = _txtHeader->SetPosition(pos);
 	
-	fres = txtHeader->SetText(szTitle);
+	fres = _txtHeader->SetText(szTitle);
 	ENSURESUCCESS(fres);
 
 	fres = Draw();
@@ -199,6 +202,24 @@ fresult OpenSpaceStatusBar::GetNetworkImages( ImageHandle** o_networkImages, uby
 
 ubyte_t OpenSpaceStatusBar::GetControlsCount()
 {
-	return 5;
+	return 6;
+}
+
+fresult OpenSpaceStatusBar::DisplayMode( OpenSpaceStatusBarDisplayModes displayMode )
+{
+	if (displayMode == sbdmClock)
+	{
+		_txtClock->SetVisible(TRUE);
+		_txtHeader->SetVisible(FALSE);
+		_txtSubtitle->SetVisible(FALSE);
+	}
+	else
+	{
+		_txtClock->SetVisible(FALSE);
+		_txtHeader->SetVisible(TRUE);
+		_txtSubtitle->SetVisible(TRUE);
+	}
+
+	return SUCCESS;
 }
 

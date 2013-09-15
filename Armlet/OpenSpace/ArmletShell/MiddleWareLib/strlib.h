@@ -1,5 +1,5 @@
 #ifndef _NAMESPACE_PROTECT_
-	#error "Use ArmletShell.h"
+	#error "Use ArmletAppSDK.h"
 #endif
 
 // returns -1 or index of first occurence of pattern in string starting from startIndex

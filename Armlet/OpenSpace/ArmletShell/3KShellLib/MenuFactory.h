@@ -7,6 +7,7 @@ struct MenuItemSettings
 {
 public:
 	char* Text;
+	char* Name;
 	ImageHandle ImgHandle;
 	IMenuHandler* Handler;
 	bool_t Empty;

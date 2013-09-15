@@ -1,6 +1,6 @@
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 
-namespace ArmletShell {
+namespace ArmletAppSDK {
 
 	fresult SizeIsSmaller( const Size size1, const Size size2 )
 	{

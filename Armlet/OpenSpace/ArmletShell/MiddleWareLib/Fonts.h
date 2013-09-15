@@ -1,5 +1,5 @@
 #ifndef _NAMESPACE_PROTECT_
-	#error "Use ArmletShell.h"
+	#error "Use ArmletAppSDK.h"
 #endif
 
 //Font

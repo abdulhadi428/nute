@@ -4,7 +4,7 @@
 //adds add string to src. returns newly allocated string
 //char* StringAdd(const char* src, const char* add);
 
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 
 char CallbackImplementation(char* str);
 typedef char (MY_CALLBACK)(char* str);

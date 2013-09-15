@@ -1,5 +1,6 @@
+#include "IDialogForm.h"
 #include "IForm.h"
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 
 #include "FormManager.h"
 #include "kl_allocator.h"
@@ -100,19 +101,19 @@ fresult FormManager::ShowForm(char* name)
 	_formStack[_shownIndex] = frm;
 	_formStackLength++;
 
-	fres = frm->OnBeforeShow(prevForm, FALSE, fsrNone);
+	fres = frm->OnBeforeShown(prevForm, FALSE, fsrNone);
 	ENSURESUCCESS(fres);
 
 	fres = frm->Draw();
 	ENSURESUCCESS(fres);
 
-	fres = frm->OnAfterShow(prevForm, FALSE, fsrNone);
+	fres = frm->OnAfterShown(prevForm, FALSE, fsrNone);
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
 }
 
-fresult FormManager::CloseForm( IForm* frm,  FormShowResults result)
+fresult FormManager::CloseForm( IForm* frm,  FormShowResults formShowResult)
 {
 	fresult fres;
 	FAILIF(_shownIndex == -1);
@@ -126,16 +127,23 @@ fresult FormManager::CloseForm( IForm* frm,  FormShowResults result)
 	_formStack[_shownIndex] = NULL;
 	_shownIndex--;
 
-	IForm* frmToShow = _formStack[_shownIndex];
+	IForm* prevForm = _formStack[_shownIndex];
 
-	fres = frmToShow->OnBeforeShow(frm, TRUE, result);
-	ENSURESUCCESS(fres);
+	bool_t needRedrawPervFrom = TRUE;
+	if (frm->IsDialog()==TRUE)
+	{
+		IDialogForm* dlg = (IDialogForm*)frm;
+		FAILIF(dlg==NULL);
+		char* dialogName = dlg->GetDialogName();
+		fres = prevForm->OnAfterDialogShown(frm, dialogName, formShowResult, &needRedrawPervFrom);
+		ENSURESUCCESS(fres);
+	}
 
-	fres = _formStack[_shownIndex]->Draw();
-	ENSURESUCCESS(fres);
-
-	fres = _formStack[_shownIndex]->OnAfterShow(frm, TRUE, result);
-	ENSURESUCCESS(fres);
+	if (needRedrawPervFrom)
+	{
+		fres = ActivateForm(prevForm, frm, TRUE, formShowResult);
+		ENSURESUCCESS(fres);
+	}
 
 	return SUCCESS;
 }
@@ -185,6 +193,29 @@ fresult FormManager::GetCloseFormHandler( IMenuHandler** o_handler, FormShowResu
 	return SUCCESS;
 }
 
+fresult FormManager::ActivateForm( IForm* frm, IForm* prevForm , bool_t isReactivation, FormShowResults prevFormShowResult)
+{
+	fresult fres;
+
+	fres = frm->OnBeforeShown(prevForm, isReactivation, prevFormShowResult);
+	ENSURESUCCESS(fres);
+
+	//OnBeforeShown might open some form. If it's so
+	if (_formStack[_shownIndex] != frm)
+	{
+		//new form is shown
+		return SUCCESS;
+	}
+
+	fres = frm->Draw();
+	ENSURESUCCESS(fres);
+
+	fres = frm->OnAfterShown(prevForm, isReactivation, prevFormShowResult);
+	ENSURESUCCESS(fres);
+
+	return SUCCESS;
+
+}
 
 
 

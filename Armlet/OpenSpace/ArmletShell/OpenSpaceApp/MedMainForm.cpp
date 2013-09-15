@@ -4,9 +4,13 @@
 
 fresult MedMainForm::DoLayout()
 {
-	ubyte_t controlsCount = 2;
-
 	fresult fres;
+
+	ubyte_t controlsCount = 1;
+
+	_TitleText = "Медицина/";
+	_SubtitleText = "Стрессы";
+
 
 	Size caSz = _App->GetClientAreaSize();
 	Position caPos = _App->GetClientAreaPos();
@@ -16,7 +20,7 @@ fresult MedMainForm::DoLayout()
 
 	//get stipes
 	Panel* stripes = NULL;
-	fres = GetStripesPanel(frmStripeSevenNarrow, &stripes);
+	fres = GetStripesPanel(frmStripeThreeWide, &stripes);
 	ENSURESUCCESS(fres);
 
 	if (stripes!=NULL)
@@ -25,16 +29,10 @@ fresult MedMainForm::DoLayout()
 	}
 
 	//get menu
-	_Menus = AllocMenus(1);
-	FAILIF(_Menus==NULL);
 
 	IMenu* mnu = NULL;
-	fres = CreateMenu(&mnu);
+	fres = CreateMenu(&_Menu);
 	ENSURESUCCESS(fres);
-	if (mnu!=NULL)
-	{
-		_Menus[0] = mnu;
-	}
 
 	return SUCCESS;
 }
@@ -42,7 +40,7 @@ fresult MedMainForm::DoLayout()
 fresult MedMainForm::Init( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, OpenSpaceApp* app, OpenSpaceLogic* logic )
 {
 	fresult fres;
-	fres = BaseInit(reps,facts, name, frmmngr, app, logic);
+	fres = BaseInit(sbdmTitles, reps,facts, name, frmmngr, app, logic);
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
@@ -108,9 +106,6 @@ fresult MedMainForm::CreateMenu( IMenu** o_mnu )
 	mf->DefaultInterlaced=mf->CurrentInterlaced;
 	mf->DefaultTextFormatHandle=mf->CurrentTextFormatHandle;
 	mf->DefaultEvenTextFormatHandle=mf->CurrentEvenTextFormatHandle;
-
-	_TitleText = NULL;
-	_SubtitleText = NULL;
 
 	*o_mnu = mnu;
 

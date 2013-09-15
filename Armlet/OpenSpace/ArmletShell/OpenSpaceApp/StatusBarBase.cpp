@@ -193,8 +193,34 @@ fresult StatusBarBase::SetTime( char* timeString )
 	return SUCCESS;
 }
 
-fresult StatusBarBase::AddClock( Position pos )
+fresult StatusBarBase::AddClock( Position pos)
 {
-	//TODO:
+	fresult fres;
+	TextField* ctrl;
+
+	fres = CreateClockControl(pos, &ctrl);
+	ENSURESUCCESS(fres);
+
+	fres = _pnlBasePanel->AppendControl(ctrl);
+	ENSURESUCCESS(fres);
+
+	_txtClock = ctrl;
+
 	return SUCCESS;
+}
+
+fresult StatusBarBase::CreateClockControl( Position pos, TextField** o_txtClock )
+{
+	fresult fres;
+
+	TextFieldFactory* tff = _Factories->GetTextFieldFactory();
+	FAILIF(tff==NULL);
+
+	tff->CurrentTextFormatHandle = TF_HEADER;
+	fres = tff->GetTextBox(pos, 5, o_txtClock);
+	ENSURESUCCESS(fres);
+
+	tff->CurrentTextFormatHandle = tff->DefaultTextFormatHandle;
+
+	return SUCCESS;	
 }

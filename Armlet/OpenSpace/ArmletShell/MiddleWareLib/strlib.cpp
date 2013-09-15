@@ -1,6 +1,6 @@
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 
-namespace ArmletShell {
+namespace ArmletAppSDK {
 
 	// returns -1 or index of first occurence of pattern in string starting from startIndex
 	sword_t InStr(const char* string, const char* pattern, uword_t startIndex)

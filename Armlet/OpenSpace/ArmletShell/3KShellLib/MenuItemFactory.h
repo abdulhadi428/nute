@@ -50,6 +50,9 @@ public:
 	ubyte_t DefaultTextLines;
 	ubyte_t CurrentTextLines;
 
+	ubyte_t DefaultTextToImageOffset;
+	ubyte_t CurrentTextToImageOffset;
+
 	Size DefaultTextFieldSize;
 	Size CurrentTextFieldSize;
 
@@ -65,6 +68,6 @@ public:
 
 	fresult Init(IRender* render, Repositories* reps, TextFieldFactory* tfFactory, PictureBoxFactory* pbxFactory, PanelFactory* pnlFactory);
 
-	fresult GetMenuItem(Position origin, Alignment align, MenuItemStyles style, ImageHandle himg, char* text, ButtonState shrtcut, IMenuHandler* handler, IMenuItem** o_mi);
+	fresult GetMenuItem(Position origin, Alignment align, MenuItemStyles style, ImageHandle himg, char* text, ButtonState shrtcut, IMenuHandler* handler, char* name, IMenuItem** o_mi);
 };
 

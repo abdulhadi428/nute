@@ -1,12 +1,12 @@
 //#ifdef _FONT_PROTECTION_
-//#include "ArmletShell.h"
+//#include "ArmletAppSDK.h"
 
-//namespace ArmletShell {
+//namespace ArmletAppSDK {
 //namespace Fonsts {
 
 //Kreyl font data 6x8
-extern const unsigned char /*ubyte_t ArmletShell::Fonts::*/ Font_6x8_Data[256][6];
-const unsigned char /*ubyte_t ArmletShell::Fonts::*/ Font_6x8_Data[256][6] = {
+extern const unsigned char /*ubyte_t ArmletAppSDK::Fonts::*/ Font_6x8_Data[256][6];
+const unsigned char /*ubyte_t ArmletAppSDK::Fonts::*/ Font_6x8_Data[256][6] = {
     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00},   // 0x00 - пустое знакоместо.
     {0x00, 0x7c, 0xa2, 0x8a, 0xa2, 0x7c},   // 0x01 - лицо с улыбкой.
     {0x00, 0x7c, 0xd6, 0xf6, 0xd6, 0x7c},   // 0x02 - лицо с улыбкой закрашенное.

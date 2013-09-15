@@ -29,7 +29,10 @@ protected:
 	virtual fresult GetNetworkImages(ImageHandle** o_networkImages, ubyte_t* o_count);
 	fresult AddNetworkLevel(Position pos);
 
+	virtual fresult CreateClockControl(Position pos, TextField** o_txtClock);;
 	fresult AddClock(Position pos);
+
+
 public:
 	virtual fresult SetVisible(bool_t visibileValue);
 	virtual bool_t  GetVisible();

@@ -9,12 +9,13 @@ protected:
 	bool_t _IsSelected;
 	bool_t _IsVisible;
 	bool_t _IsEnabled;
+	char* _Name;
 
 	IMenuHandler* _OnClickHandler;
 	ButtonState _Accelerator;
 	ButtonState _Accelerator2;
 
-	fresult MenuItemBaseInit(IControl* _control, IMenuHandler* handler, ButtonState accelerator);
+	fresult MenuItemBaseInit(char* name, IControl* control, IMenuHandler* handler, ButtonState accelerator);
 
 public:
 
@@ -27,7 +28,7 @@ public:
 
 	ButtonState GetAccelerator();
 
-	bool_t virtual ProcessKey(ButtonState button);
+	fresult virtual ProcessKey(ButtonState button, bool* found);
 
 	virtual fresult SetVisible( bool_t val );
 
@@ -36,6 +37,8 @@ public:
 	virtual fresult SetEnabled( bool_t val );
 
 	virtual bool_t GetEnabled();
+
+	virtual char* GetName();
 
 
 };

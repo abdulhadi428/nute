@@ -1,4 +1,4 @@
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 #include "ThreeKShell.h"
 #include "OpenSpaceImages.h"
 

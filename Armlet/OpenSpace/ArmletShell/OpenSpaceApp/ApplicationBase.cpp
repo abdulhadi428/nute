@@ -1,5 +1,5 @@
 #include "ArmletApi.h"
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 #include "ThreeKShell.h"
 #include "To3KShell.h"
 #include "AppMain.h"
@@ -165,6 +165,9 @@ fresult ApplicationBase::Start()
 	zeroPos.data = 0;
 	_renderer.DrawRect(zeroPos,GetDisplaySize(),WHITE);
 
+	//Get Init values;
+	OnSystemTimer();
+
 	if (_StartupFormName!=NULL)
 	{
 		fres = _FormManager->ShowForm(_StartupFormName);
@@ -180,12 +183,12 @@ fresult ApplicationBase::Start()
 	return SUCCESS;
 }
 
-fresult ApplicationBase::OnButtonEvent( ButtonState buttonState )
+fresult ApplicationBase::OnButtonEvent( ButtonState buttonState , bool* menuKeyFound)
 {
 	fresult fres;
 	IForm* frm = _FormManager->GetCurrentForm();
 	FAILIF(frm==NULL);
-	fres =  frm->OnButtonEvent(buttonState);
+	fres =  frm->OnButtonEvent(buttonState, menuKeyFound);
 	if (fres!=SUCCESS)
 	{
 		LogError("Ошибка при обработке кнопки!");
@@ -286,7 +289,7 @@ bool_t ApplicationBase::OnSystemTimer()
 		}
 		
 		//get time
-		char* timeString = ArmletShell::GetTime();
+		char* timeString = ArmletAppSDK::GetTime();
 
 		fres = _StatusBar->SetTime(timeString);
 		if (fres!=SUCCESS)	
@@ -338,5 +341,27 @@ fresult ApplicationBase::RedrawCurrentForm()
 		}
 	}
 
+	return SUCCESS;
+}
+
+fresult ApplicationBase::ShowMessage( ImageHandle icon, char* title, char* text )
+{
+	fresult fres;
+	if (_DialogForm!=NULL)
+	{
+		fres = _DialogForm->ShowMessage(title, title, text, icon);
+		ENSURESUCCESS(fres);
+	}
+	return SUCCESS;
+}
+
+fresult ApplicationBase::ShowYNMessage( char* dialogName, ImageHandle icon, char* title, char* text )
+{
+	fresult fres;
+	if (_DialogForm!=NULL)
+	{
+		fres = _DialogForm->ShowYNDialog(dialogName, title, text, icon);
+		ENSURESUCCESS(fres);
+	}
 	return SUCCESS;
 }

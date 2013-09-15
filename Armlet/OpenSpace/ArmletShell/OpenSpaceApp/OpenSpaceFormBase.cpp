@@ -2,10 +2,11 @@
 #include "To3KShell.h"
 #include "OpenSpace.h"
 
-fresult OpenSpaceFormBase::BaseInit( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, OpenSpaceApp* app, OpenSpaceLogic* logic)
+fresult OpenSpaceFormBase::BaseInit(OpenSpaceStatusBarDisplayModes statusBarDisplayMode,Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, OpenSpaceApp* app, OpenSpaceLogic* logic)
 {
 	_App = app;
 	_Logic = logic;
+	_StatusBarDisplayMode = statusBarDisplayMode;
 	return FormBase::BaseInit(reps, facts, name, frmmngr, app);
 }
 
@@ -145,13 +146,23 @@ fresult OpenSpaceFormBase::GetStripesPanel(FormStripeStyles stripeStyle, Panel**
 	return SUCCESS;
 }
 
-fresult OpenSpaceFormBase::OnBeforeShow( IForm* prevFrom, bool_t reActivation )
+fresult OpenSpaceFormBase::OnBeforeShown(IForm* prevFrom, bool_t reActivation, FormShowResults formShowResult)
 {
 	fresult fres;
-
 	
-	fres = _App->AppStatusBar->SetTitle(_TitleText, _SubtitleText);
+	fres = FormBase::OnBeforeShown(prevFrom, reActivation, formShowResult);
+	ENSURESUCCESS(fres);
+	
+	fres = _App->AppStatusBar->DisplayMode(_StatusBarDisplayMode);
+
+	if (_StatusBarDisplayMode==sbdmTitles)
+	{
+		fres = _App->AppStatusBar->SetTitle(_TitleText, _SubtitleText);
 		ENSURESUCCESS(fres);
+	}
+	
+	fres = _App->AppStatusBar->Draw();
+	ENSURESUCCESS(fres);
 
 	return SUCCESS;
 }

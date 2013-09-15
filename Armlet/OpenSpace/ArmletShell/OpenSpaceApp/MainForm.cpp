@@ -6,7 +6,7 @@
 fresult MainForm::Init( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, OpenSpaceApp* app, OpenSpaceLogic* logic )
 {
 	fresult fres;
-	fres = BaseInit(reps,facts, name, frmmngr, app, logic);
+	fres = BaseInit(sbdmClock, reps,facts, name, frmmngr, app, logic);
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
@@ -14,7 +14,7 @@ fresult MainForm::Init( Repositories* reps, Factories* facts, char* name, FormMa
 
 fresult MainForm::DoLayout()
 {
-	ubyte_t controlsCount = 3;
+	ubyte_t controlsCount = 2;
 	
 	fresult fres;
 
@@ -31,7 +31,8 @@ fresult MainForm::DoLayout()
 
 	if (stripes!=NULL)
 	{
-		_FormPanel->SetControl(stripes, 0);
+		fres = _FormPanel->AppendControl(stripes);
+		ENSURESUCCESS(fres);
 	}
 
 	//get statusbar
@@ -40,29 +41,12 @@ fresult MainForm::DoLayout()
 	ENSURESUCCESS(fres);
 	if (status!=NULL)
 	{
-		_FormPanel->SetControl(status, 1);
+		fres = _FormPanel->AppendControl(status);
+		ENSURESUCCESS(fres);
 	}
 
-
-	//test pbx
-	PictureBox* pbx = NULL;
-	Position pbxPos;
-	pbxPos.Left = SCREENX/2;
-	pbxPos.Top = SCREENY/2;
-	fres = _Factories->GetPictureBoxFactory()->GetPictureBox(pbxPos, big_arrow_left, &pbx);
+	fres = CreateMenu(&_Menu);
 	ENSURESUCCESS(fres);
-	_FormPanel->SetControl(pbx, 2);
-	
-	_Menus = AllocMenus(1);
-	FAILIF(_Menus==NULL);
-	
-	IMenu* mnu = NULL;
-	fres = CreateMenu(&mnu);
-	ENSURESUCCESS(fres);
-	if (mnu!=NULL)
-	{
-		_Menus[0] = mnu;
-	}
 	
 	return SUCCESS;
 }
@@ -165,6 +149,4 @@ fresult MainForm::CreateMenu( IMenu** o_mnu )
 
 	return SUCCESS;
 }
-
-
 

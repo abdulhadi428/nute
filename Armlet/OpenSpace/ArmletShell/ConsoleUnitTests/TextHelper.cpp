@@ -1,7 +1,7 @@
 
 #include "TextHelper.h"
 #include "PlatformAPI.h"
-#include "ArmletShell.h"
+#include "ArmletAppSDK.h"
 
 char* StringAdd(const char* src, const char* add)
 {

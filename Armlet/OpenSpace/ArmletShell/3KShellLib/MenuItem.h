@@ -16,7 +16,7 @@ protected:
 public:
 
 	//controlToDraw use Panel containing both, if text item has both text and image
-	fresult Init(TextField* tf, TextFormat* selFormat, PictureBox* img, IControl* controlToDraw, IMenuHandler* handler, ButtonState accelerator);
+	fresult Init(char* name, TextField* tf, TextFormat* selFormat, PictureBox* img, IControl* controlToDraw, IMenuHandler* handler, ButtonState accelerator);
 
 	fresult virtual Select();
 
