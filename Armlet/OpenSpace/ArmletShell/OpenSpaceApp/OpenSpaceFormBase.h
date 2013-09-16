@@ -5,7 +5,7 @@
 typedef enum _FRM_STRIPE_STYLES {
 	frmStripeNone,
 	frmStripeOneBot,
-	frmStripeOneTopOneBot,
+	frmStripeMessageYNDialog,
 	frmStripeThreeWide,
 	frmStripeSevenNarrow,
 } FormStripeStyles;

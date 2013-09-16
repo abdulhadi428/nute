@@ -113,7 +113,7 @@ fresult MainForm::CreateMenu( IMenu** o_mnu )
 	mis = &mf->Settings[ItemOriginX];
 	mis->Text = "Медицина";
 	mis->ImgHandle = small_arrow_right;
-	fres = _FormManager->GetOpenFormHandler(_App->Forms->MedMainFormName, &mis->Handler);
+	fres = _FormManager->GetOpenFormHandler(_App->Forms->MedStressFormName, &mis->Handler);
 	ENSURESUCCESS(fres);
 	mis->Empty = FALSE;
 

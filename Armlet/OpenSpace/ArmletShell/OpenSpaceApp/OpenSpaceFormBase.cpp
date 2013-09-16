@@ -59,8 +59,8 @@ fresult OpenSpaceFormBase::GetStripesPanel(FormStripeStyles stripeStyle, Panel**
 	case frmStripeOneBot:
 		stripesCount =1;
 		break;
-	case frmStripeOneTopOneBot:
-		stripesCount =2;
+	case frmStripeMessageYNDialog:
+		stripesCount =4;
 		break;
 	case frmStripeThreeWide:
 		stripesCount =4;
@@ -95,7 +95,7 @@ fresult OpenSpaceFormBase::GetStripesPanel(FormStripeStyles stripeStyle, Panel**
 		}
 		else
 		{
-			//frmStripeOneTopOneBot or frmStripeSevenNarrow
+			//frmStripeMessageYNDialog or frmStripeSevenNarrow
 			
 			//Both have one narrow ltGray top
 			pnlPos.Left=0;
@@ -104,7 +104,7 @@ fresult OpenSpaceFormBase::GetStripesPanel(FormStripeStyles stripeStyle, Panel**
 			fres = pf->GetPanel(pnlNarrowSz, pnlPos, 0, CL_MENU_BACKGROUND, &stripes[0]);
 			ENSURESUCCESS(fres);
 
-			if (stripeStyle = frmStripeSevenNarrow)
+			if (stripeStyle == frmStripeSevenNarrow)
 			{
 				
 				for (ubyte_t i=0; i< 5;i++)
@@ -121,6 +121,23 @@ fresult OpenSpaceFormBase::GetStripesPanel(FormStripeStyles stripeStyle, Panel**
 					fres = pf->GetPanel(pnlNarrowSz, pnlPos, 0, clr, &stripes[i+1]);
 					ENSURESUCCESS(fres);
 				}
+			}
+			else
+			{
+				//frmStripeMessageYNDialog
+				pnlPos.Top += STRIPE_HEIGHT;
+				Size pnlExtraLargeSz;
+				pnlExtraLargeSz.Width = pnlNarrowSz.Width;
+				pnlExtraLargeSz.Height = pnlNarrowSz.Height*4;
+
+				fres = pf->GetPanel(pnlExtraLargeSz, pnlPos, 0, CL_MENU_EVEN_BACKGROUND, &stripes[1]);
+
+				//stripe for OK
+				pnlPos.Top += 4*STRIPE_HEIGHT;
+				
+				fres = pf->GetPanel(pnlExtraLargeSz, pnlPos, 0, CL_MENU_BACKGROUND, &stripes[2]);
+				
+				ENSURESUCCESS(fres);
 			}
 		}
 	}

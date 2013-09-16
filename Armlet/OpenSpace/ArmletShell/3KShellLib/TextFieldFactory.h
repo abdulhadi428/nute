@@ -34,7 +34,7 @@ public:
 	fresult GetTextBox(Position pos, const char* text, TextField** o_tf);
 	fresult GetTextBox(Position pos, Size sizepx, TextField** o_tf);
 	fresult GetTextBox(Position pos, ubyte_t maxLineLen , TextField** o_tf);
-	fresult GetTextBox(Position pos, Size sizepx, ubyte_t frames, TextField** o_tf);
+	fresult GetTextBox(Position pos, Size sizeTx, ubyte_t frames, TextField** o_tf);
 	fresult GetTextBox(Position pos, const char* text, Size sizepx, ubyte_t frames, TextField** o_tf);
 	fresult GetTextBox(Position pos, const char* text, Size sizepx, char* buff, Size buffSz, TextField** o_tf);
 };

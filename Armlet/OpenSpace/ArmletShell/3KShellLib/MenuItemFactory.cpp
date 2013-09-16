@@ -99,7 +99,7 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 				textLinesCount++;
 				do
 				{
-					crIndex = InStr(text, "\n", lastCrIndex);
+					crIndex = InStr(text, "\n", lastCrIndex+1);
 					if (crIndex != -1)
 					{
 						textLinesCount++;
@@ -111,11 +111,14 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 					}
 					else
 					{
+						if (maxLineLen < len-lastCrIndex)
+						{
+							maxLineLen = len - lastCrIndex;
+						}
 						//loop end;
 						break;
 					}
 				} while(TRUE);
-
 			}
 		}
 
@@ -126,7 +129,10 @@ fresult MenuItemFactory::GetMenuItem(Position origin,    Alignment align, MenuIt
 			//If something is set, use it
 			if (CurrentTextFieldVSizeByLines)
 			{
-				textLinesCount = CurrentTextLines;
+				if (!CurrentTextFieldVAutoSize)
+				{
+					textLinesCount = CurrentTextLines;
+				}
 			}
 			tfSize.Height = tfmt->Font.GlyphSize.Height*textLinesCount;
 		}

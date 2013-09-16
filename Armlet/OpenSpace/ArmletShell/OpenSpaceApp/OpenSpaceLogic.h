@@ -16,6 +16,7 @@ private:
 	ubyte_t _stressEgo;
 	ubyte_t _stressCruelty;
 
+	OSMedLogic _medLogicInstance;
 public:
 
 #pragma region //		Stress
@@ -29,8 +30,9 @@ public:
 	ubyte_t GetStressCruelty();
 
 	ColorHandle GetStressColor(StressType stress, ubyte_t level);
-
 #pragma endregion
+
+	OSMedLogic* MedLogic;
 
 	fresult Init();
 };

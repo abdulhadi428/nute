@@ -24,7 +24,7 @@ template<class T> class MenuHandlerDelegate : public IMenuHandler {
 	MENU_HANDLER_DELEGATE _handler;
 	T* _this;
 public:
-	void _MenuHandlerDelegate(T* __this,MENU_HANDLER_DELEGATE handler) {_handler = handler; _this=__this;}
+	void Init(T* __this,MENU_HANDLER_DELEGATE handler) {_handler = handler; _this=__this;}
 	fresult Execute(IMenuItem* sender) {return (_this->*_handler)(sender);}
 	virtual fresult OnClick(IMenuItem* sender) { return Execute(sender);}
 };
@@ -47,7 +47,7 @@ public:
 	) \
 { \
 	MenuHandlerDelegate<T>* R = MENU_HANDLER_DELEGATE_NAME(T).Allocate(); \
-	R->_MenuHandlerDelegate(_this,F); \
+	R->Init(_this,F); \
 	return R; \
 }
 

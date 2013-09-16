@@ -1,6 +1,6 @@
 #pragma once
 
-class MedMainForm : public OpenSpaceFormBase
+class MedStressForm : public OpenSpaceFormBase
 {
 	fresult CreateMidContent(Panel** o_mainStatus);
 	fresult CreateMenu(IMenu** o_mnu);
@@ -18,4 +18,7 @@ class MedMainForm : public OpenSpaceFormBase
 public:
 	virtual fresult DoLayout();
 	fresult Init(Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, OpenSpaceApp* app, OpenSpaceLogic* logic);
+
+	virtual fresult OnMenuA( IMenuItem* mi );
+
 };

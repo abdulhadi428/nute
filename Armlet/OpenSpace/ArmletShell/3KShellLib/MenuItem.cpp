@@ -53,6 +53,9 @@ fresult MenuItem::Init( char* name, TextField* tf, TextFormat* selFormat, Pictur
 	_hasText = FALSE;
 	_hasIcon = FALSE;
 
+	_textField = NULL;
+	_image = NULL;
+
 	if (tf != NULL)
 	{
 		_textField=tf;

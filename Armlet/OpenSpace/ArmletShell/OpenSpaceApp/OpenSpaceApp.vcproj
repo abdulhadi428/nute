@@ -178,11 +178,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MedChooseTorsoWoundForm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MedChooseWoundForm.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MedCures.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MedMainForm.cpp"
+				RelativePath=".\MedStressForm.cpp"
 				>
 			</File>
 			<File
@@ -218,7 +226,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OSMedLogic.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OSTempateForm.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\StatusBarBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\YNDialogForm.cpp"
 				>
 			</File>
 		</Filter>
@@ -264,11 +284,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MedChooseTorsoWoundForm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedChooseWoundForm.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MedCures.h"
 				>
 			</File>
 			<File
-				RelativePath=".\MedMainForm.h"
+				RelativePath=".\MedStressForm.h"
 				>
 			</File>
 			<File
@@ -312,6 +340,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OSMedDefs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OSMedLogic.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OSTempateForm.h"
+				>
+			</File>
+			<File
 				RelativePath=".\StatusBarBase.h"
 				>
 			</File>
@@ -321,6 +361,10 @@
 			</File>
 			<File
 				RelativePath=".\TZ.h"
+				>
+			</File>
+			<File
+				RelativePath=".\YNDialogForm.h"
 				>
 			</File>
 		</Filter>

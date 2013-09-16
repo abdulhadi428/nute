@@ -172,7 +172,7 @@ fresult OpenSpaceStatusBar::SetTitle( char* szTitle, char* szSubtitle )
 	ENSURESUCCESS(fres);
 
 	pos = _txtHeader->GetPosition();
-	pos.Left = SCREENX - sz.Width - subtitleWidth;
+	pos.Left = SCREENX - sz.Width - subtitleWidth-2;
 	pos.Top = titleOriginTop - tf->Font.GlyphSize.Height/2;
 
 	fres = _txtHeader->SetPosition(pos);

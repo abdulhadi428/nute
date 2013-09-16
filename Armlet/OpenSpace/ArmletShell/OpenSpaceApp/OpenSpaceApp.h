@@ -6,7 +6,6 @@
 #define CL_OS_GREEN		CL_SYSTEM_LAST +4
 #define CL_OS_LIGHTGRAY	CL_SYSTEM_LAST +5
 
-
 class OpenSpaceApp : public ApplicationBase
 {
 	OpenSpaceStatusBar _OSStatusBarInstance;
@@ -15,7 +14,10 @@ class OpenSpaceApp : public ApplicationBase
 	OpenSpaceForms _openSpaceFormsInstance;
 
 	MainForm _mainFormInstance;
-	MedMainForm _medMainFormInstance;
+	MedStressForm _MedStressFormInstance;
+	YNDialogForm _YNDialogFormInstance;
+	MedChooseWoundForm _MedChooseWoundFormInstance;
+	MedChooseTorsoWoundForm _MedChooseTorsoWoundFormInstance;
 
 public:
 	OpenSpaceStatusBar* AppStatusBar; 
@@ -31,4 +33,5 @@ public:
 	virtual fresult CreateStatusBar();
 	virtual fresult CreateForms();
 
+	fresult ShowYNDialogEx(char* dialogName, char* formTitle, char* formSubtitle, char* msgTitle, char* msgContent, char* yesText);
 };

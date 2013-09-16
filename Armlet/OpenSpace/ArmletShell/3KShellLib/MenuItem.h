@@ -19,7 +19,8 @@ public:
 	fresult Init(char* name, TextField* tf, TextFormat* selFormat, PictureBox* img, IControl* controlToDraw, IMenuHandler* handler, ButtonState accelerator);
 
 	fresult virtual Select();
-
 	fresult virtual Deselect();
 
+	TextField* GetTextField() {return _textField;};
+	PictureBoxBase* GetPictureBox() {return _image;};
 };

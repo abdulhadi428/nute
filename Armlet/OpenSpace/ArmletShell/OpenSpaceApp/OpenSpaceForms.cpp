@@ -4,7 +4,10 @@
 fresult OpenSpaceForms::Init()
 {
 	MainFormName = "MainForm";
-	MedMainFormName = "Medicine";
+	MedStressFormName = "MedStress"; 
+	YNDialogFormName = "YNDialog"; 
+	MedChooseWoundFormName = "MedChooseWoundForm";
+	MedChooseTorsoWoundFormName = "MedChooseTorsoWoundForm";
 
 	return SUCCESS;
 }

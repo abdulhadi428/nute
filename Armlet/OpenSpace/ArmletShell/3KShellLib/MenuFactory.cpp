@@ -96,6 +96,7 @@ fresult MenuFactory::ClearSettings()
 		Settings[i].Text = NULL;
 		Settings[i].ImgHandle = INVALID_HANDLE;
 		Settings[i].Empty = TRUE;
+		Settings[i].OverrideTextFormat = INVALID_HANDLE;
 		Position orgn;
 		switch (i)
 		{
@@ -300,7 +301,15 @@ fresult MenuFactory::GetMenu( MenuKinds kind, IMenu** o_mnu )
 				align.VAlign = ToTop;
 			}
 
-			_miFactory->CurrentTextFormatHandle = tfmt;
+			//checking whether text format is overridden in settings
+			if (Settings[i].OverrideTextFormat == INVALID_HANDLE)
+			{
+				_miFactory->CurrentTextFormatHandle = tfmt;
+			}
+			else
+			{
+				_miFactory->CurrentTextFormatHandle = Settings[i].OverrideTextFormat;
+			}
 			fres = _miFactory->GetMenuItem(Settings[i].ScreenOrigin, 
 											align,
 											style, 

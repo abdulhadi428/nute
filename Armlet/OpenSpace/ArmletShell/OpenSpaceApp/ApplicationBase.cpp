@@ -358,9 +358,9 @@ fresult ApplicationBase::ShowMessage( ImageHandle icon, char* title, char* text 
 fresult ApplicationBase::ShowYNMessage( char* dialogName, ImageHandle icon, char* title, char* text )
 {
 	fresult fres;
-	if (_DialogForm!=NULL)
+	if (_YNDialogForm!=NULL)
 	{
-		fres = _DialogForm->ShowYNDialog(dialogName, title, text, icon);
+		fres = _YNDialogForm->ShowYNDialog(dialogName, title, text, icon);
 		ENSURESUCCESS(fres);
 	}
 	return SUCCESS;

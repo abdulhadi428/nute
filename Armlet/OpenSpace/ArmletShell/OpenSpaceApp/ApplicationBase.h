@@ -43,6 +43,8 @@ protected:
 	char* _Version;
 
 	IDialogForm* _DialogForm;
+	IDialogForm* _YNDialogForm;
+
 	char* _StartupFormName;
 	
 	fresult BaseInit();

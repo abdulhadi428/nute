@@ -10,11 +10,13 @@ public:
 	char* Name;
 	ImageHandle ImgHandle;
 	IMenuHandler* Handler;
+	TextFormatHandle OverrideTextFormat;
 	bool_t Empty;
 	Position ScreenOrigin;
 };
 
 typedef enum _MNU_ITEM_ORIGN {
+//TODO: rename to MENU	
 	ItemOriginA,
 	ItemOriginB,
 	ItemOriginC,
@@ -28,6 +30,7 @@ typedef enum _MNU_ITEM_ORIGN {
 } MenuItemOrigins;
 
 typedef enum _MNU_KINDS {
+//TODO: that's a crap
 	ABCXYZLER,
 	ACY,
 	BXZ,

@@ -4,7 +4,10 @@ class OpenSpaceForms
 {
 public:
 	char* MainFormName;
-	char* MedMainFormName;
+	char* MedStressFormName;
+	char* YNDialogFormName;
+	char* MedChooseWoundFormName;
+	char* MedChooseTorsoWoundFormName;
 	
 	fresult Init();
 };

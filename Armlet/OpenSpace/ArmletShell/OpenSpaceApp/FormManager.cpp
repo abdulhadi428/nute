@@ -101,13 +101,7 @@ fresult FormManager::ShowForm(char* name)
 	_formStack[_shownIndex] = frm;
 	_formStackLength++;
 
-	fres = frm->OnBeforeShown(prevForm, FALSE, fsrNone);
-	ENSURESUCCESS(fres);
-
-	fres = frm->Draw();
-	ENSURESUCCESS(fres);
-
-	fres = frm->OnAfterShown(prevForm, FALSE, fsrNone);
+	fres = ActivateForm(frm, NULL, FALSE, fsrNone);
 	ENSURESUCCESS(fres);
 
 	return SUCCESS;
@@ -217,8 +211,6 @@ fresult FormManager::ActivateForm( IForm* frm, IForm* prevForm , bool_t isReacti
 
 }
 
-
-
 fresult FormOpenDelegate::OnClick( IMenuItem* sender )
 {
 	fresult fres;
@@ -234,7 +226,6 @@ fresult FormOpenDelegate::Init( FormManager* frmmngr, char* formName )
 
 	return SUCCESS;
 }
-
 
 fresult FormCloseDelegate::Init( FormManager* frmmngr, FormShowResults result)
 {

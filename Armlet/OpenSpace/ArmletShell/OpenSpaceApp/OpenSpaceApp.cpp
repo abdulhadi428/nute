@@ -47,9 +47,6 @@ fresult OpenSpaceApp::InitColors( ColorsRepository* clrrep )
 оранжевый, значения стрессов (0xFF,255,102,0)
 зеленый, текст, значения стрессов (0xFF,0,153,51)
 */
-
-
-
 	//Override colors
 	//желтый, заголовок (0xFF,255,204,0)	
 	fres = clrrep->Register24bitARGBColor(CL_HEADER_BACKGROUND, 0xFF,255,204,0);
@@ -105,12 +102,14 @@ fresult OpenSpaceApp::InitColors( ColorsRepository* clrrep )
 
 fresult OpenSpaceApp::InitTextFormats( TextFormatsRepository* tfrep )
 {
+	
+	
 	return ApplicationBase::InitTextFormats(tfrep);
 }
 
 fresult OpenSpaceApp::GetFormManagerParams( ubyte_t* formsCount, ubyte_t* shownStackLength )
 {
-	*formsCount =2;
+	*formsCount =10;
 	*shownStackLength = 5;
 	
 	return SUCCESS;
@@ -142,11 +141,29 @@ fresult OpenSpaceApp::CreateForms()
 	ENSURESUCCESS(fres);
 
 	Forms = &_openSpaceFormsInstance;
+
+	//YNDialogForm
+	fres = _YNDialogFormInstance.Init(_Repositories, _Factories, Forms->YNDialogFormName, _FormManager, this, Logic);
+	ENSURESUCCESS(fres);
+	fres = _FormManager->RegisterForm(&_YNDialogFormInstance);
+	ENSURESUCCESS(fres);
+
+	//MedChooseTorsoWoundForm
+	fres = _MedChooseTorsoWoundFormInstance.Init(_Repositories, _Factories, Forms->MedChooseTorsoWoundFormName, _FormManager, this, Logic);
+	ENSURESUCCESS(fres);
+	fres = _FormManager->RegisterForm(&_MedChooseTorsoWoundFormInstance);
+	ENSURESUCCESS(fres);
+
+	//MedChooseWoundForm
+	fres = _MedChooseWoundFormInstance.Init(_Repositories, _Factories, Forms->MedChooseWoundFormName, _FormManager, this, Logic);
+	ENSURESUCCESS(fres);
+	fres = _FormManager->RegisterForm(&_MedChooseWoundFormInstance);
+	ENSURESUCCESS(fres);
 	
 	//med form
-	fres = _medMainFormInstance.Init(_Repositories, _Factories, Forms->MedMainFormName, _FormManager, this, Logic);
+	fres = _MedStressFormInstance.Init(_Repositories, _Factories, Forms->MedStressFormName, _FormManager, this, Logic);
 	ENSURESUCCESS(fres);
-	fres = _FormManager->RegisterForm(&_medMainFormInstance);
+	fres = _FormManager->RegisterForm(&_MedStressFormInstance);
 	ENSURESUCCESS(fres);
 
 	//main form
@@ -155,8 +172,21 @@ fresult OpenSpaceApp::CreateForms()
 	fres = _FormManager->RegisterForm(&_mainFormInstance);
 	ENSURESUCCESS(fres);
 
-
 	_StartupFormName = Forms->MainFormName;
 
 	return SUCCESS;
 }
+
+fresult OpenSpaceApp::ShowYNDialogEx(char* dialogName, char* formTitle, char* formSubtitle, char* msgTitle, char* msgContent, char* yesText )
+{
+	fresult fres;
+	YNDialogForm* frm = (YNDialogForm*)_FormManager->GetForm(Forms->YNDialogFormName);
+	FAILIF(frm==NULL);
+
+	fres = frm->ShowYNDialog(dialogName, formTitle, formSubtitle, msgTitle, msgContent, yesText);
+	ENSURESUCCESS(fres);
+
+	return SUCCESS;
+}
+
+

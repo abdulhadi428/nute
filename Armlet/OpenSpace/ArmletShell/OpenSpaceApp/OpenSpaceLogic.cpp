@@ -1,7 +1,21 @@
-#include "ArmletAppSDK.h"
-#include "ThreeKShell.h"
-
 #include "OpenSpace.h"
+
+
+fresult OpenSpaceLogic::Init()
+{
+	fresult fres;
+	
+	MedLogic = &_medLogicInstance;
+	fres = MedLogic->Init();
+	ENSURESUCCESS(fres);
+
+	_stressCruelty =0;
+	_stressEgo =0;
+	_stressHelplessness = 0;
+
+	return SUCCESS;
+}
+
 
 bool_t OpenSpaceLogic::SetStressHelplessness( ubyte_t level )
 {
@@ -50,15 +64,6 @@ bool_t OpenSpaceLogic::SetStressCruelty( ubyte_t level )
 ubyte_t OpenSpaceLogic::GetStressCruelty()
 {
 	return _stressCruelty;
-}
-
-fresult OpenSpaceLogic::Init()
-{
-	_stressCruelty =0;
-	_stressEgo =0;
-	_stressHelplessness = 0;
-	
-	return SUCCESS;
 }
 
 ColorHandle OpenSpaceLogic::GetStressColor( StressType stress, ubyte_t level )

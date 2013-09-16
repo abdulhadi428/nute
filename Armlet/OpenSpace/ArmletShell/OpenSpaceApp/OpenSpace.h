@@ -3,6 +3,9 @@
 #include "To3KShell.h"
 #include "OpenSpaceImages.h"
 
+#include "OSMedDefs.h"
+#include "OSMedLogic.h"
+
 class OpenSpaceApp;
 #include "OpenSpaceLogic.h"
 #include "OpenSpaceStatusBar.h"
@@ -10,8 +13,13 @@ class OpenSpaceApp;
 #include "OpenSpaceFormBase.h"
 #include "OpenSpaceForms.h"
 //forms
+#include "YNDialogForm.h"
 #include "MainForm.h"
-#include "MedMainForm.h"
+#include "MedStressForm.h"
+#include "MedChooseWoundForm.h"
+#include "MedChooseTorsoWoundForm.h"
+#include "OSTempateForm.h"
+
 
 
 #include "OpenSpaceApp.h"

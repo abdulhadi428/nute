@@ -13,6 +13,7 @@ typedef enum _MNU_ITEM_STYLE {
 	MenuItemStylesLast
 } MenuItemStyles;
 
+//TODO: move out of here, that a general purpose enum
 typedef enum _H_ALIGN {
 	ToRight,
 	ToLeft,
