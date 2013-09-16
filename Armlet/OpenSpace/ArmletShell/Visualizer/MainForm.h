@@ -188,6 +188,15 @@ namespace Visualizer {
 		int last_mins;
 		bool bVibrating;
 		bool bVibratingReverseDirection;
+private: System::Windows::Forms::Label^  lblX;
+
+private: System::Windows::Forms::Label^  lblY;
+
+
+
+
+
+
 		 int RemainignVibrationTicks;
 		//LOG
 		void ScrollLogToEnd() {
@@ -435,6 +444,8 @@ namespace Visualizer {
 			this->buttonConnectPill2 = (gcnew System::Windows::Forms::Button());
 			this->tabPage6 = (gcnew System::Windows::Forms::TabPage());
 			this->LogWindow = (gcnew System::Windows::Forms::TextBox());
+			this->lblX = (gcnew System::Windows::Forms::Label());
+			this->lblY = (gcnew System::Windows::Forms::Label());
 			this->groupBoxMain->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->Screen))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->ScreenZoomed))->BeginInit();
@@ -678,6 +689,7 @@ namespace Visualizer {
 			this->ScreenZoomed->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->ScreenZoomed->TabIndex = 13;
 			this->ScreenZoomed->TabStop = false;
+			this->ScreenZoomed->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &MainForm::ScreenZoomed_MouseMove);
 			// 
 			// tabControl1
 			// 
@@ -912,10 +924,10 @@ namespace Visualizer {
 			this->tabPage3->Controls->Add(this->groupBoxExplosionType);
 			this->tabPage3->Controls->Add(this->groupBoxKernel);
 			this->tabPage3->Controls->Add(this->groupBoxRooms);
-			this->tabPage3->Location = System::Drawing::Point(4, 24);
+			this->tabPage3->Location = System::Drawing::Point(4, 22);
 			this->tabPage3->Name = L"tabPage3";
 			this->tabPage3->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage3->Size = System::Drawing::Size(410, 241);
+			this->tabPage3->Size = System::Drawing::Size(410, 243);
 			this->tabPage3->TabIndex = 2;
 			this->tabPage3->Text = L"Отсеки";
 			this->tabPage3->UseVisualStyleBackColor = true;
@@ -1752,12 +1764,32 @@ namespace Visualizer {
 			this->LogWindow->TabIndex = 17;
 			this->LogWindow->VisibleChanged += gcnew System::EventHandler(this, &MainForm::LogWindow_VisibleChanged);
 			// 
+			// lblX
+			// 
+			this->lblX->AutoSize = true;
+			this->lblX->Location = System::Drawing::Point(450, 537);
+			this->lblX->Name = L"lblX";
+			this->lblX->Size = System::Drawing::Size(18, 15);
+			this->lblX->TabIndex = 24;
+			this->lblX->Text = L"X:";
+			// 
+			// lblY
+			// 
+			this->lblY->AutoSize = true;
+			this->lblY->Location = System::Drawing::Point(533, 537);
+			this->lblY->Name = L"lblY";
+			this->lblY->Size = System::Drawing::Size(17, 15);
+			this->lblY->TabIndex = 26;
+			this->lblY->Text = L"Y:";
+			// 
 			// MainForm
 			// 
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::None;
 			this->AutoScroll = true;
 			this->BackColor = System::Drawing::SystemColors::AppWorkspace;
 			this->ClientSize = System::Drawing::Size(1094, 574);
+			this->Controls->Add(this->lblY);
+			this->Controls->Add(this->lblX);
 			this->Controls->Add(this->tabControl1);
 			this->Controls->Add(this->groupBoxMain);
 			this->Controls->Add(this->ScreenZoomed);
@@ -1803,6 +1835,7 @@ namespace Visualizer {
 			this->tabPage6->ResumeLayout(false);
 			this->tabPage6->PerformLayout();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -2203,6 +2236,12 @@ private: System::Void numericUpDownPillsCharges_ValueChanged(System::Object^  se
 		 }
 private: System::Void numericUpDownPills2Charges_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 			 KernelApi::SetPillCharges(currTorture, (int)numericUpDownPills2Charges->Value);
+		 }
+private: System::Void label4_Click(System::Object^  sender, System::EventArgs^  e) {
+		 }
+private: System::Void ScreenZoomed_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+			 lblX->Text = String::Format("X:{0}", e->Location.X /4);
+			 lblY->Text = String::Format("Y:{0}", e->Location.Y /4);
 		 }
 }; //class
 
