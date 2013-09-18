@@ -93,8 +93,7 @@ fresult MedStressForm::CreateMenu( IMenu** o_mnu )
 	//ItemOriginL
 	mis = &mf->Settings[ItemOriginL];
 	mis->ImgHandle = small_arrow_bottom;
-	//TODO: почему то не влезает 10 символов
-	mis->Text = "+рана";
+	mis->Text = "доб.рану";
 	fres = _FormManager->GetOpenFormHandler(_App->Forms->MedChooseWoundFormName,&mis->Handler);
 	ENSURESUCCESS(fres);
 	mis->Empty = FALSE;
@@ -112,7 +111,8 @@ fresult MedStressForm::CreateMenu( IMenu** o_mnu )
 	mis = &mf->Settings[ItemOriginR];
 	mis->ImgHandle = small_arrow_bottom;
 	mis->Text = "состояние";
-	mis->Handler = NULL;
+	fres = _FormManager->GetOpenFormHandler(_App->Forms->MedStatusFormName,&mis->Handler);
+	ENSURESUCCESS(fres);
 	mis->Empty = FALSE;
 
 	//create mnu

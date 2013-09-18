@@ -190,6 +190,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MedStatusForm.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MedStressForm.cpp"
 				>
 			</File>
@@ -293,6 +297,10 @@
 			</File>
 			<File
 				RelativePath=".\MedCures.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MedStatusForm.h"
 				>
 			</File>
 			<File

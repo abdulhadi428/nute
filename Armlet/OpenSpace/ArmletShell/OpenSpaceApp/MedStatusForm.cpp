@@ -1,10 +1,10 @@
 #include "OpenSpace.h"
 
-fresult OSTemplateForm::Init( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, OpenSpaceApp* app, OpenSpaceLogic* logic )
+fresult MedStatusForm::Init( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, OpenSpaceApp* app, OpenSpaceLogic* logic )
 {
 	fresult fres;
-	_TitleText = "title/";
-	_SubtitleText = "Subtitle";
+	_TitleText = "Медицина/";
+	_SubtitleText = "Состояние";
 
 	fres = BaseInit(sbdmTitles, reps,facts, name, frmmngr, app, logic);
 	ENSURESUCCESS(fres);
@@ -12,44 +12,39 @@ fresult OSTemplateForm::Init( Repositories* reps, Factories* facts, char* name, 
 	return SUCCESS;
 }
 
-fresult OSTemplateForm::DoLayout()
+fresult MedStatusForm::DoLayout()
 {
 	fresult fres;
 
-	ubyte_t controlsCount = 1;
+	ubyte_t controlsCount = 2;
 
 	Size caSz = _App->GetClientAreaSize();
 	Position caPos = _App->GetClientAreaPos();
 
-	fres = _Factories->GetPanelFactory()->GetPanel(caSz, caPos, controlsCount, CL_TRANSPARENT, &_FormPanel);
+	fres = _Factories->GetPanelFactory()->GetPanel(caSz, caPos, controlsCount, CL_MENU_BACKGROUND, &_FormPanel);
 	ENSURESUCCESS(fres);
 
-
-	TextField* tf;
+	//log text
 	Position pos;
-	pos.Left =5;
-	pos.Top = 50;
-	//URGENTTODO: другой стиль
-	char* caption;
-	caption = "Выберите место";
+	pos.Left =caPos.Left + 6;
+	pos.Top = caPos.Top;
 	TextFieldFactory* tff = _Factories->GetTextFieldFactory();
-	tff->CurrentTextFormatHandle=TF_PARROT;
-	uword_t captionLen = Length(caption);
+	//TODO: override TF_NORMAL
+	tff->CurrentTextFormatHandle=TF_MENU;
+	tff->CurrentFrames = 2;
 
-	Size tftxSize;
-	tftxSize.Width = 14;
-	tftxSize.Height = 6;
+	Size tfSize;
+	tfSize.Width = caSz.Width - 22;
+	tfSize.Height = caSz.Height -16;
 
-	fres = tff->GetTextBox(pos, tftxSize, 1, &tf);
+	fres = tff->GetTextBox(pos, tfSize, &_txtStatus);
 	ENSURESUCCESS(fres);
-	tf->AppendText(caption);
-	ENSURESUCCESS(fres);
-	fres = _FormPanel->AppendControl(tf);
+	fres = _FormPanel->AppendControl(_txtStatus);
 	ENSURESUCCESS(fres);
 
 	//get stipes
-/*	Panel* stripes = NULL;
-	fres = GetStripesPanel(frmStripeMessageYNDialog, &stripes);
+	Panel* stripes = NULL;
+	fres = GetStripesPanel(frmStripeOneBot, &stripes);
 	ENSURESUCCESS(fres);
 	if (stripes!=NULL)
 	{
@@ -61,12 +56,12 @@ fresult OSTemplateForm::DoLayout()
 	//get menu
 	fres = CreateMenu(&_Menu);
 	ENSURESUCCESS(fres);
-*/
+
 	return SUCCESS;
 }
 
 
-fresult OSTemplateForm::CreateMenu( IMenu** o_mnu )
+fresult MedStatusForm::CreateMenu( IMenu** o_mnu )
 {
 	fresult fres;
 	MenuFactory* mf = _Factories->GetMenuFactory();
@@ -79,6 +74,18 @@ fresult OSTemplateForm::CreateMenu( IMenu** o_mnu )
 
 	//Set up menu
 	MenuItemSettings* mis;
+
+	//ItemOriginX
+	mis = &mf->Settings[ItemOriginX];
+	mis->ImgHandle = scroll_up;
+	//mis->Handler = _txtStatus.Get
+	mis->Empty = FALSE;
+
+	//ItemOriginZ
+	mis = &mf->Settings[ItemOriginZ];
+	mis->ImgHandle = scroll_down;
+	//mis->Handler = _txtStatus.Get
+	mis->Empty = FALSE;
 
 
 	//ItemOriginE
@@ -105,5 +112,18 @@ fresult OSTemplateForm::CreateMenu( IMenu** o_mnu )
 	*o_mnu = mnu;
 	return SUCCESS;
 }
+
+fresult MedStatusForm::OnBeforeShown( IForm* prevFrom, bool_t reActivation, FormShowResults results )
+{
+	fresult fres;
+
+	fres = OpenSpaceFormBase::OnBeforeShown(prevFrom, reActivation, results);
+
+	fres = _App->Logic->MedLogic->CreateMedStatus(_txtStatus);
+	ENSURESUCCESS(fres);
+
+	return SUCCESS;
+}
+
 
 

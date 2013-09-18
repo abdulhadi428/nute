@@ -8,6 +8,8 @@ public:
 	char* YNDialogFormName;
 	char* MedChooseWoundFormName;
 	char* MedChooseTorsoWoundFormName;
+	char* MedStatusFormName;
+	//char* OSTemplateFormName;
 	
 	fresult Init();
 };

@@ -12,8 +12,9 @@ fresult OpenSpaceApp::Init()
 	ENSURESUCCESS(fres);
 
 	_Version = OpenSpaceApp_VERSION;
-
 	Logic = &_logicInstance;
+	fres = Logic->Init();
+	ENSURESUCCESS(fres);
 
 	return SUCCESS;
 }
@@ -142,11 +143,25 @@ fresult OpenSpaceApp::CreateForms()
 
 	Forms = &_openSpaceFormsInstance;
 
+	//TestForm
+	//fres = _OSTemplateFormIstance.Init(_Repositories, _Factories, Forms->OSTemplateFormName, _FormManager, this, Logic);
+	//ENSURESUCCESS(fres);
+	//fres = _FormManager->RegisterForm(&_OSTemplateFormIstance);
+	//ENSURESUCCESS(fres);
+	//_StartupFormName = Forms->OSTemplateFormName;
+
 	//YNDialogForm
 	fres = _YNDialogFormInstance.Init(_Repositories, _Factories, Forms->YNDialogFormName, _FormManager, this, Logic);
 	ENSURESUCCESS(fres);
 	fres = _FormManager->RegisterForm(&_YNDialogFormInstance);
 	ENSURESUCCESS(fres);
+
+	//MedStatusFormName
+	fres = _MedStatusFormInstance.Init(_Repositories, _Factories, Forms->MedStatusFormName, _FormManager, this, Logic);
+	ENSURESUCCESS(fres);
+	fres = _FormManager->RegisterForm(&_MedStatusFormInstance);
+	ENSURESUCCESS(fres);
+
 
 	//MedChooseTorsoWoundForm
 	fres = _MedChooseTorsoWoundFormInstance.Init(_Repositories, _Factories, Forms->MedChooseTorsoWoundFormName, _FormManager, this, Logic);

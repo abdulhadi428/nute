@@ -8,6 +8,8 @@ fresult OpenSpaceForms::Init()
 	YNDialogFormName = "YNDialog"; 
 	MedChooseWoundFormName = "MedChooseWoundForm";
 	MedChooseTorsoWoundFormName = "MedChooseTorsoWoundForm";
+	MedStatusFormName = "MedStatusForm";
+	//OSTemplateFormName = "OSTemplateFormName";
 
 	return SUCCESS;
 }

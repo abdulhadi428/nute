@@ -18,6 +18,9 @@ class OpenSpaceApp : public ApplicationBase
 	YNDialogForm _YNDialogFormInstance;
 	MedChooseWoundForm _MedChooseWoundFormInstance;
 	MedChooseTorsoWoundForm _MedChooseTorsoWoundFormInstance;
+	MedStatusForm _MedStatusFormInstance;
+	OSTemplateForm _OSTemplateFormIstance;
+
 
 public:
 	OpenSpaceStatusBar* AppStatusBar; 

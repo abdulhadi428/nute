@@ -93,9 +93,10 @@ fresult TextField::AppendText(const char* text, uword_t sz)
 	uword_t strReadIndex=0;
 	while (strReadIndex < sz)
 	{
-		//read ahead to next word end
+		//read ahead to next word end (ignoring wrapLimit, just find next word border)
 		ubyte_t readAheadIndex =0;
-		for (readAheadIndex = 0; readAheadIndex+buffWritePosition.Left < wrapLimit;readAheadIndex++)
+		
+		for (readAheadIndex = 0; readAheadIndex+buffWritePosition.Left < sz; readAheadIndex++)
 		{
 			if (text[strReadIndex+readAheadIndex] ==0 ||
 				text[strReadIndex+readAheadIndex] == ' ' ||
@@ -107,7 +108,7 @@ fresult TextField::AppendText(const char* text, uword_t sz)
 
 		//word limit at readAheadIndex chars from current position. 
 		//Decide whether to wrap
-		if (buffWritePosition.Left + readAheadIndex >= wrapLimit)
+		if (buffWritePosition.Left + readAheadIndex > wrapLimit)
 		{
 			//next word border exceeds wrap limit
 			//decide to wrap

@@ -18,6 +18,7 @@ class OpenSpaceApp;
 #include "MedStressForm.h"
 #include "MedChooseWoundForm.h"
 #include "MedChooseTorsoWoundForm.h"
+#include "MedStatusForm.h"
 #include "OSTempateForm.h"
 
 

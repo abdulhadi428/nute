@@ -204,8 +204,12 @@ fresult MedChooseTorsoWoundForm::OnAfterDialogShown( IForm* prevFrom, char* dial
 	return SUCCESS;
 }
 
-fresult MedChooseTorsoWoundForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation, FormShowResults results )
+fresult MedChooseTorsoWoundForm::OnBeforeShown( IForm* prevFrom, bool_t reActivation, FormShowResults results )
 {
+	fresult fres;
+	fres = OpenSpaceFormBase::OnBeforeShown(prevFrom, reActivation, results);
+	ENSURESUCCESS(fres);
+
 	if (reActivation == FALSE)
 	{
 		_currentTarget = mwtUnknownTarget;

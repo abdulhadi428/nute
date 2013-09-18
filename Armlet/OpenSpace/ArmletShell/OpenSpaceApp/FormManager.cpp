@@ -126,7 +126,7 @@ fresult FormManager::CloseForm( IForm* frm,  FormShowResults formShowResult)
 	bool_t needRedrawPervFrom = TRUE;
 	if (frm->IsDialog()==TRUE)
 	{
-		IDialogForm* dlg = (IDialogForm*)frm;
+		IDialogForm* dlg = dynamic_cast<IDialogForm*>(frm);
 		FAILIF(dlg==NULL);
 		char* dialogName = dlg->GetDialogName();
 		fres = prevForm->OnAfterDialogShown(frm, dialogName, formShowResult, &needRedrawPervFrom);
