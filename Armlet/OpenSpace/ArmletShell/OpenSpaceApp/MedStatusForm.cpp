@@ -126,4 +126,15 @@ fresult MedStatusForm::OnBeforeShown( IForm* prevFrom, bool_t reActivation, Form
 }
 
 
+fresult MedStatusForm::OnMenuX( IMenuItem* mi )
+{
+	return _txtStatus->ScrollUp();
+}
+
+fresult MedStatusForm::OnMenuZ( IMenuItem* mi )
+{
+	return _txtStatus->ScrollDown();
+}
+
+
 

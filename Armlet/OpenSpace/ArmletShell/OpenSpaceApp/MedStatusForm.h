@@ -11,4 +11,8 @@ public:
 
 	virtual fresult OnBeforeShown( IForm* prevFrom, bool_t reActivation, FormShowResults formShowResult );
 
+	virtual fresult OnMenuX( IMenuItem* mi );
+
+	virtual fresult OnMenuZ( IMenuItem* mi );
+
 };

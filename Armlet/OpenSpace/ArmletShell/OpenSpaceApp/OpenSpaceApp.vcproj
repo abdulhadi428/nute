@@ -166,6 +166,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ItemsListFormBase.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MainForm.cpp"
 				>
 			</File>
@@ -273,6 +277,14 @@
 			</File>
 			<File
 				RelativePath=".\IForm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IMessageSource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ItemsListFormBase.h"
 				>
 			</File>
 			<File

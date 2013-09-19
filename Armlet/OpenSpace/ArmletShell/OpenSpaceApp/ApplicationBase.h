@@ -74,6 +74,7 @@ public:
 	FormManager* GetFormManager();
 
 	fresult RedrawCurrentForm(); 
+	fresult RedrawIfActive(IForm* form);
 
 	//messages
 	fresult ShowMessage(ImageHandle icon, char* title, char* text);

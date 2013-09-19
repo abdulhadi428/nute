@@ -365,3 +365,19 @@ fresult ApplicationBase::ShowYNMessage( char* dialogName, ImageHandle icon, char
 	}
 	return SUCCESS;
 }
+
+fresult ApplicationBase::RedrawIfActive( IForm* form )
+{
+	fresult fres;
+	FAILIF(form==NULL);
+	IForm* currFrm = _FormManager->GetCurrentForm();
+
+
+	if (StringEquals(currFrm->GetName(), form->GetName()))
+	{
+		fres = currFrm->Draw();
+		ENSURESUCCESS(fres);
+	}
+
+	return SUCCESS;
+}
