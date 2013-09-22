@@ -32,11 +32,10 @@ void Btn_t::CheckTransition() {
 
 // ================================ Buttons ====================================
 static WORKING_AREA(waBtnThread, 128);
-static msg_t BtnThread(void *arg) {
-    (void)arg;
+__attribute__((noreturn))
+static void BtnThread(void *arg) {
     chRegSetThreadName("Btn");
     while(1) Btn.Task();
-    return 0;
 }
 
 void Buttons_t::Init() {
@@ -45,7 +44,7 @@ void Buttons_t::Init() {
     Down.Init(GPIOB, 7);
     Tx.Init  (GPIOA, 1);
     // Create and start thread
-    chThdCreateStatic(waBtnThread, sizeof(waBtnThread), NORMALPRIO, BtnThread, NULL);
+    chThdCreateStatic(waBtnThread, sizeof(waBtnThread), NORMALPRIO, (tfunc_t)BtnThread, NULL);
 }
 
 void Buttons_t::Shutdown() {

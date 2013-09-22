@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 18/02/2013 02:16:01
+EESchema Schematic File Version 2  date 28/02/2013 18:07:00
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -14,7 +14,7 @@ $Descr A4 11700 8267
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "17 feb 2013"
+Date "28 feb 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -22,6 +22,8 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Text Notes 2550 1600 0    60   ~ 0
+If just a button needed (no touch) - \nremove touch sensor and solder the fuse
 Connection ~ 4100 6350
 Wire Wire Line
 	4100 6350 4100 5500

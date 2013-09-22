@@ -21,20 +21,26 @@ static inline void ProcessBtnEvt();
 static uint8_t ColorIndx;
 static rPkt_t Pkt;
 //static EventListener EvtLstnrRadioRx, EvtListenerKeys;
-static enum State_t {sIdle, sColorEdit, sFade} State;
+static enum State_t {sIdle, sColorEdit, sFade, sCharging} State;
 
-#define WAIT_DURATION_MS    45
-#define RX_DURATION_MS      999
+#define WAIT_DURATION_MS    999
+#define PKT_RX_DURATION_MS  4
+#define RX_RETRY_CNT        4
 
-#define FADE_CMD            0xFE
+#define FADE_CMD            0xFE    // Do not use FF, as CC's CRC does not let it through
 
-#define EVTMASK_RADIO_TX    EVENT_MASK(0)
-#define EVTMASK_RADIO_RX    EVENT_MASK(1)
-#define EVTMASK_KEYS        EVENT_MASK(2)
+//#define EVTMASK_KEYS        EVENT_MASK(2)
+
+/* TODO:
+ * 1) Radio Rx\Tx energy saving mode, work time after time, not continuously
+ * 2) Measure battery, standby when discharged
+ * 3) Charge indication and so.
+ * 4) Energy saving
+ */
 
 int main(void) {
     // ==== Init clock system ====
-    Clk.SetupBusDividers(ahbDiv1, apbDiv1, apbDiv1);
+    Clk.SetupBusDividers(ahbDiv8, apbDiv1, apbDiv1);
     Clk.UpdateFreqValues();
     // ==== Init OS ====
     halInit();
@@ -47,36 +53,50 @@ int main(void) {
 //    Btn.RegisterEvt(&EvtListenerKeys, EVTMASK_KEYS);
     // Application cycle
     while(TRUE) {
-        // Transmit if Tx pressed
+        chThdSleepMilliseconds(999);
+    } // while
+}
+
+// ==== Radio Thread ====
+static WORKING_AREA(waRadioThread, 128);
+__attribute__((noreturn))
+static void RadioThread(void *arg) {
+    chRegSetThreadName("Radio");
+    while(1) {
+        // Transmit continuously if Tx pressed
         if(Btn.Tx.Pressed) {
             Pkt.Indx = (State == sFade)? FADE_CMD : ColorIndx;
-            Uart.Printf("Tx %u\r", Pkt.Indx);
+            //Uart.Printf("Tx %u\r", Pkt.Indx);
             CC.TransmitSync(&Pkt);
-            chThdSleepMilliseconds(WAIT_DURATION_MS);
         }
         else {
             // If Up or Down pressed, do nothing
             if(Btn.Up.Pressed or Btn.Down.Pressed) chThdSleepMilliseconds(45);
             // Receive if none of the buttons pressed
             else {
-                Uart.Printf("Rx\r");
-                uint8_t Result = CC.ReceiveSync(RX_DURATION_MS, &Pkt);
-                if(Result == OK) {
-                    Uart.Printf("RSSI=%d; %u\r", Pkt.RSSI, Pkt.Indx);
-                    if(Pkt.Indx == FADE_CMD) {  // Enter fade
-                        State = sFade;
-                        Led.SetColorSmoothly(clBlack);
-                    }
-                    else {
-                        State = sIdle;
-                        ColorIndx = Pkt.Indx;
-                        Led.SetColorSmoothly(ColorTable[ColorIndx]);
-                    } // if fade
-                } // if rx ok
-                //chThdSleepMilliseconds(WAIT_DURATION_MS);
+                // Try to receive several times
+                for(uint8_t i=0; i<RX_RETRY_CNT; i++) {
+                    Uart.Printf("Rx\r");
+                    uint8_t Result = CC.ReceiveSync(PKT_RX_DURATION_MS, &Pkt);
+                    if(Result == OK) {
+                        Uart.Printf("RSSI=%d; %u\r", Pkt.RSSI, Pkt.Indx);
+                        if(Pkt.Indx == FADE_CMD) {  // Enter fade
+                            State = sFade;
+                            Led.SetColorSmoothly(clBlack);
+                            break;
+                        }
+                        else if(Pkt.Indx < COLOR_COUNT) {
+                            State = sIdle;
+                            ColorIndx = Pkt.Indx;
+                            Led.SetColorSmoothly(ColorTable[ColorIndx]);
+                            break;
+                        } // if fade
+                    } // if rx ok
+                } // for
+                chThdSleepMilliseconds(WAIT_DURATION_MS);
             } // if not pressed
         } // if Tx is pressed
-    } // while
+    } // while 1
 }
 
 void Init() {
@@ -92,6 +112,7 @@ void Init() {
     CC.Init();
     CC.SetChannel(CC_CHANNEL);
     CC.SetTxPower(PwrMinus8dBm);
+    chThdCreateStatic(waRadioThread, sizeof(waRadioThread), NORMALPRIO, (tfunc_t)RadioThread, NULL);
 
     Uart.Printf("\rCandle AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
 }
@@ -133,6 +154,8 @@ void ProcessBtnEvt() {
             else if(Btn.Tx.Evt == evtPressed)  Led.SetColorSmoothly(COLOR_FADE);
             else if(Btn.Tx.Evt == evtReleased) Led.SetColorSmoothly(clBlack);
             break;
+
+        case sCharging: break;  // Do nothing
     } // switch state
     Btn.ClearEvents();
 }

@@ -60,7 +60,7 @@ int main(void) {
             PinClear(GPIOA, 1);
             LedSmooth.SetSmoothly(LED_BOTTOM_VALUE);
         }
-     }
+    } // while
 }
 
 void Init() {

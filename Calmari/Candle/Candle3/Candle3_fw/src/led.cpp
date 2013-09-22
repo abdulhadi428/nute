@@ -110,11 +110,10 @@ void LedSmooth_t::Task() {
 LedRGB_t Led;
 // ==== LED Thread ====
 static WORKING_AREA(waLedThread, 128);
-static msg_t LedThread(void *arg) {
-    (void)arg;
+__attribute__((noreturn))
+static void LedThread(void *arg) {
     chRegSetThreadName("Led");
     while(1) Led.Task();
-    return 0;
 }
 
 void LedRGB_t::Init() {
@@ -139,7 +138,7 @@ void LedRGB_t::Init() {
     SetColor(clBlack);
     INeededColor = clBlack;
     // Thread
-    PThread = chThdCreateStatic(waLedThread, sizeof(waLedThread), NORMALPRIO, LedThread, NULL);
+    PThread = chThdCreateStatic(waLedThread, sizeof(waLedThread), NORMALPRIO, (tfunc_t)LedThread, NULL);
 }
 
 void LedRGB_t::SetColorSmoothly(Color_t AColor) {

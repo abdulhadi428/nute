@@ -18,7 +18,7 @@ Adc_t Adc;
 #define ADC_VALUE_TO_OFF    144
 #define ADC_VALUE_TO_ON     54
 
-#define LED_COLOR           clBlue
+#define LED_COLOR           ((Color_t){0, 0, 99})
 
 static inline void Init();
 
@@ -51,6 +51,7 @@ void Init() {
     Uart.Init(115200);
     Uart.Printf("\rFirefly2\r");
     Led.Init();
+    Led.SetColorSmoothly((Color_t){255, 255, 255});
     Adc.Init();
 }
 

@@ -18,7 +18,7 @@ IWDG_t Iwdg;
 #define ADC_VALUE_TO_OFF    540
 #define ADC_VALUE_TO_ON     198
 
-#define LED_COLOR           clBlue
+#define LED_COLOR           ((Color_t){99, 99, 0})
 
 static inline void Init();
 static inline void GoSleep();
@@ -77,4 +77,3 @@ void GoSleep() {
     PWR->CR |= PWR_CR_CWUF;
     __WFI();
 }
-
