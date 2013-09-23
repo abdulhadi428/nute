@@ -5,6 +5,7 @@
 typedef enum _FRM_STRIPE_STYLES {
 	frmStripeNone,
 	frmStripeOneBot,
+	frmStripeOneTopOneBot,
 	frmStripeMessageYNDialog,
 	frmStripeThreeWide,
 	frmStripeSevenNarrow,
@@ -19,8 +20,10 @@ protected:
 
 	char* _TitleText;
 	char* _SubtitleText;
+	FormStripeStyles _StripeStyle;
 
 	fresult GetStripesPanel(FormStripeStyles stripeStyle, Panel** o_pnl);
+	fresult GetContentDimensions(Position* o_pos, Size* o_size);
 	fresult BaseInit(OpenSpaceStatusBarDisplayModes statusBarDisplayMode, Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, OpenSpaceApp* app, OpenSpaceLogic* logic);
 	virtual fresult OnBeforeShown(IForm* prevFrom, bool_t reActivation, FormShowResults formShowResult);
 

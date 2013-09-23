@@ -85,3 +85,8 @@ fresult MenuBase::Draw()
 }
 
 }
+
+ubyte_t MenuBase::GetItemsCount()
+{
+	return _ItemsCount;
+}

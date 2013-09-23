@@ -9,6 +9,9 @@ fresult OpenSpaceForms::Init()
 	MedChooseWoundFormName = "MedChooseWoundForm";
 	MedChooseTorsoWoundFormName = "MedChooseTorsoWoundForm";
 	MedStatusFormName = "MedStatusForm";
+	
+	PlayMusicFormName = "PlayMusicForm";
+	BehavoirFormName = "BehavoirForm";
 	//OSTemplateFormName = "OSTemplateFormName";
 
 	return SUCCESS;

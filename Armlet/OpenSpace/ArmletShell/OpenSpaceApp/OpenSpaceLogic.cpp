@@ -9,6 +9,10 @@ fresult OpenSpaceLogic::Init()
 	fres = MedLogic->Init();
 	ENSURESUCCESS(fres);
 
+	BehaviorLogic = &_behLogicInstance;
+	fres = BehaviorLogic->Init();
+	ENSURESUCCESS(fres);
+
 	_stressCruelty =0;
 	_stressEgo =0;
 	_stressHelplessness = 0;
@@ -96,6 +100,11 @@ ColorHandle OpenSpaceLogic::GetStressColor( StressType stress, ubyte_t level )
 		}
 	}
 	return clr;
+}
+
+char* OpenSpaceLogic::getStressMP3FileName( StressType stress )
+{
+	return "C:\\None";
 }
 
 

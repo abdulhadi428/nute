@@ -35,7 +35,7 @@ fresult ApplicationBase::InitColors( ColorsRepository* clrrep )
 	return SUCCESS;
 }
 
-fresult ApplicationBase::InitTextFormats( TextFormatsRepository* tfrep )
+fresult ApplicationBase::InitTextFormats(ColorsRepository* clrrep, TextFormatsRepository* tfrep )
 {
 	return SUCCESS;
 }
@@ -58,7 +58,7 @@ fresult ApplicationBase::InitRepositories( Repositories* repositories )
 
 	fres = _textFormatsInstance.Init(&_colorsInstance, &_fontsInstance);
 	ENSURESUCCESS(fres);
-	fres = InitTextFormats(&_textFormatsInstance);
+	fres = InitTextFormats(&_colorsInstance, &_textFormatsInstance);
 	ENSURESUCCESS(fres);
 
 	fres = _imagesInstance.Init();
@@ -379,5 +379,26 @@ fresult ApplicationBase::RedrawIfActive( IForm* form )
 		ENSURESUCCESS(fres);
 	}
 
+	return SUCCESS;
+}
+
+//OSTODO: implement MP3
+fresult ApplicationBase::MP3PlayFile( char* MP3FileName )
+{
+	return SUCCESS;
+}
+
+fresult ApplicationBase::MP3Stop()
+{
+	return SUCCESS;
+}
+
+fresult ApplicationBase::MP3VolumeUp()
+{
+	return SUCCESS;
+}
+
+fresult ApplicationBase::MP3VolumeDown()
+{
 	return SUCCESS;
 }

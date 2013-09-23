@@ -4,6 +4,7 @@ typedef enum _STRESS_TYPES {
 	StressHelplessness,
 	StressEgo,
 	StressCruelty,
+	StressNone
 } StressType;
 
 class StressChangeHandler;
@@ -17,6 +18,7 @@ private:
 	ubyte_t _stressCruelty;
 
 	OSMedLogic _medLogicInstance;
+	OSBehaviourLogic _behLogicInstance;
 public:
 
 #pragma region //		Stress
@@ -30,9 +32,13 @@ public:
 	ubyte_t GetStressCruelty();
 
 	ColorHandle GetStressColor(StressType stress, ubyte_t level);
+
+	char* getStressMP3FileName(StressType stress);
+
 #pragma endregion
 
 	OSMedLogic* MedLogic;
+	OSBehaviourLogic* BehaviorLogic;
 
 	fresult Init();
 };

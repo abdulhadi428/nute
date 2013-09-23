@@ -9,6 +9,11 @@ public:
 	char* MedChooseWoundFormName;
 	char* MedChooseTorsoWoundFormName;
 	char* MedStatusFormName;
+	
+	char* PlayMusicFormName;
+	char* BehavoirFormName;
+
+
 	//char* OSTemplateFormName;
 	
 	fresult Init();

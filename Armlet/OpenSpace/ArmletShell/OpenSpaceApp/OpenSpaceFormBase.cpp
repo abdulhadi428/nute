@@ -7,6 +7,7 @@ fresult OpenSpaceFormBase::BaseInit(OpenSpaceStatusBarDisplayModes statusBarDisp
 	_App = app;
 	_Logic = logic;
 	_StatusBarDisplayMode = statusBarDisplayMode;
+	_StripeStyle = frmStripeNone;
 	return FormBase::BaseInit(reps, facts, name, frmmngr, app);
 }
 
@@ -15,6 +16,7 @@ fresult OpenSpaceFormBase::GetStripesPanel(FormStripeStyles stripeStyle, Panel**
 	fresult fres;
 
 	Panel* pnl;
+	_StripeStyle = stripeStyle;
 
 	if (stripeStyle==frmStripeNone)
 	{
@@ -59,6 +61,8 @@ fresult OpenSpaceFormBase::GetStripesPanel(FormStripeStyles stripeStyle, Panel**
 	case frmStripeOneBot:
 		stripesCount =1;
 		break;
+	case frmStripeOneTopOneBot:
+		stripesCount =3;
 	case frmStripeMessageYNDialog:
 		stripesCount =4;
 		break;
@@ -122,7 +126,7 @@ fresult OpenSpaceFormBase::GetStripesPanel(FormStripeStyles stripeStyle, Panel**
 					ENSURESUCCESS(fres);
 				}
 			}
-			else
+			else if (stripeStyle == frmStripeMessageYNDialog)
 			{
 				//frmStripeMessageYNDialog
 				pnlPos.Top += STRIPE_HEIGHT;
@@ -136,7 +140,19 @@ fresult OpenSpaceFormBase::GetStripesPanel(FormStripeStyles stripeStyle, Panel**
 				pnlPos.Top += 4*STRIPE_HEIGHT;
 				
 				fres = pf->GetPanel(pnlExtraLargeSz, pnlPos, 0, CL_MENU_BACKGROUND, &stripes[2]);
-				
+				ENSURESUCCESS(fres);
+			}
+			else
+			{
+				//frmStripeOneTopOneBot
+
+				//content stripe
+				pnlPos.Top += STRIPE_HEIGHT;
+				Size pnlExtraLargeSz;
+				pnlExtraLargeSz.Width = pnlNarrowSz.Width;
+				pnlExtraLargeSz.Height = pnlNarrowSz.Height*5;
+
+				fres = pf->GetPanel(pnlExtraLargeSz, pnlPos, 0, CL_MENU_EVEN_BACKGROUND, &stripes[1]);
 				ENSURESUCCESS(fres);
 			}
 		}
@@ -180,6 +196,49 @@ fresult OpenSpaceFormBase::OnBeforeShown(IForm* prevFrom, bool_t reActivation, F
 	
 	fres = _App->AppStatusBar->Draw();
 	ENSURESUCCESS(fres);
+
+	return SUCCESS;
+}
+
+fresult OpenSpaceFormBase::GetContentDimensions( Position* o_pos, Size* o_size )
+{
+	
+	Position caPos = _App->GetClientAreaPos();
+	Size caSize = _App->GetClientAreaSize();
+	
+	switch (_StripeStyle)
+	{
+		case frmStripeNone:
+			o_pos->data = caPos.data;
+			o_size->data =caSize.data;
+			break;
+		case frmStripeOneBot:
+			o_pos->Left = 2;
+			o_pos->Top = caPos.Top;
+
+			o_size->Width = caSize.Width - 4;
+			o_size->Height = caSize.Height - STRIPE_HEIGHT;
+			break;
+		case frmStripeOneTopOneBot:
+			o_pos->Left = 2;
+			o_pos->Top = caPos.Top + STRIPE_HEIGHT;
+
+			o_size->Width = caSize.Width - 4;
+			o_size->Height = caSize.Height - STRIPE_HEIGHT*2;
+			break;
+		case frmStripeMessageYNDialog:
+			o_pos->Left = 2;
+			o_pos->Top = caPos.Top +  STRIPE_HEIGHT;
+
+			o_size->Width = caSize.Width - 4;
+			o_size->Height = caSize.Height - STRIPE_HEIGHT*3;
+			break;
+		case frmStripeThreeWide:
+		case frmStripeSevenNarrow:
+		default:
+			o_pos->data = caPos.data;
+			o_size->data =0;
+	}
 
 	return SUCCESS;
 }

@@ -3,8 +3,8 @@
 
 namespace ThreeKShell {
 
-static Alloc_t<IControl*, 100> SIControlPtrArr;
-static Alloc_t<Panel, 70> SPanelArr;
+static Alloc_t<IControl*, 150> SIControlPtrArr;
+static Alloc_t<Panel, 100> SPanelArr;
 
 	IControl** PanelFactory::AllocControlArray( ubyte_t controlsCount )
 	{

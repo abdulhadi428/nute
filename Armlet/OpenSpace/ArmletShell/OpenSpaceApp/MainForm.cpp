@@ -121,7 +121,8 @@ fresult MainForm::CreateMenu( IMenu** o_mnu )
 	mis = &mf->Settings[ItemOriginY];
 	mis->Text = "Поведение";
 	mis->ImgHandle = small_arrow_right;
-	mis->Handler = NULL;
+	fres = _FormManager->GetOpenFormHandler(_App->Forms->BehavoirFormName, &mis->Handler);
+	ENSURESUCCESS(fres);
 	mis->Empty = FALSE;
 
 	//ItemOriginZ

@@ -85,6 +85,7 @@ typedef sbyte_t TextFormatHandle;
 #define TF_MENUEVEN			4
 #define TF_HEADER			5
 #define TF_PARROT			6
+#define TF_SYSTEM_LAST  	6
 
 class TextFormatsRepository
 {

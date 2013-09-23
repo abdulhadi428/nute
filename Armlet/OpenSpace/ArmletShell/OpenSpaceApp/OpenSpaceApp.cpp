@@ -60,7 +60,6 @@ fresult OpenSpaceApp::InitColors( ColorsRepository* clrrep )
 	//черный, текст, линия (0xFF,0,0,0)	
 	fres = clrrep->Register24bitARGBColor(CL_DEFAULT_TEXT_FOREGROUND, 0xFF,0,0,0);
 	ENSURESUCCESS(fres);
-
 	
 	//черный, текст, линия (0xFF,0,0,0)	
 	fres = clrrep->Register24bitARGBColor(CL_MENU_TEXT_FOREGROUND, 0xFF,0,0,0);
@@ -80,7 +79,7 @@ fresult OpenSpaceApp::InitColors( ColorsRepository* clrrep )
 
 	//серый, текст (0xFF,102,102,102)
 	fres = clrrep->Register24bitARGBColor(CL_OS_LIGHTGRAY	, 0xFF,102,102,102);
-	ENSURESUCCESS(fres);	
+	ENSURESUCCESS(fres);
 
 	//красный, текст (0xFF,255,0,0)
 	fres = clrrep->Register24bitARGBColor(CL_OS_LIGHTRED	, 0xFF,255,0,0);
@@ -101,11 +100,78 @@ fresult OpenSpaceApp::InitColors( ColorsRepository* clrrep )
 	return SUCCESS;
 }
 
-fresult OpenSpaceApp::InitTextFormats( TextFormatsRepository* tfrep )
+fresult OpenSpaceApp::InitTextFormats( ColorsRepository* clrrep, TextFormatsRepository* tfrep )
 {
+	fresult fres;
+	fres = ApplicationBase::InitTextFormats(clrrep, tfrep);
+	ENSURESUCCESS(fres);
+
+	TextFormatsRepository* tfr = tfrep;
+	ColorsRepository* clr = clrrep;
+
+	ColorHandle clMenuEvenBg;
+	fres = clr->GetColorById(CL_MENU_EVEN_BACKGROUND, &clMenuEvenBg);
+	ENSURESUCCESS(fres);
+
+	ColorHandle clMenuBg;
+	fres = clr->GetColorById(CL_MENU_BACKGROUND, &clMenuBg);
+	ENSURESUCCESS(fres);
+
+	ColorHandle clLightRed;
+	fres = clr->GetColorById(CL_OS_LIGHTRED, &clLightRed);
+	ENSURESUCCESS(fres);
+
+	ColorHandle clBlack;
+	fres = clr->GetColorById(CL_BLACK, &clBlack);
+	ENSURESUCCESS(fres);
+
+	ColorHandle clLightGray;
+	fres = clr->GetColorById(CL_OS_LIGHTGRAY, &clLightGray);
+	ENSURESUCCESS(fres);
+
+	TextFormat* tfm = NULL;
+
+	fres = tfr->GetTextFormat(TF_NORMAL, &tfm);
+	ENSURESUCCESS(fres);
+	tfm->FgColor = clBlack;
+	tfm->BgColor = clMenuBg;
+
+	fres = tfr->GetTextFormat(TF_NORMAL_EVEN, &tfm);
+	ENSURESUCCESS(fres);
+	tfm->FgColor = clBlack;
+	tfm->BgColor = clMenuEvenBg;
 	
+	fres = tfr->GetTextFormat(TF_MENU_RED, &tfm);
+	ENSURESUCCESS(fres);
+	tfm->FgColor = clLightRed;
+	tfm->BgColor = clMenuBg;
+
+	fres = tfr->GetTextFormat(TF_MENU_RED_EVEN, &tfm);
+	ENSURESUCCESS(fres);
+	tfm->FgColor = clLightRed;
+	tfm->BgColor = clMenuEvenBg;
+
+	fres = tfr->GetTextFormat(TF_REDTEXT, &tfm);
+	ENSURESUCCESS(fres);
+	tfm->FgColor = clLightRed;
+	tfm->BgColor = clMenuBg;
 	
-	return ApplicationBase::InitTextFormats(tfrep);
+	fres = tfr->GetTextFormat(TF_REDTEXT_EVEN, &tfm);
+	ENSURESUCCESS(fres);
+	tfm->FgColor = clLightRed;
+	tfm->BgColor = clMenuEvenBg;
+
+	fres = tfr->GetTextFormat(TF_GRAYTEXT, &tfm);
+	ENSURESUCCESS(fres);
+	tfm->FgColor = clLightGray;
+	tfm->BgColor = clMenuBg;
+
+	fres = tfr->GetTextFormat(TF_GRAYTEXT_EVEN, &tfm);
+	ENSURESUCCESS(fres);
+	tfm->FgColor = clLightGray;
+	tfm->BgColor = clMenuEvenBg;
+
+	return SUCCESS;
 }
 
 fresult OpenSpaceApp::GetFormManagerParams( ubyte_t* formsCount, ubyte_t* shownStackLength )
@@ -180,6 +246,20 @@ fresult OpenSpaceApp::CreateForms()
 	ENSURESUCCESS(fres);
 	fres = _FormManager->RegisterForm(&_MedStressFormInstance);
 	ENSURESUCCESS(fres);
+
+	
+	//PlayMusicForm form
+	fres = _PlayMusicFormInstance.Init(_Repositories, _Factories, Forms->PlayMusicFormName, _FormManager, this, Logic);
+	ENSURESUCCESS(fres);
+	fres = _FormManager->RegisterForm(&_PlayMusicFormInstance);
+	ENSURESUCCESS(fres);
+
+	//Behavior form
+	fres = _BehavoirFormInstance.Init(_Repositories, _Factories, Forms->BehavoirFormName, _FormManager, this, Logic);
+	ENSURESUCCESS(fres);
+	fres = _FormManager->RegisterForm(&_BehavoirFormInstance);
+	ENSURESUCCESS(fres);
+
 
 	//main form
 	fres = _mainFormInstance.Init(_Repositories, _Factories, Forms->MainFormName, _FormManager, this, Logic);

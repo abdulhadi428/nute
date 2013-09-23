@@ -6,24 +6,36 @@ protected:
 	TextField* _txtItemHeader;
 	TextField* _txtItemContent;
 
-	char** _itemsTexts;
+	ubyte_t _currentItemIndex;
 	ubyte_t _itemsCount;
-	ubyte_t _currentIndex;
 
 	fresult CreateMenu(IMenu** o_mnu);
-	fresult BaseInit(char** itemsTexts, ubyte_t startIndex, ubyte_t itemsCount,
-		Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, OpenSpaceApp* app, OpenSpaceLogic* logic);
 
-	virtual fresult SetItem(ubyte_t index);
+	virtual fresult UpdateMenuSettings(MenuItemSettings* ms);
+
+	virtual sbyte_t GetNextItemIndex(sbyte_t index);
+	virtual sbyte_t GetPrevItemIndex(sbyte_t index);
+
+	virtual fresult SetActiveItem(sbyte_t index);
+
+	virtual fresult SetItemText(char* itemText);
 	virtual fresult SetItemHeader(char* headerText, HorizontalAlignmentStyles alignment, ubyte_t leftOffset);
-	virtual MenuItemSettings* GetMenuSettings();
 
-	fresult MoveToNext();
-	fresult MoveToPrev();
+	virtual fresult OnMenuL( IMenuItem* mi );
+	virtual fresult OnMenuR( IMenuItem* mi );
+
+	MenuItem* _mnuBack;
+	MenuItem* _mnuNext;
+
+	char* _nextText;
+	char* _prevText;
+
 public:
 	virtual fresult DoLayout();
 
-	virtual fresult OnBeforeShown( IForm* prevFrom, bool_t reActivation, FormShowResults formShowResult );
+	virtual fresult OnMenuX( IMenuItem* mi );
+
+	virtual fresult OnMenuZ( IMenuItem* mi );
 
 
 };

@@ -8,6 +8,7 @@ public:
 	virtual sbyte_t  GetSelectedItemIndex() {return -1;};
 
 	virtual IMenuItem*  GetItem(ubyte_t index) {return NULL;};
+	virtual ubyte_t GetItemsCount(){return 0;};
 
 	virtual void SetMustHaveSelected(bool_t mustHaveSelected) {return;};
 	virtual bool_t GetMustHaveSelected() {return FALSE;};

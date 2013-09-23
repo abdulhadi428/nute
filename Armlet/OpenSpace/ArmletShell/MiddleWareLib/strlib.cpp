@@ -1,5 +1,6 @@
 #include "ArmletAppSDK.h"
 
+//TODO: get text size
 namespace ArmletAppSDK {
 
 	// returns -1 or index of first occurence of pattern in string starting from startIndex

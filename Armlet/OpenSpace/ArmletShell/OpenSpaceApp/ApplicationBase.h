@@ -52,7 +52,7 @@ protected:
 	virtual fresult InitImages(ImagesRepository* imgrep);
 	virtual fresult InitFonts(FontsRepository* fntrep);
 	virtual fresult InitColors(ColorsRepository* clrrep);
-	virtual fresult InitTextFormats(TextFormatsRepository* tfrep);
+	virtual fresult InitTextFormats(ColorsRepository* clrrep, TextFormatsRepository* tfrep);
 	virtual fresult GetFormManagerParams(ubyte_t* formsCount, ubyte_t* shownStackLength);
 	virtual fresult CreateStatusBar();
 	virtual fresult CreateForms();
@@ -82,4 +82,8 @@ public:
 
 	//api access
 	void DoVibroAndBeep();
+	fresult MP3PlayFile(char* MP3FileName);
+	fresult MP3Stop();
+	fresult MP3VolumeUp();
+	fresult MP3VolumeDown();
 };

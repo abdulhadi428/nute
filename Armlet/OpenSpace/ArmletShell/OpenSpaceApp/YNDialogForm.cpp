@@ -43,13 +43,13 @@ fresult YNDialogForm::DoLayout()
 	posTitle.Left = 0;
 	posTitle.Top = caPos.Top+4;
 	
-	tff->CurrentTextFormatHandle = TF_MENU;
+	tff->CurrentTextFormatHandle = TF_NORMAL;
 	fres = tff->GetTextBox(posTitle, 26, &_txtHeader);
 	ENSURESUCCESS(fres);
 	fres = _FormPanel->AppendControl(_txtHeader);
 	ENSURESUCCESS(fres);
 
-	tff->CurrentTextFormatHandle = TF_MENUEVEN;
+	tff->CurrentTextFormatHandle = TF_NORMAL_EVEN;
 	Position posContent;
 	posContent.Left = 2;
 	posContent.Top = posTitle.Top+16;
@@ -61,7 +61,9 @@ fresult YNDialogForm::DoLayout()
 	fres = _FormPanel->AppendControl(_txtContent);
 	ENSURESUCCESS(fres);
 	
-	tff->CurrentTextFormatHandle = tff->ResetDefaults();
+	tff->ResetDefaults();
+	
+	
 	//get menu
 	fres = CreateMenu(&_Menu);
 	ENSURESUCCESS(fres);
@@ -85,7 +87,7 @@ fresult YNDialogForm::CreateMenu( IMenu** o_mnu )
 	//ItemOriginZ
 	mis = &mf->Settings[ItemOriginZ];
 	mis->ImgHandle = small_arrow_right_red;
-	mis->OverrideTextFormat = TF_MENU;
+	mis->OverrideTextFormat = TF_MENU_RED;
 	mis->Text = "                     ";
 	fres = _FormManager->GetCloseFormHandler(&mis->Handler, fsrOK);
 	mis->Empty = FALSE;
@@ -114,13 +116,6 @@ fresult YNDialogForm::CreateMenu( IMenu** o_mnu )
 	FAILIF(_miYes==NULL);
 	_miCancel =(MenuItem*)mnu->GetItem(1);
 	FAILIF(_miCancel==NULL);
-
-	//set color to red
-	TextFormat* yesTf = _miYes->GetTextField()->GetTextFormat();
-	Color yesForeColor;
-	fres = _Repositories->Colors->GetColorById(CL_OS_LIGHTRED, &yesForeColor);
-	ENSURESUCCESS(fres);
-	yesTf->FgColor = yesForeColor;
 
 	*o_mnu = mnu;
 	return SUCCESS;

@@ -93,4 +93,6 @@ public:
 		return _MustHaveSelected;
 	};
 
+	virtual ubyte_t GetItemsCount();
+
 };

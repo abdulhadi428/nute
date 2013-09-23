@@ -4,6 +4,9 @@
 #include "OpenSpaceImages.h"
 
 #include "OSMedDefs.h"
+#include "OSBehaviourDefs.h"
+
+#include "OSBehaviourLogic.h"
 #include "OSMedLogic.h"
 
 class OpenSpaceApp;
@@ -12,15 +15,29 @@ class OpenSpaceApp;
 
 #include "OpenSpaceFormBase.h"
 #include "OpenSpaceForms.h"
+
 //forms
+//General
+#include "OSTempateForm.h"
+#include "ItemsListFormBase.h"
 #include "YNDialogForm.h"
-#include "MainForm.h"
+
+
+//Medicine
 #include "MedStressForm.h"
 #include "MedChooseWoundForm.h"
 #include "MedChooseTorsoWoundForm.h"
 #include "MedStatusForm.h"
-#include "OSTempateForm.h"
-#include "ItemsListFormBase.h"
+
+
+
+//Behaviour
+#include "PlayMusicForm.h"
+#include "BehavoirForm.h"
+
+
+
+#include "MainForm.h"
 
 
 #include "OpenSpaceApp.h"

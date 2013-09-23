@@ -158,6 +158,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\BehavoirForm.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FormBase.cpp"
 				>
 			</File>
@@ -234,11 +238,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OSBehaviourLogic.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OSMedLogic.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\OSTempateForm.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PlayMusicForm.cpp"
 				>
 			</File>
 			<File
@@ -261,6 +273,10 @@
 			</File>
 			<File
 				RelativePath=".\AppMain.h"
+				>
+			</File>
+			<File
+				RelativePath=".\BehavoirForm.h"
 				>
 			</File>
 			<File
@@ -360,6 +376,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OSBehaviourDefs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OSBehaviourLogic.h"
+				>
+			</File>
+			<File
 				RelativePath=".\OSMedDefs.h"
 				>
 			</File>
@@ -369,6 +393,10 @@
 			</File>
 			<File
 				RelativePath=".\OSTempateForm.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PlayMusicForm.h"
 				>
 			</File>
 			<File

@@ -60,9 +60,7 @@ fresult MedChooseTorsoWoundForm::DoLayout()
 	// _txtChoosePlaceCaption
 	pos.Left =0;
 	pos.Top += 16;
-	//URGENTTODO: другой стиль
-	tff->CurrentTextFormatHandle = TF_MENUEVEN;
-	//URGENTTODO: бага во wrap'e
+	tff->CurrentTextFormatHandle = TF_GRAYTEXT_EVEN;
 	tff->DefaultWrap = FALSE;
 	caption = "Выберите место";
 	captionLen = Length(caption);
