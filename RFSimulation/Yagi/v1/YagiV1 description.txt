@@ -1,0 +1,13 @@
+W - Width of the brd
+L - Length of right part of the brd
+H - height of the brd (1.5mm)
+GL - length of left part of the brd (GND size)
+BlnDistBtw - distance between two wires of balun
+BlnWW - Wire width of balun
+BlnDistGnd - distance between balun's wire and GND
+BlnGndSz - length of GND of balun along Y
+DplDistGnd - distance between dipole and GND
+DplW - width of dipole
+DplWW - width of dipole's wire
+DplDistBtw - distance between wires of dipole
+DplDistEdge - dist between edge of drd and dipole
