@@ -6,3 +6,4 @@ ListCounter: printer paper counter. Completed.
 Oven: desk heater control device. Completed.
 VaultKeeper: signals water leakage over GSM. Partly completed.
 Xtruder: plastic extrusion system. In process.
+Anganare: electronic control for spot welding. In process.
