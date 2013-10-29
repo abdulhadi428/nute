@@ -50,5 +50,5 @@ void encoder_t::Task() {
         Uart.Printf("Time=%ums\r", Load.TimeToWork);
         Lcd.Printf(0,0, "%u.%us", (Load.TimeToWork/1000), (Load.TimeToWork%1000)/100);
     }
-    chThdSleepMilliseconds(249);
+    chThdSleepMilliseconds(45);
 }

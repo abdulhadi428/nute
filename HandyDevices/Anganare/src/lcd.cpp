@@ -96,9 +96,9 @@ void Lcd_t::Init() {
 //    WriteCmd(0xC8);    // mirror Y axis
 //    WriteCmd(0xA1);    // Mirror X axis
     // Set x=0, y=0
-    WriteCmd(0xB0);    // Y axis initialization
+    WriteCmd(0xB3);    // Y axis initialization
     WriteCmd(0x10);    // X axis initialisation1
-    WriteCmd(0x00);    // X axis initialisation2
+    WriteCmd(0x08);    // X axis initialisation2
 
     Cls();             // clear LCD buffer
 
