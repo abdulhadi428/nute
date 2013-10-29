@@ -25,6 +25,7 @@ static void BtnThread(void *arg) {
 
 void ButtonControl_t::MainBtnPressed() {
     if(Load.InLoad) return;
+    if(Load.TimeToWork == 0) return;
     else {
         chVTSetI(&ITmr, MS2ST(Load.TimeToWork), TimeOut, NULL);
         Load.On();
