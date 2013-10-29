@@ -29,11 +29,13 @@ void ButtonControl_t::MainBtnPressed() {
     else {
         chVTSetI(&ITmr, MS2ST(Load.TimeToWork), TimeOut, NULL);
         Load.On();
+        Lcd.DrawImage(35,0, icon_Lighting);
 //    Uart.Printf("%u\r", Load.TimeToWork);
     }
 }
 void TimeOut(void *p) {
     Load.Off();
+    Lcd.Printf(6,0, " ");
     Uart.Printf("wasworked=%ums\r", Load.TimeToWork);
 }
 
@@ -76,6 +78,7 @@ void ButtonControl_t::Task() {
             if (MainBtn.KeyIsPressed() && !MainBtn.KWP) {
                 PressedTime = chTimeNow();
 //                Uart.Printf("rr: %u\r", chTimeNow());
+                Lcd.DrawImage(35,0, icon_Lighting);
                 Load.On();
                 MainBtn.KWP = true;
             }
@@ -83,6 +86,7 @@ void ButtonControl_t::Task() {
                 PressedTime = chTimeNow() - PressedTime;
                 Uart.Printf("waspressed=%ums\r", PressedTime);
                 Load.TimeToWork = PressedTime;
+                Lcd.Printf(6,0, " ");
                 Lcd.Printf(0,0, "%u.%us", (Load.TimeToWork/1000), (Load.TimeToWork%1000)/100);
                 Load.Off();
                 MainBtn.KWP = false;

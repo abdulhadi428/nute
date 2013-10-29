@@ -10,6 +10,7 @@
 
 #include "kl_lib_f100.h"
 #include "lcd_font.h"
+#include "lcd_images.h"
 #include <stdarg.h>
 #include <tiny_sprintf.h>
 
