@@ -42,9 +42,13 @@ void Lcd_t::Task() {
     for (uint8_t i=0; i < LCD_VIDEOBUF_SIZE; i++) {
         WriteData(IBuf[i]);
     }
-    WriteCmd(0xB0);    // Y axis initialization
+    WriteCmd(0xB3);    // Y axis initialization
     WriteCmd(0x10);    // X axis initialisation1
-    WriteCmd(0x00);    // X axis initialisation2
+    WriteCmd(0x08);    // X axis initialisation2
+    if(BackligthValue != 50) {
+        BackligthValue++;
+        Backlight(BackligthValue);
+    }
     chThdSleepMilliseconds(12);
 }
 
@@ -65,6 +69,7 @@ void Lcd_t::Init() {
     TIM15->CCMR1 = 0x6000;  // PWM mode1 on Ch2 enabled
     TIM15->CCER = 0x0010;   // Output2 enabled, polarity not inverted
 
+    BackligthValue = 0;
     // ==== GPIOs ====
     // Configure LCD_XRES, LCD_XCS, LCD_SCLK & LCD_SDA as Push-Pull output
     InitGpios();
@@ -130,9 +135,9 @@ void Lcd_t::Init() {
 
 //    DMA_Cmd(DMA1_Channel2, ENABLE);          // Enable USARTy DMA TX Channel
 #else
-    for(int i=0; i < 864; i++) WriteData(0x00);
+    for(int i=0; i < 864; i++) WriteData(0x00); // Clear all screen
 #endif
-
+    Backlight(0);
     chThdCreateStatic(waLcdThread, sizeof(waLcdThread), NORMALPRIO, (tfunc_t)LcdThread, NULL);
 }
 

@@ -9,6 +9,7 @@
 #include "buttons.h"
 #include "load.h"
 #include "lcd.h"
+#include "encoder.h"
 
 ButtonControl_t Button;
 Load_t  Load;
@@ -81,7 +82,7 @@ void ButtonControl_t::Task() {
                 PressedTime = chTimeNow() - PressedTime;
                 Uart.Printf("waspressed=%ums\r", PressedTime);
                 Load.TimeToWork = PressedTime;
-                Lcd.Printf(0,0, "%u  ", Load.TimeToWork);
+                Lcd.Printf(0,0, "%u.%us", (Load.TimeToWork/1000), (Load.TimeToWork%1000)/100);
                 Load.Off();
                 MainBtn.KWP = false;
             }

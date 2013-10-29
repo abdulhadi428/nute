@@ -61,6 +61,7 @@ class Lcd_t {
 private:
     uint16_t IBuf[LCD_VIDEOBUF_SIZE];
     DrawMode_t draw_mode;
+    uint32_t BackligthValue;
     // Pin driving functions
     inline void InitGpios() {
         PinSetupOut(LCD_GPIO, LCD_XRES, omPushPull, ps50MHz);

@@ -29,7 +29,7 @@ int main(void) {
     // ==== Init Hard & Soft ====
     Init();
 
-    Lcd.Printf(0,0, "%u", Load.TimeToWork);
+    Lcd.Printf(0,0, "%u.%us", (Load.TimeToWork/1000), (Load.TimeToWork%1000)/100);
     Load.PrintMode(Load.Mode);
 
     while(TRUE) {

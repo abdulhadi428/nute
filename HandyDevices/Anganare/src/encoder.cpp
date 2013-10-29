@@ -34,7 +34,7 @@ void encoder_t::Init() {
 
     ENCODER_TIM->DIER   = TIM_DIER_CC1IE | TIM_DIER_CC2IE;
     PCnt = (uint32_t*)&ENCODER_TIM->CNT;
-    Value = 5;
+    Value = 49;
     // Create thread
     chThdCreateStatic(waEncThread, sizeof(waEncThread), NORMALPRIO, (tfunc_t)EncThread, NULL);
 }
@@ -48,7 +48,7 @@ void encoder_t::Task() {
         CurrentValue = *PCnt;
         Load.TimeToWork = Value * 100;   // To ms
         Uart.Printf("Time=%ums\r", Load.TimeToWork);
-        Lcd.Printf(0,0, "%u    ", Load.TimeToWork);
+        Lcd.Printf(0,0, "%u.%us", (Load.TimeToWork/1000), (Load.TimeToWork%1000)/100);
     }
     chThdSleepMilliseconds(249);
 }

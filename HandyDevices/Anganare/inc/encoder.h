@@ -23,7 +23,6 @@
 class encoder_t {
 private:
     uint32_t CurrentValue;
-    uint32_t *PCnt;
     inline void InitGpios() {
         PinSetupIn(ENCODER_GPIO, ENCODER_PIN1, pudPullUp);
         PinSetupIn(ENCODER_GPIO, ENCODER_PIN2, pudPullUp);
@@ -32,6 +31,7 @@ private:
     }
 public:
     uint32_t Value;
+    uint32_t *PCnt;
     uint32_t GetValue() { return CurrentValue; }
     void Init();
     void Task();
