@@ -24,8 +24,8 @@ static void BtnThread(void *arg) {
 }
 
 void ButtonControl_t::MainBtnPressed() {
-    if(Load.InLoad) return;
     if(Load.TimeToWork == 0) return;
+    if(Load.InLoad) return;
     else {
         chVTSetI(&ITmr, MS2ST(Load.TimeToWork), TimeOut, NULL);
         Load.On();
@@ -86,8 +86,7 @@ void ButtonControl_t::Task() {
                 PressedTime = chTimeNow() - PressedTime;
                 Uart.Printf("waspressed=%ums\r", PressedTime);
                 Load.TimeToWork = PressedTime;
-                Lcd.Printf(6,0, " ");
-                Lcd.Printf(0,0, "%u.%us", (Load.TimeToWork/1000), (Load.TimeToWork%1000)/100);
+                Lcd.Printf(0,0, "%u.%us   ", (Load.TimeToWork/1000), (Load.TimeToWork%1000)/100);
                 Load.Off();
                 MainBtn.KWP = false;
             }
