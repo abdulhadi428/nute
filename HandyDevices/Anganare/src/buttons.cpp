@@ -77,10 +77,12 @@ void ButtonControl_t::Task() {
         case lmManual:
             if (MainBtn.KeyIsPressed() && !MainBtn.KWP) {
                 PressedTime = chTimeNow();
+                if(!Load.InLoad) {
 //                Uart.Printf("rr: %u\r", chTimeNow());
-                Lcd.DrawImage(35,0, icon_Lighting);
-                Load.On();
-                MainBtn.KWP = true;
+                    Lcd.DrawImage(35,0, icon_Lighting);
+                    Load.On();
+                    MainBtn.KWP = true;
+                }
             }
             else if (!MainBtn.KeyIsPressed() && MainBtn.KWP) {
                 PressedTime = chTimeNow() - PressedTime;
