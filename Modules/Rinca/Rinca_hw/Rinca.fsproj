@@ -10,7 +10,7 @@
 	<Document>
 		<LocalLibrary />
 		<Pcb>
-			<File path=".\Rinca.fsx" Folder="-1" isopened="1"/>
+			<File path=".\Rinca.fsx" Folder="-1" isopened="0"/>
 		</Pcb>
 		<ARouteSessions>
 		</ARouteSessions>
