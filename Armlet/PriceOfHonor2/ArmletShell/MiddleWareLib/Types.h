@@ -2,9 +2,15 @@
 	#error "Use ArmletShell.h"
 #endif
 
+#ifndef NULL
 #define NULL 0
+#endif
+#ifndef TRUE
 #define TRUE 1
+#endif
+#ifndef FALSE
 #define FALSE 0
+#endif
 
 typedef bool bool_t;
 typedef signed char sbyte_t;		//Int8
@@ -61,7 +67,7 @@ typedef union _grect_t {
 #pragma warning(default:4201)
 
 inline void InitPositionAndSize(
-	ubyte_t left, ubyte_t top, ubyte_t width, ubyte_t height, 
+	ubyte_t left, ubyte_t top, ubyte_t width, ubyte_t height,
 	Position* pos, Size* size)
 {
 	pos->Left = left;

@@ -2,8 +2,13 @@
 	#error "Use ArmletAppSDK.h"
 #endif
 
+#ifndef NULL
 #define NULL 0
+#endif
+#if !defined(TRUE)
 #define TRUE 1
+#endif
+
 #define FALSE 0
 
 typedef bool bool_t;
@@ -61,7 +66,7 @@ typedef union _grect_t {
 #pragma warning(default:4201)
 
 inline void InitPositionAndSize(
-	ubyte_t left, ubyte_t top, ubyte_t width, ubyte_t height, 
+	ubyte_t left, ubyte_t top, ubyte_t width, ubyte_t height,
 	Position* pos, Size* size)
 {
 	pos->Left = left;

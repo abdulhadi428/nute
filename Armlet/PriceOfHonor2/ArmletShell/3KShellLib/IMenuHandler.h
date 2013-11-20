@@ -46,7 +46,7 @@ public:
 		MENU_HANDLER_DELEGATE##T F \
 	) \
 { \
-	MenuHandlerDelegate<T>* R = MENU_HANDLER_DELEGATE_NAME(T).Allocate(); \
+	MenuHandlerDelegate<T>* R = MENU_HANDLER_DELEGATE_NAME(T).Allocate("Smth"); \
 	R->_MenuHandlerDelegate(_this,F); \
 	return R; \
 }

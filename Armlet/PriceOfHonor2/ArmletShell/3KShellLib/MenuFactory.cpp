@@ -34,18 +34,18 @@ namespace ThreeKShell {
 #define MENU_ITEM_R_TOP   SCREENY - MENU_ITEM_V_SCREENBORDER_OFFSET
 #define	MENU_ITEM_R_LEFT  129
 
-static Alloc_t<IMenuItem*, 45> SIMenuItemPtrArr;
-static Alloc_t<ScatteredMenu, 20> SScatteredMenuArr;
+static Alloc_t<IMenuItem*, 22> SIMenuItemPtrArr;
+static Alloc_t<ScatteredMenu, 4> SScatteredMenuArr;
 
 IMenuItem** MenuFactory::allocMenuItems( ubyte_t count )
 {
 	NULLIF(!(count>0));
-	return SIMenuItemPtrArr.Allocate(count); // new IMenuItem*[count];
+	return SIMenuItemPtrArr.Allocate(count, "IMenuItem*"); // new IMenuItem*[count];
 }
 
 ScatteredMenu* MenuFactory::allocMenu()
 {
-	return SScatteredMenuArr.Allocate(); // new ScatteredMenu();
+	return SScatteredMenuArr.Allocate("ScatteredMenu"); // new ScatteredMenu();
 }
 
 fresult MenuFactory::Init( IRender* render, Repositories* reps, TextFieldFactory* tfFactory, PictureBoxFactory* pbxFactory, PanelFactory* pnlFactory, MenuItemFactory* miFactory )

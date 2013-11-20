@@ -3,7 +3,7 @@
 #include "Honor2.h"
 #include "MsgBoxForm.h"
 
-ALLOCATE_MENU_HANDLERS(MsgBoxForm,20);
+ALLOCATE_MENU_HANDLERS(MsgBoxForm,4);
 DEFINE_MENU_HANDLER(MsgBoxForm);
 
 fresult MsgBoxForm::Init(Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, Honor2App* app, Honor2Logic* logic )
@@ -20,7 +20,7 @@ fresult MsgBoxForm::Init(Repositories* reps, Factories* facts, char* name, FormM
 		StrPad(_messages->text, 0, 0, MAX_MSG_LEN);
 		_messages->YesNoDialog = FALSE;
 	}
-	
+
 	return SUCCESS;
 }
 
@@ -77,7 +77,7 @@ fresult MsgBoxForm::CreateMenu( IMenu** o_mnu )
 	_miCancel = mnu->GetItem(2);
 	FAILIF(_miCancel==NULL);
 
-	//hide all buttons		
+	//hide all buttons
 	fres = _miYes->SetVisible(FALSE);
 	ENSURESUCCESS(fres);
 	fres = _miOk->SetVisible(FALSE);
@@ -115,7 +115,7 @@ fresult MsgBoxForm::DoLayout()
 	fres = CreateHeader(INVALID_HANDLE, NULL, NULL);
 	ENSURESUCCESS(fres);
 	_txtHeaderSubTitle->SetVisible(FALSE);
-	
+
 	TextFieldFactory* tff = _Factories->GetTextFieldFactory();
 	tff->CurrentTextFormatHandle = TF_NORMAL;
 	tff->CurrentFrames =1;
@@ -123,10 +123,10 @@ fresult MsgBoxForm::DoLayout()
 	tff->CurrentWrap = TRUE;
 	sz.Height = sz.Height - _pnlPanelHeader->GetSize().Height - 30;
 	pos.Top = _pnlPanelHeader->GetSize().Height;
-	
+
 	fres = tff->GetTextBox(pos, sz, &_txtMsgBoxText);
 	ENSURESUCCESS(fres);
-	
+
 	fres = _FormPanel->AppendControl(_txtMsgBoxText);
 	ENSURESUCCESS(fres);
 
@@ -210,7 +210,7 @@ fresult MsgBoxForm::SetMsgBoxData()
 
 	if (_messages[_currentMessageIndex].YesNoDialog ==  TRUE)
 	{
-		//hide all buttons		
+		//hide all buttons
 		fres = _miYes->SetVisible(TRUE);
 		ENSURESUCCESS(fres);
 		fres = _miOk->SetVisible(FALSE);
@@ -227,7 +227,7 @@ fresult MsgBoxForm::SetMsgBoxData()
 	}
 	else
 	{
-		//hide all buttons		
+		//hide all buttons
 		fres = _miYes->SetVisible(FALSE);
 		ENSURESUCCESS(fres);
 		fres = _miOk->SetVisible(TRUE);
@@ -235,7 +235,7 @@ fresult MsgBoxForm::SetMsgBoxData()
 		fres = _miCancel->SetVisible(FALSE);
 		ENSURESUCCESS(fres);
 
-		//hide all buttons		
+		//hide all buttons
 		fres = _miYes->SetEnabled(FALSE);
 		ENSURESUCCESS(fres);
 		fres = _miOk->SetEnabled(TRUE);

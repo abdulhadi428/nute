@@ -14,6 +14,7 @@
 #define CMD_PING            0x01
 #define CMD_SET_GATE_NUM    0x10
 #define CMD_RTX             0x11
+#define CMD_GET_GATE_NUM    0x12
 #define CMD_PILL_STATE      0x30
 #define CMD_PILL_WRITE      0x31
 #define CMD_PILL_READ       0x32
@@ -22,6 +23,7 @@
 #define RPL_ACK             0x90    // Acknowledge
 #define RPL_SET_GATE_NUM    0xA0
 #define RPL_RTX             0xA1    // TX completed
+#define RPL_GET_GATE_NUM    0xA2
 #define RPL_RRX             0xA4    // RX completed
 #define RPL_PILL_STATE      0xC0
 #define RPL_PILL_WRITE      0xC1

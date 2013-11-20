@@ -3,7 +3,7 @@
 
 namespace ThreeKShell {
 #define _NAMESPACE_PROTECT_
-	
+
 	//rendering
 	#include "IRender.h"
 	#include "GraphicRenderer.h"
@@ -45,6 +45,7 @@ namespace ThreeKShell {
 	#include "Factories.h"
 
 //#undef _NAMESPACE_PROTECT_
+    void ApiPrintf(const char *S, unsigned int N1, unsigned int N2);
 }
 using namespace ThreeKShell;
 

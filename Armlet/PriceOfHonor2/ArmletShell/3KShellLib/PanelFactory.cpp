@@ -3,12 +3,12 @@
 
 namespace ThreeKShell {
 
-static Alloc_t<IControl*, 45> SIControlPtrArr;
-static Alloc_t<Panel, 45> SPanelArr;
+static Alloc_t<IControl*, 26> SIControlPtrArr;
+static Alloc_t<Panel, 8> SPanelArr;
 
 	IControl** PanelFactory::AllocControlArray( ubyte_t controlsCount )
 	{
-		IControl** ctrls = SIControlPtrArr.Allocate(controlsCount); // new IControl*[controlsCount];
+		IControl** ctrls = SIControlPtrArr.Allocate(controlsCount, "IControl*"); // new IControl*[controlsCount];
 		NULLIF(ctrls==NULL);
 
 		for (ubyte_t i=0; i < controlsCount;i++)
@@ -21,7 +21,7 @@ static Alloc_t<Panel, 45> SPanelArr;
 
 	Panel* PanelFactory::AllocPanel()
 	{
-		return SPanelArr.Allocate(); // new Panel();
+		return SPanelArr.Allocate("Panel"); // new Panel();
 	}
 
 	fresult PanelFactory::GetPanel( Size sz, Position pos, ubyte_t controlsCount, Panel** o_pnl )

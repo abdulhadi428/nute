@@ -22,6 +22,8 @@
 
 // =================================== Power ===================================
 #define PwrMinus30dBm       0x03
+#define PwrMinus27dBm       0x08
+#define PwrMinus25dBm       0x0D
 #define PwrMinus20dBm       0x17
 #define PwrMinus15dBm       0x1D
 #define PwrMinus10dBm       0x26

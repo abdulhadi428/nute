@@ -136,7 +136,7 @@ void Interface_t::Init() {
             0);
     // Initial setup values
     for(uint8_t i=0; i<T_TOSET_COUNT; i++) {
-        tToSet[i] = 180;
+        tToSet[i] = 153;
         DisplayTToset(i);
     }
     // Initial selection

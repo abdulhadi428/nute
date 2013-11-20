@@ -15,7 +15,7 @@
 #define BLINK_DELAY     306  // ms
 #define STATE_DELAY     4005 // ms
 
-#define T_TOSET_COUNT   2
+#define T_TOSET_COUNT   1
 
 enum State_t {
     stIdle, stChanging

@@ -46,7 +46,7 @@ struct AdsChData_t {
 
 const AdsChData_t AdsChs[] = {
         { ADS_CH_1, ADS_CH1_A, ADS_CH1_B},
-        { ADS_CH_2, ADS_CH2_A, ADS_CH2_B},
+//        { ADS_CH_2, ADS_CH2_A, ADS_CH2_B},
 };
 #define ADS_CH_COUNT    (countof(AdsChs))
 

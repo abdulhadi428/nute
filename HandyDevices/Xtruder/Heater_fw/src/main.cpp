@@ -13,6 +13,7 @@
 #include "interface.h"
 #include "i2c_mgr.h"
 #include "i2c_ee.h"
+#include "inttypes.h"
 
 #define PWM_TICK    99  // ms
 #define PWM_TOP     10
@@ -90,7 +91,7 @@ inline void RegulationTask() {
 
         // Regulate them
         Outputs.Pwm[0] = Regulator(Interface.tToSet[0] - Ads.Temperature[0], 6);
-        Outputs.Pwm[1] = Regulator(Interface.tToSet[1] - Ads.Temperature[1], 7);
+        //Outputs.Pwm[1] = Regulator(Interface.tToSet[1] - Ads.Temperature[1], 7);
     }
 }
 
@@ -99,14 +100,15 @@ inline void RegulationTask() {
 
 uint8_t Regulator(int32_t Err, uint8_t Y) {
     // Gain
-    int32_t Gain = Err * kp;
-    // Integrator
-    static int32_t IntAcc = 0;
-    IntAcc += ki * Err;
+//    int32_t Gain = Err * kp;
+//    // Integrator
+//    static int32_t IntAcc = 0;
+//    IntAcc += ki * Err;
+//
+//    int32_t r = ((Gain + IntAcc) / 0x10000);
+//    Uart.Printf("x: %i; Gain: %i; IntAcc: %i; Pwm: %i\r", Err, Gain, IntAcc, r);
 
-    int32_t r = ((Gain + IntAcc) / 0x10000);
-
-    Uart.Printf("x: %i; Gain: %i; IntAcc: %i; Pwm: %i\r", Err, Gain, IntAcc, r);
+    int32_t r = Err;
 
     if(r<0) r=0;
     else if(r > PWM_TOP) r = PWM_TOP;

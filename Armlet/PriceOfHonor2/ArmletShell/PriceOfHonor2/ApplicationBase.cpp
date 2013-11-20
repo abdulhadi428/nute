@@ -7,17 +7,17 @@
 
 #define DEFAULT_SHOWNFORMSSTACK_LENGTH 10
 
-static Alloc_t<Repositories, 20> SRepositoriesArr;
-static Alloc_t<Factories, 30> SFactoriesArr;
+static Alloc_t<Repositories, 1> SRepositoriesArr;
+static Alloc_t<Factories, 1> SFactoriesArr;
 
 Repositories* ApplicationBase::AllocRepositories()
 {
-	return SRepositoriesArr.Allocate(); // new Repositories();
+	return SRepositoriesArr.Allocate("Repositories"); // new Repositories();
 }
 
 Factories* ApplicationBase::AllocFactories()
 {
-	return SFactoriesArr.Allocate(); // new Factories();
+	return SFactoriesArr.Allocate("Factories"); // new Factories();
 }
 
 fresult ApplicationBase::InitImages( ImagesRepository* imgrep )
@@ -264,7 +264,7 @@ bool_t ApplicationBase::OnSystemTimer()
 
 		ubyte_t currBattery = ArmletApi::GetBatteryLevel();
 		fres =  _StatusBar->SetBatteryLevel(currBattery);
-		if (fres!=SUCCESS)	
+		if (fres!=SUCCESS)
 		{
 			LogError("Cant't set battery level");
 			return true;
@@ -279,17 +279,17 @@ bool_t ApplicationBase::OnSystemTimer()
 		//-100 bad
 
 		fres = _StatusBar->SetNetworkSignalStrength(Level);
-		if (fres!=SUCCESS)	
+		if (fres!=SUCCESS)
 		{
 			LogError("Cant't set radio status level");
 			return true;
 		}
-		
+
 		//get time
 		char* timeString = ArmletShell::GetTime();
 
 		fres = _StatusBar->SetTime(timeString);
-		if (fres!=SUCCESS)	
+		if (fres!=SUCCESS)
 		{
 			LogError("Cant't set time");
 			return true;
@@ -300,7 +300,7 @@ bool_t ApplicationBase::OnSystemTimer()
 		if (_StatusBar->GetVisible() == TRUE)
 		{
 			fres = _StatusBar->Draw();
-			if (fres!=SUCCESS)	
+			if (fres!=SUCCESS)
 			{
 				LogError("Cant't draw status");
 				return true;
@@ -313,7 +313,7 @@ bool_t ApplicationBase::OnSystemTimer()
 
 void ApplicationBase::LogError( char* errorText )
 {
-	DrawTextString(10,10,errorText,Length(errorText),WHITE,0);	
+	DrawTextString(10,10,errorText,Length(errorText),WHITE,0);
 }
 
 FormManager* ApplicationBase::GetFormManager()
@@ -331,7 +331,7 @@ fresult ApplicationBase::RedrawCurrentForm()
 	if (_StatusBar->GetVisible() == TRUE)
 	{
 		fres = _StatusBar->Draw();
-		if (fres!=SUCCESS)	
+		if (fres!=SUCCESS)
 		{
 			LogError("Cant't draw status");
 			return true;

@@ -11,6 +11,7 @@
 #include "hal.h"
 #include "pwr.h"
 #include "lvl1_lckt.h"
+#include "cc1101_rf_settings.h"
 
 static inline void Init();
 
@@ -45,11 +46,11 @@ int main(void) {
 
 static inline uint8_t GetID() {
     uint8_t id = 0;
-    for(uint8_t i=3; i<9; i++) {
-        id >>= 1;
+    for(uint8_t i=3; i<=9; i++) {
+        id <<= 1;
         PinSetupIn(GPIOB, i, pudPullUp);
         Delay_ms(1);
-        if(!PinIsSet(GPIOB, i)) id |= 0x20;    // Fuse detected
+        if(!PinIsSet(GPIOB, i)) id |= 1;    // Fuse detected
         PinSetupAnalog(GPIOB, i);
     }
     return id;
@@ -61,8 +62,9 @@ void Init() {
     Pwr.Init();
     // Get ID
     uint8_t id = GetID();
-    rLevel1.Init(id);
+    rLevel1.Init(id, Pwr0dBm);
     // LED
     PinSetupOut(GPIOB, 0, omPushPull);
-    Uart.Printf("\rTx2 id=%u  AHB=%u; APB1=%u; APB2=%u\r", id, Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+    Uart.Printf("\rTx2 id=%u  Pwr=-27 dBm\r", id);
+    //Uart.Printf("AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
 }

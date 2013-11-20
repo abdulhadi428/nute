@@ -8,26 +8,28 @@
 #ifndef KL_ALLOCATOR_H_
 #define KL_ALLOCATOR_H_
 
-typedef unsigned int uint32_t;
+void ApiPrintf(const char *S, unsigned int N1, unsigned int N2);
 
-template <typename T, uint32_t Sz>
+template <typename T, unsigned int Sz>
 class Alloc_t {
 private:
     T IArr[Sz];
-    uint32_t INewIndx;
+    unsigned int INewIndx;
 public:
-    T* Allocate() {
-        if(INewIndx == (Sz-1)) {
+    T* Allocate(const char* ATypeName) {
+        if(INewIndx == Sz) {
 #ifdef _MSC_VER
             throw;
 #endif
             return 0;   // Return NULL if unable to allocate
         }
         INewIndx++;
+        ApiPrintf(ATypeName, INewIndx, Sz);
         return &IArr[INewIndx-1];
     }
-    T* Allocate(uint32_t ALen) {
-        if((INewIndx + ALen) >= Sz) {
+
+    T* Allocate(unsigned int ALen, const char* ATypeName) {
+        if((INewIndx + ALen) > Sz) {
 #ifdef _MSC_VER
             throw;
 #endif
@@ -35,6 +37,7 @@ public:
         }
         T *p = &IArr[INewIndx];
         INewIndx += ALen;
+        ApiPrintf(ATypeName, INewIndx, Sz);
         return p;
     }
 };

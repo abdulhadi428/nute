@@ -2,7 +2,7 @@
 #include "To3KShell.h"
 #include "Honor2.h"
 
-ALLOCATE_MENU_HANDLERS(LogForm,20);
+ALLOCATE_MENU_HANDLERS(LogForm,4);
 DEFINE_MENU_HANDLER(LogForm);
 
 fresult LogForm::CreateMenu( IMenu** o_mnu )
@@ -239,7 +239,7 @@ fresult LogForm::ScrollDown( IMenuItem* Sender )
 fresult LogForm::CycleLogLeft( IMenuItem* Sender )
 {
 	fresult fres;
-	
+
 	if (_currentLog != -1)
 	{
 		ubyte_t newLog;
@@ -348,12 +348,12 @@ fresult LogForm::CleanLog( LogKinds log )
 	{
 		fres = _logs[log].txtLogField->Clear();
 		ENSURESUCCESS(fres);
-	} 
+	}
 
 	if (log == LogKindErrors)
 	{
 		errorSet = FALSE;
 	}
 	return SUCCESS;
-		
+
 }

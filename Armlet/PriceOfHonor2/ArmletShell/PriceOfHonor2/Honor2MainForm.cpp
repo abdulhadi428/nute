@@ -3,7 +3,7 @@
 #include "Honor2.h"
 #include "Honor2MainForm.h"
 
-ALLOCATE_MENU_HANDLERS(Honor2MainForm,20);
+ALLOCATE_MENU_HANDLERS(Honor2MainForm,4);
 DEFINE_MENU_HANDLER(Honor2MainForm);
 
 #define KNOCKOUT_CHECK_TITLE "Сильный удар!"
@@ -30,7 +30,7 @@ fresult Honor2MainForm::DoLayout()
 	caSz.Width = _App->GetDisplaySize().Width;
 	caSz.Height = _App->GetDisplaySize().Height - _App->GetStatusBarSize().Height;
 	_FormClientSize.data =  caSz.data;
-	
+
 	Position caPos;
 	caPos.Top = _App->GetStatusBarSize().Height;
 	caPos.Left = 0;
@@ -42,7 +42,7 @@ fresult Honor2MainForm::DoLayout()
 	tff->CurrentWrap = TRUE;
 	tff->CurrentFrames = 5;
 	tff->CurrentLines = 12;
-	
+
 	Position pos;
 	pos.Left = 26;
 	pos.Top = caPos.Top+2;
@@ -160,7 +160,7 @@ fresult Honor2MainForm::OnBeforeShow( IForm* prevFrom, bool_t reActivation , For
 fresult Honor2MainForm::OnAfterShow( IForm* prevFrom, bool_t reActivation, FormShowResults results )
 {
 	fresult fres;
-	
+
 	if (reActivation == TRUE)
 	{
 		//handle msgbox to confirm knockout!

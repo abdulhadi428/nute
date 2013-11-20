@@ -2,7 +2,7 @@
 #include "To3KShell.h"
 #include "kl_allocator.h"
 
-static Alloc_t<IMenu*, 30> SIMenuPtrArr;
+static Alloc_t<IMenu*, 4> SIMenuPtrArr;
 
 
 fresult FormBase::BaseInit( Repositories* reps, Factories* facts, char* name, FormManager* frmmngr, ApplicationBase* app )
@@ -81,7 +81,7 @@ fresult FormBase::Draw()
 IMenu** FormBase::AllocMenus( ubyte_t menusCount )
 {
 	_MenusCount = menusCount;
-	return SIMenuPtrArr.Allocate(menusCount); // new IMenu*[menusCount];
+	return SIMenuPtrArr.Allocate(menusCount, "IMenu*"); // new IMenu*[menusCount];
 }
 
 

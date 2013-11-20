@@ -54,7 +54,7 @@ void Pwr_t::Task() {
     }
     Adc.Disable();
     rslt >>= 3;
-    Uart.Printf("Adc=%u; ", rslt);
+    //Uart.Printf("Adc=%u; ", rslt);
     // Convert adc to mv
     rslt = (rslt * 16225) / 10000;
     Uart.Printf("mv=%u\r", rslt);

@@ -34,7 +34,7 @@ struct rPkt_t {
 #define RDEV_TOP_ID     50
 
 #define RDEVICE_CNT     ((1+RDEV_TOP_ID)-RDEV_BOTTOM_ID)
-#define CHANNEL_ZERO    200
+#define CHANNEL_ZERO    10
 
 // ============================== Timings ======================================
 #define RX_DURATION_MS          18  // How long to listen
@@ -50,7 +50,7 @@ private:
 #endif
 public:
 #ifdef TX2
-    void Init(uint16_t ASelfID);
+    void Init(uint16_t ASelfID, uint8_t TxPwr);
     rPkt_t PktTx;       // Local rPkt to transmit
     inline void TxDone();
 #else

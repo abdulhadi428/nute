@@ -2,7 +2,7 @@
     ChibiOS/RT - Copyright (C) 2006,2007,2008,2009,2010,
                  2011,2012 Giovanni Di Sirio.
 
-    @ Modified by Kreyl to use with stm32f100c4
+    @ Modified by Kreyl to use with stm32f100x8
 
     This file is part of ChibiOS/RT.
 
@@ -21,7 +21,7 @@
 */
 
 /*
- * ST32F100x4 memory setup.
+ * ST32F100x8 memory setup.
  */
 __main_stack_size__     = 0x0400;
 __process_stack_size__  = 0x0400;

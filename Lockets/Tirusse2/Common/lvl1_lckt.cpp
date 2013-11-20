@@ -49,6 +49,8 @@ static void DisappearTmrCallback(void *p) {
 void rLevel1_t::Task() {
     if(!Enabled) {
         chThdSleepMilliseconds(999);
+        SomethingIsNear = false;
+        chVTReset(&DisappearTmr);
         return;
     }
     // Iterate channels
@@ -57,7 +59,7 @@ void rLevel1_t::Task() {
         uint8_t Result = CC.ReceiveSync(RX_DURATION_MS, &PktRx);
         if(Result == OK) {
             if(PktRx.TheByte == THE_BYTE) {
-                Uart.Printf("Rx %d\r", PktRx.RSSI);
+                Uart.Printf("%u; Lvl=%d\r", n, PktRx.RSSI);
                 // Check if changed
                 if(!SomethingIsNear) {
                     SomethingIsNear = true;
@@ -69,8 +71,8 @@ void rLevel1_t::Task() {
             } // if TheByte
         } // id rslt ok
     } // for
-    CC.Sleep();
-    chThdSleepMilliseconds(1800);
+//    CC.Sleep();
+//    chThdSleepMilliseconds(1800);
 }
 
 void rLevel1_t::TimeoutHandler() {
@@ -85,15 +87,15 @@ void rLevel1_t::TimeoutHandler() {
 
 // ================================= Common ====================================
 #ifdef TX2
-void rLevel1_t::Init(uint16_t ASelfID) {
+void rLevel1_t::Init(uint16_t ASelfID, uint8_t TxPwr) {
 #ifdef DBG_PINS
     PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull);
 #endif
     // Init radioIC
     CC.Init();
     CC.SetChannel(CHANNEL_ZERO + ASelfID-1);
+    //CC.SetTxPower(Pwr0dBm);
     CC.SetTxPower(Pwr0dBm);
-    //CC.SetTxPower(PwrMinus6dBm);
     // Variables
     PktTx.TheByte = THE_BYTE;
     // Init thread. High priority is required to satisfy timings.

@@ -68,6 +68,11 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
             else SBuf[1] = FAILURE;
             Uart.Cmd(RPL_SET_GATE_NUM, SBuf, 2);
             break;
+        case CMD_GET_GATE_NUM:
+            SBuf[0] = (uint8_t)rLevel1.GetID();
+            Uart.Cmd(RPL_GET_GATE_NUM, SBuf, 1);
+            break;
+
         case CMD_RTX:
             b = PData[0];   // Armlet ID
             if((b >= RDEV_BOTTOM_ID) and (b <= RDEV_TOP_ID)) {
@@ -118,6 +123,12 @@ void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
                 Uart.Cmd(0xF1, &b, 1);
                 chThdSleepMilliseconds(21);
             }
+            break;
+
+        case 0xF1:  // Check if AHB ok
+            if(Clk.AHBFreqHz == 12000000) SBuf[0] = 0;
+            else SBuf[0] = 1;
+            Uart.Cmd(0xF2, SBuf, 1);
             break;
 
         default:

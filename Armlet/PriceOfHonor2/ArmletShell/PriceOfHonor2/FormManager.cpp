@@ -4,17 +4,17 @@
 #include "FormManager.h"
 #include "kl_allocator.h"
 
-static Alloc_t<IForm*, 30> SIFormPtrArr;
-static Alloc_t<FormDescription, 40> SFormDescriptionArr;
+static Alloc_t<IForm*, 5> SIFormPtrArr;
+static Alloc_t<FormDescription, 6> SFormDescriptionArr;
 
 IForm** FormManager::allocFormsArray(ubyte_t count)
 {
-	return SIFormPtrArr.Allocate(count); // new IForm*[count];
+	return SIFormPtrArr.Allocate(count, "IForm*"); // new IForm*[count];
 }
 
 FormDescription* FormManager::allocFormsDescription( ubyte_t count )
 {
-	return SFormDescriptionArr.Allocate(count); // new FormDescription[count];
+	return SFormDescriptionArr.Allocate(count, "FormDescription"); // new FormDescription[count];
 }
 
 fresult FormManager::Init( ubyte_t formsCount, ubyte_t stackLength )
@@ -180,7 +180,7 @@ fresult FormManager::GetCloseFormHandler( IMenuHandler** o_handler)
 fresult FormManager::GetCloseFormHandler( IMenuHandler** o_handler, FormShowResults result )
 {
 	FAILIF(!(result<FormShowResultsCount));
-	
+
 	*o_handler = (IMenuHandler*)&_formCloseDelegateInstance[result];
 	return SUCCESS;
 }

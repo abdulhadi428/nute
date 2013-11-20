@@ -1,31 +1,31 @@
 #include "ThreeKShell.h"
 #include "kl_allocator.h"
 
-static Alloc_t<ImageList, 20> SImageListArr;
-static Alloc_t<sword_t, 99> SSwordtArr;
-static Alloc_t<ScaledValueImageList, 20> SScaledValueImageListArr;
-static Alloc_t<BitmapImage*, 45> SBitmapImagePtrArr;
+static Alloc_t<ImageList, 0> SImageListArr;
+static Alloc_t<sword_t, 10> SSwordtArr;
+static Alloc_t<ScaledValueImageList, 2> SScaledValueImageListArr;
+static Alloc_t<BitmapImage*, 10> SBitmapImagePtrArr;
 
 ImageList* ImageListFactory::AllocImageList()
 {
-	return SImageListArr.Allocate(); // new ImageList();
+	return SImageListArr.Allocate("ImageList"); // new ImageList();
 }
 
 sword_t* ImageListFactory::AllocSwordArray( ubyte_t len )
 {
-	return SSwordtArr.Allocate(len); // new sword_t[len];
+	return SSwordtArr.Allocate(len, "sword_t"); // new sword_t[len];
 }
 
 
 ScaledValueImageList* ImageListFactory::AllocScaledValueImageList()
 {
-	return SScaledValueImageListArr.Allocate(); // new ScaledValueImageList();
+	return SScaledValueImageListArr.Allocate("ScaledValueImageList"); // new ScaledValueImageList();
 }
 
 
 BitmapImage** ImageListFactory::AllocBitmapArray( ubyte_t len )
 {
-	return SBitmapImagePtrArr.Allocate(len); // new BitmapImage*[len];
+	return SBitmapImagePtrArr.Allocate(len, "BitmapImage*"); // new BitmapImage*[len];
 }
 
 

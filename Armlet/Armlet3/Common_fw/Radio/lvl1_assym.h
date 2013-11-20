@@ -156,6 +156,7 @@ public:
 #endif
 #ifdef GATE
     void SetID(uint16_t ASelfID);
+    uint16_t GetID() { return SelfID; }
 #endif
     // Rx
     uint8_t GetReceivedPkt(rPktWithData_t<RRX_PKT_DATA_SZ> *PPkt) { return IRxBuf.Get(PPkt); }

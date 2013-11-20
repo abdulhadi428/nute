@@ -290,7 +290,7 @@ public:
 #define DBG_UART_ENABLED
 
 #ifdef DBG_UART_ENABLED
-#define UART_TXBUF_SIZE     1024
+#define UART_TXBUF_SIZE     512
 
 class DbgUart_t {
 private:

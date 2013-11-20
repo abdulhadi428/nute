@@ -132,7 +132,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(CH_USE_REGISTRY) || defined(__DOXYGEN__)
-#define CH_USE_REGISTRY                 TRUE
+#define CH_USE_REGISTRY                 FALSE
 #endif
 
 /**
@@ -153,7 +153,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(CH_USE_SEMAPHORES) || defined(__DOXYGEN__)
-#define CH_USE_SEMAPHORES               TRUE
+#define CH_USE_SEMAPHORES               FALSE
 #endif
 
 /**
@@ -177,7 +177,7 @@
  * @note    Requires @p CH_USE_SEMAPHORES.
  */
 #if !defined(CH_USE_SEMSW) || defined(__DOXYGEN__)
-#define CH_USE_SEMSW                    TRUE
+#define CH_USE_SEMSW                    FALSE
 #endif
 
 /**
@@ -221,7 +221,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(CH_USE_EVENTS) || defined(__DOXYGEN__)
-#define CH_USE_EVENTS                   TRUE
+#define CH_USE_EVENTS                   FALSE
 #endif
 
 /**
@@ -289,7 +289,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(CH_USE_MEMCORE) || defined(__DOXYGEN__)
-#define CH_USE_MEMCORE                  TRUE
+#define CH_USE_MEMCORE                  FALSE
 #endif
 
 /**

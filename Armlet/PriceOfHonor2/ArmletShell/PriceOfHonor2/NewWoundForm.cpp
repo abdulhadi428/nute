@@ -4,7 +4,7 @@
 #include "NewWoundForm.h"
 #include "med.h"
 
-ALLOCATE_MENU_HANDLERS(NewWoundForm,20);
+ALLOCATE_MENU_HANDLERS(NewWoundForm,4);
 DEFINE_MENU_HANDLER(NewWoundForm);
 
 #define WOUND_CHECK_TITLE "В тебя попали!"
@@ -118,11 +118,11 @@ fresult NewWoundForm::DoLayout()
 {
 	fresult fres;
 	ubyte_t controlsCount =2;
-	
+
 	Position pos;
 	pos.Top = 0;
 	pos.Left = 0;
-	
+
 	Size sz;
 	sz = _App->GetDisplaySize();
 
@@ -134,7 +134,7 @@ fresult NewWoundForm::DoLayout()
 	ENSURESUCCESS(fres);
 	_txtHeaderSubTitle->SetVisible(FALSE);
 	_pbxHeaderIcon->SetVisible(FALSE);
-	
+
 	Size szHeaderSize;
 	szHeaderSize.Width = sz.Width;
 	szHeaderSize.Height = 14;
@@ -178,7 +178,7 @@ fresult NewWoundForm::OnWound( IMenuItem* sender )
 
 	MenuItemBase* mi = (MenuItemBase*)sender;
 
-	
+
 	TARGET trg;
 	switch (mi->GetAccelerator())
 	{
@@ -258,7 +258,7 @@ fresult NewWoundForm::OnAfterShow( IForm* prevFrom, bool_t reActivation, FormSho
 							fres = _txtWoundText->Draw();
 							ENSURESUCCESS(fres);
 
-							_woundSelected = TRUE;	
+							_woundSelected = TRUE;
 						}
 					}
 				}

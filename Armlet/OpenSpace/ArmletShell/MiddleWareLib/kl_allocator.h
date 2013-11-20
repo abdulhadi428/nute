@@ -8,13 +8,11 @@
 #ifndef KL_ALLOCATOR_H_
 #define KL_ALLOCATOR_H_
 
-typedef unsigned int uint32_t;
-
-template <typename T, uint32_t Sz>
+template <typename T, unsigned int Sz>
 class Alloc_t {
 private:
     T IArr[Sz];
-    uint32_t INewIndx;
+    unsigned int INewIndx;
 public:
     T* Allocate() {
         if(INewIndx == (Sz-1)) {
@@ -26,7 +24,7 @@ public:
         INewIndx++;
         return &IArr[INewIndx-1];
     }
-    T* Allocate(uint32_t ALen) {
+    T* Allocate(unsigned int ALen) {
         if((INewIndx + ALen) >= Sz) {
 #ifdef _MSC_VER
             throw;

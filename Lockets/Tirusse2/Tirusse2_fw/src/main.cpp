@@ -41,11 +41,6 @@ int main(void) {
 
     while(TRUE) {
         EvtMsk = chEvtWaitAny(EVTMASK_APPEARANCE | EVTMASK_PWR);
-        // Appear/disappear
-        if(EvtMsk & EVTMASK_APPEARANCE) {
-            if(rLevel1.SomethingIsNear) LedSmooth.SetSmoothly(LED_TOP_VALUE);
-            else LedSmooth.SetSmoothly(0);
-        }
         // Power
         if(EvtMsk & EVTMASK_PWR) {
             if(Pwr.ExtPwrOn()) {
@@ -58,6 +53,11 @@ int main(void) {
                 rLevel1.Enabled = true;
                 LedSmooth.SetSmoothly(0);
             }
+        }
+        // Appear/disappear
+        else if(EvtMsk & EVTMASK_APPEARANCE) {
+            if(rLevel1.SomethingIsNear) LedSmooth.SetSmoothly(LED_TOP_VALUE);
+            else LedSmooth.SetSmoothly(0);
         }
     } // while
 }

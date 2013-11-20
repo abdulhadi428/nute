@@ -3,11 +3,11 @@
 
 namespace ThreeKShell {
 
-static Alloc_t<PictureBox, 45> SPictureBoxArr;
+static Alloc_t<PictureBox, 17> SPictureBoxArr;
 
 	PictureBox* PictureBoxFactory::AllocPictureBox()
 	{
-		return SPictureBoxArr.Allocate(); // new PictureBox();
+		return SPictureBoxArr.Allocate("PictureBox"); // new PictureBox();
 	}
 
 	fresult PictureBoxFactory::Init( IRender* render, ImagesRepository* images )

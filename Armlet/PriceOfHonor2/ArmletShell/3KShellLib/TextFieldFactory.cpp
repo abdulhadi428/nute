@@ -4,8 +4,8 @@
 
 namespace ThreeKShell {
 
-static Alloc_t<TextField, 45> STextFieldFactoryArr;
-static Alloc_t<char, 18000> SCharArr;
+static Alloc_t<TextField, 25> STextFieldFactoryArr;
+static Alloc_t<char, 4885> SCharArr;
 
 fresult TextFieldFactory::Init(IRender* renderer, Repositories* styles)
 {
@@ -169,7 +169,7 @@ char* TextFieldFactory::AllocBuffBySizeTx( Size sizeTx, ubyte_t pages, Size* o_b
 
 char* TextFieldFactory::allocBytes( uword_t io_len )
 {
-	char* res = SCharArr.Allocate(io_len); // new char[io_len];
+	char* res = SCharArr.Allocate(io_len, "char"); // new char[io_len];
 	StrPad(res, 0, 0, io_len);
 
 	return res;
@@ -177,6 +177,6 @@ char* TextFieldFactory::allocBytes( uword_t io_len )
 
 TextField* TextFieldFactory::allocTextField()
 {
-	return STextFieldFactoryArr.Allocate();     //new TextField();
+	return STextFieldFactoryArr.Allocate("TextField");     //new TextField();
 }
 }

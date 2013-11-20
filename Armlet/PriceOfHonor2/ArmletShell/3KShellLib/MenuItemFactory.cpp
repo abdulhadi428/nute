@@ -3,11 +3,11 @@
 
 namespace ThreeKShell {
 
-static Alloc_t<MenuItem, 45> SMenuItemArr;
+static Alloc_t<MenuItem, 22> SMenuItemArr;
 
 MenuItem* MenuItemFactory::allocMenuItem()
 {
-	return SMenuItemArr.Allocate(); // new MenuItem();
+	return SMenuItemArr.Allocate("MenuItem"); // new MenuItem();
 }
 
 fresult MenuItemFactory::Init( IRender* render, Repositories* reps, TextFieldFactory* tfFactory, PictureBoxFactory* pbxFactory, PanelFactory* pnlFactory )
