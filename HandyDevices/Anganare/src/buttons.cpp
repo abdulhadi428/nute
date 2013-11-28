@@ -36,7 +36,7 @@ void ButtonControl_t::MainBtnPressed() {
 void TimeOut(void *p) {
     Load.Off();
     Lcd.Printf(6,0, " ");
-    Uart.Printf("wasworked=%ums\r", Load.TimeToWork);
+//    Uart.Printf("wasworked=%ums\r", Load.TimeToWork);
 }
 
 void ButtonControl_t::ModeBtnPressed() {
@@ -86,7 +86,8 @@ void ButtonControl_t::Task() {
             }
             else if (!MainBtn.KeyIsPressed() && MainBtn.KWP) {
                 PressedTime = chTimeNow() - PressedTime;
-                Uart.Printf("waspressed=%ums\r", PressedTime);
+                if(PressedTime > 15000) PressedTime = 15000;
+//                Uart.Printf("waspressed=%ums\r", PressedTime);
                 Load.TimeToWork = PressedTime;
                 Lcd.Printf(0,0, "%u.%us   ", (Load.TimeToWork/1000), (Load.TimeToWork%1000)/100);
                 Load.Off();

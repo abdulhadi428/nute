@@ -34,7 +34,6 @@ int main(void) {
 
     while(TRUE) {
         chThdSleepMilliseconds(999);
-        Uart.Printf("a");
     }
 }
 

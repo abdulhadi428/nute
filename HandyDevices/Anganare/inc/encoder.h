@@ -18,7 +18,7 @@
 #define ENCODER_PIN2    5
 
 #define MAX_VALUE 		99
-#define MIN_VALUE       0
+#define MIN_VALUE       1
 
 class encoder_t {
 private:

@@ -37,7 +37,7 @@ public:
                 break;
         }
     }
-    void Init()         { PinSetupOut(LOAD_PORT, LOAD_PIN, omPushPull, ps50MHz);}
+    void Init()         { PinSetupOut(LOAD_PORT, LOAD_PIN, omPushPull, ps50MHz); Mode = lmTime; }
     inline void On()    { PinSet(LOAD_PORT, LOAD_PIN); InLoad = true;           }
     inline void Off()   { PinClear(LOAD_PORT, LOAD_PIN); InLoad = false;        }
 };
