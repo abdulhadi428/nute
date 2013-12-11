@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 23/11/2013 19:46:04
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 11/12/2013 11:27:12
 
 BeginCmp
 TimeStamp = /52664780;
@@ -204,6 +204,13 @@ IdModule  = IND_0805;
 EndCmp
 
 BeginCmp
+TimeStamp = /52A81A10;
+Reference = L3;
+ValeurCmp = 10uH;
+IdModule  = IND_0805;
+EndCmp
+
+BeginCmp
 TimeStamp = /52670A36;
 Reference = Q1;
 ValeurCmp = MMBT2222;
@@ -248,14 +255,14 @@ EndCmp
 BeginCmp
 TimeStamp = /52907C12;
 Reference = R5;
-ValeurCmp = 1.94k;
+ValeurCmp = 81k;
 IdModule  = RES_0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /52907C21;
 Reference = R6;
-ValeurCmp = 1k;
+ValeurCmp = 10k;
 IdModule  = RES_0603;
 EndCmp
 
@@ -365,6 +372,13 @@ IdModule  = TESTPOINT_1MM;
 EndCmp
 
 BeginCmp
+TimeStamp = /52A81664;
+Reference = TP3;
+ValeurCmp = TESTPOINT;
+IdModule  = TESTPOINT_1MM;
+EndCmp
+
+BeginCmp
 TimeStamp = /526728AC;
 Reference = XL1;
 ValeurCmp = CONN_3;
@@ -393,10 +407,10 @@ IdModule  = CONN_DG381_2;
 EndCmp
 
 BeginCmp
-TimeStamp = /5270DB72;
+TimeStamp = /52A81997;
 Reference = XTAL1;
 ValeurCmp = 32768;
-IdModule  = CRYSTAL_KX26;
+IdModule  = CRYSTAL_KX26_NOGND;
 EndCmp
 
 EndListe
