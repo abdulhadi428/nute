@@ -5,13 +5,14 @@ LIBS:st_kl
 LIBS:Tittar_kl
 LIBS:Power_kl
 LIBS:power
+LIBS:MotorControl2-cache
 EELAYER 27 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "12 dec 2013"
+Date "13 dec 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -115,7 +116,7 @@ L CP C11
 U 1 1 52A9754F
 P 8300 3300
 F 0 "C11" V 8250 3100 50  0000 L CNN
-F 1 "0.1u/63v" V 8150 3100 50  0000 L CNN
+F 1 "100u/63v" V 8150 3100 50  0000 L CNN
 F 2 "~" H 8300 3300 60  0000 C CNN
 F 3 "~" H 8300 3300 60  0000 C CNN
 	1    8300 3300
@@ -163,17 +164,6 @@ F 1 "GND" H 8300 3520 30  0001 C CNN
 F 2 "" H 8300 3600 60  0000 C CNN
 F 3 "" H 8300 3600 60  0000 C CNN
 	1    8300 3600
-	1    0    0    -1  
-$EndComp
-$Comp
-L C C6
-U 1 1 52A9775C
-P 4450 3300
-F 0 "C6" H 4350 3200 50  0000 L CNN
-F 1 "47u" H 4350 3400 50  0000 L CNN
-F 2 "CAP_0603" V 4550 3150 28  0000 C BNN
-F 3 "~" H 4450 3300 60  0000 C CNN
-	1    4450 3300
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -352,21 +342,10 @@ F 3 "~" H 1100 4650 60  0000 C CNN
 	1    1100 4650
 	-1   0    0    1   
 $EndComp
-$Comp
-L SOLDERFUSE FU1
-U 1 1 52A98698
-P 3750 2650
-F 0 "FU1" H 3775 2775 60  0000 C CNN
-F 1 "SOLDERFUSE" H 3775 2875 60  0001 C CNN
-F 2 "" H 3750 2650 60  0000 C CNN
-F 3 "" H 3750 2650 60  0000 C CNN
-	1    3750 2650
-	0    -1   -1   0   
-$EndComp
 Text Label 3750 3050 2    60   ~ 0
 EXT_VDD
 Text Label 1500 4700 0    60   ~ 0
-BUSY
+BUSY/SYNC
 Text Label 1500 4900 0    60   ~ 0
 FLAG
 Text Label 1500 5100 0    60   ~ 0
@@ -554,7 +533,7 @@ VDD
 Text Label 1100 2600 1    60   ~ 0
 FLAG
 Text Label 1450 2600 1    60   ~ 0
-BUSY
+BUSY/SYNC
 $Comp
 L PWR_FLAG #FLG016
 U 1 1 52A9A59A
@@ -854,10 +833,6 @@ Wire Wire Line
 Wire Wire Line
 	1300 4200 1500 4200
 Wire Wire Line
-	3750 2800 3750 3050
-Wire Wire Line
-	3750 2500 3750 2300
-Wire Wire Line
 	1300 4900 1500 4900
 Wire Wire Line
 	4750 4150 4550 4150
@@ -926,4 +901,40 @@ Wire Wire Line
 Wire Wire Line
 	6450 2300 6450 3250
 Connection ~ 6450 2600
+$Comp
+L CP C6
+U 1 1 52A9B523
+P 4450 3300
+F 0 "C6" V 4550 3150 50  0000 L CNN
+F 1 "100u/63v" V 4650 3150 50  0000 L CNN
+F 2 "~" H 4450 3300 60  0000 C CNN
+F 3 "~" H 4450 3300 60  0000 C CNN
+	1    4450 3300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3750 2400 3750 2300
+Wire Wire Line
+	3750 2900 3750 3050
+$Comp
+L FUSE0R F1
+U 1 1 52A9B7B8
+P 3750 2650
+F 0 "F1" V 3680 2650 50  0000 C CNN
+F 1 "FUSE0R" V 3750 2650 50  0000 C CNN
+F 2 "~" H 3750 2650 60  0000 C CNN
+F 3 "~" H 3750 2650 60  0000 C CNN
+	1    3750 2650
+	1    0    0    -1  
+$EndComp
+Text Label 7950 2800 1    60   ~ 0
+Vs
+Text Label 6800 4200 0    60   ~ 0
+Mtr1A
+Text Label 6800 4400 0    60   ~ 0
+Mtr2A
+Text Label 6800 4700 0    60   ~ 0
+Mtr1B
+Text Label 6800 4900 0    60   ~ 0
+Mtr2B
 $EndSCHEMATC
