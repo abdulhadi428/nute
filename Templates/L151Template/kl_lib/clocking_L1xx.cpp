@@ -205,3 +205,14 @@ void SetupVCore(VCore_t AVCore) {
     while((PWR->CSR & PWR_CSR_VOSF) != 0); // Wait until regulator is stable
     VCore = AVCore;
 }
+
+///*
+// * Early initialization code.
+// * This initialization must be performed just after stack setup and before
+// * any other initialization.
+// */
+//void __early_init(void) {
+//    // Enable HSI. It is enabled by default, but who knows.
+//    RCC->CR |= RCC_CR_HSION;
+//    while(!(RCC->CR & RCC_CR_HSIRDY));
+//}

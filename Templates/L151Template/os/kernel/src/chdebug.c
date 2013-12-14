@@ -268,12 +268,11 @@ const char *dbg_panic_msg;
  *
  * @param[in] msg       the pointer to the panic message string
  */
-// @KL: replaced at kl_lib
-//void chDbgPanic(const char *msg) {
-//
-//  dbg_panic_msg = msg;
-//  chSysHalt();
-//}
+void chDbgPanic(const char *msg) {
+
+  dbg_panic_msg = msg;
+  chSysHalt();
+}
 #endif /* CH_DBG_ENABLED */
 
 /** @} */

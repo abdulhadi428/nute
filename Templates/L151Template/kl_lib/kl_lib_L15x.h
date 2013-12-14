@@ -52,6 +52,9 @@ typedef void (*ftVoidVoid)(void);
 #define TRIM_VALUE(v, Max)  { if((v) > (Max)) (v) = (Max); }
 #define IS_LIKE(v, precise, deviation)  (((precise - deviation) < v) and (v < (precise + deviation)))
 
+#define MIN(a, b)                       (((a) < (b))? (a) : (b))
+#define MAX(a, b)                       (((a) > (b))? (a) : (b))
+
 #define ANY_OF_2(a, b1, b2)             (((a)==(b1)) or ((a)==(b2)))
 #define ANY_OF_3(a, b1, b2, b3)         (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)))
 #define ANY_OF_4(a, b1, b2, b3, b4)     (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)) or ((a)==(b4)))
@@ -75,12 +78,12 @@ static inline void MemCopy(uint8_t *PDst, const uint8_t *PSrc, uint32_t Sz) {
 #define DMA_PRIORITY_VERYHIGH   STM32_DMA_CR_PL(0b11)
 
 // Init, to calm compiler
-extern "C" {
-void __attribute__ ((weak)) _init(void)  {}
-}
+//extern "C" {
+//void __attribute__ ((weak)) _init(void)  {}
+//}
 #endif
 
-#if 1 // ========================== Simple delay ===============================
+#if 0 // ========================== Simple delay ===============================
 static inline void DelayLoop(volatile uint32_t ACounter) { while(ACounter--); }
 static inline void Delay_ms(uint32_t Ams) {
     volatile uint32_t __ticks = (Clk.AHBFreqHz / 4000) * Ams;
@@ -450,7 +453,12 @@ public:
 
 #if 1 // ====================== FLASH & EEPROM =================================
 #define FLASH_LIB_KL
+#define RAM_FUNC_KL      __attribute__((section(".ramfunc")))
+
 #define EEPROM_BASE_ADDR    ((uint32_t)0x08080000)
+#define FLASH_PAGE_SZ       (uint32_t)256 // in Bytes
+#define FLASH_HALFPAGE_SZ   (uint32_t)128 // in Bytes
+#define FLASH_HALFPAGE_SZ32 (uint32_t)32  // in words32
 // ==== Flash keys ====
 #define FLASH_PDKEY1    ((uint32_t)0x04152637) // Flash power down key1
 // Flash power down key2: used with FLASH_PDKEY1 to unlock the RUN_PD bit in FLASH_ACR
@@ -468,14 +476,41 @@ public:
 
 #define FLASH_WAIT_TIMEOUT  36000
 class Flash_t {
+private:
+    void Unlock() {
+        if(FLASH->PECR & FLASH_PECR_PELOCK) {
+            chSysLock();
+            // Unlock PECR (together with EEPROM, but who cares)
+            FLASH->PEKEYR = FLASH_PEKEY1;
+            FLASH->PEKEYR = FLASH_PEKEY2;
+            FLASH->PRGKEYR = FLASH_PRGKEY1;
+            FLASH->PRGKEYR = FLASH_PRGKEY2;
+            chSysUnlock();
+            FLASH->PECR &= ~FLASH_PECR_FTDW;    // Disable fixed time programming
+        }
+    }
+    void Lock() { FLASH->PECR |= FLASH_PECR_PRGLOCK | FLASH_PECR_PELOCK; }
+    uint8_t IErasePage(uint32_t Addr) {
+        uint8_t r = WaitForLastOperation();
+        if(r == OK) {
+            FLASH->PECR |= FLASH_PECR_ERASE | FLASH_PECR_PROG;    // Set the ERASE & PROG bits
+            // Write 00000000h to the first word of the program page to erase
+            *(volatile uint32_t*)Addr = 0x00000000;
+            r = WaitForLastOperation();
+            // Disable the ERASE and PROG bits
+            FLASH->PECR &= ~(FLASH_PECR_PROG | FLASH_PECR_ERASE);
+        }
+        return r;
+    }
+    uint8_t RAM_FUNC_KL IWriteHalfPage(uint32_t Addr, uint32_t *Ptr);
 protected:
-    static uint8_t GetStatus() {
+    uint8_t GetStatus() {
         if(FLASH->SR & FLASH_SR_BSY) return BUSY;
         else if(FLASH->SR & FLASH_SR_WRPERR) return WRITE_PROTECT;
         else if(FLASH->SR & (uint32_t)0x1E00) return FAILURE;
         else return OK;
     }
-    static uint8_t WaitForLastOperation() {
+    uint8_t WaitForLastOperation() {
         uint32_t Timeout = FLASH_WAIT_TIMEOUT;
         while(Timeout--) {
             // Get status
@@ -484,21 +519,25 @@ protected:
         }
         return TIMEOUT;
     }
-    static void UnlockEE() {
+    void ClearStatusFlags() { FLASH->SR = (FLASH_SR_OPTVERRUSR | FLASH_SR_OPTVERR | FLASH_SR_SIZERR | FLASH_SR_PGAERR | FLASH_SR_WRPERR | FLASH_SR_EOP); }
+public:
+    uint8_t WriteBuf(uint32_t Addr, uint32_t *Ptr, uint32_t ALenBytes);
+};
+
+class Eeprom_t : private Flash_t {
+private:
+    void UnlockEE() {
         if(FLASH->PECR & FLASH_PECR_PELOCK) {
             // Unlocking the Data memory and FLASH_PECR register access
             chSysLock();
             FLASH->PEKEYR = FLASH_PEKEY1;
             FLASH->PEKEYR = FLASH_PEKEY2;
             chSysUnlock();
-            FLASH->SR = FLASH_SR_WRPERR;        // Clear WriteProtectErr
+            FLASH->SR = 0x1F00;                 // Clear all
             FLASH->PECR &= ~FLASH_PECR_FTDW;    // Disable fixed time programming
         }
     }
-    static void LockEE() { FLASH->PECR |= FLASH_PECR_PELOCK; }
-};
-
-class Eeprom_t : private Flash_t {
+    void LockEE() { FLASH->PECR |= FLASH_PECR_PELOCK; }
 public:
     uint32_t Read32(uint32_t Addr) { return *((uint32_t*)(Addr + EEPROM_BASE_ADDR)); }
     uint8_t Write32(uint32_t Addr, uint32_t W);

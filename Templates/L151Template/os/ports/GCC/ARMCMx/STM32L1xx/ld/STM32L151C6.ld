@@ -80,7 +80,15 @@ SECTIONS
         *(.glue_7)
         *(.gcc*)
     } > flash
-
+    
+    /*
+    *   Here is place to read and write to
+    */
+    MyFlash 0x08004000 : 
+    {
+        *(MyFlash)
+    } > flash
+    
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
@@ -135,9 +143,10 @@ SECTIONS
         . = ALIGN(4);
         *(.ramtext)
         . = ALIGN(4);
+        *(.ramfunc)
         PROVIDE(_edata = .);
     } > ram AT > flash
-
+    
     .bss :
     {
         . = ALIGN(4);

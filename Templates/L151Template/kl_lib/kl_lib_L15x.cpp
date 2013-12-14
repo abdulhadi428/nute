@@ -394,6 +394,70 @@ uint8_t i2c_t::WaitBTF() {
 
 #include "cmd_uart.h"
 #ifdef FLASH_LIB_KL // ==================== FLASH & EEPROM =====================
+uint8_t Flash_t::IWriteHalfPage(uint32_t Addr, uint32_t *Ptr) {
+    uint8_t Rslt = OK;
+    SCnSCB->ACTLR |= SCnSCB_ACTLR_DISMCYCINT_Msk;
+    Rslt = WaitForLastOperation();
+    if(Rslt == OK) {
+        FLASH->PECR |= (FLASH_PECR_FPRG | FLASH_PECR_PROG);
+        for(uint32_t i=0; i<FLASH_HALFPAGE_SZ; i+=4) {
+            *(volatile uint32_t*) (Addr + i) = *(Ptr++);
+        }
+        Rslt = WaitForLastOperation();
+        FLASH->PECR &= ~(FLASH_PECR_FPRG | FLASH_PECR_PROG);
+    }
+    SCnSCB->ACTLR &= ~SCnSCB_ACTLR_DISMCYCINT_Msk;
+    return Rslt;
+}
+
+uint8_t Flash_t::WriteBuf(uint32_t Addr, uint32_t *Ptr, uint32_t ALenBytes) {
+    //Uart.Printf("PECR = %X\r", FLASH->PECR);
+    // Check address aligment
+    if(Addr & (FLASH_PAGE_SZ - 1)) {
+        Uart.Printf("BadAddr\r");
+        return FAILURE;
+    }
+    Unlock();
+    ClearStatusFlags();
+    uint8_t Rslt = OK;
+    uint32_t PagesCnt = ALenBytes  / FLASH_PAGE_SZ;
+    if(PagesCnt == 0) PagesCnt = 1;
+    chSysLock();
+    // ==== Erase flash ====
+    for(uint32_t i=0; i<PagesCnt; i++) {
+        Rslt = IErasePage(Addr + (i * FLASH_PAGE_SZ));
+        if(Rslt != OK) break;
+        ClearStatusFlags();
+    }
+    // ==== Write data ====
+    while((ALenBytes != 0) and (Rslt == OK)) {
+        if(ALenBytes > FLASH_HALFPAGE_SZ) {
+            Rslt = IWriteHalfPage(Addr, Ptr);
+            Addr += FLASH_HALFPAGE_SZ;
+            ALenBytes -= FLASH_HALFPAGE_SZ;
+            Ptr += FLASH_HALFPAGE_SZ32;
+        }
+        else {  // Less than half a page
+            // Copy data to intermediate buffer
+            uint32_t fBuf[32], i=0;
+            while(ALenBytes != 0) {
+                fBuf[i++] = *Ptr++;
+                ALenBytes = (ALenBytes >= 4)? (ALenBytes - 4) : 0;
+            }
+            while(i < 32) fBuf[i++] = 0;    // Clear bytes left
+            Rslt = IWriteHalfPage(Addr, fBuf);
+            ALenBytes = 0;
+        } // if > half sz
+    } // while != 0
+    chSysUnlock();
+    Lock();
+    //Uart.Printf("PECR = %X\r", FLASH->PECR);
+    return OK;
+}
+
+
+
+#if 1 // ========================== EEPROM =====================================
 // Here not-fast write is used. I.e. interface will erase the word if it is not the same.
 uint8_t Eeprom_t::Write32(uint32_t Addr, uint32_t W) {
     Addr += EEPROM_BASE_ADDR;
@@ -406,89 +470,6 @@ uint8_t Eeprom_t::Write32(uint32_t Addr, uint32_t W) {
     return status;
 }
 
-void Eeprom_t::ReadBuf(void *PDst, uint32_t Sz, uint32_t Addr) {
-//    Sz = Sz / 4;  // Size in words32
-//    while(Sz--) {
-//        *((uint32_t*)PDst) = Read32(Addr);
-//        PDst += 4;
-//        Addr += 4;
-//    }
-}
+#endif // EEPROM
 
-//uint8_t Eeprom_t::WriteBuf(void *PSrc, uint32_t Sz, uint32_t Addr) {
-//    Sz = (Sz + 3) / 4;  // Size in words32
-//}
-
-// ==== EEStore ====
-//uint8_t EEStore_t::Get(void *Ptr, uint32_t Sz, uint32_t ZeroAddr, uint16_t StoreCnt) {
-//    uint32_t Addr, AddrPrev = ZeroAddr;
-//    uint16_t Cnt, CntPrev;
-//    // ==== Read first occurence ====
-//    uint32_t w = Read32(ZeroAddr);
-//    // Check sign
-//    if((w & 0xFFFF) != EE_STORE_SIGN) return FAILURE;   // nothing is stored
-//    CntPrev = w >> 16;
-//    uint32_t SzRounded = (Sz & 0x3)? (Sz + 4) & (~(uint32_t)0x3) : Sz;   // Round sz
-//    // ==== Read the storage until correct address found ====
-//    for(uint32_t i=1; i < StoreCnt; i++) {
-//        Addr = ZeroAddr + i * (4 + SzRounded);
-//        w = Read32(Addr);
-//        uint32_t Sign = w & 0xFFFF;
-//        Cnt = w >> 16;
-//        // Check sign and counter: if nothing is written, or difference is not 1, return data
-//        if((Sign != EE_STORE_SIGN) or ((CntPrev + 1) != Cnt)) {
-//            ReadBuf(Ptr, Sz, AddrPrev + 4);
-//            return OK;
-//        }
-//        CntPrev = Cnt;
-//        AddrPrev = Addr;
-//    }
-//    // Will be here if counter diff was 1 all the way. Return Last value.
-//    ReadBuf(Ptr, Sz, AddrPrev + 4);
-//    return OK;
-//}
-
-//uint8_t EEStore_t::Put(void *Ptr, uint32_t Sz, uint32_t ZeroAddr, uint16_t StoreCnt) {
-//    uint8_t r;
-//    // ==== Read first occurence ====
-//    uint32_t w = Read32(ZeroAddr);
-//    // Check sign
-//    if((w & 0xFFFF) != EE_STORE_SIGN) { // nothing is stored
-//        Unlock();
-//        w = EE_STORE_SIGN;
-//        r = Write32(ZeroAddr, w);
-//        if(r == OK) r = WriteBuf(Ptr, Sz, ZeroAddr + 4);
-//        Lock();
-//        return r;
-//    }
-//
-//    return FAILURE;
-    /*
-    uint32_t Addr, AddrPrev = ZeroAddr;
-    uint16_t Cnt, CntPrev;
-
-
-        return FAILURE;
-    CntPrev = w >> 16;
-    uint32_t SzRounded = (Sz & 0x3)? (Sz + 4) & (~(uint32_t)0x3) : Sz;   // Round sz
-    // ==== Read the storage until correct address found ====
-    for(uint32_t i=1; i < StoreCnt; i++) {
-        Addr = ZeroAddr + i * (4 + SzRounded);
-        w = Read32(Addr);
-        uint32_t Sign = w & 0xFFFF;
-        Cnt = w >> 16;
-        // Check sign and counter: if nothing is written, or difference is not 1, return data
-        if((Sign != EE_STORE_SIGN) or ((CntPrev + 1) != Cnt)) {
-            ReadBuf(Ptr, Sz, AddrPrev + 4);
-            return OK;
-        }
-        CntPrev = Cnt;
-        AddrPrev = Addr;
-    }
-    // Will be here if counter diff was 1 all the way. Return Last value.
-    ReadBuf(Ptr, Sz, AddrPrev + 4);
-    return OK;
-   */
-//}
-
-#endif
+#endif // FLASH

@@ -7,32 +7,26 @@
  */
 
 #include "kl_lib_L15x.h"
-#include "stm32l1xx.h"
+#include "clocking_L1xx.h"
+#include "ch.h"
+#include "hal.h"
 
 int main(void) {
-    PinSetupOut(GPIOB, 0, omPushPull, pudNone);
+    // ==== Init Vcore & clock system ====
+    SetupVCore(vcore1V8);
+    Clk.UpdateFreqValues();
 
-    PinSetupAlterFunc(GPIOA, 9, omPushPull, pudNone, AF7);
-
-    rccEnableUSART1(FALSE);
-    USART1->CR1 = USART_CR1_UE | USART_CR1_TE;
-    USART1->BRR = 2400000 / 115200;
+    // ==== Init OS ====
+    halInit();
+    chSysInit();
+    // ==== Init Hard & Soft ====
+    PinSetupOut(GPIOC, 9, omPushPull);
+    PinSet(GPIOC, 9);
 
     while(1) {
-        PinSet(GPIOB, 0);
-        USART1->DR = 'a';
-        DelayLoop(100000);
-        PinClear(GPIOB, 0);
-        DelayLoop(100000);
+//        PinSet(GPIOC, 8);
+//        chThdSleepMilliseconds(207);
+//        PinClear(GPIOC, 8);
+//        chThdSleepMilliseconds(360);
     } // while
 }
-
-/*
- *     // someth
-    PinSetupAlterFunc(GPIOA, 9, omPushPull, pudNone, AF7);
-    rccEnableUSART1(FALSE);
-    USART1->CR1 = USART_CR1_UE | USART_CR1_TE;     // Enable USART
-    USART1->BRR = 2097000 / 115200;
-    USART1->DR = 'a';
- *
- */

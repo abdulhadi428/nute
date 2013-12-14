@@ -229,7 +229,7 @@
  * @note    Requires @p CH_USE_EVENTS.
  */
 #if !defined(CH_USE_EVENTS_TIMEOUT) || defined(__DOXYGEN__)
-#define CH_USE_EVENTS_TIMEOUT           FALSE
+#define CH_USE_EVENTS_TIMEOUT           TRUE
 #endif
 
 /**
@@ -240,7 +240,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(CH_USE_MESSAGES) || defined(__DOXYGEN__)
-#define CH_USE_MESSAGES                 FALSE
+#define CH_USE_MESSAGES                 TRUE
 #endif
 
 /**
@@ -264,7 +264,7 @@
  * @note    Requires @p CH_USE_SEMAPHORES.
  */
 #if !defined(CH_USE_MAILBOXES) || defined(__DOXYGEN__)
-#define CH_USE_MAILBOXES                FALSE
+#define CH_USE_MAILBOXES                TRUE
 #endif
 
 /**
@@ -274,7 +274,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(CH_USE_QUEUES) || defined(__DOXYGEN__)
-#define CH_USE_QUEUES                   FALSE
+#define CH_USE_QUEUES                   TRUE
 #endif
 
 /**
@@ -357,7 +357,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_SYSTEM_STATE_CHECK) || defined(__DOXYGEN__)
-#define CH_DBG_SYSTEM_STATE_CHECK       TRUE
+#define CH_DBG_SYSTEM_STATE_CHECK       FALSE
 #endif
 
 /**
@@ -368,7 +368,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_CHECKS) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_CHECKS            TRUE
+#define CH_DBG_ENABLE_CHECKS            FALSE
 #endif
 
 /**
@@ -380,7 +380,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_ASSERTS) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_ASSERTS           TRUE
+#define CH_DBG_ENABLE_ASSERTS           FALSE
 #endif
 
 /**
@@ -391,7 +391,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_ENABLE_TRACE) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_TRACE             TRUE
+#define CH_DBG_ENABLE_TRACE             FALSE
 #endif
 
 /**
@@ -405,7 +405,7 @@
  *          @p panic_msg variable set to @p NULL.
  */
 #if !defined(CH_DBG_ENABLE_STACK_CHECK) || defined(__DOXYGEN__)
-#define CH_DBG_ENABLE_STACK_CHECK       TRUE
+#define CH_DBG_ENABLE_STACK_CHECK       FALSE
 #endif
 
 /**
@@ -417,7 +417,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(CH_DBG_FILL_THREADS) || defined(__DOXYGEN__)
-#define CH_DBG_FILL_THREADS             TRUE
+#define CH_DBG_FILL_THREADS             FALSE
 #endif
 
 /**
