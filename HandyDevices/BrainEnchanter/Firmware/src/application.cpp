@@ -11,20 +11,44 @@
 #include "sequences.h"
 #include "eestore.h"
 #include "lcd1200.h"
+#include "evt_mask.h"
 
 App_t App;
 #define UART_RPL_BUF_SZ     36
 //static uint8_t SBuf[UART_RPL_BUF_SZ];
 
-#define EVTMSK_ONE_S    EVENT_MASK(0)
-
 #if 1 // ============================ Timers ===================================
 static VirtualTimer ITmr;
 void TmrOneSecondCallback(void *p) {
     chSysLockFromIsr();
-    chEvtSignalI(App.PThd, EVTMSK_ONE_S);
+    chEvtSignalI(App.PThd, EVTMASK_NEWSECOND);
     chVTSetI(&ITmr, MS2ST(TM_DOSE_INCREASE_MS), TmrOneSecondCallback, nullptr);
     chSysUnlockFromIsr();
+}
+#endif
+
+#if 1 // ============================ Keys =====================================
+static void KeyAny() {
+    Beeper.Beep(BeepKey);
+}
+
+static void KeyStart() {
+
+}
+static void KeyTimeUp() {
+
+}
+static void KeyTimeDown() {
+
+}
+static void KeyCurrentUp() {
+
+}
+static void KeyCurrentDown() {
+
+}
+static void KeyStartLong() {
+
 }
 #endif
 
@@ -36,9 +60,16 @@ static void AppThread(void *arg) {
     uint32_t EvtMsk;
     while(true) {
         EvtMsk = chEvtWaitAny(ALL_EVENTS);
-        if(EvtMsk & EVTMSK_ONE_S) {
+        // Keys
+        if(EvtMsk & EVTMSK_KEY_START)        { KeyStart();       KeyAny(); }
+        if(EvtMsk & EVTMSK_KEY_TIME_UP)      { KeyTimeUp();      KeyAny(); }
+        if(EvtMsk & EVTMSK_KEY_TIME_DOWN)    { KeyTimeDown();    KeyAny(); }
+        if(EvtMsk & EVTMSK_KEY_CURRENT_UP)   { KeyCurrentUp();   KeyAny(); }
+        if(EvtMsk & EVTMSK_KEY_CURRENT_DOWN) { KeyCurrentDown(); KeyAny(); }
+        if(EvtMsk & EVTMSK_KEY_START_LONG)   { KeyStartLong();   KeyAny(); }
 
-
+        // TIme
+        if(EvtMsk & EVTMASK_NEWSECOND) {
         }
     } // while 1
 }

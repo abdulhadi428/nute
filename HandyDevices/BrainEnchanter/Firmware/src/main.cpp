@@ -15,6 +15,7 @@
 #include "cmd_uart.h"
 #include "application.h"
 #include "lcd1200.h"
+#include "keys.h"
 
 static inline void Init();
 
@@ -47,4 +48,5 @@ void Init() {
     Beeper.Init();
     Beeper.Beep(BeepBeep);
     App.Init();
+    Keys.Init();
 }

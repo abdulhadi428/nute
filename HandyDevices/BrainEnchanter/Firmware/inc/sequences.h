@@ -16,35 +16,6 @@
  * ckRepeat => after this, goto begin
  */
 
-#ifdef LED_RGB // ======================= LED RGB ==============================
-// Pill
-const LedChunk_t LedPillOk[] = {
-        {clBlue,  540, ckStop},
-};
-const LedChunk_t LedPillBad[] = {
-        {clRed,  540, ckStop},
-};
-
-// Health states
-const LedChunk_t LedRedFast[] = {
-        {clRed,   36, ckNormal},
-        {clBlack, 36, ckRepeat},
-};
-const LedChunk_t LedRedSlow[] = {
-        {clRed,   36, ckNormal},
-        {clBlack, 1008, ckRepeat},
-};
-const LedChunk_t LedYellow[] = {
-        {clYellow, 36, ckNormal},
-        {clBlack,  3006, ckRepeat},
-};
-const LedChunk_t LedGreen[] = {
-        {clGreen, 36, ckNormal},
-        {clBlack, 3006, ckRepeat},
-};
-
-#endif
-
 #if 1 // ============================= Beep ====================================
 /* Every sequence is an array of BeepCmd_t:
  struct BeepChunk_t {
@@ -55,6 +26,9 @@ const LedChunk_t LedGreen[] = {
   };
 */
 #define BEEP_VOLUME     1   // set to 10 in production, and to 1 when someone sleeps near
+const BeepChunk_t BeepKey[] = {
+        {BEEP_VOLUME, 1975, 54, ckStop},
+};
 
 const BeepChunk_t BeepBeep[] = {
         {BEEP_VOLUME, 1975, 54, ckNormal},
@@ -75,16 +49,6 @@ const BeepChunk_t BeepPillBad[] = {
         {BEEP_VOLUME, 1975, 180, ckStop},
 };
 
-
-// Health states
-const BeepChunk_t BeepDeath[] = {
-        {BEEP_VOLUME, 1975, 2000, ckNormal},
-        {0, 0, 10000, ckRepeat},
-};
-const BeepChunk_t BeepRedFast[] = {
-        {BEEP_VOLUME, 1975, 54, ckNormal},
-        {0, 0, 54, ckRepeat},
-};
 #endif
 
 #endif /* SEQUENCES_H_ */

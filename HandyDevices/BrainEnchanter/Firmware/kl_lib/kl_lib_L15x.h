@@ -85,6 +85,16 @@ void __attribute__ ((weak)) _init(void)  {}
 }
 #endif
 
+#if 1 // =========================== Time ======================================
+static inline bool TimeElapsed(systime_t *PSince, uint32_t Delay_ms) {
+    chSysLock();
+    bool Rslt = (systime_t)(chTimeNow() - *PSince) > MS2ST(Delay_ms);
+    if(Rslt) *PSince = chTimeNow();
+    chSysUnlock();
+    return Rslt;
+}
+#endif
+
 #if 0 // ========================== Simple delay ===============================
 static inline void DelayLoop(volatile uint32_t ACounter) { while(ACounter--); }
 static inline void Delay_ms(uint32_t Ams) {
