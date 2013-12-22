@@ -36,14 +36,13 @@ const BeepChunk_t BeepBeep[] = {
         {BEEP_VOLUME, 1975, 54, ckStop},
 };
 
-// Pill
-const BeepChunk_t BeepPillOk[] = {
+const BeepChunk_t BeepWake[] = {
         {BEEP_VOLUME, 1975, 180, ckNormal},
         {BEEP_VOLUME, 2489, 180, ckNormal},
         {BEEP_VOLUME, 2960, 180, ckStop},
 };
 
-const BeepChunk_t BeepPillBad[] = {
+const BeepChunk_t BeepStandBy[] = {
         {BEEP_VOLUME, 2794, 180, ckNormal},
         {BEEP_VOLUME, 2349, 180, ckNormal},
         {BEEP_VOLUME, 1975, 180, ckStop},

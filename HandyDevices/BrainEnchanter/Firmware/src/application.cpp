@@ -22,33 +22,44 @@ static VirtualTimer ITmr;
 void TmrOneSecondCallback(void *p) {
     chSysLockFromIsr();
     chEvtSignalI(App.PThd, EVTMASK_NEWSECOND);
-    chVTSetI(&ITmr, MS2ST(TM_DOSE_INCREASE_MS), TmrOneSecondCallback, nullptr);
+    chVTSetI(&ITmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
     chSysUnlockFromIsr();
 }
 #endif
 
 #if 1 // ============================ Keys =====================================
-static void KeyAny() {
-    Beeper.Beep(BeepKey);
-}
-
 static void KeyStart() {
 
 }
-static void KeyTimeUp() {
 
+static void KeyTimeUp() {
+    if(App.State != asIdle) return;
+    Beeper.Beep(BeepKey);
 }
 static void KeyTimeDown() {
-
+    if(App.State != asIdle) return;
+    Beeper.Beep(BeepKey);
 }
 static void KeyCurrentUp() {
-
+    if(App.State != asIdle) return;
+    Beeper.Beep(BeepKey);
 }
 static void KeyCurrentDown() {
-
+    if(App.State != asIdle) return;
+    Beeper.Beep(BeepKey);
 }
-static void KeyStartLong() {
 
+static void KeyStartLong() {
+    if(App.State == asStandBy) {
+        Beeper.Beep(BeepWake);
+        App.State = asIdle;
+        Lcd.Backlight(50);
+    }
+    else {
+        Beeper.Beep(BeepStandBy);
+        App.State = asStandBy;
+        Lcd.Backlight(0);
+    }
 }
 #endif
 
@@ -61,14 +72,14 @@ static void AppThread(void *arg) {
     while(true) {
         EvtMsk = chEvtWaitAny(ALL_EVENTS);
         // Keys
-        if(EvtMsk & EVTMSK_KEY_START)        { KeyStart();       KeyAny(); }
-        if(EvtMsk & EVTMSK_KEY_TIME_UP)      { KeyTimeUp();      KeyAny(); }
-        if(EvtMsk & EVTMSK_KEY_TIME_DOWN)    { KeyTimeDown();    KeyAny(); }
-        if(EvtMsk & EVTMSK_KEY_CURRENT_UP)   { KeyCurrentUp();   KeyAny(); }
-        if(EvtMsk & EVTMSK_KEY_CURRENT_DOWN) { KeyCurrentDown(); KeyAny(); }
-        if(EvtMsk & EVTMSK_KEY_START_LONG)   { KeyStartLong();   KeyAny(); }
+        if(EvtMsk & EVTMSK_KEY_START)        KeyStart();
+        if(EvtMsk & EVTMSK_KEY_TIME_UP)      KeyTimeUp();
+        if(EvtMsk & EVTMSK_KEY_TIME_DOWN)    KeyTimeDown();
+        if(EvtMsk & EVTMSK_KEY_CURRENT_UP)   KeyCurrentUp();
+        if(EvtMsk & EVTMSK_KEY_CURRENT_DOWN) KeyCurrentDown();
+        if(EvtMsk & EVTMSK_KEY_START_LONG)   KeyStartLong();
 
-        // TIme
+        // Time
         if(EvtMsk & EVTMASK_NEWSECOND) {
         }
     } // while 1
@@ -87,6 +98,7 @@ void App_t::Init() {
     Lcd.Symbols(7, 6, LineVertDouble, 1, 0);
     Lcd.Printf (0, 7, " 20:00 %c 1.0 mA", LineVertDouble);
 
+    State = asIdle;
     PThd = chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, (tfunc_t)AppThread, NULL);
     // Timers init
     chSysLock();
