@@ -137,59 +137,14 @@ void Lcd_t::Cls() {
 // ================================= Printf ====================================
 void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
     GotoCharXY(x, y);
-    char c;
-    bool WasPercent = false;
-    va_list Arg;
-    va_start(Arg, S);    // Set pointer to first argument
-    while ((c = *S) != 0) {
-        if (c == '%') {
-            if (WasPercent) {
-                DrawChar(c, NotInverted);  // %%
-                WasPercent = false;
-            }
-            else WasPercent = true;
-        }
-        else { // not %
-            if (WasPercent) {
-                if (c == 'c') DrawChar((uint8_t)va_arg(Arg, int32_t), NotInverted);
-                else if (c == 'u') PrintUint(va_arg(Arg, uint32_t));
-                else if (c == 'd') PrintInt(va_arg(Arg, int32_t));
-//                else if (c == 'X') PrintAsHex(va_arg(Arg, uint32_t));
-//                else if ((c == 's') || (c == 'S')) PrintString(va_arg(Arg, char*));
-//                else if (c == 'H') Print8HexArray(va_arg(Arg, uint8_t*), va_arg(Arg, uint32_t));
-                WasPercent = false;
-            } // if was percent
-            else DrawChar(c, NotInverted);
-        }
-        S++;
-    } // while
-    va_end(Arg);
-}
-void Lcd_t::PrintUint (uint32_t ANumber) {
-    uint8_t digit = '0';
-    bool ShouldPrint = false;
-    const uint32_t m[9] = {1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10};
-
-    for(uint8_t i=0; i<9; i++) {
-        while (ANumber >= m[i]) {
-            digit++;
-            ANumber -= m[i];
-        }
-        if (digit != '0' || ShouldPrint) {
-            DrawChar(digit, NotInverted);
-            ShouldPrint = true;
-        }
-        digit = '0';
-    } // for
-    DrawChar((uint8_t)('0'+ANumber), NotInverted);
-}
-
-void Lcd_t::PrintInt (int32_t ANumber) {
-    if (ANumber < 0) {
-        DrawChar('-', NotInverted);
-        ANumber = -ANumber;
-    }
-    PrintUint (ANumber);
+    char FBuf[17];
+    // Printf to buffer
+    va_list args;
+    va_start(args, S);
+    uint32_t Cnt = tiny_vsprintf(FBuf, 17, S, args);
+    va_end(args);
+    // Draw what printed
+    for(uint32_t i=0; i<Cnt; i++) DrawChar(FBuf[i], NotInverted);
 }
 
 // ================================ Graphics ===================================

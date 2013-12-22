@@ -26,9 +26,14 @@
   };
 */
 #define BEEP_VOLUME     1   // set to 10 in production, and to 1 when someone sleeps near
-const BeepChunk_t BeepKey[] = {
+const BeepChunk_t BeepKeyOk[] = {
         {BEEP_VOLUME, 1975, 54, ckStop},
 };
+
+const BeepChunk_t BeepKeyErr[] = {
+        {BEEP_VOLUME, 1000, 54, ckStop},
+};
+
 
 const BeepChunk_t BeepBeep[] = {
         {BEEP_VOLUME, 1975, 54, ckNormal},
@@ -43,8 +48,8 @@ const BeepChunk_t BeepWake[] = {
 };
 
 const BeepChunk_t BeepStandBy[] = {
-        {BEEP_VOLUME, 2794, 180, ckNormal},
-        {BEEP_VOLUME, 2349, 180, ckNormal},
+        {BEEP_VOLUME, 2960, 180, ckNormal},
+        {BEEP_VOLUME, 2489, 180, ckNormal},
         {BEEP_VOLUME, 1975, 180, ckStop},
 };
 

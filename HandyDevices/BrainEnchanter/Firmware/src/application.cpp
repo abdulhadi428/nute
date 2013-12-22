@@ -14,6 +14,7 @@
 #include "evt_mask.h"
 
 App_t App;
+
 #define UART_RPL_BUF_SZ     36
 //static uint8_t SBuf[UART_RPL_BUF_SZ];
 
@@ -27,6 +28,51 @@ void TmrOneSecondCallback(void *p) {
 }
 #endif
 
+#if 1 // ============================ Current ==================================
+class Current_t {
+private:
+public:
+    int32_t uA;
+    uint8_t M_Set, M_Now, S_Now;
+    uint32_t Get_mA_Whole() { return uA / 1000; }
+    uint32_t Get_mA_Fract() { return (uA % 1000) / 100; }
+    void Reset() {
+        uA = CURRENT_INIT_uA;
+        M_Set = 18;
+        M_Now = 0;
+        S_Now = 0;
+    }
+
+};
+
+static Current_t Current;
+#endif
+
+#if 1 // ============================ Interface ================================
+class Interface_t {
+public:
+    void DisplayCurrentSet() { Lcd.Printf(9, 7, "%u.%u mA", Current.Get_mA_Whole(), Current.Get_mA_Fract()); }
+    void DisplayCurrentMeasured() {}
+    void DisplayTimeSet() { Lcd.Printf(0, 7, "%02u:00", Current.M_Set); }
+    void Reset() {
+        Lcd.PrintfFont(Times_New_Roman18x16, 18, 0, "0.0 mA ");
+        Lcd.PrintfFont(Times_New_Roman18x16, 27, 2, "--:--");
+        Lcd.Symbols(0, 4,
+                LineHorizDouble, 7,
+                LineHorizDoubleDown, 1,
+                LineHorizDouble, 8,
+                0);
+        Lcd.Printf (0, 5, " Time  %c Current", LineVertDouble);
+        Lcd.Symbols(7, 6, LineVertDouble, 1, 0);
+        Lcd.Symbols(7, 7, LineVertDouble, 1, 0);
+        DisplayCurrentSet();
+        DisplayTimeSet();
+    }
+};
+
+static Interface_t Interface;
+#endif
+
 #if 1 // ============================ Keys =====================================
 static void KeyStart() {
 
@@ -34,19 +80,40 @@ static void KeyStart() {
 
 static void KeyTimeUp() {
     if(App.State != asIdle) return;
-    Beeper.Beep(BeepKey);
+    if(Current.M_Set < MINUTES_MAX) {
+        Beeper.Beep(BeepKeyOk);
+        Current.M_Set++;
+    }
+    else Beeper.Beep(BeepKeyErr);
+    Interface.DisplayTimeSet();
 }
 static void KeyTimeDown() {
     if(App.State != asIdle) return;
-    Beeper.Beep(BeepKey);
+    if(Current.M_Set > MINUTES_MIN) {
+        Beeper.Beep(BeepKeyOk);
+        Current.M_Set--;
+    }
+    else Beeper.Beep(BeepKeyErr);
+    Interface.DisplayTimeSet();
 }
+
 static void KeyCurrentUp() {
     if(App.State != asIdle) return;
-    Beeper.Beep(BeepKey);
+    if((Current.uA + CURRENT_STEP_uA) <= CURRENT_MAX_uA) {
+        Beeper.Beep(BeepKeyOk);
+        Current.uA += CURRENT_STEP_uA;
+    }
+    else Beeper.Beep(BeepKeyErr);
+    Interface.DisplayCurrentSet();
 }
 static void KeyCurrentDown() {
     if(App.State != asIdle) return;
-    Beeper.Beep(BeepKey);
+    if((Current.uA - CURRENT_STEP_uA) >= CURRENT_MIN_uA) {
+        Beeper.Beep(BeepKeyOk);
+        Current.uA -= CURRENT_STEP_uA;
+    }
+    else Beeper.Beep(BeepKeyErr);
+    Interface.DisplayCurrentSet();
 }
 
 static void KeyStartLong() {
@@ -86,18 +153,8 @@ static void AppThread(void *arg) {
 }
 
 void App_t::Init() {
-    // Interface init
-    Lcd.PrintfFont(Times_New_Roman18x16, 18, 0, "0.0 mA ");
-    Lcd.PrintfFont(Times_New_Roman18x16, 27, 2, "18:00");
-    Lcd.Symbols(0, 4,
-            LineHorizDouble, 7,
-            LineHorizDoubleDown, 1,
-            LineHorizDouble, 8,
-            0);
-    Lcd.Printf (0, 5, " Time  %c Current", LineVertDouble);
-    Lcd.Symbols(7, 6, LineVertDouble, 1, 0);
-    Lcd.Printf (0, 7, " 20:00 %c 1.0 mA", LineVertDouble);
-
+    Current.Reset();
+    Interface.Reset();
     State = asIdle;
     PThd = chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, (tfunc_t)AppThread, NULL);
     // Timers init

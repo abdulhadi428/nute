@@ -40,6 +40,11 @@ void Keys_t::ITask() {
         // Check if just released
         else if(!PressedNow and Key[i].IsPressed) {
             Key[i].IsPressed = false;
+            if(!Key[i].IsLongPress) {
+                chSysLock();
+                chEvtSignalI(App.PThd, KeyData[i].EvtMskRelease);
+                chSysUnlock();
+            }
         }
         // Check if still pressed
         else if(PressedNow and Key[i].IsPressed) {
