@@ -12,6 +12,7 @@
 #include "eestore.h"
 #include "lcd1200.h"
 #include "evt_mask.h"
+#include "current.h"
 
 App_t App;
 
@@ -26,26 +27,6 @@ void TmrOneSecondCallback(void *p) {
     chVTSetI(&ITmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
     chSysUnlockFromIsr();
 }
-#endif
-
-#if 1 // ============================ Current ==================================
-class Current_t {
-private:
-public:
-    int32_t uA;
-    uint8_t M_Set, M_Now, S_Now;
-    uint32_t Get_mA_Whole() { return uA / 1000; }
-    uint32_t Get_mA_Fract() { return (uA % 1000) / 100; }
-    void Reset() {
-        uA = CURRENT_INIT_uA;
-        M_Set = 18;
-        M_Now = 0;
-        S_Now = 0;
-    }
-
-};
-
-static Current_t Current;
 #endif
 
 #if 1 // ============================ Interface ================================
@@ -74,10 +55,6 @@ static Interface_t Interface;
 #endif
 
 #if 1 // ============================ Keys =====================================
-static void KeyStart() {
-
-}
-
 static void KeyTimeUp() {
     if(App.State != asIdle) return;
     if(Current.M_Set < MINUTES_MAX) {
@@ -114,6 +91,11 @@ static void KeyCurrentDown() {
     }
     else Beeper.Beep(BeepKeyErr);
     Interface.DisplayCurrentSet();
+}
+
+static void KeyStart() {
+    Beeper.Beep(BeepKeyOk);
+    Current.On();
 }
 
 static void KeyStartLong() {
@@ -153,6 +135,7 @@ static void AppThread(void *arg) {
 }
 
 void App_t::Init() {
+    Current.Init();
     Current.Reset();
     Interface.Reset();
     State = asIdle;
