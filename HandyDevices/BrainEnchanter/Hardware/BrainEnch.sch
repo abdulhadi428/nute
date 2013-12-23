@@ -14,7 +14,7 @@ $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "11 dec 2013"
+Date "23 dec 2013"
 Rev ""
 Comp ""
 Comment1 ""
@@ -1025,7 +1025,7 @@ L R R9
 U 1 1 52909D3B
 P 13050 3000
 F 0 "R9" V 13130 2850 50  0000 C CNN
-F 1 "1k" V 13050 3000 50  0000 C CNN
+F 1 "4.7k" V 13050 3000 50  0000 C CNN
 F 2 "RES_0603" V 13130 3100 28  0000 C CNN
 F 3 "" H 13050 3000 60  0000 C CNN
 	1    13050 3000
@@ -1726,4 +1726,6 @@ F 3 "~" H 14750 2800 60  0000 C CNN
 	1    14750 2800
 	1    0    0    -1  
 $EndComp
+Text Notes 11700 2950 0    60   ~ 0
+R9: 1k -> 4.7k
 $EndSCHEMATC

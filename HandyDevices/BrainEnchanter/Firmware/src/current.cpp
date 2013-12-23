@@ -21,6 +21,6 @@ void Current_t::Init() {
 }
 
 void Current_t::On() {
-    uint16_t w = uA;
+    uint32_t w = ((uA * 3800) - 104000) / 5902;
     DAC->DHR12R1 = w;
 }
