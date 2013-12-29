@@ -67,7 +67,6 @@ enum APBDiv_t {apbDiv1=0b000, apbDiv2=0b100, apbDiv4=0b101, apbDiv8=0b110, apbDi
 class Clk_t {
 private:
     uint8_t HSEEnable();
-    uint8_t HSIEnable();
     uint8_t PLLEnable();
     uint8_t MSIEnable();
 public:
@@ -81,6 +80,7 @@ public:
     uint8_t SwitchToPLL();
     uint8_t SwitchToMSI();
     void HSEDisable() { RCC->CR &= ~RCC_CR_HSEON; }
+    uint8_t HSIEnable();
     void HSIDisable() { RCC->CR &= ~RCC_CR_HSION; }
     void PLLDisable() { RCC->CR &= ~RCC_CR_PLLON; }
     void MSIDisable() { RCC->CR &= ~RCC_CR_MSION; }

@@ -23,7 +23,7 @@ static VirtualTimer ITmr;
 void TmrOneSecondCallback(void *p) {
     chSysLockFromIsr();
     chEvtSignalI(App.PThd, EVTMSK_NEWSECOND);
-    chVTSetI(&ITmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
+    chVTSetI(&ITmr, MS2ST(10000), TmrOneSecondCallback, nullptr);   // FIXME
     chSysUnlockFromIsr();
 }
 #endif
@@ -37,8 +37,9 @@ public:
         Uart.Printf("Curr=%u\r", adc);
    }
     void DisplayBattery() {
-        uint32_t adc = Measure.GetResult(BATTERY_CHNL);
-        Uart.Printf("Batt=%u\r", adc);
+        uint32_t tmp = Measure.GetResult(BATTERY_CHNL);
+        tmp = (tmp * 3320) / 4096;
+        Uart.Printf("%u\r", tmp);
     }
     void DisplayTimeSet() { Lcd.Printf(0, 7, "%02u:00", Current.M_Set); }
 
@@ -143,7 +144,7 @@ static void AppThread(void *arg) {
         // Measurement
         if(EvtMsk & EVTMSK_MEASUREMENT_DONE) {
             Interface.DisplayBattery();
-            Interface.DisplayCurrentMeasured();
+//            Interface.DisplayCurrentMeasured();
         }
     } // while 1
 }
@@ -158,7 +159,7 @@ void App_t::Init() {
     Measure.PThreadToSignal = PThd;
     // Timers init
     chSysLock();
-    chVTSetI(&ITmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
+    chVTSetI(&ITmr, MS2ST(10000), TmrOneSecondCallback, nullptr);   // FIXME
     chSysUnlock();
 }
 #endif
