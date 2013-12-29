@@ -12,18 +12,17 @@
 #include "eestore.h"
 #include "lcd1200.h"
 #include "evt_mask.h"
-#include "current.h"
+#include "power.h"
 
 App_t App;
 
-#define UART_RPL_BUF_SZ     36
 //static uint8_t SBuf[UART_RPL_BUF_SZ];
 
 #if 1 // ============================ Timers ===================================
 static VirtualTimer ITmr;
 void TmrOneSecondCallback(void *p) {
     chSysLockFromIsr();
-    chEvtSignalI(App.PThd, EVTMASK_NEWSECOND);
+    chEvtSignalI(App.PThd, EVTMSK_NEWSECOND);
     chVTSetI(&ITmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
     chSysUnlockFromIsr();
 }
@@ -33,8 +32,16 @@ void TmrOneSecondCallback(void *p) {
 class Interface_t {
 public:
     void DisplayCurrentSet() { Lcd.Printf(9, 7, "%u.%u mA", Current.Get_mA_Whole(), Current.Get_mA_Fract()); }
-    void DisplayCurrentMeasured() {}
+    void DisplayCurrentMeasured() {
+        uint32_t adc = Measure.GetResult(CURRENT_CHNL);
+        Uart.Printf("Curr=%u\r", adc);
+   }
+    void DisplayBattery() {
+        uint32_t adc = Measure.GetResult(BATTERY_CHNL);
+        Uart.Printf("Batt=%u\r", adc);
+    }
     void DisplayTimeSet() { Lcd.Printf(0, 7, "%02u:00", Current.M_Set); }
+
     void Reset() {
         Lcd.PrintfFont(Times_New_Roman18x16, 18, 0, "0.0 mA ");
         Lcd.PrintfFont(Times_New_Roman18x16, 27, 2, "--:--");
@@ -129,17 +136,26 @@ static void AppThread(void *arg) {
         if(EvtMsk & EVTMSK_KEY_START_LONG)   KeyStartLong();
 
         // Time
-        if(EvtMsk & EVTMASK_NEWSECOND) {
+        if(EvtMsk & EVTMSK_NEWSECOND) {
+            Measure.StartMeasurement();
+        }
+
+        // Measurement
+        if(EvtMsk & EVTMSK_MEASUREMENT_DONE) {
+            Interface.DisplayBattery();
+            Interface.DisplayCurrentMeasured();
         }
     } // while 1
 }
 
 void App_t::Init() {
-    Current.Init();
-    Current.Reset();
+    Current.InitHardware();
+    Current.ResetValues();
+    Measure.InitHardware();
     Interface.Reset();
     State = asIdle;
     PThd = chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, (tfunc_t)AppThread, NULL);
+    Measure.PThreadToSignal = PThd;
     // Timers init
     chSysLock();
     chVTSetI(&ITmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
@@ -148,6 +164,8 @@ void App_t::Init() {
 #endif
 
 #if 1 // ======================= Command processing ============================
+#define UART_RPL_BUF_SZ     36
+
 void Ack(uint8_t Result) { Uart.Cmd(0x90, &Result, 1); }
 
 void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
