@@ -2,6 +2,7 @@
 #include "lcd_font.h"
 #include "string.h"
 #include <stdarg.h>
+#include "cmd_uart.h"
 
 #include "tiny_sprintf.h"
 
@@ -165,20 +166,21 @@ void Lcd_t::DrawChar(uint8_t AChar, Invert_t AInvert) {
 }
 
 void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img) {
-    uint16_t i=0;
-    uint8_t Width = Img[i++], Height = Img[i++];
-    for(uint8_t fy=y; fy<y+Height; fy++) {
+    uint8_t *p = (uint8_t*)Img;
+    uint16_t w;
+    uint8_t Width = *p++, Height = *p++;
+    for(uint8_t fy=y; fy < y+Height; fy++) {
         GotoXY(x, fy);
-        for(uint8_t fx=x; fx<x+Width; fx++) {
-            IBuf[CurrentPosition++] = Img[i++];
+        for(uint8_t fx=x; fx < x+Width; fx++) {
+            w = *p++;
+            w = (w << 1) | 0x0001;
+            IBuf[CurrentPosition++] = w;
             if(CurrentPosition >= LCD_VIDEOBUF_SIZE) continue;
         } // fx
     } // fy
 }
 
 #ifdef LCD_LARGEFONTS_H_ // ================== LargeFonts ======================
-#include "cmd_uart.h"
-
 void Lcd_t::PrintfFont(const uint8_t *PFont, uint8_t x, uint8_t y, const char *S, ...) {
     uint32_t height = PFont[2], MaxWidth = PFont[1];
     uint8_t FirstSymbolCode = PFont[0];

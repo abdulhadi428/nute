@@ -68,8 +68,7 @@ private:
     void WriteCmd(uint8_t ACmd);
     void WriteData(uint8_t AData);
     // High-level
-    // High-level
-    void GotoXY(uint8_t x, uint8_t y);
+    void GotoXY(uint8_t x, uint8_t y) { CurrentPosition =  x + y*96; }
     void PrintUint (uint32_t ANumber);
     void PrintInt (int32_t ANumber);
     void PrintString (const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert);

@@ -14,6 +14,7 @@
 #include "evt_mask.h"
 #include "power.h"
 #include "battery_consts.h"
+#include "images.h"
 
 App_t App;
 
@@ -43,6 +44,7 @@ public:
         Uart.Printf("%u ", tmp);
         tmp = mV2PercentAlkaline(tmp);
         Uart.Printf("%u\r", tmp);
+        Lcd.DrawImage(81, 0, iconBatteryFull);
     }
     void DisplayTimeSet() { Lcd.Printf(0, 7, "%02u:00", Current.M_Set); }
 
