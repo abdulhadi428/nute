@@ -11,7 +11,7 @@
 #include "stm32l1xx.h"
 
 /*
- * Right after reset, CPU works on internal (HSI) source.
+ * Right after reset, CPU works on internal MSI source.
  * To switch to external src (HSE) without dividing (i.e. SysClk == CrystalFreq),
  * call SwitchToHSE(), and then optionally HSIDisable().
  * To switch from HSE to HSI, call SwitchToHSI() then optionally HSEDisable().
@@ -19,8 +19,6 @@
  * with SetupPLLDividers(), then call SwitchToPLL(). Then disable HSI if needed.
  *
  * Do not forget to update Freq values after switching.
- *
- * Flash latency requires no attention as top freq of 24 MHz is too low to affect Flash.
  *
  * AHB  freq max = 32 MHz;
  * APB1 freq max = 32 MHz;
@@ -69,7 +67,6 @@ enum APBDiv_t {apbDiv1=0b000, apbDiv2=0b100, apbDiv4=0b101, apbDiv8=0b110, apbDi
 class Clk_t {
 private:
     uint8_t HSEEnable();
-    uint8_t HSIEnable();
     uint8_t PLLEnable();
     uint8_t MSIEnable();
 public:
@@ -83,6 +80,7 @@ public:
     uint8_t SwitchToPLL();
     uint8_t SwitchToMSI();
     void HSEDisable() { RCC->CR &= ~RCC_CR_HSEON; }
+    uint8_t HSIEnable();
     void HSIDisable() { RCC->CR &= ~RCC_CR_HSION; }
     void PLLDisable() { RCC->CR &= ~RCC_CR_PLLON; }
     void MSIDisable() { RCC->CR &= ~RCC_CR_MSION; }
@@ -105,14 +103,5 @@ extern Clk_t Clk;
 enum VCore_t {vcore1V2=0b11, vcore1V5=0b10, vcore1V8=0b01};
 extern VCore_t VCore;
 void SetupVCore(VCore_t AVCore);
-
-/*
- * Early initialization code.
- * This initialization must be performed just after stack setup and before
- * any other initialization.
- */
-extern "C" {
-void __early_init(void);
-}
 
 #endif /* CLOCKING_H_ */
