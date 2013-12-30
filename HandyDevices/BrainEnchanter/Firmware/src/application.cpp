@@ -14,7 +14,7 @@
 #include "evt_mask.h"
 #include "power.h"
 #include "battery_consts.h"
-#include "images.h"
+#include "lcd_images.h"
 
 App_t App;
 
@@ -41,10 +41,14 @@ public:
     void DisplayBattery() {
         uint32_t tmp = Measure.GetResult(BATTERY_CHNL);
         tmp = (tmp * 3320) / 4096;  // Calculate voltage, mV, from ADC value
-        Uart.Printf("%u ", tmp);
+        //Uart.Printf("%u ", tmp);
         tmp = mV2PercentAlkaline(tmp);
-        Uart.Printf("%u\r", tmp);
-        Lcd.DrawImage(81, 0, iconBatteryFull);
+        //Uart.Printf("%u\r", tmp);
+        if     (tmp > 80) Lcd.DrawImage(90, 0, iconBattery80_100);
+        else if(tmp > 60) Lcd.DrawImage(90, 0, iconBattery60_80);
+        else if(tmp > 40) Lcd.DrawImage(90, 0, iconBattery40_60);
+        else if(tmp > 20) Lcd.DrawImage(90, 0, iconBattery20_40);
+        else              Lcd.DrawImage(90, 0, iconBattery0_20);
     }
     void DisplayTimeSet() { Lcd.Printf(0, 7, "%02u:00", Current.M_Set); }
 
