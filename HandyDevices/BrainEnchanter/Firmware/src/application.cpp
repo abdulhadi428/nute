@@ -13,6 +13,7 @@
 #include "lcd1200.h"
 #include "evt_mask.h"
 #include "power.h"
+#include "battery_consts.h"
 
 App_t App;
 
@@ -23,7 +24,7 @@ static VirtualTimer ITmr;
 void TmrOneSecondCallback(void *p) {
     chSysLockFromIsr();
     chEvtSignalI(App.PThd, EVTMSK_NEWSECOND);
-    chVTSetI(&ITmr, MS2ST(10000), TmrOneSecondCallback, nullptr);   // FIXME
+    chVTSetI(&ITmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
     chSysUnlockFromIsr();
 }
 #endif
@@ -38,7 +39,9 @@ public:
    }
     void DisplayBattery() {
         uint32_t tmp = Measure.GetResult(BATTERY_CHNL);
-        tmp = (tmp * 3320) / 4096;
+        tmp = (tmp * 3320) / 4096;  // Calculate voltage, mV, from ADC value
+        Uart.Printf("%u ", tmp);
+        tmp = mV2PercentAlkaline(tmp);
         Uart.Printf("%u\r", tmp);
     }
     void DisplayTimeSet() { Lcd.Printf(0, 7, "%02u:00", Current.M_Set); }
@@ -159,7 +162,7 @@ void App_t::Init() {
     Measure.PThreadToSignal = PThd;
     // Timers init
     chSysLock();
-    chVTSetI(&ITmr, MS2ST(10000), TmrOneSecondCallback, nullptr);   // FIXME
+    chVTSetI(&ITmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
     chSysUnlock();
 }
 #endif
