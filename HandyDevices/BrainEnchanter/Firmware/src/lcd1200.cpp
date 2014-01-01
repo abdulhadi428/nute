@@ -136,13 +136,15 @@ void Lcd_t::Cls() {
     for (uint32_t i=0; i < LCD_VIDEOBUF_SIZE; i++) IBuf[i] = 0x0001;
 }
 // ================================= Printf ====================================
+static inline void FLcdPutChar(char c) { }
+
 void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
     GotoCharXY(x, y);
 //    char FBuf[17];
     // Printf to buffer
     va_list args;
     va_start(args, S);
-//    uint32_t Cnt = tiny_vsprintf(FBuf, 17, S, args);  // FIXME
+    kl_vsprintf(FLcdPutChar, 16, S, args);
     va_end(args);
     // Draw what printed
     //for(uint32_t i=0; i<Cnt; i++) DrawChar(FBuf[i], NotInverted); // FIXME

@@ -14,21 +14,16 @@ Supported format specifiers:
 %A - pair (uint8_t *arr, int len) as hex array
 */
 
-class vsPrintf_t {
-private:
-    char *PBuf;
-    uint32_t IBufSz;
-    void IPutChar(char c) {
-        *PWrite++ = c;
-        if(PWrite >= &PBuf[IBufSz]) PWrite = PBuf;  // Circulate buff
-        CharCnt++;
-    }
-    void IPutUint(uint32_t MaxLength, uint32_t n, uint32_t base, uint32_t width, bool zero_padded);
-public:
-    char *PWrite;
-    void Init(char *Ptr, uint32_t Sz) { PBuf = Ptr; PWrite = Ptr; IBufSz = Sz; }
-    uint32_t CharCnt;
-    void vsprintf(uint32_t MaxLength, const char *format, va_list args);
-};
+#ifndef ftVoidChar
+typedef void(*ftVoidChar)(char);
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+uint32_t kl_vsprintf(ftVoidChar PPutChar, uint32_t MaxLength, const char *format, va_list args);
+#ifdef __cplusplus
+}
+#endif
 
 #endif

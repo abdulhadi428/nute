@@ -55,8 +55,7 @@ enum RcvState_t {rsStart, rsCmdCode1, rsCmdCode2, rsData1, rsData2};
 class CmdUart_t {
 private:
     char TXBuf[UART_TXBUF_SIZE];
-    vsPrintf_t IPrtf;
-    char *PRead;
+    char *PRead, *PWrite;
     bool IDmaIsIdle;
     uint32_t IFullSlotsCount, ITransSize;
 #if UART_RX_ENABLED
@@ -79,6 +78,7 @@ public:
     void Cmd(uint8_t CmdCode, uint8_t *PData, uint32_t Length) { Printf("#%X,%A\r\n", CmdCode, PData, Length, 0); }
     // Inner use
     void IRQDmaTxHandler();
+    void IPutChar(char c);
 #if UART_RX_ENABLED
     // Inner use
     void IRxTask();
