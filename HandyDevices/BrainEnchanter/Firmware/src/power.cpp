@@ -16,17 +16,24 @@ void Current_t::InitHardware() {
     PinSetupOut(GPIOA, 15, omPushPull); // 12V_enable pin
     DisableHighV();
     // ==== DAC ====
-    PinSetupAnalog(GPIOA, 4);
     rccEnableAPB1(RCC_APB1ENR_DACEN, FALSE);
     DAC->CR = DAC_CR_EN1;   // Channel1 enabled, buffer disabled
     DAC->DHR12R1 = 0;
-
+    Off();
 }
 
 void Current_t::On() {
+    PinSetupAnalog(GPIOA, 4);
     uint32_t w = ((uA * 3800) - 104000) / 5902;
     DAC->DHR12R1 = w;
 }
+
+void Current_t::Off() {
+    DAC->DHR12R1 = 0;
+    PinSetupOut(GPIOA, 4, omPushPull, pudNone);
+    PinClear(GPIOA, 4);
+}
+
 #endif
 
 #if 1 // ========================= Measurement =================================

@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include "cmd_uart.h"
 
-#include "tiny_sprintf.h"
+#include "kl_sprintf.h"
 
 #define LCD_DMA_TX_MODE     DMA_PRIORITY_LOW | \
                             STM32_DMA_CR_MSIZE_HWORD | \
@@ -138,14 +138,14 @@ void Lcd_t::Cls() {
 // ================================= Printf ====================================
 void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
     GotoCharXY(x, y);
-    char FBuf[17];
+//    char FBuf[17];
     // Printf to buffer
     va_list args;
     va_start(args, S);
-    uint32_t Cnt = tiny_vsprintf(FBuf, 17, S, args);
+//    uint32_t Cnt = tiny_vsprintf(FBuf, 17, S, args);  // FIXME
     va_end(args);
     // Draw what printed
-    for(uint32_t i=0; i<Cnt; i++) DrawChar(FBuf[i], NotInverted);
+    //for(uint32_t i=0; i<Cnt; i++) DrawChar(FBuf[i], NotInverted); // FIXME
 }
 
 // ================================ Graphics ===================================

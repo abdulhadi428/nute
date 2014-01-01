@@ -18,8 +18,6 @@
 
 App_t App;
 
-//static uint8_t SBuf[UART_RPL_BUF_SZ];
-
 #if 1 // ============================ Timers ===================================
 static VirtualTimer ITmr;
 void TmrOneSecondCallback(void *p) {
@@ -33,10 +31,13 @@ void TmrOneSecondCallback(void *p) {
 #if 1 // ============================ Interface ================================
 class Interface_t {
 public:
-    void DisplayCurrentSet() { Lcd.Printf(9, 7, "%u.%u mA", Current.Get_mA_Whole(), Current.Get_mA_Fract()); }
+    void DisplayCurrentSet() { Lcd.Printf(9, 7, "%u.%u mA", Current.uA2mA_Whole(Current.uA), Current.uA2mA_Fract(Current.uA)); }
     void DisplayCurrentMeasured() {
-        uint32_t adc = Measure.GetResult(CURRENT_CHNL);
-        Uart.Printf("Curr=%u\r", adc);
+        uint32_t tmp = Measure.GetResult(CURRENT_CHNL);
+        Uart.Printf("adc=%u; ", tmp);
+        tmp = Current.Adc2uA(tmp);
+        Uart.Printf("curr=%u\r", tmp);
+        Lcd.PrintfFont(Times_New_Roman18x16, 18, 0, "%u.%u mA ", Current.uA2mA_Whole(tmp), Current.uA2mA_Fract(tmp));
    }
     void DisplayBattery() {
         uint32_t tmp = Measure.GetResult(BATTERY_CHNL);
@@ -112,7 +113,14 @@ static void KeyCurrentDown() {
 
 static void KeyStart() {
     Beeper.Beep(BeepKeyOk);
-    Current.On();
+    if(App.State == asIdle) {
+        Current.On();
+        App.State = asCurrent;
+    }
+    else if(App.State == asCurrent) {
+        Current.Off();
+        App.State = asIdle;
+    }
 }
 
 static void KeyStartLong() {
@@ -153,7 +161,7 @@ static void AppThread(void *arg) {
         // Measurement
         if(EvtMsk & EVTMSK_MEASUREMENT_DONE) {
             Interface.DisplayBattery();
-//            Interface.DisplayCurrentMeasured();
+            Interface.DisplayCurrentMeasured();
         }
     } // while 1
 }

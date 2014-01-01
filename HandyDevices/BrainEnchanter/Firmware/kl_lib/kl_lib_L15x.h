@@ -62,11 +62,6 @@ typedef void (*ftVoidVoid)(void);
 #define ANY_OF_4(a, b1, b2, b3, b4)     (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)) or ((a)==(b4)))
 #define ANY_OF_5(a, b1, b2, b3, b4, b5) (((a)==(b1)) or ((a)==(b2)) or ((a)==(b3)) or ((a)==(b4)) or ((a)==(b5)))
 
-// Memcpy
-static inline void MemCopy(uint8_t *PDst, const uint8_t *PSrc, uint32_t Sz) {
-    while(Sz--) *PDst++ = *PSrc++;
-}
-
 // IRQ priorities
 #define IRQ_PRIO_LOW            15  // Minimum
 #define IRQ_PRIO_MEDIUM         9

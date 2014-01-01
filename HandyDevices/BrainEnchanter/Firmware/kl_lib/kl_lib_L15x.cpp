@@ -8,7 +8,6 @@
 #include "kl_lib_L15x.h"
 #include <stdarg.h>
 #include <string.h>
-#include "tiny_sprintf.h"
 #include "cmd_uart.h"
 
 #if 1 // ============================= Timer ===================================

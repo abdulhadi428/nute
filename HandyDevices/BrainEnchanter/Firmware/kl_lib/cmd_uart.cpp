@@ -6,36 +6,37 @@
  */
 
 #include "cmd_uart.h"
-#include "tiny_sprintf.h"
+#include <string.h>
 
 CmdUart_t Uart;
 
 void CmdUart_t::Printf(const char *format, ...) {
+    uint32_t MaxLength = (IPrtf.PWrite < PRead)? (PRead - IPrtf.PWrite) : ((UART_TXBUF_SIZE + PRead) - IPrtf.PWrite);
     va_list args;
     va_start(args, format);
-    uint32_t Cnt = tiny_vsprintf(SprintfBuf, UART_TXBUF_SIZE, format, args);
+    IPrtf.vsprintf(MaxLength, format, args);
     va_end(args);
+    IFullSlotsCount += IPrtf.CharCnt;
 
-    // Put data to buffer
-    uint8_t *p = (uint8_t*)SprintfBuf;
-    IFullSlotsCount += Cnt;
-    uint32_t PartSz = (TXBuf + UART_TXBUF_SIZE) - PWrite;  // Data from PWrite to right bound
-    if(Cnt > PartSz) {
-        MemCopy(PWrite, p, PartSz);
-        PWrite = TXBuf;     // Start from beginning
-        p += PartSz;
-        Cnt -= PartSz;
-    }
-    MemCopy(PWrite, p, Cnt);
-    PWrite += Cnt;
-    if(PWrite >= (TXBuf + UART_TXBUF_SIZE)) PWrite = TXBuf; // Circulate pointer
+//    // Put data to buffer
+//    uint8_t *p = nullptr;// (uint8_t*)SprintfBuf;
+//    uint32_t PartSz = (TXBuf + UART_TXBUF_SIZE) - PWrite;  // Data from PWrite to right bound
+//    if(Cnt > PartSz) {
+//        memcpy(PWrite, p, PartSz);
+//        PWrite = TXBuf;     // Start from beginning
+//        p += PartSz;
+//        Cnt -= PartSz;
+//    }
+//    memcpy(PWrite, p, Cnt);
+//    PWrite += Cnt;
+//    if(PWrite >= (TXBuf + UART_TXBUF_SIZE)) PWrite = TXBuf; // Circulate pointer
 
     // Start transmission if Idle
     if(IDmaIsIdle) {
         IDmaIsIdle = false;
         dmaStreamSetMemory0(UART_DMA_TX, PRead);
-        PartSz = (TXBuf + UART_TXBUF_SIZE) - PRead;
-        ITransSize = (IFullSlotsCount > PartSz)? PartSz : IFullSlotsCount;
+        uint32_t PartSz = (TXBuf + UART_TXBUF_SIZE) - PRead;    // Char count from PRead to buffer end
+        ITransSize = (IFullSlotsCount > PartSz)? PartSz : IFullSlotsCount;  // How many to transmit now
         dmaStreamSetTransactionSize(UART_DMA_TX, ITransSize);
         dmaStreamSetMode(UART_DMA_TX, UART_DMA_TX_MODE);
         dmaStreamEnable(UART_DMA_TX);
@@ -132,7 +133,7 @@ void CmdUartTxIrq(void *p, uint32_t flags) { Uart.IRQDmaTxHandler(); }
 }
 
 void CmdUart_t::Init(uint32_t ABaudrate) {
-    PWrite = TXBuf;
+    IPrtf.Init(TXBuf, UART_TXBUF_SIZE);
     PRead = TXBuf;
     IDmaIsIdle = true;
     IFullSlotsCount = 0;
