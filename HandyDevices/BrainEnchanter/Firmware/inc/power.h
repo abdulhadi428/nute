@@ -18,8 +18,8 @@ private:
 public:
     int32_t uA;
     uint8_t M_Set, M_Now, S_Now;
-    uint32_t uA2mA_Whole(uint32_t AuA) { return uA / 1000; }
-    uint32_t uA2mA_Fract(uint32_t AuA) { return (uA % 1000) / 100; }
+    uint32_t uA2mA_Whole(uint32_t AuA) { return (AuA  + 499) / 1000; }
+    uint32_t uA2mA_Fract(uint32_t AuA) { return ((AuA + 499) % 1000) / 100; }
     void InitHardware();
     void ResetValues() {
         uA = CURRENT_INIT_uA;

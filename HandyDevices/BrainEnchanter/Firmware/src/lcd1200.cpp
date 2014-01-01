@@ -136,24 +136,18 @@ void Lcd_t::Cls() {
     for (uint32_t i=0; i < LCD_VIDEOBUF_SIZE; i++) IBuf[i] = 0x0001;
 }
 // ================================= Printf ====================================
-static inline void FLcdPutChar(char c) { }
+static inline void FLcdPutChar(char c) { Lcd.DrawChar(c, NotInverted); }
 
 void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
     GotoCharXY(x, y);
-//    char FBuf[17];
-    // Printf to buffer
     va_list args;
     va_start(args, S);
     kl_vsprintf(FLcdPutChar, 16, S, args);
     va_end(args);
-    // Draw what printed
-    //for(uint32_t i=0; i<Cnt; i++) DrawChar(FBuf[i], NotInverted); // FIXME
 }
 
 // ================================ Graphics ===================================
-/*
- * Prints char at specified buf indx, returns next indx
- */
+// Prints char at current buf indx
 void Lcd_t::DrawChar(uint8_t AChar, Invert_t AInvert) {
     uint8_t b;
     uint16_t w;
@@ -183,23 +177,35 @@ void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img) {
 }
 
 #ifdef LCD_LARGEFONTS_H_ // ================== LargeFonts ======================
+#define FNT_CHAR_BUF_SZ     9
+struct {
+    char Buf[FNT_CHAR_BUF_SZ];
+    uint32_t Cnt;
+} FntBuf;
+static inline void FLcdPutFontChar(char c) { FntBuf.Buf[FntBuf.Cnt++] = c; }
+
 void Lcd_t::PrintfFont(const uint8_t *PFont, uint8_t x, uint8_t y, const char *S, ...) {
+    // Print to buf
+    FntBuf.Cnt = 0;
+    va_list args;
+    va_start(args, S);
+    kl_vsprintf(FLcdPutFontChar, FNT_CHAR_BUF_SZ, S, args);
+    va_end(args);
+    // Display what printed
     uint32_t height = PFont[2], MaxWidth = PFont[1];
     uint8_t FirstSymbolCode = PFont[0];
-    char c;
-    uint16_t w;
-    while((c = *S) != 0) {
+    for(uint32_t i=0; i<FntBuf.Cnt; i++) {
+        char c = FntBuf.Buf[i];
         // ==== Draw char ====
         uint8_t *P = (uint8_t*)PFont + 3 + (c - FirstSymbolCode) * (MaxWidth*height + 1);  // Pointer to char
         uint32_t width = 1 + *P++;
-        uint32_t Indx;
         for(uint8_t i=0; i<width; i++) {
             for(uint8_t h=0; h<height; h++) {
-                Indx = x + i + (y + h) * 96;
+                uint32_t Indx = x + i + (y + h) * 96;
                 uint32_t dw = *P++;
                 dw = __RBIT(dw);
                 dw >>= 23;
-                w = dw | 0x0001;
+                uint16_t w = dw | 0x0001;
                 IBuf[Indx] = w;
             }
         }

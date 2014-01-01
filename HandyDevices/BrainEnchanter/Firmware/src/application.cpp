@@ -34,10 +34,13 @@ public:
     void DisplayCurrentSet() { Lcd.Printf(9, 7, "%u.%u mA", Current.uA2mA_Whole(Current.uA), Current.uA2mA_Fract(Current.uA)); }
     void DisplayCurrentMeasured() {
         uint32_t tmp = Measure.GetResult(CURRENT_CHNL);
-        Uart.Printf("adc=%u; ", tmp);
+        //Uart.Printf("adc=%u; ", tmp);
         tmp = Current.Adc2uA(tmp);
         Uart.Printf("curr=%u\r", tmp);
-        Lcd.PrintfFont(Times_New_Roman18x16, 18, 0, "%u.%u mA ", Current.uA2mA_Whole(tmp), Current.uA2mA_Fract(tmp));
+        uint32_t Whole = Current.uA2mA_Whole(tmp);
+        uint32_t Fract = Current.uA2mA_Fract(tmp);
+//        Uart.Printf("curr=%u; \r", tmp);
+        Lcd.PrintfFont(Times_New_Roman18x16, 11, 0, "%u.%u mA ", Whole, Fract);
    }
     void DisplayBattery() {
         uint32_t tmp = Measure.GetResult(BATTERY_CHNL);
@@ -54,7 +57,7 @@ public:
     void DisplayTimeSet() { Lcd.Printf(0, 7, "%02u:00", Current.M_Set); }
 
     void Reset() {
-        Lcd.PrintfFont(Times_New_Roman18x16, 18, 0, "0.0 mA ");
+        Lcd.PrintfFont(Times_New_Roman18x16, 11, 0, "0.0 mA ");
         Lcd.PrintfFont(Times_New_Roman18x16, 27, 2, "--:--");
         Lcd.Symbols(0, 4,
                 LineHorizDouble, 7,
