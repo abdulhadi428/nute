@@ -29,11 +29,22 @@
 const BeepChunk_t BeepKeyOk[] = {
         {BEEP_VOLUME, 1975, 54, ckStop},
 };
-
 const BeepChunk_t BeepKeyErr[] = {
         {BEEP_VOLUME, 1000, 54, ckStop},
 };
 
+const BeepChunk_t BeepStart[] = {   // Re F# La
+        {BEEP_VOLUME, 1175, 180, ckNormal},
+        {BEEP_VOLUME, 1480, 180, ckNormal},
+        {BEEP_VOLUME, 1720, 180, ckNormal},
+        {BEEP_VOLUME, 2093, 180, ckStop},
+};
+const BeepChunk_t BeepStop[] = {
+        {BEEP_VOLUME, 2093, 180, ckNormal},
+        {BEEP_VOLUME, 1720, 180, ckNormal},
+        {BEEP_VOLUME, 1480, 180, ckNormal},
+        {BEEP_VOLUME, 1175, 180, ckStop},
+};
 
 const BeepChunk_t BeepBeep[] = {
         {BEEP_VOLUME, 1975, 54, ckNormal},

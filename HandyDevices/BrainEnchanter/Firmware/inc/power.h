@@ -15,16 +15,9 @@ class Current_t {
 private:
 public:
     int32_t uA;
-    uint8_t M_Set, M_Now, S_Now;
     uint32_t uA2mA_Whole(uint32_t AuA) { return (AuA  + 5) / 1000; }
     uint32_t uA2mA_Fract(uint32_t AuA) { return ((AuA + 5) % 1000) / 10; }
-    void InitHardware();
-    void ResetValues() {
-        uA = CURRENT_INIT_uA;
-        M_Set = 18;
-        M_Now = 0;
-        S_Now = 0;
-    }
+    void Init();
     void On();
     void Off();
     void HighVEnable()  { PinSet(GPIOA, 15); }

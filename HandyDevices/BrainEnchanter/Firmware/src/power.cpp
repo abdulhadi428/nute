@@ -12,9 +12,10 @@
 #if 1 // ============================== Current ================================
 Current_t Current;
 
-void Current_t::InitHardware() {
+void Current_t::Init() {
     PinSetupOut(GPIOA, 15, omPushPull); // 12V_enable pin
     HighVDisable();
+    uA = CURRENT_INIT_uA;
     // ==== DAC ====
     rccEnableAPB1(RCC_APB1ENR_DACEN, FALSE);
     DAC->CR = DAC_CR_EN1 | DAC_CR_BOFF1;   // Channel1 enabled, buffer disabled

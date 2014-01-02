@@ -41,7 +41,6 @@ int main(void) {
 void Init() {
     Uart.Init(115200);
     Uart.Printf("BrainEnchanter AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
-
     Lcd.Init();
     Lcd.Backlight(50);
 

@@ -36,6 +36,7 @@ public:
     Thread *PThd;
     AppState_t State;
     void Init();
+    void StopEverything();
 };
 
 extern App_t App;
