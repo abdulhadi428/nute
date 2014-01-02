@@ -13,13 +13,11 @@
 
 class Current_t {
 private:
-    void EnableHighV()  { PinSet(GPIOA, 15); }
-    void DisableHighV() { PinClear(GPIOA, 15); }
 public:
     int32_t uA;
     uint8_t M_Set, M_Now, S_Now;
-    uint32_t uA2mA_Whole(uint32_t AuA) { return (AuA  + 499) / 1000; }
-    uint32_t uA2mA_Fract(uint32_t AuA) { return ((AuA + 499) % 1000) / 100; }
+    uint32_t uA2mA_Whole(uint32_t AuA) { return (AuA  + 5) / 1000; }
+    uint32_t uA2mA_Fract(uint32_t AuA) { return ((AuA + 5) % 1000) / 10; }
     void InitHardware();
     void ResetValues() {
         uA = CURRENT_INIT_uA;
@@ -29,7 +27,9 @@ public:
     }
     void On();
     void Off();
-    int32_t Adc2uA(int32_t AdcValue) { return ((3000 * AdcValue) + 26000) / 2873; }
+    void HighVEnable()  { PinSet(GPIOA, 15); }
+    void HighVDisable() { PinClear(GPIOA, 15); }
+    int32_t Adc2uA(int32_t AdcValue) { return ((2801 * AdcValue) + 21742) / 2676; }
 };
 
 extern Current_t Current;

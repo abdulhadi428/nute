@@ -22,9 +22,10 @@
 #define CURRENT_INIT_uA 1000
 #define CURRENT_MAX_uA  4000
 #define CURRENT_MIN_uA  100
-#define CURRENT_STEP_uA 200
+#define CURRENT_STEP_uA 100
 
 // Timings
+#define MEASURE_PERIOD_MS   153
 
 #endif
 

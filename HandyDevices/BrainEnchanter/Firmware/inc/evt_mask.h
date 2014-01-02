@@ -20,5 +20,6 @@
 // Misc
 #define EVTMSK_NEWSECOND        EVENT_MASK(6)
 #define EVTMSK_MEASUREMENT_DONE EVENT_MASK(7)
+#define EVTMSK_MEASURE_TIME     EVENT_MASK(8)
 
 #endif /* EVT_MASK_H_ */

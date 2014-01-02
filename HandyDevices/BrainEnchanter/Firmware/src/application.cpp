@@ -19,11 +19,17 @@
 App_t App;
 
 #if 1 // ============================ Timers ===================================
-static VirtualTimer ITmr;
+static VirtualTimer ITmr, IMeasureTmr;
 void TmrOneSecondCallback(void *p) {
     chSysLockFromIsr();
     chEvtSignalI(App.PThd, EVTMSK_NEWSECOND);
     chVTSetI(&ITmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
+    chSysUnlockFromIsr();
+}
+void MeasureTmrCallback(void *p) {
+    chSysLockFromIsr();
+    chEvtSignalI(App.PThd, EVTMSK_MEASURE_TIME);
+    chVTSetI(&IMeasureTmr, MS2ST(MEASURE_PERIOD_MS), MeasureTmrCallback, nullptr);
     chSysUnlockFromIsr();
 }
 #endif
@@ -31,16 +37,15 @@ void TmrOneSecondCallback(void *p) {
 #if 1 // ============================ Interface ================================
 class Interface_t {
 public:
-    void DisplayCurrentSet() { Lcd.Printf(9, 7, "%u.%u mA", Current.uA2mA_Whole(Current.uA), Current.uA2mA_Fract(Current.uA)); }
+    void DisplayCurrentSet() { Lcd.Printf(9, 7, "%u.%u mA", Current.uA2mA_Whole(Current.uA), Current.uA2mA_Fract(Current.uA)/10); }
     void DisplayCurrentMeasured() {
         uint32_t tmp = Measure.GetResult(CURRENT_CHNL);
-        //Uart.Printf("adc=%u; ", tmp);
+        Uart.Printf("adc=%u; ", tmp);
         tmp = Current.Adc2uA(tmp);
         Uart.Printf("curr=%u\r", tmp);
         uint32_t Whole = Current.uA2mA_Whole(tmp);
         uint32_t Fract = Current.uA2mA_Fract(tmp);
-//        Uart.Printf("curr=%u; \r", tmp);
-        Lcd.PrintfFont(Times_New_Roman18x16, 11, 0, "%u.%u mA ", Whole, Fract);
+        Lcd.PrintfFont(Times_New_Roman18x16, 11, 0, "%u.%02u mA ", Whole, Fract);
    }
     void DisplayBattery() {
         uint32_t tmp = Measure.GetResult(BATTERY_CHNL);
@@ -55,6 +60,9 @@ public:
         else              Lcd.DrawImage(90, 0, iconBattery0_20);
     }
     void DisplayTimeSet() { Lcd.Printf(0, 7, "%02u:00", Current.M_Set); }
+
+    void ShowOn()  { Lcd.Printf (14, 3, "ON"); }
+    void ShowOff() { Lcd.Printf (14, 3, "  "); }
 
     void Reset() {
         Lcd.PrintfFont(Times_New_Roman18x16, 11, 0, "0.0 mA ");
@@ -117,11 +125,16 @@ static void KeyCurrentDown() {
 static void KeyStart() {
     Beeper.Beep(BeepKeyOk);
     if(App.State == asIdle) {
+        Current.HighVEnable();
+        chThdSleepMilliseconds(360);
         Current.On();
+        Interface.ShowOn();
         App.State = asCurrent;
     }
     else if(App.State == asCurrent) {
+        Current.HighVDisable();
         Current.Off();
+        Interface.ShowOff();
         App.State = asIdle;
     }
 }
@@ -157,11 +170,11 @@ static void AppThread(void *arg) {
         if(EvtMsk & EVTMSK_KEY_START_LONG)   KeyStartLong();
 
         // Time
-        if(EvtMsk & EVTMSK_NEWSECOND) {
-            Measure.StartMeasurement();
-        }
 
         // Measurement
+        if(EvtMsk & EVTMSK_MEASURE_TIME) {
+            Measure.StartMeasurement();
+        }
         if(EvtMsk & EVTMSK_MEASUREMENT_DONE) {
             Interface.DisplayBattery();
             Interface.DisplayCurrentMeasured();
@@ -180,6 +193,7 @@ void App_t::Init() {
     // Timers init
     chSysLock();
     chVTSetI(&ITmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
+    chVTSetI(&IMeasureTmr, MS2ST(MEASURE_PERIOD_MS), MeasureTmrCallback, nullptr);
     chSysUnlock();
 }
 #endif
