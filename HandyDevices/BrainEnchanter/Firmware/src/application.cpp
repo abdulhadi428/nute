@@ -40,9 +40,9 @@ public:
     void DisplayCurrentSet() { Lcd.Printf(9, 7, "%u.%u mA", Current.uA2mA_Whole(Current.uA), Current.uA2mA_Fract(Current.uA)/10); }
     void DisplayCurrentMeasured() {
         uint32_t tmp = Measure.GetResult(CURRENT_CHNL);
-        Uart.Printf("adc=%u; ", tmp);
+//        Uart.Printf("adc=%u; ", tmp);
         tmp = Current.Adc2uA(tmp);
-        Uart.Printf("curr=%u\r", tmp);
+//        Uart.Printf("curr=%u\r", tmp);
         uint32_t Whole = Current.uA2mA_Whole(tmp);
         uint32_t Fract = Current.uA2mA_Fract(tmp);
         Lcd.PrintfFont(Times_New_Roman18x16, 11, 0, "%u.%02u mA ", Whole, Fract);

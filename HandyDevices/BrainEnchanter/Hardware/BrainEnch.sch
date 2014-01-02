@@ -14,7 +14,7 @@ $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "23 dec 2013"
+Date "2 jan 2014"
 Rev ""
 Comp ""
 Comment1 ""
@@ -1154,7 +1154,7 @@ L R R7
 U 1 1 5290A449
 P 12350 4850
 F 0 "R7" V 12430 4700 50  0000 C CNN
-F 1 "6.5k" V 12350 4850 50  0000 C CNN
+F 1 "6.8k" V 12350 4850 50  0000 C CNN
 F 2 "RES_0603" V 12430 4950 28  0000 C CNN
 F 3 "~" H 12350 4850 60  0000 C CNN
 	1    12350 4850
@@ -1505,13 +1505,11 @@ Wire Wire Line
 	14200 3300 14200 3100
 Wire Wire Line
 	14200 3100 14800 3100
-Wire Wire Line
-	14800 3000 14800 3200
 Connection ~ 14800 3100
 Wire Wire Line
 	14800 3700 14800 4200
 Wire Wire Line
-	14800 2250 14800 2600
+	14800 2250 14800 2650
 Wire Wire Line
 	13050 1950 13050 2150
 Wire Wire Line
@@ -1715,17 +1713,25 @@ F 3 "~" H 3200 3650 60  0000 C CNN
 $EndComp
 Wire Wire Line
 	2950 3650 3000 3650
-$Comp
-L NPN Q2
-U 1 1 52A82105
-P 14750 2800
-F 0 "Q2" H 14950 2850 60  0000 C CNN
-F 1 "NPN" H 15000 2750 60  0000 C CNN
-F 2 "~" H 14750 2800 60  0000 C CNN
-F 3 "~" H 14750 2800 60  0000 C CNN
-	1    14750 2800
-	1    0    0    -1  
-$EndComp
 Text Notes 11700 2950 0    60   ~ 0
 R9: 1k -> 4.7k
+$Comp
+L 2N7002 Q2
+U 1 1 52C57941
+P 14750 2850
+F 0 "Q2" H 14950 2900 60  0000 C CNN
+F 1 "2N7002" H 15100 2800 60  0000 C CNN
+F 2 "" H 14750 2850 60  0000 C CNN
+F 3 "" H 14750 2850 60  0000 C CNN
+	1    14750 2850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	14800 3200 14800 3050
+Text Notes 15250 2550 0    60   ~ 0
+BC848 replaced\nwith 2N7002 to\neliminate B-E\ncurrent
+Text Notes 12100 5050 0    60   ~ 0
+R7: 6.5k -> 6.8k
+Text Notes 12800 9700 0    60   ~ 0
+C16: Do not mount 
 $EndSCHEMATC
