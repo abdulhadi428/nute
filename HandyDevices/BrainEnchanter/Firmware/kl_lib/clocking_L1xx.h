@@ -82,12 +82,12 @@ public:
     void UpdateFreqValues();
     void UpdateSysTick() { SysTick->LOAD = AHBFreqHz / CH_FREQUENCY - 1; }
     void SetupFlashLatency(uint8_t AHBClk_MHz);
-    // Other clocks
-//    void LsiEnable() {
-//        RCC->CSR |= RCC_CSR_LSION;
-//        while(!(RCC->CSR & RCC_CSR_LSIRDY));
-//    }
-//    void LsiDisable() { RCC->CSR &= RCC_CSR_LSION; }
+    // LSI
+    void EnableLSI() {
+        RCC->CSR |= RCC_CSR_LSION;
+        while(!(RCC->CSR & RCC_CSR_LSIRDY));
+    }
+    void DisableLSI() { RCC->CSR &= RCC_CSR_LSION; }
     // LSE
     uint8_t EnableLSE() {
         RCC->APB1ENR |= RCC_APB1ENR_PWREN;
@@ -96,7 +96,7 @@ public:
         // Wait until ready
         uint32_t StartUpCounter=0;
         do {
-            if(RCC->CSR & RCC_CSR_LSERDY) return 0;   // HSI is ready
+            if(RCC->CSR & RCC_CSR_LSERDY) return 0;   // LSE is ready
         } while(++StartUpCounter < 1000000);
         return 1; // Timeout
     }

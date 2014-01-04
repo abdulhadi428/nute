@@ -331,7 +331,7 @@ public:
 };
 #endif
 
-#if 0 // ============================== IWDG ===================================
+#if 1 // ============================== IWDG ===================================
 enum IwdgPre_t {
     iwdgPre4 = 0x00,
     iwdgPre8 = 0x01,
@@ -364,6 +364,20 @@ public:
             return true;
         }
         else return false;
+    }
+    void GoSleep(uint32_t Timeout_ms) {
+        chSysLock();
+        // Start LSI
+        Clk.EnableLSI();
+        // Start IWDG
+        SetTimeout(Timeout_ms);
+        Enable();
+        // Enter standby mode
+        SCB->SCR |= SCB_SCR_SLEEPDEEP;
+        PWR->CR = PWR_CR_PDDS;
+        PWR->CR |= PWR_CR_CWUF;
+        __WFI();
+        chSysUnlock();
     }
 };
 #endif

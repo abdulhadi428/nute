@@ -17,6 +17,7 @@
 #include "lcd_images.h"
 
 App_t App;
+IWDG_t Iwdg;
 
 #if 1 // ============================ Time =====================================
 class Time_t {
@@ -276,12 +277,9 @@ void App_t::Sleep() {
     Lcd.Backlight(0);
     Lcd.Cls();
     Lcd.PrintfFont(Times_New_Roman18x16, 27, 2, "Sleep");
-    chThdSleepMilliseconds(630);
-    chSysLock();
-    Clk.SetupBusDividers(ahbDiv4, apbDiv1, apbDiv1);
-    Clk.UpdateFreqValues();
-    Clk.UpdateSysTick();
-    chSysUnlock();
+    chThdSleepMilliseconds(999);
+    Lcd.Shutdown();
+    Iwdg.GoSleep(4500);
 }
 
 void App_t::Wake() {
