@@ -17,6 +17,7 @@
 #include "lcd_images.h"
 
 App_t App;
+EEStore_t EEStore;
 
 #if 1 // ============================ Time =====================================
 class Time_t {
@@ -176,6 +177,11 @@ static void KeyStart() {
         chThdSleepMilliseconds(810);
         Current.On();
         Interface.ShowCurrentOn();
+        // Save settings to EEPROM if changed
+        uint32_t Stored = 0;
+        uint32_t Now = (uint32_t)Current.uA | ((uint32_t)Time.M_Set << 16);
+        EEStore.Get(&Stored);   // If Get succeded, Stored != 0
+        if(Stored != Now) EEStore.Put(&Now);
         App.State = asCurrent;
     }
     else App.StopEverything();
@@ -229,6 +235,12 @@ void App_t::Init() {
     PThd = chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, (tfunc_t)AppThread, NULL);
     Current.Init();
     Time.Init();
+    // Load data from EEPROM
+    uint32_t tmp = 0;
+    if(EEStore.Get(&tmp) == OK) {
+        Current.uA = (uint16_t)(tmp & 0x0000FFFF);
+        Time.M_Set = (uint8_t)((tmp & 0x00FF0000) >> 16);
+    }
     Measure.InitHardware();
     Measure.PThreadToSignal = PThd;
     Interface.Reset();
