@@ -13,26 +13,27 @@
 #include "lcd_LargeFonts.h"
 
 #if 1 // ========================== GPIO etc ===================================
-#define LCD_GPIO        GPIOB
-#define LCD_SCLK        12
-#define LCD_SDA         10
-#define LCD_XRES        11
-#define LCD_XCS         13
+#define LCD_GPIO            GPIOB
+#define LCD_SCLK            12
+#define LCD_SDA             10
+#define LCD_XRES            11
+#define LCD_XCS             13
+// UART, DMA & Buff sz
+#define LCD_UART_SPEED      100000
+#define LCD_DMA             STM32_DMA1_STREAM2
+#define LCD_VIDEOBUF_SIZE   864     // = 96 * 9
 // Backlight
-#define LCD_BCKLT_GPIO  GPIOB
-#define LCD_BCKLT_PIN   14
-#define LCD_BCKLT_TMR   TIM9
-#define LCD_BCKLT_CHNL  2
+#define LCD_BCKLT_GPIO      GPIOB
+#define LCD_BCKLT_PIN       14
+#define LCD_BCKLT_TMR       TIM9
+#define LCD_BCKLT_CHNL      2
 #define LCD_TOP_BRIGHTNESS  100 // i.e. 100%
 
-#define LCD_WIDTH		96
-#define LCD_HEIGHT		65
+#define LCD_WIDTH		    96
+#define LCD_HEIGHT		    65
 
-#define LCD_STR_HEIGHT  8
-#define LCD_STR_WIDTH   16
-
-// Data sizes
-#define LCD_VIDEOBUF_SIZE       864     // = 96 * 9
+#define LCD_STR_HEIGHT      8
+#define LCD_STR_WIDTH       16
 #endif
 
 enum PseudoGraph_t {
@@ -69,29 +70,22 @@ private:
     void WriteData(uint8_t AData);
     // High-level
     void GotoXY(uint8_t x, uint8_t y) { CurrentPosition =  x + y*96; }
-    void PrintUint (uint32_t ANumber);
-    void PrintInt (int32_t ANumber);
-    void PrintString (const uint8_t x, const uint8_t y, const char *S, Invert_t AInvert);
-    void PrintStringLen(const char *S, uint16_t ALen, Invert_t AInvert);
 public:
     uint16_t Brightness;
     void Init();
     void Shutdown();
     void Backlight(uint8_t ABrightness)  { BckLt.Set(ABrightness); }
-
     // High-level
     void GotoCharXY(uint8_t x, uint8_t y) { CurrentPosition =  x*6 + y*96; }
     void DrawChar(uint8_t AChar, Invert_t AInvert);
     void Printf(const uint8_t x, const uint8_t y, const char *S, ...);
-    void Cls();
-    void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img);
-    void DrawSymbol(const uint8_t x, const uint8_t y, const uint8_t ACode);
-    // Symbols printing
-    void Symbols(const uint8_t x, const uint8_t y, ...);
-
 #ifdef LCD_LARGEFONTS_H_
     void PrintfFont(const uint8_t *PFont, uint8_t x, uint8_t y, const char *S, ...);
 #endif
+    void Cls();
+    void DrawImage(const uint8_t x, const uint8_t y, const uint8_t *Img);
+    // Symbols printing
+    void Symbols(const uint8_t x, const uint8_t y, ...);
 };
 
 extern Lcd_t Lcd;

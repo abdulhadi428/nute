@@ -12,7 +12,6 @@
                             STM32_DMA_CR_MINC |       /* Memory pointer increase */ \
                             STM32_DMA_CR_DIR_M2P |    /* Direction is memory to peripheral */ \
                             STM32_DMA_CR_CIRC
-                           // STM32_DMA_CR_TCIE         /* Enable Transmission Complete IRQ */
 
 Lcd_t Lcd;
 
@@ -57,24 +56,23 @@ void Lcd_t::Init(void) {
     // ==== USART init ==== clock enabled, idle low, first edge, enable last bit pulse
     rccEnableUSART3(FALSE);
     USART3->CR1 = USART_CR1_UE;     // Enable
-    USART3->BRR = Clk.APB1FreqHz / 100000;
+    USART3->BRR = Clk.APB1FreqHz / LCD_UART_SPEED;
     USART3->CR2 = USART_CR2_CLKEN | USART_CR2_LBCL; // Enable clock, enable last bit clock
     USART3->CR1 = USART_CR1_UE | USART_CR1_M | USART_CR1_TE;
     USART3->CR3 = USART_CR3_DMAT;   // Enable DMA at transmitter
     // DMA
-    dmaStreamAllocate     (STM32_DMA1_STREAM2, IRQ_PRIO_LOW, nullptr, NULL);
-    dmaStreamSetPeripheral(STM32_DMA1_STREAM2, &USART3->DR);
-    dmaStreamSetMemory0   (STM32_DMA1_STREAM2, IBuf);
-    dmaStreamSetTransactionSize(STM32_DMA1_STREAM2, LCD_VIDEOBUF_SIZE);
-    dmaStreamSetMode      (STM32_DMA1_STREAM2, LCD_DMA_TX_MODE);
+    dmaStreamAllocate     (LCD_DMA, IRQ_PRIO_LOW, nullptr, NULL);
+    dmaStreamSetPeripheral(LCD_DMA, &USART3->DR);
+    dmaStreamSetMemory0   (LCD_DMA, IBuf);
+    dmaStreamSetTransactionSize(LCD_DMA, LCD_VIDEOBUF_SIZE);
+    dmaStreamSetMode      (LCD_DMA, LCD_DMA_TX_MODE);
     // Start transmission
     XCS_Lo();
-    dmaStreamEnable(STM32_DMA1_STREAM2);
+    dmaStreamEnable(LCD_DMA);
 }
 
-
 void Lcd_t::Shutdown(void) {
-//    DMA_Cmd(DMA1_Channel2, DISABLE);
+    dmaStreamDisable(LCD_DMA);
     XRES_Lo();
     XCS_Lo();
     SCLK_Lo();
@@ -117,6 +115,46 @@ void Lcd_t::WriteData(uint8_t AByte) {
     XCS_Hi();
 }
 
+// ================================= Printf ====================================
+// Prints char at current buf indx
+void Lcd_t::DrawChar(uint8_t AChar, Invert_t AInvert) {
+    uint8_t b;
+    uint16_t w;
+    for(uint8_t i=0; i<6; i++) {
+        b = Font_6x8_Data[AChar][i];
+        if(AInvert == Inverted) b = ~b;
+        w = b;
+        w = (w << 1) | 0x0001;
+        IBuf[CurrentPosition++] = w;
+        if(CurrentPosition >= LCD_VIDEOBUF_SIZE) CurrentPosition = 0;
+    }
+}
+
+static inline void FLcdPutChar(char c) { Lcd.DrawChar(c, NotInverted); }
+
+void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
+    GotoCharXY(x, y);
+    va_list args;
+    va_start(args, S);
+    kl_vsprintf(FLcdPutChar, 16, S, args);
+    va_end(args);
+}
+
+// ================================ Graphics ===================================
+void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img) {
+    uint8_t *p = (uint8_t*)Img;
+    uint16_t w;
+    uint8_t Width = *p++, Height = *p++;
+    for(uint8_t fy=y; fy < y+Height; fy++) {
+        GotoXY(x, fy);
+        for(uint8_t fx=x; fx < x+Width; fx++) {
+            w = *p++;
+            w = (w << 1) | 0x0001;
+            IBuf[CurrentPosition++] = w;
+            if(CurrentPosition >= LCD_VIDEOBUF_SIZE) continue;
+        } // fx
+    } // fy
+}
 
 void Lcd_t::Symbols(const uint8_t x, const uint8_t y, ...) {
     GotoCharXY(x, y);
@@ -134,46 +172,6 @@ void Lcd_t::Symbols(const uint8_t x, const uint8_t y, ...) {
 
 void Lcd_t::Cls() {
     for (uint32_t i=0; i < LCD_VIDEOBUF_SIZE; i++) IBuf[i] = 0x0001;
-}
-// ================================= Printf ====================================
-static inline void FLcdPutChar(char c) { Lcd.DrawChar(c, NotInverted); }
-
-void Lcd_t::Printf(const uint8_t x, const uint8_t y, const char *S, ...) {
-    GotoCharXY(x, y);
-    va_list args;
-    va_start(args, S);
-    kl_vsprintf(FLcdPutChar, 16, S, args);
-    va_end(args);
-}
-
-// ================================ Graphics ===================================
-// Prints char at current buf indx
-void Lcd_t::DrawChar(uint8_t AChar, Invert_t AInvert) {
-    uint8_t b;
-    uint16_t w;
-    for(uint8_t i=0; i<6; i++) {
-        b = Font_6x8_Data[AChar][i];
-        if(AInvert == Inverted) b = ~b;
-        w = b;
-        w = (w << 1) | 0x0001;
-        IBuf[CurrentPosition++] = w;
-        if(CurrentPosition >= LCD_VIDEOBUF_SIZE) CurrentPosition = 0;
-    }
-}
-
-void Lcd_t::DrawImage(const uint8_t x, const uint8_t y, const uint8_t* Img) {
-    uint8_t *p = (uint8_t*)Img;
-    uint16_t w;
-    uint8_t Width = *p++, Height = *p++;
-    for(uint8_t fy=y; fy < y+Height; fy++) {
-        GotoXY(x, fy);
-        for(uint8_t fx=x; fx < x+Width; fx++) {
-            w = *p++;
-            w = (w << 1) | 0x0001;
-            IBuf[CurrentPosition++] = w;
-            if(CurrentPosition >= LCD_VIDEOBUF_SIZE) continue;
-        } // fx
-    } // fy
 }
 
 #ifdef LCD_LARGEFONTS_H_ // ================== LargeFonts ======================
