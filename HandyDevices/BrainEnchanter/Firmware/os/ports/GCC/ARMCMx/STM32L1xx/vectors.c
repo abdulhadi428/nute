@@ -167,7 +167,7 @@ vectors_t _vectors = {
 __attribute__ ((naked))
 #endif
 void _unhandled_exception(void) {
-
+    chDbgPanic("Unhandled IRQ");    // @KL
   while (TRUE)
     ;
 }
@@ -213,7 +213,7 @@ void Vector9C(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorA0(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorA4(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorA8(void) __attribute__((weak, alias("_unhandled_exception")));
-void VectorAC(void) __attribute__((weak, alias("_unhandled_exception")));
+//void VectorAC(void) __attribute__((weak, alias("_unhandled_exception")));   // TIM11
 void VectorB0(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorB4(void) __attribute__((weak, alias("_unhandled_exception")));
 void VectorB8(void) __attribute__((weak, alias("_unhandled_exception")));

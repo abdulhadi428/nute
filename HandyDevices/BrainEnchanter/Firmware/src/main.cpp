@@ -33,16 +33,23 @@ int main(void) {
     Init();
 //    if(ClkResult) Uart.Printf("Clock failure\r");
 
-    while(1) {
-        chThdSleep(TIME_INFINITE);
-    } // while
+    while(1) { chThdSleep(TIME_INFINITE); } // while
 }
 
 void Init() {
     Uart.Init(115200);
     Uart.Printf("BrainEnchanter AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+
     Lcd.Init();
     Lcd.Backlight(50);
+
+    // Start 32768 quartz
+    if(Clk.EnableLSE() != OK) {
+        Uart.Printf("Quartz failure\r");
+        Lcd.Printf(0, 0, "Quartz Failure");
+        while(true);
+    }
+    Uart.Printf("32768 started\r");
 
     Beeper.Init();
     Beeper.Beep(BeepBeep);

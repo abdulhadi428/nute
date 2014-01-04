@@ -20,12 +20,22 @@ App_t App;
 
 #if 1 // ============================ Time =====================================
 class Time_t {
+private:
+//    Timer_t ITmr;
 public:
+    Timer_t Tmr;
     uint8_t M_Set, M_Now, S_Now;
     void Init() {
         M_Set = 18;
         M_Now = 0;
         S_Now = 0;
+        // Setup TIM11 to be fed by LSE
+        Tmr.Init(TIM11);
+        Tmr.SetTopValue(32768);
+        Tmr.EnableExternalClk();
+        Tmr.ClearIrqBits();
+        nvicEnableVector(TIM11_IRQn, CORTEX_PRIORITY_MASK(IRQ_PRIO_LOW));
+        Tmr.EnableIrqOnUpdate();
     }
     bool IsZero() { return (M_Now == 0) and (S_Now == 0); }
     void DecreaseSecond() {
@@ -36,18 +46,24 @@ public:
         }
         else S_Now--;
     }
+    void StartTimer() { Tmr.Enable();  }
+    void StopTimer()  { Tmr.Disable(); }
 } Time;
 
+extern "C" {
+CH_IRQ_HANDLER(TIM11_IRQHandler) {
+    CH_IRQ_PROLOGUE();
+    Time.Tmr.ClearIrqBits();
+    chSysLockFromIsr();
+    chEvtSignalI(App.PThd, EVTMSK_NEWSECOND);
+    chSysUnlockFromIsr();
+    CH_IRQ_EPILOGUE();
+}
+} // extern C
 #endif
 
 #if 1 // ============================ Timers ===================================
-static VirtualTimer ITimeTmr, IMeasureTmr;
-void TmrOneSecondCallback(void *p) {
-    chSysLockFromIsr();
-    chEvtSignalI(App.PThd, EVTMSK_NEWSECOND);
-    chVTSetI(&ITimeTmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
-    chSysUnlockFromIsr();
-}
+static VirtualTimer IMeasureTmr;
 void MeasureTmrCallback(void *p) {
     chSysLockFromIsr();
     chEvtSignalI(App.PThd, EVTMSK_MEASURE_TIME);
@@ -66,7 +82,10 @@ public:
 
     // ==== Current ====
     void ShowCurrentOn()  { Lcd.DrawImage(88, 2, iconOn); }
-    void ShowCurrentOff() { Lcd.DrawImage(88, 2, iconOff); }
+    void ShowCurrentOff() {
+        Lcd.DrawImage(88, 2, iconOff);
+        Lcd.PrintfFont(Times_New_Roman18x16, 11, 0, "         ");
+    }
     void DisplayCurrentSet() { Lcd.Printf(9, 7, "%u.%u mA", Current.uA2mA_Whole(Current.uA), Current.uA2mA_Fract(Current.uA)/10); }
     void DisplayCurrentMeasured() {
         uint32_t tmp = Measure.GetResult(CURRENT_CHNL);
@@ -77,6 +96,7 @@ public:
         uint32_t Fract = Current.uA2mA_Fract(tmp);
         Lcd.PrintfFont(Times_New_Roman18x16, 11, 0, "%u.%02u mA ", Whole, Fract);
     }
+    void ShowFailure() { Lcd.PrintfFont(Times_New_Roman18x16, 11, 0, "FAILURE  "); }
 
     // ==== Common ====
     void DisplayBattery() {
@@ -93,7 +113,7 @@ public:
     }
 
     void Reset() {
-        Lcd.PrintfFont(Times_New_Roman18x16, 11, 0, "0.0 mA ");
+        Lcd.PrintfFont(Times_New_Roman18x16, 11, 0, "         ");
         ShowTimeStopped();
         Lcd.Symbols(0, 4,
                 LineHorizDouble, 7,
@@ -157,11 +177,11 @@ static void KeyStart() {
         // Time
         Time.M_Now = Time.M_Set;
         Time.S_Now = 0;
+        Time.StartTimer();
         Interface.ShowTimeNow();
-        chVTSet(&ITimeTmr, MS2ST(1000), TmrOneSecondCallback, nullptr);
         // Current
         Current.HighVEnable();
-        chThdSleepMilliseconds(360);
+        chThdSleepMilliseconds(810);
         Current.On();
         Interface.ShowCurrentOn();
         App.State = asCurrent;
@@ -210,19 +230,28 @@ static void AppThread(void *arg) {
         if(EvtMsk & EVTMSK_MEASURE_TIME) { Measure.StartMeasurement(); }
         if(EvtMsk & EVTMSK_MEASUREMENT_DONE) {
             Interface.DisplayBattery();
-            Interface.DisplayCurrentMeasured();
+            if(App.State == asCurrent) {
+                Interface.DisplayCurrentMeasured();
+                // Check if overcurrent (current regulation loop failure)
+                int32_t tmp = Measure.GetResult(CURRENT_CHNL);
+                tmp = Current.Adc2uA(tmp);
+                if((tmp - Current.uA) > 504) {
+                    App.StopEverything();
+                    Interface.ShowFailure();
+                }
+            }
         }
     } // while 1
 }
 
 void App_t::Init() {
+    State = asIdle;
+    PThd = chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, (tfunc_t)AppThread, NULL);
     Current.Init();
     Time.Init();
     Measure.InitHardware();
-    Interface.Reset();
-    State = asIdle;
-    PThd = chThdCreateStatic(waAppThread, sizeof(waAppThread), NORMALPRIO, (tfunc_t)AppThread, NULL);
     Measure.PThreadToSignal = PThd;
+    Interface.Reset();
     // Timers init
     chVTSet(&IMeasureTmr, MS2ST(MEASURE_PERIOD_MS), MeasureTmrCallback, nullptr);
 }
@@ -231,7 +260,7 @@ void App_t::StopEverything() {
     Beeper.Beep(BeepStop);
     // Time
     Interface.ShowTimeStopped();
-    chVTReset(&ITimeTmr);
+    Time.StopTimer();
     // Current
     Current.HighVDisable();
     Current.Off();

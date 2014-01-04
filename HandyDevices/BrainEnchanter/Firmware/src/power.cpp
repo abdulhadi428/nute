@@ -76,7 +76,7 @@ void AdcTxIrq(void *p, uint32_t flags) {
 // ==== Implementation ====
 void Measure_t::InitHardware() {
     rccEnableADC1(FALSE);   // Enable digital clock
-    Clk.HSIEnable();        // Enable HSI, as ADC clocks from HSI
+    Clk.EnableHSI();        // Enable HSI, as ADC clocks from HSI
     SetupClk(adcDiv4);      // Setup ADCCLK
     // Setup channels
     SetSequenceLength(ADC_SEQ_LEN);

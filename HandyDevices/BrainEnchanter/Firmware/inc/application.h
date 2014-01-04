@@ -19,7 +19,7 @@
 #define MINUTES_MAX     30
 #define MINUTES_MIN     1
 // Current
-#define CURRENT_INIT_uA 1000
+#define CURRENT_INIT_uA 500
 #define CURRENT_MAX_uA  4000
 #define CURRENT_MIN_uA  100
 #define CURRENT_STEP_uA 100

@@ -26,7 +26,7 @@ void Timer_t::Init(TIM_TypeDef* Tmr) {
     else PClk = &Clk.APB1FreqHz;
 }
 
-void Timer_t::PwmInit(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted, const PinSpeed_t ASpeed) {
+void Timer_t::InitPwm(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted, const PinSpeed_t ASpeed) {
     // GPIO
     if              (ITmr == TIM2)              PinSetupAlterFunc(GPIO, N, omPushPull, pudNone, AF1, ASpeed);
     else if(ANY_OF_2(ITmr, TIM3, TIM4))         PinSetupAlterFunc(GPIO, N, omPushPull, pudNone, AF2, ASpeed);
