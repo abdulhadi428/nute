@@ -17,12 +17,9 @@
 #include "lcd_images.h"
 
 App_t App;
-IWDG_t Iwdg;
 
 #if 1 // ============================ Time =====================================
 class Time_t {
-private:
-//    Timer_t ITmr;
 public:
     Timer_t Tmr;
     uint8_t M_Set, M_Now, S_Now;
@@ -181,22 +178,7 @@ static void KeyStart() {
         Interface.ShowCurrentOn();
         App.State = asCurrent;
     }
-    else if(App.State == asCurrent) App.StopEverything();
-}
-
-static void KeyStartLong() {
-    switch(App.State) {
-        case asStandBy:
-            App.Wake();
-            break;
-        case asIdle:
-            App.Sleep();
-            break;
-        case asCurrent:
-            App.StopEverything();
-            App.Sleep();
-            break;
-    } // switch
+    else App.StopEverything();
 }
 #endif
 
@@ -209,8 +191,7 @@ static void AppThread(void *arg) {
     while(true) {
         EvtMsk = chEvtWaitAny(ALL_EVENTS);
         // Keys
-        if(EvtMsk & EVTMSK_KEY_START)        KeyStart();
-        if(EvtMsk & EVTMSK_KEY_START_LONG)   KeyStartLong();
+        if(EvtMsk & EVTMSK_KEY_START)            KeyStart();
         if(App.State == asIdle) {
             if(EvtMsk & EVTMSK_KEY_TIME_UP)      KeyTimeUp();
             if(EvtMsk & EVTMSK_KEY_TIME_DOWN)    KeyTimeDown();
@@ -226,12 +207,9 @@ static void AppThread(void *arg) {
         }
 
         // Measurement
-        if(EvtMsk & EVTMSK_MEASURE_TIME) {
-            if(App.State != asStandBy) Measure.StartMeasurement();
-        }
-
+        if(EvtMsk & EVTMSK_MEASURE_TIME) Measure.StartMeasurement();
         if(EvtMsk & EVTMSK_MEASUREMENT_DONE) {
-            if(App.State != asStandBy) Interface.DisplayBattery();
+            Interface.DisplayBattery();
             if(App.State == asCurrent) {
                 Interface.DisplayCurrentMeasured();
                 // Check if overcurrent (current regulation loop failure)
@@ -269,34 +247,6 @@ void App_t::StopEverything() {
     Interface.ShowCurrentOff();
     App.State = asIdle;
 }
-
-void App_t::Sleep() {
-    App.State = asStandBy;
-    chVTReset(&IMeasureTmr);
-    Beeper.Beep(BeepStandBy);
-    Lcd.Backlight(0);
-    Lcd.Cls();
-    Lcd.PrintfFont(Times_New_Roman18x16, 27, 2, "Sleep");
-    chThdSleepMilliseconds(999);
-    Lcd.Shutdown();
-    Iwdg.GoSleep(4500);
-}
-
-void App_t::Wake() {
-    chSysLock();
-    Clk.SetupBusDividers(ahbDiv1, apbDiv1, apbDiv1);
-    Clk.UpdateFreqValues();
-    Clk.UpdateSysTick();
-    chSysUnlock();
-    chThdSleepMilliseconds(99);
-    Beeper.Beep(BeepWake);
-    Lcd.Cls();
-    Interface.Reset();
-    Lcd.Backlight(50);
-    chVTSet(&IMeasureTmr, MS2ST(MEASURE_PERIOD_MS), MeasureTmrCallback, nullptr);
-    App.State = asIdle;
-}
-
 #endif
 
 #if UART_RX_ENABLED // ================ Command processing =====================

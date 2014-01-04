@@ -17,8 +17,6 @@
 #include "lcd1200.h"
 #include "keys.h"
 
-extern IWDG_t Iwdg;
-
 int main(void) {
     // Init Vcore & clock system
     SetupVCore(vcore1V2);
@@ -26,11 +24,6 @@ int main(void) {
     // Init OS
     halInit();
     chSysInit();
-
-    // Check if IWDG reset occured
-    if(Iwdg.ResetOccured()) {
-
-    }
 
     // Init Hard & Soft
     Uart.Init(115200);

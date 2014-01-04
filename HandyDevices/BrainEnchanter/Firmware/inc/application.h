@@ -29,7 +29,7 @@
 
 #endif
 
-enum AppState_t {asIdle, asCurrent, asStandBy};
+enum AppState_t {asIdle, asCurrent};
 
 class App_t {
 public:
@@ -37,8 +37,6 @@ public:
     AppState_t State;
     void Init();
     void StopEverything();
-    void Sleep();
-    void Wake();
 };
 
 extern App_t App;
