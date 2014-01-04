@@ -37,6 +37,8 @@ public:
     AppState_t State;
     void Init();
     void StopEverything();
+    void Sleep();
+    void Wake();
 };
 
 extern App_t App;

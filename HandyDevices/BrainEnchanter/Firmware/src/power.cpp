@@ -40,23 +40,6 @@ void Current_t::Off() {
 #endif
 
 #if 1 // ========================= Measurement =================================
-//class Adc_t {
-//private:
-//    inline void SetupClk(ADCDiv_t Div) { ADC->CCR |= (uint32_t)Div; }
-//    void SetChannelCount(uint32_t Count);
-//    void StartConversion() { ADC1->CR2 |= ADC_CR2_SWSTART; }
-//    void Enable() { ADC1->CR2 = ADC_CR2_ADON; }
-//    void ChannelConfig(AdcChnl_t ACfg);
-////    void ContModeEnable() { ADC1->CFGR1 = ADC_CFGR1_CONT; }  // Enable continuos conversion
-//    inline bool ConversionCompleted() { return (ADC1->SR & ADC_SR_EOC); }
-//    inline uint16_t IResult() { return ADC1->DR; }
-//public:
-//    uint16_t Result[ADC_BUF_SZ];
-//    void Init();
-//    void Measure();
-//    void Disable();
-//    void ClockOff() { rccDisableADC1(FALSE); }
-//};
 Measure_t Measure;
 
 // Measurement completed IRQ

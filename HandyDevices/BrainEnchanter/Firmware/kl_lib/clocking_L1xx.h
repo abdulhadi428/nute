@@ -9,7 +9,7 @@
 #define CLOCKING_H_
 
 #include "stm32l1xx.h"
-
+#include "chconf.h"
 /*
  * Right after reset, CPU works on internal MSI source.
  * To switch to external src (HSE) without dividing (i.e. SysClk == CrystalFreq),
@@ -80,6 +80,7 @@ public:
     void SetupBusDividers(AHBDiv_t AHBDiv, APBDiv_t APB1Div, APBDiv_t APB2Div);
     uint8_t SetupPLLMulDiv(PllMul_t PllMul, PllDiv_t PllDiv);
     void UpdateFreqValues();
+    void UpdateSysTick() { SysTick->LOAD = AHBFreqHz / CH_FREQUENCY - 1; }
     void SetupFlashLatency(uint8_t AHBClk_MHz);
     // Other clocks
 //    void LsiEnable() {

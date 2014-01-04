@@ -17,26 +17,15 @@
 #include "lcd1200.h"
 #include "keys.h"
 
-static inline void Init();
-
 int main(void) {
-    // ==== Init Vcore & clock system ====
-    SetupVCore(vcore1V8);
-    //Clk.SetupFlashLatency(24);  // Setup Flash Latency for clock in MHz
-//    Clk.SetupBusDividers(ahbDiv1, apbDiv1, apbDiv1);
+    // Init Vcore & clock system
+    SetupVCore(vcore1V2);
     Clk.UpdateFreqValues();
-
-    // ==== Init OS ====
+    // Init OS
     halInit();
     chSysInit();
-    // ==== Init Hard & Soft ====
-    Init();
-//    if(ClkResult) Uart.Printf("Clock failure\r");
 
-    while(1) { chThdSleep(TIME_INFINITE); } // while
-}
-
-void Init() {
+    // Init Hard & Soft
     Uart.Init(115200);
     Uart.Printf("BrainEnchanter AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
 
@@ -55,4 +44,6 @@ void Init() {
     Beeper.Beep(BeepBeep);
     App.Init();
     Keys.Init();
+
+    while(1) { chThdSleep(TIME_INFINITE); } // while
 }
