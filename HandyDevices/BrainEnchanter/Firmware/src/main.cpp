@@ -31,19 +31,30 @@ int main(void) {
 
     Lcd.Init();
     Lcd.Backlight(50);
-
-    // Start 32768 quartz
-    if(Clk.EnableLSE() != OK) {
-        Uart.Printf("Quartz failure\r");
-        Lcd.Printf(0, 0, "Quartz Failure");
-        while(true);
-    }
-    Uart.Printf("32768 started\r");
-
     Beeper.Init();
     Beeper.Beep(BeepBeep);
+
     App.Init();
     Keys.Init();
 
-    while(1) { chThdSleep(TIME_INFINITE); } // while
+#if USE_QUARTZ_32768
+    systime_t t = chTimeNow();
+    while(true) {
+        chThdSleepMilliseconds(99);
+        Clk.StartLSE();
+        chThdSleepMilliseconds(1107);
+        if(Clk.IsLseOn()) {
+            Uart.Printf("32768 started; t=%u\r", chTimeNow()-t);
+            //Lcd.Printf(0,0,"Q");
+            //App.UseQuartz = true;
+            chThdSleep(TIME_INFINITE);
+        }
+        else {
+            Uart.Printf("32768 failure\r");
+            Clk.DisableLSE();
+        }
+    } // while
+#else
+    while(true) { chThdSleep(TIME_INFINITE); }
+#endif
 }

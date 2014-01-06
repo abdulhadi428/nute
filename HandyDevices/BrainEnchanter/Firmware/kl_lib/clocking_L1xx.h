@@ -89,17 +89,12 @@ public:
     }
     void DisableLSI() { RCC->CSR &= RCC_CSR_LSION; }
     // LSE
-    uint8_t EnableLSE() {
+    void StartLSE() {
         RCC->APB1ENR |= RCC_APB1ENR_PWREN;
         PWR->CR |= PWR_CR_DBP;
         RCC->CSR |= RCC_CSR_LSEON;
-        // Wait until ready
-        uint32_t StartUpCounter=0;
-        do {
-            if(RCC->CSR & RCC_CSR_LSERDY) return 0;   // LSE is ready
-        } while(++StartUpCounter < 1000000);
-        return 1; // Timeout
     }
+    bool IsLseOn() { return (RCC->CSR & RCC_CSR_LSERDY); }
     void DisableLSE() {
         RCC->APB1ENR |= RCC_APB1ENR_PWREN;
         PWR->CR |= PWR_CR_DBP;

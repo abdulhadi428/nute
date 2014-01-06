@@ -28,10 +28,15 @@ public:
         M_Set = 18;
         M_Now = 0;
         S_Now = 0;
-        // Setup TIM11 to be fed by LSE
+        // Timer
         Tmr.Init(TIM11);
+#if USE_QUARTZ_32768
         Tmr.SetTopValue(32768);
         Tmr.EnableExternalClk();
+#else
+        Tmr.SetPrescaler(999);  // The counter clock frequency CK_CNT is equal to PClk/(999+1)
+        Tmr.SetUpdateFreq(1);
+#endif
         Tmr.ClearIrqBits();
         nvicEnableVector(TIM11_IRQn, CORTEX_PRIORITY_MASK(IRQ_PRIO_LOW));
         Tmr.EnableIrqOnUpdate();
@@ -170,13 +175,13 @@ static void KeyStart() {
         // Time
         Time.M_Now = Time.M_Set;
         Time.S_Now = 0;
-        Time.StartTimer();
         Interface.ShowTimeNow();
         // Current
         Current.HighVEnable();
-        chThdSleepMilliseconds(810);
+        chThdSleepMilliseconds(810);    // Let power to rise
         Current.On();
         Interface.ShowCurrentOn();
+        Time.StartTimer();
         // Save settings to EEPROM if changed
         uint32_t Stored = 0;
         uint32_t Now = (uint32_t)Current.uA | ((uint32_t)Time.M_Set << 16);

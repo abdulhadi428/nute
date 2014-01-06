@@ -288,18 +288,22 @@ private:
     TIM_TypeDef* ITmr;
     uint32_t *PClk;
 public:
-    __IO uint32_t *PCCR;    // Made public to allow DMA
+    volatile uint32_t *PCCR;    // Made public to allow DMA
     // Common
     void Init(TIM_TypeDef* Tmr);
     void Deinit();
-    inline void Enable()  { ITmr->CR1 |=  TIM_CR1_CEN; }
-    inline void Disable() { ITmr->CR1 &= ~TIM_CR1_CEN; }
-    inline void SetUpdateFrequency(uint32_t FreqHz) { SetTopValue(*PClk / FreqHz); }
-    inline void SetTopValue(uint16_t Value) { ITmr->ARR = Value; }
-    inline uint16_t GetTopValue() { return ITmr->ARR; }
-    inline void SetupPrescaler(uint32_t PrescaledFreqHz) { ITmr->PSC = (*PClk / PrescaledFreqHz) - 1; }
-    inline void SetCounter(uint16_t Value) { ITmr->CNT = Value; }
-    inline uint16_t GetCounter() { return ITmr->CNT; }
+    void Enable()  { ITmr->CR1 |=  TIM_CR1_CEN; }
+    void Disable() { ITmr->CR1 &= ~TIM_CR1_CEN; }
+    void SetTopValue(uint16_t Value) { ITmr->ARR = Value; }
+    void SetCounter(uint16_t Value) { ITmr->CNT = Value; }
+    uint16_t GetCounter() { return ITmr->CNT; }
+    uint16_t GetTopValue() { return ITmr->ARR; }
+    void SetPrescaler(uint16_t Value) { ITmr->PSC = Value; }
+    void SetUpdateFreq(uint32_t FreqHz) {
+        uint32_t ClkCnt = *PClk / (ITmr->PSC + 1);
+        SetTopValue((ClkCnt / FreqHz) - 1);
+    }
+    void SetCounterFreq(uint32_t CounterFreqHz) { ITmr->PSC = (*PClk / CounterFreqHz) - 1; }
     // Master/Slave
     void SetTriggerInput(TmrTrigInput_t TrgInput) {
         uint16_t tmp = ITmr->SMCR;

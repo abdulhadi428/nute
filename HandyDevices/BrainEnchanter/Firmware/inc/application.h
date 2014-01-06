@@ -10,6 +10,8 @@
 
 #include "kl_lib_L15x.h"
 
+#define USE_QUARTZ_32768    FALSE
+
 # if 1 // Uart Command Codes. See https://docs.google.com/document/d/1pGQf9CrQ016ObS0w7PhPLAy92MRPhdBriICflt1YGXA/edit
 #define CMD_PING            0x01
 #endif
@@ -33,6 +35,7 @@ enum AppState_t {asIdle, asCurrent};
 
 class App_t {
 public:
+    //bool UseQuartz;
     Thread *PThd;
     AppState_t State;
     void Init();
