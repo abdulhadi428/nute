@@ -207,6 +207,7 @@ public:
     void SetFreqHz(uint32_t FreqHz);
     void Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, uint16_t TopValue, bool Inverted=false);
     void Set(uint16_t Value) { *PCCR = Value; }
+    void SetTop(uint16_t ATop) { Tim->ARR = ATop; }
     void Off() { *PCCR = 0; }
 };
 

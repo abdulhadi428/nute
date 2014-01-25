@@ -55,7 +55,7 @@ void PwmPin_t::Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, 
     else PClk = &Clk.APB1FreqHz;
 
     // Common
-    Tim->CR1 = TIM_CR1_CEN; // Enable timer, set clk division to 0, AutoReload not buffered
+    Tim->CR1 = TIM_CR1_CEN | TIM_CR1_ARPE; // Enable timer, set clk division to 0, AutoReload buffered
     Tim->CR2 = 0;
     Tim->ARR = TopValue;
     Tim->BDTR = TIM_BDTR_MOE | TIM_BDTR_AOE;

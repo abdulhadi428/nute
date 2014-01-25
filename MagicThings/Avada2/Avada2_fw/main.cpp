@@ -11,6 +11,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "flash.h"
+#include "buzzer.h"
 
 Flash_t Flash;
 
@@ -27,12 +28,18 @@ int main(void) {
     JtagDisable();
     Uart.Init(57600);
     Flash.Init();
+    Buzzer.Init();
 
     Uart.Printf("\rAvada2  AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
 
     // ==== Main cycle ====
     while(true) {
-        //chThdSleepMilliseconds(1800);
+
+        Buzzer.BuzzUp();
+
+        chThdSleepMilliseconds(180000);
+//        Buzzer.Off();
+//        chThdSleepMilliseconds(1800);
         //Flash.Fire();
 //            if(rLevel1.SomethingIsNear) LedSmooth.SetSmoothly(LED_TOP_VALUE);
 //            else LedSmooth.SetSmoothly(0);
