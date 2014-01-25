@@ -26,9 +26,8 @@ void Buzz_t::ITmrCallback() {
 
 void Buzz_t::BuzzUp() {
     IPeriod = PERIOD_MAX;
-    IVolume = VOLUME;
     IPin.SetTop(IPeriod);
-    IPin.Set(IVolume);
+    IPin.Set(VOLUME);
     chVTSetI(&ITmr, MS2ST(BUZZ_DELAY), (vtfunc_t)&BuzzTmrCallback, nullptr);
 }
 

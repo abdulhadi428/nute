@@ -80,6 +80,15 @@ static inline void Delay_ms(uint32_t Ams) {
     DelayLoop(__ticks);
 }
 
+#if 1 // =========================== Time ======================================
+static inline bool TimeElapsed(systime_t *PSince, uint32_t Delay_ms) {
+    chSysLock();
+    bool Rslt = (systime_t)(chTimeNow() - *PSince) > MS2ST(Delay_ms);
+    if(Rslt) *PSince = chTimeNow();
+    chSysUnlock();
+    return Rslt;
+}
+#endif
 // ===================== Single pin manipulations ==============================
 enum PinOutMode_t {
     omPushPull  = 0,
