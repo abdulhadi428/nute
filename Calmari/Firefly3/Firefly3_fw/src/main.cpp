@@ -102,8 +102,8 @@ void GoSleep() {
 #define EraseTimeout        ((uint32_t)0x000B0000)
 #define ProgramTimeout      ((uint32_t)0x00002000)
 
-const uint32_t SaveAddr __attribute__ ((aligned(FLASH_PAGE_SIZE))) = 0;
-Color_t *PSavedClr = (Color_t*)&SaveAddr;
+const uint32_t MyBigUint __attribute__ ((section("MyFlash"), aligned(FLASH_PAGE_SIZE))) = 0xDEADBEEF;
+Color_t *PSavedClr = (Color_t*)&MyBigUint;
 
 void FLASH_Unlock() {
     FLASH->KEYR = FLASH_KEY1;
@@ -173,7 +173,7 @@ void Load(Color_t *PClr) {
 
 void Save(Color_t *PClr) {
     uint8_t status = OK;
-    uint32_t FAddr = (uint32_t)&SaveAddr;
+    uint32_t FAddr = (uint32_t)&MyBigUint;
     FLASH_Unlock();
     // Erase flash
     FLASH_ClearFlag(FLASH_SR_EOP | FLASH_SR_PGERR | FLASH_SR_WRPRTERR);   // Clear All pending flags
