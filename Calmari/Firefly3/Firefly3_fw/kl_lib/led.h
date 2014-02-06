@@ -134,6 +134,10 @@ public:
 		ICurrentColor = AColor;
 	}
 	void SetColorSmoothly(Color_t AColor);
+	void SetColorNow(Color_t AColor) {
+	    SetColor(AColor);
+	    INeededColor = AColor;
+	}
 	bool IsOff() { return (ICurrentColor == INeededColor) and (ICurrentColor == clBlack); }
 //	void Blink(uint32_t ABlinkDelay, Color_t AColor) {
 //	        IsInsideBlink = true;

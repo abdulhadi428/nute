@@ -11,17 +11,20 @@
 #include "ch.h"
 #include "hal.h"
 #include "adc_f100.h"
+#include "cmd_uart_f10x.h"
 
+//#define LED_COLOR           ((Color_t){255, 71, 100})
+#define LED_COLOR           ((Color_t){75, 255, 44})
+
+#define AUTO_OFF    FALSE
+
+#if AUTO_OFF
 Adc_t Adc;
 IWDG_t Iwdg;
-
 #define ADC_VALUE_TO_OFF    540
 #define ADC_VALUE_TO_ON     198
-
-#define LED_COLOR           ((Color_t){99, 99, 0})
-
-static inline void Init();
 static inline void GoSleep();
+#endif
 
 int main(void) {
     // ==== Init clock system ====
@@ -31,10 +34,21 @@ int main(void) {
     halInit();
     chSysInit();
     // ==== Init Hard & Soft ====
-    Init();
-
-    while(TRUE) {
+    JtagDisable();
+    Uart.Init(57600);
+    Led.Init();
+    // Set white and print info only when switch on, not after watcdog reset.
+#if AUTO_OFF
+    if(!Iwdg.ResetOccured()) {
+#endif
+        Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+        Led.SetColorNow(LED_COLOR);
+#if AUTO_OFF
+    }
+    Adc.Init();
+    while(true) {
         chThdSleepMilliseconds(450);
+
         uint32_t rslt = 0;
         Adc.Enable();
         Adc.Calibrate();
@@ -51,20 +65,12 @@ int main(void) {
         // Check if sleep
         if(Led.IsOff()) GoSleep();
     }
+#else
+    while(true) { chThdSleepS(TIME_INFINITE); }
+#endif
 }
 
-void Init() {
-    JtagDisable();
-    Uart.Init(57600);
-    Led.Init();
-    // Set white and print info only when switch on, not after watcdog reset.
-    if(!Iwdg.ResetOccured()) {
-        Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB2=%u\r", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
-        Led.SetColor(clWhite);
-    }
-    Adc.Init();
-}
-
+#if AUTO_OFF
 void GoSleep() {
     // Start LSI
     Clk.LsiEnable();
@@ -77,3 +83,10 @@ void GoSleep() {
     PWR->CR |= PWR_CR_CWUF;
     __WFI();
 }
+#endif
+
+#if UART_RX_ENABLED
+void UartCmdCallback(uint8_t CmdCode, uint8_t *PData, uint32_t Length) {
+    Uart.Printf("Aga\r");
+}
+#endif
