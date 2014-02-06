@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 22/07/2013 12:11:27
+EESchema Schematic File Version 2
 LIBS:Connectors_kl
 LIBS:pcb_details
 LIBS:power
@@ -13,7 +13,7 @@ $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "22 jul 2013"
+Date "26 jan 2014"
 Rev ""
 Comp ""
 Comment1 ""
@@ -1292,7 +1292,7 @@ Wire Wire Line
 Wire Wire Line
 	8600 2750 8600 2850
 Wire Wire Line
-	8200 2600 8200 2300
+	8200 2300 8200 2700
 Wire Wire Line
 	6500 2600 8200 2600
 Wire Wire Line
@@ -1467,4 +1467,31 @@ Wire Wire Line
 Wire Wire Line
 	5000 8500 5000 8550
 Connection ~ 5000 8500
+$Comp
+L GND #PWR?
+U 1 1 52E4EA42
+P 8200 3300
+F 0 "#PWR?" H 8290 3280 30  0001 C CNN
+F 1 "GND" H 8200 3220 30  0001 C CNN
+F 2 "" H 8200 3300 60  0001 C CNN
+F 3 "" H 8200 3300 60  0001 C CNN
+	1    8200 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R?
+U 1 1 52E4EA48
+P 8200 2950
+F 0 "R?" V 8280 2950 50  0000 C CNN
+F 1 "2k" V 8200 2950 50  0000 C CNN
+F 2 "" H 8200 2950 60  0001 C CNN
+F 3 "" H 8200 2950 60  0001 C CNN
+	1    8200 2950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8200 3200 8200 3300
+Connection ~ 8200 2600
+Text Notes 7450 2850 0    60   ~ 0
+Place resistor\nsomehow if \nLED Off during\npower-up is \nrequired
 $EndSCHEMATC
