@@ -17,29 +17,14 @@
 Led_t Led;
 
 class Flash_t {
-private:
-
 public:
     void Fire() {
         Led.Fire();
         Buzzer.Off();
     }
-    void Restart() {
-        Buzzer.BuzzUp();
-    }
+    void Restart() { Buzzer.BuzzUp(); }
     bool IsReady() { return Buzzer.IsOnTop(); }
 } Flash;
-
-
-#if 1 // ============================ Keys =====================================
-static void KeyFire() {
-    Uart.Printf("KeyFire\r");
-    if(Flash.IsReady()) {
-        Flash.Fire();
-        Flash.Restart();
-    }
-}
-#endif
 
 int main(void) {
     // ==== Init clock system ====
@@ -64,14 +49,15 @@ int main(void) {
     while(true) {
         eventmask_t EvtMsk = chEvtWaitAny(ALL_EVENTS);
         // Keys
-        if(EvtMsk & EVTMSK_KEY_FIRE) KeyFire();
-
-        //chThdSleepMilliseconds(180000);
-//        Buzzer.Off();
-//        chThdSleepMilliseconds(1800);
-        //Flash.Fire();
-//            if(rLevel1.SomethingIsNear) LedSmooth.SetSmoothly(LED_TOP_VALUE);
-//            else LedSmooth.SetSmoothly(0);
+        if(EvtMsk & EVTMSK_KEY_FIRE) {
+            Uart.Printf("KeyFire\r");
+            if(Flash.IsReady()) {
+                Buzzer.SetVolume(VOLUME_MAX);
+                chThdSleepMilliseconds(5004);
+                Flash.Fire();
+                Flash.Restart();
+            }
+        }
     } // while
 }
 

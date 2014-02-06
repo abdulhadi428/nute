@@ -16,11 +16,12 @@
 #define BUZZER_PIN          8
 
 // Sound
-#define BUZZ_DELAY  5
-#define PERIOD_MAX  3600    // Lowest frequency
-#define PERIOD_MIN  315     // Highest frequency
+#define BUZZ_DELAY_MS       5
+#define PERIOD_MAX          3600    // Lowest frequency
+#define PERIOD_MIN          315     // Highest frequency
 // Sound volume
-#define VOLUME      4
+#define VOLUME_NORMAL       4
+#define VOLUME_MAX          153
 
 class Buzz_t {
 private:
@@ -30,6 +31,7 @@ public:
     uint16_t IPeriod;
     void Init() { IPin.Init(BUZZER_GPIO, BUZZER_PIN, BUZZER_TIM_N, BUZZER_TIM_CH, PERIOD_MAX); }
     void BuzzUp();
+    void SetVolume(uint16_t AVolume) { IPin.Set(AVolume); }
     void Off() {
         chVTReset(&ITmr);
         IPin.Off();

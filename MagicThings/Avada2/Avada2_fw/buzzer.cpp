@@ -20,14 +20,14 @@ void Buzz_t::ITmrCallback() {
     else                    IPeriod -= 1;
     IPin.SetTop(IPeriod);
     if(IPeriod >= PERIOD_MIN) {
-        chVTSetI(&ITmr, MS2ST(BUZZ_DELAY), (vtfunc_t)&BuzzTmrCallback, nullptr);
+        chVTSetI(&ITmr, MS2ST(BUZZ_DELAY_MS), (vtfunc_t)&BuzzTmrCallback, nullptr);
     }
 }
 
 void Buzz_t::BuzzUp() {
     IPeriod = PERIOD_MAX;
     IPin.SetTop(IPeriod);
-    IPin.Set(VOLUME);
-    chVTSetI(&ITmr, MS2ST(BUZZ_DELAY), (vtfunc_t)&BuzzTmrCallback, nullptr);
+    IPin.Set(VOLUME_NORMAL);
+    chVTSetI(&ITmr, MS2ST(BUZZ_DELAY_MS), (vtfunc_t)&BuzzTmrCallback, nullptr);
 }
 
