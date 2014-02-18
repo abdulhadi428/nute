@@ -31,7 +31,7 @@ static inline void GoSleep();
 
 int main(void) {
     // ==== Init clock system ====
-    Clk.SetupBusDividers(ahbDiv8, apbDiv1, apbDiv1);
+    Clk.SetupBusDividers(ahbDiv1, apbDiv1, apbDiv1);
     Clk.UpdateFreqValues();
     // ==== Init OS ====
     halInit();
@@ -102,7 +102,7 @@ void GoSleep() {
 #define EraseTimeout        ((uint32_t)0x000B0000)
 #define ProgramTimeout      ((uint32_t)0x00002000)
 
-const uint32_t MyBigUint __attribute__ ((section("MyFlash"), aligned(FLASH_PAGE_SIZE))) = 0xDEADBEEF;
+const uint32_t MyBigUint __attribute__ ((section("MyFlash"), aligned(FLASH_PAGE_SIZE))) = 0x00040B04; // 00 BB GG RR
 Color_t *PSavedClr = (Color_t*)&MyBigUint;
 
 void FLASH_Unlock() {
