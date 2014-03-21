@@ -53,7 +53,9 @@ int main(void) {
             Uart.Printf("KeyFire\r");
             if(Flash.IsReady()) {
                 Buzzer.SetVolume(VOLUME_MAX);
-                chThdSleepMilliseconds(5004);
+                chThdSleepMilliseconds(4005);
+                Buzzer.Off();
+                chThdSleepMilliseconds(504);
                 Flash.Fire();
                 Flash.Restart();
             }
