@@ -1,24 +1,24 @@
-Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 21/03/2014 23:25:45
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 22/03/2014 14:38:32
 
 BeginCmp
 TimeStamp = /532C7D48;
 Reference = B1;
 ValeurCmp = BAT;
-IdModule  = ;
+IdModule  = BATTERY_AAA_X1;
 EndCmp
 
 BeginCmp
 TimeStamp = /532C7D55;
 Reference = B2;
 ValeurCmp = BAT;
-IdModule  = ;
+IdModule  = BATTERY_AAA_X1;
 EndCmp
 
 BeginCmp
 TimeStamp = /532C7D5B;
 Reference = B3;
 ValeurCmp = BAT;
-IdModule  = ;
+IdModule  = BATTERY_AAA_X1;
 EndCmp
 
 BeginCmp
@@ -116,7 +116,7 @@ BeginCmp
 TimeStamp = /532C5615;
 Reference = C13;
 ValeurCmp = 1000u;
-IdModule  = ;
+IdModule  = CAP_08xxR;
 EndCmp
 
 BeginCmp
@@ -305,7 +305,14 @@ BeginCmp
 TimeStamp = /532C7DA3;
 Reference = SW1;
 ValeurCmp = SWITCH;
-IdModule  = ;
+IdModule  = SWITCH_SS9;
+EndCmp
+
+BeginCmp
+TimeStamp = /532D53AF;
+Reference = SW2;
+ValeurCmp = BUTTON_H;
+IdModule  = BUTTON_6x6_CORNER;
 EndCmp
 
 BeginCmp
