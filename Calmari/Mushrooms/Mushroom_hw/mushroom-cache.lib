@@ -1,4 +1,4 @@
-EESchema-LIBRARY Version 2.3  Date: 23/03/2014 22:11:52
+EESchema-LIBRARY Version 2.3  Date: 26/03/2014 16:59:44
 #encoding utf-8
 #
 # +3.3V
@@ -36,6 +36,9 @@ F0 "ANT" -100 250 60 H V C CNN
 F1 "ANT_PCB_NoCntr" 150 0 60 V V C CNN
 F2 "~" 0 0 60 H V C CNN
 F3 "~" 0 0 60 H V C CNN
+$FPLIST
+ ANT*
+$ENDFPLIST
 DRAW
 S -100 200 100 -200 0 1 0 f
 P 10 0 1 0  -60 160  60 160  60 -160  -60 -160  -60 120  20 120  20 -120  -20 -120  -20 80  -20 80 N

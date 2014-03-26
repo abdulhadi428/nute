@@ -1,10 +1,10 @@
-Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 23/03/2014 22:38:43
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 26/03/2014 17:03:12
 
 BeginCmp
-TimeStamp = /532B493F;
+TimeStamp = /5332D14D;
 Reference = ANT1;
 ValeurCmp = ANT_PCB_NOCNTR;
-IdModule  = AntDipole1;
+IdModule  = ANT_FOLDED_DIPOLE2;
 EndCmp
 
 BeginCmp
