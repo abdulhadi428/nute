@@ -14,10 +14,10 @@
 #include "cmd_uart_f10x.h"
 
 //#define LED_COLOR           ((Color_t){255, 71, 100})
-//#define LED_COLOR           ((Color_t){75, 255, 44})
+#define LED_COLOR           ((Color_t){0, 255, 0})
 
 static Color_t Clr;
-static void Load(Color_t *PClr);
+//static void Load(Color_t *PClr);
 
 #define AUTO_OFF    FALSE
 
@@ -45,8 +45,9 @@ int main(void) {
     if(!Iwdg.ResetOccured()) {
 #endif
         Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB2=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
-        Load(&Clr);
-        Led.SetColorNow(Clr);
+//        Load(&Clr);
+//        Led.SetColorNow(Clr);
+        Led.SetColorNow(LED_COLOR);
 #if AUTO_OFF
     }
     Adc.Init();
