@@ -42,7 +42,7 @@ void LedWs_t::Init() {
     AFIO->MAPR2 |= AFIO_MAPR2_TIM15_REMAP;
     if (!AfioWasEnabled) RCC->APB2ENR &= ~RCC_APB2ENR_AFIOEN;
     // Init tmr in PWM mode
-    TxTmr.Init();
+    TxTmr.Init(TIM15);
     TxTmr.Enable();
     TxTmr.InitPwm(GPIOB, 15, 2, invNotInverted, true);
     TxTmr.SetTopValue(T_TOTAL_N);

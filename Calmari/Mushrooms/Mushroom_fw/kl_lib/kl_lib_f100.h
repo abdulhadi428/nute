@@ -231,10 +231,9 @@ private:
     TIM_TypeDef* ITmr;
     uint32_t *PClk;
 public:
-    Timer_t(TIM_TypeDef* Tmr): ITmr(Tmr), PClk(NULL), PCCR(NULL) {}
     __IO uint16_t *PCCR;    // Made public to allow DMA
     // Common
-    void Init();
+    void Init(TIM_TypeDef* PTmr);
     void Deinit();
     inline void Enable()  { ITmr->CR1 |=  TIM_CR1_CEN; }
     inline void Disable() { ITmr->CR1 &= ~TIM_CR1_CEN; }
