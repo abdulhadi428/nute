@@ -53,6 +53,7 @@ enum RiseFall_t {Rising, Falling};
 
 
 // Simple pseudofunctions
+#define MAX(a, b)   (((a) > (b))? (a) : (b))
 #define TRIM_VALUE(v, Max)  { if(v > Max) v = Max; }
 #define IS_LIKE(v, precise, deviation)  (((precise - deviation) < v) and (v < (precise + deviation)))
 

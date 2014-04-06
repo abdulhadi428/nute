@@ -38,13 +38,16 @@ int main(void) {
     LedWs.Init();
 #endif
 
-//    Uart.Printf("\rMushroom  AHB=%u; APB1=%u; APB2=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
-//    Led.SetColorNow(LED_COLOR);
+    Uart.Printf("\rMushroom  AHB=%u; APB1=%u; APB2=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+//    LedWs.SetCommonColorSmoothly(clGreen);
+    //    Led.SetColorNow(LED_COLOR);
     while(true) {
-        LedWs.SetCommonColor(clGreen);
-        chThdSleepMilliseconds(999);
-        LedWs.SetCommonColor(clBlue);
-        chThdSleepMilliseconds(999);
+        LedWs.SetCommonColorSmoothly(clGreen);
+        chThdSleepMilliseconds(18000);
+        LedWs.SetCommonColorSmoothly(clBlue);
+        chThdSleepMilliseconds(27000);
+        LedWs.SetCommonColorSmoothly(clBlack);
+        chThdSleepMilliseconds(18000);
 
 //        chThdSleepS(TIME_INFINITE);
     }

@@ -14,7 +14,7 @@ LedWs_t LedWs;
 // Tx timings
 #define T0H_N       3
 #define T1H_N       7
-#define T_TOTAL_N   10
+#define T_TOTAL_N   11
 
 // DMA
 #define LED_DMA_STREAM  STM32_DMA1_STREAM5
@@ -32,6 +32,7 @@ void LedTxcIrq(void *p, uint32_t flags) {
     LedWs.IStopTx();
     //Uart.Printf("Irq\r");
 }
+static inline void LedTmrCallback(void *p) { LedWs.ITmrHandler(); }
 } // "C"
 
 void LedWs_t::Init() {
@@ -61,21 +62,30 @@ void LedWs_t::Init() {
 }
 
 void LedWs_t::SetCommonColor(Color_t Clr) {
-    // Fill bit buffer
-    PBit = &BitBuf[RST_BIT_CNT];
-    for(uint32_t i=0; i<LED_CNT; i++) {
-        AppendBitsMadeOfByte(Clr.Green);
-        AppendBitsMadeOfByte(Clr.Red);
-        AppendBitsMadeOfByte(Clr.Blue);
+    for(uint32_t i=0; i<LED_CNT; i++) IClr[i] = Clr;
+    ISetCurrentColors();
+}
+
+void LedWs_t::SetCommonColorSmoothly(Color_t Clr) {
+    chVTReset(&ITmr);
+    for(uint32_t i=0; i<LED_CNT; i++) DesiredClr[i] = Clr;
+    Indx = 0;   // Start with first LED
+    ITmrHandler();
+}
+
+void LedWs_t::ITmrHandler() {
+//    Uart.Printf("I1=%u\r", Indx);
+    while(IClr[Indx] == DesiredClr[Indx]) {
+        Indx++;
+        if(Indx >= LED_CNT) return; // Setup completed
     }
-//    Uart.Printf("%u %u %u\r", Clr.Green, Clr.Red, Clr.Blue);
-//    Uart.Printf("%A\r", &BitBuf[RST_BIT_CNT], DATA_BIT_CNT, ' ');
-//    Uart.Printf("%A\r", BitBuf, TOTAL_BIT_CNT, ' ');
-    // Start transmission
-    dmaStreamSetTransactionSize(LED_DMA_STREAM, TOTAL_BIT_CNT);
-    dmaStreamEnable(LED_DMA_STREAM);
-    TxTmr.SetCounter(0);
-    TxTmr.Enable();
+//    Uart.Printf("I2=%u\r", Indx);
+    // Calculate delay
+    uint32_t Delay = ICalcDelayClr();
+    IClr[Indx].Adjust(&DesiredClr[Indx]);
+    ISetCurrentColors();
+//    Uart.Printf("I=%u; D=%u\r", Indx, Delay);
+    chVTSet(&ITmr, MS2ST(Delay), LedTmrCallback, NULL);
 }
 
 void LedWs_t::AppendBitsMadeOfByte(uint8_t Byte) {
@@ -85,6 +95,37 @@ void LedWs_t::AppendBitsMadeOfByte(uint8_t Byte) {
         PBit++;
         Byte <<= 1;
     }
+}
+
+void LedWs_t::ISetCurrentColors() {
+    // Fill bit buffer
+    PBit = &BitBuf[RST_BIT_CNT];
+    for(uint32_t i=0; i<LED_CNT; i++) {
+        AppendBitsMadeOfByte(IClr[i].Green);
+        AppendBitsMadeOfByte(IClr[i].Red);
+        AppendBitsMadeOfByte(IClr[i].Blue);
+    }
+    // Start transmission
+    dmaStreamSetTransactionSize(LED_DMA_STREAM, TOTAL_BIT_CNT);
+    dmaStreamEnable(LED_DMA_STREAM);
+    TxTmr.SetCounter(0);
+    TxTmr.Enable();
+}
+
+uint32_t LedWs_t::ICalcDelayClr() {
+    uint32_t DelayR = (IClr[Indx].Red   == DesiredClr[Indx].Red  )? 0 : ICalcDelay(IClr[Indx].Red);
+    uint32_t DelayG = (IClr[Indx].Green == DesiredClr[Indx].Green)? 0 : ICalcDelay(IClr[Indx].Green);
+    uint32_t DelayB = (IClr[Indx].Blue  == DesiredClr[Indx].Blue )? 0 : ICalcDelay(IClr[Indx].Blue);
+//    Uart.Printf("I=%u; R=%u/%u; G=%u/%u; B=%u/%u\r",
+//            Indx,
+//            IClr[Indx].Red,   DesiredClr[Indx].Red,
+//            IClr[Indx].Green, DesiredClr[Indx].Green,
+//            IClr[Indx].Blue,  DesiredClr[Indx].Blue);
+//    Uart.Printf("DR=%u; DG=%u; DB=%u\r", DelayR, DelayG, DelayB);
+    uint32_t Rslt = DelayR;
+    if(DelayG > Rslt) Rslt = DelayG;
+    if(DelayB > Rslt) Rslt = DelayB;
+    return Rslt;
 }
 
 #endif
