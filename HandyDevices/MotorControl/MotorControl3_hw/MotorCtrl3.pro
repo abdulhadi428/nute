@@ -1,4 +1,4 @@
-update=13/01/2014 15:50:57
+update=02/04/2014 16:28:00
 version=1
 last_client=eeschema
 [cvpcb]
@@ -60,6 +60,6 @@ LibName3=Kicad/pcb_details
 LibName4=Kicad/power
 LibName5=Kicad/Power_kl
 LibName6=Kicad/RF ICs
-LibName7=Kicad/st_kl
+LibName7=Kicad/Transistors_kl
 LibName8=Kicad/Tittar_kl
-LibName9=Kicad/Transistors_kl
+LibName9=Kicad/st_kl
