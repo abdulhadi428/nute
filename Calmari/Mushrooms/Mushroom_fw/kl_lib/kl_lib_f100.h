@@ -275,21 +275,60 @@ public:
     void InitPwm(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted, bool EnablePreload);
     void SetPwm(uint16_t Value) { *PCCR = Value; }
 };
-// ==== External IRQ ====
-//enum ExtiTrigType_t {
-//static inline void PinIrqSetup(GPIO_TypeDef *PGpioPort, const uint8_t APinNumber, EXTITrigger_TypeDef ATriggerType) {
-//    // Get IRQ channel
-//    uint8_t IChannel;
-//    if      ((APinNumber >= 0)  and (APinNumber <= 4))  IChannel = EXTI0_IRQn + APinNumber;
-//    else if ((APinNumber >= 5)  and (APinNumber <= 9))  IChannel = EXTI9_5_IRQn;
-//    else if ((APinNumber >= 10) and (APinNumber <= 15)) IChannel = EXTI15_10_IRQn;
-//
-//}
-//
-//
-//uint8_t N = APinNumber / 4;    // Indx of EXTICR register
-//uint8_t Shift = (APinNumber & 0x03) * 4;
-//AFIO->EXTICR[N] &= ~((uint32_t)0b1111 << Shift);    // Clear bits
+
+#if 1 // ======================== External IRQ =================================
+enum ExtiTrigType_t {ttRising, ttFalling, ttRisingFalling};
+
+class PinIrq_t {
+private:
+    uint32_t IIrqChnl;
+    GPIO_TypeDef *IGPIO;
+    uint8_t IPinNumber;
+public:
+    void SetTriggerType(ExtiTrigType_t ATriggerType) {
+        uint32_t IrqMsk = 1 << IPinNumber;
+        switch(ATriggerType) {
+            case ttRising:
+                EXTI->RTSR |=  IrqMsk;  // Rising trigger enabled
+                EXTI->FTSR &= ~IrqMsk;  // Falling trigger disabled
+                break;
+            case ttFalling:
+                EXTI->RTSR &= ~IrqMsk;  // Rising trigger disabled
+                EXTI->FTSR |=  IrqMsk;  // Falling trigger enabled
+                break;
+            case ttRisingFalling:
+                EXTI->RTSR |=  IrqMsk;  // Rising trigger enabled
+                EXTI->FTSR |=  IrqMsk;  // Falling trigger enabled
+                break;
+        } // switch
+    }
+
+    void Setup(GPIO_TypeDef *GPIO, const uint8_t APinNumber, ExtiTrigType_t ATriggerType) {
+        IGPIO = GPIO;
+        IPinNumber = APinNumber;
+        RCC->APB2ENR |= RCC_APB2ENR_AFIOEN; // Enable AFIO clock
+        // Connect EXTI line to the pin of the port
+        uint8_t Indx   = APinNumber / 4;            // Indx of EXTICR register
+        uint8_t Offset = (APinNumber & 0x03) * 4;   // Offset in EXTICR register
+        AFIO->EXTICR[Indx] &= ~((uint32_t)0b1111 << Offset);    // Clear  port-related bits
+        if     (GPIO == GPIOB) AFIO->EXTICR[Indx] |= (uint32_t)0b0001 << Offset;
+        else if(GPIO == GPIOC) AFIO->EXTICR[Indx] |= (uint32_t)0b0010 << Offset;
+        // Configure EXTI line
+        uint32_t IrqMsk = 1 << APinNumber;
+        EXTI->IMR  |=  IrqMsk;      // Interrupt mode enabled
+        EXTI->EMR  &= ~IrqMsk;      // Event mode disabled
+        SetTriggerType(ATriggerType);
+        EXTI->PR    =  IrqMsk;      // Clean irq flag
+        // Get IRQ channel
+        if      ((APinNumber >= 0)  and (APinNumber <= 4))  IIrqChnl = EXTI0_IRQn + APinNumber;
+        else if ((APinNumber >= 5)  and (APinNumber <= 9))  IIrqChnl = EXTI9_5_IRQn;
+        else if ((APinNumber >= 10) and (APinNumber <= 15)) IIrqChnl = EXTI15_10_IRQn;
+    }
+    void EnableIrq(const uint32_t Priority) { nvicEnableVector(IIrqChnl, CORTEX_PRIORITY_MASK(Priority)); }
+    void DisableIrq() { nvicDisableVector(IIrqChnl); }
+    void CleanIrqFlag() { EXTI->PR = (1 << IPinNumber); }
+};
+#endif
 
 // ================================= IWDG ======================================
 enum IwdgPre_t {
@@ -345,7 +384,7 @@ static inline void ClearStandbyFlag() { PWR->CR |= PWR_CR_CSBF; }
 }; // namespace
 #endif
 
-// ================================= SPI =======================================
+#if 1 // ============================== SPI ====================================
 enum CPHA_t {cphaFirstEdge, cphaSecondEdge};
 enum CPOL_t {cpolIdleLow, cpolIdleHigh};
 enum SpiBaudrate_t {
@@ -359,29 +398,40 @@ enum SpiBaudrate_t {
     sbFdiv256 = 0b111,
 };
 
-static inline void SpiSetup(
-        SPI_TypeDef *Spi,
-        BitOrder_t BitOrder,
-        CPOL_t CPOL,
-        CPHA_t CPHA,
-        SpiBaudrate_t Baudrate
-        ) {
-    // Clocking
-    if      (Spi == SPI1) { rccEnableSPI1(FALSE); }
-#ifndef STM32F10X_LD_VL
-    else if (Spi == SPI2) { rccEnableSPI2(FALSE); }
+class Spi_t {
+private:
+    SPI_TypeDef *PSpi;
+public:
+    void Setup(SPI_TypeDef *Spi, BitOrder_t BitOrder,
+            CPOL_t CPOL, CPHA_t CPHA, SpiBaudrate_t Baudrate) {
+        PSpi = Spi;
+        // Clocking
+#ifdef RCC_APB1ENR_SPI2EN
+        if      (PSpi == SPI1) { rccEnableSPI1(FALSE); }
+        else if (PSpi == SPI2) { rccEnableSPI2(FALSE); }
+#else
+        rccEnableSPI1(FALSE);
 #endif
-    // Mode: Master, NSS software controlled and is 1, 8bit, NoCRC, FullDuplex
-    Spi->CR1 = SPI_CR1_SSM | SPI_CR1_SSI | SPI_CR1_MSTR;
-    if(BitOrder == boLSB) Spi->CR1 |= SPI_CR1_LSBFIRST;     // MSB/LSB
-    if(CPOL == cpolIdleHigh) Spi->CR1 |= SPI_CR1_CPOL;      // CPOL
-    if(CPHA == cphaSecondEdge) Spi->CR1 |= SPI_CR1_CPHA;    // CPHA
-    Spi->CR1 |= ((uint16_t)Baudrate) << 3;                  // Baudrate
-    Spi->CR2 = 0;
-}
-
-static inline void SpiEnable (SPI_TypeDef *Spi) { Spi->CR1 |=  SPI_CR1_SPE; }
-static inline void SpiDisable(SPI_TypeDef *Spi) { Spi->CR1 &= ~SPI_CR1_SPE; }
+        // Mode: Master, NSS software controlled and is 1, 8bit, NoCRC, FullDuplex
+        PSpi->CR1 = SPI_CR1_SSM | SPI_CR1_SSI | SPI_CR1_MSTR;
+        if(BitOrder == boLSB) PSpi->CR1 |= SPI_CR1_LSBFIRST;    // MSB/LSB
+        if(CPOL == cpolIdleHigh) PSpi->CR1 |= SPI_CR1_CPOL;     // CPOL
+        if(CPHA == cphaSecondEdge) PSpi->CR1 |= SPI_CR1_CPHA;   // CPHA
+        PSpi->CR1 |= ((uint16_t)Baudrate) << 3;                 // Baudrate
+        PSpi->CR2 = 0;
+        PSpi->I2SCFGR &= ~((uint16_t)SPI_I2SCFGR_I2SMOD);       // Disable I2S
+    }
+    void Enable () { PSpi->CR1 |=  SPI_CR1_SPE; }
+    void Disable() { PSpi->CR1 &= ~SPI_CR1_SPE; }
+    void EnableTxDma() { PSpi->CR2 |= SPI_CR2_TXDMAEN; }
+    void WaitBsyHi2Lo() { while(PSpi->SR & SPI_SR_BSY); }
+    uint8_t ReadWriteByte(uint8_t AByte) {
+        PSpi->DR = AByte;
+        while(!(PSpi->SR & SPI_SR_RXNE));  // Wait for SPI transmission to complete
+        return PSpi->DR;
+    }
+};
+#endif
 
 // =============================== I2C =========================================
 class i2c_t {

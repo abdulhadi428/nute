@@ -12,18 +12,15 @@
 #include "hal.h"
 #include "adc_f100.h"
 #include "cmd_uart_f10x.h"
-#include "color.h"
 #include "ws2812b.h"
+#include "application.h"
+#include "radio_lvl1.h"
 
-//#define LED_COLOR           ((Color_t){255, 71, 100})
-#define LED_COLOR           ((Color_t){0, 255, 0})
-
-//static Color_t Clr;
 //static void Load(Color_t *PClr);
 
 int main(void) {
     // ==== Init clock system ====
-    Clk.SetupBusDividers(ahbDiv1, apbDiv1, apbDiv1);
+    Clk.SetupBusDividers(ahbDiv2, apbDiv1, apbDiv1);
     Clk.UpdateFreqValues();
     // ==== Init OS ====
     halInit();
@@ -37,20 +34,12 @@ int main(void) {
 #if LED_WS_ENABLE
     LedWs.Init();
 #endif
+    Radio.Init();
+    App.PThd = chThdSelf();
+    App.Init();
 
     Uart.Printf("\rMushroom  AHB=%u; APB1=%u; APB2=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
-//    LedWs.SetCommonColorSmoothly(clGreen);
-    //    Led.SetColorNow(LED_COLOR);
-    while(true) {
-        LedWs.SetCommonColorSmoothly(clGreen, csmOneByOne);
-        chThdSleepMilliseconds(18000);
-//        LedWs.SetCommonColorSmoothly(clBlue);
-//        chThdSleepMilliseconds(27000);
-        LedWs.SetCommonColorSmoothly(clBlack, csmSimultaneously);
-        chThdSleepMilliseconds(18000);
-
-//        chThdSleepS(TIME_INFINITE);
-    }
+    while(true) App.ITask();
 }
 
 #if AUTO_OFF

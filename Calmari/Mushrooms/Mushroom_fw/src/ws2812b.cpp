@@ -12,9 +12,9 @@
 LedWs_t LedWs;
 
 // Tx timings
-#define T0H_N       3
-#define T1H_N       7
-#define T_TOTAL_N   11
+#define T0H_N       1
+#define T1H_N       3
+#define T_TOTAL_N   18
 
 // DMA
 #define LED_DMA_STREAM  STM32_DMA1_STREAM5
@@ -56,9 +56,6 @@ void LedWs_t::Init() {
     dmaStreamSetPeripheral(LED_DMA_STREAM, TxTmr.PCCR);
     dmaStreamSetMemory0   (LED_DMA_STREAM, BitBuf);
     dmaStreamSetMode      (LED_DMA_STREAM, LED_DMA_MODE);
-
-    // ==== Initial variables ====
-    //for(uint16_t i=0; i<RST_BIT_CNT; i++) BitBuf[i] = T0H_N;    // Set
 }
 
 void LedWs_t::SetCommonColor(Color_t Clr) {
@@ -112,7 +109,12 @@ void LedWs_t::ISetCurrentColors() {
     dmaStreamSetTransactionSize(LED_DMA_STREAM, TOTAL_BIT_CNT);
     dmaStreamEnable(LED_DMA_STREAM);
     TxTmr.SetCounter(0);
+
+//    chSysLockFromIsr();
     TxTmr.Enable();
+//    dmaWaitCompletion(LED_DMA_STREAM);
+//    IStopTx();
+//    chSysUnlockFromIsr();
 }
 
 uint32_t LedWs_t::ICalcDelayClr() {

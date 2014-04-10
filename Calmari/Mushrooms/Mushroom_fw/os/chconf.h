@@ -221,7 +221,7 @@
  * @note    The default is @p TRUE.
  */
 #if !defined(CH_USE_EVENTS) || defined(__DOXYGEN__)
-#define CH_USE_EVENTS                   FALSE
+#define CH_USE_EVENTS                   TRUE
 #endif
 
 /**
