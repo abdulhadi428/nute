@@ -66,8 +66,9 @@ void LedWs_t::SetCommonColor(Color_t Clr) {
     ISetCurrentColors();
 }
 
-void LedWs_t::SetCommonColorSmoothly(Color_t Clr) {
+void LedWs_t::SetCommonColorSmoothly(Color_t Clr, ClrSetupMode_t AMode) {
     chVTReset(&ITmr);
+    IMode = AMode;
     for(uint32_t i=0; i<LED_CNT; i++) DesiredClr[i] = Clr;
     Indx = 0;   // Start with first LED
     ITmrHandler();
@@ -79,10 +80,12 @@ void LedWs_t::ITmrHandler() {
         Indx++;
         if(Indx >= LED_CNT) return; // Setup completed
     }
-//    Uart.Printf("I2=%u\r", Indx);
-    // Calculate delay
     uint32_t Delay = ICalcDelayClr();
-    IClr[Indx].Adjust(&DesiredClr[Indx]);
+    // Adjust color(s) depending on mode
+    if(IMode == csmOneByOne) IClr[Indx].Adjust(&DesiredClr[Indx]);
+    else {  // Simultaneously
+        for(uint8_t i=0; i<LED_CNT; i++) IClr[i].Adjust(&DesiredClr[Indx]);
+    }
     ISetCurrentColors();
 //    Uart.Printf("I=%u; D=%u\r", Indx, Delay);
     chVTSet(&ITmr, MS2ST(Delay), LedTmrCallback, NULL);

@@ -42,11 +42,11 @@ int main(void) {
 //    LedWs.SetCommonColorSmoothly(clGreen);
     //    Led.SetColorNow(LED_COLOR);
     while(true) {
-        LedWs.SetCommonColorSmoothly(clGreen);
+        LedWs.SetCommonColorSmoothly(clGreen, csmOneByOne);
         chThdSleepMilliseconds(18000);
-        LedWs.SetCommonColorSmoothly(clBlue);
-        chThdSleepMilliseconds(27000);
-        LedWs.SetCommonColorSmoothly(clBlack);
+//        LedWs.SetCommonColorSmoothly(clBlue);
+//        chThdSleepMilliseconds(27000);
+        LedWs.SetCommonColorSmoothly(clBlack, csmSimultaneously);
         chThdSleepMilliseconds(18000);
 
 //        chThdSleepS(TIME_INFINITE);
