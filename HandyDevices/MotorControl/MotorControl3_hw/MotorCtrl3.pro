@@ -1,11 +1,6 @@
-update=02/04/2014 16:28:00
+update=11/04/2014 18:31:20
 version=1
-last_client=eeschema
-[cvpcb]
-version=1
-NetIExt=net
-[cvpcb/libraries]
-EquName1=devcms
+last_client=cvpcb
 [pcbnew]
 version=1
 LastNetListRead=
@@ -26,23 +21,12 @@ DrawSegmentWidth=0.200000000000
 BoardOutlineThickness=0.100000000000
 ModuleOutlineThickness=0.150000000000
 [pcbnew/libraries]
-LibDir=
-LibName1=sockets
-LibName2=connect
-LibName3=discret
-LibName4=pin_array
-LibName5=divers
-LibName6=smd_capacitors
-LibName7=smd_resistors
-LibName8=smd_crystal&oscillator
-LibName9=smd_dil
-LibName10=smd_transistors
-LibName11=libcms
-LibName12=display
-LibName13=led
-LibName14=dip_sockets
-LibName15=pga_sockets
-LibName16=valves
+LibName1=Common_kl
+LibName2=Connectors_kl
+LibName3=pcb_details
+LibName4=Power_kl
+LibName5=Tittar_kl
+LibDir=D:/libs/Kicad
 [general]
 version=1
 [eeschema]
@@ -63,3 +47,8 @@ LibName6=Kicad/RF ICs
 LibName7=Kicad/Transistors_kl
 LibName8=Kicad/Tittar_kl
 LibName9=Kicad/st_kl
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms
