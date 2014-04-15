@@ -10,6 +10,59 @@
 #include <stdarg.h>
 #include <string.h>
 
+// ================================ Timer ======================================
+void Timer_t::Init(TIM_TypeDef* PTmr) {
+    ITmr = PTmr;
+    if     (ITmr == TIM1)  { rccEnableTIM1(FALSE); }
+    else if(ITmr == TIM2)  { rccEnableTIM2(FALSE); }
+    else if(ITmr == TIM3)  { rccEnableTIM3(FALSE); }
+    else if(ITmr == TIM6)  { rccEnableAPB1(RCC_APB1ENR_TIM6EN, FALSE); }
+    else if(ITmr == TIM7)  { rccEnableAPB1(RCC_APB1ENR_TIM7EN, FALSE); }
+    else if(ITmr == TIM15) { rccEnableAPB2(RCC_APB2ENR_TIM15EN, FALSE); }
+    else if(ITmr == TIM16) { rccEnableAPB2(RCC_APB2ENR_TIM16EN, FALSE); }
+    else if(ITmr == TIM17) { rccEnableAPB2(RCC_APB2ENR_TIM17EN, FALSE); }
+    // Clock src
+    if(ANY_OF_4(ITmr, TIM1, TIM15, TIM16, TIM17)) PClk = &Clk.APB2FreqHz;
+    else PClk = &Clk.APB1FreqHz;
+}
+
+void Timer_t::InitPwm(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted, bool EnablePreload) {
+    // GPIO
+    PinSetupAlterFuncOutput(GPIO, N, omPushPull);
+    // Enable outputs for advanced timers
+    ITmr->BDTR = TIM_BDTR_MOE | TIM_BDTR_AOE;
+    // Output
+    uint16_t tmp = (Inverted == invInverted)? 0b1110 : 0b1100; // PWM mode 1 or 2
+    if(EnablePreload) tmp |= 0b1;
+    switch(Chnl) {
+        case 1:
+            PCCR = &ITmr->CCR1;
+            ITmr->CCMR1 |= (tmp << 3);
+            ITmr->CCER  |= TIM_CCER_CC1E;
+            break;
+
+        case 2:
+            PCCR = &ITmr->CCR2;
+            ITmr->CCMR1 |= (tmp << 11);
+            ITmr->CCER  |= TIM_CCER_CC2E;
+            break;
+
+        case 3:
+            PCCR = &ITmr->CCR3;
+            ITmr->CCMR2 |= (tmp << 3);
+            ITmr->CCER  |= TIM_CCER_CC3E;
+            break;
+
+        case 4:
+            PCCR = &ITmr->CCR4;
+            ITmr->CCMR2 |= (tmp << 11);
+            ITmr->CCER  |= TIM_CCER_CC4E;
+            break;
+
+        default: break;
+    }
+}
+
 // ================================ PWM pin ====================================
 void PwmPin_t::Init(GPIO_TypeDef *GPIO, uint16_t N, uint8_t TimN, uint8_t Chnl, uint16_t TopValue, bool Inverted) {
     PinSetupAlterFuncOutput(GPIO, N, omPushPull);

@@ -48,7 +48,7 @@ static inline bool TryConvertToDigit(uint8_t b, uint8_t *p) {
     }
     else return false;
 }
-static inline bool IsDelimiter(uint8_t b) { return (b == ','); }
+static inline bool IsDelimiter(uint8_t b) { return (b == ',') or (b == ' '); }
 static inline bool IsEnd(uint8_t b) { return (b == '\r') or (b == '\n'); }
 
 static WORKING_AREA(waUartRxThread, 256);
@@ -72,48 +72,61 @@ void CmdUart_t::IRxTask() {
 }
 
 void CmdUart_t::IProcessByte(uint8_t b) {
+    if(IsEnd(b)) {
+        if(NbrIndx == 2) UartCmdCallback(Nbr[0], Nbr[1], Nbr[2]);
+        IResetCmd();
+        return;
+    }
     uint8_t d=0;
-    if(b == '#') RxState = rsCmdCode1; // If # is received anywhere, start again
-    else switch(RxState) {
-        case rsCmdCode1:
+    switch(RxState) {
+        case rsNbr1:
             if(TryConvertToDigit(b, &d)) {
-                CmdCode = d << 4;
-                RxState = rsCmdCode2;
+                Nbr[NbrIndx] = d;
+                RxState = rsNbr2;
+            }
+            else if(IsDelimiter(b)) {
+                if(NbrIndx == 2) IResetCmd();
+                else {
+                    NbrIndx++;
+                    RxState = rsNbr1;
+                }
             }
             else IResetCmd();
             break;
 
-        case rsCmdCode2:
+        case rsNbr2:
             if(TryConvertToDigit(b, &d)) {
-                CmdCode |= d;
-                RxState = rsData1;
+                Nbr[NbrIndx] = Nbr[NbrIndx]*10 + d;
+                RxState = rsNbr3;
+            }
+            else if(IsDelimiter(b)) {
+                if(NbrIndx == 2) IResetCmd();
+                else {
+                    NbrIndx++;
+                    RxState = rsNbr1;
+                }
             }
             else IResetCmd();
             break;
 
-        case rsData1:
+        case rsNbr3:
             if(TryConvertToDigit(b, &d)) {
-                *PCmdWrite = d << 4;
-                RxState = rsData2;
+                Nbr[NbrIndx] = Nbr[NbrIndx]*10 + d;
+                if(NbrIndx == 2) RxState = rsWaitingEnd;
             }
-            else if(IsDelimiter(b)) return; // skip delimiters
-            else if(IsEnd(b)) {
-                UartCmdCallback(CmdCode, CmdData, (PCmdWrite - CmdData));
-                IResetCmd();
+            else if(IsDelimiter(b)) {
+                if(NbrIndx == 2) IResetCmd();
+                else {
+                    NbrIndx++;
+                    RxState = rsNbr1;
+                }
             }
             else IResetCmd();
             break;
 
-        case rsData2:
-            if(TryConvertToDigit(b, &d)) {
-                *PCmdWrite |= d;
-                RxState = rsData1;  // Prepare to rx next byte
-                if(PCmdWrite < (CmdData + (UART_CMDDATA_SZ-1))) PCmdWrite++;
-            }
-            else IResetCmd(); // Delimiters and End symbols are not allowed in the middle of byte
+        case rsWaitingEnd:  // Will be here in case of something else after CMD
+            IResetCmd();
             break;
-
-        default: break;
     } // switch
 }
 #endif
