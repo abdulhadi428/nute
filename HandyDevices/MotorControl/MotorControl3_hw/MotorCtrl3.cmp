@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-05-31 BZR 4019)-stable date = 14/04/2014 13:13:48
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 16/04/2014 11:48:04
 
 BeginCmp
 TimeStamp = /533C96C2;
@@ -606,42 +606,42 @@ BeginCmp
 TimeStamp = /5331E05F;
 Reference = D1;
 ValeurCmp = LED;
-IdModule  = LED-3MM;
+IdModule  = LED0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /5331E059;
 Reference = D2;
 ValeurCmp = LED;
-IdModule  = LED-3MM;
+IdModule  = LED0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /5331DEDE;
 Reference = D3;
 ValeurCmp = LED;
-IdModule  = LED-3MM;
+IdModule  = LED0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /5331D2EE;
 Reference = D4;
 ValeurCmp = LED;
-IdModule  = LED-3MM;
+IdModule  = LED0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /5331DBFB;
 Reference = D5;
 ValeurCmp = LED;
-IdModule  = LED-3MM;
+IdModule  = LED0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /5331DED8;
 Reference = D6;
 ValeurCmp = LED;
-IdModule  = LED-3MM;
+IdModule  = LED0603;
 EndCmp
 
 BeginCmp
@@ -655,14 +655,14 @@ BeginCmp
 TimeStamp = /5331D2DF;
 Reference = D8;
 ValeurCmp = LED;
-IdModule  = LED-3MM;
+IdModule  = LED0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /5331DBF5;
 Reference = D9;
 ValeurCmp = LED;
-IdModule  = LED-3MM;
+IdModule  = LED0603;
 EndCmp
 
 BeginCmp
@@ -1191,10 +1191,10 @@ IdModule  = HTSSOP28;
 EndCmp
 
 BeginCmp
-TimeStamp = /5301D1D5;
+TimeStamp = /534E37B2;
 Reference = XL1;
-ValeurCmp = USB_MINI_B;
-IdModule  = USBmicro_MOLEX_WM17142;
+ValeurCmp = USB_B;
+IdModule  = CONN_USB_B;
 EndCmp
 
 BeginCmp
