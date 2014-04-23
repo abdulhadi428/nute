@@ -1,0 +1,1 @@
+cli.exe -c SWD -P "Avada3.hex" 0x08000000 -Rst 
