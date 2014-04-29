@@ -1,6 +1,6 @@
-update=11/04/2014 18:31:20
+update=29/04/2014 17:11:10
 version=1
-last_client=cvpcb
+last_client=eeschema
 [pcbnew]
 version=1
 LastNetListRead=
@@ -29,6 +29,11 @@ LibName5=Tittar_kl
 LibDir=D:/libs/Kicad
 [general]
 version=1
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms
 [eeschema]
 version=1
 LibDir=D:/Libs
@@ -47,8 +52,4 @@ LibName6=Kicad/RF ICs
 LibName7=Kicad/Transistors_kl
 LibName8=Kicad/Tittar_kl
 LibName9=Kicad/st_kl
-[cvpcb]
-version=1
-NetIExt=net
-[cvpcb/libraries]
-EquName1=devcms
+LibName10=Kicad/memory
