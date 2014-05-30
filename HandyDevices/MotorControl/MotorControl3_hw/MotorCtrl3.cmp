@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 14/05/2014 11:39:57
+Cmp-Mod V01 Created by CvPcb (2013-05-31 BZR 4019)-stable date = 30/05/2014 16:55:33
 
 BeginCmp
 TimeStamp = /533C96C2;
@@ -1775,7 +1775,7 @@ BeginCmp
 TimeStamp = /53731F27;
 Reference = XL2;
 ValeurCmp = CONN_4X2;
-IdModule  = CONN_KF128D_2;
+IdModule  = MINIFIT_8;
 EndCmp
 
 BeginCmp
@@ -1803,14 +1803,14 @@ BeginCmp
 TimeStamp = /5360833B;
 Reference = XL6;
 ValeurCmp = CONN_2;
-IdModule  = CONN_PLS-3;
+IdModule  = CONN_PLS-2;
 EndCmp
 
 BeginCmp
 TimeStamp = /53608350;
 Reference = XL7;
 ValeurCmp = CONN_2;
-IdModule  = CONN_PLS-3;
+IdModule  = CONN_PLS-2;
 EndCmp
 
 BeginCmp
@@ -1831,28 +1831,28 @@ BeginCmp
 TimeStamp = /5360503C;
 Reference = XL10;
 ValeurCmp = CONN_4X2;
-IdModule  = CONN_PLS-3;
+IdModule  = CONN_DIL2X4;
 EndCmp
 
 BeginCmp
 TimeStamp = /5360571E;
 Reference = XL11;
 ValeurCmp = CONN_4X2;
-IdModule  = CONN_PLS-3;
+IdModule  = CONN_DIL2X4;
 EndCmp
 
 BeginCmp
 TimeStamp = /53605744;
 Reference = XL12;
 ValeurCmp = CONN_4X2;
-IdModule  = CONN_PLS-3;
+IdModule  = CONN_DIL2X4;
 EndCmp
 
 BeginCmp
 TimeStamp = /5360576A;
 Reference = XL13;
 ValeurCmp = CONN_4X2;
-IdModule  = CONN_PLS-3;
+IdModule  = CONN_DIL2X4;
 EndCmp
 
 BeginCmp
@@ -1866,14 +1866,14 @@ BeginCmp
 TimeStamp = /53606EED;
 Reference = XL15;
 ValeurCmp = CONN_5;
-IdModule  = CONN_PLS-2;
+IdModule  = CONN_PLS-5;
 EndCmp
 
 BeginCmp
 TimeStamp = /5363138E;
 Reference = XL16;
 ValeurCmp = CONN_8;
-IdModule  = CONN_PLS-2;
+IdModule  = CONN_DIL2X4;
 EndCmp
 
 BeginCmp
@@ -1887,63 +1887,63 @@ BeginCmp
 TimeStamp = /53635BCC;
 Reference = XL18;
 ValeurCmp = CONN_8;
-IdModule  = CONN_PLS-2;
+IdModule  = CONN_DIL2X4;
 EndCmp
 
 BeginCmp
 TimeStamp = /53605782;
 Reference = XL19;
 ValeurCmp = CONN_2;
-IdModule  = ;
+IdModule  = CONN_PLS-2;
 EndCmp
 
 BeginCmp
 TimeStamp = /53613AA0;
 Reference = XL20;
 ValeurCmp = CONN_6;
-IdModule  = CONN_PLS-4;
+IdModule  = MINIFIT_6;
 EndCmp
 
 BeginCmp
 TimeStamp = /5361A152;
 Reference = XL21;
 ValeurCmp = CONN_4;
-IdModule  = CONN_PLS-2;
+IdModule  = MINIFIT_4;
 EndCmp
 
 BeginCmp
 TimeStamp = /535FB7CD;
 Reference = XL22;
 ValeurCmp = CONN_MICROSD;
-IdModule  = CONN_KF128D_2;
+IdModule  = MICROSD_CAP_FIX05A;
 EndCmp
 
 BeginCmp
 TimeStamp = /535FF26D;
 Reference = XL23;
 ValeurCmp = CONN_4;
-IdModule  = CONN_KF128D_2;
+IdModule  = MINIFIT_4;
 EndCmp
 
 BeginCmp
 TimeStamp = /535FE54E;
 Reference = XL24;
 ValeurCmp = CONN_4;
-IdModule  = CONN_KF128D_2;
+IdModule  = MINIFIT_4;
 EndCmp
 
 BeginCmp
 TimeStamp = /535FF279;
 Reference = XL25;
 ValeurCmp = CONN_4;
-IdModule  = CONN_KF128D_2;
+IdModule  = MINIFIT_4;
 EndCmp
 
 BeginCmp
 TimeStamp = /535FF261;
 Reference = XL26;
 ValeurCmp = CONN_4;
-IdModule  = CONN_KF128D_2;
+IdModule  = MINIFIT_4;
 EndCmp
 
 BeginCmp
