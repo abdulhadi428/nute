@@ -1,10 +1,10 @@
-Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 20/07/2014 12:33:34
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 22/07/2014 14:06:36
 
 BeginCmp
 TimeStamp = /527152AC;
 Reference = ANT1;
 ValeurCmp = ANT_PCB_MONO;
-IdModule  = ANT_MEANDER868_16MM;
+IdModule  = ANT_868_SEIDHE;
 EndCmp
 
 BeginCmp
