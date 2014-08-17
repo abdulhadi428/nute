@@ -17,9 +17,9 @@
 #define LED_SMOOTH          TRUE
 
 #define LED_GPIO            GPIOB
-#define LED_GPIO_N          9
-#define LED_TIM_N           17
-#define LED_CCR_N           1
+//#define LED_GPIO_N          9
+//#define LED_TIM_N           17
+//#define LED_CCR_N           1
 #define LED_TOP_VALUE       1998
 #define LED_BOTTOM_VALUE    0
 #define LED_INITIAL_VALUE   LED_TOP_VALUE
@@ -31,14 +31,20 @@ enum SmLedState_t {slsNone, slsGlimmer};
 class LedSmooth_t {
 private:
     VirtualTimer ITmr;
-    PwmPin_t IPin;
+    PwmPin_t IPins[4];
     SmLedState_t IState;
     uint16_t IMax, IMin;
     uint16_t ICurrentValue, INeededValue;
     uint32_t ISetupDelay(uint16_t AValue) { return (uint32_t)((SMOOTH_CONST / (AValue+4)) + 1); }
 public:
     void Init();
-    void Set(uint16_t AValue) { IPin.Set(AValue); ICurrentValue = AValue; }
+    void Set(uint16_t AValue) {
+        IPins[0].Set(AValue);
+        IPins[1].Set(AValue);
+        IPins[2].Set(AValue);
+        IPins[3].Set(AValue);
+        ICurrentValue = AValue;
+    }
     void SetSmoothly(uint16_t AValue);
     bool IsEqOrAbove(uint16_t AValue) { return (ICurrentValue >= AValue); }
     bool IsEqOrBelow(uint16_t AValue) { return (ICurrentValue <= AValue); }

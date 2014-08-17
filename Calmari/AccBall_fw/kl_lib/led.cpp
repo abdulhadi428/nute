@@ -16,11 +16,15 @@ static void LedTmrCallback(void *p) {
 }
 
 void LedSmooth_t::Init() {
-    IPin.Init(LED_GPIO, LED_GPIO_N, LED_TIM_N, LED_CCR_N, LED_TOP_VALUE, false);
-    IPin.SetFreqHz(LED_PWM_FREQ_HZ);
-    // Remap Tim3 Chnl1 to PB4
-    AFIO->MAPR &= ~((uint32_t)0b11 << 10);  // Clear bits
-    AFIO->MAPR |=  ((uint32_t)0b10 << 10);  // Partial remap
+    IPins[0].Init(LED_GPIO, 0, 3,  3, LED_TOP_VALUE, false);
+    IPins[1].Init(LED_GPIO, 1, 3,  4, LED_TOP_VALUE, false);
+    IPins[2].Init(LED_GPIO, 8, 16, 1, LED_TOP_VALUE, false);
+    IPins[3].Init(LED_GPIO, 9, 17, 1, LED_TOP_VALUE, false);
+
+    IPins[0].SetFreqHz(LED_PWM_FREQ_HZ);
+    IPins[1].SetFreqHz(LED_PWM_FREQ_HZ);
+    IPins[2].SetFreqHz(LED_PWM_FREQ_HZ);
+    IPins[3].SetFreqHz(LED_PWM_FREQ_HZ);
     // Initial value
     Set(LED_INITIAL_VALUE);
     INeededValue = LED_INITIAL_VALUE;
@@ -50,7 +54,10 @@ void LedSmooth_t::Glimmer(uint16_t AMax, uint16_t AMin) {
 void LedSmooth_t::IrqHandlerI() {
     if (INeededValue < ICurrentValue) ICurrentValue--;
     else ICurrentValue++;
-    IPin.Set(ICurrentValue);
+    IPins[0].Set(ICurrentValue);
+    IPins[1].Set(ICurrentValue);
+    IPins[2].Set(ICurrentValue);
+    IPins[3].Set(ICurrentValue);
 
     // if equal and glimmer needed, switch to another
     if(IState == slsGlimmer) {
