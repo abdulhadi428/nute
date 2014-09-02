@@ -1,0 +1,129 @@
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 01/09/2014 17:34:04
+
+BeginCmp
+TimeStamp = /54045AE4;
+Reference = C1;
+ValeurCmp = 0.1u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /54045AC0;
+Reference = C2;
+ValeurCmp = 0.1u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /54045A10;
+Reference = DA1;
+ValeurCmp = MPR121;
+IdModule  = QFN20;
+EndCmp
+
+BeginCmp
+TimeStamp = /54047142;
+Reference = HOLE1;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /54047151;
+Reference = HOLE2;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /54045D87;
+Reference = R1;
+ValeurCmp = 10k;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /54045D81;
+Reference = R2;
+ValeurCmp = 10k;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /54045D60;
+Reference = R3;
+ValeurCmp = 10k;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /54045AF3;
+Reference = R4;
+ValeurCmp = 75k1%;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5404623A;
+Reference = SNSP1;
+ValeurCmp = SENSORPAD;
+IdModule  = SENSOR_PAD_7D2_9;
+EndCmp
+
+BeginCmp
+TimeStamp = /5404621C;
+Reference = SNSP2;
+ValeurCmp = SENSORPAD;
+IdModule  = SENSOR_PAD_7D2_9;
+EndCmp
+
+BeginCmp
+TimeStamp = /540461FE;
+Reference = SNSP3;
+ValeurCmp = SENSORPAD;
+IdModule  = SENSOR_PAD_7D2_9;
+EndCmp
+
+BeginCmp
+TimeStamp = /540461EF;
+Reference = SNSP4;
+ValeurCmp = SENSORPAD;
+IdModule  = SENSOR_PAD_7D2_9;
+EndCmp
+
+BeginCmp
+TimeStamp = /540461E0;
+Reference = SNSP5;
+ValeurCmp = SENSORPAD;
+IdModule  = SENSOR_PAD_7D2_9;
+EndCmp
+
+BeginCmp
+TimeStamp = /5404620D;
+Reference = SNSP6;
+ValeurCmp = SENSORPAD;
+IdModule  = SENSOR_PAD_7D2_9;
+EndCmp
+
+BeginCmp
+TimeStamp = /5404622B;
+Reference = SNSP7;
+ValeurCmp = SENSORPAD;
+IdModule  = SENSOR_PAD_7D2_9;
+EndCmp
+
+BeginCmp
+TimeStamp = /54046249;
+Reference = SNSP8;
+ValeurCmp = SENSORPAD;
+IdModule  = SENSOR_PAD_7D2_9;
+EndCmp
+
+BeginCmp
+TimeStamp = /54045E2F;
+Reference = XL1;
+ValeurCmp = CONN_5;
+IdModule  = CONN_MW_5M;
+EndCmp
+
+EndListe
