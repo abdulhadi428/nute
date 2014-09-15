@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 01/09/2014 17:34:04
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 15/09/2014 22:15:12
 
 BeginCmp
 TimeStamp = /54045AE4;
@@ -18,7 +18,7 @@ BeginCmp
 TimeStamp = /54045A10;
 Reference = DA1;
 ValeurCmp = MPR121;
-IdModule  = QFN20;
+IdModule  = QFN20_04PITCH;
 EndCmp
 
 BeginCmp
@@ -92,29 +92,8 @@ IdModule  = SENSOR_PAD_7D2_9;
 EndCmp
 
 BeginCmp
-TimeStamp = /540461E0;
+TimeStamp = /54172112;
 Reference = SNSP5;
-ValeurCmp = SENSORPAD;
-IdModule  = SENSOR_PAD_7D2_9;
-EndCmp
-
-BeginCmp
-TimeStamp = /5404620D;
-Reference = SNSP6;
-ValeurCmp = SENSORPAD;
-IdModule  = SENSOR_PAD_7D2_9;
-EndCmp
-
-BeginCmp
-TimeStamp = /5404622B;
-Reference = SNSP7;
-ValeurCmp = SENSORPAD;
-IdModule  = SENSOR_PAD_7D2_9;
-EndCmp
-
-BeginCmp
-TimeStamp = /54046249;
-Reference = SNSP8;
 ValeurCmp = SENSORPAD;
 IdModule  = SENSOR_PAD_7D2_9;
 EndCmp
