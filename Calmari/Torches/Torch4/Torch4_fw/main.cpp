@@ -23,6 +23,7 @@ int main(void) {
     Uart.Printf("\rTorch4 AHB=%u", Clk.AHBFreqHz);
     Uart.OnCmdRx = OnCmdRx;
 
+    Touch.Init();
 
     // Forever
     while(true) {
