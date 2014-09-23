@@ -31,11 +31,12 @@ int main(void) {
     // ==== Init Hard & Soft ====
     JtagDisable();
     Uart.Init(115200);
-    i2c.Init(I2C1, 100000);
-    Acc.Init();
     LedSmooth.Init();
     LedSmooth.SetSmoothly(0);
     PThd = chThdSelf();
+    chThdSleepMilliseconds(999);    // Allow power to stabilize
+    i2c.Init(I2C1, 100000);
+    Acc.Init();
 
     Uart.Printf("\rAccBall  AHB=%u; APB1=%u; APB2=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
 

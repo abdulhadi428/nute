@@ -111,8 +111,8 @@ struct Color_t {
 #define LED_SETUP_DELAY_MS  45
 
 #define LED_TIM         TIM2
-#define LED_RED_CCR     CCR4
-#define LED_GREEN_CCR   CCR3
+#define LED_RED_CCR     CCR3
+#define LED_GREEN_CCR   CCR4
 #define LED_BLUE_CCR    CCR2
 #define LED_RCC_EN()    rccEnableTIM2()
 

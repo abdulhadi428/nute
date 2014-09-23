@@ -14,7 +14,7 @@
 #include "cmd_uart_f10x.h"
 
 //#define LED_COLOR           ((Color_t){255, 71, 100})
-#define LED_COLOR           ((Color_t){0, 255, 0})
+#define LED_COLOR           ((Color_t){255, 255, 255})
 
 static Color_t Clr;
 //static void Load(Color_t *PClr);

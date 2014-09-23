@@ -44,7 +44,7 @@ int main(void) {
 
     // Init radioIC
     CC.Init();
-    CC.SetTxPower(CC_Pwr0dBm);
+    CC.SetTxPower(CC_PwrPlus10dBm);
     CC.SetPktSize(RPKT_LEN);
     CC.SetChannel(9);
 

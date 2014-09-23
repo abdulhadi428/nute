@@ -2,7 +2,7 @@
  * File:   cc_rf_settings.h
  * Author: Kreyl Laurelindo
  *
- * Created on 7 Март 2010 г., 12:42
+ * Created on 7.08� 2010, 12:42
  */
 
 #ifndef _CC_RF_SETTINGS_H
