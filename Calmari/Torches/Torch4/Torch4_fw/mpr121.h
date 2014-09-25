@@ -10,6 +10,7 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "filter.h"
 #if defined STM32L1XX_HD || defined STM32L1XX_MD
 #include "kl_lib_L15x.h"
 #else
@@ -21,7 +22,7 @@
 #define MPR_I2C_GPIO            GPIOB
 #define MPR_SCL_PIN             8
 #define MPR_SDA_PIN             9
-#define MPR_I2C_BITRATE_HZ      100000
+#define MPR_I2C_BITRATE_HZ      400000
 #define MPR_DMATX               STM32_DMA1_STREAM6
 #define MPR_DMARX               STM32_DMA1_STREAM7
 
@@ -32,9 +33,15 @@
 // I2C address
 #define MPR_I2C_ADDR            0x5A    // Addr pin connected to VSS
 
+// Sns config
 #define MPR_USED_SNS_CNT        5       // ELE0, ELE1, ...
-#define MPR_SAMPLE_INTRVL_MS    16      // 16 by default; 1,2,4,...16,32,...128
-#define MPR_SAMPLE_INTRVL_MS_LP 128     // Sample interval for low power mode
+// Sensor pads IDs
+// Pad #0 connected to input 0, ..., Pad #2 connected to input 4
+const uint8_t SnsIndx[MPR_USED_SNS_CNT] = { 0, 1, 4, 3, 2 };
+// Measure settings
+enum mprSampleInterval_t {msi1=0, msi2=1, msi4=2, msi8=3, msi16=4, msi32=5, msi64=6, msi128=7};
+#define MPR_SAMPLE_INTRVL_MS    msi16   // 16 by default; 1,2,4,...16,32,...128
+#define MPR_SAMPLE_INTRVL_MS_LP msi128  // Sample interval for low power mode
 #define MPR_VDD_MV              3300    // Voltage required for autocfg settings
 
 
@@ -45,6 +52,16 @@
 #define MPR_REG_TOUCH_STATUS1           0x01
 #define MPR_REG_OUT_OF_RANGE            0x02
 #endif
+
+// Filter
+#define FILTER_ORDER    4
+#define FILTER_DIVIDER  1000
+static const int32_t FirCoeff[FILTER_ORDER] = {
+        400,
+        300,
+        200,
+        100,
+};
 
 // Output data
 struct mpr121Output_t {
@@ -59,6 +76,8 @@ private:
     mpr121Output_t Output;
     PinIrq_t Irq;
     Thread *PThd;
+//    FilterFir_t<FILTER_ORDER> Filter(FirCoeff);
+    FilterFir_t<FILTER_ORDER, FILTER_DIVIDER> Filter;
     // High-level cmds
     // Middle-level cmds
     void ReadOutput() { Read(MPR_REG_TOUCH_STATUS0, &Output, sizeof(mpr121Output_t)); }
@@ -67,8 +86,11 @@ private:
     void Write(void *PRegData, uint8_t Length); // PRegdata contains reg addr first
     void Write(uint8_t RegAddr, uint8_t AData);
     void Read(uint8_t RegAddr, void *PData, uint8_t Length);
-    void SetSampleInterval(uint8_t SampleInterval);
+    void SetSampleInterval(mprSampleInterval_t SampleInterval);
     void Reset() { Write(0x80, 0x63); }
+    // Calculations
+    int32_t GetPos(int32_t WeightedSum, int32_t Sum);
+    uint32_t CalcCoordinate();
 public:
     void Init();
     void On();
