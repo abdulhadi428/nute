@@ -46,18 +46,18 @@ const uint8_t AfeFilterCfg[] = {
         0x04    // 4 samples (def), sampling intl=16ms(def)
 };
 #define FILTER_CFG  0x00    // Electrode charging dis, 4 samples (default)
+
 // ==== Auto-configuration ====
-const uint8_t AutoCfg[] = { 0x7B, // Reg addr
-        0x0B, // Reg0; AutoCfg en, AutoRecfg en, Baseline auto en. Do as AN3889 p.9 says and do not ask.
-        0x00, // Reg1; Both CDTx and CDCx will be searched and set by autoconfiguration and/or autoreconfiguration; no failure IRQs.
+#define FFI         0xC0    // Must be same in 0x7B and 0x5C. 00=6smpl(def), 40=10, 80=18, C0=34
+#define BVA_CL      0b10    // 10 - Baseline tracking enabled, initial baseline value is loaded with the 5 high bits of the first 10-bit electrode data value
+const uint8_t AutoCfg[] = {
+        0x7B,           // Reg addr
+        (FFI | (BVA_CL<<2) | 0b11), // Reg0; AutoCfg en, AutoRecfg en
+        0x00,                       // Reg1; Both CDTx and CDCx will be searched and set by autoconfiguration and/or autoreconfiguration; no failure IRQs.
         ((256 * (MPR_VDD_MV - 700)) / MPR_VDD_MV),         // USL; AN3889 p.7
         ((256 * (MPR_VDD_MV - 700) * 65) / (100 * MPR_VDD_MV)), // LowSideLimit
         ((256 * (MPR_VDD_MV - 700) * 90) / (100 * MPR_VDD_MV)) // TargetLevel; AN3889 p.8
-        };
-
-// ==== Baseline values ==== experimental obtained data
-const uint8_t Baseline[] = { 0x1E,   // reg addr
-        0xB4, 0xB4, 0xB4, 0xB4, 0xB4 };
+};
 #endif
 
 #if 1 // ==== Thread ====static WORKING_AREA(waMprThread, 256);
@@ -70,7 +70,8 @@ static void MprThread(void *arg) {
 void mpr121_t::ITask() {
     chThdSleepMilliseconds(99);
     ReadOutput();
-    if (Output.TouchStatus != 0) {
+    if (Output.TouchStatus != 0)
+    {
         Uart.Printf("\r");
 //    Uart.Printf("TS: %04X", Output.TouchStatus);
 //    Uart.Printf("   ");
@@ -108,7 +109,7 @@ void mpr121_t::ITask() {
 
 int32_t mpr121_t::GetPos(int32_t WeightedSum, int32_t Sum) {
     if(WeightedSum == 0 or Sum == 0) return 0;
-    else return (10 * WeightedSum / Sum) - 10;
+    else return (25 * WeightedSum / Sum) - 25;
 }
 
 #endif
@@ -120,11 +121,14 @@ void mpr121_t::Init() {
     i2c.Init(MPR_I2C, MPR_I2C_GPIO, MPR_SCL_PIN, MPR_SDA_PIN, MPR_I2C_BITRATE_HZ, MPR_DMATX, MPR_DMARX);
     Reset();
     chThdSleepMilliseconds(1);
-    Write((void*)Filtering, countof(Filtering));
+    Write((void*)Filtering,  countof(Filtering));
     Write((void*)Thresholds, countof(Thresholds));
-    Write((void*)AutoCfg, countof(AutoCfg));
-    Write((void*)Baseline, countof(Baseline));
+    Write((void*)AutoCfg,    countof(AutoCfg));
+    chThdSleepMilliseconds(1);
+    Write(0x5C, FFI);           // FFI must be same as in AutoCfg
+    chThdSleepMilliseconds(1);
     SetSampleInterval(msi16);
+    chThdSleepMilliseconds(1);
 
 //    Irq.Setup(MPR_IRQ_GPIO, MPR_IRQ_PIN, ttFalling);
     PThd = chThdCreateStatic(waMprThread, sizeof(waMprThread), NORMALPRIO, (tfunc_t) MprThread, NULL);
@@ -132,7 +136,7 @@ void mpr121_t::Init() {
     On();
 }
 
-void mpr121_t::On()  { Write(0x5E, ELECTRODE_CFG); }
+void mpr121_t::On()  { Write(0x5E, (ELECTRODE_CFG | (BVA_CL<<6))); }
 void mpr121_t::Off() { Write(0x5E, 0); }
 
 void mpr121_t::SetSampleInterval(mprSampleInterval_t SampleInterval) {
