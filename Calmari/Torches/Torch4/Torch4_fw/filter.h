@@ -10,6 +10,17 @@
 
 #include "cmd_uart.h"
 
+/* ==== Example ====
+#define FILTER_ORDER    4
+#define FILTER_DIVIDER  1000
+static const int32_t FirCoeff[FILTER_ORDER] = {
+        400,
+        300,
+        200,
+        100,
+};
+*/
+
 template <uint32_t Sz, uint32_t Divider>
 class FilterFir_t {
 private:

@@ -37,7 +37,8 @@
 #define MPR_USED_SNS_CNT        5       // ELE0, ELE1, ...
 // Sensor pads IDs
 // Pad #0 connected to input 0, ..., Pad #2 connected to input 4
-const uint8_t SnsIndx[MPR_USED_SNS_CNT] = { 0, 1, 4, 3, 2 };
+//const uint8_t SnsIndx[MPR_USED_SNS_CNT] = { 0, 1, 4, 3, 2 };
+const uint8_t SnsIndx[MPR_USED_SNS_CNT] = { 2, 3, 4, 1, 0 };
 // Measure settings
 enum mprSampleInterval_t {msi1=0, msi2=1, msi4=2, msi8=3, msi16=4, msi32=5, msi64=6, msi128=7};
 #define MPR_SAMPLE_INTRVL_MS    msi16   // 16 by default; 1,2,4,...16,32,...128
@@ -53,17 +54,7 @@ enum mprSampleInterval_t {msi1=0, msi2=1, msi4=2, msi8=3, msi16=4, msi32=5, msi6
 #define MPR_REG_OUT_OF_RANGE            0x02
 #endif
 
-// Filter
-#define FILTER_ORDER    4
-#define FILTER_DIVIDER  1000
-static const int32_t FirCoeff[FILTER_ORDER] = {
-        400,
-        300,
-        200,
-        100,
-};
-
-// Output data
+// ==== Output data ====
 struct mpr121Output_t {
     uint16_t TouchStatus;   // ELE0...ELE11, ELEPROX and Overcurrent bit
     uint16_t OorStatus;     // E0_OOR...E11OOR, PROX_OOR, ARFF, ACFF
@@ -71,14 +62,15 @@ struct mpr121Output_t {
     uint8_t Baseline[MPR_TOTAL_SNS_CNT];
 } __attribute__((__packed__));
 
+// ==== Class itself ====
 class mpr121_t {
 private:
     mpr121Output_t Output;
     PinIrq_t Irq;
     Thread *PThd;
-//    FilterFir_t<FILTER_ORDER> Filter(FirCoeff);
-    FilterFir_t<FILTER_ORDER, FILTER_DIVIDER> Filter;
-    // High-level cmds
+    bool WasTouched;
+    int32_t dxPrev, xPrev;
+
     // Middle-level cmds
     void ReadOutput() { Read(MPR_REG_TOUCH_STATUS0, &Output, sizeof(mpr121Output_t)); }
     void ClearOvercurrentBit() { Write(MPR_REG_TOUCH_STATUS1, 0x80); }    // Write 1 to OVCF bit
@@ -89,9 +81,9 @@ private:
     void SetSampleInterval(mprSampleInterval_t SampleInterval);
     void Reset() { Write(0x80, 0x63); }
     // Calculations
-    int32_t GetPos(int32_t WeightedSum, int32_t Sum);
-    uint32_t CalcCoordinate();
+    int32_t CalcCoordinate();
 public:
+    int32_t xCurrent, dx;
     void Init();
     void On();
     void Off();
