@@ -6,7 +6,7 @@
  */
 
 #include "kl_lib_f100.h"
-#include "kl_sprintf.h"
+#include "cmd_uart_f10x.h"
 #include <stdarg.h>
 #include <string.h>
 

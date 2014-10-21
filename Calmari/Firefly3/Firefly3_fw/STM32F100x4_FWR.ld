@@ -28,7 +28,7 @@
 /*
  * ST32F100x4 memory setup. __xxx_stack_size__ changed by Ostranna 
  */
-__main_stack_size__     = 0x0100;
+__main_stack_size__     = 0x0200;
 __process_stack_size__  = 0x0200;
 
 MEMORY

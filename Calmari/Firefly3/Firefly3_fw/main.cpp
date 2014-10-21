@@ -15,10 +15,26 @@
 #include "led_rgb_f100.h"
 #include "LedSequence.h"
 
-#define LED_EMPTY_COLOR           ((Color_t){4, 4, 4})
+//#define LED_EMPTY_COLOR     ((Color_t){4, 4, 4})
+
 LedSequence_t Seq;
 
 void OnUartCmd();
+void SaveToFlash();
+void LoadFromFlash();
+
+#if 1 // ==== Save after a while ====
+#define SAVE_TIMEOUT_MS     9999    // Save to flash after this
+VirtualTimer TmrSave;
+
+void OnSaveTime(void *p) {
+    chSysLockFromIsr();
+    SaveToFlash();
+    chSysUnlockFromIsr();
+}
+void ResetSaveTimer() { chVTReset(&TmrSave);}
+void StartSaveTimer() { chVTSet(&TmrSave, MS2ST(SAVE_TIMEOUT_MS), &OnSaveTime, nullptr); }
+#endif
 
 #define AUTO_OFF    FALSE
 
@@ -43,8 +59,19 @@ static inline void GoSleep();
 #define EraseTimeout        ((uint32_t)0x000B0000)
 #define ProgramTimeout      ((uint32_t)0x00002000)
 
-const uint32_t MyBigUint __attribute__ ((section("MyFlash"), aligned(FLASH_PAGE_SIZE))) = 0;
-
+__attribute__ ((section("MyFlash"), aligned(FLASH_PAGE_SIZE)))
+const LedSequence_t FlashSeq = {
+        7,
+        {
+                {csSetColor, 0, {4,0,0}},
+                {csWait, 450},
+                {csSetColor, 0, {0,4,0}},
+                {csWait, 450},
+                {csSetColor, 0, {0,0,4}},
+                {csWait, 450},
+                {csGoto, 0}
+        }
+};
 #endif
 
 #if 1 // =========================== Main ======================================
@@ -64,7 +91,8 @@ int main(void) {
     if(!Iwdg.ResetOccured()) {
 #endif
     Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB2=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
-    Led.SetColor(LED_EMPTY_COLOR);
+    LoadFromFlash();
+    Led.StartSequence(&Seq.Chunk[0]);
 #if AUTO_OFF
     }
     Adc.Init();
@@ -96,8 +124,7 @@ int main(void) {
 }
 #endif
 
-// ==== Uart cmd ====
-#if UART_RX_ENABLED
+#if 1 // ========================== Uart cmd ===================================
 void OnUartCmd() {
     UartCmd_t *PCmd = &Uart.Cmd;
     __attribute__((unused)) int32_t dw32 = 0;  // May be unused in some configurations
@@ -107,32 +134,17 @@ void OnUartCmd() {
 
     else if(PCmd->NameIs("#ffGet")) {
         Uart.Printf("#ff");
-        for(uint32_t i=0; i < Seq.Cnt; i++) {
-            LedChunk_t *PChunk = &Seq.Chunk[i];
-            switch(PChunk->ChunkSort) {
-                case csSetColor:
-                    Uart.Printf(",RGB,%u,%u,%u,%u", PChunk->Color.R, PChunk->Color.G, PChunk->Color.B, PChunk->MorphMS);
-                    break;
-                case csWait:
-                    Uart.Printf(",Wait,%u",PChunk->Time_ms);
-                    break;
-                case csGoto:
-                    Uart.Printf(",Goto,%u",PChunk->ChunkToJumpTo);
-                    break;
-                case csEnd:
-                    Uart.Printf(",End");
-                    break;
-            }
-        }
-        Uart.Printf("\r\n");
+        Seq.Print();
     }
 
     else if(PCmd->NameIs("#ffSet")) {
+        ResetSaveTimer();
         Led.Stop();
         Seq.Reset();
         LedChunk_t *PChunk;
         while(PCmd->GetNextToken() == OK) {
             if(PCmd->TokenIs("RGB")) {  // Read R, G, B
+//                Uart.Printf("\rRGB");
                 PChunk = &Seq.Chunk[Seq.Cnt++];
                 PChunk->ChunkSort = csSetColor;
                 // Color
@@ -144,12 +156,14 @@ void OnUartCmd() {
             }
 
             if(PCmd->TokenIs("Wait")) {
+//                Uart.Printf("\rW");
                 PChunk = &Seq.Chunk[Seq.Cnt++];
                 PChunk->ChunkSort = csWait;
                 if(PCmd->GetNextTokenAndConvertToInt32(&PChunk->Time_ms) != OK) { Uart.Ack(CMD_ERROR); return; }
             }
 
             if(PCmd->TokenIs("Goto")) {
+//                Uart.Printf("\rG");
                 PChunk = &Seq.Chunk[Seq.Cnt++];
                 PChunk->ChunkSort = csGoto;
                 if(PCmd->GetNextTokenAndConvertToInt32(&PChunk->ChunkToJumpTo) != OK) { Uart.Ack(CMD_ERROR); return; }
@@ -157,13 +171,19 @@ void OnUartCmd() {
 
             if(Seq.Cnt >= LED_CHUNK_CNT-1) { Uart.Ack(CMD_ERROR); return; }
         } // while GetNextToken
+//        Uart.Printf("\rFin");
+//        Seq.Print();
+//        chThdSleepMilliseconds(99);
         // Add final token if not end or goto
         PChunk = &Seq.Chunk[Seq.Cnt++];
         if(!(PChunk->ChunkSort == csGoto or PChunk->ChunkSort == csEnd)) {
             PChunk->ChunkSort = csEnd;
         }
+//        Uart.Printf("\rFin1");
         Led.StartSequence(&Seq.Chunk[0]);
+//        Uart.Printf("\rFin2");
         Uart.Ack(OK);
+        StartSaveTimer();
     }
 
     else if(*PCmd->Name == '#') Uart.Ack(CMD_UNKNOWN);  // reply only #-started stuff
@@ -185,9 +205,10 @@ void GoSleep() {
 }
 #endif
 
-// ==== Flash load/save ====
-
-
+#if 1 // ======================== Flash load/save ==============================
+void LoadFromFlash() {
+    memcpy(&Seq, &FlashSeq, LED_SEQ_SZ);
+}
 
 void FLASH_Unlock() {
     FLASH->KEYR = FLASH_KEY1;
@@ -248,35 +269,30 @@ uint8_t FLASH_ProgramWord(uint32_t Address, uint32_t Data) {
     return status;
 }
 
-
-void Load(Color_t *PClr) {
-}
-
-void Save(Color_t *PClr) {
+void SaveToFlash() {
     uint8_t status = OK;
-    uint32_t FAddr = (uint32_t)&MyBigUint;
+    uint32_t FAddr = (uint32_t)&FlashSeq;
     FLASH_Unlock();
     // Erase flash
-    FLASH_ClearFlag(FLASH_SR_EOP | FLASH_SR_PGERR | FLASH_SR_WRPRTERR);   // Clear All pending flags
+    FLASH_ClearFlag(FLASH_SR_EOP | FLASH_SR_PGERR | FLASH_SR_WRPRTERR);   // Clear all pending flags
     status = FLASH_ErasePage(FAddr);
-    //klPrintf("  Flash erase %u: %u\r", i, FLASHStatus);
+    //Uart.Printf("  Flash erase %u: %u\r", i, FLASHStatus);
     if(status != OK) {
         Uart.Printf("  Flash erase error\r");
         return;
     }
-    uint32_t *PRAM = (uint32_t*)PClr;    // What to write
-    uint32_t DataWordCount = (sizeof(Color_t) + 3) / 4;
-    chSysLock();
+    uint32_t *PRAM = (uint32_t*)&Seq;    // What to write
+    uint32_t DataWordCount = (LED_SEQ_SZ + 3) / 4;
     for(uint32_t i=0; i<DataWordCount; i++) {
         status = FLASH_ProgramWord(FAddr, *PRAM);
         if(status != OK) {
             Uart.Printf("  Flash write error\r");
             return;
         }
-        //else klPrintf("#");
         FAddr += 4;
         PRAM++;
     }
     FLASH_Lock();
-    chSysUnlock();
+    Uart.PrintfI("\r\nSaved");
 }
+#endif

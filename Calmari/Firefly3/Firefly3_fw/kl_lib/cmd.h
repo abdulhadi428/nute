@@ -35,6 +35,10 @@ public:
                 return pdrNewCmd;
             }
         }
+        else if(c == '#') { // New Cmd started
+            Cnt = 1;
+            IString[0] = c;
+        }
         else if(Cnt < BufSz-1) IString[Cnt++] = c;  // Add char if buffer not full
         return pdrProceed;
     }

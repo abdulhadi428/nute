@@ -9,6 +9,7 @@
 #define LEDSEQUENCE_H_
 
 #include "color.h"
+#include "cmd_uart_f10x.h"
 
 enum LedChunkSort_t {csSetColor, csWait, csGoto, csEnd};
 
@@ -28,7 +29,27 @@ struct LedSequence_t {
     uint32_t Cnt;
     LedChunk_t Chunk[LED_CHUNK_CNT];
     void Reset() { Cnt = 0; }
+    void Print() const {
+        for(uint32_t i=0; i < Cnt; i++) {
+            switch(Chunk[i].ChunkSort) {
+                case csSetColor:
+                    Uart.Printf(",RGB,%u,%u,%u,%u", Chunk[i].Color.R, Chunk[i].Color.G, Chunk[i].Color.B, Chunk[i].MorphMS);
+                    break;
+                case csWait:
+                    Uart.Printf(",Wait,%u",Chunk[i].Time_ms);
+                    break;
+                case csGoto:
+                    Uart.Printf(",Goto,%u",Chunk[i].ChunkToJumpTo);
+                    break;
+                case csEnd:
+//                    Uart.Printf(",End");
+                    break;
+            }
+        }
+        Uart.Printf("\r\n");
+    }
 };
+#define LED_SEQ_SZ      sizeof(LedSequence_t)
 
 
 #endif /* LEDSEQUENCE_H_ */

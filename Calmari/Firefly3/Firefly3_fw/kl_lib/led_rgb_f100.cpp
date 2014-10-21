@@ -60,12 +60,17 @@ void LedRGB_t::IStartSequenceI(const LedChunk_t *PLedChunk) {
                 break;
 
             case csWait: // Start timer, pointing to next chunk
-                chVTSetI(&ITmr, MS2ST(PLedChunk->Time_ms), LedTmrCallback, (void*)(PLedChunk+1));
-                return;
+                if(PLedChunk->Time_ms == 0) PLedChunk++;
+                else {
+                    chVTSetI(&ITmr, MS2ST(PLedChunk->Time_ms), LedTmrCallback, (void*)(PLedChunk+1));
+                    return;
+                }
                 break;
 
             case csGoto:
                 PLedChunk = IPStartChunk + PLedChunk->ChunkToJumpTo;
+                chVTSetI(&ITmr, MS2ST(1), LedTmrCallback, (void*)PLedChunk);    // To not allow infinite cycle
+                return;
                 break;
 
             case csEnd:
