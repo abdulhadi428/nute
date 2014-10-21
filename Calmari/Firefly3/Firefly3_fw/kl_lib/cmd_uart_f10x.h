@@ -13,6 +13,7 @@
 #include "hal.h"
 #include "kl_lib_f100.h"
 #include "kl_sprintf.h"
+#include "cmd.h"
 
 // Set to true if RX needed
 #define UART_RX_ENABLED     TRUE
@@ -47,8 +48,10 @@
                             STM32_DMA_CR_MINC |       /* Memory pointer increase */ \
                             STM32_DMA_CR_DIR_P2M |    /* Direction is peripheral to memory */ \
                             STM32_DMA_CR_CIRC         /* Circular buffer enable */
-// Cmd decode states
-enum RcvState_t {rsNbr1, rsNbr2, rsNbr3, rsWaitingEnd};
+
+// Cmd related
+#define CDC_CMD_BUF_SZ  512 // payload bytes
+typedef Cmd_t<CDC_CMD_BUF_SZ> UartCmd_t;
 #endif
 
 class CmdUart_t {
@@ -59,9 +62,7 @@ private:
     uint32_t IFullSlotsCount, ITransSize;
 #if UART_RX_ENABLED
     int32_t SzOld=0, RIndx=0;
-    RcvState_t RxState;
     uint8_t IRxBuf[UART_RXBUF_SZ];
-    uint8_t Nbr[3], NbrIndx;
 #endif
 public:
     void Printf(const char *S, ...);
@@ -73,22 +74,16 @@ public:
         }
     }
     void Init(uint32_t ABaudrate);
-    void Cmd(uint8_t CmdCode, uint8_t *PData, uint32_t Length) { Printf("#%X,%A\r\n", CmdCode, PData, Length, 0); }
     // Inner use
     void IRQDmaTxHandler();
     void IPutChar(char c);
 #if UART_RX_ENABLED
-    // Inner use
-    void IRxTask();
-    void IProcessByte(uint8_t b);
-    void IResetCmd() { RxState = rsNbr1; NbrIndx = 0; }
+    void PollRx(ftVoidVoid FCallBack);
+    UartCmd_t Cmd;
+    void Ack() { Printf("#Ack\r\n"); }
 #endif
 };
 
 extern CmdUart_t Uart;
-
-#if UART_RX_ENABLED
-extern void UartCmdCallback(uint8_t R, uint8_t G, uint8_t B);
-#endif
 
 #endif /* CMD_UART_H_ */

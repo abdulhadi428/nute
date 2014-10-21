@@ -51,6 +51,8 @@ enum BitOrder_t {boMSB, boLSB};
 enum LowHigh_t  {Low, High};
 enum RiseFall_t {Rising, Falling};
 
+typedef void(*ftVoidVoid)(void);
+
 
 // Simple pseudofunctions
 #define TRIM_VALUE(v, Max)  { if(v > Max) v = Max; }

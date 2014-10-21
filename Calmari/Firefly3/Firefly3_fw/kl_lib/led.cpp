@@ -162,19 +162,19 @@ void LedRGB_t::Task(void) {
     else {
         chThdSleepMilliseconds(LED_SETUP_DELAY_MS);
         // Red channel
-        if (ICurrentColor.Red != INeededColor.Red) {
-            if(INeededColor.Red < ICurrentColor.Red) ICurrentColor.Red--;
-            else ICurrentColor.Red++;
+        if (ICurrentColor.R != INeededColor.R) {
+            if(INeededColor.R < ICurrentColor.R) ICurrentColor.R--;
+            else ICurrentColor.R++;
         }
         // Green channel
-        if (ICurrentColor.Green != INeededColor.Green) {
-            if(INeededColor.Green < ICurrentColor.Green) ICurrentColor.Green--;
-            else ICurrentColor.Green++;
+        if (ICurrentColor.G != INeededColor.G) {
+            if(INeededColor.G < ICurrentColor.G) ICurrentColor.G--;
+            else ICurrentColor.G++;
         }
         // Blue channel
-        if (ICurrentColor.Blue != INeededColor.Blue) {
-            if(INeededColor.Blue < ICurrentColor.Blue) ICurrentColor.Blue--;
-            else ICurrentColor.Blue++;
+        if (ICurrentColor.B != INeededColor.B) {
+            if(INeededColor.B < ICurrentColor.B) ICurrentColor.B--;
+            else ICurrentColor.B++;
         }
         SetColor(ICurrentColor);
     }

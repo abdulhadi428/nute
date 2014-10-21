@@ -12,11 +12,13 @@
 #include "hal.h"
 #include "adc_f100.h"
 #include "cmd_uart_f10x.h"
+#include "cmd.h"
+#include "LedSequence.h"
 
 //#define LED_COLOR           ((Color_t){255, 71, 100})
-#define LED_COLOR           ((Color_t){255, 255, 255})
+#define LED_COLOR           ((Color_t){0, 4, 0})
 
-static Color_t Clr;
+void OnUartCmd();
 //static void Load(Color_t *PClr);
 
 #define AUTO_OFF    FALSE
@@ -31,7 +33,7 @@ static inline void GoSleep();
 
 int main(void) {
     // ==== Init clock system ====
-    Clk.SetupBusDividers(ahbDiv1, apbDiv1, apbDiv1);
+    Clk.SetupBusDividers(ahbDiv4, apbDiv1, apbDiv1);
     Clk.UpdateFreqValues();
     // ==== Init OS ====
     halInit();
@@ -45,7 +47,8 @@ int main(void) {
     if(!Iwdg.ResetOccured()) {
 #endif
         Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB2=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
-//        Load(&Clr);
+        Uart.Printf("\rChunkSz=%d", LED_CHUNK_SZ);
+        //        Load(&Clr);
 //        Led.SetColorNow(Clr);
         Led.SetColorNow(LED_COLOR);
 #if AUTO_OFF
@@ -71,9 +74,38 @@ int main(void) {
         if(Led.IsOff()) GoSleep();
     }
 #else
-    while(true) { chThdSleepS(TIME_INFINITE); }
+    while(true) {
+        chThdSleepMilliseconds(99);
+        Uart.PollRx(&OnUartCmd);
+    }
 #endif
 }
+
+// ==== Uart cmd ====
+#if UART_RX_ENABLED
+void OnUartCmd() {
+    UartCmd_t *PCmd = &Uart.Cmd;
+    __attribute__((unused)) int32_t dw32 = 0;  // May be unused in some configurations
+    Uart.Printf("\r%S\r", PCmd->Name);
+    // Handle command
+    if(PCmd->NameIs("#Ping")) Uart.Ack();
+
+    else if(PCmd->NameIs("#ffGet")) {
+        Uart.Printf("#ff,");
+    }
+
+    else if(PCmd->NameIs("#ffSet")) {
+        Uart.Ack();
+    }
+
+//    Uart.Printf("R=%u; G=%u; B=%u\r", R, G, B);
+//    Clr.Red = R;
+//    Clr.Green = G;
+//    Clr.Blue = B;
+//    Led.SetColorNow(Clr);
+//    Save(&Clr);
+}
+#endif
 
 #if AUTO_OFF
 void GoSleep() {
@@ -167,9 +199,7 @@ uint8_t FLASH_ProgramWord(uint32_t Address, uint32_t Data) {
 
 
 void Load(Color_t *PClr) {
-    PClr->Red = PSavedClr->Red;
-    PClr->Green = PSavedClr->Green;
-    PClr->Blue = PSavedClr->Blue;
+    *PClr = *PSavedClr;
 }
 
 void Save(Color_t *PClr) {
@@ -200,15 +230,3 @@ void Save(Color_t *PClr) {
     FLASH_Lock();
     chSysUnlock();
 }
-
-// ==== Uart cmd ====
-#if UART_RX_ENABLED
-void UartCmdCallback(uint8_t R, uint8_t G, uint8_t B) {
-    Uart.Printf("R=%u; G=%u; B=%u\r", R, G, B);
-    Clr.Red = R;
-    Clr.Green = G;
-    Clr.Blue = B;
-    Led.SetColorNow(Clr);
-    Save(&Clr);
-}
-#endif

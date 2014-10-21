@@ -37,98 +37,26 @@ void CmdUart_t::Printf(const char *format, ...) {
 }
 
 #if UART_RX_ENABLED
-static inline bool TryConvertToDigit(uint8_t b, uint8_t *p) {
-    if((b >= '0') and (b <= '9')) {
-        *p = b - '0';
-        return true;
-    }
-    else if((b >= 'A') and (b <= 'F')) {
-        *p = 0x0A + b - 'A';
-        return true;
-    }
-    else return false;
-}
-static inline bool IsDelimiter(uint8_t b) { return (b == ',') or (b == ' '); }
-static inline bool IsEnd(uint8_t b) { return (b == '\r') or (b == '\n'); }
-
-static WORKING_AREA(waUartRxThread, 256);
-static void UartRxThread(void *arg) {
-    chRegSetThreadName("UartRx");
-    while(true) Uart.IRxTask();
-}
-
-void CmdUart_t::IRxTask() {
-    chThdSleepMilliseconds(UART_RX_POLLING_MS);
+void CmdUart_t::PollRx(ftVoidVoid FCallBack) {
+    if(FCallBack == nullptr) return;
     int32_t Sz = UART_RXBUF_SZ - UART_DMA_RX->channel->CNDTR;   // Number of bytes copied to buffer since restart
     if(Sz != SzOld) {
         int32_t ByteCnt = Sz - SzOld;
         if(ByteCnt < 0) ByteCnt += UART_RXBUF_SZ;   // Handle buffer circulation
         SzOld = Sz;
+        Cmd.Reset();
         for(int32_t i=0; i<ByteCnt; i++) {          // Iterate received bytes
-            IProcessByte(IRxBuf[RIndx++]);
+            char c = IRxBuf[RIndx++];
             if(RIndx >= UART_RXBUF_SZ) RIndx = 0;
-        }
-    }
+            if(Cmd.PutChar(c) == pdrNewCmd) {
+                FCallBack();
+                Cmd.Reset();
+            }
+        } // for
+    } // if sz
 }
 
-void CmdUart_t::IProcessByte(uint8_t b) {
-    if(IsEnd(b)) {
-        if(NbrIndx == 2) UartCmdCallback(Nbr[0], Nbr[1], Nbr[2]);
-        IResetCmd();
-        return;
-    }
-    uint8_t d=0;
-    switch(RxState) {
-        case rsNbr1:
-            if(TryConvertToDigit(b, &d)) {
-                Nbr[NbrIndx] = d;
-                RxState = rsNbr2;
-            }
-            else if(IsDelimiter(b)) {
-                if(NbrIndx == 2) IResetCmd();
-                else {
-                    NbrIndx++;
-                    RxState = rsNbr1;
-                }
-            }
-            else IResetCmd();
-            break;
 
-        case rsNbr2:
-            if(TryConvertToDigit(b, &d)) {
-                Nbr[NbrIndx] = Nbr[NbrIndx]*10 + d;
-                RxState = rsNbr3;
-            }
-            else if(IsDelimiter(b)) {
-                if(NbrIndx == 2) IResetCmd();
-                else {
-                    NbrIndx++;
-                    RxState = rsNbr1;
-                }
-            }
-            else IResetCmd();
-            break;
-
-        case rsNbr3:
-            if(TryConvertToDigit(b, &d)) {
-                Nbr[NbrIndx] = Nbr[NbrIndx]*10 + d;
-                if(NbrIndx == 2) RxState = rsWaitingEnd;
-            }
-            else if(IsDelimiter(b)) {
-                if(NbrIndx == 2) IResetCmd();
-                else {
-                    NbrIndx++;
-                    RxState = rsNbr1;
-                }
-            }
-            else IResetCmd();
-            break;
-
-        case rsWaitingEnd:  // Will be here in case of something else after CMD
-            IResetCmd();
-            break;
-    } // switch
-}
 #endif
 
 // ==== Init & DMA ====
@@ -158,7 +86,6 @@ void CmdUart_t::Init(uint32_t ABaudrate) {
 #if UART_RX_ENABLED
     UART->CR1 = USART_CR1_TE | USART_CR1_RE;        // TX & RX enable
     UART->CR3 = USART_CR3_DMAT | USART_CR3_DMAR;    // Enable DMA at TX & RX
-    IResetCmd();
     PinSetupIn(UART_GPIO, UART_RX_PIN,  pudPullUp);
     dmaStreamAllocate     (UART_DMA_RX, IRQ_PRIO_LOW, nullptr, NULL);
     dmaStreamSetPeripheral(UART_DMA_RX, &UART->DR);
@@ -166,8 +93,6 @@ void CmdUart_t::Init(uint32_t ABaudrate) {
     dmaStreamSetTransactionSize(UART_DMA_RX, UART_RXBUF_SZ);
     dmaStreamSetMode      (UART_DMA_RX, UART_DMA_RX_MODE);
     dmaStreamEnable       (UART_DMA_RX);
-    // Create and start thread
-    chThdCreateStatic(waUartRxThread, sizeof(waUartRxThread), NORMALPRIO, (tfunc_t)UartRxThread, NULL);
 #else
     UART->CR1 = USART_CR1_TE;     // Transmitter enabled
     UART->CR3 = USART_CR3_DMAT;   // Enable DMA at transmitter
