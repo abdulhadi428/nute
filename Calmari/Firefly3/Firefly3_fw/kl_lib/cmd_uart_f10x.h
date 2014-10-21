@@ -19,7 +19,7 @@
 #define UART_RX_ENABLED     TRUE
 
 // UART
-#define UART_TXBUF_SIZE     189
+#define UART_TXBUF_SIZE     378
 #define UART                USART1
 #define UART_GPIO           GPIOA
 #define UART_TX_PIN         9
@@ -38,7 +38,7 @@
 #if UART_RX_ENABLED
 #define UART_RX_PIN         10
 #define UART_RX_REG         UART->DR
-#define UART_RXBUF_SZ       99 // unprocessed bytes
+#define UART_RXBUF_SZ       387 // unprocessed bytes
 
 #define UART_RX_POLLING_MS  99
 #define UART_DMA_RX         STM32_DMA1_STREAM5
@@ -50,7 +50,7 @@
                             STM32_DMA_CR_CIRC         /* Circular buffer enable */
 
 // Cmd related
-#define CDC_CMD_BUF_SZ  512 // payload bytes
+#define CDC_CMD_BUF_SZ  378 // payload bytes
 typedef Cmd_t<CDC_CMD_BUF_SZ> UartCmd_t;
 #endif
 
@@ -80,7 +80,7 @@ public:
 #if UART_RX_ENABLED
     void PollRx(ftVoidVoid FCallBack);
     UartCmd_t Cmd;
-    void Ack() { Printf("#Ack\r\n"); }
+    void Ack(uint8_t rslt) { Printf("#Ack %u\r\n", rslt); }
 #endif
 };
 

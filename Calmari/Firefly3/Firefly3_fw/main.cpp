@@ -6,20 +6,19 @@
  * Created on Feb 05, 2013, 20:27
  */
 
-#include "led.h"
 #include "kl_lib_f100.h"
 #include "ch.h"
 #include "hal.h"
 #include "adc_f100.h"
 #include "cmd_uart_f10x.h"
 #include "cmd.h"
+#include "led_rgb_f100.h"
 #include "LedSequence.h"
 
-//#define LED_COLOR           ((Color_t){255, 71, 100})
-#define LED_COLOR           ((Color_t){0, 4, 0})
+#define LED_EMPTY_COLOR           ((Color_t){4, 4, 4})
+LedSequence_t Seq;
 
 void OnUartCmd();
-//static void Load(Color_t *PClr);
 
 #define AUTO_OFF    FALSE
 
@@ -31,6 +30,24 @@ IWDG_t Iwdg;
 static inline void GoSleep();
 #endif
 
+#if 1 // ========================== Flash ======================================
+#define FLASH_PAGE_SIZE     1024
+#define FLASH_KEY1          ((uint32_t)0x45670123)
+#define FLASH_KEY2          ((uint32_t)0xCDEF89AB)
+#define CR_LOCK_Set         ((uint32_t)0x00000080)
+#define CR_PER_Set          ((uint32_t)0x00000002)
+#define CR_PER_Reset        ((uint32_t)0x00001FFD)
+#define CR_STRT_Set         ((uint32_t)0x00000040)
+#define CR_PG_Set           ((uint32_t)0x00000001)
+#define CR_PG_Reset         ((uint32_t)0x00001FFE)
+#define EraseTimeout        ((uint32_t)0x000B0000)
+#define ProgramTimeout      ((uint32_t)0x00002000)
+
+const uint32_t MyBigUint __attribute__ ((section("MyFlash"), aligned(FLASH_PAGE_SIZE))) = 0;
+
+#endif
+
+#if 1 // =========================== Main ======================================
 int main(void) {
     // ==== Init clock system ====
     Clk.SetupBusDividers(ahbDiv4, apbDiv1, apbDiv1);
@@ -40,17 +57,14 @@ int main(void) {
     chSysInit();
     // ==== Init Hard & Soft ====
     JtagDisable();
-    Uart.Init(57600);
+    Uart.Init(115200);
     Led.Init();
-    // Set white and print info only when switch on, not after watcdog reset.
 #if AUTO_OFF
+    // Set white and print info only when switch on, not after watcdog reset.
     if(!Iwdg.ResetOccured()) {
 #endif
-        Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB2=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
-        Uart.Printf("\rChunkSz=%d", LED_CHUNK_SZ);
-        //        Load(&Clr);
-//        Led.SetColorNow(Clr);
-        Led.SetColorNow(LED_COLOR);
+    Uart.Printf("\rFirefly3  AHB=%u; APB1=%u; APB2=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
+    Led.SetColor(LED_EMPTY_COLOR);
 #if AUTO_OFF
     }
     Adc.Init();
@@ -80,30 +94,79 @@ int main(void) {
     }
 #endif
 }
+#endif
 
 // ==== Uart cmd ====
 #if UART_RX_ENABLED
 void OnUartCmd() {
     UartCmd_t *PCmd = &Uart.Cmd;
     __attribute__((unused)) int32_t dw32 = 0;  // May be unused in some configurations
-    Uart.Printf("\r%S\r", PCmd->Name);
+//    Uart.Printf("\r%S\r", PCmd->Name);
     // Handle command
-    if(PCmd->NameIs("#Ping")) Uart.Ack();
+    if(PCmd->NameIs("#Ping")) Uart.Ack(OK);
 
     else if(PCmd->NameIs("#ffGet")) {
-        Uart.Printf("#ff,");
+        Uart.Printf("#ff");
+        for(uint32_t i=0; i < Seq.Cnt; i++) {
+            LedChunk_t *PChunk = &Seq.Chunk[i];
+            switch(PChunk->ChunkSort) {
+                case csSetColor:
+                    Uart.Printf(",RGB,%u,%u,%u,%u", PChunk->Color.R, PChunk->Color.G, PChunk->Color.B, PChunk->MorphMS);
+                    break;
+                case csWait:
+                    Uart.Printf(",Wait,%u",PChunk->Time_ms);
+                    break;
+                case csGoto:
+                    Uart.Printf(",Goto,%u",PChunk->ChunkToJumpTo);
+                    break;
+                case csEnd:
+                    Uart.Printf(",End");
+                    break;
+            }
+        }
+        Uart.Printf("\r\n");
     }
 
     else if(PCmd->NameIs("#ffSet")) {
-        Uart.Ack();
+        Led.Stop();
+        Seq.Reset();
+        LedChunk_t *PChunk;
+        while(PCmd->GetNextToken() == OK) {
+            if(PCmd->TokenIs("RGB")) {  // Read R, G, B
+                PChunk = &Seq.Chunk[Seq.Cnt++];
+                PChunk->ChunkSort = csSetColor;
+                // Color
+                if(PCmd->GetNextTokenAndConvertToUint8(&PChunk->Color.R) != OK) { Uart.Ack(CMD_ERROR); return; }
+                if(PCmd->GetNextTokenAndConvertToUint8(&PChunk->Color.G) != OK) { Uart.Ack(CMD_ERROR); return; }
+                if(PCmd->GetNextTokenAndConvertToUint8(&PChunk->Color.B) != OK) { Uart.Ack(CMD_ERROR); return; }
+                // MorphMS
+                if(PCmd->GetNextTokenAndConvertToInt32(&PChunk->MorphMS) != OK) { Uart.Ack(CMD_ERROR); return; }
+            }
+
+            if(PCmd->TokenIs("Wait")) {
+                PChunk = &Seq.Chunk[Seq.Cnt++];
+                PChunk->ChunkSort = csWait;
+                if(PCmd->GetNextTokenAndConvertToInt32(&PChunk->Time_ms) != OK) { Uart.Ack(CMD_ERROR); return; }
+            }
+
+            if(PCmd->TokenIs("Goto")) {
+                PChunk = &Seq.Chunk[Seq.Cnt++];
+                PChunk->ChunkSort = csGoto;
+                if(PCmd->GetNextTokenAndConvertToInt32(&PChunk->ChunkToJumpTo) != OK) { Uart.Ack(CMD_ERROR); return; }
+            }
+
+            if(Seq.Cnt >= LED_CHUNK_CNT-1) { Uart.Ack(CMD_ERROR); return; }
+        } // while GetNextToken
+        // Add final token if not end or goto
+        PChunk = &Seq.Chunk[Seq.Cnt++];
+        if(!(PChunk->ChunkSort == csGoto or PChunk->ChunkSort == csEnd)) {
+            PChunk->ChunkSort = csEnd;
+        }
+        Led.StartSequence(&Seq.Chunk[0]);
+        Uart.Ack(OK);
     }
 
-//    Uart.Printf("R=%u; G=%u; B=%u\r", R, G, B);
-//    Clr.Red = R;
-//    Clr.Green = G;
-//    Clr.Blue = B;
-//    Led.SetColorNow(Clr);
-//    Save(&Clr);
+    else if(*PCmd->Name == '#') Uart.Ack(CMD_UNKNOWN);  // reply only #-started stuff
 }
 #endif
 
@@ -123,20 +186,8 @@ void GoSleep() {
 #endif
 
 // ==== Flash load/save ====
-#define FLASH_PAGE_SIZE     1024
-#define FLASH_KEY1          ((uint32_t)0x45670123)
-#define FLASH_KEY2          ((uint32_t)0xCDEF89AB)
-#define CR_LOCK_Set         ((uint32_t)0x00000080)
-#define CR_PER_Set          ((uint32_t)0x00000002)
-#define CR_PER_Reset        ((uint32_t)0x00001FFD)
-#define CR_STRT_Set         ((uint32_t)0x00000040)
-#define CR_PG_Set           ((uint32_t)0x00000001)
-#define CR_PG_Reset         ((uint32_t)0x00001FFE)
-#define EraseTimeout        ((uint32_t)0x000B0000)
-#define ProgramTimeout      ((uint32_t)0x00002000)
 
-const uint32_t MyBigUint __attribute__ ((section("MyFlash"), aligned(FLASH_PAGE_SIZE))) = 0x00040B04; // 00 BB GG RR
-Color_t *PSavedClr = (Color_t*)&MyBigUint;
+
 
 void FLASH_Unlock() {
     FLASH->KEYR = FLASH_KEY1;
@@ -199,7 +250,6 @@ uint8_t FLASH_ProgramWord(uint32_t Address, uint32_t Data) {
 
 
 void Load(Color_t *PClr) {
-    *PClr = *PSavedClr;
 }
 
 void Save(Color_t *PClr) {

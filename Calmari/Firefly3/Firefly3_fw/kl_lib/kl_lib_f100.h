@@ -42,6 +42,10 @@ void __attribute__ ((weak)) _init(void)  {}
 #define IN_PROGRESS     5
 #define LAST            6
 #define CMD_ERROR       7
+#define WRITE_PROTECT   8
+#define CMD_UNKNOWN     9
+#define EMPTY_STRING    10
+#define NOT_A_NUMBER    11
 
 // Binary semaphores
 #define NOT_TAKEN       false
