@@ -169,19 +169,12 @@ void OnUartCmd() {
                 if(PCmd->GetNextTokenAndConvertToInt32(&PChunk->ChunkToJumpTo) != OK) { Uart.Ack(CMD_ERROR); return; }
             }
 
-            if(Seq.Cnt >= LED_CHUNK_CNT-1) { Uart.Ack(CMD_ERROR); return; }
+            if(Seq.Cnt >= LED_CHUNK_CNT-2) { Uart.Ack(CMD_ERROR); return; } // Last token always added is of type End
         } // while GetNextToken
-//        Uart.Printf("\rFin");
-//        Seq.Print();
-//        chThdSleepMilliseconds(99);
-        // Add final token if not end or goto
-        PChunk = &Seq.Chunk[Seq.Cnt++];
-        if(!(PChunk->ChunkSort == csGoto or PChunk->ChunkSort == csEnd)) {
-            PChunk->ChunkSort = csEnd;
-        }
-//        Uart.Printf("\rFin1");
+//        Seq.Print(); chThdSleepMilliseconds(99);
+        // Add final End token
+        Seq.Chunk[Seq.Cnt++].ChunkSort = csEnd;
         Led.StartSequence(&Seq.Chunk[0]);
-//        Uart.Printf("\rFin2");
         Uart.Ack(OK);
         StartSaveTimer();
     }
