@@ -53,7 +53,7 @@ typedef void (*ftVoidVoid)(void);
 
 enum BitOrder_t {boMSB, boLSB};
 enum LowHigh_t  {Low, High};
-enum RiseFall_t {Rising, Falling, RisingFalling};
+enum RiseFall_t {Rising, Falling, RisingFalling, NoRiseNoFall};
 
 // Simple pseudofunctions
 #define MIN(a, b)   ( ((a)<(b))? (a) : (b) )
