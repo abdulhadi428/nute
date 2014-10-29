@@ -1,10 +1,10 @@
-Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 08/11/2013 12:04:36
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 16/10/2014 18:07:54
 
 BeginCmp
-TimeStamp = /527C8F2C;
+TimeStamp = /543FE567;
 Reference = ANT1;
-ValeurCmp = ANT_GENERAL;
-IdModule  = ANT_2400_MEANDER;
+ValeurCmp = ANT_PCB_NOCNTR;
+IdModule  = ANT_FOLDED_DIPOLE2;
 EndCmp
 
 BeginCmp
@@ -15,59 +15,10 @@ IdModule  = CAP_0603;
 EndCmp
 
 BeginCmp
-TimeStamp = /527BF5DE;
-Reference = C2;
-ValeurCmp = 47n;
-IdModule  = CAP_0603;
-EndCmp
-
-BeginCmp
 TimeStamp = /527BF5CC;
 Reference = C3;
 ValeurCmp = 10n;
 IdModule  = CAP_0603;
-EndCmp
-
-BeginCmp
-TimeStamp = /527C8ED1;
-Reference = C4;
-ValeurCmp = 100pF;
-IdModule  = CAP_0402;
-EndCmp
-
-BeginCmp
-TimeStamp = /527C8EE9;
-Reference = C5;
-ValeurCmp = 1pF;
-IdModule  = CAP_0402;
-EndCmp
-
-BeginCmp
-TimeStamp = /527C8ED7;
-Reference = C6;
-ValeurCmp = 100pF;
-IdModule  = CAP_0402;
-EndCmp
-
-BeginCmp
-TimeStamp = /527C8F0C;
-Reference = C7;
-ValeurCmp = 1.8pF;
-IdModule  = CAP_0402;
-EndCmp
-
-BeginCmp
-TimeStamp = /527C8F1F;
-Reference = C8;
-ValeurCmp = 1.5pF;
-IdModule  = CAP_0402;
-EndCmp
-
-BeginCmp
-TimeStamp = /527C8EDD;
-Reference = C9;
-ValeurCmp = 1pF;
-IdModule  = CAP_0402;
 EndCmp
 
 BeginCmp
@@ -393,30 +344,44 @@ IdModule  = LQFP64;
 EndCmp
 
 BeginCmp
-TimeStamp = /527C8EE3;
-Reference = L1;
-ValeurCmp = 1.2nH;
-IdModule  = IND_0402;
+TimeStamp = /543FDCA4;
+Reference = HOLE1;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
 EndCmp
 
 BeginCmp
-TimeStamp = /527C8F19;
-Reference = L2;
-ValeurCmp = 1.2nH;
-IdModule  = IND_0402;
+TimeStamp = /543FDCB3;
+Reference = HOLE2;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
 EndCmp
 
 BeginCmp
-TimeStamp = /527C8EEF;
-Reference = L3;
-ValeurCmp = 1.2nH;
-IdModule  = IND_0402;
+TimeStamp = /543FDCC2;
+Reference = HOLE3;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
+EndCmp
+
+BeginCmp
+TimeStamp = /543FDCD1;
+Reference = HOLE4;
+ValeurCmp = HOLE_METALLED;
+IdModule  = Hole3_5_out6mm;
 EndCmp
 
 BeginCmp
 TimeStamp = /508FFBD7;
 Reference = Q1;
 ValeurCmp = IRLML9303;
+IdModule  = SOT23;
+EndCmp
+
+BeginCmp
+TimeStamp = /543FDB2B;
+Reference = Q2;
+ValeurCmp = BC817;
 IdModule  = SOT23;
 EndCmp
 
@@ -442,9 +407,9 @@ IdModule  = RES_0603;
 EndCmp
 
 BeginCmp
-TimeStamp = /527BF5D8;
+TimeStamp = /543FDB32;
 Reference = R4;
-ValeurCmp = 10;
+ValeurCmp = 1k;
 IdModule  = RES_0603;
 EndCmp
 
@@ -500,14 +465,14 @@ EndCmp
 BeginCmp
 TimeStamp = /5045D6D1;
 Reference = R12;
-ValeurCmp = 330k;
+ValeurCmp = 100k;
 IdModule  = RES_0603;
 EndCmp
 
 BeginCmp
 TimeStamp = /5045D6D2;
 Reference = R13;
-ValeurCmp = 330k;
+ValeurCmp = 100k;
 IdModule  = RES_0603;
 EndCmp
 
@@ -537,13 +502,6 @@ TimeStamp = /527CA3EF;
 Reference = XL1;
 ValeurCmp = CONN_3;
 IdModule  = SIL-3;
-EndCmp
-
-BeginCmp
-TimeStamp = /527BF5BF;
-Reference = XL2;
-ValeurCmp = CONN_AUDIO_SIMPLE;
-IdModule  = CONN_AUDIO_CKX3_5_30;
 EndCmp
 
 BeginCmp

@@ -10,7 +10,7 @@
 	<Document>
 		<LocalLibrary />
 		<Pcb>
-			<File path=".\Quetta.fsx" Folder="-1" isopened="0"/>
+			<File path=".\Quetta.fsx" Folder="-1" isopened="1"/>
 		</Pcb>
 		<Import>
 			<Specctra>
