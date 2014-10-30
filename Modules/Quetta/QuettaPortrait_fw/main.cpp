@@ -16,35 +16,10 @@
 #include "ff.h"
 #include "MassStorage.h"
 #include "evt_mask.h"
-
-// External Power Input
-#define PWR_EXTERNAL_GPIO   GPIOA
-#define PWR_EXTERNAL_PIN    9
-static inline bool ExternalPwrOn() { return  PinIsSet(PWR_EXTERNAL_GPIO, PWR_EXTERNAL_PIN); }
-
-// External sensors
-class Sns_t {
-private:
-    bool IsHi() const { return PinIsSet(PGpioPort, PinNumber); }
-public:
-    GPIO_TypeDef *PGpioPort;
-    uint16_t PinNumber;
-    bool WasHi;
-    void Init() const { PinSetupIn(PGpioPort, PinNumber, pudPullDown); }
-    RiseFall_t CheckEdge() {
-        if(!WasHi and IsHi()) {
-            WasHi = true;
-            return Rising;
-        }
-        else if(WasHi and !IsHi()) {
-            WasHi = false;
-            return Falling;
-        }
-        else return NoRiseNoFall;
-    }
-};
+#include "main.h"
 
 Sns_t Sns = {GPIOA, 0};
+SndList_t SndList;
 
 // =============================== Main ========================================
 int main() {
@@ -67,9 +42,6 @@ int main() {
     // ==== Init Hard & Soft ====
     Uart.Init(115200);
     SD.Init();
-    // Read config
-//    SD.iniReadInt32("Radio", "id", "settings.ini", &App.SelfID);
-//    Uart.Printf("\rID=%u", App.SelfID);
 
     // USB related
     PinSetupIn(PWR_EXTERNAL_GPIO, PWR_EXTERNAL_PIN, pudPullDown);
@@ -83,6 +55,7 @@ int main() {
     // Sensor
     Sns.Init();
 
+    ReadConfig();
     Uart.Printf("\rPortrait   AHB freq=%uMHz", Clk.AHBFreqHz/1000000);
     // Report problem with clock if any
     if(ClkResult) Uart.Printf("Clock failure\r");
@@ -90,6 +63,7 @@ int main() {
 
     // ==== Main cycle ====
     bool WasExternal = false;
+    int32_t PreviousPhrase = 0;
     while(true) {
         chThdSleepMilliseconds(306);
 
@@ -119,9 +93,56 @@ int main() {
 
 #if 1 // ==== Sensor ====
       if(Sns.CheckEdge() == Rising) {
-          if(Sound.State == sndStopped) Sound.Play("alive.wav");
+          if(Sound.State == sndStopped) {
+              Uart.Printf("\rDetected");
+//              Sound.Play("alive.wav");
+              // Generate random
+              int32_t i;
+              do {
+                  uint32_t r = rand() % SndList.ProbSumm + 1; // [1; Probsumm]
+                  //uint32_t r = Random(SndList.ProbSumm-1) + 1;
+                  Uart.Printf("\rR=%u", r);
+                  // Select phrase
+                  for(i=0; i<SndList.Count-1; i++) { // do not check last phrase
+                      if((r >= SndList.Phrases[i].ProbBottom) and (r <= SndList.Phrases[i].ProbTop)) break;
+                  }
+              } while(i == PreviousPhrase);
+              PreviousPhrase = i;
+              // Play phrase
+              Sound.Play(SndList.Phrases[i].Filename);
+          }
       }
 #endif
     } // while true
+}
+
+char SndKey[45]="Sound";
+uint8_t ReadConfig() {
+    int32_t Probability;
+    if(SD.iniReadInt32("Sound", "Count", "settings.ini", &SndList.Count) != OK) return FAILURE;
+    Uart.Printf("\rCount: %d", SndList.Count);
+    if (SndList.Count <= 0) return FAILURE;
+    char *c;
+    SndList.ProbSumm = 0;
+    // Read sounds data
+    for(int i=0; i<SndList.Count; i++) {
+        // Build SndKey
+        c = Convert::Int32ToStr(i+1, &SndKey[5]);   // first symbol after "Sound"
+        strcpy(c, "Name");
+//        Uart.Printf("\r%s", SndKey);
+        // Read filename and probability
+        char *S = nullptr;
+        if(SD.iniReadString("Sound", SndKey, "settings.ini", &S) != OK) return FAILURE;
+        strcpy(SndList.Phrases[i].Filename, S);
+        strcpy(c, "Prob");
+//        Uart.Printf("\r%s", SndKey);
+        if(SD.iniReadInt32 ("Sound", SndKey, "settings.ini", &Probability) != OK) return FAILURE;
+        // Calculate probability boundaries
+        SndList.Phrases[i].ProbBottom = SndList.ProbSumm;
+        SndList.ProbSumm += Probability;
+        SndList.Phrases[i].ProbTop = SndList.ProbSumm;
+    }
+    for(int i=0; i<SndList.Count; i++) Uart.Printf("\r%u %S Bot=%u Top=%u", i, SndList.Phrases[i].Filename, SndList.Phrases[i].ProbBottom, SndList.Phrases[i].ProbTop);
+    return OK;
 }
 

@@ -129,6 +129,27 @@ public:
         *POutput = strtol(S, &p, 0);
         return (*p == '\0')? OK : NOT_A_NUMBER;
     }
+    // Converts AValue to NULL-terminated string S, returns pointer to NULL-terminating symbol.
+    static char *Int32ToStr(int32_t AValue, char* S) {
+        char digit = '0';
+        bool ShouldPrint = false;
+        const int32_t m[9] = {1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10};
+        for(int i=0; i<9; i++) {
+            while(AValue >= m[i]) {
+                digit++;
+                AValue -= m[i];
+            }
+            if (digit != '0' || ShouldPrint) {
+                *S++ = digit;
+                ShouldPrint = true;
+            }
+            digit = '0';
+        } // for
+        *S++ = '0'+AValue;
+        *S = 0; // trailing \0
+        return S;
+    }
+
 };
 
 // IRQ priorities

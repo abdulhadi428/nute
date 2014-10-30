@@ -51,100 +51,6 @@ void sd_t::Init() {
     IsReady = TRUE;
 }
 
-#if 1 // ====================== Get Filename In Folder =========================
-// Get first file in folder
-FRESULT sd_t::PrepareToReadDirs(MusList_t *PList) {
-    // Setup variables
-    IPList = PList;
-    IPList->Reset();
-    // Open first dir
-    char* DirPath = nullptr;
-    if(IPList->GetCurrentDir(&DirPath) == OK) {
-//        Uart.Printf("\rDir1 %S", DirPath);
-        // Put filename in middle of buffer, saving space to copy path from beginning
-        int i = strlen(DirPath);
-        // Check if root dir. Empty string allowed, too
-        if(i > 0) {
-            if((i == 1) and (*DirPath == '/' or *DirPath == '\\')) i = 0;
-            else i++;   // Reserve space for '/' at start of filename
-        }
-        FileInfo.lfname = &LongFileName[i];
-        FileInfo.lfsize = MAX_NAME_LEN - i;
-        return f_opendir(&Directory, DirPath); // Try to open the folder
-    }
-    else return FR_NO_FILE;
-}
-
-FRESULT sd_t::GetNext(char** PPName) {
-    while(true) {   // Read everything within current dir until file found
-        FRESULT r = f_readdir(&Directory, &FileInfo);
-        if(r != FR_OK) return r;
-        if((FileInfo.fname[0] == 0) and (FileInfo.lfname[0] == 0)) {
-            // No files left, get next dir
-            if(IPList == nullptr) return FR_INVALID_OBJECT;
-            char* DirPath = nullptr;
-            if(IPList->GetNextDir(&DirPath) == OK) {
-//                Uart.Printf("\rDir2 %S", DirPath);
-                int i = strlen(DirPath);
-                // Check if root dir. Empty string allowed, too
-                if(i > 0) {
-                    if((i == 1) and (*DirPath == '/' or *DirPath == '\\')) i = 0;
-                    else i++;   // Reserve space for '/' at start of filename
-                }
-                FileInfo.lfname = &LongFileName[i];
-                FileInfo.lfsize = MAX_NAME_LEN - i;
-                r = f_opendir(&Directory, DirPath); // Try to open the folder
-                if(r != FR_OK) {
-//                    Uart.Printf("\rOpenDir err=%d; %S", r, DirPath);
-                    return r;
-                }
-            }
-            else return FR_NO_FILE; // no more dirs left
-        }
-        else { // Filename ok, check if not dir
-            *PPName = (FileInfo.lfname[0] == 0)? FileInfo.fname : FileInfo.lfname;
-            if(!(FileInfo.fattrib & AM_DIR)) break;
-        }
-    } // while
-//    Uart.Printf("\rFile: %S", *PPName);
-    return FR_OK;
-}
-
-uint8_t sd_t::GetNthFileByPrefix(MusList_t* PList, const char* Prefix, uint32_t N, char** PPName) {
-    uint32_t Len = strlen(Prefix);
-    FRESULT r = PrepareToReadDirs(PList);
-    if(r != FR_OK) return r;
-    char *S = nullptr;
-    while(GetNext(&S) == FR_OK) {
-//        Uart.Printf("\rFile: %S", S);
-        // Check if name begins with prefix
-        if(strncmp(S, Prefix, Len) == 0) {  // Prefix found
-            if(N == 0) {                    // Required number of files found
-                // if filename is short (==stored in short charbuf), copy it
-                if(S == FileInfo.fname) strcpy(FileInfo.lfname, S);    // Copy short filename to long buf
-                // Copy dir path
-                char *DirPath = nullptr;
-                IPList->GetCurrentDir(&DirPath);
-//                Uart.Printf("\rDir: %S", DirPath);
-                // Add '/' between path and name if not root
-                Len = strlen(DirPath);
-                // Check if root dir. Empty string allowed, too. Reserve space for '/' at start of filename
-                if((Len > 1) or (Len == 1 and *DirPath != '/' and *DirPath != '\\')) {
-                    strcpy(LongFileName, DirPath);
-                    LongFileName[Len] = '/';
-                }
-                *PPName = LongFileName; // return Path + Filename
-//                Uart.Printf("\rRslt: %S", *PPName);
-                return OK;
-            }
-            else N--;
-        } // if prefix
-    } // while
-//    Uart.Printf("\rFilesNotFound");
-    return FAILURE;
-}
-#endif
-
 #if 1 // ======================= ini file operations ===========================
 // ==== Inner use ====
 static inline char* skipleading(char *S) {
@@ -194,7 +100,7 @@ uint8_t sd_t::iniReadString(const char *ASection, const char *AKey, const char *
     // Section found, find the key
     len = strlen(AKey);
     do {
-        if (!f_gets(IStr, SD_STRING_SZ, &IFile) or *(StartP = skipleading(IStr)) == '[') {
+        if(!f_gets(IStr, SD_STRING_SZ, &IFile) or *(StartP = skipleading(IStr)) == '[') {
             Uart.Printf("\riniNoKey");
             f_close(&IFile);
             return FAILURE;
