@@ -1,0 +1,12 @@
+"Id";"Designator";"Package";"Quantity";"Designation";"Supplier and ref";
+1;"TP1";"TESTPOINT_1MM";1;"TESTPOINT";;;
+2;"R1";"RES_0603";1;"51R";;;
+3;"DD1";"QFN32";1;"STM32F050K4_6";;;
+4;"D1";"LED0603";1;"LED";;;
+5;"XL3";"CONN_PLS-4";1;"ST_SWD";;;
+6;"XL4";"CONN_PLS-3";1;"CONN_3";;;
+7;"SW1";"CONN_PLS-2";1;"BUTTON";;;
+8;"C4,C2,C1";"CAP_0603";3;"0.1u";;;
+9;"C3";"CAP_0603";1;"1u";;;
+10;"B1";"BAT_CH7410";1;"BAT";;;
+11;"XL1";"CONN_PLS-2";1;"CONN_2";;;

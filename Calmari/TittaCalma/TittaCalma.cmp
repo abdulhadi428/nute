@@ -1,0 +1,94 @@
+Cmp-Mod V01 Created by CvPcb (2013-07-07 BZR 4022)-stable date = 12/7/2014 1:17:53 AM
+
+BeginCmp
+TimeStamp = /547B8A13;
+Reference = B1;
+ValeurCmp = BAT;
+IdModule  = BAT_CH7410;
+EndCmp
+
+BeginCmp
+TimeStamp = /547B7C6E;
+Reference = C1;
+ValeurCmp = 0.1u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /547B7C68;
+Reference = C2;
+ValeurCmp = 0.1u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /547B7C9E;
+Reference = C3;
+ValeurCmp = 1u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /547B7C62;
+Reference = C4;
+ValeurCmp = 0.1u;
+IdModule  = CAP_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /547B7D9F;
+Reference = D1;
+ValeurCmp = LED;
+IdModule  = LED0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /547B7C50;
+Reference = DD1;
+ValeurCmp = STM32F050K4_6;
+IdModule  = QFN32;
+EndCmp
+
+BeginCmp
+TimeStamp = /547B7D5D;
+Reference = R1;
+ValeurCmp = 51R;
+IdModule  = RES_0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /547B8B6C;
+Reference = SW1;
+ValeurCmp = BUTTON;
+IdModule  = CONN_PLS-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /547B7BDD;
+Reference = TP1;
+ValeurCmp = TESTPOINT;
+IdModule  = TESTPOINT_1MM;
+EndCmp
+
+BeginCmp
+TimeStamp = /548370CD;
+Reference = XL1;
+ValeurCmp = CONN_2;
+IdModule  = CONN_PLS-2;
+EndCmp
+
+BeginCmp
+TimeStamp = /547B8286;
+Reference = XL3;
+ValeurCmp = ST_SWD;
+IdModule  = CONN_PLS-4;
+EndCmp
+
+BeginCmp
+TimeStamp = /547B7BE4;
+Reference = XL4;
+ValeurCmp = CONN_3;
+IdModule  = CONN_PLS-3;
+EndCmp
+
+EndListe
