@@ -113,14 +113,10 @@ void App_t::OnUartCmd(CmdUart_t *PUart) {
     else if(PCmd->NameIs("#GetLines")) {
         char c[4];
         // Collect data
-        if(PinIsSet(PATH_GPIO, PATH21_PIN)) c[0] = '1';
-        else c[0] = '0';
-        if(PinIsSet(PATH_GPIO, PATH31_PIN)) c[1] = '1';
-        else c[1] = '0';
-        if(PinIsSet(PATH_GPIO, PATH22_PIN)) c[2] = '1';
-        else c[2] = '0';
-        if(PinIsSet(PATH_GPIO, PATH32_PIN)) c[3] = '1';
-        else c[3] = '0';
+        c[0] = PinIsSet(PATH_GPIO, PATH21_PIN)? '1' : '0';
+        c[1] = PinIsSet(PATH_GPIO, PATH31_PIN)? '1' : '0';
+        c[2] = PinIsSet(PATH_GPIO, PATH22_PIN)? '1' : '0';
+        c[3] = PinIsSet(PATH_GPIO, PATH32_PIN)? '1' : '0';
         // Send reply
         PUart->Printf("#Lines %c %c %c %c\r\n", c[0], c[1], c[2], c[3]);
     }
