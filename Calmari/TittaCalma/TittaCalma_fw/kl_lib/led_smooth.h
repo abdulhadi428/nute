@@ -33,8 +33,8 @@ const LedChnl_t LedCh = {GPIOA, 15, TIM2, 1, AF2};
 // TimeToWaitBeforeNextAdjustment = SmoothVar / (N+4) + 1, where N - current LED brightness.
 class LedSmooth_t {
 private:
-    uint32_t ISmoothVar;
-    uint32_t CurrentBrt, DesiredBrt;
+    uint32_t ISmoothVar=360;
+    uint32_t CurrentBrt=0, DesiredBrt=0;
     uint32_t ICalcDelay(uint32_t CurrentBrightness, uint32_t SmoothVar) { return (uint32_t)((SmoothVar / (CurrentBrightness+4)) + 1); }
     VirtualTimer ITmr;
 public:

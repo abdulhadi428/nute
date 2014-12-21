@@ -11,8 +11,15 @@
 #include "hal.h"
 #include "led_smooth.h"
 
+#define BTN_GPIO        GPIOA
+#define BTN_PIN         0
+#define BtnIsPressed()  (!PinIsSet(GPIOA, BTN_PIN))
+
+#define SMOOTH_CONST    450
+
 int main(void) {
     // ==== Init clock system ====
+    Clk.SetupBusDividers(ahbDiv4, apbDiv1); // Sysclk = 2MHz
     Clk.UpdateFreqValues();
     Clk.SetupFlashLatency();
 
@@ -23,14 +30,25 @@ int main(void) {
     // ==== Init Hard & Soft ====
     Uart.Init(115200);
     Uart.Printf("\rTittaCalma  AHB=%u APB=%u", Clk.AHBFreqHz, Clk.APBFreqHz);
+    // Led
     Led.Init();
+    Led.FadeIn(450);
+    // Key
+    PinSetupIn(GPIOA, BTN_PIN, pudPullUp);
 
     // ==== Main cycle ====
+    bool BtnWasPressed = false, LedIsOn = true;
     while(TRUE) {
-        Led.FadeIn(360);
-        chThdSleepMilliseconds(4500);
-        Led.FadeOut(360);
-        chThdSleepMilliseconds(4500);
+        chThdSleepMilliseconds(45);
+        if(BtnIsPressed() and !BtnWasPressed) {
+            BtnWasPressed = true;
+            if(LedIsOn) Led.FadeOut(SMOOTH_CONST);
+            else Led.FadeIn(SMOOTH_CONST);
+            LedIsOn = !LedIsOn;
+        }
+        else if(!BtnIsPressed() and BtnWasPressed) {
+            BtnWasPressed = false;
+        }
     }
 }
 

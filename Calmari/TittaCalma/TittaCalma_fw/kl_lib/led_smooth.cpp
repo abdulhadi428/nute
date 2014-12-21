@@ -18,24 +18,28 @@ static void LedTmrCallback(void *p) {
 
 void LedSmooth_t::IAdjustBrightness() {
     if(CurrentBrt == DesiredBrt) return;
-    if(CurrentBrt <  DesiredBrt) CurrentBrt++;
+    else if(CurrentBrt < DesiredBrt) CurrentBrt++;
     else CurrentBrt--;
     LedCh.Set(CurrentBrt);
     chVTSetI(&ITmr, ICalcDelay(CurrentBrt, ISmoothVar), LedTmrCallback, nullptr);
 }
 
 void LedSmooth_t::FadeIn(const uint32_t ASmoothVar) {
+    chSysLock();
     if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);
     ISmoothVar = ASmoothVar;
     DesiredBrt = LED_TOP_VALUE;
-    chVTSet(&ITmr, ICalcDelay(CurrentBrt, ISmoothVar), LedTmrCallback, nullptr);
+    chVTSetI(&ITmr, ICalcDelay(CurrentBrt, ISmoothVar), LedTmrCallback, nullptr);
+    chSysUnlock();
 }
 
 void LedSmooth_t::FadeOut(const uint32_t ASmoothVar) {
+    chSysLock();
     if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);
     ISmoothVar = ASmoothVar;
     DesiredBrt = 0;
-    chVTSet(&ITmr, ICalcDelay(CurrentBrt, ISmoothVar), LedTmrCallback, nullptr);
+    chVTSetI(&ITmr, ICalcDelay(CurrentBrt, ISmoothVar), LedTmrCallback, nullptr);
+    chSysUnlock();
 }
 
 
@@ -46,16 +50,16 @@ void LedChnl_t::Init() const {
 
     // ==== Timer setup ====
     if     (PTimer == TIM1)  { rccEnableTIM1(FALSE); }
-    if     (PTimer == TIM2)  { rccEnableTIM2(FALSE); }
+    else if(PTimer == TIM2)  { rccEnableTIM2(FALSE); }
     else if(PTimer == TIM3)  { rccEnableTIM3(FALSE); }
     else if(PTimer == TIM14) { rccEnableAPB1(RCC_APB1ENR_TIM14EN, FALSE); }
     else if(PTimer == TIM15) { rccEnableAPB2(RCC_APB2ENR_TIM15EN, FALSE); }
     else if(PTimer == TIM16) { rccEnableAPB2(RCC_APB2ENR_TIM16EN, FALSE); }
     else if(PTimer == TIM17) { rccEnableAPB2(RCC_APB2ENR_TIM17EN, FALSE); }
 
-    PTimer->CR1 = TIM_CR1_CEN; // Enable timer, set clk division to 0, AutoReload not buffered
-    PTimer->CR2 = 0;
     PTimer->ARR = LED_TOP_VALUE;
+    PTimer->CR1 = TIM_CR1_CEN | TIM_CR1_ARPE; // Enable timer, set clk division to 0, AutoReload buffered
+    PTimer->CR2 = 0;
 
     // ==== Timer's channel ====
 #if LED_INVERTED_PWM
