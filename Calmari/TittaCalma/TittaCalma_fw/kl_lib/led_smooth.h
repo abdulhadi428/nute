@@ -34,10 +34,10 @@ const LedChnl_t LedCh = {GPIOA, 15, TIM2, 1, AF2};
 class LedSmooth_t {
 private:
     uint32_t ISmoothVar=360;
-    uint32_t CurrentBrt=0, DesiredBrt=0;
     uint32_t ICalcDelay(uint32_t CurrentBrightness, uint32_t SmoothVar) { return (uint32_t)((SmoothVar / (CurrentBrightness+4)) + 1); }
     VirtualTimer ITmr;
 public:
+    uint32_t DesiredBrt=0, CurrentBrt=0;
     void Init() { LedCh.Init(); }
     void FadeIn(const uint32_t ASmoothVar);
     void FadeOut(const uint32_t ASmoothVar);

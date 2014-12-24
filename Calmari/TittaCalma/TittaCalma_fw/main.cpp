@@ -13,9 +13,11 @@
 
 #define BTN_GPIO        GPIOA
 #define BTN_PIN         0
-#define BtnIsPressed()  (!PinIsSet(GPIOA, BTN_PIN))
+#define BtnIsPressed()  (PinIsSet(GPIOA, BTN_PIN))
 
 #define SMOOTH_CONST    450
+
+void GoSleep();
 
 int main(void) {
     // ==== Init clock system ====
@@ -33,13 +35,16 @@ int main(void) {
     // Led
     Led.Init();
     Led.FadeIn(450);
-    // Key
-    PinSetupIn(GPIOA, BTN_PIN, pudPullUp);
+    // Button
+    PinSetupIn(GPIOA, BTN_PIN, pudPullDown);
+
+    chThdSleepMilliseconds(720);
 
     // ==== Main cycle ====
     bool BtnWasPressed = false, LedIsOn = true;
     while(TRUE) {
         chThdSleepMilliseconds(45);
+        // Check button
         if(BtnIsPressed() and !BtnWasPressed) {
             BtnWasPressed = true;
             if(LedIsOn) Led.FadeOut(SMOOTH_CONST);
@@ -49,6 +54,19 @@ int main(void) {
         else if(!BtnIsPressed() and BtnWasPressed) {
             BtnWasPressed = false;
         }
-    }
+        // Check if time to sleep
+        if(Led.CurrentBrt == 0 and Led.DesiredBrt == 0 and !BtnIsPressed()) GoSleep();
+    } // while true
 }
 
+void GoSleep() {
+    chSysLock();
+    // Enable WKUP1 pin
+    PWR->CSR |= PWR_CSR_EWUP1;
+    // Enter standby mode
+    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+    PWR->CR = PWR_CR_PDDS;
+    PWR->CR |= PWR_CR_CWUF;
+    __WFI();
+    chSysUnlock();
+}
