@@ -20,7 +20,8 @@
 
 
 
-// ======================= Lite version: blinker only ==========================
+#if 1 // ===================== Lite version: blinker only ======================
+#define LED_RGB_BLINKER
 struct LedChnl_t {
     GPIO_TypeDef *PGpio;
     uint16_t Pin;
@@ -32,7 +33,6 @@ struct LedChnl_t {
 class LedRgbBlinker_t {
 public:
     LedChnl_t R, G, B;
-
     void Init() {
         R.Init();
         G.Init();
@@ -44,9 +44,25 @@ public:
         if(AColor.G != 0) G.On(); else G.Off();
         if(AColor.B != 0) B.On(); else B.Off();
     }
+    void StartSequence(const LedChunk_t *PLedChunk) {
+        chSysLock();
+        IPStartChunk = PLedChunk;   // Save first chunk
+        IPCurrentChunk = PLedChunk;
+        IProcessSequenceI();
+        chSysUnlock();
+    }
+    void Stop() {
+        chSysLock();
+        if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);
+        SetColor(clBlack);
+        chSysUnlock();
+    }
     // Inner use
-    const LedChunk_t *IPStartChunk;
+    const LedChunk_t *IPStartChunk, *IPCurrentChunk;
+    void IProcessSequenceI();
+    VirtualTimer ITmr;
 };
+#endif
 
 // ================================= LedRGB ====================================
 struct LedChnlTmr_t {

@@ -5,25 +5,57 @@
  *      Author: Kreyl
  */
 
-#include <led_rgb.h>
+#include "led_rgb.h"
 
 //#include "cmd_uart_f10x.h"
 
+#include "cmd_uart.h"
 
+#ifdef LED_RGB_BLINKER // =================== Led blinker ======================
 // Timer callback
 static void LedTmrCallback(void *p) {
     chSysLockFromIsr();
-//    Led.IStartSequenceI((const LedChunk_t*)p);
+    ((LedRgbBlinker_t*)p)->IProcessSequenceI();
     chSysUnlockFromIsr();
 }
-/*
-void LedRGB_t::Init() {
-//    R.Init();
-//    G.Init();
-//    B.Init();
-//    SetColor(clBlack);
-}
 
+void LedRgbBlinker_t::IProcessSequenceI() {
+    // Reset timer
+    if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);
+    // Process the sequence
+    while(true) {
+//        Uart.PrintfI("\rCh %u", IPCurrentChunk->ChunkSort);
+        switch(IPCurrentChunk->ChunkSort) {
+            case csSetColor:
+                SetColor(IPCurrentChunk->Color); // set color now, and goto next chunk
+                IPCurrentChunk++;
+                break;
+
+            case csWait: // Start timer, pointing to next chunk
+                if(IPCurrentChunk->Time_ms == 0) IPCurrentChunk++;
+                else {
+                    chVTSetI(&ITmr, MS2ST(IPCurrentChunk->Time_ms), LedTmrCallback, this);
+                    IPCurrentChunk++;
+                    return;
+                }
+                break;
+
+            case csGoto:
+                IPCurrentChunk = IPStartChunk + IPCurrentChunk->ChunkToJumpTo;
+                chVTSetI(&ITmr, MS2ST(1), LedTmrCallback, this);    // To not allow infinite cycle
+                return;
+                break;
+
+            case csEnd:
+                return;
+                break;
+        } // switch
+    } // while
+}
+#endif
+
+
+/*
 void LedRGB_t::IStartSequenceI(const LedChunk_t *PLedChunk) {
     // Reset timer
     if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);

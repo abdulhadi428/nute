@@ -18,6 +18,7 @@
 #include "evt_mask.h"
 #include "main.h"
 #include "led_rgb.h"
+#include "Sequences.h"
 
 Sns_t Sns = {GPIOA, 0};
 SndList_t SndList;
@@ -50,7 +51,8 @@ int main() {
     Uart.Init(115200);
     LedService.Init();
 
-    LedService.SetColor(clGreen);
+//    LedService.SetColor(clGreen);
+    LedService.StartSequence(lsqBlinkGreenX2);
 
 //    SD.Init();
 

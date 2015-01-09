@@ -8,6 +8,8 @@
 #ifndef KL_LIB_CHUNKTYPES_H_
 #define KL_LIB_CHUNKTYPES_H_
 
+#include "color.h"
+
 #if 1 // ============================= RGB LED chenks ==========================
 enum LedChunkSort_t {csSetColor, csWait, csGoto, csEnd};
 
