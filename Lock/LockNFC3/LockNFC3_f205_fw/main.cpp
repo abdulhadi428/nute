@@ -19,15 +19,13 @@
 #include "main.h"
 #include "led_rgb.h"
 #include "Sequences.h"
+#include "pn.h"
 
+App_t App;
 Sns_t Sns = {GPIOA, 0};
 SndList_t SndList;
 
-LedRgbBlinker_t LedService = {
-        {GPIOB, 10},
-        {GPIOB, 12},
-        {GPIOB, 11},
-};
+LedRgbBlinker_t LedService = { {GPIOB, 10}, {GPIOB, 12}, {GPIOB, 11} };
 
 // =============================== Main ========================================
 int main() {
@@ -48,11 +46,12 @@ int main() {
     chSysInit();
 
     // ==== Init Hard & Soft ====
+    App.PThd = chThdSelf();
     Uart.Init(115200);
+    Uart.Printf("\rLockNFC3 F205   AHB freq=%uMHz", Clk.AHBFreqHz/1000000);
     LedService.Init();
-
-//    LedService.SetColor(clGreen);
     LedService.StartSequence(lsqBlinkGreenX2);
+    Pn.Init();
 
 //    SD.Init();
 
@@ -69,7 +68,7 @@ int main() {
 //    Sns.Init();
 
 //    ReadConfig();
-    Uart.Printf("\rLockNFC3 F205   AHB freq=%uMHz", Clk.AHBFreqHz/1000000);
+
     // Report problem with clock if any
     if(ClkResult) Uart.Printf("Clock failure\r");
 #endif

@@ -528,6 +528,7 @@ public:
         while(!(PSpi->SR & SPI_SR_RXNE));  // Wait for SPI transmission to complete
         return PSpi->DR;
     }
+    void ReadDummy() { (void)PSpi->DR; }
     // Flags
     void WaitBsyLo() { while(PSpi->SR & SPI_SR_BSY); }
     void WaitTxEHi() { while(!(PSpi->SR & SPI_SR_TXE)); }
@@ -542,8 +543,10 @@ public:
     void DisableIrqRxNE() { PSpi->CR2 &= ~SPI_CR2_RXNEIE; }
     void DisableIrqTxE()  { PSpi->CR2 &= ~SPI_CR2_TXEIE;  }
     // DMA
-    void EnableTxDma() { PSpi->CR2 |= SPI_CR2_TXDMAEN; }
-    void EnableRxDma() { PSpi->CR2 |= SPI_CR2_RXDMAEN; }
+    void EnableTxDma()  { PSpi->CR2 |=  SPI_CR2_TXDMAEN; }
+    void EnableRxDma()  { PSpi->CR2 |=  SPI_CR2_RXDMAEN; }
+    void DisableTxDma() { PSpi->CR2 &= ~SPI_CR2_TXDMAEN; }
+    void DisableRxDma() { PSpi->CR2 &= ~SPI_CR2_RXDMAEN; }
 };
 #endif
 

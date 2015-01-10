@@ -8,6 +8,8 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
+#include "kl_sd.h"
+
 // External Power Input
 #define PWR_EXTERNAL_GPIO   GPIOA
 #define PWR_EXTERNAL_PIN    9
@@ -50,5 +52,17 @@ struct SndList_t {
 };
 
 uint8_t ReadConfig();
+
+class App_t {
+public:
+    Thread *PThd; // Main thread
+    void SendEvt(uint32_t EvtMsk) {
+        chSysLock();
+        chEvtSignalI(PThd, EvtMsk);
+        chSysUnlock();
+    }
+};
+
+extern App_t App;
 
 #endif /* MAIN_H_ */
