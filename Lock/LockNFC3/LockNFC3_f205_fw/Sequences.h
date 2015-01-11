@@ -14,6 +14,11 @@
 // Timings
 #define T_SHORT_BLINK_MS    45
 
+const LedChunk_t lsqIdle[] = {
+        {csSetColor, 0, clBlack},
+        {csEnd}
+};
+
 // Adding / removing IDs
 const LedChunk_t lsqAddingAccIdle[] = {
         {csSetColor, 0, clGreen},
@@ -34,6 +39,21 @@ const LedChunk_t lsqRemovingAccNew[] = {
         {csSetColor, 0, clBlack},
         {csWait, 180},
         {csSetColor, 0, clRed},
+        {csEnd}
+};
+
+const LedChunk_t lsqEraseAll[] = {
+        {csSetColor, 0, clRed},
+        {csWait, 180},
+        {csSetColor, 0, clBlack},
+        {csWait, 180},
+        {csSetColor, 0, clRed},
+        {csWait, 180},
+        {csSetColor, 0, clBlack},
+        {csWait, 180},
+        {csSetColor, 0, clRed},
+        {csWait, 180},
+        {csSetColor, 0, clBlack},
         {csEnd}
 };
 

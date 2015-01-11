@@ -51,7 +51,7 @@ private:
 //    void PrintIDs(void);
 public:
     void Init() {}
-//    bool IsChanged;
+    bool HasChanged;
     // ID operations
     IdKind_t Check(ID_t &sID) { return ikNone; }
 //    bool IsPresent(ID_t *PID) { return IsPresentIndx(AID, 0); }
@@ -59,8 +59,8 @@ public:
     void RemoveAcc(ID_t &sID) {}
     // Load/save
 //    void Load(void);
-//    void Save(void);
-//    void EraseAll(void);
+    void Save() {}
+    void EraseAll() {}
 };
 
 #endif /* IDSTORE_H_ */

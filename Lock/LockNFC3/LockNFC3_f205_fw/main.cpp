@@ -20,6 +20,7 @@
 #include "led_rgb.h"
 #include "Sequences.h"
 #include "pn.h"
+#include "keys.h"
 
 App_t App;
 Sns_t Sns = {GPIOA, 0};
@@ -50,7 +51,10 @@ int main() {
     Uart.Printf("\rLockNFC3 F205   AHB freq=%uMHz", Clk.AHBFreqHz/1000000);
     LedService.Init();
     LedService.StartSequence(lsqBlinkGreenX2);
+
     App.IDStore.Init();
+    Keys.Init();
+
     Pn.Init();
 
 //    SD.Init();
@@ -126,19 +130,64 @@ int main() {
 __attribute__ ((__noreturn__))
 void App_t::ITask() {
     while(true) {
-            uint32_t EvtMsk = chEvtWaitAny(ALL_EVENTS);
-            // ==== Card ====
-            if(EvtMsk & EVTMASK_CARD_APPEARS) ProcessAppearance();
-            // ==== Door ====
-            if(EvtMsk & EVTMASK_DOOR_OPEN) {
-                DoorState = dsOpen;
-                // Set color
-                // Say something
-                Uart.Printf("\rDoor is open");
-            }
-            if(EvtMsk & EVTMASK_BAD_KEY) {
-                Uart.Printf("\rBadKey");
-            }
+        uint32_t EvtMsk = chEvtWaitAny(ALL_EVENTS);
+        // ==== Card ====
+        if(EvtMsk & EVTMASK_CARD_APPEARS) ProcessAppearance();
+
+        // ==== Door ====
+        if(EvtMsk & EVTMASK_DOOR_OPEN) {
+            DoorState = dsOpen;
+            // Set color
+            // Say something
+            Uart.Printf("\rDoor is open");
+        }
+        if(EvtMsk & EVTMASK_BAD_KEY) {
+            Uart.Printf("\rBadKey");
+        }
+
+#if 1 // ==== Keys ====
+        if(EvtMsk & EVTMSK_KEYS) {
+            KeyEvtInfo_t EInfo;
+            while(Keys.EvtBuf.Get(&EInfo) == OK) {
+                if(EInfo.Type == kePress) {
+                    switch(EInfo.KeyID[0]) {
+                        case keyA:
+                            if(State == asAddingAcc) {
+                                if(IDStore.HasChanged) IDStore.Save();
+                                LedService.StartSequence(lsqIdle);
+                                State = asIdle;
+                            }
+                            else {
+                                State = asAddingAcc;
+                                LedService.StartSequence(lsqAddingAccIdle);
+                                ResetStateTimer();
+                            }
+                            break;
+
+                        case keyB:
+                            if(State == asRemovingAcc) {
+                                if(IDStore.HasChanged) IDStore.Save();
+                                LedService.StartSequence(lsqIdle);
+                                State = asIdle;
+                            }
+                            else {
+                                State = asRemovingAcc;
+                                LedService.StartSequence(lsqRemovingAccIdle);
+                                ResetStateTimer();
+                            }
+                            break;
+
+                        case keyC: break;
+                    } // switch
+                } // if keypress
+                else if(EInfo.Type == keCombo and EInfo.KeyID[0] == keyA and EInfo.KeyID[1] == keyB) {
+                    LedService.StartSequence(lsqEraseAll);
+                    IDStore.EraseAll();
+                    State = asIdle;
+                }
+            } // while
+        } // if keys
+#endif
     } // while true
 }
 
