@@ -10,6 +10,18 @@
 #include "cmd_uart.h"
 #include "evt_mask.h"
 
+//#define DBG_PINS
+
+#ifdef DBG_PINS
+#define DBG_GPIO1   GPIOC
+#define DBG_PIN1    5
+#define DBG1_SET()  PinSet(DBG_GPIO1, DBG_PIN1)
+#define DBG1_CLR()  PinClear(DBG_GPIO1, DBG_PIN1)
+#endif
+
+//#define IO_VERBOSE
+#define DATA_VERBOSE
+
 PN532_t Pn;
 
 extern "C" {
@@ -26,6 +38,10 @@ static void PnThread(void *arg) {
 }
 
 void PN532_t::Init() {
+#ifdef DBG_PINS
+    PinSetupOut(DBG_GPIO1, DBG_PIN1, omPushPull);
+    DBG1_CLR();
+#endif
     // ==== GPIO ====
     PinSetupOut(PN_GPIO, PN_RST_PIN, omPushPull, pudNone);
     PinSetupOut(PN_NSS_GPIO, PN_NSS_PIN, omPushPull, pudNone);
@@ -36,16 +52,13 @@ void PN532_t::Init() {
     IRstLo();
     INssHi();
     // ==== SPI ====    LSB first, master, ClkLowIdle, FirstEdge, Baudrate=f/2
-    ISpi.Setup(PN_SPI, boLSB, cpolIdleLow, cphaFirstEdge, sbFdiv8);
-//    ISpi.DisableIrqRxNE();
-//    ISpi.DisableIrqTxE();
+    ISpi.Setup(PN_SPI, boLSB, cpolIdleLow, cphaFirstEdge, sbFdiv64);
     ISpi.Enable();
-//    ISpi.SetupIrq(IRQ_PRIO_MEDIUM);
     // ==== DMA ====
     // Tx
     dmaStreamAllocate(PN_TX_DMA, IRQ_PRIO_MEDIUM, PnDmaTxCompIrq, NULL);
     dmaStreamSetPeripheral(PN_TX_DMA, &PN_SPI->DR);
-    dmaStreamSetMode      (PN_TX_DMA, PN_TX_DMA_MODE_NOIRQ);
+    dmaStreamSetMode      (PN_TX_DMA, PN_TX_DMA_MODE);
     // Rx
     dmaStreamAllocate(PN_RX_DMA, IRQ_PRIO_MEDIUM, PnDmaRxCompIrq, NULL);
     dmaStreamSetPeripheral(PN_RX_DMA, &PN_SPI->DR);
@@ -72,6 +85,7 @@ void PN532_t::ITask() {
                 IReset();
                 ServiceCmd(PN_CMD_GET_FIRMWARE_VERSION, WITHOUT_DATA);
                 ServiceCmd(PN_CMD_GET_FIRMWARE_VERSION, WITHOUT_DATA);
+//                ServiceCmd(PN_CMD_GET_FIRMWARE_VERSION, WITHOUT_DATA);
 //                ServiceCmd(PN_CMD_SAM_CONFIGURATION, 1, 0x01);
 //                ServiceCmd(PN_CMD_RF_CONFIGURATION, 4, 0x05, 0x02, 0x01, 0x05);
 //                ServiceCmd(PN_CMD_RF_CONFIGURATION, 4, 0x02, 0x00, 0x0B, 0x10);
@@ -98,7 +112,8 @@ void PN532_t::IReset() {
 
 uint8_t PN532_t::ServiceCmd(uint8_t CmdID, uint32_t ADataLength, ...) {
     uint8_t Rslt = OK;
-    *PSeqType = PN_PRE_DATA_WRITE;
+    uint32_t FLength;
+    IBuf[0] = PN_PRE_DATA_WRITE;
     // Prologue
     PrologueExt->Preamble = 0x00;     // Always
     PrologueExt->SoP0     = 0x00;     // Always
@@ -106,98 +121,154 @@ uint8_t PN532_t::ServiceCmd(uint8_t CmdID, uint32_t ADataLength, ...) {
     PrologueExt->NPLC     = 0xFF;     // Always
     PrologueExt->NPL      = 0xFF;     // Always
     // Length = 1 (TFI) + 1 (CMD == PD0) + ADataLength
-    ILength = 1 + 1 + ADataLength;
-    PrologueExt->LengthHi = (uint8_t)((ILength >> 8) & 0xFF);
-    PrologueExt->LengthLo = (uint8_t)( ILength       & 0xFF);
+    FLength = 1 + 1 + ADataLength;
+    PrologueExt->LengthHi = (uint8_t)((FLength >> 8) & 0xFF);
+    PrologueExt->LengthLo = (uint8_t)( FLength       & 0xFF);
     PrologueExt->CalcLCS();           // LCS + LENGTH == 0
     // Data
-    PData = &IBuf[PN_DATA_EXT_INDX];  // Beginning of TFI+Data
-    *PData++ = PN_FRAME_TFI_TRANSMIT;
-    *PData++ = CmdID;
+    uint8_t *pd = &IBuf[PN_DATA_EXT_INDX];  // Beginning of TFI+Data
+    *pd++ = PN_FRAME_TFI_TRANSMIT;
+    *pd++ = CmdID;
     if(ADataLength != 0) {              // If data present copy it to ComboData Buffer
         va_list Arg;                    // Init Agr
         va_start(Arg, ADataLength);     // Set pointer to last argument
-        for(uint32_t i=0; i<ADataLength; i++) *PData++ = (uint8_t)va_arg(Arg, int);
+        for(uint32_t i=0; i<ADataLength; i++) *pd++ = (uint8_t)va_arg(Arg, int);
         va_end(Arg);
     }
     // Epilogue
-    WriteEpilogue(ILength);
+    WriteEpilogue(FLength);
     // ==== Transmit frame ====
-    Uart.Printf("\r>> %A   ", IBuf, PN_TX_SZ(ILength), ' ');
+#ifdef IO_VERBOSE
+    Uart.Printf("\r>> %A   ", IBuf, PN_TX_SZ(FLength), ' ');
+#endif
+#ifdef DATA_VERBOSE
+    Uart.Printf("\r>> %A   ", &IBuf[PN_DATA_EXT_INDX], 2+ADataLength, ' ');
+#endif
     INssLo();
-    ITransmit(IBuf, PN_TX_SZ(ILength));
+    ITxRx(IBuf, nullptr, PN_TX_SZ(FLength));
     INssHi();
-
     // ======= Receive =======
     if((Rslt = ReceiveAck()) != OK) return Rslt;
     return ReceiveData();
 }
 
+
 uint8_t PN532_t::ReceiveAck() {
     uint8_t Rslt = OK;
     if((Rslt = WaitReplyReady(PN_ACK_TIMEOUT)) != OK) return Rslt;
-    PnAckNack_t *PAckNack = (PnAckNack_t*)IBuf;
-    *PSeqType = PN_PRE_DATA_READ;
+    IBuf[0] = PN_PRE_DATA_READ;
     INssLo();
-    ITransmit(PSeqType, 1);
-    ISpi.ReadDummy();   // remove byte red during transmitting
-    IReceive(PAckNack, PN_ACK_NACK_LENGTH);   // Receive ACK
+    ITxRx(IBuf, IBuf, PN_ACK_NACK_SZ+1);    // First byte is sequence "read"
     INssHi();
+    PnAckNack_t *PAckNack = (PnAckNack_t*)&IBuf[1]; // First byte is reply to sequence "read"
     Rslt = (*PAckNack == PnPktAck)? OK : FAILURE;
-    Uart.Printf("\r<< %A   ", PAckNack, PN_ACK_NACK_LENGTH, ' ');
-    Uart.Printf("\rRslt=%u", Rslt);
+#ifdef IO_VERBOSE
+    Uart.Printf("\r<< %A   ", PAckNack, PN_ACK_NACK_SZ, ' ');
+#endif
     return Rslt;
 }
 
 uint8_t PN532_t::ReceiveData() {
-    uint8_t Rslt = OK;
+    uint8_t Rslt = FAILURE;
     if((Rslt = WaitReplyReady(PN_DATA_TIMEOUT)) != OK) return Rslt;
-    *PSeqType = PN_PRE_DATA_READ;
+    IBuf[0] = PN_PRE_DATA_READ;
     INssLo();
-    ITransmit(PSeqType, 1);
-    ISpi.ReadDummy();
     // Receive reply's prologue
-    IReceive(Prologue, PROLOGUE_SZ);
-    Uart.Printf("\r<< %A", Prologue, PROLOGUE_SZ, ' ');
+    ITxRx(IBuf, IBuf, PROLOGUE_SZ+1);    // First byte is sequence "read"
+//    Uart.Printf("\rPrologue: %A", Prologue, PROLOGUE_SZ, ' ');
+    // Check if wrong beginning
+    if(!Prologue->IsStartOk()) {
+        Uart.Printf("\rBad start");
+        INssHi();
+        return FAILURE;
+    }
+    // Check if extended frame
+    if(Prologue->IsExtended()) {
+        ITxRx(IBuf, &PrologueExt->LengthHi, (PROLOGUE_EXT_SZ - PROLOGUE_SZ)); // Receive remainder of prologueExt
+        // Check length crc
+        if(!PrologueExt->IsLcsOk()) {
+            Uart.Printf("\rBad Ext LCS");
+            INssHi();
+            return FAILURE;
+        }
+        PRxData = &IBuf[PN_DATA_EXT_INDX];
+        RxDataSz = BuildUint16(PrologueExt->LengthLo, PrologueExt->LengthHi);
+    }
+    // Normal frame
+    else {
+        // Check length crc
+        if(!Prologue->IsLcsOk()) {
+            Uart.Printf("\rBad LCS");
+            INssHi();
+            return FAILURE;
+        }
+        PRxData = &IBuf[PN_DATA_NORMAL_INDX];
+        RxDataSz = Prologue->Len;
+    }
+    ITxRx(IBuf, PRxData, (RxDataSz + EPILOGUE_SZ));  // Receive data and epilogue
     INssHi();
+    // Check DCS
+    uint8_t DCS = 0;
+    for(uint32_t i=0; i < RxDataSz+1; i++) DCS += PRxData[i]; // TFI + D0 + D1 + ... + DCS
+    if(DCS != 0) {
+        Uart.Printf("\rBad DCS");
+        return FAILURE;
+    }
+    // All ok
+#ifdef IO_VERBOSE
+    uint32_t TotalLength = DataSz + (Prologue->IsExtended()? PROLOGUE_EXT_SZ : PROLOGUE_SZ) + EPILOGUE_SZ;
+    Uart.Printf("\r<< %A", Prologue, TotalLength, ' ');
+#endif
+#ifdef DATA_VERBOSE
+    Uart.Printf("\r<< %A", PRxData, RxDataSz, ' ');
+#endif
     return Rslt;
 }
 
-void PN532_t::ITransmit(void *Ptr, uint32_t ALength) {
-    chSysLock();
-    ISpi.EnableTxDma();
-    dmaStreamSetMemory0(PN_TX_DMA, Ptr);
-    dmaStreamSetTransactionSize(PN_TX_DMA, ALength);
-    dmaStreamSetMode(PN_TX_DMA, PN_TX_DMA_MODE_IRQ);
-    dmaStreamEnable(PN_TX_DMA);
-    chSchGoSleepS(THD_STATE_SUSPENDED);
-    chSysUnlock();
-    ISpi.WaitBsyLo();
-}
+//void PN532_t::ITransmit(void *Ptr, uint32_t ALength) {
+//    chSysLock();
+//    dmaStreamSetMemory0(PN_TX_DMA, Ptr);
+//    dmaStreamSetTransactionSize(PN_TX_DMA, ALength);
+//    dmaStreamSetMode(PN_TX_DMA, PN_TX_DMA_MODE_IRQ);
+//    dmaStreamEnable(PN_TX_DMA);
+//    chSysUnlock();
+//    chEvtGetAndClearEvents(EVTMASK_PN_RX_COMPLETED | EVTMASK_PN_TX_COMPLETED);
+//    ISpi.EnableTxDma();
+//    if(chEvtWaitOneTimeout(EVTMASK_PN_TX_COMPLETED, MS2ST(PN_ACK_TIMEOUT)) == 0) Uart.Printf("\rTxTimeout");
+//    ISpi.WaitBsyLo();
+//}
 
-void PN532_t::IReceive(void *Ptr, uint32_t ALength) {
-//    uint8_t Dummy;
-//    if(Ptr == nullptr) Ptr = &Dummy;
+void PN532_t::ITxRx(void *PTx, void *PRx, uint32_t ALength) {
+    ISpi.ClearOVR();
     chSysLock();
-    ISpi.EnableRxDma();
-    dmaStreamSetMemory0(PN_RX_DMA, Ptr);
-    dmaStreamSetTransactionSize(PN_RX_DMA, ALength);
-    dmaStreamSetMode(PN_RX_DMA, PN_RX_DMA_MODE);
-    dmaStreamEnable(PN_RX_DMA);
-    ISpi.EnableTxDma();
-    dmaStreamSetMemory0(PN_TX_DMA, NULL);
+    uint32_t Msk = EVTMASK_PN_TX_COMPLETED;
+    // RX
+    if(PRx != nullptr) {
+        dmaStreamSetMemory0(PN_RX_DMA, PRx);
+        dmaStreamSetTransactionSize(PN_RX_DMA, ALength);
+        dmaStreamSetMode(PN_RX_DMA, PN_RX_DMA_MODE);
+        dmaStreamEnable(PN_RX_DMA);
+        Msk = EVTMASK_PN_RX_COMPLETED;
+        ISpi.EnableRxDma();
+    }
+    // TX
+    dmaStreamSetMemory0(PN_TX_DMA, PTx);
     dmaStreamSetTransactionSize(PN_TX_DMA, ALength);
-    dmaStreamSetMode(PN_TX_DMA, PN_TX_DMA_MODE_NOIRQ);
+    dmaStreamSetMode(PN_TX_DMA, PN_TX_DMA_MODE);
     dmaStreamEnable(PN_TX_DMA);
-    chSchGoSleepS(THD_STATE_SUSPENDED);
     chSysUnlock();
+    chEvtGetAndClearEvents(EVTMASK_PN_RX_COMPLETED | EVTMASK_PN_TX_COMPLETED);
+    ISpi.EnableTxDma();
+    if(chEvtWaitOneTimeout(Msk, MS2ST(PN_ACK_TIMEOUT)) == 0) Uart.Printf("\rTxRxTimeout");
     ISpi.WaitBsyLo();
 }
 
 uint8_t PN532_t::WaitReplyReady(uint32_t ATimeout) {
     // Enable IRQ and wait event
+    IIrqPin.CleanIrqFlag();
     IIrqPin.EnableIrq(IRQ_PRIO_MEDIUM);
     if(chEvtWaitOneTimeout(EVTMASK_PN_NEW_PKT, MS2ST(ATimeout)) == 0) {
+        IIrqPin.DisableIrq();
         Uart.Printf("\rTimeout");
         return TIMEOUT;
     }
@@ -205,11 +276,6 @@ uint8_t PN532_t::WaitReplyReady(uint32_t ATimeout) {
 }
 
 #if 1 // ========================= IRQs ========================================
-//void PN532_t::IrqSpiHandler() {
-//    ISpi.DisableIrqTxE();
-//    if(PThd->p_state == THD_STATE_SUSPENDED) chSchReadyI(PThd);
-//}
-
 void PN532_t::IrqPinHandler() { // Interrupt caused by Low level on IRQ_Pin
 //    if(Card.State == csBusy) Uart.Printf("RplRdy\r");
     IIrqPin.CleanIrqFlag();     // Clear IRQ Pending Bit
@@ -218,14 +284,6 @@ void PN532_t::IrqPinHandler() { // Interrupt caused by Low level on IRQ_Pin
 }
 
 extern "C" {
-//CH_IRQ_HANDLER(SPI1_IRQHandler) {
-//    CH_IRQ_PROLOGUE();
-//    chSysLockFromIsr();
-//    Pn.IrqSpiHandler();
-//    chSysUnlockFromIsr();
-//    CH_IRQ_EPILOGUE();
-//}
-
 CH_IRQ_HANDLER(PN_IRQ_HANDLER) {
     CH_IRQ_PROLOGUE();
     chSysLockFromIsr();
@@ -238,9 +296,8 @@ CH_IRQ_HANDLER(PN_IRQ_HANDLER) {
 void PnDmaTxCompIrq(void *p, uint32_t flags) {
     dmaStreamDisable(PN_TX_DMA);    // Disable DMA
     Pn.ISpi.DisableTxDma();         // Disable SPI DMA
-//    Pn.ISpi.EnableIrqTxE();         // Wait TxBuffer Empty In Interrupt while Thread suspended
     chSysLockFromIsr();
-    if(Pn.PThd->p_state == THD_STATE_SUSPENDED) chSchReadyI(Pn.PThd);
+    chEvtSignalI(Pn.PThd, EVTMASK_PN_TX_COMPLETED);
     chSysUnlockFromIsr();
 }
 // DMA reception complete
@@ -248,7 +305,7 @@ void PnDmaRxCompIrq(void *p, uint32_t flags) {
     dmaStreamDisable(PN_RX_DMA); // Disable DMA
     Pn.ISpi.DisableRxDma();
     chSysLockFromIsr();
-    if(Pn.PThd->p_state == THD_STATE_SUSPENDED) chSchReadyI(Pn.PThd);
+    chEvtSignalI(Pn.PThd, EVTMASK_PN_RX_COMPLETED);
     chSysUnlockFromIsr();
 }
 } // extern C

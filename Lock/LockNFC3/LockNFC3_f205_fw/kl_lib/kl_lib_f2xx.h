@@ -22,6 +22,9 @@
 #define countof(A)  (sizeof(A)/sizeof(A[0]))
 #endif
 
+// Zero const, may be useful for dummy purposes
+const uint32_t ZeroConst = 0;
+
 #ifndef TRUE
 #define TRUE 1
 #endif

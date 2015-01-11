@@ -16,6 +16,7 @@
 #define PN_PRE_STATUS_READ              0b00000010
 #define PN_PRE_DATA_WRITE               0b00000001
 #define PN_PRE_DATA_READ                0b00000011
+
 // Frame identifier
 // Pn CMDs
 #define PN_FRAME_PREAMBLE               0x00
@@ -23,12 +24,6 @@
 #define PN_FRAME_TFI_RECIEVE            0xD5
 #define PN_FRAME_POSTAMBLE              0x00
 
-// Pn CMD Length
-#define PN_ACK_NACK_LENGTH              (uint8_t)6
-#define PN_SERVICE_BYTES_IN_DATA_EX     (uint8_t)3
-#define PN_RESPONSE_START_FRAME_LENGTH  (uint8_t)5
-#define PN_EXTENDED_FRAME_LEN           (uint8_t)3
-#define PN_RESPONSE_EPILOGUE_LENGTH     (uint8_t)2
 // Command codes
 // Miscellaneous
 #define PN_CMD_DIAGNOSE                 0x00

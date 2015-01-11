@@ -19,14 +19,14 @@
 // ==== DMA ====
 #define PN_TX_DMA           STM32_DMA2_STREAM5
 #define PN_TX_DMA_CHNL      3
-#define PN_TX_DMA_MODE_NOIRQ \
+#define PN_TX_DMA_MODE \
     STM32_DMA_CR_CHSEL(PN_TX_DMA_CHNL) |               \
     DMA_PRIORITY_MEDIUM |                              \
     STM32_DMA_CR_MSIZE_BYTE | /* Size byte */          \
     STM32_DMA_CR_PSIZE_BYTE |                          \
     STM32_DMA_CR_MINC |       /* Mem pointer increase */  \
-    STM32_DMA_CR_DIR_M2P      /* Mem to peripheral */
-#define PN_TX_DMA_MODE_IRQ  (PN_TX_DMA_MODE_NOIRQ | STM32_DMA_CR_TCIE)
+    STM32_DMA_CR_DIR_M2P |    /* Mem to peripheral */  \
+    STM32_DMA_CR_TCIE
 
 #define PN_RX_DMA           STM32_DMA2_STREAM2
 #define PN_RX_DMA_CHNL      3
@@ -78,6 +78,9 @@ struct PnPrologue_t {
     uint8_t SoP1;           // Start of Packet Code 1
     uint8_t Len;            // Length
     uint8_t LCS;            // Length Checksum
+    bool IsStartOk()  { return (Preamble == 0 and SoP0 == 0 and SoP1 == 0xFF); }
+    bool IsExtended() { return (Len == 0xFF and LCS == 0xFF); }
+    bool IsLcsOk()    { return ((uint8_t)(Len + LCS) == 0); }
 } __attribute__ ((__packed__));
 #define PROLOGUE_SZ  sizeof(PnPrologue_t)
 
@@ -91,6 +94,7 @@ struct PnPrologueExt_t {
     uint8_t LengthLo;       // LSByte of Length
     uint8_t LCS;            // Length Checksum
     void CalcLCS() { LCS = -(LengthHi + LengthLo); }
+    bool IsLcsOk()    { return ((uint8_t)(LengthHi + LengthLo + LCS) == 0); }
 } __attribute__ ((__packed__));
 #define PROLOGUE_EXT_SZ  sizeof(PnPrologueExt_t)
 
@@ -120,13 +124,14 @@ struct PnAckNack_t {
     uint8_t Postamble;
     bool operator == (const PnAckNack_t &APkt) { return (Preamble == APkt.Preamble) and (SoP0 == APkt.SoP0) and (SoP1 == APkt.SoP1) and (Code0 == APkt.Code0) and (Code1 == APkt.Code1) and (Postamble == APkt.Postamble); }
 } __attribute__ ((__packed__));
+#define PN_ACK_NACK_SZ sizeof(PnAckNack_t)
 
 const PnAckNack_t PnPktAck = {0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00};
 
 // Auxilary Data indxs, sizes etc
 #define PN_PROLOGUE_INDX    1
 #define PN_DATA_EXT_INDX    (1 + PROLOGUE_EXT_SZ)   // index in buffer
-#define PN_DATA_INDX        (1 + PROLOGUE_SZ)       // index in buffer
+#define PN_DATA_NORMAL_INDX (1 + PROLOGUE_SZ)       // index in buffer
 #define PN_TX_SZ(ALength)   (1 + PROLOGUE_EXT_SZ + ALength + EPILOGUE_SZ)
 
 #endif
@@ -138,13 +143,12 @@ class PN532_t {
 private:
     PnState_t State;
     IrqPin_t IIrqPin;
-    uint32_t ILength; // General variable
     // Frame
     uint8_t IBuf[1 + PROLOGUE_EXT_SZ + PN_MAX_DATA_SZ + EPILOGUE_SZ]; // Seq type + prologue +...
-    uint8_t *PSeqType = IBuf;
     PnPrologue_t    *Prologue    = (PnPrologue_t*)   &IBuf[PN_PROLOGUE_INDX];  // Exclude Seq type
     PnPrologueExt_t *PrologueExt = (PnPrologueExt_t*)&IBuf[PN_PROLOGUE_INDX];  // Exclude Seq type
-    uint8_t *PData;
+    uint8_t *PRxData;
+    uint32_t RxDataSz;
     void WriteEpilogue(uint16_t ALength) { // [TFI + PD0 + PD1 + … + PDn + DCS] = 0x00
         uint8_t *p = &IBuf[PN_DATA_EXT_INDX]; // Beginning of TFI+Data
         uint8_t Dcs = 0;
@@ -156,7 +160,11 @@ private:
     // Gpio
     inline void IRstLo()  { PinClear(PN_GPIO, PN_RST_PIN); }
     inline void IRstHi()  { PinSet  (PN_GPIO, PN_RST_PIN); }
-    inline void INssLo()  { PinClear(PN_NSS_GPIO, PN_NSS_PIN); chThdSleepMilliseconds(1); } // TODO: useconds?
+    inline void INssLo()  {
+        PinClear(PN_NSS_GPIO, PN_NSS_PIN);
+        Loop(200);
+        // chThdSleepMicroseconds(20);
+    }
     inline void INssHi()  { PinSet  (PN_NSS_GPIO, PN_NSS_PIN); }
     // Inner use
     void IReset();
@@ -164,8 +172,7 @@ private:
     // ==== Data Exchange ====
     uint8_t ReceiveAck();
     uint8_t ReceiveData();
-    void ITransmit(void *Ptr, uint32_t ALength);
-    void IReceive(void *Ptr, uint32_t ALength);
+    void ITxRx(void *PTx, void *PRx, uint32_t ALength);
     uint8_t WaitReplyReady(uint32_t ATimeout);
 
     // ==== Hi lvl ====
@@ -177,7 +184,6 @@ public:
     void ITask();
     Thread *PThd;
     Spi_t ISpi;
-    inline void IrqSpiHandler();    // SPI IRQ Handler
     inline void IrqPinHandler();    // EXTI P70_IRQ Handler
 };
 #endif

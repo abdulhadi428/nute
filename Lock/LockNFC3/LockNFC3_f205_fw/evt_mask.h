@@ -17,5 +17,7 @@
 
 // Inner use
 #define EVTMASK_PN_NEW_PKT      EVENT_MASK(27)
+#define EVTMASK_PN_TX_COMPLETED EVENT_MASK(28)
+#define EVTMASK_PN_RX_COMPLETED EVENT_MASK(29)
 
 #endif /* EVT_MASK_H_ */
