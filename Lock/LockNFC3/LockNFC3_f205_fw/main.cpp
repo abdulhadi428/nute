@@ -22,6 +22,7 @@
 #include "pn.h"
 
 App_t App;
+Card_t Card;
 Sns_t Sns = {GPIOA, 0};
 SndList_t SndList;
 
@@ -77,7 +78,16 @@ int main() {
 //    bool WasExternal = false;
 //    int32_t PreviousPhrase = 0;
     while(true) {
-        chThdSleepMilliseconds(306);
+        uint32_t EvtMsk = chEvtWaitAny(ALL_EVENTS);
+        // ==== Card ====
+        if(EvtMsk & EVTMASK_CARD_APPEARS) {
+            LedService.SetColor(clGreen);
+        }
+        if(EvtMsk & EVTMASK_CARD_DISAPPEARS) {
+            LedService.SetColor(clBlack);
+        }
+
+
 
 #if 0 // ==== USB connected/disconnected ====
         if(WasExternal and !ExternalPwrOn()) {

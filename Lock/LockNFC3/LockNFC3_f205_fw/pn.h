@@ -11,6 +11,7 @@
 #include "ch.h"
 #include "kl_lib_f2xx.h"
 #include "pn_defins.h"
+#include "card.h"
 
 #if 1 // ===================== GPIO, DMA etc. ==================================
 // SPI clock is up to 5MHz (um p.45)
@@ -68,8 +69,9 @@
 #define PN_MAX_DATA_SZ      265  // Max Data Lenghth=265 including TFI um. page 29
 
 // Timings
-#define PN_ACK_TIMEOUT      27 // ms
+#define PN_ACK_TIMEOUT      27  // ms
 #define PN_DATA_TIMEOUT     180 // ms
+#define PN_POLL_INTERVAL    999 // ms
 
 #if 1 // ======================= Auxilary structures ===========================
 struct PnPrologue_t {
@@ -98,17 +100,6 @@ struct PnPrologueExt_t {
 } __attribute__ ((__packed__));
 #define PROLOGUE_EXT_SZ  sizeof(PnPrologueExt_t)
 
-//struct PnData_t {
-//    uint8_t TFI;
-//    uint8_t PD0;
-//    union {
-//        uint8_t Tg;
-//        uint8_t Err;
-//        uint8_t Slot;
-//    };
-//    uint8_t Buf[PN_MAX_DATA_SIZE-1];
-//} __attribute__ ((__packed__));
-
 struct PnEpilogue_t {
     uint8_t DCS;
     uint8_t Postamble;
@@ -134,6 +125,19 @@ const PnAckNack_t PnPktAck = {0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00};
 #define PN_DATA_NORMAL_INDX (1 + PROLOGUE_SZ)       // index in buffer
 #define PN_TX_SZ(ALength)   (1 + PROLOGUE_EXT_SZ + ALength + EPILOGUE_SZ)
 
+struct PnReply_t {
+    uint8_t TFI;
+    struct {
+        uint8_t RplCode;
+        union {
+            uint8_t NbTg;
+            uint8_t Err;
+            uint8_t Slot;
+        };
+        uint8_t Buf[PN_MAX_DATA_SZ-3]; // exclude TFI, RplCode and ErrCode
+    } __attribute__ ((__packed__));
+} __attribute__ ((__packed__));
+
 #endif
 
 #if 1 // =========================== PN class ==================================
@@ -147,7 +151,7 @@ private:
     uint8_t IBuf[1 + PROLOGUE_EXT_SZ + PN_MAX_DATA_SZ + EPILOGUE_SZ]; // Seq type + prologue +...
     PnPrologue_t    *Prologue    = (PnPrologue_t*)   &IBuf[PN_PROLOGUE_INDX];  // Exclude Seq type
     PnPrologueExt_t *PrologueExt = (PnPrologueExt_t*)&IBuf[PN_PROLOGUE_INDX];  // Exclude Seq type
-    uint8_t *PRxData;
+    PnReply_t *PReply;
     uint32_t RxDataSz;
     void WriteEpilogue(uint16_t ALength) { // [TFI + PD0 + PD1 + … + PDn + DCS] = 0x00
         uint8_t *p = &IBuf[PN_DATA_EXT_INDX]; // Beginning of TFI+Data
@@ -168,16 +172,18 @@ private:
     inline void INssHi()  { PinSet  (PN_NSS_GPIO, PN_NSS_PIN); }
     // Inner use
     void IReset();
-    uint8_t ServiceCmd(uint8_t CmdID, uint32_t ADataLength, ...);
     // ==== Data Exchange ====
+    uint8_t Cmd(uint8_t CmdID, uint32_t ADataLength, ...);
     uint8_t ReceiveAck();
     uint8_t ReceiveData();
     void ITxRx(void *PTx, void *PRx, uint32_t ALength);
     uint8_t WaitReplyReady(uint32_t ATimeout);
-
     // ==== Hi lvl ====
-    void FieldOn()  { ServiceCmd(PN_CMD_RF_CONFIGURATION, 2, 0x01, 0x01); }
-    void FieldOff() { ServiceCmd(PN_CMD_RF_CONFIGURATION, 2, 0x01, 0x00); }
+    bool CardAppeared();
+    bool CardIsStillNear();
+    void FieldOn()  { Cmd(PN_CMD_RF_CONFIGURATION, 2, 0x01, 0x01); }
+    void FieldOff() { Cmd(PN_CMD_RF_CONFIGURATION, 2, 0x01, 0x00); }
+    uint8_t MifareRead(void *ABuf, uint32_t AAddr);
 public:
     void Init();
     // Inner use

@@ -9,6 +9,7 @@
 #include "ch.h"
 #include "cmd_uart.h"
 #include "evt_mask.h"
+#include "main.h"
 
 //#define DBG_PINS
 
@@ -19,8 +20,9 @@
 #define DBG1_CLR()  PinClear(DBG_GPIO1, DBG_PIN1)
 #endif
 
-//#define IO_VERBOSE
-#define DATA_VERBOSE
+//#define PRINT_IO
+//#define PRINT_DATA
+#define PRINT_TAGS
 
 PN532_t Pn;
 
@@ -52,7 +54,7 @@ void PN532_t::Init() {
     IRstLo();
     INssHi();
     // ==== SPI ====    LSB first, master, ClkLowIdle, FirstEdge, Baudrate=f/2
-    ISpi.Setup(PN_SPI, boLSB, cpolIdleLow, cphaFirstEdge, sbFdiv64);
+    ISpi.Setup(PN_SPI, boLSB, cpolIdleLow, cphaFirstEdge, sbFdiv8);
     ISpi.Enable();
     // ==== DMA ====
     // Tx
@@ -65,7 +67,6 @@ void PN532_t::Init() {
     dmaStreamSetMode      (PN_RX_DMA, PN_RX_DMA_MODE);
     // ==== IRQ ====
     IIrqPin.Setup(PN_IRQ_GPIO, PN_IRQ_PIN, ttFalling);
-//    IIrqPin.EnableIrq(IRQ_PRIO_LOW);
     // ==== Variables ====
     State = psSetup;
 //    Card.State = csCardOut;
@@ -73,22 +74,42 @@ void PN532_t::Init() {
     Uart.Printf("\rPnHWSet");
 }
 
+void PN532_t::IReset() {
+    IRstLo();
+    chThdSleepMilliseconds(9);
+    IRstHi();
+    chThdSleepMilliseconds(9);
+}
+
 __attribute__ ((__noreturn__))
 void PN532_t::ITask() {
     while(true) {
         switch (State) {
             case psConfigured:
-                chThdSleepMilliseconds(999);
+                chThdSleepMilliseconds(PN_POLL_INTERVAL);
+                if(Card.State != csCardOk) {
+                    if(CardAppeared()) {
+                        Uart.Printf("\rCard Appeared");
+                        Card.State = csCardOk;
+                        chEvtSignal(App.PThd, EVTMASK_CARD_APPEARS);
+                    }
+                }
+                else {
+                    if(!CardIsStillNear()) {
+                        Uart.Printf("\rCard Lost");
+                        Card.State = csCardOut;
+                        chEvtSignal(App.PThd, EVTMASK_CARD_DISAPPEARS);
+                    }
+                } // if Card is ok
                 break;
 
             case psSetup:
                 IReset();
-                ServiceCmd(PN_CMD_GET_FIRMWARE_VERSION, WITHOUT_DATA);
-                ServiceCmd(PN_CMD_GET_FIRMWARE_VERSION, WITHOUT_DATA);
-//                ServiceCmd(PN_CMD_GET_FIRMWARE_VERSION, WITHOUT_DATA);
-//                ServiceCmd(PN_CMD_SAM_CONFIGURATION, 1, 0x01);
-//                ServiceCmd(PN_CMD_RF_CONFIGURATION, 4, 0x05, 0x02, 0x01, 0x05);
-//                ServiceCmd(PN_CMD_RF_CONFIGURATION, 4, 0x02, 0x00, 0x0B, 0x10);
+                Cmd(PN_CMD_GET_FIRMWARE_VERSION, WITHOUT_DATA);  // First Cmd will be discarded
+                Cmd(PN_CMD_GET_FIRMWARE_VERSION, WITHOUT_DATA);
+                Cmd(PN_CMD_SAM_CONFIGURATION, 1, 0x01);          // Disable SAM to calm PN: Normal mode, the SAM is not used
+                Cmd(PN_CMD_RF_CONFIGURATION, 4, 0x05, 0x02, 0x01, 0x05);
+                Cmd(PN_CMD_RF_CONFIGURATION, 4, 0x02, 0x00, 0x0B, 0x10);
                 State = psConfigured;
                 Uart.Printf("\rPnSet");
                 break;
@@ -102,15 +123,60 @@ void PN532_t::ITask() {
     } // while true
 }
 
-void PN532_t::IReset() {
-//    FirstCmd = true;
-    IRstLo();
-    chThdSleepMilliseconds(99); // FIXME: edit timeout
-    IRstHi();
-    chThdSleepMilliseconds(99); // FIXME: edit timeout
+bool PN532_t::CardAppeared() {
+    FieldOn();
+    if(Cmd(PN_CMD_IN_LIST_PASSIVE_TARGET, 2, 0x01, 0x00) == OK) {
+        if(PReply->RplCode != PN_RPL_IN_LIST_PASSIVE_TARGET or PReply->NbTg == 0) { // Incorrect reply or Nothing found
+            FieldOff();
+            return false;
+        }
+        // ==== Tag is found ====
+#ifdef PRINT_TAGS
+//        Uart.Printf("\rTag found");
+//        Uart.Printf("\rTag1: ");
+//        klPrintf("SensRes: %X %X\r", Buf[3], Buf[4]);
+//        klPrintf("SelRes: %X\r");
+//        NFCIDLength = Buf[6];
+//        klPrintf("NFCIDLength: %X\r", NFCIDLength);
+//        klPrintf("NFCID: ");
+//        for (uint8_t i=7; i<(7+NFCIDLength); i++) klPrintf("%X ", Buf[i]);
+//        klPrintf("\r");
+//        if (Length > (7+NFCIDLength)) {
+//            ATSLength = Buf[7+NFCIDLength];
+//            klPrintf("ATSLength: %X\r", ATSLength);
+//            klPrintf("ATS: ");
+//            for (uint8_t i=7+NFCIDLength+1; i<(7+NFCIDLength+1+ATSLength-1); i++) klPrintf("%X ", Buf[i]);
+//            klPrintf("\r");
+//        }
+#endif
+        return true;
+    }
+    else return false;
 }
 
-uint8_t PN532_t::ServiceCmd(uint8_t CmdID, uint32_t ADataLength, ...) {
+bool PN532_t::CardIsStillNear() {
+    // Try to read data from Mifare to determine if it still near
+    if(MifareRead(nullptr, 0) == OK) return true;
+    else {
+        FieldOff();
+        return false;
+    }
+}
+
+// Read 16 bytes starting from address AAddr into ABuf.
+uint8_t PN532_t::MifareRead(void *ABuf, uint32_t AAddr) {
+    if(Cmd(PN_CMD_IN_DATA_EXCHANGE, 3, 0x01, MIFARE_CMD_READ, AAddr) == OK) {
+        //klPrintf("PN reply: %H\r", Buf, Length);
+        if ((PReply->RplCode == PN_CMD_IN_DATA_EXCHANGE+1) and (PReply->Err == 0x00)) { // Correct reply & errorcode == 0
+            if(ABuf != nullptr) memcpy(ABuf, PReply->Buf, 16);
+            return OK;
+        }
+    }
+    return FAILURE;
+}
+
+#if 1 // ========================== Data exchange ==============================
+uint8_t PN532_t::Cmd(uint8_t CmdID, uint32_t ADataLength, ...) {
     uint8_t Rslt = OK;
     uint32_t FLength;
     IBuf[0] = PN_PRE_DATA_WRITE;
@@ -138,10 +204,10 @@ uint8_t PN532_t::ServiceCmd(uint8_t CmdID, uint32_t ADataLength, ...) {
     // Epilogue
     WriteEpilogue(FLength);
     // ==== Transmit frame ====
-#ifdef IO_VERBOSE
+#ifdef PRINT_IO
     Uart.Printf("\r>> %A   ", IBuf, PN_TX_SZ(FLength), ' ');
 #endif
-#ifdef DATA_VERBOSE
+#ifdef PRINT_DATA
     Uart.Printf("\r>> %A   ", &IBuf[PN_DATA_EXT_INDX], 2+ADataLength, ' ');
 #endif
     INssLo();
@@ -152,7 +218,6 @@ uint8_t PN532_t::ServiceCmd(uint8_t CmdID, uint32_t ADataLength, ...) {
     return ReceiveData();
 }
 
-
 uint8_t PN532_t::ReceiveAck() {
     uint8_t Rslt = OK;
     if((Rslt = WaitReplyReady(PN_ACK_TIMEOUT)) != OK) return Rslt;
@@ -162,20 +227,21 @@ uint8_t PN532_t::ReceiveAck() {
     INssHi();
     PnAckNack_t *PAckNack = (PnAckNack_t*)&IBuf[1]; // First byte is reply to sequence "read"
     Rslt = (*PAckNack == PnPktAck)? OK : FAILURE;
-#ifdef IO_VERBOSE
+#ifdef PRINT_IO
     Uart.Printf("\r<< %A   ", PAckNack, PN_ACK_NACK_SZ, ' ');
 #endif
     return Rslt;
 }
 
 uint8_t PN532_t::ReceiveData() {
-    uint8_t Rslt = FAILURE;
+    uint8_t Rslt;
+    uint8_t* PRxData;
+    PReply = nullptr;
     if((Rslt = WaitReplyReady(PN_DATA_TIMEOUT)) != OK) return Rslt;
     IBuf[0] = PN_PRE_DATA_READ;
     INssLo();
     // Receive reply's prologue
     ITxRx(IBuf, IBuf, PROLOGUE_SZ+1);    // First byte is sequence "read"
-//    Uart.Printf("\rPrologue: %A", Prologue, PROLOGUE_SZ, ' ');
     // Check if wrong beginning
     if(!Prologue->IsStartOk()) {
         Uart.Printf("\rBad start");
@@ -215,28 +281,16 @@ uint8_t PN532_t::ReceiveData() {
         return FAILURE;
     }
     // All ok
-#ifdef IO_VERBOSE
+    PReply = (PnReply_t*)PRxData;
+#ifdef PRINT_IO
     uint32_t TotalLength = DataSz + (Prologue->IsExtended()? PROLOGUE_EXT_SZ : PROLOGUE_SZ) + EPILOGUE_SZ;
     Uart.Printf("\r<< %A", Prologue, TotalLength, ' ');
 #endif
-#ifdef DATA_VERBOSE
+#ifdef PRINT_DATA
     Uart.Printf("\r<< %A", PRxData, RxDataSz, ' ');
 #endif
-    return Rslt;
+    return OK;
 }
-
-//void PN532_t::ITransmit(void *Ptr, uint32_t ALength) {
-//    chSysLock();
-//    dmaStreamSetMemory0(PN_TX_DMA, Ptr);
-//    dmaStreamSetTransactionSize(PN_TX_DMA, ALength);
-//    dmaStreamSetMode(PN_TX_DMA, PN_TX_DMA_MODE_IRQ);
-//    dmaStreamEnable(PN_TX_DMA);
-//    chSysUnlock();
-//    chEvtGetAndClearEvents(EVTMASK_PN_RX_COMPLETED | EVTMASK_PN_TX_COMPLETED);
-//    ISpi.EnableTxDma();
-//    if(chEvtWaitOneTimeout(EVTMASK_PN_TX_COMPLETED, MS2ST(PN_ACK_TIMEOUT)) == 0) Uart.Printf("\rTxTimeout");
-//    ISpi.WaitBsyLo();
-//}
 
 void PN532_t::ITxRx(void *PTx, void *PRx, uint32_t ALength) {
     ISpi.ClearOVR();
@@ -274,6 +328,7 @@ uint8_t PN532_t::WaitReplyReady(uint32_t ATimeout) {
     }
     else return OK;
 }
+#endif
 
 #if 1 // ========================= IRQs ========================================
 void PN532_t::IrqPinHandler() { // Interrupt caused by Low level on IRQ_Pin
