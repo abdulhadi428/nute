@@ -15,10 +15,7 @@
 #include "cmd_uart.h"
 #include "ff.h"
 #include "MassStorage.h"
-#include "evt_mask.h"
 #include "main.h"
-#include "led_rgb.h"
-#include "Sequences.h"
 #include "pn.h"
 #include "keys.h"
 
@@ -27,6 +24,13 @@ Sns_t Sns = {GPIOA, 0};
 SndList_t SndList;
 
 LedRgbBlinker_t LedService = { {GPIOB, 10}, {GPIOB, 12}, {GPIOB, 11} };
+
+// Universal VirtualTimer callback
+void TmrGeneralCallback(void *p) {
+    chSysLockFromIsr();
+    chEvtSignalI(App.PThd, (eventmask_t)p);
+    chSysUnlockFromIsr();
+}
 
 // =============================== Main ========================================
 int main() {
@@ -140,7 +144,18 @@ void App_t::ITask() {
             // Set color
             // Say something
             Uart.Printf("\rDoor is open");
+            chSysLock();
+            if(chVTIsArmedI(&IDoorTmr)) chVTResetI(&IDoorTmr);
+            chVTSetI(&IDoorTmr, MS2ST(DOOR_CLOSE_TIMEOUT), TmrGeneralCallback, (void*)EVTMASK_DOOR_SHUT);
+            chSysUnlock();
         }
+        if(EvtMsk & EVTMASK_DOOR_SHUT) {
+            DoorState = dsClosed;
+            // Set color
+            // Say something
+            Uart.Printf("\rDoor is closed");
+        }
+
         if(EvtMsk & EVTMASK_BAD_KEY) {
             Uart.Printf("\rBadKey");
         }
@@ -160,7 +175,7 @@ void App_t::ITask() {
                             else {
                                 State = asAddingAcc;
                                 LedService.StartSequence(lsqAddingAccIdle);
-                                ResetStateTimer();
+                                RestartStateTimer();
                             }
                             break;
 
@@ -173,7 +188,7 @@ void App_t::ITask() {
                             else {
                                 State = asRemovingAcc;
                                 LedService.StartSequence(lsqRemovingAccIdle);
-                                ResetStateTimer();
+                                RestartStateTimer();
                             }
                             break;
 
@@ -188,12 +203,18 @@ void App_t::ITask() {
             } // while
         } // if keys
 #endif
+
+        // ==== State timeout ====
+        if(EvtMsk & EVTMSK_STATE_TIMEOUT) {
+            LedService.StartSequence(lsqIdle);
+            State = asIdle;
+        }
+
     } // while true
 }
 
 void App_t::ProcessAppearance() {
-    //LedService.StartSequence(lsqBlinkGreen);
-    App.CurrentID.Print();
+//    App.CurrentID.Print();
     switch(State) {
         case asIdle:
             if(DoorState == dsClosed) {
@@ -209,13 +230,13 @@ void App_t::ProcessAppearance() {
         case asAddingAcc:
             LedService.StartSequence(lsqAddingAccNew);
             IDStore.AddAcc(CurrentID);
-            ResetStateTimer();
+            RestartStateTimer();
             break;
 
         case asRemovingAcc:
             LedService.StartSequence(lsqRemovingAccNew);
             IDStore.RemoveAcc(CurrentID);
-            ResetStateTimer();
+            RestartStateTimer();
             break;
 
         case asAddingMaster:

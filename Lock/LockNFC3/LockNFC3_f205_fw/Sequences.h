@@ -19,6 +19,13 @@ const LedChunk_t lsqIdle[] = {
         {csEnd}
 };
 
+const LedChunk_t lsqError[] = {
+        {csSetColor, 0, clRed},
+        {csWait, 4005},
+        {csSetColor, 0, clBlack},
+        {csEnd}
+};
+
 // Adding / removing IDs
 const LedChunk_t lsqAddingAccIdle[] = {
         {csSetColor, 0, clGreen},
@@ -43,6 +50,10 @@ const LedChunk_t lsqRemovingAccNew[] = {
 };
 
 const LedChunk_t lsqEraseAll[] = {
+        {csSetColor, 0, clRed},
+        {csWait, 180},
+        {csSetColor, 0, clBlack},
+        {csWait, 180},
         {csSetColor, 0, clRed},
         {csWait, 180},
         {csSetColor, 0, clBlack},

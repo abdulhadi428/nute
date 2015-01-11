@@ -6,80 +6,85 @@
  */
 
 #include "IDStore.h"
-//#include "led.h"
+#include "main.h"
 //#include "kl_util.h"
 //#include "stm32f10x.h"
 //#include "stm32f10x_flash.h"
 
-//#define FLASH_DO_NOT_SAVE   // Use this to save Flash when debugging
-/*
-#define FLASH_PAGE_SIZE     1024
-#define SAVED_DATA_SIZE     2048    // must be multiple of FlashPageSize
-#define PAGE_COUNT          (SAVED_DATA_SIZE / FLASH_PAGE_SIZE)
+//#define DO_NOT_SAVE   // Use this to save Flash when debugging
 
-IDStore_t IDStore;
+//void IDStore_t::PrintIDs(void) {
+//    klPrintf(" Count = %u\r", IDArr.Count);
+//    for (uint32_t i=0; i<IDArr.Count; i++)
+//        klPrintf(" %u %X%X\r", i, (uint32_t)((IDArr.ID[i] >> 32)& 0xFFFFFFFF), (uint32_t)(IDArr.ID[i] & 0xFFFFFFFF));
+//}
 
-// Address of saved data
-const uint32_t SaveAddr __attribute__ ((aligned(SAVED_DATA_SIZE))) = 0;
-ID_Array_t *SavedIDs = (ID_Array_t*)&SaveAddr;
+//bool IDStore_t::IsPresentIndx(uint64_t AID, uint32_t *AIndx) {
+//    for (uint32_t i=0; i<IDArr.Count; i++) {
+//        if (IDArr.ID[i] == AID) {
+//            if (AIndx != 0) *AIndx = i;
+//            klPrintf("Key indx: %u\r", i);
+//            return true;
+//        }
+//    } // for
+//    klPrintf("No such key\r");
+//    return false;
+//}
 
-
-// ============================== Implementation ===============================
-void IDStore_t::PrintIDs(void) {
-    klPrintf(" Count = %u\r", IDArr.Count);
-    for (uint32_t i=0; i<IDArr.Count; i++)
-        klPrintf(" %u %X%X\r", i, (uint32_t)((IDArr.ID[i] >> 32)& 0xFFFFFFFF), (uint32_t)(IDArr.ID[i] & 0xFFFFFFFF));
-}
-
-void IDStore_t::EraseAll() {
-    IDArr.Count = 0;
-    Save();
-}
-
-// ========================== ID operations ====================================
-bool IDStore_t::IsPresentIndx(uint64_t AID, uint32_t *AIndx) {
-    for (uint32_t i=0; i<IDArr.Count; i++) {
-        if (IDArr.ID[i] == AID) {
-            if (AIndx != 0) *AIndx = i;
-            klPrintf("Key indx: %u\r", i);
-            return true;
+IdKind_t IDStore_t::Check(ID_t &sID, uint32_t *PIndx) {
+    // Iterate access ids
+    for(uint32_t i=0; i<IDArr.CntAccess; i++) {
+        if(IDArr.IDAcc[i] == sID) {
+            if(PIndx != nullptr) *PIndx = i;
+            Uart.Printf("\rID Acc indx: %u", i);
+            return ikAccess;
         }
-    } // for
-    klPrintf("No such key\r");
-    return false;
+    }
+    // Iterate master ids
+    for(uint32_t i=0; i<IDArr.CntMaster; i++) {
+        if(IDArr.IDMaster[i] == sID) {
+            if(PIndx != nullptr) *PIndx = i;
+            Uart.Printf("\rID Master indx: %u", i);
+            return ikMaster;
+        }
+    }
+    return ikNone;
 }
-void IDStore_t::Add(uint64_t AID) {
-    if (IsPresent(AID)) {
-        klPrintf("Key is already in base\r");
+
+void IDStore_t::AddAcc(ID_t &sID) {
+    IdKind_t IdKind = Check(sID);
+    if(IdKind == ikAccess) {
+        Uart.Printf("\rKeyAcc is already in base");
         return;         // Already in base
     }
-    if (IDArr.Count == ID_MAX_COUNT) {  // Base overflow, display error
-        LedRed.On();
-        Delay.ms(4005);
-        LedRed.Off();
-        klPrintf("Base overflow\r");
+    // TODO: remove from masters if there
+    if(IDArr.CntAccess == ID_ACCESS_CNT) {  // Base overflow, display error
+        LedService.StartSequence(lsqError);
+        Uart.Printf("\rBase overflow");
         return;
     }
-    IDArr.ID[IDArr.Count] = AID;
-    IDArr.Count++;
-    IsChanged = true;
-    klPrintf("Key added, count = %u\r", IDArr.Count);
-    //dbgPrintIDs();
-}
-void IDStore_t::Remove(uint64_t AID) {
-    uint32_t indx=0;
-    if (IsPresentIndx(AID, &indx)) {
-        if (indx != (IDArr.Count-1)) {  // Check if not last
-            for (uint32_t i=indx; i<IDArr.Count-1; i++) IDArr.ID[i] = IDArr.ID[i+1];
-        }
-        IDArr.Count--;
-        IsChanged = true;
-        klPrintf("Key removed, count = %u\r", IDArr.Count);
-        //dbgPrintIDs();
-    }
-    else klPrintf("No such key in base\r");
+    IDArr.IDAcc[IDArr.CntAccess] = sID;
+    IDArr.CntAccess++;
+    HasChanged = true;
+    Uart.Printf("\rKeyAcc added, count = %u", IDArr.CntAccess);
 }
 
+void IDStore_t::RemoveAcc(ID_t &sID) {
+    uint32_t indx=0;
+    IdKind_t IdKind = Check(sID, &indx);
+    if(IdKind == ikAccess) {
+        if(indx != (IDArr.CntAccess-1)) {  // Check if not last
+            for(uint32_t i=indx; i<IDArr.CntAccess-1; i++) IDArr.IDAcc[i] = IDArr.IDAcc[i+1];
+        }
+        IDArr.CntAccess--;
+        HasChanged = true;
+        Uart.Printf("\rKeyAcc removed, count = %u\r", IDArr.CntAccess);
+        //dbgPrintIDs();
+    }
+    else Uart.Printf("\rNo such KeyAcc in base");
+}
+
+ /*
 // =============================== Load/save ===================================
 void IDStore_t::Load(void) {
     IsChanged = false;

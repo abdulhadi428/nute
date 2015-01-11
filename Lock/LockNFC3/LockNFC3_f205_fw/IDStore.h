@@ -35,6 +35,7 @@ struct ID_t {
     }
     void Print() { Uart.Printf("\r%04X %04X", ID32[0], ID32[1]); }
     bool operator == (const ID_t &AID) { return (ID32[0] == AID.ID32[0]) and (ID32[1] == AID.ID32[1]); }
+    ID_t& operator = (const ID_t &AID) { ID32[0] = AID.ID32[0]; ID32[1] = AID.ID32[1]; return *this; }
 } __attribute__ ((__packed__));
 
 struct ID_Array_t {
@@ -53,14 +54,17 @@ public:
     void Init() {}
     bool HasChanged;
     // ID operations
-    IdKind_t Check(ID_t &sID) { return ikNone; }
-//    bool IsPresent(ID_t *PID) { return IsPresentIndx(AID, 0); }
-    void AddAcc(ID_t &sID) {}
-    void RemoveAcc(ID_t &sID) {}
+    IdKind_t Check(ID_t &sID, uint32_t *PIndx = nullptr);
+    void AddAcc(ID_t &sID);
+    void RemoveAcc(ID_t &sID);
     // Load/save
-//    void Load(void);
+    void Load();
     void Save() {}
-    void EraseAll() {}
+    void EraseAll() {
+        IDArr.CntAccess = 0;
+        IDArr.CntMaster = 0;
+        Save();
+    }
 };
 
 #endif /* IDSTORE_H_ */

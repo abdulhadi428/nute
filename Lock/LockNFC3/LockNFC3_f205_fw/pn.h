@@ -70,7 +70,7 @@
 // Timings
 #define PN_ACK_TIMEOUT      27  // ms
 #define PN_DATA_TIMEOUT     180 // ms
-#define PN_POLL_INTERVAL    999 // ms
+#define PN_POLL_INTERVAL    504 // ms
 
 #if 1 // ======================= Auxilary structures ===========================
 struct PnPrologue_t {

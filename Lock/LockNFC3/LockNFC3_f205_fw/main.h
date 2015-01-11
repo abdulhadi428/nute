@@ -10,6 +10,9 @@
 
 #include "kl_sd.h"
 #include "IDStore.h"
+#include "evt_mask.h"
+#include "led_rgb.h"
+#include "Sequences.h"
 
 // External Power Input
 #define PWR_EXTERNAL_GPIO   GPIOA
@@ -49,12 +52,12 @@ struct Snd_t {
 struct SndList_t {
     Snd_t Phrases[SND_COUNT_MAX];
     int32_t Count;
-    int32_t ProbSumm;
+//    int32_t ProbSumm;
 };
 
 uint8_t ReadConfig();
 
-#define STATE_TIMEOUT       27000   // ms; switch to waiting state
+#define STATE_TIMEOUT       18000   // ms; switch to waiting state
 #define DOOR_CLOSE_TIMEOUT  9999    // ms
 // Colors in RGB
 #define DOOR_CLOSED_COLOR   {4, 0, 0}
@@ -65,11 +68,19 @@ uint8_t ReadConfig();
 enum DoorState_t {dsClosed, dsOpen};
 enum AppState_t  {asIdle, asAddingAcc, asRemovingAcc, asAddingMaster, asRemovingMaster};
 
+void TmrGeneralCallback(void *p);
+
 class App_t {
 private:
     DoorState_t DoorState = dsClosed;
+    VirtualTimer ITmr, IDoorTmr;
     void ProcessAppearance();
-    void ResetStateTimer() {}
+    void RestartStateTimer() {
+        chSysLock();
+        if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);
+        chVTSetI(&ITmr, MS2ST(STATE_TIMEOUT), TmrGeneralCallback, (void*)EVTMSK_STATE_TIMEOUT);
+        chSysUnlock();
+    }
 public:
     Thread *PThd; // Main thread
     AppState_t State = asIdle;
@@ -85,5 +96,6 @@ public:
 };
 
 extern App_t App;
+extern LedRgbBlinker_t LedService;
 
 #endif /* MAIN_H_ */
