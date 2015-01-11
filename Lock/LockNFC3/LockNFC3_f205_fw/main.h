@@ -9,6 +9,7 @@
 #define MAIN_H_
 
 #include "kl_sd.h"
+#include "IDStore.h"
 
 // External Power Input
 #define PWR_EXTERNAL_GPIO   GPIOA
@@ -53,14 +54,34 @@ struct SndList_t {
 
 uint8_t ReadConfig();
 
+#define STATE_TIMEOUT       27000   // ms; switch to waiting state
+#define DOOR_CLOSE_TIMEOUT  9999    // ms
+// Colors in RGB
+#define DOOR_CLOSED_COLOR   {4, 0, 0}
+#define DOOR_OPEN_COLOR     {45, 0, 45}
+#define DOOR_CLOSED_BLINK   {45, 0, 0}
+#define DOOR_OPEN_BLINK     {135, 0, 135}
+
+enum DoorState_t {dsClosed, dsOpen};
+enum AppState_t  {asIdle, asAddingAcc, asRemovingAcc, asAddingMaster, asRemovingMaster};
+
 class App_t {
+private:
+    DoorState_t DoorState = dsClosed;
+    void ProcessAppearance();
+    void ResetStateTimer() {}
 public:
     Thread *PThd; // Main thread
+    AppState_t State = asIdle;
+    ID_t CurrentID;
+    IDStore_t IDStore;
     void SendEvt(uint32_t EvtMsk) {
         chSysLock();
         chEvtSignalI(PThd, EvtMsk);
         chSysUnlock();
     }
+    // Inner use
+    void ITask();
 };
 
 extern App_t App;

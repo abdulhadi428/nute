@@ -22,7 +22,6 @@
 #include "pn.h"
 
 App_t App;
-Card_t Card;
 Sns_t Sns = {GPIOA, 0};
 SndList_t SndList;
 
@@ -30,7 +29,6 @@ LedRgbBlinker_t LedService = { {GPIOB, 10}, {GPIOB, 12}, {GPIOB, 11} };
 
 // =============================== Main ========================================
 int main() {
-#if 1 // ==== Init ====
     // ==== Setup clock ====
     Clk.UpdateFreqValues();
     uint8_t ClkResult = FAILURE;
@@ -52,6 +50,7 @@ int main() {
     Uart.Printf("\rLockNFC3 F205   AHB freq=%uMHz", Clk.AHBFreqHz/1000000);
     LedService.Init();
     LedService.StartSequence(lsqBlinkGreenX2);
+    App.IDStore.Init();
     Pn.Init();
 
 //    SD.Init();
@@ -72,22 +71,9 @@ int main() {
 
     // Report problem with clock if any
     if(ClkResult) Uart.Printf("Clock failure\r");
-#endif
 
     // ==== Main cycle ====
-//    bool WasExternal = false;
-//    int32_t PreviousPhrase = 0;
-    while(true) {
-        uint32_t EvtMsk = chEvtWaitAny(ALL_EVENTS);
-        // ==== Card ====
-        if(EvtMsk & EVTMASK_CARD_APPEARS) {
-            LedService.SetColor(clGreen);
-        }
-        if(EvtMsk & EVTMASK_CARD_DISAPPEARS) {
-            LedService.SetColor(clBlack);
-        }
-
-
+    App.ITask();
 
 #if 0 // ==== USB connected/disconnected ====
         if(WasExternal and !ExternalPwrOn()) {
@@ -135,8 +121,60 @@ int main() {
           }
       }
 #endif
+}
+
+__attribute__ ((__noreturn__))
+void App_t::ITask() {
+    while(true) {
+            uint32_t EvtMsk = chEvtWaitAny(ALL_EVENTS);
+            // ==== Card ====
+            if(EvtMsk & EVTMASK_CARD_APPEARS) ProcessAppearance();
+            // ==== Door ====
+            if(EvtMsk & EVTMASK_DOOR_OPEN) {
+                DoorState = dsOpen;
+                // Set color
+                // Say something
+                Uart.Printf("\rDoor is open");
+            }
+            if(EvtMsk & EVTMASK_BAD_KEY) {
+                Uart.Printf("\rBadKey");
+            }
     } // while true
 }
+
+void App_t::ProcessAppearance() {
+    //LedService.StartSequence(lsqBlinkGreen);
+    App.CurrentID.Print();
+    switch(State) {
+        case asIdle:
+            if(DoorState == dsClosed) {
+                IdKind_t IdKind = IDStore.Check(CurrentID);
+                switch(IdKind) {
+                    case ikAccess: SendEvt(EVTMASK_DOOR_OPEN); break;
+                    case ikNone:   SendEvt(EVTMASK_BAD_KEY);   break;
+                    case ikMaster: break;
+                }
+            }
+            break;
+
+        case asAddingAcc:
+            LedService.StartSequence(lsqAddingAccNew);
+            IDStore.AddAcc(CurrentID);
+            ResetStateTimer();
+            break;
+
+        case asRemovingAcc:
+            LedService.StartSequence(lsqRemovingAccNew);
+            IDStore.RemoveAcc(CurrentID);
+            ResetStateTimer();
+            break;
+
+        case asAddingMaster:
+        case asRemovingMaster:
+            break;
+    } // switch
+}
+
 /*
 char SndKey[45]="Sound";
 uint8_t ReadConfig() {

@@ -22,7 +22,7 @@
 
 //#define PRINT_IO
 //#define PRINT_DATA
-#define PRINT_TAGS
+//#define PRINT_TAGS
 
 PN532_t Pn;
 
@@ -69,9 +69,7 @@ void PN532_t::Init() {
     IIrqPin.Setup(PN_IRQ_GPIO, PN_IRQ_PIN, ttFalling);
     // ==== Variables ====
     State = psSetup;
-//    Card.State = csCardOut;
     PThd = chThdCreateStatic(waPnThread, sizeof(waPnThread), NORMALPRIO, (tfunc_t)PnThread, NULL);
-    Uart.Printf("\rPnHWSet");
 }
 
 void PN532_t::IReset() {
@@ -87,18 +85,21 @@ void PN532_t::ITask() {
         switch (State) {
             case psConfigured:
                 chThdSleepMilliseconds(PN_POLL_INTERVAL);
-                if(Card.State != csCardOk) {
+                if(!CardOk) {
                     if(CardAppeared()) {
-                        Uart.Printf("\rCard Appeared");
-                        Card.State = csCardOk;
-                        chEvtSignal(App.PThd, EVTMASK_CARD_APPEARS);
-                    }
+                        if(MifareRead(0) == OK) {
+                            CardOk = true;
+                            Uart.Printf("\rCard Appeared");
+                            App.CurrentID.ConstructOfBuf(PReply->Buf);
+                            App.SendEvt(EVTMASK_CARD_APPEARS);
+                        }
+                    } // if appeared
                 }
                 else {
                     if(!CardIsStillNear()) {
                         Uart.Printf("\rCard Lost");
-                        Card.State = csCardOut;
-                        chEvtSignal(App.PThd, EVTMASK_CARD_DISAPPEARS);
+                        CardOk = false;
+                        App.SendEvt(EVTMASK_CARD_DISAPPEARS);
                     }
                 } // if Card is ok
                 break;
@@ -111,7 +112,6 @@ void PN532_t::ITask() {
                 Cmd(PN_CMD_RF_CONFIGURATION, 4, 0x05, 0x02, 0x01, 0x05);
                 Cmd(PN_CMD_RF_CONFIGURATION, 4, 0x02, 0x00, 0x0B, 0x10);
                 State = psConfigured;
-                Uart.Printf("\rPnSet");
                 break;
 
             case psOff:
@@ -132,22 +132,7 @@ bool PN532_t::CardAppeared() {
         }
         // ==== Tag is found ====
 #ifdef PRINT_TAGS
-//        Uart.Printf("\rTag found");
-//        Uart.Printf("\rTag1: ");
-//        klPrintf("SensRes: %X %X\r", Buf[3], Buf[4]);
-//        klPrintf("SelRes: %X\r");
-//        NFCIDLength = Buf[6];
-//        klPrintf("NFCIDLength: %X\r", NFCIDLength);
-//        klPrintf("NFCID: ");
-//        for (uint8_t i=7; i<(7+NFCIDLength); i++) klPrintf("%X ", Buf[i]);
-//        klPrintf("\r");
-//        if (Length > (7+NFCIDLength)) {
-//            ATSLength = Buf[7+NFCIDLength];
-//            klPrintf("ATSLength: %X\r", ATSLength);
-//            klPrintf("ATS: ");
-//            for (uint8_t i=7+NFCIDLength+1; i<(7+NFCIDLength+1+ATSLength-1); i++) klPrintf("%X ", Buf[i]);
-//            klPrintf("\r");
-//        }
+        Uart.Printf("\rTag1: %A", PReply->Buf, (RxDataSz-3), ' '); // without TFI, Rpl code and NbTg
 #endif
         return true;
     }
@@ -156,19 +141,21 @@ bool PN532_t::CardAppeared() {
 
 bool PN532_t::CardIsStillNear() {
     // Try to read data from Mifare to determine if it still near
-    if(MifareRead(nullptr, 0) == OK) return true;
-    else {
-        FieldOff();
-        return false;
+    //if(MifareRead(nullptr, 0) == OK) return true;
+    if(Cmd(PN_CMD_IN_DESELECT, 1, 0x01) == OK) {
+        if(Cmd(PN_CMD_IN_SELECT, 1, 0x01) == OK) {
+            if(PReply->Err == 0) return true;
+        }
     }
+    FieldOff();
+    return false;
 }
 
 // Read 16 bytes starting from address AAddr into ABuf.
-uint8_t PN532_t::MifareRead(void *ABuf, uint32_t AAddr) {
+uint8_t PN532_t::MifareRead(uint32_t AAddr) {
     if(Cmd(PN_CMD_IN_DATA_EXCHANGE, 3, 0x01, MIFARE_CMD_READ, AAddr) == OK) {
         //klPrintf("PN reply: %H\r", Buf, Length);
         if ((PReply->RplCode == PN_CMD_IN_DATA_EXCHANGE+1) and (PReply->Err == 0x00)) { // Correct reply & errorcode == 0
-            if(ABuf != nullptr) memcpy(ABuf, PReply->Buf, 16);
             return OK;
         }
     }

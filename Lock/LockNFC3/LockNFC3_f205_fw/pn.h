@@ -11,7 +11,6 @@
 #include "ch.h"
 #include "kl_lib_f2xx.h"
 #include "pn_defins.h"
-#include "card.h"
 
 #if 1 // ===================== GPIO, DMA etc. ==================================
 // SPI clock is up to 5MHz (um p.45)
@@ -161,6 +160,7 @@ private:
         *p++ = Dcs; // DCS
         *p = 0x00;  // Postamble
     }
+    bool CardOk = false;
     // Gpio
     inline void IRstLo()  { PinClear(PN_GPIO, PN_RST_PIN); }
     inline void IRstHi()  { PinSet  (PN_GPIO, PN_RST_PIN); }
@@ -183,7 +183,7 @@ private:
     bool CardIsStillNear();
     void FieldOn()  { Cmd(PN_CMD_RF_CONFIGURATION, 2, 0x01, 0x01); }
     void FieldOff() { Cmd(PN_CMD_RF_CONFIGURATION, 2, 0x01, 0x00); }
-    uint8_t MifareRead(void *ABuf, uint32_t AAddr);
+    uint8_t MifareRead(uint32_t AAddr);
 public:
     void Init();
     // Inner use
