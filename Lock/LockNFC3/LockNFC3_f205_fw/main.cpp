@@ -23,7 +23,8 @@ App_t App;
 Sns_t Sns = {GPIOA, 0};
 SndList_t SndList;
 
-LedRgbBlinker_t LedService = { {GPIOB, 10}, {GPIOB, 12}, {GPIOB, 11} };
+LedRgbBlinker_t LedService({GPIOB, 10}, {GPIOB, 12}, {GPIOB, 11});
+LedRGB_t Led({GPIOB, 0, TIM3, 3}, {GPIOB, 5, TIM3, 2}, {GPIOB, 1, TIM3, 4});
 
 // Universal VirtualTimer callback
 void TmrGeneralCallback(void *p) {
@@ -55,6 +56,8 @@ int main() {
     Uart.Printf("\rLockNFC3 F205   AHB freq=%uMHz", Clk.AHBFreqHz/1000000);
     LedService.Init();
     LedService.StartSequence(lsqBlinkGreenX2);
+    Led.Init();
+    Led.StartSequence(lsqSmootnGreen);
 
     App.IDStore.Init();
     Keys.Init();

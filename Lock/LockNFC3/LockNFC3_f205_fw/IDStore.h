@@ -48,8 +48,6 @@ enum IdKind_t {ikNone, ikMaster, ikAccess};
 class IDStore_t {
 private:
     ID_Array_t IDArr;
-//    bool IsPresentIndx(uint64_t AID, uint32_t *AIndx);
-//    void PrintIDs(void);
 public:
     void Init() {}
     bool HasChanged;

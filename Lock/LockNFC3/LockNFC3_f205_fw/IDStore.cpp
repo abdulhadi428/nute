@@ -13,24 +13,6 @@
 
 //#define DO_NOT_SAVE   // Use this to save Flash when debugging
 
-//void IDStore_t::PrintIDs(void) {
-//    klPrintf(" Count = %u\r", IDArr.Count);
-//    for (uint32_t i=0; i<IDArr.Count; i++)
-//        klPrintf(" %u %X%X\r", i, (uint32_t)((IDArr.ID[i] >> 32)& 0xFFFFFFFF), (uint32_t)(IDArr.ID[i] & 0xFFFFFFFF));
-//}
-
-//bool IDStore_t::IsPresentIndx(uint64_t AID, uint32_t *AIndx) {
-//    for (uint32_t i=0; i<IDArr.Count; i++) {
-//        if (IDArr.ID[i] == AID) {
-//            if (AIndx != 0) *AIndx = i;
-//            klPrintf("Key indx: %u\r", i);
-//            return true;
-//        }
-//    } // for
-//    klPrintf("No such key\r");
-//    return false;
-//}
-
 IdKind_t IDStore_t::Check(ID_t &sID, uint32_t *PIndx) {
     // Iterate access ids
     for(uint32_t i=0; i<IDArr.CntAccess; i++) {

@@ -8,13 +8,15 @@
 #ifndef COLOR_H_
 #define COLOR_H_
 
+#include <inttypes.h>
+
 // Mixing two colors
 #define ClrMix(C, B, L)     ((C * L + B * (255 - L)) / 255)
 
 struct Color_t {
     uint8_t R, G, B;
-    bool operator == (Color_t &AColor) { return ((R == AColor.R) and (G == AColor.G) and (B == AColor.B)); }
-    bool operator != (Color_t &AColor) { return ((R != AColor.R) or  (G != AColor.G) or  (B != AColor.B)); }
+    bool operator == (const Color_t &AColor) { return ((R == AColor.R) and (G == AColor.G) and (B == AColor.B)); }
+    bool operator != (const Color_t &AColor) { return ((R != AColor.R) or  (G != AColor.G) or  (B != AColor.B)); }
     Color_t& operator=(const Color_t &Right) { R = Right.R; G = Right.G; B = Right.B; return *this; }
     uint8_t RGBTo565_HiByte() {
         uint32_t rslt = R & 0b11111000;
@@ -30,6 +32,14 @@ struct Color_t {
         R = ClrMix(Fore.R, Back.R, Brt);
         G = ClrMix(Fore.G, Back.G, Brt);
         B = ClrMix(Fore.B, Back.B, Brt);
+    }
+    void Adjust(const Color_t *PColor) {
+        if     (R < PColor->R) R++;
+        else if(R > PColor->R) R--;
+        if     (G < PColor->G) G++;
+        else if(G > PColor->G) G--;
+        if     (B < PColor->B) B++;
+        else if(B > PColor->B) B--;
     }
 } __attribute__((packed));
 

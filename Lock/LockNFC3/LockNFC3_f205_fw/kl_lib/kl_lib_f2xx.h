@@ -406,14 +406,24 @@ enum TmrMasterMode_t {mmReset=0x00, mmEnable=0x10, mmUpdate=0x20, mmComparePulse
 enum TmrSlaveMode_t {smDisable=0, smEncoder1=1, smEncoder2=2, smEncoder3=3, smReset=4, smGated=5, smTrigger=6, smExternal=7};
 enum Inverted_t {invNotInverted, invInverted};
 
+#define TMR_PCCR(PTimer, AChannel)  ((uint32_t*)(&PTimer->CCR1 + AChannel-1))
+#define TMR_ENABLE(PTimer)          PTimer->CR1 |=  TIM_CR1_CEN;
+#define TMR_DISABLE(PTimer)         PTimer->CR1 &= ~TIM_CR1_CEN;
+
 class Timer_t {
 private:
     TIM_TypeDef* ITmr;
     uint32_t *PClk;
 public:
-    __IO uint32_t *PCCR;    // Made public to allow DMA
     // Common
-    void Init(TIM_TypeDef* Tmr);
+    static void InitClock(TIM_TypeDef* Tmr);
+    void Init(TIM_TypeDef* Tmr) {
+        ITmr = Tmr;
+        // Clock src
+        if(ANY_OF_5(ITmr, TIM1, TIM8, TIM9, TIM10, TIM11)) PClk = &Clk.APB2FreqHz;
+        else PClk = &Clk.APB1FreqHz;
+        InitClock(Tmr);
+    }
     void Deinit();
     inline void Enable()  { ITmr->CR1 |=  TIM_CR1_CEN; }
     inline void Disable() { ITmr->CR1 &= ~TIM_CR1_CEN; }
@@ -448,8 +458,7 @@ public:
     inline void IrqOnTriggerEnable() { ITmr->DIER |= TIM_DIER_UIE; }
     inline void ClearIrqPendingBit() { ITmr->SR &= ~TIM_SR_UIF;    }
     // PWM
-    void PwmInit(GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, Inverted_t Inverted);
-    void PwmSet(uint16_t Value) { *PCCR = Value; }
+    static void InitPwm(TIM_TypeDef* Tmr, GPIO_TypeDef *GPIO, uint16_t N, uint8_t Chnl, uint32_t ATopValue, Inverted_t Inverted = invNotInverted);
 };
 #endif
 
