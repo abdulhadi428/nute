@@ -35,6 +35,7 @@ const uint32_t ZeroConst = 0;
 
 // Functional type
 typedef void (*ftVoidVoid)(void);
+typedef void (*ftVoidPVoid)(void*p);
 
 // Return values
 #define OK              0

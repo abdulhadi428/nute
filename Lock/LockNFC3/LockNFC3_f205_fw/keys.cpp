@@ -9,99 +9,96 @@
 #include "ch.h"
 #include "main.h"
 #include "evt_mask.h"
+#include "SimpleSensors.h"
 
 Keys_t Keys;
 
-// ==== Keys Thread ====
-static WORKING_AREA(waKeysThread, 128);
-__attribute__((noreturn))
-static void KeysThread(void *arg) {
-    chRegSetThreadName("Keys");
-    Keys.ITask();
+void ProcessKeyState(void *p) {
+    SnsGroup_t *grp = (SnsGroup_t*)p;
+    Keys.ProcessKeysState(grp->WasHi);
 }
 
-__attribute__((noreturn))
-void Keys_t::ITask() {
-//    KeyEvtInfo_t Evt;
-    while(true) {
-        chThdSleepMilliseconds(KEYS_POLL_PERIOD_MS);
-        // Check keys
-        for(uint8_t i=0; i<KEYS_CNT; i++) {
-            bool PressedNow = !PinIsSet(KeyData[i].PGpio, KeyData[i].Pin);
-            // ==== Key Press ====
-            if(PressedNow and !Key[i].IsPressed) {
-                Key[i].IsPressed = true;
-                Key[i].IsLongPress = false;
-                Key[i].IsRepeating = false;
 
-                KeyEvtInfo_t IEvt;
-                IEvt.NKeys = 0;
+void Keys_t::ProcessKeysState(bool *PCurrentState) {
+//    Uart.Printf("\r%A", PCurrentState, KEYS_CNT, ' ');
+    // Iterate keys
+    for(uint8_t i=0; i<KEYS_CNT; i++) {
+        bool PressedNow = KeyIsPressed(PCurrentState[i]);
+
+        // ==== Key Press ====
+        if(PressedNow and !Key[i].IsPressed) {
+            Key[i].IsPressed = true;
+#if KEY_LONGPRESS
+            Key[i].IsLongPress = false;
+            Key[i].IsRepeating = false;
+#endif
+            KeyEvtInfo_t IEvt;
+            IEvt.KeysCnt = 0;
+            // Check if combo
+            for(uint8_t j=0; j<KEYS_CNT; j++) {
+                if(Key[j].IsPressed) {
+                    IEvt.KeyID[IEvt.KeysCnt] = j;
+                    IEvt.KeysCnt++;
+                    if((j != i) and !IsCombo) {
+                        IsCombo = true;
+                        AddEvtToQueue(keCancel, j);
+                    }
+                }
+            } // for j
+            if(IEvt.KeysCnt == 1) {   // Single key pressed, no combo
+                IsCombo = false;
+                IEvt.Type = kePress;
+#if KEY_LONGPRESS   // Reset timers
+                RepeatTimer = chTimeNow();
+                LongPressTimer = chTimeNow();
+#endif
+            }
+            else IEvt.Type = keCombo;
+            AddEvtToQueue(IEvt);
+        } // if became pressed
+
+        // ==== Key Release ====
+        else if(!PressedNow and Key[i].IsPressed) {
+            Key[i].IsPressed = false;
+            // Check if combo completely released
+            if(IsCombo) {
+                IsCombo = false;
                 for(uint8_t j=0; j<KEYS_CNT; j++) {
                     if(Key[j].IsPressed) {
-                        IEvt.KeyID[IEvt.NKeys] = j;
-                        IEvt.NKeys++;
-                        if((j != i) and !IsCombo) {
-                            IsCombo = true;
-                            AddEvtToQueue({keCancel, 1, {j}});
-                        }
-                    }
-                } // for j
-                if(IEvt.NKeys == 1) {   // Single key pressed
-                    IsCombo = false;
-                    IEvt.Type = kePress;
-                    // Reset timers
-                    RepeatTimer = chTimeNow();
-                    LongPressTimer = chTimeNow();
-                }
-                else IEvt.Type = keCombo;
-                AddEvtToQueue(IEvt);
-            }
-            // ==== Key Release ====
-            else if(!PressedNow and Key[i].IsPressed) {
-                Key[i].IsPressed = false;
-                // Check if combo completely released
-                if(IsCombo) {
-                    IsCombo = false;
-                    for(uint8_t j=0; j<KEYS_CNT; j++) {
-                        if(Key[j].IsPressed) {
-                            IsCombo = true;
-                            break;
-                        }
-                    }
-                } // if combo
-                // Send evt if not combo
-                else AddEvtToQueue({keRelease, 1, {i}});
-            }
-            // ==== Long Press ====
-            else if(PressedNow and Key[i].IsPressed and !IsCombo) {
-                // Check if long press
-                if(!Key[i].IsLongPress) {
-                    if(TimeElapsed(&LongPressTimer, KEY_LONGPRESS_DELAY_MS)) {
-                        Key[i].IsLongPress = true;
-                        AddEvtToQueue({keLongPress, 1, {i}});
+                        IsCombo = true;
+                        break;
                     }
                 }
-                // Check if repeat
-                if(!Key[i].IsRepeating) {
-                    if(TimeElapsed(&RepeatTimer, KEYS_DELAY_BEFORE_REPEAT_MS)) {
-                        Key[i].IsRepeating = true;
-                        AddEvtToQueue({keRepeat, 1, {i}});
-                    }
-                }
-                else {
-                    if(TimeElapsed(&RepeatTimer, KEY_REPEAT_PERIOD_MS)) {
-                        AddEvtToQueue({keRepeat, 1, {i}});
-                    }
-                }
-            } // if still pressed
-        } // for
-    } // while 1
-}
+            } // if combo
+#if KEY_RELEASE // Send evt if not combo
+            else AddEvtToQueue(keRelease, i);
+#endif
+        }
 
-void Keys_t::Init() {
-    for(uint8_t i=0; i<KEYS_CNT; i++) PinSetupIn(KeyData[i].PGpio, KeyData[i].Pin, pudPullUp);
-    // Create and start thread
-    chThdCreateStatic(waKeysThread, sizeof(waKeysThread), NORMALPRIO, (tfunc_t)KeysThread, NULL);
+#if KEY_LONGPRESS // ==== Long Press ====
+        else if(PressedNow and Key[i].IsPressed and !IsCombo) {
+            // Check if long press
+            if(!Key[i].IsLongPress) {
+                if(TimeElapsed(&LongPressTimer, KEY_LONGPRESS_DELAY_MS)) {
+                    Key[i].IsLongPress = true;
+                    AddEvtToQueue(keLongPress, i);
+                }
+            }
+            // Check if repeat
+            if(!Key[i].IsRepeating) {
+                if(TimeElapsed(&RepeatTimer, KEYS_DELAY_BEFORE_REPEAT_MS)) {
+                    Key[i].IsRepeating = true;
+                    AddEvtToQueue(keRepeat, i);
+                }
+            }
+            else {
+                if(TimeElapsed(&RepeatTimer, KEY_REPEAT_PERIOD_MS)) {
+                    AddEvtToQueue(keRepeat, i);
+                }
+            }
+        } // if still pressed
+#endif
+    } // for i
 }
 
 void Keys_t::AddEvtToQueue(KeyEvtInfo_t Evt) {
@@ -111,6 +108,17 @@ void Keys_t::AddEvtToQueue(KeyEvtInfo_t Evt) {
     if(App.PThd == nullptr) return;
     chSysLock();
     EvtBuf.Put(&Evt);
+    chEvtSignalI(App.PThd, EVTMSK_KEYS);
+    chSysUnlock();
+}
+
+void Keys_t::AddEvtToQueue(KeyEvt_t AType, uint8_t KeyIndx) {
+    KeyEvtInfo_t IEvt;
+    IEvt.Type = AType;
+    IEvt.KeysCnt = 1;
+    IEvt.KeyID[0] = KeyIndx;
+    chSysLock();
+    EvtBuf.Put(&IEvt);
     chEvtSignalI(App.PThd, EVTMSK_KEYS);
     chSysUnlock();
 }

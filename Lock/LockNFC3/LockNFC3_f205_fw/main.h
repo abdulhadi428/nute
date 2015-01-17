@@ -14,33 +14,6 @@
 #include "led_rgb.h"
 #include "Sequences.h"
 
-// External Power Input
-#define PWR_EXTERNAL_GPIO   GPIOA
-#define PWR_EXTERNAL_PIN    9
-static inline bool ExternalPwrOn() { return  PinIsSet(PWR_EXTERNAL_GPIO, PWR_EXTERNAL_PIN); }
-
-// External sensors
-class Sns_t {
-private:
-    bool IsHi() const { return PinIsSet(PGpioPort, PinNumber); }
-public:
-    GPIO_TypeDef *PGpioPort;
-    uint16_t PinNumber;
-    bool WasHi;
-    void Init() const { PinSetupIn(PGpioPort, PinNumber, pudPullDown); }
-    RiseFall_t CheckEdge() {
-        if(!WasHi and IsHi()) {
-            WasHi = true;
-            return Rising;
-        }
-        else if(WasHi and !IsHi()) {
-            WasHi = false;
-            return Falling;
-        }
-        else return NoRiseNoFall;
-    }
-};
-
 // ==== Sound files ====
 #define SND_COUNT_MAX   100
 
@@ -54,8 +27,6 @@ struct SndList_t {
     int32_t Count;
 //    int32_t ProbSumm;
 };
-
-uint8_t ReadConfig();
 
 #define STATE_TIMEOUT       18000   // ms; switch to waiting state
 #define DOOR_CLOSE_TIMEOUT  9999    // ms

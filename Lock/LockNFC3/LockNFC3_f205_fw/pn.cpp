@@ -91,7 +91,7 @@ void PN532_t::ITask() {
                             CardOk = true;
                             Uart.Printf("\rCard Appeared");
                             App.CurrentID.ConstructOfBuf(PReply->Buf);
-                            App.SendEvt(EVTMASK_CARD_APPEARS);
+                            App.SendEvt(EVTMSK_CARD_APPEARS);
                         }
                     } // if appeared
                 }
@@ -99,7 +99,7 @@ void PN532_t::ITask() {
                     if(!CardIsStillNear()) {
                         Uart.Printf("\rCard Lost");
                         CardOk = false;
-                        App.SendEvt(EVTMASK_CARD_DISAPPEARS);
+                        App.SendEvt(EVTMSK_CARD_DISAPPEARS);
                     }
                 } // if Card is ok
                 break;
@@ -282,14 +282,14 @@ uint8_t PN532_t::ReceiveData() {
 void PN532_t::ITxRx(void *PTx, void *PRx, uint32_t ALength) {
     ISpi.ClearOVR();
     chSysLock();
-    uint32_t Msk = EVTMASK_PN_TX_COMPLETED;
+    uint32_t Msk = EVTMSK_PN_TX_COMPLETED;
     // RX
     if(PRx != nullptr) {
         dmaStreamSetMemory0(PN_RX_DMA, PRx);
         dmaStreamSetTransactionSize(PN_RX_DMA, ALength);
         dmaStreamSetMode(PN_RX_DMA, PN_RX_DMA_MODE);
         dmaStreamEnable(PN_RX_DMA);
-        Msk = EVTMASK_PN_RX_COMPLETED;
+        Msk = EVTMSK_PN_RX_COMPLETED;
         ISpi.EnableRxDma();
     }
     // TX
@@ -298,7 +298,7 @@ void PN532_t::ITxRx(void *PTx, void *PRx, uint32_t ALength) {
     dmaStreamSetMode(PN_TX_DMA, PN_TX_DMA_MODE);
     dmaStreamEnable(PN_TX_DMA);
     chSysUnlock();
-    chEvtGetAndClearEvents(EVTMASK_PN_RX_COMPLETED | EVTMASK_PN_TX_COMPLETED);
+    chEvtGetAndClearEvents(EVTMSK_PN_RX_COMPLETED | EVTMSK_PN_TX_COMPLETED);
     ISpi.EnableTxDma();
     if(chEvtWaitOneTimeout(Msk, MS2ST(PN_ACK_TIMEOUT)) == 0) Uart.Printf("\rTxRxTimeout");
     ISpi.WaitBsyLo();
@@ -308,8 +308,10 @@ uint8_t PN532_t::WaitReplyReady(uint32_t ATimeout) {
     // Enable IRQ and wait event
     IIrqPin.CleanIrqFlag();
     IIrqPin.EnableIrq(IRQ_PRIO_MEDIUM);
-    if(chEvtWaitOneTimeout(EVTMASK_PN_NEW_PKT, MS2ST(ATimeout)) == 0) {
+    if(chEvtWaitOneTimeout(EVTMSK_PN_NEW_PKT, MS2ST(ATimeout)) == 0) {
+        chSysLock();
         IIrqPin.DisableIrq();
+        chSysUnlock();
         Uart.Printf("\rTimeout");
         return TIMEOUT;
     }
@@ -319,10 +321,9 @@ uint8_t PN532_t::WaitReplyReady(uint32_t ATimeout) {
 
 #if 1 // ========================= IRQs ========================================
 void PN532_t::IrqPinHandler() { // Interrupt caused by Low level on IRQ_Pin
-//    if(Card.State == csBusy) Uart.Printf("RplRdy\r");
     IIrqPin.CleanIrqFlag();     // Clear IRQ Pending Bit
     IIrqPin.DisableIrq();       // Disable IRQ
-    chEvtSignalI(PThd, EVTMASK_PN_NEW_PKT);
+    chEvtSignalI(PThd, EVTMSK_PN_NEW_PKT);
 }
 
 extern "C" {
@@ -339,7 +340,7 @@ void PnDmaTxCompIrq(void *p, uint32_t flags) {
     dmaStreamDisable(PN_TX_DMA);    // Disable DMA
     Pn.ISpi.DisableTxDma();         // Disable SPI DMA
     chSysLockFromIsr();
-    chEvtSignalI(Pn.PThd, EVTMASK_PN_TX_COMPLETED);
+    chEvtSignalI(Pn.PThd, EVTMSK_PN_TX_COMPLETED);
     chSysUnlockFromIsr();
 }
 // DMA reception complete
@@ -347,7 +348,7 @@ void PnDmaRxCompIrq(void *p, uint32_t flags) {
     dmaStreamDisable(PN_RX_DMA); // Disable DMA
     Pn.ISpi.DisableRxDma();
     chSysLockFromIsr();
-    chEvtSignalI(Pn.PThd, EVTMASK_PN_RX_COMPLETED);
+    chEvtSignalI(Pn.PThd, EVTMSK_PN_RX_COMPLETED);
     chSysUnlockFromIsr();
 }
 } // extern C

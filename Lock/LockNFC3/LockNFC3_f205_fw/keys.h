@@ -12,24 +12,13 @@
 #include "kl_lib_f2xx.h"
 #include "kl_buf.h"
 
-//// Select required events. KeyPress is a must.
-//#define KEY_RELEASE     TRUE
-//#define KEY_LONGPRESS   TRUE
-//#define KEY_COMBO       TRUE
+#include "SnsPins.h"
 
-// Keys ports and pins
-struct KeyData_t {
-    GPIO_TypeDef *PGpio;
-    uint16_t Pin;
-};
-const KeyData_t KeyData[] = {
-        {GPIOC,  3},  // A
-        {GPIOC,  2},  // B
-        {GPIOC, 13},  // C
-};
+// Select required events. KeyPress is a must.
+#define KEY_RELEASE     FALSE
+#define KEY_LONGPRESS   FALSE
+#define KEY_COMBO       TRUE
 
-#define KEYS_CNT                    countof(KeyData)
-#define KEYS_POLL_PERIOD_MS         72
 #define KEY_REPEAT_PERIOD_MS        306
 #define KEY_LONGPRESS_DELAY_MS      801
 #define KEYS_DELAY_BEFORE_REPEAT_MS (KEY_REPEAT_PERIOD_MS + KEY_LONGPRESS_DELAY_MS)
@@ -40,13 +29,18 @@ enum KeyName_t {keyA=0, keyB=1, keyC=2};
 
 // Key status
 struct Key_t {
-    bool IsPressed, IsRepeating, IsLongPress;
+    bool IsPressed
+#if KEY_LONGPRESS
+    , IsRepeating, IsLongPress
+#endif
+    ;
 };
 
+// KeyEvent: contains info about event type, count of participating keys and array with key IDs
 enum KeyEvt_t {kePress, keLongPress, keRelease, keCancel, keRepeat, keCombo};
 struct KeyEvtInfo_t {
     KeyEvt_t Type;
-    uint8_t NKeys;
+    uint8_t KeysCnt;
     uint8_t KeyID[KEYS_CNT];
 };
 
@@ -56,16 +50,14 @@ private:
     systime_t RepeatTimer, LongPressTimer;
     bool IsCombo;
     void AddEvtToQueue(KeyEvtInfo_t Evt);
+    void AddEvtToQueue(KeyEvt_t AType, uint8_t KeyIndx);
 public:
-    void Init();
-    void Shutdown() { for(uint8_t i=0; i<KEYS_CNT; i++) PinSetupAnalog(KeyData[i].PGpio, KeyData[i].Pin); }
+    void ProcessKeysState(bool *PCurrentState);
     // Events
     CircBuf_t<KeyEvtInfo_t, KEYS_EVT_Q_LEN> EvtBuf;
-
-    // Inner use
-    void ITask();
 };
 
 extern Keys_t Keys;
+
 
 #endif /* KEYS_H_ */

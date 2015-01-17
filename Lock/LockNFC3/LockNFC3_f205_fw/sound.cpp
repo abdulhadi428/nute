@@ -69,7 +69,7 @@ void Sound_t::ITask() {
 //        	Uart.Printf("\rComp");
             AddCmd(VS_REG_MODE, 0x0004);    // Soft reset
             if(IFilename != NULL) IPlayNew();
-            else if(IPThd != nullptr) chEvtSignal(IPThd, EVTMASK_PLAY_ENDS);  // Raise event if nothing to play
+            else if(IPThd != nullptr) chEvtSignal(IPThd, EVTMSK_PLAY_ENDS);  // Raise event if nothing to play
         }
         // Stop request
         else if(EvtMsk & VS_EVT_STOP) {

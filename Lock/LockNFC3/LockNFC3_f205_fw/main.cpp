@@ -17,10 +17,10 @@
 #include "MassStorage.h"
 #include "main.h"
 #include "pn.h"
+#include "SimpleSensors.h"
 #include "keys.h"
 
 App_t App;
-Sns_t Sns = {GPIOA, 0};
 SndList_t SndList;
 
 LedRgbBlinker_t LedService({GPIOB, 10}, {GPIOB, 12}, {GPIOB, 11});
@@ -60,15 +60,13 @@ int main() {
     Led.StartSequence(lsqDoorClose);
 
     App.IDStore.Init();
-    Keys.Init();
+    Sensors.Init();
 
     Pn.Init();
-
-//    SD.Init();
+    SD.Init();
 
     // USB related
-//    PinSetupIn(PWR_EXTERNAL_GPIO, PWR_EXTERNAL_PIN, pudPullDown);
-//    MassStorage.Init();
+    MassStorage.Init();
 
 //    Sound.Init();
 //    Sound.SetVolume(255);
@@ -139,10 +137,10 @@ void App_t::ITask() {
     while(true) {
         uint32_t EvtMsk = chEvtWaitAny(ALL_EVENTS);
         // ==== Card ====
-        if(EvtMsk & EVTMASK_CARD_APPEARS) ProcessAppearance();
+        if(EvtMsk & EVTMSK_CARD_APPEARS) ProcessAppearance();
 
-        // ==== Door ====
-        if(EvtMsk & EVTMASK_DOOR_OPEN) {
+#if 1 // ==== Door ====
+        if(EvtMsk & EVTMSK_DOOR_OPEN) {
             DoorState = dsOpen;
             // Set color
             Led.StartSequence(lsqDoorOpen);
@@ -150,10 +148,10 @@ void App_t::ITask() {
             Uart.Printf("\rDoor is open");
             chSysLock();
             if(chVTIsArmedI(&IDoorTmr)) chVTResetI(&IDoorTmr);
-            chVTSetI(&IDoorTmr, MS2ST(DOOR_CLOSE_TIMEOUT), TmrGeneralCallback, (void*)EVTMASK_DOOR_SHUT);
+            chVTSetI(&IDoorTmr, MS2ST(DOOR_CLOSE_TIMEOUT), TmrGeneralCallback, (void*)EVTMSK_DOOR_SHUT);
             chSysUnlock();
         }
-        if(EvtMsk & EVTMASK_DOOR_SHUT) {
+        if(EvtMsk & EVTMSK_DOOR_SHUT) {
             DoorState = dsClosed;
             // Set color
             Led.StartSequence(lsqDoorClose);
@@ -161,13 +159,15 @@ void App_t::ITask() {
             Uart.Printf("\rDoor is closed");
         }
 
-        if(EvtMsk & EVTMASK_BAD_KEY) {
+        if(EvtMsk & EVTMSK_BAD_KEY) {
             Led.StartSequence(lsqDoorWrongKey);
             Uart.Printf("\rBadKey");
         }
+#endif
 
 #if 1 // ==== Keys ====
         if(EvtMsk & EVTMSK_KEYS) {
+//            Uart.Printf("\rKey");
             KeyEvtInfo_t EInfo;
             while(Keys.EvtBuf.Get(&EInfo) == OK) {
                 if(EInfo.Type == kePress) {
@@ -215,7 +215,6 @@ void App_t::ITask() {
             LedService.StartSequence(lsqIdle);
             State = asIdle;
         }
-
     } // while true
 }
 
@@ -226,8 +225,8 @@ void App_t::ProcessAppearance() {
             if(DoorState == dsClosed) {
                 IdKind_t IdKind = IDStore.Check(CurrentID);
                 switch(IdKind) {
-                    case ikAccess: SendEvt(EVTMASK_DOOR_OPEN); break;
-                    case ikNone:   SendEvt(EVTMASK_BAD_KEY);   break;
+                    case ikAccess: SendEvt(EVTMSK_DOOR_OPEN); break;
+                    case ikNone:   SendEvt(EVTMSK_BAD_KEY);   break;
                     case ikMaster: break;
                 }
             }
