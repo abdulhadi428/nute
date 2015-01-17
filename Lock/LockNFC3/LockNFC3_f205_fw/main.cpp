@@ -57,7 +57,7 @@ int main() {
     LedService.Init();
     LedService.StartSequence(lsqBlinkGreenX2);
     Led.Init();
-    Led.StartSequence(lsqSmootnGreen);
+    Led.StartSequence(lsqDoorClose);
 
     App.IDStore.Init();
     Keys.Init();
@@ -145,6 +145,7 @@ void App_t::ITask() {
         if(EvtMsk & EVTMASK_DOOR_OPEN) {
             DoorState = dsOpen;
             // Set color
+            Led.StartSequence(lsqDoorOpen);
             // Say something
             Uart.Printf("\rDoor is open");
             chSysLock();
@@ -155,11 +156,13 @@ void App_t::ITask() {
         if(EvtMsk & EVTMASK_DOOR_SHUT) {
             DoorState = dsClosed;
             // Set color
+            Led.StartSequence(lsqDoorClose);
             // Say something
             Uart.Printf("\rDoor is closed");
         }
 
         if(EvtMsk & EVTMASK_BAD_KEY) {
+            Led.StartSequence(lsqDoorWrongKey);
             Uart.Printf("\rBadKey");
         }
 
