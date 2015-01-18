@@ -20,7 +20,7 @@
 #include "SimpleSensors.h"
 #include "keys.h"
 
-#define USB_ENABLED FALSE
+#define USB_ENABLED TRUE
 
 App_t App;
 SndList_t SndList;
@@ -115,9 +115,8 @@ void App_t::ITask() {
 #if 1 // ==== Door ====
         if(EvtMsk & EVTMSK_DOOR_OPEN) {
             DoorState = dsOpen;
-            // Set color
-            Led.StartSequence(lsqDoorOpen);
-            // Say something
+            Led.StartSequence(lsqDoorOpen); // Set color
+            Sound.Play("phrase01.wav");     // Say something
             Uart.Printf("\rDoor is open");
             chSysLock();
             if(chVTIsArmedI(&IDoorTmr)) chVTResetI(&IDoorTmr);
@@ -126,14 +125,14 @@ void App_t::ITask() {
         }
         if(EvtMsk & EVTMSK_DOOR_SHUT) {
             DoorState = dsClosed;
-            // Set color
-            Led.StartSequence(lsqDoorClose);
-            // Say something
+            Led.StartSequence(lsqDoorClose);    // Set color
+            Sound.Play("phrase02.wav");         // Say something
             Uart.Printf("\rDoor is closed");
         }
 
         if(EvtMsk & EVTMSK_BAD_KEY) {
             Led.StartSequence(lsqDoorWrongKey);
+            Sound.Play("phrase03.wav");         // Say something
             Uart.Printf("\rBadKey");
         }
 #endif

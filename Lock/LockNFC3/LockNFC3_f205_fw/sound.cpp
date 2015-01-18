@@ -207,7 +207,7 @@ void Sound_t::ISendNextData() {
     // If command queue is not empty, send command
     msg_t msg = chMBFetch(&CmdBox, &ICmd.Msg, TIME_IMMEDIATE);
     if(msg == RDY_OK) {
-        Uart.PrintfI("\rvCmd: %A\r", &ICmd, 4, ' ');
+//        Uart.PrintfI("\rvCmd: %A", &ICmd, 4, ' ');
         XCS_Lo();   // Start Cmd transmission
         chThdSleepMilliseconds(1);
         dmaStreamSetMemory0(VS_DMA, &ICmd);
