@@ -120,7 +120,7 @@ private:
     void AddCmd(uint8_t AAddr, uint16_t AData);
     inline void StartTransmissionIfNotBusy() {
         if(IDmaIdle and IDreq.IsHi()) {
-//            Uart.Printf("T");
+//            Uart.Printf("\rTXinB");
             IDreq.EnableIrq(IRQ_PRIO_MEDIUM);
             IDreq.GenerateIrq();    // Do not call SendNexData directly because of its interrupt context
         }

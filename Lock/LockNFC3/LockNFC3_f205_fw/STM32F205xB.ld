@@ -27,8 +27,9 @@
 
 /*
  * ST32F205xB memory setup.
+ * MainStackSz = 4096 bytes
  */
-__main_stack_size__     = 0x0800;
+__main_stack_size__     = 0x1000; 
 __process_stack_size__  = 0x0800;
 
 MEMORY

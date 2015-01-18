@@ -25,7 +25,7 @@ struct Snd_t {
 struct SndList_t {
     Snd_t Phrases[SND_COUNT_MAX];
     int32_t Count;
-//    int32_t ProbSumm;
+    int32_t ProbSumm;
 };
 
 #define STATE_TIMEOUT       18000   // ms; switch to waiting state
@@ -45,7 +45,7 @@ class App_t {
 private:
     DoorState_t DoorState = dsClosed;
     VirtualTimer ITmr, IDoorTmr;
-    void ProcessAppearance();
+    void ProcessCardAppearance();
     void RestartStateTimer() {
         chSysLock();
         if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);
@@ -64,6 +64,7 @@ public:
     }
     // Inner use
     void ITask();
+    uint8_t ReadConfig();
 };
 
 extern App_t App;

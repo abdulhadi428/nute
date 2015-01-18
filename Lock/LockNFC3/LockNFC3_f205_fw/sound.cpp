@@ -55,7 +55,7 @@ void Sound_t::ITask() {
             XDCS_Hi();                      // } Stop SPI
             if(IDreq.IsHi()) ISendNextData();   // More data allowed, send it now
             else {
-                chThdSleepMilliseconds(1); // Allow VS to end up with data processing
+                chThdSleepMilliseconds(1);      // Allow VS to end up with data processing
                 chSysLock();
                 IDreq.EnableIrq(IRQ_PRIO_MEDIUM); // Enable dreq irq
                 chSysUnlock();
@@ -87,7 +87,7 @@ void Sound_t::ITask() {
                 else if(Buf2.DataSz == 0) { /*Uart.Printf("2");*/ rslt = Buf2.ReadFromFile(&IFile); }
             }
             // Check if was EOF or if error occured during reading. Do not do it if EOF occured during reading.
-//            if(rslt != FR_OK) Uart.Printf("\rsndReadErr=%u", rslt);
+            if(rslt != FR_OK) Uart.Printf("\rsndReadErr=%u", rslt);
             if((rslt != FR_OK) or EofAtStart) PrepareToStop();
             else StartTransmissionIfNotBusy();
         }
@@ -102,14 +102,11 @@ void Sound_t::Init() {
     Rst_Lo();
     XCS_Hi();
     XDCS_Hi();
+    chThdSleepMilliseconds(45);
     PinSetupIn(VS_GPIO, VS_DREQ, pudPullDown);
     PinSetupAlterFunc(VS_GPIO, VS_XCLK, omPushPull, pudNone, VS_AF);
     PinSetupAlterFunc(VS_GPIO, VS_SO,   omPushPull, pudNone, VS_AF);
     PinSetupAlterFunc(VS_GPIO, VS_SI,   omPushPull, pudNone, VS_AF);
-#if VS_AMPF_EXISTS
-    PinSetupOut(VS_AMPF_GPIO, VS_AMPF_PIN, omPushPull);
-    AmpfOn();
-#endif
 
     // ==== SPI init ====
     ISpi.Setup(VS_SPI, boMSB, cpolIdleLow, cphaFirstEdge, sbFdiv4);
@@ -131,13 +128,17 @@ void Sound_t::Init() {
 
     // ==== Init VS ====
     Rst_Hi();
+    chThdSleepMilliseconds(7);
     Clk.MCO1Enable(mco1HSE, mcoDiv1);   // Only after reset, as pins are grounded when Rst is Lo
-    chThdSleepMicroseconds(45);
+    chThdSleepMilliseconds(7);
     // ==== DREQ IRQ ====
     IDreq.Setup(VS_GPIO, VS_DREQ, ttRising);
     // ==== Thread ====
     PThread = chThdCreateStatic(waSoundThread, sizeof(waSoundThread), NORMALPRIO, (tfunc_t)SoundThread, NULL);
-    StartTransmissionIfNotBusy();   // Send init commands
+#if VS_AMPF_EXISTS
+    PinSetupOut(VS_AMPF_GPIO, VS_AMPF_PIN, omPushPull);
+    AmpfOn();
+#endif
 }
 
 void Sound_t::Shutdown() {
@@ -199,14 +200,14 @@ void Sound_t::AddCmd(uint8_t AAddr, uint16_t AData) {
 }
 
 void Sound_t::ISendNextData() {
-//    Uart.Printf("sn\r");
+//    Uart.Printf("\rSN");
     IDreq.DisableIrq();
     dmaStreamDisable(VS_DMA);
     IDmaIdle = false;
     // If command queue is not empty, send command
     msg_t msg = chMBFetch(&CmdBox, &ICmd.Msg, TIME_IMMEDIATE);
     if(msg == RDY_OK) {
-//        Uart.PrintfI("\rvCmd: %A\r", &ICmd, 4, ' ');
+        Uart.PrintfI("\rvCmd: %A\r", &ICmd, 4, ' ');
         XCS_Lo();   // Start Cmd transmission
         chThdSleepMilliseconds(1);
         dmaStreamSetMemory0(VS_DMA, &ICmd);

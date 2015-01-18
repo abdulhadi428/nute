@@ -20,6 +20,8 @@
 #include "SimpleSensors.h"
 #include "keys.h"
 
+#define USB_ENABLED FALSE
+
 App_t App;
 SndList_t SndList;
 
@@ -54,59 +56,30 @@ int main() {
     App.PThd = chThdSelf();
     Uart.Init(115200);
     Uart.Printf("\rLockNFC3 F205   AHB freq=%uMHz", Clk.AHBFreqHz/1000000);
+    // Report problem with clock if any
+    if(ClkResult) Uart.Printf("Clock failure\r");
+
     LedService.Init();
     LedService.StartSequence(lsqBlinkGreenX2);
     Led.Init();
     Led.StartSequence(lsqDoorClose);
-
-    App.IDStore.Init();
     Sensors.Init();
 
+    App.IDStore.Init(); // Init Srorage of IDs
+
     Pn.Init();
-    SD.Init();
-
-    // USB related
-    MassStorage.Init();
-
-//    Sound.Init();
-//    Sound.SetVolume(255);
-//    Sound.RegisterAppThd(chThdSelf());
-//    Sound.Play("alive.wav");
-
-    // Sensor
-//    Sns.Init();
-
-//    ReadConfig();
-
-    // Report problem with clock if any
-    if(ClkResult) Uart.Printf("Clock failure\r");
+    SD.Init();          // SD-card init
+    App.ReadConfig();   // Read config from SD-card
+#if USB_ENABLED
+    MassStorage.Init(); // Init USB MassStorage device
+#endif
+    Sound.Init();
+    Sound.SetVolume(255);
+    Sound.RegisterAppThd(chThdSelf());
+    Sound.Play("alive.wav");
 
     // ==== Main cycle ====
     App.ITask();
-
-#if 0 // ==== USB connected/disconnected ====
-        if(WasExternal and !ExternalPwrOn()) {
-            WasExternal = false;
-            Usb.Shutdown();
-            MassStorage.Reset();
-            chSysLock();
-            Clk.SetFreq12Mhz();
-            Clk.InitSysTick();
-            chSysUnlock();
-            Uart.Printf("\rUsb Off");
-        }
-        else if(!WasExternal and ExternalPwrOn()) {
-            WasExternal = true;
-            chSysLock();
-            Clk.SetFreq48Mhz();
-            Clk.InitSysTick();
-            chSysUnlock();
-            Usb.Init();
-            chThdSleepMilliseconds(540);
-            Usb.Connect();
-            Uart.Printf("\rUsb On");
-        }
-#endif
 
 #if 0 // ==== Sensor ====
       if(Sns.CheckEdge() == Rising) {
@@ -137,7 +110,7 @@ void App_t::ITask() {
     while(true) {
         uint32_t EvtMsk = chEvtWaitAny(ALL_EVENTS);
         // ==== Card ====
-        if(EvtMsk & EVTMSK_CARD_APPEARS) ProcessAppearance();
+        if(EvtMsk & EVTMSK_CARD_APPEARS) ProcessCardAppearance();
 
 #if 1 // ==== Door ====
         if(EvtMsk & EVTMSK_DOOR_OPEN) {
@@ -210,6 +183,28 @@ void App_t::ITask() {
         } // if keys
 #endif
 
+#if USB_ENABLED // ==== USB connection ====
+        if(EvtMsk & EVTMSK_USB_CONNECTED) {
+            chSysLock();
+            Clk.SetFreq48Mhz();
+            Clk.InitSysTick();
+            chSysUnlock();
+            Usb.Init();
+            chThdSleepMilliseconds(540);
+            Usb.Connect();
+            Uart.Printf("\rUsb connected");
+        }
+        if(EvtMsk & EVTMSK_USB_DISCONNECTED) {
+            Usb.Shutdown();
+            MassStorage.Reset();
+            chSysLock();
+            Clk.SetFreq12Mhz();
+            Clk.InitSysTick();
+            chSysUnlock();
+            Uart.Printf("\rUsb disconnected");
+        }
+#endif
+
         // ==== State timeout ====
         if(EvtMsk & EVTMSK_STATE_TIMEOUT) {
             LedService.StartSequence(lsqIdle);
@@ -218,7 +213,7 @@ void App_t::ITask() {
     } // while true
 }
 
-void App_t::ProcessAppearance() {
+void App_t::ProcessCardAppearance() {
 //    App.CurrentID.Print();
     switch(State) {
         case asIdle:
@@ -250,14 +245,12 @@ void App_t::ProcessAppearance() {
     } // switch
 }
 
-/*
-char SndKey[45]="Sound";
-uint8_t ReadConfig() {
+uint8_t App_t::ReadConfig() {
     int32_t Probability;
     if(SD.iniReadInt32("Sound", "Count", "settings.ini", &SndList.Count) != OK) return FAILURE;
-    Uart.Printf("\rCount: %d", SndList.Count);
+//    Uart.Printf("\rCount: %d", SndList.Count);
     if (SndList.Count <= 0) return FAILURE;
-    char *c;
+    char *c, SndKey[MAX_NAME_LEN]="Sound";
     SndList.ProbSumm = 0;
     // Read sounds data
     for(int i=0; i<SndList.Count; i++) {
@@ -277,7 +270,6 @@ uint8_t ReadConfig() {
         SndList.ProbSumm += Probability;
         SndList.Phrases[i].ProbTop = SndList.ProbSumm;
     }
-    for(int i=0; i<SndList.Count; i++) Uart.Printf("\r%u %S Bot=%u Top=%u", i, SndList.Phrases[i].Filename, SndList.Phrases[i].ProbBottom, SndList.Phrases[i].ProbTop);
+//    for(int i=0; i<SndList.Count; i++) Uart.Printf("\r%u %S Bot=%u Top=%u", i, SndList.Phrases[i].Filename, SndList.Phrases[i].ProbBottom, SndList.Phrases[i].ProbTop);
     return OK;
 }
-*/

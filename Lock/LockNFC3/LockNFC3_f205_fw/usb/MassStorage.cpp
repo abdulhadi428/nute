@@ -198,10 +198,10 @@ bool MassStorage_t::CmdReadFormatCapacities() {
 bool MassStorage_t::ReadWriteCommon(uint32_t *PAddr, uint16_t *PLen) {
     *PAddr = BuildUint32(CmdBlock.SCSICmdData[5], CmdBlock.SCSICmdData[4], CmdBlock.SCSICmdData[3], CmdBlock.SCSICmdData[2]);
     *PLen  = BuildUint16(CmdBlock.SCSICmdData[8], CmdBlock.SCSICmdData[7]);
-//    Uart.Printf("Addr=%u; Len=%u\r", BlockAddress, TotalBlocks);
+//    Uart.Printf("Addr=%u; Len=%u\r", *PAddr, *PLen);
     // Check block addr
-    if((*PAddr + *PLen) >= SDCD1.capacity) {
-        Uart.Printf("Out Of Range\r");
+    if((*PAddr + *PLen) > SDCD1.capacity) {
+        Uart.Printf("\rSD: Out Of Range. Addr=%u; Len=%u; Cap=%u", *PAddr, *PLen, SDCD1.capacity);
         SenseData.SenseKey = SCSI_SENSE_KEY_ILLEGAL_REQUEST;
         SenseData.AdditionalSenseCode = SCSI_ASENSE_LOGICAL_BLOCK_ADDRESS_OUT_OF_RANGE;
         SenseData.AdditionalSenseQualifier = SCSI_ASENSEQ_NO_QUALIFIER;
@@ -209,7 +209,7 @@ bool MassStorage_t::ReadWriteCommon(uint32_t *PAddr, uint16_t *PLen) {
     }
     // Check cases 4, 5: (Hi != Dn); and 3, 11, 13: (Hn, Ho != Do)
     if(CmdBlock.DataTransferLen != (*PLen) * MMCSD_BLOCK_SIZE) {
-        Uart.Printf("Wrong length\r");
+        Uart.Printf("\rSD: Wrong length");
         SenseData.SenseKey = SCSI_SENSE_KEY_ILLEGAL_REQUEST;
         SenseData.AdditionalSenseCode = SCSI_ASENSE_INVALID_COMMAND;
         SenseData.AdditionalSenseQualifier = SCSI_ASENSEQ_NO_QUALIFIER;
@@ -219,7 +219,7 @@ bool MassStorage_t::ReadWriteCommon(uint32_t *PAddr, uint16_t *PLen) {
 }
 
 bool MassStorage_t::CmdRead10() {
-//    Uart.Printf("CmdRead10\r");
+//    Uart.Printf("\rCmdRead10");
     uint32_t BlockAddress=0;
     uint16_t TotalBlocks=0;
     if(ReadWriteCommon(&BlockAddress, &TotalBlocks) == false) return false;
@@ -272,7 +272,7 @@ bool MassStorage_t::CmdRead10() {
 }
 
 bool MassStorage_t::CmdWrite10() {
-//    Uart.Printf("CmdWrite10\r");
+//    Uart.Printf("\rCmdWrite10");
 #if READ_ONLY
     SenseData.SenseKey = SCSI_SENSE_KEY_DATA_PROTECT;
     SenseData.AdditionalSenseCode = SCSI_ASENSE_WRITE_PROTECTED;
