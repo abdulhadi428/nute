@@ -19,6 +19,7 @@
 #include "pn.h"
 #include "SimpleSensors.h"
 #include "keys.h"
+#include "Soundlist.h"
 
 #define USB_ENABLED TRUE
 
@@ -35,7 +36,6 @@ void TmrGeneralCallback(void *p) {
     chSysUnlockFromIsr();
 }
 
-// =============================== Main ========================================
 int main() {
     // ==== Setup clock ====
     Clk.UpdateFreqValues();
@@ -69,6 +69,10 @@ int main() {
 
     Pn.Init();
     SD.Init();          // SD-card init
+    SndList.Init();
+//    SndList.PlayRandomFileFromDir("GoodKey");
+//    SndList.PlayRandomFileFromDir("Closing");
+
     App.ReadConfig();   // Read config from SD-card
 #if USB_ENABLED
     MassStorage.Init(); // Init USB MassStorage device
@@ -116,7 +120,7 @@ void App_t::ITask() {
         if(EvtMsk & EVTMSK_DOOR_OPEN) {
             DoorState = dsOpen;
             Led.StartSequence(lsqDoorOpen); // Set color
-            Sound.Play("phrase01.wav");     // Say something
+            SndList.PlayRandomFileFromDir("GoodKey");
             Uart.Printf("\rDoor is open");
             chSysLock();
             if(chVTIsArmedI(&IDoorTmr)) chVTResetI(&IDoorTmr);
@@ -126,13 +130,13 @@ void App_t::ITask() {
         if(EvtMsk & EVTMSK_DOOR_SHUT) {
             DoorState = dsClosed;
             Led.StartSequence(lsqDoorClose);    // Set color
-            Sound.Play("phrase02.wav");         // Say something
+            SndList.PlayRandomFileFromDir("Closing");
             Uart.Printf("\rDoor is closed");
         }
 
         if(EvtMsk & EVTMSK_BAD_KEY) {
             Led.StartSequence(lsqDoorWrongKey);
-            Sound.Play("phrase03.wav");         // Say something
+            SndList.PlayRandomFileFromDir("BadKey");
             Uart.Printf("\rBadKey");
         }
 #endif
@@ -245,30 +249,30 @@ void App_t::ProcessCardAppearance() {
 }
 
 uint8_t App_t::ReadConfig() {
-    int32_t Probability;
-    if(SD.iniReadInt32("Sound", "Count", "settings.ini", &SndList.Count) != OK) return FAILURE;
+//    int32_t Probability;
+//    if(SD.iniReadInt32("Sound", "Count", "settings.ini", &SndList.Count) != OK) return FAILURE;
 //    Uart.Printf("\rCount: %d", SndList.Count);
-    if (SndList.Count <= 0) return FAILURE;
-    char *c, SndKey[MAX_NAME_LEN]="Sound";
-    SndList.ProbSumm = 0;
+//    if (SndList.Count <= 0) return FAILURE;
+//    char *c, SndKey[MAX_NAME_LEN]="Sound";
+//    SndList.ProbSumm = 0;
     // Read sounds data
-    for(int i=0; i<SndList.Count; i++) {
+//    for(int i=0; i<SndList.Count; i++) {
         // Build SndKey
-        c = Convert::Int32ToStr(i+1, &SndKey[5]);   // first symbol after "Sound"
-        strcpy(c, "Name");
+//        c = Convert::Int32ToStr(i+1, &SndKey[5]);   // first symbol after "Sound"
+//        strcpy(c, "Name");
 //        Uart.Printf("\r%s", SndKey);
         // Read filename and probability
-        char *S = nullptr;
-        if(SD.iniReadString("Sound", SndKey, "settings.ini", &S) != OK) return FAILURE;
-        strcpy(SndList.Phrases[i].Filename, S);
-        strcpy(c, "Prob");
+//        char *S = nullptr;
+//        if(SD.iniReadString("Sound", SndKey, "settings.ini", &S) != OK) return FAILURE;
+//        strcpy(SndList.Phrases[i].Filename, S);
+//        strcpy(c, "Prob");
 //        Uart.Printf("\r%s", SndKey);
-        if(SD.iniReadInt32 ("Sound", SndKey, "settings.ini", &Probability) != OK) return FAILURE;
-        // Calculate probability boundaries
-        SndList.Phrases[i].ProbBottom = SndList.ProbSumm;
-        SndList.ProbSumm += Probability;
-        SndList.Phrases[i].ProbTop = SndList.ProbSumm;
-    }
+//        if(SD.iniReadInt32 ("Sound", SndKey, "settings.ini", &Probability) != OK) return FAILURE;
+//        // Calculate probability boundaries
+//        SndList.Phrases[i].ProbBottom = SndList.ProbSumm;
+//        SndList.ProbSumm += Probability;
+//        SndList.Phrases[i].ProbTop = SndList.ProbSumm;
+//    }
 //    for(int i=0; i<SndList.Count; i++) Uart.Printf("\r%u %S Bot=%u Top=%u", i, SndList.Phrases[i].Filename, SndList.Phrases[i].ProbBottom, SndList.Phrases[i].ProbTop);
     return OK;
 }
