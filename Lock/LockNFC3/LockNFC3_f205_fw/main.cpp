@@ -21,7 +21,7 @@
 #include "keys.h"
 #include "Soundlist.h"
 
-#define USB_ENABLED TRUE
+//#define USB_ENABLED TRUE
 
 App_t App;
 SndList_t SndList;

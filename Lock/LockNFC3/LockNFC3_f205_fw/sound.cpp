@@ -10,8 +10,6 @@ Sound_t Sound;
 //#define VS_MODE_REG_VALUE   0x0802  // Native SDI mode, Layer I + II enabled
 #define VS_MODE_REG_VALUE   0x0803  // Native SDI mode, Layer I + II enabled, differential output
 
-// After file end, send several zeroes
-#define ZERO_SEQ_LEN        128
 static const uint8_t SZero = 0;
 
 static uint8_t ReadWriteByte(uint8_t AByte);
@@ -21,9 +19,10 @@ extern "C" {
 // Dreq IRQ
 CH_IRQ_HANDLER(EXTI2_IRQHandler) {
     CH_IRQ_PROLOGUE();
+    chSysLockFromIsr();
     EXTI->PR = (1 << 2);  // Clean irq flag
 //    Uart.Printf("Irq ");
-    chSysLockFromIsr();
+    Sound.IDreq.DisableIrq();
     chEvtSignalI(Sound.PThread, VS_EVT_DREQ_IRQ);
     chSysUnlockFromIsr();
     CH_IRQ_EPILOGUE();
@@ -49,18 +48,22 @@ __attribute__((noreturn))
 void Sound_t::ITask() {
     while(true) {
         eventmask_t EvtMsk = chEvtWaitAny(ALL_EVENTS);
+#if 1 // ==== DMA done ====
         if(EvtMsk & VS_EVT_DMA_DONE) {
-            ISpi.WaitBsyLo();               // Wait SPI transaction end
-            XCS_Hi();                       // }
-            XDCS_Hi();                      // } Stop SPI
+            ISpi.WaitBsyLo();                   // Wait SPI transaction end
+            Loop(99);                           // Make a solemn pause
+            XCS_Hi();                           // }
+            XDCS_Hi();                          // } Stop SPI
+            // Send next data if VS is ready
             if(IDreq.IsHi()) ISendNextData();   // More data allowed, send it now
-            else {
+            else { // Enable IRQ
                 chThdSleepMilliseconds(1);      // Allow VS to end up with data processing
                 chSysLock();
                 IDreq.EnableIrq(IRQ_PRIO_MEDIUM); // Enable dreq irq
                 chSysUnlock();
             }
         }
+#endif
 
         if(EvtMsk & VS_EVT_DREQ_IRQ) ISendNextData();
 
@@ -69,28 +72,28 @@ void Sound_t::ITask() {
 //        	Uart.Printf("\rComp");
             AddCmd(VS_REG_MODE, 0x0004);    // Soft reset
             if(IFilename != NULL) IPlayNew();
-            else if(IPThd != nullptr) chEvtSignal(IPThd, EVTMSK_PLAY_ENDS);  // Raise event if nothing to play
+            else if(IPAppThd != nullptr) chEvtSignal(IPAppThd, EVTMSK_PLAY_ENDS);  // Raise event if nothing to play
         }
         // Stop request
         else if(EvtMsk & VS_EVT_STOP) {
 //            Uart.Printf("\rStop");
             PrepareToStop();
         }
-        // Data read request
+
+#if 1 // ==== Read next ====
         else if(EvtMsk & VS_EVT_READ_NEXT) {
-//            Uart.Printf("\rreadNext");
+//            Uart.Printf("\rreadNext; L= %u %u", Buf1.DataSz, Buf2.DataSz);
             FRESULT rslt = FR_OK;
-            bool EofAtStart = f_eof(&IFile);
+            bool Eof = f_eof(&IFile);
             // Read next if not EOF
-            if(!EofAtStart) {
-                if     (Buf1.DataSz == 0) { /*Uart.Printf("1");*/ rslt = Buf1.ReadFromFile(&IFile); }
-                else if(Buf2.DataSz == 0) { /*Uart.Printf("2");*/ rslt = Buf2.ReadFromFile(&IFile); }
+            if(!Eof) {
+                if     (Buf1.DataSz == 0) { /*Uart.Printf(" r1");*/ rslt = Buf1.ReadFromFile(&IFile); }
+                else if(Buf2.DataSz == 0) { /*Uart.Printf(" r2");*/ rslt = Buf2.ReadFromFile(&IFile); }
             }
-            // Check if was EOF or if error occured during reading. Do not do it if EOF occured during reading.
             if(rslt != FR_OK) Uart.Printf("\rsndReadErr=%u", rslt);
-            if((rslt != FR_OK) or EofAtStart) PrepareToStop();
-            else StartTransmissionIfNotBusy();
+            if(rslt == FR_OK and !Eof) StartTransmissionIfNotBusy();
         }
+#endif
     } // while true
 }
 
@@ -158,14 +161,13 @@ void Sound_t::IPlayNew() {
     // Open new file
     Uart.Printf("\rPlay %S at %u", IFilename, IStartPosition);
     rslt = f_open(&IFile, IFilename, FA_READ+FA_OPEN_EXISTING);
+    IFilename = NULL;
     if (rslt != FR_OK) {
         if (rslt == FR_NO_FILE) Uart.Printf("\r%S: not found", IFilename);
         else Uart.Printf("\rOpenFile error: %u", rslt);
-        IFilename = NULL;
         Stop();
         return;
     }
-    IFilename = NULL;
     // Check if zero file
     if (IFile.fsize == 0) {
         f_close(&IFile);
@@ -201,68 +203,73 @@ void Sound_t::AddCmd(uint8_t AAddr, uint16_t AData) {
 
 void Sound_t::ISendNextData() {
 //    Uart.Printf("\rSN");
-    IDreq.DisableIrq();
     dmaStreamDisable(VS_DMA);
     IDmaIdle = false;
-    // If command queue is not empty, send command
+    // ==== If command queue is not empty, send command ====
     msg_t msg = chMBFetch(&CmdBox, &ICmd.Msg, TIME_IMMEDIATE);
     if(msg == RDY_OK) {
 //        Uart.PrintfI("\rvCmd: %A", &ICmd, 4, ' ');
         XCS_Lo();   // Start Cmd transmission
-        chThdSleepMilliseconds(1);
         dmaStreamSetMemory0(VS_DMA, &ICmd);
         dmaStreamSetTransactionSize(VS_DMA, sizeof(VsCmd_t));
         dmaStreamSetMode(VS_DMA, VS_DMA_MODE | STM32_DMA_CR_MINC);  // Memory pointer increase
         dmaStreamEnable(VS_DMA);
     }
-    // Send next chunk of data if any
-    else if(State == sndPlaying) {
-//        Uart.PrintfI("\rD");
-        // Send data if buffer is not empty
-        if(PBuf->DataSz != 0) {
+    // ==== Send next chunk of data if any ====
+    else switch(State) {
+        case sndPlaying: {
+//            Uart.PrintfI("\rD");
+            // Switch buffer if required
+            if(PBuf->DataSz == 0) {
+                PBuf = (PBuf == &Buf1)? &Buf2 : &Buf1;      // Switch to next buf
+//                Uart.Printf("\rB=%u; Sz=%u", ((PBuf == &Buf1)? 1 : 2), PBuf->DataSz);
+                if(PBuf->DataSz == 0) { // Previous attempt to read the file failed
+                    IDmaIdle = true;
+                    PrepareToStop();
+                    break;
+                }
+                else {
+                    chSysLock();
+                    chEvtSignalI(PThread, VS_EVT_READ_NEXT);    // Read next chunk of file
+                    chSysUnlock();
+                }
+            }
+            // Send next piece of data
             XDCS_Lo();  // Start data transmission
+//            chThdSleepMilliseconds(1);
             uint32_t FLength = (PBuf->DataSz > 32)? 32 : PBuf->DataSz;
             dmaStreamSetMemory0(VS_DMA, PBuf->PData);
             dmaStreamSetTransactionSize(VS_DMA, FLength);
             dmaStreamSetMode(VS_DMA, VS_DMA_MODE | STM32_DMA_CR_MINC);  // Memory pointer increase
             dmaStreamEnable(VS_DMA);
+//            if(PBuf == &Buf1) Uart.Printf("*"); else Uart.Printf("#");
             // Process pointers and lengths
             PBuf->DataSz -= FLength;
             PBuf->PData += FLength;
-        }
-        else IDmaIdle = true;   // Will come true if both buffers are empty
+        } break;
 
-        // Check if buffer is now empty
-        if(PBuf->DataSz == 0) {
-            // Prepare to read next chunk
-//            Uart.Printf("*");
-            chSysLock();
-            chEvtSignalI(PThread, VS_EVT_READ_NEXT);
-            chSysUnlock();
-            // Switch to next buf
-            PBuf = (PBuf == &Buf1)? &Buf2 : &Buf1;
-        }
-    }
-    else if(State == sndWritingZeroes) {
-//        Uart.Printf("\rZ");
-        if(ZeroesCount == 0) { // Was writing zeroes, now all over
-            State = sndStopped;
-            IDmaIdle = true;
-//            Uart.Printf("vEnd\r");
-            chSysLock();
-            chEvtSignalI(PThread, VS_EVT_COMPLETED);
-            chSysUnlock();
-        }
-        else SendZeroes();
-    }
-    else {
-//    	Uart.PrintfI("\rI");
-        if(!IDreq.IsHi()) IDreq.EnableIrq(IRQ_PRIO_MEDIUM);
-        else IDmaIdle = true;
-    }
+        case sndWritingZeroes:
+//            Uart.Printf("\rZ");
+            if(ZeroesCount == 0) { // Was writing zeroes, now all over
+                State = sndStopped;
+                IDmaIdle = true;
+//                Uart.Printf("\rvEnd");
+                chSysLock();
+                chEvtSignalI(PThread, VS_EVT_COMPLETED);
+                chSysUnlock();
+            }
+            else SendZeroes();
+            break;
+
+        case sndStopped:
+//            Uart.PrintfI("\rI");
+            if(!IDreq.IsHi()) IDreq.EnableIrq(IRQ_PRIO_MEDIUM);
+            else IDmaIdle = true;
+    } // switch
 }
 
 void Sound_t::PrepareToStop() {
+//    Uart.Printf("\rPrepare");
     State = sndWritingZeroes;
     ZeroesCount = ZERO_SEQ_LEN;
     if(IFile.fs != 0) f_close(&IFile);

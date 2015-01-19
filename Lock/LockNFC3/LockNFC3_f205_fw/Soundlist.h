@@ -13,17 +13,8 @@
 
 #define DIRS_MAX_CNT     3  // Max number of dirs used. Here GoodKey, BadKey, Closing
 
-//struct Dir_t {
-//     char Filename[MAX_NAME_LEN];
-//     uint16_t NumberOfFiles;
-//};
-
 class SndList_t {
 private:
-//    uint16_t NumberOfFilesInDir[DIRS_MAX_CNT];
-//    Snd_t Phrases[SND_COUNT_MAX];
-//    int32_t Count;
-//    int32_t ProbSumm;
     char Filename[MAX_NAME_LEN];    // to store name with path
     uint32_t PreviousN;
     DIR Dir;

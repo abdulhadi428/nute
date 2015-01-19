@@ -23,6 +23,7 @@
 #endif
 
 // Zero const, may be useful for dummy purposes
+__attribute__((unused))
 const uint32_t ZeroConst = 0;
 
 #ifndef TRUE
