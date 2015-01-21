@@ -56,23 +56,24 @@ void Sound_t::ITask() {
             XDCS_Hi();                          // } Stop SPI
             // Send next data if VS is ready
             if(IDreq.IsHi()) ISendNextData();   // More data allowed, send it now
-            else { // Enable IRQ
-                chThdSleepMilliseconds(1);      // Allow VS to end up with data processing
-                chSysLock();
-                IDreq.EnableIrq(IRQ_PRIO_MEDIUM); // Enable dreq irq
-                chSysUnlock();
-            }
+            else IDreq.EnableIrq(IRQ_PRIO_MEDIUM); // Enable dreq irq
         }
 #endif
 
-        if(EvtMsk & VS_EVT_DREQ_IRQ) ISendNextData();
+        if(EvtMsk & VS_EVT_DREQ_IRQ) {
+            chThdSleepMilliseconds(1);  // Make a pause after IRQ rise
+            ISendNextData();
+        }
 
         // Play new request
         if(EvtMsk & VS_EVT_COMPLETED) {
 //        	Uart.Printf("\rComp");
             AddCmd(VS_REG_MODE, 0x0004);    // Soft reset
             if(IFilename != NULL) IPlayNew();
-            else if(IPAppThd != nullptr) chEvtSignal(IPAppThd, EVTMSK_PLAY_ENDS);  // Raise event if nothing to play
+            else {
+//                AmpfOff();    // switch off the amplifier to save energy
+                if(IPAppThd != nullptr) chEvtSignal(IPAppThd, EVTMSK_PLAY_ENDS);  // Raise event if nothing to play
+            }
         }
         // Stop request
         else if(EvtMsk & VS_EVT_STOP) {
@@ -140,7 +141,7 @@ void Sound_t::Init() {
     PThread = chThdCreateStatic(waSoundThread, sizeof(waSoundThread), NORMALPRIO, (tfunc_t)SoundThread, NULL);
 #if VS_AMPF_EXISTS
     PinSetupOut(VS_AMPF_GPIO, VS_AMPF_PIN, omPushPull);
-    AmpfOn();
+    AmpfOff();
 #endif
 }
 
@@ -153,6 +154,7 @@ void Sound_t::Shutdown() {
 }
 
 void Sound_t::IPlayNew() {
+    AmpfOn();
     AddCmd(VS_REG_MODE, VS_MODE_REG_VALUE);
     AddCmd(VS_REG_CLOCKF, (0x8000 + (12000000/2000)));
     AddCmd(VS_REG_VOL, ((IAttenuation * 256) + IAttenuation));
@@ -236,7 +238,6 @@ void Sound_t::ISendNextData() {
             }
             // Send next piece of data
             XDCS_Lo();  // Start data transmission
-//            chThdSleepMilliseconds(1);
             uint32_t FLength = (PBuf->DataSz > 32)? 32 : PBuf->DataSz;
             dmaStreamSetMemory0(VS_DMA, PBuf->PData);
             dmaStreamSetTransactionSize(VS_DMA, FLength);

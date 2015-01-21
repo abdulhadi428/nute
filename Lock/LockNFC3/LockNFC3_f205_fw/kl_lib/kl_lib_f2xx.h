@@ -389,7 +389,12 @@ public:
         else if((APinNumber >= 10) and (APinNumber <= 15)) IIrqChnl = EXTI15_10_IRQn;
     }
     // Enable/disable NVIC vector
-    void EnableIrq(const uint32_t Priority) { nvicEnableVector(IIrqChnl, CORTEX_PRIORITY_MASK(Priority)); }
+    void EnableIrqI(const uint32_t Priority) { nvicEnableVector(IIrqChnl, CORTEX_PRIORITY_MASK(Priority)); }
+    void EnableIrq(const uint32_t Priority)  {
+        chSysLock();
+        nvicEnableVector(IIrqChnl, CORTEX_PRIORITY_MASK(Priority));
+        chSysUnlock();
+    }
     void DisableIrq() { nvicDisableVector(IIrqChnl); }
     void GenerateIrq() { EXTI->SWIER |= 1 << IPinNumber; }
     void CleanIrqFlag() { EXTI->PR = (1 << IPinNumber); }

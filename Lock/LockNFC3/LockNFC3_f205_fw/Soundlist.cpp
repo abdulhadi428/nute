@@ -25,7 +25,7 @@ FRESULT SndList_t::CountFilesInDir(const char* DirName, uint32_t *PCnt) {
             if(!(FileInfo.fattrib & AM_DIR)) {
                 // Check if wav or mp3
                 char *FName = (FileInfo.lfname[0] == 0)? FileInfo.fname : FileInfo.lfname;
-                Uart.Printf("\r%S", FName);
+//                Uart.Printf("\r%S", FName);
                 uint32_t Len = strlen(FName);
                 if(Len > 4) {
                     if((strcasecmp(&FName[Len-3], "mp3") == 0) or (strcasecmp(&FName[Len-3], "wav") == 0)) (*PCnt)++;
@@ -40,7 +40,7 @@ void SndList_t::PlayRandomFileFromDir(const char* DirName) {
     uint32_t Cnt=0;
     FRESULT Rslt = CountFilesInDir(DirName, &Cnt);
     if(Rslt != FR_OK or Cnt == 0) return;       // Get out if nothing to play
-    Uart.Printf("\rR=%u; Cnt=%u", Rslt, Cnt);
+//    Uart.Printf("\rR=%u; Cnt=%u", Rslt, Cnt);
     // Select number of file
     uint32_t N = 0;
     if(Cnt > 1) {   // Get random number if count > 1
@@ -48,7 +48,7 @@ void SndList_t::PlayRandomFileFromDir(const char* DirName) {
             N = Random(Cnt-1);      // [0; Cnt-1]
         } while(N == PreviousN);    // skip same as previous
     }
-    Uart.Printf("; Random=%u", N);
+//    Uart.Printf("; Random=%u", N);
     PreviousN = N;
     // Iterate files in dir until success
     uint32_t Counter = 0;
@@ -62,7 +62,7 @@ void SndList_t::PlayRandomFileFromDir(const char* DirName) {
             if(!(FileInfo.fattrib & AM_DIR)) {
                 // Check if wav or mp3
                 char *FName = (FileInfo.lfname[0] == 0)? FileInfo.fname : FileInfo.lfname;
-                Uart.Printf("\r%S  Cnt=%u", FName, Counter);
+//                Uart.Printf("\r%S  Cnt=%u", FName, Counter);
                 uint32_t Len = strlen(FName);
                 if(Len > 4) {
                     if((strcasecmp(&FName[Len-3], "mp3") == 0) or (strcasecmp(&FName[Len-3], "wav") == 0)) {
