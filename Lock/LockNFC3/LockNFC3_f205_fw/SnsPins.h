@@ -84,7 +84,7 @@ const SnsGroup_t SnsGroupKey = {
 
 // ==== USB group ====
 #define SNS_USB_CNT     1
-const SnsData_t SnsUsbData = {GPIOC,  3, pudPullUp};
+const SnsData_t SnsUsbData = {GPIOA,  9, pudPullDown};
 static bool UsbKeysWasHi[SNS_USB_CNT];
 
 const SnsGroup_t SnsGroupUsb = {

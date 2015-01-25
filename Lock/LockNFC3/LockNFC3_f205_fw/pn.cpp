@@ -89,7 +89,7 @@ void PN532_t::ITask() {
                     if(CardAppeared()) {
                         if(MifareRead(0) == OK) {
                             CardOk = true;
-                            Uart.Printf("\rCard Appeared");
+//                            Uart.Printf("\rCard Appeared");
                             App.CurrentID.ConstructOfBuf(PReply->Buf);
                             App.SendEvt(EVTMSK_CARD_APPEARS);
                         }
@@ -97,7 +97,7 @@ void PN532_t::ITask() {
                 }
                 else {
                     if(!CardIsStillNear()) {
-                        Uart.Printf("\rCard Lost");
+//                        Uart.Printf("\rCard Lost");
                         CardOk = false;
                         App.SendEvt(EVTMSK_CARD_DISAPPEARS);
                     }
@@ -312,7 +312,7 @@ uint8_t PN532_t::WaitReplyReady(uint32_t ATimeout) {
         chSysLock();
         IIrqPin.DisableIrq();
         chSysUnlock();
-        Uart.Printf("\rTimeout");
+//        Uart.Printf("\rTimeout");
         return TIMEOUT;
     }
     else return OK;

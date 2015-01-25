@@ -21,7 +21,7 @@
 #include "keys.h"
 #include "Soundlist.h"
 
-//#define USB_ENABLED TRUE
+#define USB_ENABLED TRUE
 
 App_t App;
 SndList_t SndList;
@@ -65,7 +65,10 @@ int main() {
     Led.StartSequence(lsqDoorClose);
     Sensors.Init();
 
-    App.IDStore.Init(); // Init Srorage of IDs
+    // Wait to allow power to stabilize
+    chThdSleepMilliseconds(702);
+
+    App.IDStore.Load(); // Init Srorage of IDs
 
     Pn.Init();
     SD.Init();          // SD-card init
@@ -78,35 +81,12 @@ int main() {
     MassStorage.Init(); // Init USB MassStorage device
 #endif
     Sound.Init();
-    Sound.SetVolume(255);
+    Sound.SetVolume(180);
     Sound.RegisterAppThd(chThdSelf());
     Sound.Play("alive.wav");
 
     // ==== Main cycle ====
     App.ITask();
-
-#if 0 // ==== Sensor ====
-      if(Sns.CheckEdge() == Rising) {
-          if(Sound.State == sndStopped) {
-              Uart.Printf("\rDetected");
-//              Sound.Play("alive.wav");
-              // Generate random
-              int32_t i;
-              do {
-                  uint32_t r = rand() % SndList.ProbSumm + 1; // [1; Probsumm]
-                  //uint32_t r = Random(SndList.ProbSumm-1) + 1;
-                  Uart.Printf("\rR=%u", r);
-                  // Select phrase
-                  for(i=0; i<SndList.Count-1; i++) { // do not check last phrase
-                      if((r >= SndList.Phrases[i].ProbBottom) and (r <= SndList.Phrases[i].ProbTop)) break;
-                  }
-              } while(i == PreviousPhrase);
-              PreviousPhrase = i;
-              // Play phrase
-              Sound.Play(SndList.Phrases[i].Filename);
-          }
-      }
-#endif
 }
 
 __attribute__ ((__noreturn__))
@@ -143,9 +123,9 @@ void App_t::ITask() {
 
 #if 1 // ==== Keys ====
         if(EvtMsk & EVTMSK_KEYS) {
-//            Uart.Printf("\rKey");
             KeyEvtInfo_t EInfo;
             while(Keys.EvtBuf.Get(&EInfo) == OK) {
+//                Uart.Printf("\rEinfo: %u, %u, %u", EInfo.Type, EInfo.KeysCnt, EInfo.KeyID[0]);
                 if(EInfo.Type == kePress) {
                     switch(EInfo.KeyID[0]) {
                         case keyA:
@@ -180,6 +160,7 @@ void App_t::ITask() {
                 else if(EInfo.Type == keCombo and EInfo.KeyID[0] == keyA and EInfo.KeyID[1] == keyB) {
                     LedService.StartSequence(lsqEraseAll);
                     IDStore.EraseAll();
+                    IDStore.Save();
                     State = asIdle;
                 }
             } // while
@@ -212,6 +193,7 @@ void App_t::ITask() {
         if(EvtMsk & EVTMSK_STATE_TIMEOUT) {
             LedService.StartSequence(lsqIdle);
             State = asIdle;
+            if(IDStore.HasChanged) IDStore.Save();
         }
     } // while true
 }
@@ -223,22 +205,24 @@ void App_t::ProcessCardAppearance() {
             if(DoorState == dsClosed) {
                 IdKind_t IdKind = IDStore.Check(CurrentID);
                 switch(IdKind) {
-                    case ikAccess: SendEvt(EVTMSK_DOOR_OPEN); break;
-                    case ikNone:   SendEvt(EVTMSK_BAD_KEY);   break;
-                    case ikMaster: break;
+                    case ikAccess:  SendEvt(EVTMSK_DOOR_OPEN); break;
+                    case ikSpecial: break;
+                    case ikAdder: break;
+                    case ikRemover: break;
+                    case ikNone:    SendEvt(EVTMSK_BAD_KEY);   break;
                 }
             }
             break;
 
         case asAddingAcc:
             LedService.StartSequence(lsqAddingAccNew);
-            IDStore.AddAcc(CurrentID);
+            if(IDStore.AddAccessID(CurrentID) != OK) LedService.StartSequence(lsqError);
             RestartStateTimer();
             break;
 
         case asRemovingAcc:
             LedService.StartSequence(lsqRemovingAccNew);
-            IDStore.RemoveAcc(CurrentID);
+            IDStore.RemoveAccess(CurrentID);
             RestartStateTimer();
             break;
 
