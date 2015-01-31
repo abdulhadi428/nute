@@ -21,8 +21,6 @@
 #include "keys.h"
 #include "Soundlist.h"
 
-#define USB_ENABLED TRUE
-
 App_t App;
 SndList_t SndList;
 
@@ -65,25 +63,20 @@ int main() {
     Led.StartSequence(lsqDoorClose);
     Sensors.Init();
 
-    // Wait to allow power to stabilize
-    chThdSleepMilliseconds(702);
-
-    App.IDStore.Load(); // Init Srorage of IDs
-
     Pn.Init();
     SD.Init();          // SD-card init
+    App.IDStore.Load(); // Init Srorage of IDs
     SndList.Init();
-//    SndList.PlayRandomFileFromDir("GoodKey");
-//    SndList.PlayRandomFileFromDir("Closing");
 
     App.ReadConfig();   // Read config from SD-card
+    Sound.Init();
+    Sound.SetVolume(225);
+    Sound.RegisterAppThd(chThdSelf());
+    Sound.Play("alive.wav");
+
 #if USB_ENABLED
     MassStorage.Init(); // Init USB MassStorage device
 #endif
-    Sound.Init();
-    Sound.SetVolume(180);
-    Sound.RegisterAppThd(chThdSelf());
-    Sound.Play("alive.wav");
 
     // ==== Main cycle ====
     App.ITask();
@@ -128,33 +121,55 @@ void App_t::ITask() {
 //                Uart.Printf("\rEinfo: %u, %u, %u", EInfo.Type, EInfo.KeysCnt, EInfo.KeyID[0]);
                 if(EInfo.Type == kePress) {
                     switch(EInfo.KeyID[0]) {
+                        // Iterate AccessAdd / AccessRemove / Idle
                         case keyA:
-                            if(State == asAddingAcc) {
-                                if(IDStore.HasChanged) IDStore.Save();
-                                LedService.StartSequence(lsqIdle);
-                                State = asIdle;
-                            }
-                            else {
-                                State = asAddingAcc;
-                                LedService.StartSequence(lsqAddingAccIdle);
-                                RestartStateTimer();
-                            }
+                            switch(State) {
+                                // If was adding, enter removing state
+                                case asAddingAccess: EnterRemovingAccessState(); break;
+                                // If was removing, enter Idle
+                                case asRemovingAccess: EnterIdleState(); break;
+                                // Otherwise, enter adding
+                                default: EnterAddingAccessState(); break;
+                            } // switch State
                             break;
 
+                        // Iterate AdderAdd / AdderRemove / Idle
                         case keyB:
-                            if(State == asRemovingAcc) {
-                                if(IDStore.HasChanged) IDStore.Save();
-                                LedService.StartSequence(lsqIdle);
-                                State = asIdle;
-                            }
-                            else {
-                                State = asRemovingAcc;
-                                LedService.StartSequence(lsqRemovingAccIdle);
-                                RestartStateTimer();
-                            }
+                            switch(State) {
+                                case asAddingAdder:    // If was adding, now remove
+                                    State = asRemovingAdder;
+                                    LedService.StartSequence(lsqRemovingAdderWaiting);
+                                    RestartStateTimer();
+                                    break;
+                                // If was removing, enter Idle
+                                case asRemovingAdder: EnterIdleState(); break;
+                                // Otherwise, enter adding
+                                default:
+                                    State = asAddingAdder;
+                                    LedService.StartSequence(lsqAddingAdderWaiting);
+                                    RestartStateTimer();
+                                    break;
+                            } // switch State
                             break;
 
-                        case keyC: break;
+                        // Iterate RemoverAdd / RemoverRemove / Idle
+                        case keyC:
+                            switch(State) {
+                                case asAddingRemover:    // If was adding, now remove
+                                    State = asRemovingRemover;
+                                    LedService.StartSequence(lsqRemovingRemoverWaiting);
+                                    RestartStateTimer();
+                                    break;
+                                case asRemovingRemover:  // If was removing, now Idle
+                                    EnterIdleState();
+                                    break;
+                                default:                // Otherwise, add
+                                    State = asAddingRemover;
+                                    LedService.StartSequence(lsqAddingRemoverWaiting);
+                                    RestartStateTimer();
+                                    break;
+                            } // switch State
+                            break;
                     } // switch
                 } // if keypress
                 else if(EInfo.Type == keCombo and EInfo.KeyID[0] == keyA and EInfo.KeyID[1] == keyB) {
@@ -176,7 +191,7 @@ void App_t::ITask() {
             Usb.Init();
             chThdSleepMilliseconds(540);
             Usb.Connect();
-            Uart.Printf("\rUsb connected");
+            Uart.Printf("\rUsb connected, AHB freq=%uMHz", Clk.AHBFreqHz/1000000);
         }
         if(EvtMsk & EVTMSK_USB_DISCONNECTED) {
             Usb.Shutdown();
@@ -185,51 +200,148 @@ void App_t::ITask() {
             Clk.SetFreq12Mhz();
             Clk.InitSysTick();
             chSysUnlock();
-            Uart.Printf("\rUsb disconnected");
+            Uart.Printf("\rUsb disconnected, AHB freq=%uMHz", Clk.AHBFreqHz/1000000);
         }
 #endif
 
         // ==== State timeout ====
-        if(EvtMsk & EVTMSK_STATE_TIMEOUT) {
-            LedService.StartSequence(lsqIdle);
-            State = asIdle;
-            if(IDStore.HasChanged) IDStore.Save();
-        }
+        if(EvtMsk & EVTMSK_STATE_TIMEOUT) EnterIdleState();
     } // while true
 }
 
+#if 1 // ========================= States ======================================
+void App_t::EnterIdleState() {
+    if(IDStore.HasChanged) IDStore.Save();
+    Led.StartSequence(lsqDoorClose);
+    LedService.StartSequence(lsqIdle);
+    State = asIdle;
+}
+
+void App_t::EnterAddingAccessState() {
+    State = asAddingAccess;
+    Led.StartSequence(lsqAddingAccessWaiting);
+    LedService.StartSequence(lsqAddingAccessWaiting);
+    RestartStateTimer();
+}
+
+void App_t::EnterRemovingAccessState() {
+    State = asRemovingAccess;
+    Led.StartSequence(lsqRemovingAccessWaiting);
+    LedService.StartSequence(lsqRemovingAccessWaiting);
+    RestartStateTimer();
+}
+#endif
+
 void App_t::ProcessCardAppearance() {
 //    App.CurrentID.Print();
+#if SAVE_LAST_ID
+    if(LastID != CurrentID) {
+        LastID = CurrentID;
+        if(SD.OpenRewrite(LAST_ID_FILENAME) == OK) {
+            for(uint32_t i=0; i<8; i++) f_printf(&SD.File, "%02X", LastID.ID8[i]);
+            SD.Close();
+//            Uart.Printf("\rID saved");
+        }
+    }
+#endif
+    // Proceed with check
+    IdKind_t IdKind = IDStore.Check(CurrentID);
     switch(State) {
         case asIdle:
             if(DoorState == dsClosed) {
-                IdKind_t IdKind = IDStore.Check(CurrentID);
                 switch(IdKind) {
                     case ikAccess:  SendEvt(EVTMSK_DOOR_OPEN); break;
-                    case ikSpecial: break;
-                    case ikAdder: break;
-                    case ikRemover: break;
-                    case ikNone:    SendEvt(EVTMSK_BAD_KEY);   break;
+                    case ikSecret:  break;
+                    case ikAdder:   EnterAddingAccessState(); break;
+                    case ikRemover: EnterRemovingAccessState(); break;
+                    case ikNone:    SendEvt(EVTMSK_BAD_KEY); break;
                 }
+            }
+            return;
+            break;
+
+        case asAddingAccess:
+            switch(IdKind) {
+                case ikAdder: EnterIdleState(); break;
+                case ikRemover: EnterRemovingAccessState(); break;
+                case ikNone:
+                    if(IDStore.Add(CurrentID, ikAccess) == OK) LedService.StartSequence(lsqAddingAccessNew);
+                    else LedService.StartSequence(lsqAddingAccessError);
+                    break;
+                case ikAccess: LedService.StartSequence(lsqAddingAccessNew); break; // already in base
+                case ikSecret: break;
+            }
+            break;
+        case asRemovingAccess:
+            switch(IdKind) {
+                case ikAdder: EnterAddingAccessState(); break;
+                case ikRemover: EnterIdleState(); break;
+                case ikNone: LedService.StartSequence(lsqRemovingAccessNew); break; // already absent
+                case ikAccess:
+                    IDStore.Remove(CurrentID, ikAccess);
+                    LedService.StartSequence(lsqRemovingAccessNew);
+                    break;
+                case ikSecret: break;
             }
             break;
 
-        case asAddingAcc:
-            LedService.StartSequence(lsqAddingAccNew);
-            if(IDStore.AddAccessID(CurrentID) != OK) LedService.StartSequence(lsqError);
-            RestartStateTimer();
+        case asAddingAdder:
+            Uart.Printf("\rAdding Adder");
+            switch(IdKind) {
+                case ikAdder: LedService.StartSequence(lsqAddingAdderNew); break; // already in base
+                case ikRemover:
+                    IDStore.Remove(CurrentID, ikRemover);
+                    if(IDStore.Add(CurrentID, ikAdder) == OK) LedService.StartSequence(lsqAddingAdderNew);
+                    else LedService.StartSequence(lsqAddingAdderError);
+                    break;
+                case ikNone:
+                    if(IDStore.Add(CurrentID, ikAdder) == OK) LedService.StartSequence(lsqAddingAdderNew);
+                    else LedService.StartSequence(lsqAddingAdderError);
+                    break;
+                case ikAccess:
+                    IDStore.Remove(CurrentID, ikAccess);
+                    if(IDStore.Add(CurrentID, ikAdder) == OK) LedService.StartSequence(lsqAddingAdderNew);
+                    else LedService.StartSequence(lsqAddingAdderError);
+                    break;
+                case ikSecret: break;
+            }
             break;
 
-        case asRemovingAcc:
-            LedService.StartSequence(lsqRemovingAccNew);
-            IDStore.RemoveAccess(CurrentID);
-            RestartStateTimer();
+        case asRemovingAdder:
+            Uart.Printf("\rRemoving Adder");
+            LedService.StartSequence(lsqRemovingAdderNew);
+            IDStore.Remove(CurrentID, ikAdder);
             break;
 
-        case asAddingMaster:
-        case asRemovingMaster:
+        case asAddingRemover:
+            Uart.Printf("\rAdding Remover");
+            switch(IdKind) {
+                case ikAdder:
+                    IDStore.Remove(CurrentID, ikAdder);
+                    if(IDStore.Add(CurrentID, ikRemover) == OK) LedService.StartSequence(lsqAddingRemoverNew);
+                    else LedService.StartSequence(lsqAddingRemoverError);
+                    break;
+                case ikRemover: LedService.StartSequence(lsqAddingRemoverNew); break; // already in base
+                case ikNone:
+                    if(IDStore.Add(CurrentID, ikRemover) == OK) LedService.StartSequence(lsqAddingRemoverNew);
+                    else LedService.StartSequence(lsqAddingRemoverError);
+                    break;
+                case ikAccess:
+                    IDStore.Remove(CurrentID, ikAccess);
+                    if(IDStore.Add(CurrentID, ikRemover) == OK) LedService.StartSequence(lsqAddingRemoverNew);
+                    else LedService.StartSequence(lsqAddingRemoverError);
+                    break;
+                case ikSecret: break;
+            }
+            break;
+
+        case asRemovingRemover:
+            Uart.Printf("\rRemoving Remover");
+            LedService.StartSequence(lsqRemovingRemoverNew);
+            IDStore.Remove(CurrentID, ikRemover);
             break;
     } // switch
+    RestartStateTimer();
 }
 
 uint8_t App_t::ReadConfig() {

@@ -23,29 +23,131 @@ const LedChunk_t lsqError[] = {
         {csEnd}
 };
 
-// Adding / removing IDs
-const LedChunk_t lsqAddingAccIdle[] = {
-        {csSetup, 0, clGreen},
+// ======= Adding / removing IDs ========
+// ==== Access ====
+#define LSQ_ACCESS_ADD_CLR      clGreen
+#define LSQ_ACCESS_REMOVE_CLR   clRed
+const LedChunk_t lsqAddingAccessWaiting[] = {
+        {csSetup, 0, LSQ_ACCESS_ADD_CLR},
         {csEnd}
 };
-const LedChunk_t lsqAddingAccNew[] = {
+const LedChunk_t lsqAddingAccessNew[] = {
         {csSetup, 0, clBlack},
         {csWait, 180},
-        {csSetup, 0, clGreen},
+        {csSetup, 0, LSQ_ACCESS_ADD_CLR},
+        {csEnd}
+};
+const LedChunk_t lsqAddingAccessError[] = {
+        {csSetup, 0, clRed},
+        {csWait, 99},
+        {csSetup, 0, clBlack},
+        {csWait, 99},
+        {csSetup, 0, clRed},
+        {csWait, 99},
+        {csSetup, 0, clBlack},
+        {csWait, 99},
+        {csSetup, 0, clRed},
+        {csWait, 99},
+        {csSetup, 0, clBlack},
+        {csWait, 99},
+        {csSetup, 0, LSQ_ACCESS_ADD_CLR},
         {csEnd}
 };
 
-const LedChunk_t lsqRemovingAccIdle[] = {
-        {csSetup, 0, clRed},
+const LedChunk_t lsqRemovingAccessWaiting[] = {
+        {csSetup, 0, LSQ_ACCESS_REMOVE_CLR},
         {csEnd}
 };
-const LedChunk_t lsqRemovingAccNew[] = {
+const LedChunk_t lsqRemovingAccessNew[] = {
         {csSetup, 0, clBlack},
         {csWait, 180},
-        {csSetup, 0, clRed},
+        {csSetup, 0, LSQ_ACCESS_REMOVE_CLR},
         {csEnd}
 };
 
+// ==== Adder ====
+#define LSQ_ADDER_ADD_CLR       clBlue
+#define LSQ_ADDER_REMOVE_CLR    clMagenta
+const LedChunk_t lsqAddingAdderWaiting[] = {
+        {csSetup, 0, LSQ_ADDER_ADD_CLR},
+        {csEnd}
+};
+const LedChunk_t lsqAddingAdderNew[] = {
+        {csSetup, 0, clBlack},
+        {csWait, 180},
+        {csSetup, 0, LSQ_ADDER_ADD_CLR},
+        {csEnd}
+};
+const LedChunk_t lsqAddingAdderError[] = {
+        {csSetup, 0, clRed},
+        {csWait, 99},
+        {csSetup, 0, clBlack},
+        {csWait, 99},
+        {csSetup, 0, clRed},
+        {csWait, 99},
+        {csSetup, 0, clBlack},
+        {csWait, 99},
+        {csSetup, 0, clRed},
+        {csWait, 99},
+        {csSetup, 0, clBlack},
+        {csWait, 99},
+        {csSetup, 0, LSQ_ADDER_ADD_CLR},
+        {csEnd}
+};
+
+const LedChunk_t lsqRemovingAdderWaiting[] = {
+        {csSetup, 0, LSQ_ADDER_REMOVE_CLR},
+        {csEnd}
+};
+const LedChunk_t lsqRemovingAdderNew[] = {
+        {csSetup, 0, clBlack},
+        {csWait, 180},
+        {csSetup, 0, LSQ_ADDER_REMOVE_CLR},
+        {csEnd}
+};
+
+// ==== Remover ====
+#define LSQ_REMOVER_ADD_CLR     clCyan
+#define LSQ_REMOVER_REMOVE_CLR  clYellow
+const LedChunk_t lsqAddingRemoverWaiting[] = {
+        {csSetup, 0, LSQ_REMOVER_ADD_CLR},
+        {csEnd}
+};
+const LedChunk_t lsqAddingRemoverNew[] = {
+        {csSetup, 0, clBlack},
+        {csWait, 180},
+        {csSetup, 0, LSQ_REMOVER_ADD_CLR},
+        {csEnd}
+};
+const LedChunk_t lsqAddingRemoverError[] = {
+        {csSetup, 0, clRed},
+        {csWait, 99},
+        {csSetup, 0, clBlack},
+        {csWait, 99},
+        {csSetup, 0, clRed},
+        {csWait, 99},
+        {csSetup, 0, clBlack},
+        {csWait, 99},
+        {csSetup, 0, clRed},
+        {csWait, 99},
+        {csSetup, 0, clBlack},
+        {csWait, 99},
+        {csSetup, 0, LSQ_REMOVER_ADD_CLR},
+        {csEnd}
+};
+
+const LedChunk_t lsqRemovingRemoverWaiting[] = {
+        {csSetup, 0, LSQ_REMOVER_REMOVE_CLR},
+        {csEnd}
+};
+const LedChunk_t lsqRemovingRemoverNew[] = {
+        {csSetup, 0, clBlack},
+        {csWait, 180},
+        {csSetup, 0, LSQ_REMOVER_REMOVE_CLR},
+        {csEnd}
+};
+
+// ==== Erase all ====
 const LedChunk_t lsqEraseAll[] = {
         {csSetup, 0, clRed},
         {csWait, 180},
@@ -98,6 +200,7 @@ const LedChunk_t lsqDoorOpen[] = {
         {csEnd}
 };
 const LedChunk_t lsqDoorClose[] = {
+        {csSetup, 0, clBlack},
         {csSetup, 900, clDoorClosed},
         {csEnd}
 };

@@ -27,9 +27,10 @@ enum MS_ClassRequests_t {
 
 // Enum for the possible command status wrapper return status codes.
 enum MS_CommandStatusCodes_t {
-    MS_SCSI_COMMAND_Pass       = 0, // Command completed with no error
-    MS_SCSI_COMMAND_Fail       = 1, // Command failed to complete - host may check the exact error via a SCSI REQUEST SENSE command
-    MS_SCSI_COMMAND_PhaseError = 2, // Command failed due to being invalid in the current phase.
+    MS_SCSI_Status_Good       = 0x00, // Command completed with no error
+//    MS_SCSI_COMMAND_Fail       = 1, // Command failed to complete - host may check the exact error via a SCSI REQUEST SENSE command
+    MS_SCSI_Status_Check_Condition = 0x02,
+    MS_SCSI_Status_Busy = 0x08,
 };
 
 // Mass Storage Class Command Block Wrapper

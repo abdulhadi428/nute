@@ -15,24 +15,28 @@
 #include <inttypes.h>
 #include "cmd_uart.h"
 #include "ch.h"
-#include "ff.h"
+#include "kl_sd.h"
 
 #define ID_SZ_BYTES         8   // 7 bytes of Mifare Ultralite's ID
-#define ID_MASTER_CNT       9
-#define ID_SPECIAL_CNT      4
-// Setup this carefully. If EEProm size == 512 bytes,
-// Space Left = 512 - 4 - 4 - ID_MASTER_CNT * ID_SZ_BYTES = 432;
-// AccessID cnt = 432 / 8 = 54.
+// Group types: Access, MasterAdder, MasterRemover, Secret
+// Group sizes
 #define ID_ACCESS_CNT       99
+#define ID_ADDER_CNT        9
+#define ID_REMOVER_CNT      9
+#define ID_SECRET_CNT       9
 
 #if 1 // ========== Files ==========
-#define IDSTORE_FILENAME    "ID_Store.ini"
+#define IDSTORE_FILENAME        "ID_Store.ini"
 
-#define ID_GROUP_ACCESS     "AccessID"
+#define ID_GROUP_NAME_ACCESS    "GroupAccess"
+#define ID_GROUP_NAME_ADDER     "GroupMasterAdder"
+#define ID_GROUP_NAME_REMOVER   "GroupMasterRemover"
+#define ID_GROUP_NAME_SECRET    "GroupSecret"
 
 #endif
 
 #if 1 // ========================== Auxilary classes ===========================
+// Struct of single ID. ID is 8-byte wide.
 struct ID_t {
     union {
         uint32_t ID32[2];
@@ -45,13 +49,15 @@ struct ID_t {
     }
     void Print() { Uart.Printf("\r%04X %04X", ID32[0], ID32[1]); }
     bool operator == (const ID_t &AID) { return (ID32[0] == AID.ID32[0]) and (ID32[1] == AID.ID32[1]); }
+    bool operator != (const ID_t &AID) { return (ID32[0] != AID.ID32[0]) or  (ID32[1] != AID.ID32[1]); }
     ID_t& operator = (const ID_t &AID) { ID32[0] = AID.ID32[0]; ID32[1] = AID.ID32[1]; return *this; }
 } __attribute__ ((__packed__));
 
+// Array of IDs. Length is templated.
 template <uint32_t TCnt>
 struct ID_Array_t {
-    uint32_t Cnt;
-    ID_t ID[TCnt];
+    int32_t Cnt;        // Number of IDs stored
+    ID_t ID[TCnt];      // IDs themselves
     void Erase() { Cnt = 0; }
     bool ContainsID(ID_t &sID, uint32_t *PIndx = nullptr) {
         for(uint32_t i=0; i<Cnt; i++) {
@@ -92,49 +98,72 @@ struct ID_Array_t {
             return FAILURE;
         }
     }
-    // Save/Load
-    void Save(FIL *PFile, const char *GroupName) {
-        f_putc('[', PFile);
-        f_puts(ID_GROUP_ACCESS, PFile);
-        f_puts("]\r\n", PFile);
-        f_printf(PFile, "Count=%u\r\n", Cnt);
+    // Save/Load to SD card
+    void Save(const char *GroupName) {
+        SD.iniFile.WriteSection(GroupName);
+        char *p, IDKey[11] = "ID";
         for(uint32_t i=0; i<Cnt; i++) {
-            f_printf(PFile, "ID=%04X%04X\r\n", ID[i].ID32[0], ID[i].ID32[1]);
+            p = Convert::Int32ToStr(i, &IDKey[2]);
+            *p = 0; // End of string
+            SD.iniFile.WriteArray(IDKey, ID[i].ID8, 8);
         }
+    }
+    void Load(const char *GroupName) {
+        Cnt = 0;
+        char *p, IDKey[11] = "ID";
+        while(Cnt < TCnt) {
+            p = Convert::Int32ToStr(Cnt, &IDKey[2]);
+            *p = 0; // End of string
+            if(SD.iniFile.ReadArray(GroupName, IDKey, ID[Cnt].ID8, 8) == OK) Cnt++;
+            else break; // Get out if failed to read array
+        }
+//        Uart.Printf("\rCnt=%u; %04X %04X; Id0=%A", Cnt, ID[0].ID32[0], ID[0].ID32[1], ID[0].ID8, 8, ' ');
     }
 } __attribute__ ((__packed__));
 
 #endif
 
-enum IdKind_t {ikNone, ikAdder, ikRemover, ikAccess, ikSpecial};
+enum IdKind_t {ikNone, ikAccess, ikAdder, ikRemover, ikSecret};
 
 class IDStore_t {
 private:
-    ID_Array_t<ID_ACCESS_CNT> IDAccess;
-    ID_Array_t<ID_MASTER_CNT> IDAdder;
-    ID_Array_t<ID_MASTER_CNT> IDRemover;
-    ID_Array_t<ID_SPECIAL_CNT> IDSpecial;
-    FIL IFile;
+    ID_Array_t<ID_ACCESS_CNT>  IDAccess;
+    ID_Array_t<ID_ADDER_CNT>   IDAdder;
+    ID_Array_t<ID_REMOVER_CNT> IDRemover;
+    ID_Array_t<ID_SECRET_CNT>  IDSecret;
 public:
     bool HasChanged;
     // ID operations
     IdKind_t Check(ID_t &sID, uint32_t *PIndx = nullptr);
-    uint8_t AddAccessID(ID_t &sID) {
-        if(IDAccess.Add(sID) == OK) {
-            HasChanged = true;
-            return OK;
+    uint8_t Add(ID_t &sID, IdKind_t Kind) {
+        uint8_t Rslt = FAILURE;
+        switch(Kind) {
+            case ikAccess:  Rslt = IDAccess.Add(sID);  break;
+            case ikAdder:   Rslt = IDAdder.Add(sID);   break;
+            case ikRemover: Rslt = IDRemover.Add(sID); break;
+            default: break;
         }
-        else return FAILURE;
+        if(Rslt == OK) HasChanged = true;   // Failure means absence in base
+        return Rslt;
     }
-    void RemoveAccess(ID_t &sID) {
-        if(IDAccess.Remove(sID) == OK) HasChanged = true;   // Failure means absence in base
+    uint8_t Remove(ID_t &sID, IdKind_t Kind) {
+        uint8_t Rslt = FAILURE;
+        switch(Kind) {
+            case ikAccess:  Rslt = IDAccess.Remove(sID);  break;
+            case ikAdder:   Rslt = IDAdder.Remove(sID);   break;
+            case ikRemover: Rslt = IDRemover.Remove(sID); break;
+            default: break;
+        }
+        if(Rslt == OK) HasChanged = true;   // Failure means absence in base
+        return Rslt;
     }
     // Load/save
     void Load();
     void Save();
     void EraseAll() {
         IDAccess.Erase();
-//        IDArr.CntMaster = 0;
+        IDAdder.Erase();
+        IDRemover.Erase();
         HasChanged = true;
     }
 };

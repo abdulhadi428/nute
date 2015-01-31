@@ -23,15 +23,15 @@ EpState_t Usb_t::NonStandardControlRequestHandler(uint8_t **PPtr, uint32_t *PLen
     if((SetupReq.wIndex != 0) or (SetupReq.wValue != 0)) return esError;
     switch(SetupReq.bRequest) {
             case MS_REQ_MassStorageReset:
-//                Uart.Printf("MS_REQ_MassStorageReset\r");
+//                Uart.PrintfI("\rMS_REQ_MassStorageReset");
                 if((SetupReq.bmRequestType == (USB_REQTYPE_RECIPIENT_DEVICE | USB_REQTYPE_CLASS | USB_REQTYPE_RECIPIENT_INTERFACE))
                         and (SetupReq.wLength == 0)) {
-                    // TODO: remove Stall condition
+//                     TODO: remove Stall condition
                     return esOutStatus; // Acknowledge reception
                 }
                 break;
             case MS_REQ_GetMaxLUN:
-//                Uart.Printf("MS_REQ_GetMaxLUN\r");
+//                Uart.PrintfI("\rMS_REQ_GetMaxLUN");
                 if((SetupReq.bmRequestType == (USB_REQTYPE_DEV2HOST | USB_REQTYPE_CLASS | USB_REQTYPE_RECIPIENT_INTERFACE))
                         and (SetupReq.wLength == 1)) {
                     SByte = 0;  // Maximum LUN ID
@@ -81,7 +81,8 @@ void MassStorage_t::UsbOutTask() {
 
 #if 1 // =========================== SCSI ======================================
 void MassStorage_t::SCSICmdHandler() {
-    //Uart.Printf("Sgn=%X; Tag=%X; Len=%u; Flags=%X; LUN=%u; SLen=%u; SCmd=%A\r", CmdBlock.Signature, CmdBlock.Tag, CmdBlock.DataTransferLen, CmdBlock.Flags, CmdBlock.LUN, CmdBlock.SCSICmdLen, CmdBlock.SCSICmdData, CmdBlock.SCSICmdLen, ' ');
+//    Uart.Printf("\rSgn=%X; Tag=%X; Len=%u; Flags=%X; LUN=%u; SLen=%u; SCmd=%A", CmdBlock.Signature, CmdBlock.Tag, CmdBlock.DataTransferLen, CmdBlock.Flags, CmdBlock.LUN, CmdBlock.SCSICmdLen, CmdBlock.SCSICmdData, CmdBlock.SCSICmdLen, ' ');
+//    Uart.Printf("\rSCmd=%X", CmdBlock.SCSICmdData[0]);
     bool CmdOk = false;
     switch(CmdBlock.SCSICmdData[0]) {
         case SCSI_CMD_INQUIRY:            CmdOk = CmdInquiry(); break;
@@ -92,6 +93,7 @@ void MassStorage_t::SCSICmdHandler() {
         case SCSI_CMD_WRITE_10:           CmdOk = CmdWrite10(); break;
         case SCSI_CMD_READ_10:            CmdOk = CmdRead10(); break;
         case SCSI_CMD_MODE_SENSE_6:       CmdOk = CmdModeSense6(); break;
+
         // These commands should just succeed, no handling required
         case SCSI_CMD_TEST_UNIT_READY:
         case SCSI_CMD_PREVENT_ALLOW_MEDIUM_REMOVAL:
@@ -117,7 +119,7 @@ void MassStorage_t::SCSICmdHandler() {
     }
 
     // Send status
-    CmdStatus.Status = CmdOk? MS_SCSI_COMMAND_Pass : MS_SCSI_COMMAND_Fail;
+    CmdStatus.Status = CmdOk? MS_SCSI_Status_Good : MS_SCSI_Status_Check_Condition;
     CmdStatus.Signature = MS_CSW_SIGNATURE;
     CmdStatus.Tag = CmdBlock.Tag;
     // DataTransferLen decreased at cmd handlers
@@ -223,6 +225,7 @@ bool MassStorage_t::CmdRead10() {
     uint32_t BlockAddress=0;
     uint16_t TotalBlocks=0;
     if(ReadWriteCommon(&BlockAddress, &TotalBlocks) == false) return false;
+//    Uart.Printf("\rCmdRead10: A=%u L=%u", BlockAddress, TotalBlocks);
     // ==== Send data ====
     uint32_t BlocksToRead, BytesToSend; // Intermediate values
     bool Rslt;

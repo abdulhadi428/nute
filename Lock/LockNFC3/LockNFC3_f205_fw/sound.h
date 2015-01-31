@@ -114,9 +114,9 @@ private:
     // Pin operations
     inline void Rst_Lo()   { PinClear(VS_GPIO, VS_RST); }
     inline void Rst_Hi()   { PinSet(VS_GPIO, VS_RST); }
-    inline void XCS_Lo()   { PinClear(VS_GPIO, VS_XCS); }
+    inline void XCS_Lo()   { PinClear(VS_GPIO, VS_XCS); Loop(180); }
     inline void XCS_Hi()   { PinSet(VS_GPIO, VS_XCS);  }
-    inline void XDCS_Lo()  { PinClear(VS_GPIO, VS_XDCS); }
+    inline void XDCS_Lo()  { PinClear(VS_GPIO, VS_XDCS); Loop(360); }
     inline void XDCS_Hi()  { PinSet(VS_GPIO, VS_XDCS); }
     // Cmds
     uint8_t CmdRead(uint8_t AAddr, uint16_t *AData);

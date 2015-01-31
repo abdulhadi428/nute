@@ -32,7 +32,6 @@ void SIrqDmaHandler(void *p, uint32_t flags) {
     chSysLockFromIsr();
     chEvtSignalI(Sound.PThread, VS_EVT_DMA_DONE);
     chSysUnlockFromIsr();
-    //Sound.IrqDmaHandler();
 }
 } // extern c
 
@@ -51,7 +50,7 @@ void Sound_t::ITask() {
 #if 1 // ==== DMA done ====
         if(EvtMsk & VS_EVT_DMA_DONE) {
             ISpi.WaitBsyLo();                   // Wait SPI transaction end
-            Loop(99);                           // Make a solemn pause
+            Loop(450);                          // Make a solemn pause
             XCS_Hi();                           // }
             XDCS_Hi();                          // } Stop SPI
             // Send next data if VS is ready
@@ -113,7 +112,7 @@ void Sound_t::Init() {
     PinSetupAlterFunc(VS_GPIO, VS_SI,   omPushPull, pudNone, VS_AF);
 
     // ==== SPI init ====
-    ISpi.Setup(VS_SPI, boMSB, cpolIdleLow, cphaFirstEdge, sbFdiv4);
+    ISpi.Setup(VS_SPI, boMSB, cpolIdleLow, cphaFirstEdge, sbFdiv8);
     ISpi.Enable();
     ISpi.EnableTxDma();
 

@@ -14,11 +14,25 @@
 #include "led_rgb.h"
 #include "Sequences.h"
 
+#define USB_ENABLED TRUE
+
+// Timings
 #define STATE_TIMEOUT       18000   // ms; switch to waiting state
 #define DOOR_CLOSE_TIMEOUT  9999    // ms
 
+// Saving last ID to file
+#define SAVE_LAST_ID        TRUE
+#if SAVE_LAST_ID
+#define LAST_ID_FILENAME    "Last_ID.txt"
+#endif
+
 enum DoorState_t {dsClosed, dsOpen};
-enum AppState_t  {asIdle, asAddingAcc, asRemovingAcc, asAddingMaster, asRemovingMaster};
+enum AppState_t  {
+    asIdle,
+    asAddingAccess, asRemovingAccess,
+    asAddingAdder, asRemovingAdder,
+    asAddingRemover, asRemovingRemover,
+};
 
 void TmrGeneralCallback(void *p);
 
@@ -33,6 +47,13 @@ private:
         chVTSetI(&ITmr, MS2ST(STATE_TIMEOUT), TmrGeneralCallback, (void*)EVTMSK_STATE_TIMEOUT);
         chSysUnlock();
     }
+    // States
+    void EnterIdleState();
+    void EnterAddingAccessState();
+    void EnterRemovingAccessState();
+#if SAVE_LAST_ID
+    ID_t LastID;
+#endif
 public:
     Thread *PThd; // Main thread
     AppState_t State = asIdle;
