@@ -89,6 +89,7 @@ extern const uint8_t Mode_Sense6_data[MODE_SENSE6_DATA_SZ];
 #define SCSI_CMD_WRITE_6                        0x0A
 #define SCSI_CMD_INQUIRY                        0x12
 #define SCSI_CMD_MODE_SENSE_6                   0x1A
+#define SCSI_CMD_START_STOP_UNIT                0x1B
 #define SCSI_CMD_SEND_DIAGNOSTIC                0x1D
 #define SCSI_CMD_PREVENT_ALLOW_MEDIUM_REMOVAL   0x1E
 #define SCSI_READ_FORMAT_CAPACITIES             0x23

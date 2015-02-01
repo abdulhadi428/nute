@@ -17,13 +17,18 @@
 #define USB_ENABLED TRUE
 
 // Timings
-#define STATE_TIMEOUT       18000   // ms; switch to waiting state
-#define DOOR_CLOSE_TIMEOUT  9999    // ms
+#define STATE_TIMEOUT           18000   // ms; switch to waiting state
+#define DOOR_CLOSE_TIMEOUT      9999    // ms
 
 // Saving last ID to file
-#define SAVE_LAST_ID        TRUE
+#define SAVE_LAST_ID            TRUE
 #if SAVE_LAST_ID
-#define LAST_ID_FILENAME    "Last_ID.txt"
+#define LAST_ID_FILENAME        "Last_ID.txt"
+// File folders
+#define DIRNAME_GOOD_KEY        "GoodKey"
+#define DIRNAME_BAD_KEY         "BadKey"
+#define DIRNAME_DOOR_CLOSING    "Closing"
+#define DIRNAME_SECRET          "Secret"
 #endif
 
 enum DoorState_t {dsClosed, dsOpen};

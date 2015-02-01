@@ -57,6 +57,10 @@ public:
         f_putc('\r', PFile);
         f_putc('\n', PFile);
     }
+    void WriteNewline() {
+        f_putc('\r', PFile);
+        f_putc('\n', PFile);
+    }
     friend class sd_t;
 };
 #endif

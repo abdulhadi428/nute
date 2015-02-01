@@ -28,10 +28,10 @@
 #if 1 // ========== Files ==========
 #define IDSTORE_FILENAME        "ID_Store.ini"
 
-#define ID_GROUP_NAME_ACCESS    "GroupAccess"
-#define ID_GROUP_NAME_ADDER     "GroupMasterAdder"
-#define ID_GROUP_NAME_REMOVER   "GroupMasterRemover"
-#define ID_GROUP_NAME_SECRET    "GroupSecret"
+#define ID_GROUP_NAME_ACCESS    "AccessID"
+#define ID_GROUP_NAME_ADDER     "MasterAdderID"
+#define ID_GROUP_NAME_REMOVER   "MasterRemoverID"
+#define ID_GROUP_NAME_SECRET    "SecretID"
 
 #endif
 
@@ -107,6 +107,7 @@ struct ID_Array_t {
             *p = 0; // End of string
             SD.iniFile.WriteArray(IDKey, ID[i].ID8, 8);
         }
+        SD.iniFile.WriteNewline();
     }
     void Load(const char *GroupName) {
         Cnt = 0;

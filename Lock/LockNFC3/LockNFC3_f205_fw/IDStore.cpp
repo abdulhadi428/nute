@@ -21,7 +21,10 @@ IdKind_t IDStore_t::Check(ID_t &sID, uint32_t *PIndx) {
 void IDStore_t::Load() {
     HasChanged = false;
     if(SD.OpenRead(IDSTORE_FILENAME) == OK) {
-        IDAccess.Load(IDSTORE_FILENAME);
+        IDAccess.Load(ID_GROUP_NAME_ACCESS);
+        IDAdder.Load(ID_GROUP_NAME_ADDER);
+        IDRemover.Load(ID_GROUP_NAME_REMOVER);
+        IDSecret.Load(ID_GROUP_NAME_SECRET);
         SD.Close();
         Uart.Printf("\rIDs loaded");
     }
@@ -30,8 +33,10 @@ void IDStore_t::Load() {
 void IDStore_t::Save(void) {
     HasChanged = false;
     if(SD.OpenRewrite(IDSTORE_FILENAME) == OK) {
-//        IDAccess.Save(ID_GROUP_ACCESS);
-
+        IDAccess.Save(ID_GROUP_NAME_ACCESS);
+        IDAdder.Save(ID_GROUP_NAME_ADDER);
+        IDRemover.Save(ID_GROUP_NAME_REMOVER);
+        IDSecret.Save(ID_GROUP_NAME_SECRET);
         SD.Close();
         Uart.Printf("\rIDs saved");
     }

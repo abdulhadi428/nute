@@ -93,7 +93,7 @@ void App_t::ITask() {
         if(EvtMsk & EVTMSK_DOOR_OPEN) {
             DoorState = dsOpen;
             Led.StartSequence(lsqDoorOpen); // Set color
-            SndList.PlayRandomFileFromDir("GoodKey");
+            SndList.PlayRandomFileFromDir(DIRNAME_GOOD_KEY);
             Uart.Printf("\rDoor is open");
             chSysLock();
             if(chVTIsArmedI(&IDoorTmr)) chVTResetI(&IDoorTmr);
@@ -103,14 +103,22 @@ void App_t::ITask() {
         if(EvtMsk & EVTMSK_DOOR_SHUT) {
             DoorState = dsClosed;
             Led.StartSequence(lsqDoorClose);    // Set color
-            SndList.PlayRandomFileFromDir("Closing");
-            Uart.Printf("\rDoor is closed");
+            SndList.PlayRandomFileFromDir(DIRNAME_DOOR_CLOSING);
+            Uart.Printf("\rDoor is closing");
         }
 
         if(EvtMsk & EVTMSK_BAD_KEY) {
             Led.StartSequence(lsqDoorWrongKey);
-            SndList.PlayRandomFileFromDir("BadKey");
+            SndList.PlayRandomFileFromDir(DIRNAME_BAD_KEY);
             Uart.Printf("\rBadKey");
+        }
+#endif
+
+#if 1 // ==== Secret key ====
+        if(EvtMsk & EVTMSK_SECRET_KEY) {
+            Led.StartSequence(lsqDoorSecretKey);
+            SndList.PlayRandomFileFromDir(DIRNAME_SECRET);
+            Uart.Printf("\rSecretKey");
         }
 #endif
 
@@ -261,7 +269,7 @@ void App_t::ProcessCardAppearance() {
             if(DoorState == dsClosed) {
                 switch(IdKind) {
                     case ikAccess:  SendEvt(EVTMSK_DOOR_OPEN); break;
-                    case ikSecret:  break;
+                    case ikSecret:  SendEvt(EVTMSK_SECRET_KEY); break;
                     case ikAdder:   EnterState(asAddingAccess); break;
                     case ikRemover: EnterState(asRemovingAccess); break;
                     case ikNone:    SendEvt(EVTMSK_BAD_KEY); break;

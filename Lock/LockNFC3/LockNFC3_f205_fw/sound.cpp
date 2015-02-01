@@ -1,8 +1,7 @@
 #include "sound.h"
 #include <string.h>
 #include "evt_mask.h"
-
-//#if SOUND_ENABLED
+#include "clocking.h"
 
 Sound_t Sound;
 
@@ -50,7 +49,7 @@ void Sound_t::ITask() {
 #if 1 // ==== DMA done ====
         if(EvtMsk & VS_EVT_DMA_DONE) {
             ISpi.WaitBsyLo();                   // Wait SPI transaction end
-            Loop(450);                          // Make a solemn pause
+            if(Clk.AHBFreqHz > 12000000) Loop(450); // Make a solemn pause
             XCS_Hi();                           // }
             XDCS_Hi();                          // } Stop SPI
             // Send next data if VS is ready
@@ -322,5 +321,3 @@ uint8_t Sound_t::CmdWrite(uint8_t AAddr, uint16_t AData) {
     XCS_Hi();                       // End transmission
     return OK;
 }
-
-//#endif // #if SOUND_ENABLED
