@@ -33,6 +33,7 @@ enum AppState_t  {
     asAddingAdder, asRemovingAdder,
     asAddingRemover, asRemovingRemover,
 };
+enum AddRemoveResult_t {arrAddingOk, arrAddingErr, arrRemovingOk};
 
 void TmrGeneralCallback(void *p);
 
@@ -47,10 +48,10 @@ private:
         chVTSetI(&ITmr, MS2ST(STATE_TIMEOUT), TmrGeneralCallback, (void*)EVTMSK_STATE_TIMEOUT);
         chSysUnlock();
     }
-    // States
-    void EnterIdleState();
-    void EnterAddingAccessState();
-    void EnterRemovingAccessState();
+    // States and indication
+    void EnterState(AppState_t NewState);
+    void ShowAddRemoveResult(AddRemoveResult_t Rslt);
+
 #if SAVE_LAST_ID
     ID_t LastID;
 #endif

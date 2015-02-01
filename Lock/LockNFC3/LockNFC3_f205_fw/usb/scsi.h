@@ -96,6 +96,7 @@ extern const uint8_t Mode_Sense6_data[MODE_SENSE6_DATA_SZ];
 #define SCSI_CMD_READ_10                        0x28
 #define SCSI_CMD_WRITE_10                       0x2A
 #define SCSI_CMD_VERIFY_10                      0x2F
+#define SCSI_CMD_SYNCHRONIZE_CACHE              0x35
 #define SCSI_CMD_MODE_SENSE_10                  0x5A
 #endif
 

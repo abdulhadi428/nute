@@ -124,50 +124,26 @@ void App_t::ITask() {
                         // Iterate AccessAdd / AccessRemove / Idle
                         case keyA:
                             switch(State) {
-                                // If was adding, enter removing state
-                                case asAddingAccess: EnterRemovingAccessState(); break;
-                                // If was removing, enter Idle
-                                case asRemovingAccess: EnterIdleState(); break;
-                                // Otherwise, enter adding
-                                default: EnterAddingAccessState(); break;
+                                case asAddingAccess:   EnterState(asRemovingAccess); break;
+                                case asRemovingAccess: EnterState(asIdle); break;
+                                default:               EnterState(asAddingAccess); break;
                             } // switch State
                             break;
-
                         // Iterate AdderAdd / AdderRemove / Idle
                         case keyB:
                             switch(State) {
-                                case asAddingAdder:    // If was adding, now remove
-                                    State = asRemovingAdder;
-                                    LedService.StartSequence(lsqRemovingAdderWaiting);
-                                    RestartStateTimer();
-                                    break;
-                                // If was removing, enter Idle
-                                case asRemovingAdder: EnterIdleState(); break;
-                                // Otherwise, enter adding
-                                default:
-                                    State = asAddingAdder;
-                                    LedService.StartSequence(lsqAddingAdderWaiting);
-                                    RestartStateTimer();
-                                    break;
+                                case asAddingAdder:   EnterState(asRemovingAdder); break;
+                                case asRemovingAdder: EnterState(asIdle); break;
+                                default:              EnterState(asAddingAdder); break;
                             } // switch State
                             break;
 
                         // Iterate RemoverAdd / RemoverRemove / Idle
                         case keyC:
                             switch(State) {
-                                case asAddingRemover:    // If was adding, now remove
-                                    State = asRemovingRemover;
-                                    LedService.StartSequence(lsqRemovingRemoverWaiting);
-                                    RestartStateTimer();
-                                    break;
-                                case asRemovingRemover:  // If was removing, now Idle
-                                    EnterIdleState();
-                                    break;
-                                default:                // Otherwise, add
-                                    State = asAddingRemover;
-                                    LedService.StartSequence(lsqAddingRemoverWaiting);
-                                    RestartStateTimer();
-                                    break;
+                                case asAddingRemover:   EnterState(asRemovingRemover); break;
+                                case asRemovingRemover: EnterState(asIdle); break;
+                                default:                EnterState(asAddingRemover); break;
                             } // switch State
                             break;
                     } // switch
@@ -175,8 +151,8 @@ void App_t::ITask() {
                 else if(EInfo.Type == keCombo and EInfo.KeyID[0] == keyA and EInfo.KeyID[1] == keyB) {
                     LedService.StartSequence(lsqEraseAll);
                     IDStore.EraseAll();
-                    IDStore.Save();
-                    State = asIdle;
+                    chThdSleepMilliseconds(1530);   // Allow LED to complete blinking
+                    EnterState(asIdle);
                 }
             } // while
         } // if keys
@@ -205,30 +181,64 @@ void App_t::ITask() {
 #endif
 
         // ==== State timeout ====
-        if(EvtMsk & EVTMSK_STATE_TIMEOUT) EnterIdleState();
+        if(EvtMsk & EVTMSK_STATE_TIMEOUT) EnterState(asIdle);
     } // while true
 }
 
 #if 1 // ========================= States ======================================
-void App_t::EnterIdleState() {
-    if(IDStore.HasChanged) IDStore.Save();
-    Led.StartSequence(lsqDoorClose);
-    LedService.StartSequence(lsqIdle);
-    State = asIdle;
-}
+void App_t::EnterState(AppState_t NewState) {
+    State = NewState;
+    switch(NewState) {
+        case asIdle:
+            if(IDStore.HasChanged) IDStore.Save();
+            Led.StartSequence(lsqDoorClose);
+            LedService.StartSequence(lsqIdle);
+            return;
+            break;
 
-void App_t::EnterAddingAccessState() {
-    State = asAddingAccess;
-    Led.StartSequence(lsqAddingAccessWaiting);
-    LedService.StartSequence(lsqAddingAccessWaiting);
+        case asAddingAccess:
+            Led.StartSequence(lsqAddingAccessWaiting);
+            LedService.StartSequence(lsqAddingAccessWaiting);
+            break;
+        case asRemovingAccess:
+            Led.StartSequence(lsqRemovingAccessWaiting);
+            LedService.StartSequence(lsqRemovingAccessWaiting);
+            break;
+
+        case asAddingAdder:
+            LedService.StartSequence(lsqAddingAdderWaiting);
+            break;
+        case asRemovingAdder:
+            LedService.StartSequence(lsqRemovingAdderWaiting);
+            break;
+
+        case asAddingRemover:
+            LedService.StartSequence(lsqAddingRemoverWaiting);
+            break;
+
+        case asRemovingRemover:
+            LedService.StartSequence(lsqRemovingRemoverWaiting);
+            break;
+
+    } // switch
     RestartStateTimer();
 }
 
-void App_t::EnterRemovingAccessState() {
-    State = asRemovingAccess;
-    Led.StartSequence(lsqRemovingAccessWaiting);
-    LedService.StartSequence(lsqRemovingAccessWaiting);
-    RestartStateTimer();
+void App_t::ShowAddRemoveResult(AddRemoveResult_t Rslt) {
+    switch(Rslt) {
+        case arrAddingOk:
+            Led.StartSequence(lsqAddingAccessNew);
+            LedService.StartSequence(lsqAddingAccessNew);
+            break;
+        case arrAddingErr:
+            Led.StartSequence(lsqAddingAccessError);
+            LedService.StartSequence(lsqAddingAccessError);
+            break;
+        case arrRemovingOk:
+            Led.StartSequence(lsqRemovingAccessNew);
+            LedService.StartSequence(lsqRemovingAccessNew);
+            break;
+    }
 }
 #endif
 
@@ -252,8 +262,8 @@ void App_t::ProcessCardAppearance() {
                 switch(IdKind) {
                     case ikAccess:  SendEvt(EVTMSK_DOOR_OPEN); break;
                     case ikSecret:  break;
-                    case ikAdder:   EnterAddingAccessState(); break;
-                    case ikRemover: EnterRemovingAccessState(); break;
+                    case ikAdder:   EnterState(asAddingAccess); break;
+                    case ikRemover: EnterState(asRemovingAccess); break;
                     case ikNone:    SendEvt(EVTMSK_BAD_KEY); break;
                 }
             }
@@ -262,24 +272,24 @@ void App_t::ProcessCardAppearance() {
 
         case asAddingAccess:
             switch(IdKind) {
-                case ikAdder: EnterIdleState(); break;
-                case ikRemover: EnterRemovingAccessState(); break;
+                case ikAdder: EnterState(asIdle); break;
+                case ikRemover: EnterState(asRemovingAccess); break;
                 case ikNone:
-                    if(IDStore.Add(CurrentID, ikAccess) == OK) LedService.StartSequence(lsqAddingAccessNew);
-                    else LedService.StartSequence(lsqAddingAccessError);
+                    if(IDStore.Add(CurrentID, ikAccess) == OK) ShowAddRemoveResult(arrAddingOk);
+                    else ShowAddRemoveResult(arrAddingErr);
                     break;
-                case ikAccess: LedService.StartSequence(lsqAddingAccessNew); break; // already in base
+                case ikAccess: ShowAddRemoveResult(arrAddingOk); break; // already in base
                 case ikSecret: break;
             }
             break;
         case asRemovingAccess:
             switch(IdKind) {
-                case ikAdder: EnterAddingAccessState(); break;
-                case ikRemover: EnterIdleState(); break;
-                case ikNone: LedService.StartSequence(lsqRemovingAccessNew); break; // already absent
+                case ikAdder: EnterState(asAddingAccess); break;
+                case ikRemover: EnterState(asIdle); break;
+                case ikNone: ShowAddRemoveResult(arrRemovingOk); break; // already absent
                 case ikAccess:
                     IDStore.Remove(CurrentID, ikAccess);
-                    LedService.StartSequence(lsqRemovingAccessNew);
+                    ShowAddRemoveResult(arrRemovingOk);
                     break;
                 case ikSecret: break;
             }

@@ -196,12 +196,11 @@ const LedChunk_t lsqBlinkGreenX2[] = {
 #define clWrongKey      ((Color_t){255, 0,   0})
 
 const LedChunk_t lsqDoorOpen[] = {
-        {csSetup, 900, clDoorOpen},
+        {csSetup, 630, clDoorOpen},
         {csEnd}
 };
 const LedChunk_t lsqDoorClose[] = {
-        {csSetup, 0, clBlack},
-        {csSetup, 900, clDoorClosed},
+        {csSetup, 630, clDoorClosed},
         {csEnd}
 };
 const LedChunk_t lsqDoorWrongKey[] = {
@@ -209,15 +208,6 @@ const LedChunk_t lsqDoorWrongKey[] = {
         {csWait, 99},
         {csSetup, 360, clDoorClosed},
         {csEnd}
-};
-
-
-const LedChunk_t lsqSmootnGreen[] = {
-        {csSetup, 1800, clGreen},
-        {csWait, 999},
-        {csSetup, 1800, clBlack},
-        {csWait, 999},
-        {csGoto, 0}
 };
 
 

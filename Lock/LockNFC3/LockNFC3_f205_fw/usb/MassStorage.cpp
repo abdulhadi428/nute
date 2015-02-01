@@ -98,6 +98,7 @@ void MassStorage_t::SCSICmdHandler() {
         case SCSI_CMD_TEST_UNIT_READY:
         case SCSI_CMD_PREVENT_ALLOW_MEDIUM_REMOVAL:
         case SCSI_CMD_VERIFY_10:
+        case SCSI_CMD_SYNCHRONIZE_CACHE:
             CmdOk = true;
             CmdBlock.DataTransferLen = 0;
             break;
