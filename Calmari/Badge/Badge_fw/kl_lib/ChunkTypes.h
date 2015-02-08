@@ -71,6 +71,18 @@ public:
         ISwitchOff();
         chSysUnlock();
     }
+    void Pause() {
+        chSysLock();
+        if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);
+        chSysUnlock();
+    }
+    void Proceed() {
+        chSysLock();
+        if(IPStartChunk == nullptr) return;
+        IProcessSequenceI();
+        chSysUnlock();
+    }
+
     const TChunk* GetCurrentSequence() { return IPStartChunk; }
 
     void IProcessSequenceI() {

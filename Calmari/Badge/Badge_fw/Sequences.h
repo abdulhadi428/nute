@@ -11,13 +11,23 @@
 #include "ChunkTypes.h"
 
 #if 1 // ============================ LED RGB ==================================
+#define LSQ_CHANGING_DELAY  999
+#define LSQ_WAIT_DELAY      999
 const LedChunk_t lsqChange[] = {
-        {csSetup, 900, clRed},
-        {csSetup, 900, clYellow},
-        {csSetup, 900, clGreen},
-        {csSetup, 900, clCyan},
-        {csSetup, 900, clBlue},
-        {csSetup, 900, clMagenta},
+        {csSetup, LSQ_CHANGING_DELAY, clRed},
+        {csWait,  LSQ_WAIT_DELAY},
+        {csSetup, LSQ_CHANGING_DELAY, clYellow},
+        {csWait,  LSQ_WAIT_DELAY},
+        {csSetup, LSQ_CHANGING_DELAY, clGreen},
+        {csWait,  LSQ_WAIT_DELAY},
+        {csSetup, LSQ_CHANGING_DELAY, clCyan},
+        {csWait,  LSQ_WAIT_DELAY},
+        {csSetup, LSQ_CHANGING_DELAY, clBlue},
+        {csWait,  LSQ_WAIT_DELAY},
+        {csSetup, LSQ_CHANGING_DELAY, clMagenta},
+        {csWait,  LSQ_WAIT_DELAY},
+        {csSetup, LSQ_CHANGING_DELAY, clWhite},
+        {csWait,  LSQ_WAIT_DELAY},
         {csGoto, 0}
 };
 

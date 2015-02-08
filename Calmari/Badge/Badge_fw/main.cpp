@@ -14,9 +14,16 @@
 #include "Sequences.h"
 #include "led_rgb.h"
 
-#define KEYPRESS_DELAY  18
+// Button
+#define BTN_POLL_INTERVAL   18
+#define BTN_LONGPRESS_DELAY 3006
+#define BTN_GPIO            GPIOA
+#define BTN_PIN             0
+#define BtnPressedNow()     (PinIsSet(BTN_GPIO, BTN_PIN))
 
 LedRGB_t Led({GPIOB, 0, TIM3, 3}, {GPIOB, 3, TIM2, 2}, {GPIOB, 1, TIM3, 4});
+
+enum State_t {stChanging, stStop, stSleep};
 
 void GoSleep();
 
@@ -31,7 +38,7 @@ int main(void) {
     JtagDisable();
     Uart.Init(115200);
     Uart.Printf("\rBadge  AHB=%u; APB1=%u; APB2=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
-    PinSetupIn(GPIOA, 0, pudNone);  // Button
+    PinSetupIn(BTN_GPIO, BTN_PIN, pudNone); // Button
     Led.Init();
     // Remap TIM2 CH2 to PB3
     RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
@@ -41,19 +48,42 @@ int main(void) {
     AFIO->MAPR = tmp;
     RCC->APB2ENR &= ~RCC_APB2ENR_AFIOEN;
 
+    // Main cycle: btn polling
+    bool BtnWasPressed = false;
+    uint32_t TimeStamp = 0;
+    State_t State = stChanging;
     // Start blink
     Led.StartSequence(lsqChange);
+    // Allow it to light-up before keypress
+    chThdSleepMilliseconds(999);
 
-    // Main cycle: btn polling
-    uint32_t N=0;
     while(true) {
-        chThdSleepMilliseconds(72);
-        if(PinIsSet(GPIOA, 0)) {
-            N++;
-            if(N >= KEYPRESS_DELAY) GoSleep();
+        chThdSleepMilliseconds(BTN_POLL_INTERVAL);
+        // OnButtonPress
+        if(BtnPressedNow() and !BtnWasPressed) {
+            BtnWasPressed = true;
+            TimeStamp = chTimeNow();
+            if(State == stChanging) {
+                State = stStop;
+                Led.Pause();
+            }
+            else {
+                State = stChanging;
+                Led.Proceed();
+            }
         }
-        else N=0;
-    }
+
+        // OnButtonRelease
+        else if(!BtnPressedNow() and BtnWasPressed) BtnWasPressed = false;
+
+        // OnButtonLongPress
+        else if(BtnPressedNow() and ((chTimeNow() - TimeStamp) >= BTN_LONGPRESS_DELAY)) {
+            // Shutdown lights and allow user to release button to minimize risk of inintended "keypress"
+            Led.Stop();
+            chThdSleepMilliseconds(999);
+            GoSleep();
+        }
+    } // while
 }
 
 void GoSleep() {
