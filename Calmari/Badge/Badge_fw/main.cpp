@@ -21,11 +21,17 @@
 #define BTN_PIN             0
 #define BtnPressedNow()     (PinIsSet(BTN_GPIO, BTN_PIN))
 
+#define THE_WORD            0xCa11  // For wake-up checking
+
 LedRGB_t Led({GPIOB, 0, TIM3, 3}, {GPIOB, 3, TIM2, 2}, {GPIOB, 1, TIM3, 4});
 
 enum State_t {stChanging, stStop, stSleep};
+State_t State = stChanging;
 
-void GoSleep();
+// Prototypes
+static inline void GoSleep();
+static inline void LoadLedState();
+static inline void SaveLedState();
 
 int main(void) {
     // ==== Init clock system ====
@@ -39,6 +45,9 @@ int main(void) {
     Uart.Init(115200);
     Uart.Printf("\rBadge  AHB=%u; APB1=%u; APB2=%u\r\n", Clk.AHBFreqHz, Clk.APB1FreqHz, Clk.APB2FreqHz);
     PinSetupIn(BTN_GPIO, BTN_PIN, pudNone); // Button
+
+    BackupRegs::Init();
+
     Led.Init();
     // Remap TIM2 CH2 to PB3
     RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
@@ -48,38 +57,57 @@ int main(void) {
     AFIO->MAPR = tmp;
     RCC->APB2ENR &= ~RCC_APB2ENR_AFIOEN;
 
-    // Main cycle: btn polling
-    bool BtnWasPressed = false;
     uint32_t TimeStamp = 0;
-    State_t State = stChanging;
-    // Start blink
-    Led.StartSequence(lsqChange);
-    // Allow it to light-up before keypress
-    chThdSleepMilliseconds(999);
+    bool BtnWasPressed = false, BtnIgnore = false;
 
+    // DEBUG
+//    chThdSleepMilliseconds(999);
+
+    // Check if just awake
+    Uart.Printf("\rW=%X", BackupRegs::Read(1));
+    if(BackupRegs::Read(1) == THE_WORD) {
+        Uart.Printf("\rWas in Standby");
+        // wait for a while checking button
+        TimeStamp = chTimeNow();
+        do {
+            chThdSleepMilliseconds(BTN_POLL_INTERVAL);
+            if(!BtnPressedNow()) GoSleep();
+        } while((chTimeNow() - TimeStamp) < BTN_LONGPRESS_DELAY);
+        BtnIgnore = true;
+        LoadLedState();
+    }
+    else Led.StartSequence(lsqChange);
+
+    // Main cycle: btn polling
     while(true) {
         chThdSleepMilliseconds(BTN_POLL_INTERVAL);
         // OnButtonPress
         if(BtnPressedNow() and !BtnWasPressed) {
             BtnWasPressed = true;
             TimeStamp = chTimeNow();
-            if(State == stChanging) {
-                State = stStop;
-                Led.Pause();
-            }
-            else {
-                State = stChanging;
-                Led.Proceed();
-            }
         }
 
         // OnButtonRelease
-        else if(!BtnPressedNow() and BtnWasPressed) BtnWasPressed = false;
+        else if(!BtnPressedNow() and BtnWasPressed) {
+            BtnWasPressed = false;
+            if(BtnIgnore) BtnIgnore = false;
+            else {
+                if(State == stChanging) {
+                    State = stStop;
+                    Led.PauseSequence();
+                }
+                else {
+                    State = stChanging;
+                    Led.ProceedPausedSequence();
+                }
+            }
+        }
 
         // OnButtonLongPress
-        else if(BtnPressedNow() and ((chTimeNow() - TimeStamp) >= BTN_LONGPRESS_DELAY)) {
+        else if(BtnPressedNow() and ((chTimeNow() - TimeStamp) >= BTN_LONGPRESS_DELAY) and !BtnIgnore) {
             // Shutdown lights and allow user to release button to minimize risk of inintended "keypress"
-            Led.Stop();
+            SaveLedState();
+            Led.StopAndOff();
             chThdSleepMilliseconds(999);
             GoSleep();
         }
@@ -88,13 +116,38 @@ int main(void) {
 
 void GoSleep() {
     chSysLock();
-    // Enable WKUP1 pin
-    PWR->CSR |= PWR_CSR_EWUP;
-    // Enter standby mode
-    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-    PWR->CR = PWR_CR_PDDS;
-    PWR->CR |= PWR_CR_CWUF;
-    __WFI();
+    Sleep::EnableWakeupPin();
+    Sleep::EnterStandbyMode();
     chSysUnlock();
+}
+
+
+using namespace BackupRegs;
+void LoadLedState() {
+    State = State_t(Read(2));
+    Color_t Clr;
+    Clr.R = Read(3);
+    Clr.G = Read(4);
+    Clr.B = Read(5);
+    uint32_t CurrentChunk = Read(6);
+    Led.StartSequence(lsqChange, CurrentChunk);
+    if(State == stStop) Led.PauseSequence();
+    Led.SetColor(Clr);
+    Uart.Printf("\rLoad: St=%u  R=%u G=%u B=%u  Indx=%u", State, Clr.R, Clr.G, Clr.B, CurrentChunk);
+}
+
+void SaveLedState() {
+    AllowWrite();
+    Write(1, THE_WORD);
+    Write(2, (uint32_t)State);
+    Color_t Clr = Led.GetCurrentColor();
+    Write(3, Clr.R);
+    Write(4, Clr.G);
+    Write(5, Clr.B);
+    uint32_t CurrentChunk = Led.GetCurrentChunkIndx();
+    Write(6, CurrentChunk);
+    DenyWrite();
+//    Uart.Printf("\rSave: St=%u  R=%u G=%u B=%u  Indx=%u", State, Clr.R, Clr.G, Clr.B, CurrentChunk);
+//    chThdSleepMilliseconds(999);
 }
 

@@ -92,6 +92,11 @@ private:
     LedChnlTmr_t R, G, B;
     uint32_t ICalcDelay(uint32_t CurrentBrightness, uint32_t SmoothVar) { return (uint32_t)((SmoothVar / (CurrentBrightness+4)) + 1); }
     Color_t ICurrColor;
+    void ISetCurrentColor() {
+        R.Set(ICurrColor.R);
+        G.Set(ICurrColor.G);
+        B.Set(ICurrColor.B);
+    }
     void ISwitchOff() { SetColor(clBlack); }
     SequencerLoopTask_t ISetup() {
         if(ICurrColor != IPCurrentChunk->Color) {
@@ -102,7 +107,7 @@ private:
             }
             else {
                 ICurrColor.Adjust(&IPCurrentChunk->Color);
-                SetColor(ICurrColor);
+                ISetCurrentColor();
                 // Check if completed now
                 if(ICurrColor == IPCurrentChunk->Color) IPCurrentChunk++;
                 else { // Not completed
@@ -134,7 +139,9 @@ public:
         R.Set(AColor.R);
         G.Set(AColor.G);
         B.Set(AColor.B);
+        ICurrColor = AColor;
     }
+    Color_t GetCurrentColor() { return ICurrColor; }
 };
 #endif
 

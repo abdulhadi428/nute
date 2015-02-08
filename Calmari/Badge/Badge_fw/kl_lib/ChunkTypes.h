@@ -58,25 +58,25 @@ protected:
     BaseSequencer_t() : IPStartChunk(nullptr), IPCurrentChunk(nullptr) {}
     void SetupDelay(uint32_t ms) { chVTSetI(&ITmr, MS2ST(ms), GeneralSequencerTmrCallback, this); }
 public:
-    void StartSequence(const TChunk *PLedChunk) {
+    void StartSequence(const TChunk *PLedChunk, uint32_t StartFromIndx = 0) {
         chSysLock();
         IPStartChunk = PLedChunk;   // Save first chunk
-        IPCurrentChunk = PLedChunk;
+        IPCurrentChunk = PLedChunk + StartFromIndx;
         IProcessSequenceI();
         chSysUnlock();
     }
-    void Stop() {
+    void StopAndOff() {
         chSysLock();
         if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);
         ISwitchOff();
         chSysUnlock();
     }
-    void Pause() {
+    void PauseSequence() {
         chSysLock();
         if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);
         chSysUnlock();
     }
-    void Proceed() {
+    void ProceedPausedSequence() {
         chSysLock();
         if(IPStartChunk == nullptr) return;
         IProcessSequenceI();
@@ -84,6 +84,12 @@ public:
     }
 
     const TChunk* GetCurrentSequence() { return IPStartChunk; }
+    uint32_t GetCurrentChunkIndx() {
+        chSysLock();
+        uint32_t r = IPCurrentChunk - IPStartChunk;
+        chSysUnlock();
+        return r;
+    }
 
     void IProcessSequenceI() {
         if(chVTIsArmedI(&ITmr)) chVTResetI(&ITmr);  // Reset timer

@@ -14,12 +14,11 @@
 #include "clocking_f100.h"
 
 extern "C" {
-//void _init(void);   // Need to calm linker
+// Calm linker
 void __attribute__ ((weak)) _init(void)  {}
-
 }
 
-// =============================== General =====================================
+#if 1 // ============================ General ==================================
 #define PACKED __attribute__ ((__packed__))
 #ifndef countof
 #define countof(A)  (sizeof(A)/sizeof(A[0]))
@@ -78,13 +77,15 @@ typedef void(*ftVoidVoid)(void);
 #define DMA_PRIORITY_MEDIUM     STM32_DMA_CR_PL(0b01)
 #define DMA_PRIORITY_HIGH       STM32_DMA_CR_PL(0b10)
 #define DMA_PRIORITY_VERYHIGH   STM32_DMA_CR_PL(0b11)
+#endif
 
-// ============================ Simple delay ===================================
+#if 1 // ========================= Simple delay ================================
 static inline void DelayLoop(volatile uint32_t ACounter) { while(ACounter--); }
 static inline void Delay_ms(uint32_t Ams) {
     volatile uint32_t __ticks = (Clk.AHBFreqHz / 4000) * Ams;
     DelayLoop(__ticks);
 }
+#endif
 
 #if 1 // =========================== Time ======================================
 static inline bool TimeElapsed(systime_t *PSince, uint32_t Delay_ms) {
@@ -95,6 +96,7 @@ static inline bool TimeElapsed(systime_t *PSince, uint32_t Delay_ms) {
     return Rslt;
 }
 #endif
+
 #if 1 // ================== Single pin manipulations ===========================
 enum PinOutMode_t {
     omPushPull  = 0,
@@ -342,8 +344,7 @@ public:
 };
 #endif
 
-#if 1 // ========================== Sleep ======================================
-namespace Sleep {
+namespace Sleep { // ===================== Sleep ===============================
 static inline void EnterStandbyMode() {
     SCB->SCR |= SCB_SCR_SLEEPDEEP;
     PWR->CR = PWR_CR_PDDS;
@@ -356,9 +357,36 @@ static inline void DisableWakeupPin() { PWR->CSR &= ~PWR_CSR_EWUP; }
 
 static inline bool WasInStandby() { return (PWR->CSR & PWR_CSR_SBF); }
 static inline void ClearStandbyFlag() { PWR->CR |= PWR_CR_CSBF; }
-
 }; // namespace
-#endif
+
+namespace BackupRegs {
+static inline void AllowWrite() { PWR->CR |=  PWR_CR_DBP; }
+static inline void DenyWrite()  { PWR->CR &= ~PWR_CR_DBP; }
+
+static inline void Init() {
+    rccEnablePWRInterface();
+    rccEnableBKPInterface();
+}
+
+// 1 <= Indx <= 42
+static inline uint16_t Read(uint32_t Indx) {
+    if(Indx == 0 or Indx > 42) return 0;
+    volatile uint32_t* ptr;
+    if(Indx <= 10) ptr = ((uint32_t*)&BKP->DR1) + Indx - 1;
+    else ptr = ((uint32_t*)&BKP->DR11) + Indx - 11;
+    return *(volatile uint16_t*)ptr;
+}
+
+// 1 <= Indx <= 42
+static inline void Write(uint32_t Indx, uint16_t Value) {
+    if(Indx == 0 or Indx > 42) return;
+    volatile uint32_t* ptr;
+    if(Indx <= 10) ptr = ((uint32_t*)&BKP->DR1) + Indx - 1;
+    else ptr = ((uint32_t*)&BKP->DR11) + Indx - 11;
+    *(volatile uint16_t*)ptr = Value;
+}
+
+};
 
 #if 1 // ============================== SPI ====================================
 enum CPHA_t {cphaFirstEdge, cphaSecondEdge};
