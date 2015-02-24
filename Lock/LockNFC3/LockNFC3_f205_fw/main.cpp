@@ -70,7 +70,7 @@ int main() {
 
     App.ReadConfig();   // Read config from SD-card
     Sound.Init();
-    Sound.SetVolume(225);
+    Sound.SetVolume(250);
     Sound.RegisterAppThd(chThdSelf());
     Sound.Play("alive.wav");
 
