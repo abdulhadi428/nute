@@ -1,13 +1,8 @@
-update=2/22/2015 10:13:49 PM
+update=3/3/2015 8:39:25 PM
 version=1
-last_client=eeschema
+last_client=cvpcb
 [general]
 version=1
-[cvpcb]
-version=1
-NetIExt=net
-[cvpcb/libraries]
-EquName1=devcms
 [pcbnew]
 version=1
 LastNetListRead=Candle3.net
@@ -28,13 +23,13 @@ DrawSegmentWidth=0.150000000000
 BoardOutlineThickness=0.381000000000
 ModuleOutlineThickness=0.150000000000
 [pcbnew/libraries]
-LibDir=D:/libs/Kicad
 LibName1=Antennas_kl
 LibName2=Common_kl
 LibName3=Connectors_kl
 LibName4=pcb_details
 LibName5=Tittar_kl
 LibName6=switches
+LibDir=D:/kl-libs/Kicad
 [eeschema]
 version=1
 LibDir=D:/kl-libs/Kicad
@@ -52,3 +47,8 @@ LibName5=Tittar_kl
 LibName6=power
 LibName7=Antennas_kl
 LibName8=Power_kl
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms
