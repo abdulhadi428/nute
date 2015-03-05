@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xsi:noNamespaceSchemaLocation="Project.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Version current="1"/>
+	<Format>Project</Format>
+	<Header>
+		<Program name="TopoR" version="6.0"/>
+		<GUID>{459D6205-526A-4D1E-A572-AFA6304FBDD4}</GUID>
+		<Annotation>Project file</Annotation>
+	</Header>
+	<Document>
+		<LocalLibrary />
+		<Pcb>
+			<File path=".\Candle4.fsx" Folder="-1" isopened="1"/>
+		</Pcb>
+		<Import>
+			<Specctra>
+			<Path name="D:\nute\Calmari\Candle\Candle4\Candle4_hw\Candle4.dsn"/>
+			</Specctra>
+		</Import>
+		<ARouteSessions>
+		</ARouteSessions>
+	</Document>
+</Project>
