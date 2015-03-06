@@ -564,48 +564,50 @@
     )
     (net GND
       (pins DA1-4 R1-2 R5-2 DD2-16 DD2-19 DD2-PAD DD2-PAD@1 DD2-PAD@2 DD2-PAD@3 DD1-8
-        DD1-23 DD1-35 DD1-44 DD1-47 L2-1 XTAL1-H XTAL1-H@1 XL8-1 XL8-2 XL8-3 XL1-3
-        XL4-2 C7-2 C9-2 C24-2 C23-2 C6-2 C2-2 C8-2 C4-2 C3-2 C5-2 C22-2 C14-2 C13-2
-        C18-2 C12-2 C20-2 C11-2 C10-2 C1-2 C17-2 C19-2 ANT1-2 XL3-1)
+        DD1-23 DD1-35 DD1-44 DD1-47 L2-1 L4-1 XTAL1-H XTAL1-H@1 XL8-1 XL8-2 XL8-3
+        XL1-3 XL4-2 C7-2 C9-2 C24-1 C24-2 C23-2 C6-2 C2-2 C8-2 C4-2 C3-2 C5-2 C22-2
+        C14-2 C13-2 C18-2 C12-2 C20-2 C11-2 C10-2 C1-2 C17-2 C19-2 ANT1-1 ANT1-1@1
+        ANT1-1@2 ANT1-1@3 ANT1-1@4 ANT1-1@5 ANT1-1@6 ANT1-1@7 ANT1-2 ANT1-1@8 ANT1-1@9
+        ANT1-1@10 XL3-1)
     )
     (net "N-000001"
-      (pins DD2-5 C12-1)
+      (pins R5-1 DD2-17)
     )
-    (net "N-0000011"
+    (net "N-0000013"
       (pins L3-1 L4-2 C23-1 C21-2)
     )
     (net "N-000002"
-      (pins R5-1 DD2-17)
+      (pins DD2-5 C12-1)
     )
     (net "N-0000023"
-      (pins XL6-3 Q1-BA)
-    )
-    (net "N-0000024"
-      (pins XL7-1 Q1-RC)
-    )
-    (net "N-0000025"
-      (pins XL7-3 Q1-BC)
-    )
-    (net "N-0000026"
-      (pins XL6-2 Q1-GA)
-    )
-    (net "N-0000027"
-      (pins XL6-1 Q1-RA)
-    )
-    (net "N-0000028"
       (pins R7-2 XL5-2)
     )
-    (net "N-0000029"
+    (net "N-0000024"
+      (pins XL7-3 Q1-BC)
+    )
+    (net "N-0000025"
+      (pins XL6-2 Q1-GA)
+    )
+    (net "N-0000026"
+      (pins XL6-1 Q1-RA)
+    )
+    (net "N-0000027"
+      (pins XL6-3 Q1-BA)
+    )
+    (net "N-0000028"
       (pins R6-2 XL5-1)
+    )
+    (net "N-0000029"
+      (pins R8-2 XL5-3)
     )
     (net "N-000003"
       (pins DD1-30 XL4-1)
     )
     (net "N-0000030"
-      (pins R8-2 XL5-3)
+      (pins XL7-2 Q1-GC)
     )
     (net "N-0000031"
-      (pins XL7-2 Q1-GC)
+      (pins XL7-1 Q1-RC)
     )
     (net "N-0000032"
       (pins L3-2 C16-2 C19-1)
@@ -614,23 +616,19 @@
       (pins L2-2 C15-2 C21-1)
     )
     (net "N-0000034"
-      (pins TP1-1 DD1-7)
+      (pins DD2-8 XTAL1-1 C10-1)
     )
     (net "N-0000035"
-      (pins L4-1 C24-1 ANT1-1 ANT1-1@1 ANT1-1@2 ANT1-1@3 ANT1-1@4 ANT1-1@5 ANT1-1@6
-        ANT1-1@7 ANT1-1@8 ANT1-1@9 ANT1-1@10)
-    )
-    (net "N-0000036"
       (pins DD2-10 XTAL1-2 C11-1)
     )
-    (net "N-0000037"
-      (pins DD2-8 XTAL1-1 C10-1)
+    (net "N-0000036"
+      (pins TP1-1 DD1-7)
     )
     (class kicad_default "" /Ant1 /Ant2 /BTN_DOWN /BTN_TX /BTN_UP /CC_CS /CC_GDO0
       /CC_MISO /CC_MOSI /CC_SCK /LED_B /LED_G /LED_R /SWCLK /SWDIO /WKUP "N-000001"
-      "N-0000011" "N-000002" "N-0000023" "N-0000024" "N-0000025" "N-0000026"
+      "N-0000013" "N-000002" "N-0000023" "N-0000024" "N-0000025" "N-0000026"
       "N-0000027" "N-0000028" "N-0000029" "N-000003" "N-0000030" "N-0000031"
-      "N-0000032" "N-0000033" "N-0000034" "N-0000035" "N-0000036" "N-0000037"
+      "N-0000032" "N-0000033" "N-0000034" "N-0000035" "N-0000036"
       (circuit
         (use_via Via[0-1]_900:400_um)
       )

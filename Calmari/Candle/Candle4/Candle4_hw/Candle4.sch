@@ -14,7 +14,7 @@ $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
 Title ""
-Date "3 mar 2015"
+Date "5 mar 2015"
 Rev ""
 Comp ""
 Comment1 ""
@@ -1720,4 +1720,10 @@ Wire Wire Line
 	5250 2300 4850 2300
 Wire Wire Line
 	4850 2600 5250 2600
+Wire Wire Line
+	14700 2900 14600 2900
+Wire Wire Line
+	14600 2900 14600 2750
+Connection ~ 14600 2750
+Connection ~ 14700 2900
 $EndSCHEMATC
